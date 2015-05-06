@@ -164,7 +164,6 @@ public class DEGinModule extends AbstractGinModule {
         bind(DEAppsWindow.class);
         bind(DeDiskResourceWindow.class);
         bind(FileViewerWindow.class);
-        bind(IDropLiteAppletWindow.class);
         bind(MyAnalysesWindow.class);
         bind(NotificationWindow.class);
         bind(PipelineEditorWindow.class);

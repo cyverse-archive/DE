@@ -83,8 +83,8 @@ public class SimpleFileUploadDialogDefaultAppearance implements SimpleFileUpload
     }
 
     @Override
-    public String idropLiteCloseConfirmMessage() {
-        return iplantDisplayStrings.idropLiteCloseConfirmMessage();
+    public String closeConfirmMessage() {
+        return iplantDisplayStrings.transferCloseConfirmMessage();
     }
 
     @Override

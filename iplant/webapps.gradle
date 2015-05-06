@@ -10,7 +10,6 @@ project(':de-webapp') {
     apply plugin: 'spring-boot'
 
     configurations {
-        applet
         providedRuntime
     }
 
@@ -43,8 +42,6 @@ project(':de-webapp') {
 
         compile("org.hibernate:hibernate-validator:4.2.0.Final")
 
-        applet "org.irods.idrop:idrop-lite:2.0.1-SNAPSHOT@jar"
-
         testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
     }
 
@@ -70,20 +67,6 @@ project(':de-webapp') {
             strict = true
         }
 
-    }
-
-    war {
-        // Put idrop lite jar into war
-        from(configurations.applet) {
-            into 'applets'
-        }
-    }
-
-    draftWar {
-        // Put idrop lite jar into war
-        from(configurations.applet) {
-            into 'applets'
-        }
     }
 
     // Convenience task for launching sdm
@@ -150,7 +133,6 @@ project(':de-webapp') {
         delete "./war"
         delete "./bin"
     }
-
 }
 
 

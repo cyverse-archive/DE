@@ -100,19 +100,6 @@ public class ConfigFactory {
         return ab.as();
     }
 
-    public static IDropLiteWindowConfig iDropLiteUploadWindowConfig() {
-        IDropLiteWindowConfig idlwc = applyWindowType(WindowType.IDROP_LITE_UPLOAD,
-                factory.iDropLiteWindowConfig()).as();
-        return idlwc;
-    }
-
-    public static IDropLiteWindowConfig iDropLiteDownloadWindowConfig() {
-        IDropLiteWindowConfig idlwc = applyWindowType(WindowType.IDROP_LITE_DOWNLOAD,
-                factory.iDropLiteWindowConfig()).as();
-
-        return idlwc;
-    }
-
     public static NotifyWindowConfig notifyWindowConfig(NotificationCategory category) {
         NotifyWindowConfig nwc = applyWindowType(WindowType.NOTIFICATIONS, factory.notifyWindowConfig())
                 .as();
@@ -155,13 +142,6 @@ public class ConfigFactory {
 
             case DATA:
                 config = diskResourceWindowConfig(true);
-                break;
-
-            case IDROP_LITE_DOWNLOAD:
-                config = iDropLiteDownloadWindowConfig();
-                break;
-            case IDROP_LITE_UPLOAD:
-                config = iDropLiteUploadWindowConfig();
                 break;
 
             case NOTIFICATIONS:
@@ -226,12 +206,6 @@ public class ConfigFactory {
 
             case HELP:
                 config = null;
-                break;
-
-            case IDROP_LITE_DOWNLOAD:
-            case IDROP_LITE_UPLOAD:
-                config = AutoBeanCodex
-                        .decode(factory, IDropLiteWindowConfig.class, ws.getWindowConfig()).as();
                 break;
 
             case NOTIFICATIONS:

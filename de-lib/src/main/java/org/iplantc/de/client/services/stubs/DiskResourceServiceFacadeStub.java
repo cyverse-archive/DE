@@ -80,16 +80,6 @@ public class DiskResourceServiceFacadeStub implements DiskResourceServiceFacade 
     }
 
     @Override
-    public void upload(AsyncCallback<String> callback) {
-
-    }
-
-    @Override
-    public void download(HasPaths paths, AsyncCallback<String> callback) {
-
-    }
-
-    @Override
     public String getEncodedSimpleDownloadURL(String path) {
         return null;
     }

@@ -10,7 +10,8 @@ import com.google.inject.Inject;
 
 /**
  * Defines a factory for the creation of windows.
- * 
+ *
+ * @author jstroot
  */
 public class WindowFactory {
 
@@ -23,7 +24,6 @@ public class WindowFactory {
     @Inject AsyncProvider<DEAppsWindow> appsWindowAsyncProvider;
     @Inject AsyncProvider<DeDiskResourceWindow> diskResourceWindowAsyncProvider;
     @Inject AsyncProvider<FileViewerWindow> fileViewerWindowAsyncProvider;
-    @Inject AsyncProvider<IDropLiteAppletWindow> iDropWindowAsyncProvider;
     @Inject AsyncProvider<NotificationWindow> notificationWindowAsyncProvider;
     @Inject AsyncProvider<SimpleDownloadWindow> simpleDownloadWindowAsyncProvider;
     @Inject AsyncProvider<PipelineEditorWindow> pipelineEditorWindowAsyncProvider;
@@ -64,10 +64,6 @@ public class WindowFactory {
                 break;
             case HELP:
                 WindowUtil.open(constants.deHelpFile());
-                break;
-            case IDROP_LITE_DOWNLOAD:
-            case IDROP_LITE_UPLOAD:
-                ret = iDropWindowAsyncProvider;
                 break;
             case NOTIFICATIONS:
                 ret = notificationWindowAsyncProvider;

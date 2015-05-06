@@ -5,6 +5,7 @@ import com.google.gwt.i18n.client.Constants;
 
 /**
  * Constants used by client code not visible to the user.
+ * @author jstroot
  */
 public interface DEClientConstants extends Constants {
 
@@ -35,19 +36,5 @@ public interface DEClientConstants extends Constants {
      * @return path to help file;
      */
     String deHelpFile();
-
-    /**
-     * Applet Main Class
-     * 
-     * @return Main class name of the iDrop Lite Applet
-     */
-    String iDropLiteMainClass();
-
-    /**
-     * get relative path of Applet jar
-     * 
-     * @return the relative path
-     */
-    String iDropLiteArchivePath();
 
 }

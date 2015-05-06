@@ -1034,31 +1034,8 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
      *         "Are you sure you want to close this window? Closing may interrupt any transfers in progress."
      */
     @DefaultMessage("Are you sure you want to close this window? Closing may interrupt any transfers in progress.")
-    @Key("idropLiteCloseConfirmMessage")
-    String idropLiteCloseConfirmMessage();
-
-    /**
-     * Translated "Confirm".
-     *
-     * @return translated "Confirm"
-     */
-    @DefaultMessage("Confirm")
-    @Key("idropLiteCloseConfirmTitle")
-    String idropLiteCloseConfirmTitle();
-
-    /**
-     * Translated
-     * "You must close this window, after the current download is complete, before beginning a new download."
-     * .
-     *
-     * @return translated
-     *         "You must close this window, after the current download is complete, before beginning a new download."
-     */
-    @DefaultMessage("You must close this window, after the current download is complete, before beginning a new download.")
-    @Key("idropLiteDownloadNotice")
-    String idropLiteDownloadNotice();
-    
-    String idropJavaInfo(String helpUrl);
+    @Key("transferCloseConfirmMessage")
+    String transferCloseConfirmMessage();
 
     /**
      * Translated "Image".
@@ -2467,15 +2444,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String show();
 
     /**
-     * Translated "Switch to Simple Download Links".
-     *
-     * @return translated "Switch to Simple Download Links"
-     */
-    @DefaultMessage("Switch to Simple Download Links")
-    @Key("simpleDownloadForm")
-    String simpleDownloadForm();
-
-    /**
      * Translated "Click on the link(s) below to begin a download.".
      *
      * @return translated "Click on the link(s) below to begin a download."
@@ -2483,15 +2451,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Click on the link(s) below to begin a download.")
     @Key("simpleDownloadNotice")
     String simpleDownloadNotice();
-
-    /**
-     * Translated "Switch to Simple Upload Form".
-     *
-     * @return translated "Switch to Simple Upload Form"
-     */
-    @DefaultMessage("Switch to Simple Upload Form")
-    @Key("simpleUploadForm")
-    String simpleUploadForm();
 
     /**
      * Translated "Source / binary".

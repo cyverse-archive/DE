@@ -27,23 +27,11 @@ import org.iplantc.de.diskResource.client.SearchView;
 import org.iplantc.de.diskResource.client.ToolbarView;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.events.RequestBulkDownloadEvent;
-import org.iplantc.de.diskResource.client.events.RequestBulkUploadEvent;
 import org.iplantc.de.diskResource.client.events.RequestSendToCoGeEvent;
 import org.iplantc.de.diskResource.client.events.RequestSendToEnsemblEvent;
 import org.iplantc.de.diskResource.client.events.RequestSendToTreeViewerEvent;
 import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent;
-import org.iplantc.de.diskResource.client.events.selection.BulkDownloadSelected;
-import org.iplantc.de.diskResource.client.events.selection.BulkUploadSelected;
-import org.iplantc.de.diskResource.client.events.selection.DeleteDiskResourcesSelected;
-import org.iplantc.de.diskResource.client.events.selection.EmptyTrashSelected;
-import org.iplantc.de.diskResource.client.events.selection.MoveDiskResourcesSelected;
-import org.iplantc.de.diskResource.client.events.selection.RefreshFolderSelected;
-import org.iplantc.de.diskResource.client.events.selection.RenameDiskResourceSelected;
-import org.iplantc.de.diskResource.client.events.selection.RestoreDiskResourcesSelected;
-import org.iplantc.de.diskResource.client.events.selection.SendToCogeSelected;
-import org.iplantc.de.diskResource.client.events.selection.SendToEnsemblSelected;
-import org.iplantc.de.diskResource.client.events.selection.SendToTreeViewerSelected;
+import org.iplantc.de.diskResource.client.events.selection.*;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceViewFactory;
 import org.iplantc.de.diskResource.client.gin.factory.GridViewPresenterFactory;
 import org.iplantc.de.diskResource.client.gin.factory.ToolbarViewPresenterFactory;
@@ -60,12 +48,12 @@ import org.iplantc.de.diskResource.client.views.search.DiskResourceSearchField;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 
 import static com.google.common.base.Preconditions.checkState;
-
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.inject.client.AsyncProvider;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -364,15 +352,15 @@ public class DiskResourcePresenterImpl implements
         Preconditions.checkArgument(Iterables.elementsEqual(event.getSelectedDiskResources(),
                                                             gridViewPresenter.getSelectedDiskResources()));
         Preconditions.checkArgument(event.getSelectedFolder() == navigationPresenter.getSelectedFolder());
-        eventBus.fireEvent(new RequestBulkDownloadEvent(gridViewPresenter.isSelectAllChecked(),
-                                                        event.getSelectedDiskResources(),
-                                                        event.getSelectedFolder()));
+
+        // FIXME REPLACE THIS
+        Window.alert("BULK DOWNLOAD SELECTED");
     }
 
     @Override
     public void onBulkUploadSelected(BulkUploadSelected event) {
-        eventBus.fireEvent(new RequestBulkUploadEvent(this,
-                                                      navigationPresenter.getSelectedUploadFolder()));
+        // FIXME REPLACE THIS
+        Window.alert("BULK UPLOAD SELECTED");
     }
 
     @Override

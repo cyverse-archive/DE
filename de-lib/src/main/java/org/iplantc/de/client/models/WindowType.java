@@ -1,5 +1,8 @@
 package org.iplantc.de.client.models;
 
+/**
+ * @author jstroot
+ */
 public enum WindowType {
 
     ABOUT,
@@ -10,11 +13,9 @@ public enum WindowType {
     DATA,
     DATA_VIEWER,
     HELP,
-    IDROP_LITE_UPLOAD,
-    IDROP_LITE_DOWNLOAD,
     NOTIFICATIONS,
     SIMPLE_DOWNLOAD,
     WORKFLOW_INTEGRATION,
-    SYSTEM_MESSAGES;
+    SYSTEM_MESSAGES
 
 }

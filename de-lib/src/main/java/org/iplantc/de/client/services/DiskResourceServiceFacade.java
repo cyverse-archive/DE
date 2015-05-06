@@ -123,20 +123,6 @@ public interface DiskResourceServiceFacade {
     void importFromUrl(String url, DiskResource dest, AsyncCallback<String> callback);
 
     /**
-     * Call service to retrieve upload configuration values for idrop-lite.
-     * 
-     * @param callback executed when RPC call completes.
-     */
-    void upload(AsyncCallback<String> callback);
-
-    /**
-     * Call service to retrieve upload configuration values for idrop-lite.
-     * 
-     * @param callback executed when RPC call completes.
-     */
-    void download(HasPaths paths, AsyncCallback<String> callback);
-
-    /**
      * @param path the path of the file to download.
      * @return the URL encoded simple download address for the given path.
      */

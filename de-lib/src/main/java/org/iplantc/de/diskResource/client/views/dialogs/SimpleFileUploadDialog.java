@@ -73,7 +73,7 @@ public class SimpleFileUploadDialog extends IPlantDialog {
 
         String fileUploadsFailed(List<String> strings);
 
-        String idropLiteCloseConfirmMessage();
+        String closeConfirmMessage();
 
         SafeHtml renderDestinationPathLabel(String destPath, String parentPath);
 
@@ -225,7 +225,7 @@ public class SimpleFileUploadDialog extends IPlantDialog {
         if (submittedForms.size() > 0) {
             final ConfirmMessageBox cmb = new ConfirmMessageBox(
                     appearance.confirmAction(),
-                    appearance.idropLiteCloseConfirmMessage());
+                    appearance.closeConfirmMessage());
 
             cmb.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
                 @Override

@@ -4,7 +4,8 @@ package org.iplantc.de.desktop.shared;
  * top level items don't need '.' prefix. so we can have gwt-debug-analysesWindow instead of
  * gwt-debug-.analysesWindow
  * 
- * @author sriram/stroot
+ * @author sriram
+ * @author jstroot
  * 
  */
 public interface DeModule {
@@ -69,7 +70,6 @@ public interface DeModule {
         String APP_EDITOR_WINDOW = "appEditorWindow";
         String DISK_RESOURCE_WINDOW = "diskResourceWindow";
         String APP_LAUNCH_WINDOW = "appLaunchWindow";
-        String IDROP_LITE = "iDropLiteWindow";
         String NOTIFICATION = "notificationWindow";
         String WORKFLOW_EDITOR = "workflowEditorWindow";
         String SIMPLE_DOWNLOAD = "simpleDownloadWindow";

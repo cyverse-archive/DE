@@ -31,9 +31,6 @@ subprojects {
 
     repositories {
         mavenCentral()
-        maven {
-            url 'http://katic.iplantcollaborative.org/archiva/repository/internal/' 
-        }   
     }
 
     group = 'org.iplantc.de'

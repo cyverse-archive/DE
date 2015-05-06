@@ -25,12 +25,17 @@ import org.iplantc.de.commons.client.views.window.configs.AppsIntegrationWindowC
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.DiskResourceWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
-import org.iplantc.de.commons.client.views.window.configs.IDropLiteWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.PipelineEditorWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.SimpleDownloadWindowConfig;
 import org.iplantc.de.desktop.client.DesktopView;
-import org.iplantc.de.desktop.client.util.IDropLiteUtil;
-import org.iplantc.de.diskResource.client.events.*;
+import org.iplantc.de.diskResource.client.events.CreateNewFileEvent;
+import org.iplantc.de.diskResource.client.events.RequestImportFromUrlEvent;
+import org.iplantc.de.diskResource.client.events.RequestSendToCoGeEvent;
+import org.iplantc.de.diskResource.client.events.RequestSendToEnsemblEvent;
+import org.iplantc.de.diskResource.client.events.RequestSendToTreeViewerEvent;
+import org.iplantc.de.diskResource.client.events.RequestSimpleDownloadEvent;
+import org.iplantc.de.diskResource.client.events.RequestSimpleUploadEvent;
+import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
 import org.iplantc.de.diskResource.client.views.dialogs.FileUploadByUrlDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.SimpleFileUploadDialog;
 import org.iplantc.de.fileViewers.client.callbacks.EnsemblUtil;
@@ -71,8 +76,6 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
                                                            RequestSendToCoGeEvent.RequestSendToCoGeEventHandler,
                                                            RequestSendToEnsemblEvent.RequestSendToEnsemblEventHandler,
                                                            RequestSendToTreeViewerEvent.RequestSendToTreeViewerEventHandler,
-                                                           RequestBulkDownloadEvent.RequestBulkDownloadEventHandler,
-                                                           RequestBulkUploadEvent.RequestBulkUploadEventHandler,
                                                            RequestImportFromUrlEvent.RequestImportFromUrlEventHandler,
                                                            RequestSimpleDownloadEvent.RequestSimpleDownloadEventHandler,
                                                            RequestSimpleUploadEvent.RequestSimpleUploadEventHandler {
@@ -127,37 +130,6 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
         Splittable serviceWorkflowJson = event.getServiceWorkflowJson();
         config.setServiceWorkflowJson(serviceWorkflowJson);
         presenter.show(config);
-    }
-
-    @Override
-    public void onRequestBulkDownload(RequestBulkDownloadEvent event) {
-
-        List<DiskResource> resources = Lists.newArrayList(event.getRequestedResources());
-        if (isDownloadable(resources)) {
-            // Build window config
-            IDropLiteWindowConfig idlwc = ConfigFactory.iDropLiteDownloadWindowConfig();
-            idlwc.setDisplayMode(IDropLiteUtil.DISPLAY_MODE_DOWNLOAD);
-            idlwc.setResourcesToDownload(resources);
-            idlwc.setTypeMap(buildTypeMap(resources));
-            idlwc.setCurrentFolder(event.getCurrentFolder());
-            idlwc.setSelectAll(event.isSelectAll());
-            presenter.show(idlwc);
-        } else {
-            showErrorMsg();
-        }
-    }
-
-    @Override
-    public void onRequestBulkUpload(RequestBulkUploadEvent event) {
-        Folder uploadDest = event.getDestinationFolder();
-        if (canUpload(uploadDest)) {
-            // Build window config
-            IDropLiteWindowConfig idlwc = ConfigFactory.iDropLiteUploadWindowConfig();
-            idlwc.setDisplayMode(IDropLiteUtil.DISPLAY_MODE_UPLOAD);
-            idlwc.setUploadFolderDest(uploadDest);
-            idlwc.setCurrentFolder(uploadDest);
-            presenter.show(idlwc);
-        }
     }
 
     @Override
@@ -367,10 +339,6 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
         registrations.add(handlerRegistration);
 
 
-        handlerRegistration = eventBus.addHandler(RequestBulkDownloadEvent.TYPE, this);
-        registrations.add(handlerRegistration);
-        handlerRegistration = eventBus.addHandler(RequestBulkUploadEvent.TYPE, this);
-        registrations.add(handlerRegistration);
         handlerRegistration = eventBus.addHandler(RequestImportFromUrlEvent.TYPE, this);
         registrations.add(handlerRegistration);
         handlerRegistration = eventBus.addHandler(RequestSimpleDownloadEvent.TYPE, this);

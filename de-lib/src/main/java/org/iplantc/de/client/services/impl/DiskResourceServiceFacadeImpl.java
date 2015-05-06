@@ -512,22 +512,6 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     }
 
     @Override
-    public void upload(AsyncCallback<String> callback) {
-        String address = deProperties.getDataMgmtBaseUrl() + "upload"; //$NON-NLS-1$
-
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        callService(wrapper, callback);
-    }
-
-    @Override
-    public void download(HasPaths paths, AsyncCallback<String> callback) {
-        final String address = deProperties.getDataMgmtBaseUrl() + "download"; //$NON-NLS-1$
-        final String body = encode(paths);
-        final ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body);
-        callService(wrapper, callback);
-    }
-
-    @Override
     public void downloadContents(String parentFolderId, AsyncCallback<String> callback) {
         final String address = deProperties.getDataMgmtBaseUrl() + "download-contents"; //$NON-NLS-1$
         JSONObject body = new JSONObject();

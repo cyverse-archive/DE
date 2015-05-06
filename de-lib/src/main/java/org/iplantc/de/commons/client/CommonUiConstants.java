@@ -2,15 +2,11 @@ package org.iplantc.de.commons.client;
 
 import com.google.gwt.i18n.client.Constants;
 
-/** Configurable constants shared by apps */
+/**
+ * Configurable constants shared by apps
+ * @author jstroot
+ */
 public interface CommonUiConstants extends Constants {
-
-    /**
-     * URL for error icon image.
-     * 
-     * @return a string representing the URL.
-     */
-    String iconError();
 
     /**
      * URL to forums
@@ -48,16 +44,7 @@ public interface CommonUiConstants extends Constants {
     String appNameRestrictedStartingChars();
 
     /**
-     * The default tag prefix used by the window manager when creating a "handle" for a window.
-     * 
-     * @return a string representing the default prefix used for a window
-     */
-    String windowTag();
-
-    /**
      * key board short cuts
-     * 
-     * @return
      */
     String dataKeyShortCut();
 
@@ -71,8 +58,6 @@ public interface CommonUiConstants extends Constants {
     
     /**
      * iDrop download URL
-     * 
-     * @return
      */
-    String idropUrl();
+    String iDropDesktopClientInstructionsUrl();
 }
