@@ -1,5 +1,6 @@
 package org.iplantc.de.server.controllers;
 
+import org.iplantc.de.server.AppLoggerConstants;
 import org.iplantc.de.server.util.CasUtils;
 
 import org.jasig.cas.client.authentication.AttributePrincipal;
@@ -39,7 +40,7 @@ import java.net.URL;
 public class SecuredFileUploadController {
 
     private final Logger LOG = LoggerFactory.getLogger(SecuredFileUploadController.class);
-    private final Logger API_LOG = LoggerFactory.getLogger("org.iplantc.de.server.api");
+    private final Logger API_REQUEST_LOG = LoggerFactory.getLogger(AppLoggerConstants.API_REQUEST_LOGGER + ".secured.fileio.upload");
 
     @Value("${org.iplantc.services.file-io.secured.file-upload}") String securedFileUploadUrl;
 
@@ -49,7 +50,7 @@ public class SecuredFileUploadController {
                                    @RequestParam("file") final MultipartFile file,
                                    MultipartHttpServletRequest request) throws IOException {
 
-        API_LOG.info("POST {}", securedFileUploadUrl);
+        API_REQUEST_LOG.info("POST {}?dest={}", securedFileUploadUrl, dest);
         final RestTemplate restTemplate = new RestTemplate();
         // Create special part converter and add it to custom form message converter
         final FormHttpMessageConverter customFormMsgConverter = new FormHttpMessageConverter();

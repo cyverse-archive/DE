@@ -80,8 +80,8 @@ public class DEServiceImpl implements DEService,
         if (isValidServiceCall(wrapper)) {
             String address = retrieveServiceAddress(wrapper);
             String endpoint = getEndpointLoggerString(address);
-            Logger jsonLogger = LoggerFactory.getLogger(AppLoggerConstants.API_JSON + endpoint);
-            Logger apiLogger = LoggerFactory.getLogger(AppLoggerConstants.API_LOGGER + endpoint);
+            Logger jsonLogger = LoggerFactory.getLogger(AppLoggerConstants.API_JSON_RESPONSE_LOGGER + endpoint);
+            Logger apiLogger = LoggerFactory.getLogger(AppLoggerConstants.API_REQUEST_LOGGER + endpoint);
 
             CloseableHttpClient client = HttpClients.createDefault();
             try {
@@ -100,7 +100,7 @@ public class DEServiceImpl implements DEService,
 
             if (jsonLogger.isTraceEnabled()
                     && !Strings.isNullOrEmpty(json)) {
-                jsonLogger.trace("{} {} response={}", wrapper.getType(), wrapper.getAddress(), json);
+                jsonLogger.trace("{} {} - {}", wrapper.getType(), wrapper.getAddress(), json);
             }
         }
 
@@ -225,16 +225,15 @@ public class DEServiceImpl implements DEService,
 
         String endpoint = getEndpointLoggerString(resolvedAddress);
 
-        Logger apiLogger = LoggerFactory.getLogger(AppLoggerConstants.API_LOGGER + endpoint);
-        Logger jsonLogger = LoggerFactory.getLogger(AppLoggerConstants.API_JSON + endpoint);
+        Logger apiLogger = LoggerFactory.getLogger(AppLoggerConstants.API_REQUEST_LOGGER + endpoint);
+        Logger jsonReqLogger = LoggerFactory.getLogger(AppLoggerConstants.API_JSON_REQUEST_LOGGER + endpoint);
 
 
         apiLogger.info("{} {}", wrapper.getType(), resolvedAddress);
         String body = updateRequestBody(wrapper.getBody());
-        if (jsonLogger.isTraceEnabled()
+        if (jsonReqLogger.isTraceEnabled()
             && !Strings.isNullOrEmpty(body)) {
-//            Gson prettyGson = new GsonBuilder().create();
-            jsonLogger.trace("{} {} request={}", wrapper.getType(), resolvedAddress, body);
+            jsonReqLogger.trace("{} {} - {}", wrapper.getType(), resolvedAddress, body);
         }
 
         BaseServiceCallWrapper.Type type = wrapper.getType();

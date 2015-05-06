@@ -2,33 +2,44 @@ package org.iplantc.de.server;
 
 /**
  * This interface holds constants for various loggers used throughout the application.
+ *
+ *
+ * Each API endpoint has it's own logger which starts with {@code de.ui.api}.
+ * For instance, turning on logging for {@code de.ui.api.json.request.apps} will only reflect
+ * JSON payload activity on the 'apps' endpoint.
+ *
+ *
  * Created by jstroot on 4/30/15.
  * @author jstroot
  */
 public interface AppLoggerConstants {
     /**
-     * Tracks the applications DE API usage.
+     * Tracks the applications DE API requests.
      */
-    String API_LOGGER = "org.iplantc.de.api";
+    String API_REQUEST_LOGGER = "de.ui.api.request";
 
     /**
-     * Logs json requests/responses of the DE API activity.
+     * Logs DE API json requests.
      *
      * <b><u>Suggested Logging Level:</u></b> TRACE
      *
-     * Each endpoint has it's own logger, and this logger is the greatest ancestor.
-     * For instance, turning on logging for 'org.iplantc.de.api.json.apps` will only reflect
-     * activity on the 'apps' endpoint.
-     *
-     * <b>NOTE:</b> This logger should only be used as necessary. It should not be turned on by
-     * default.
+     * <b>NOTE:</b> This logger should only be used as necessary. It should not be turned on by default
      */
-    String API_JSON = "org.iplantc.de.api.json";
+    String API_JSON_REQUEST_LOGGER = "de.ui.api.json.request";
+
+    /**
+     * Logs DE API json responses.
+     *
+     * <b><u>Suggested Logging Level:</u></b> TRACE
+     *
+     * <b>NOTE:</b> This logger should only be used as necessary. It should not be turned on by default
+     */
+    String API_JSON_RESPONSE_LOGGER = "de.ui.api.json.response";
 
     /**
      * Logs successful login events.
      */
-    String LOGIN = "org.iplantc.de.login";
+    String LOGIN = "de.ui.login";
 
     /**
      * The key used to track the authenticated user in the {@link org.slf4j.MDC}
