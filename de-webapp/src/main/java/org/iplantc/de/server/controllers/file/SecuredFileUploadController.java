@@ -1,4 +1,4 @@
-package org.iplantc.de.server.controllers;
+package org.iplantc.de.server.controllers.file;
 
 import org.iplantc.de.server.AppLoggerConstants;
 import org.iplantc.de.server.util.CasUtils;
