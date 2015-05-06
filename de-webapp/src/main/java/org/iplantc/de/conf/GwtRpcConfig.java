@@ -2,6 +2,7 @@ package org.iplantc.de.conf;
 
 import org.iplantc.de.server.ServiceCallResolver;
 import org.iplantc.de.server.auth.UrlConnector;
+import org.iplantc.de.server.rpc.DeGwtRemoteLoggingServiceImpl;
 import org.iplantc.de.server.rpc.GwtRpcController;
 import org.iplantc.de.server.services.AboutApplicationServiceImpl;
 import org.iplantc.de.server.services.DEServiceImpl;
@@ -9,8 +10,6 @@ import org.iplantc.de.server.services.EmailServiceImpl;
 import org.iplantc.de.server.services.IplantEmailClient;
 import org.iplantc.de.server.services.PropertyServiceImpl;
 import org.iplantc.de.server.services.UUIDServiceImpl;
-
-import com.google.gwt.logging.server.RemoteLoggingServiceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,8 +63,9 @@ public class GwtRpcConfig {
                                                       urlConnector));
     }
 
-    @Bean GwtRpcController remoteLogging() {
-        return new GwtRpcController(new RemoteLoggingServiceImpl());
+    @Bean
+    public GwtRpcController remoteLogging() {
+        return new GwtRpcController(new DeGwtRemoteLoggingServiceImpl());
     }
 
     @Bean
