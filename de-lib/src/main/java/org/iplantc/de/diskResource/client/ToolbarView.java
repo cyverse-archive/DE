@@ -5,8 +5,6 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.viewer.MimeType;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent.FolderSelectionEventHandler;
-import org.iplantc.de.diskResource.client.events.selection.BulkDownloadSelected.HasBulkDownloadSelectedEventHandlers;
-import org.iplantc.de.diskResource.client.events.selection.BulkUploadSelected.HasBulkUploadSelectedEventHandlers;
 import org.iplantc.de.diskResource.client.events.selection.CopyMetadataSelected.HasCopyMetadataSelectedEventHandlers;
 import org.iplantc.de.diskResource.client.events.selection.DeleteDiskResourcesSelected.HasDeleteDiskResourcesSelectedEventHandlers;
 import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected.HasEditInfoTypeSelectedEventHandlers;
@@ -29,6 +27,7 @@ import org.iplantc.de.diskResource.client.events.selection.SimpleUploadSelected.
 import org.iplantc.de.diskResource.client.views.search.DiskResourceSearchField;
 
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.IsWidget;
 
 import java.util.List;
@@ -40,14 +39,12 @@ public interface ToolbarView extends IsWidget,
                                      HasManageCommentsSelectedEventHandlers,
                                      HasManageMetadataSelectedEventHandlers,
                                      HasCopyMetadataSelectedEventHandlers,
-                            HasSaveMetadataSelectedEventHandlers,
+                                     HasSaveMetadataSelectedEventHandlers,
                                      HasManageSharingSelectedEventHandlers,
                                      HasShareByDataLinkSelectedEventHandlers,
                                      HasSendToEnsemblSelectedHandlers,
                                      HasSendToCogeSelectedHandlers,
                                      HasSendToTreeViewerSelectedHandlers,
-                                     HasBulkDownloadSelectedEventHandlers,
-                                     HasBulkUploadSelectedEventHandlers,
                                      HasDeleteDiskResourcesSelectedEventHandlers,
                                      HasEditInfoTypeSelectedEventHandlers,
                                      HasEmptyTrashSelectedHandlers,
@@ -61,6 +58,14 @@ public interface ToolbarView extends IsWidget,
                                      FolderSelectionEventHandler,
                                      DiskResourceSelectionChangedEventHandler {
     interface Appearance {
+
+        SafeHtml bulkDownloadInfoBoxHeading();
+
+        SafeHtml bulkDownloadInfoBoxMsg();
+
+        SafeHtml bulkUploadInfoBoxHeading();
+
+        SafeHtml bulkUploadInfoBoxMsg();
 
         String newPathListMenuText();
 

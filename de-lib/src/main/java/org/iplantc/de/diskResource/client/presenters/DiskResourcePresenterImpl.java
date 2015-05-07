@@ -16,6 +16,7 @@ import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.commons.client.CommonUiConstants;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
@@ -31,7 +32,15 @@ import org.iplantc.de.diskResource.client.events.RequestSendToCoGeEvent;
 import org.iplantc.de.diskResource.client.events.RequestSendToEnsemblEvent;
 import org.iplantc.de.diskResource.client.events.RequestSendToTreeViewerEvent;
 import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent;
-import org.iplantc.de.diskResource.client.events.selection.*;
+import org.iplantc.de.diskResource.client.events.selection.DeleteDiskResourcesSelected;
+import org.iplantc.de.diskResource.client.events.selection.EmptyTrashSelected;
+import org.iplantc.de.diskResource.client.events.selection.MoveDiskResourcesSelected;
+import org.iplantc.de.diskResource.client.events.selection.RefreshFolderSelected;
+import org.iplantc.de.diskResource.client.events.selection.RenameDiskResourceSelected;
+import org.iplantc.de.diskResource.client.events.selection.RestoreDiskResourcesSelected;
+import org.iplantc.de.diskResource.client.events.selection.SendToCogeSelected;
+import org.iplantc.de.diskResource.client.events.selection.SendToEnsemblSelected;
+import org.iplantc.de.diskResource.client.events.selection.SendToTreeViewerSelected;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceViewFactory;
 import org.iplantc.de.diskResource.client.gin.factory.GridViewPresenterFactory;
 import org.iplantc.de.diskResource.client.gin.factory.ToolbarViewPresenterFactory;
@@ -48,12 +57,9 @@ import org.iplantc.de.diskResource.client.views.search.DiskResourceSearchField;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 
 import static com.google.common.base.Preconditions.checkState;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.inject.client.AsyncProvider;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -79,14 +85,12 @@ import java.util.List;
 public class DiskResourcePresenterImpl implements
                                       DiskResourceView.Presenter,
                                       RootFoldersRetrievedEvent.RootFoldersRetrievedEventHandler,
-                                      BulkDownloadSelected.BulkDownloadSelectedEventHandler,
                                       DeleteDiskResourcesSelected.DeleteDiskResourcesSelectedEventHandler,
                                       EmptyTrashSelected.EmptyTrashSelectedHandler,
                                       MoveDiskResourcesSelected.MoveDiskResourcesSelectedHandler,
                                       RefreshFolderSelected.RefreshFolderSelectedHandler,
                                       RenameDiskResourceSelected.RenameDiskResourceSelectedHandler,
                                       RestoreDiskResourcesSelected.RestoreDiskResourcesSelectedHandler,
-                                      BulkUploadSelected.BulkUploadSelectedEventHandler,
                                       SendToTreeViewerSelected.SendToTreeViewerSelectedHandler,
                                       SendToEnsemblSelected.SendToEnsemblSelectedHandler,
                                       SendToCogeSelected.SendToCogeSelectedHandler {
@@ -94,16 +98,13 @@ public class DiskResourcePresenterImpl implements
     final IplantAnnouncer announcer;
     final DiskResourceAutoBeanFactory drFactory;
     final DiskResourceView view;
-    @Inject
-    DiskResourceView.Presenter.Appearance appearance;
-    @Inject
-    DiskResourceServiceFacade diskResourceService;
-    @Inject
-    DiskResourceUtil diskResourceUtil;
-    @Inject
-    AsyncProvider<FolderSelectDialog> folderSelectDialogProvider;
-    @Inject
-    UserInfo userInfo;
+    @Inject DiskResourceView.Presenter.Appearance appearance;
+    @Inject DiskResourceServiceFacade diskResourceService;
+    @Inject DiskResourceUtil diskResourceUtil;
+    @Inject AsyncProvider<FolderSelectDialog> folderSelectDialogProvider;
+    @Inject UserInfo userInfo;
+    @Inject CommonUiConstants commonUiConstants;
+
     private final SearchView.Presenter dataSearchPresenter;
     private final DetailsView.Presenter detailsViewPresenter;
     private final EventBus eventBus;
@@ -308,8 +309,6 @@ public class DiskResourcePresenterImpl implements
         this.dataSearchPresenter.addSavedSearchDeletedEventHandler(searchField);
 
         // Toolbar Presenter
-        toolbarPresenter.getView().addBulkDownloadSelectedEventHandler(this);
-        toolbarPresenter.getView().addBulkUploadSelectedEventHandler(this);
         toolbarPresenter.getView().addDeleteSelectedDiskResourcesSelectedEventHandler(this);
         toolbarPresenter.getView().addEditInfoTypeSelectedEventHandler(this.gridViewPresenter);
         toolbarPresenter.getView().addEmptyTrashSelectedHandler(this);
@@ -347,22 +346,6 @@ public class DiskResourcePresenterImpl implements
     // </editor-fold>
 
     // <editor-fold desc="Event Handlers">
-    @Override
-    public void onBulkDownloadSelected(BulkDownloadSelected event) {
-        Preconditions.checkArgument(Iterables.elementsEqual(event.getSelectedDiskResources(),
-                                                            gridViewPresenter.getSelectedDiskResources()));
-        Preconditions.checkArgument(event.getSelectedFolder() == navigationPresenter.getSelectedFolder());
-
-        // FIXME REPLACE THIS
-        Window.alert("BULK DOWNLOAD SELECTED");
-    }
-
-    @Override
-    public void onBulkUploadSelected(BulkUploadSelected event) {
-        // FIXME REPLACE THIS
-        Window.alert("BULK UPLOAD SELECTED");
-    }
-
     @Override
     public void onDeleteSelectedDiskResourcesSelected(DeleteDiskResourcesSelected event) {
         List<DiskResource> selectedResources = event.getSelectedDiskResources();

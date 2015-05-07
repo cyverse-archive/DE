@@ -1,5 +1,6 @@
 package org.iplantc.de.theme.base.client.diskResource.toolbar;
 
+import org.iplantc.de.commons.client.CommonUiConstants;
 import org.iplantc.de.diskResource.client.ToolbarView;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
@@ -8,6 +9,9 @@ import org.iplantc.de.theme.base.client.diskResource.DiskResourceMessages;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 /**
  * @author jstroot
@@ -17,6 +21,7 @@ public class ToolbarViewDefaultAppearance implements ToolbarView.Appearance {
     private final IplantDisplayStrings iplantDisplayStrings;
     private final ToolbarDisplayMessages displayMessages;
     private final Resources resources;
+    private final CommonUiConstants commonUiConstants;
     private final DiskResourceMessages diskResourceMessages;
 
     public interface Resources extends ClientBundle {
@@ -48,19 +53,50 @@ public class ToolbarViewDefaultAppearance implements ToolbarView.Appearance {
              GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class),
              GWT.<ToolbarDisplayMessages> create(ToolbarDisplayMessages.class),
              GWT.<DiskResourceMessages> create(DiskResourceMessages.class),
-             GWT.<Resources> create(Resources.class));
+             GWT.<Resources> create(Resources.class),
+             GWT.<CommonUiConstants> create(CommonUiConstants.class));
     }
 
     ToolbarViewDefaultAppearance(final IplantResources iplantResources,
                                  final IplantDisplayStrings iplantDisplayStrings,
                                  final ToolbarDisplayMessages displayMessages,
                                  final DiskResourceMessages diskResourceMessages,
-                                 final Resources resources) {
+                                 final Resources resources,
+                                 final CommonUiConstants commonUiConstants) {
         this.iplantResources = iplantResources;
         this.iplantDisplayStrings = iplantDisplayStrings;
         this.displayMessages = displayMessages;
         this.diskResourceMessages = diskResourceMessages;
         this.resources = resources;
+        this.commonUiConstants = commonUiConstants;
+    }
+
+    @Override
+    public SafeHtml bulkDownloadInfoBoxHeading() {
+        return displayMessages.bulkDownloadInfoBoxHeading();
+    }
+
+    @Override
+    public SafeHtml bulkDownloadInfoBoxMsg() {
+        SafeHtmlBuilder sb = new SafeHtmlBuilder();
+        sb.append(displayMessages.bulkDownloadInfoBoxMsg());
+        sb.append(SafeHtmlUtils.fromString(" "));
+        sb.append(displayMessages.externalHyperlink(commonUiConstants.iDropDesktopClientInstructionsUrl(), "here."));
+        return sb.toSafeHtml();
+    }
+
+    @Override
+    public SafeHtml bulkUploadInfoBoxHeading() {
+        return displayMessages.bulkUploadInfoBoxHeading();
+    }
+
+    @Override
+    public SafeHtml bulkUploadInfoBoxMsg() {
+        SafeHtmlBuilder sb = new SafeHtmlBuilder();
+        sb.append(displayMessages.bulkUploadInfoBoxMsg());
+        sb.append(SafeHtmlUtils.fromString(" "));
+        sb.append(displayMessages.externalHyperlink(commonUiConstants.iDropDesktopClientInstructionsUrl(), "here."));
+        return sb.toSafeHtml();
     }
 
     @Override

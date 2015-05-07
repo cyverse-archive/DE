@@ -1,17 +1,26 @@
 package org.iplantc.de.theme.base.client.diskResource.toolbar;
 
 import com.google.gwt.i18n.client.Messages;
+import com.google.gwt.safehtml.shared.SafeHtml;
 
 /**
  * Created by jstroot on 2/2/15.
  * @author jstroot
  */
 public interface ToolbarDisplayMessages extends Messages {
+    SafeHtml bulkDownloadInfoBoxHeading();
+
+    SafeHtml bulkDownloadInfoBoxMsg();
+
     @Key("bulkDownloadMenuItem")
     String bulkDownloadMenuItem();
 
     @Key("bulkUploadFromDesktop")
     String bulkUploadFromDesktop();
+
+    SafeHtml bulkUploadInfoBoxHeading();
+
+    SafeHtml bulkUploadInfoBoxMsg();
 
     @Key("createPublicLinkMenuItem")
     String createPublicLinkMenuItem();
@@ -30,6 +39,8 @@ public interface ToolbarDisplayMessages extends Messages {
 
     @Key("editInfoTypeMenuItem")
     String editInfoTypeMenuItem();
+
+    SafeHtml externalHyperlink(String url, String hyperlinkText);
 
     @Key("importFromUrlMenuItem")
     String importFromUrlMenuItem();
