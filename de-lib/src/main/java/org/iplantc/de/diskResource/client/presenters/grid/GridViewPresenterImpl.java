@@ -431,6 +431,7 @@ public class GridViewPresenterImpl implements
         });
         mCopyDialog.clear();
         mCopyDialog.setSource(selected);
+        mCopyDialog.setHeader(selected.getPath());
         mCopyDialog.unmask();
         mCopyDialog.show();
     }

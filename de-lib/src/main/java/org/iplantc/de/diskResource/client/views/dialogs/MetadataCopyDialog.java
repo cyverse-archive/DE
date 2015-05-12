@@ -53,4 +53,8 @@ public class MetadataCopyDialog extends IPlantDialog implements TakesValue<List<
         this.srcDr = dr;
     }
 
+    public void setHeader(String srcPath) {
+        setHeadingText(this.appearance.copyMetadata() + " from: " + srcPath);
+    }
+
 }
