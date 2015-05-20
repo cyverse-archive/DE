@@ -1,12 +1,19 @@
 <configuration scan="true">
 
     <!-- APPENDERS -->
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <!-- encoders are assigned the type
-                      ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+    <appender name="STDOUT-JSON" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder" >
+            <includeContext>false</includeContext>
+            <customFields>{"service":"ui"}</customFields>
+            <fieldNames>
+                <logger>loggerName</logger>
+                <thread>thread</thread>
+                <levelValue>[ignore]</levelValue>
+            </fieldNames>
+        </encoder>
     </appender>
-
+    <!-- TODO: Look into logback-access-->
+    <!-- http://stackoverflow.com/questions/20574972/spring-boot-jetty-tomcat-embedded-access-log-configuration -->
     <appender name="SYSLOG" class="ch.qos.logback.classic.net.SyslogAppender">
         <syslogHost>localhost</syslogHost>
         <port>5000</port>
@@ -40,6 +47,6 @@
     <logger name="org.apache.http.wire" level="OFF"/>
 
     <root level="WARN">
-        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="STDOUT-JSON"/>
     </root>
 </configuration>

@@ -1,6 +1,5 @@
 package org.iplantc.de.server;
 
-import static org.iplantc.de.server.AppLoggerConstants.SERVICE_MDC_KEY;
 import static org.iplantc.de.server.AppLoggerConstants.USERNAME_MDC_KEY;
 
 import org.slf4j.MDC;
@@ -37,14 +36,12 @@ public class MDCFilter implements Filter {
         if(authentication != null){
             // This put is also performed in the ApplicationAuthenticationListener. This is intentional.
             MDC.put(USERNAME_MDC_KEY, authentication.getName());
-            MDC.put(SERVICE_MDC_KEY, "ui");
         }
         try {
             filterChain.doFilter(servletRequest, servletResponse);
         } finally {
             if(authentication != null) {
                 MDC.remove(USERNAME_MDC_KEY);
-                MDC.remove(SERVICE_MDC_KEY);
             }
         }
     }

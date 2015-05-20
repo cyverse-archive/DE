@@ -1,5 +1,6 @@
 package org.iplantc.de.server.auth;
 
+import static org.iplantc.de.server.AppLoggerConstants.USERNAME_MDC_KEY;
 import org.iplantc.de.server.AppLoggerConstants;
 
 import org.apache.log4j.MDC;
@@ -24,7 +25,7 @@ public class AuthenticationSuccessListener implements ApplicationListener<Authen
 
     @Override
     public void onApplicationEvent(AuthenticationSuccessEvent event) {
-            MDC.put(AppLoggerConstants.USERNAME_MDC_KEY, event.getAuthentication().getName());
-            LOGIN_LOG.info("Login success");
+        MDC.put(USERNAME_MDC_KEY, event.getAuthentication().getName());
+        LOGIN_LOG.info("Login success");
     }
 }

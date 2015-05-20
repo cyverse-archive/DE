@@ -1,17 +1,17 @@
 package org.iplantc.de.shared;
 
-import com.google.gwt.core.client.GWT;
 import org.iplantc.de.shared.exceptions.AuthenticationException;
 import org.iplantc.de.shared.exceptions.HttpRedirectException;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.StatusCodeException;
 
 import org.apache.http.HttpStatus;
 
-import java.util.logging.Logger;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Detects when the user is not logged in to the application and redirects the user to the login page.  Under normal
@@ -75,6 +75,7 @@ public class AsyncCallbackWrapper<T> implements AsyncCallback<T> {
         callback.onFailure(error);
 
         if (error instanceof HttpRedirectException) {
+            LOG.log(Level.INFO, "Redirecting to", error);
             HttpRedirectException e = (HttpRedirectException) error;
             Window.Location.replace(e.getLocation());
         }
