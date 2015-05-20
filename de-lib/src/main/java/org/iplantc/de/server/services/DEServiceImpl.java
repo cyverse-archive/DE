@@ -1,5 +1,6 @@
 package org.iplantc.de.server.services;
 
+import static org.iplantc.de.server.AppLoggerConstants.*;
 import org.iplantc.de.server.AppLoggerConstants;
 import org.iplantc.de.server.ServiceCallResolver;
 import org.iplantc.de.server.auth.UrlConnector;
@@ -31,6 +32,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.log4j.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,12 +82,18 @@ public class DEServiceImpl implements DEService,
         if (isValidServiceCall(wrapper)) {
             String address = retrieveServiceAddress(wrapper);
             String endpoint = getEndpointLoggerString(address);
-            Logger jsonLogger = LoggerFactory.getLogger(AppLoggerConstants.API_JSON_RESPONSE_LOGGER + endpoint);
-            Logger apiLogger = LoggerFactory.getLogger(AppLoggerConstants.API_REQUEST_LOGGER + endpoint);
+            Logger jsonLogger = LoggerFactory.getLogger(API_JSON_RESPONSE_LOGGER + endpoint);
+            Logger apiLogger = LoggerFactory.getLogger(API_REQUEST_LOGGER + endpoint);
+            MDC.put(RESPONSE_ENDPOINT_KEY, endpoint.replace(".","/"));
 
             CloseableHttpClient client = HttpClients.createDefault();
             try {
                 json = getResponseBody(getResponse(client, wrapper, address));
+                if (jsonLogger.isTraceEnabled()
+                        && !Strings.isNullOrEmpty(json)) {
+                    MDC.put(RESPONSE_BODY_KEY, json);
+                    jsonLogger.trace("{} {}", wrapper.getType(), wrapper.getAddress(), json);
+                }
             } catch (AuthenticationException | HttpException ex) {
                 apiLogger.error(ex.getMessage(), ex);
                 doLogError(ex);
@@ -96,12 +104,11 @@ public class DEServiceImpl implements DEService,
                 throw new SerializationException(ex);
             } finally {
                 IOUtils.closeQuietly(client);
+                MDC.remove(RESPONSE_ENDPOINT_KEY);
+                MDC.remove(RESPONSE_BODY_KEY);
             }
 
-            if (jsonLogger.isTraceEnabled()
-                    && !Strings.isNullOrEmpty(json)) {
-                jsonLogger.trace("{} {} - {}", wrapper.getType(), wrapper.getAddress(), json);
-            }
+
         }
 
 
@@ -225,16 +232,26 @@ public class DEServiceImpl implements DEService,
 
         String endpoint = getEndpointLoggerString(resolvedAddress);
 
-        Logger apiLogger = LoggerFactory.getLogger(AppLoggerConstants.API_REQUEST_LOGGER + endpoint);
+        Logger apiLogger = LoggerFactory.getLogger(API_REQUEST_LOGGER + endpoint);
         Logger jsonReqLogger = LoggerFactory.getLogger(AppLoggerConstants.API_JSON_REQUEST_LOGGER + endpoint);
 
+        MDC.put(REQUEST_KEY, resolvedAddress);
+        MDC.put(REQUEST_ENDPOINT_KEY, endpoint.replace(".", "/"));
+        MDC.put(REQUEST_METHOD_KEY, wrapper.getType());
 
-        apiLogger.info("{} {}", wrapper.getType(), resolvedAddress);
         String body = updateRequestBody(wrapper.getBody());
         if (jsonReqLogger.isTraceEnabled()
             && !Strings.isNullOrEmpty(body)) {
-            jsonReqLogger.trace("{} {} - {}", wrapper.getType(), resolvedAddress, body);
+            MDC.put(REQUEST_BODY_KEY, body);
+            jsonReqLogger.trace("{} {}", wrapper.getType(), resolvedAddress, body);
         }
+        apiLogger.info("{} {}", wrapper.getType(), resolvedAddress);
+
+        // Clear MDC
+        MDC.remove(REQUEST_KEY);
+        MDC.remove(RESPONSE_ENDPOINT_KEY);
+        MDC.remove(REQUEST_METHOD_KEY);
+        MDC.remove(RESPONSE_BODY_KEY);
 
         BaseServiceCallWrapper.Type type = wrapper.getType();
         switch (type) {

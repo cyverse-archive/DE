@@ -1,10 +1,13 @@
 package org.iplantc.de.server.controllers.file;
 
+import static org.iplantc.de.server.AppLoggerConstants.REQUEST_KEY;
+import static org.iplantc.de.server.AppLoggerConstants.REQUEST_METHOD_KEY;
 import org.iplantc.de.server.AppLoggerConstants;
 import org.iplantc.de.server.util.CasUtils;
 
 import com.google.common.collect.Lists;
 
+import org.apache.log4j.MDC;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +74,9 @@ public class FileDownloadController {
 
         // Create URI template for REST request
         String downloadUrl = url.isEmpty() ? fileIoBaseUrl : dataMgmtServiceBaseUrl + url;
+
+        MDC.put(REQUEST_KEY, downloadUrl + "?path=" + path);
+        MDC.put(REQUEST_METHOD_KEY, "GET");
         API_REQUEST_LOG.info("GET {}?path={}&attachment={}", downloadUrl, path, attachment);
         final String uriTemplate = "{downloadUrl}?proxyToken={token}&path={path}&attachment={attachment}";
         AttributePrincipal principal = CasUtils.attributePrincipalFromServletRequest(request);
@@ -89,6 +95,10 @@ public class FileDownloadController {
             }
             StreamUtils.copy(restResponse.getBody(), response.getOutputStream());
         }
+
+        MDC.remove(REQUEST_KEY);
+        MDC.remove(REQUEST_METHOD_KEY);
+
     }
 
     private String extractServiceName(URL url) throws IOException {

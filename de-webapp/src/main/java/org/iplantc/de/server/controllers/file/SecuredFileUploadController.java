@@ -1,8 +1,10 @@
 package org.iplantc.de.server.controllers.file;
 
+import static org.iplantc.de.server.AppLoggerConstants.*;
 import org.iplantc.de.server.AppLoggerConstants;
 import org.iplantc.de.server.util.CasUtils;
 
+import org.apache.log4j.MDC;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +42,7 @@ import java.net.URL;
 public class SecuredFileUploadController {
 
     private final Logger LOG = LoggerFactory.getLogger(SecuredFileUploadController.class);
-    private final Logger API_REQUEST_LOG = LoggerFactory.getLogger(AppLoggerConstants.API_REQUEST_LOGGER + ".secured.fileio.upload");
+    private final Logger API_REQUEST_LOG = LoggerFactory.getLogger(API_REQUEST_LOGGER + ".secured.fileio.upload");
 
     @Value("${org.iplantc.services.file-io.secured.file-upload}") String securedFileUploadUrl;
 
@@ -50,6 +52,10 @@ public class SecuredFileUploadController {
                                    @RequestParam("file") final MultipartFile file,
                                    MultipartHttpServletRequest request) throws IOException {
 
+        final String logRequestUrl = securedFileUploadUrl + "?dest=" + dest;
+        MDC.put(REQUEST_KEY, logRequestUrl);
+        MDC.put(AppLoggerConstants.RESPONSE_ENDPOINT_KEY, logRequestUrl);
+        MDC.put(REQUEST_METHOD_KEY, "POST");
         API_REQUEST_LOG.info("POST {}?dest={}", securedFileUploadUrl, dest);
         final RestTemplate restTemplate = new RestTemplate();
         // Create special part converter and add it to custom form message converter
@@ -85,7 +91,12 @@ public class SecuredFileUploadController {
         //  Make request
         final ResponseEntity<Object> stringResponseEntity = restTemplate.postForEntity(uriTemplate, requestEntity, Object.class, proxyToken, dest);
 
+        MDC.put(RESPONSE_BODY_KEY, stringResponseEntity.toString());
         LOG.debug("result = {}", stringResponseEntity.toString());
+
+        MDC.remove(REQUEST_KEY);
+        MDC.remove(REQUEST_METHOD_KEY);
+        MDC.remove(RESPONSE_BODY_KEY);
         return stringResponseEntity;
     }
 
