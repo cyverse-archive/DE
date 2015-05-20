@@ -45,7 +45,7 @@ public interface AppLoggerConstants {
     /**
      * The key used to track the authenticated user in the {@link org.slf4j.MDC}
      */
-    String USERNAME_MDC_KEY = "username";
+    String USERNAME_MDC_KEY = "user";
 
     String RESPONSE_BODY_KEY = "response_body";
 
@@ -57,4 +57,5 @@ public interface AppLoggerConstants {
     String REQUEST_BODY_KEY = "request_body";
 
 
+    String SERVICE_MDC_KEY = "service";
 }

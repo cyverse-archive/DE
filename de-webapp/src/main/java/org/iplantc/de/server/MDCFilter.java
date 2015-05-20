@@ -1,5 +1,8 @@
 package org.iplantc.de.server;
 
+import static org.iplantc.de.server.AppLoggerConstants.SERVICE_MDC_KEY;
+import static org.iplantc.de.server.AppLoggerConstants.USERNAME_MDC_KEY;
+
 import org.slf4j.MDC;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,13 +36,15 @@ public class MDCFilter implements Filter {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication != null){
             // This put is also performed in the ApplicationAuthenticationListener. This is intentional.
-            MDC.put(AppLoggerConstants.USERNAME_MDC_KEY, authentication.getName());
+            MDC.put(USERNAME_MDC_KEY, authentication.getName());
+            MDC.put(SERVICE_MDC_KEY, "ui");
         }
         try {
             filterChain.doFilter(servletRequest, servletResponse);
         } finally {
             if(authentication != null) {
-                MDC.remove(AppLoggerConstants.USERNAME_MDC_KEY);
+                MDC.remove(USERNAME_MDC_KEY);
+                MDC.remove(SERVICE_MDC_KEY);
             }
         }
     }
