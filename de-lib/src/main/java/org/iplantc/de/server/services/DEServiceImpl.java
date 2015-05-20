@@ -84,13 +84,13 @@ public class DEServiceImpl implements DEService,
             String endpoint = getEndpointLoggerString(address);
             Logger jsonLogger = LoggerFactory.getLogger(API_JSON_RESPONSE_LOGGER + endpoint);
             Logger apiLogger = LoggerFactory.getLogger(API_REQUEST_LOGGER + endpoint);
-            MDC.put(RESPONSE_ENDPOINT_KEY, endpoint.replace(".","/"));
 
             CloseableHttpClient client = HttpClients.createDefault();
             try {
                 json = getResponseBody(getResponse(client, wrapper, address));
                 if (jsonLogger.isTraceEnabled()
                         && !Strings.isNullOrEmpty(json)) {
+                    MDC.put(RESPONSE_ENDPOINT_KEY, endpoint.replace(".","/"));
                     MDC.put(RESPONSE_BODY_KEY, json);
                     jsonLogger.trace("{} {}", wrapper.getType(), wrapper.getAddress(), json);
                 }
