@@ -20,4 +20,6 @@ public interface MetadataDisplayStrings extends Messages{
     String newValue();
 
     String userMetadata();
+
+    String metadataTermGuide();
 }

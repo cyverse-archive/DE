@@ -69,6 +69,7 @@ public class ManageMetadataDialog extends IPlantDialog {
                          final DiskResourceUtil diskResourceUtil,
                          final GridView.Presenter.Appearance appearance){
         super(true);
+        setModal(false);
         this.announcer = announcer;
         this.diskResourceService = diskResourceService;
         this.diskResourceUtil = diskResourceUtil;

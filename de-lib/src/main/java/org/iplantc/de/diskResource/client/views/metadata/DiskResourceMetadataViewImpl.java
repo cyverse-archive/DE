@@ -9,6 +9,7 @@ import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 import org.iplantc.de.client.models.diskResources.TemplateAttributeSelectionItem;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.validators.UrlValidator;
+import org.iplantc.de.commons.client.widgets.ContextualHelpPopup;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.diskResource.client.MetadataView;
 import org.iplantc.de.diskResource.client.model.DiskResourceMetadataProperties;
@@ -32,7 +33,10 @@ import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
@@ -46,7 +50,9 @@ import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.StringLabelProvider;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.ContentPanel;
+import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
+import com.sencha.gxt.widget.core.client.Window;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.AccordionLayoutContainer;
@@ -339,7 +345,12 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     public void loadTemplateAttributes(List<MetadataTemplateAttribute> attributes) {
         templateAttrFieldMap.clear();
         IPlantAnchor removeLink = buildRemoveTemplateLink();
-        templateContainer.add(removeLink, new VerticalLayoutData(.25, -1));
+        IPlantAnchor helpLink = buildHelpLink(attributes);
+        HorizontalPanel hp = new HorizontalPanel();
+        hp.setSpacing(5);
+        hp.add(removeLink);
+        hp.add(helpLink);
+        templateContainer.add(hp, new VerticalLayoutData(1, -1));
         for (MetadataTemplateAttribute attribute : attributes) {
             Field<?> field = getAttributeValueWidget(attribute);
             if (field != null) {
@@ -350,6 +361,36 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         }
         alc.forceLayout();
         alc.unmask();
+    }
+
+    public IPlantAnchor buildHelpLink(final List<MetadataTemplateAttribute> attributes) {
+        IPlantAnchor helpLink = new IPlantAnchor(appearance.metadataTermGuide(),
+                                                 150,
+                                                 new ClickHandler() {
+            
+            @Override
+            public void onClick(ClickEvent event) {
+                VerticalLayoutContainer helpVlc = new VerticalLayoutContainer();
+                helpVlc.setScrollMode(ScrollMode.AUTOY);
+                for (MetadataTemplateAttribute mta : attributes) {
+                    HTML l = new HTML("<b>" + mta.getName() + ":</b> <br/>");
+                    HTML helpText = new HTML(mta.getDescription() + "<br/>");
+                    helpVlc.add(l, new VerticalLayoutData(.25, -1));
+                    helpVlc.add(helpText, new VerticalLayoutData(.90, -1));
+                }
+                Dialog w = new Dialog();
+                w.setHideOnButtonClick(true);
+                w.setSize("350", "400");
+                w.setPredefinedButtons(PredefinedButton.OK);
+                w.setHeadingText(selectedTemplate.getName());
+                w.setBodyStyle("background: #fff;");
+                w.setWidget(helpVlc);
+                w.show();
+                
+            }
+        });
+
+        return helpLink;
     }
 
     @Override
@@ -501,7 +542,9 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     }
 
     private IPlantAnchor buildRemoveTemplateLink() {
-        return new IPlantAnchor(appearance.metadataTemplateRemove(), 575, new RemoveTemplateHandlerImpl());
+        return new IPlantAnchor(appearance.metadataTemplateRemove(),
+                                200,
+                                new RemoveTemplateHandlerImpl());
     }
 
     private void buildTemplateContainer() {

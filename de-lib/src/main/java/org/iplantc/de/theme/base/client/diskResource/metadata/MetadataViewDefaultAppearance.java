@@ -172,4 +172,9 @@ public class MetadataViewDefaultAppearance implements MetadataView.Appearance {
     public ImageResource deleteIcon() {
         return iplantResources.delete();
     }
+
+    @Override
+    public String metadataTermGuide() {
+        return displayStrings.metadataTermGuide();
+    }
 }

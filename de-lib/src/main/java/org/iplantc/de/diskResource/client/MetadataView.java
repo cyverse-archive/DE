@@ -57,6 +57,8 @@ public interface MetadataView extends IsWidget {
 
         String delete();
 
+        String metadataTermGuide();
+
         ImageResource deleteIcon();
     }
 
