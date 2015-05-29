@@ -404,15 +404,15 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         this.presenter = p;
     }
 
-    @Override
-    public boolean shouldValidate() {
-        if (isCompleteCbx != null) {
-            return isCompleteCbx.getValue();
-        }
-
-        // validate by default
-        return true;
-    }
+    // @Override
+    // public boolean shouldValidate() {
+    // if (isCompleteCbx != null) {
+    // return isCompleteCbx.getValue();
+    // }
+    //
+    // // validate by default
+    // return true;
+    // }
 
     @Override
     protected void onEnsureDebugId(String baseID) {

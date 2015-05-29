@@ -92,5 +92,5 @@ public interface MetadataView extends IsWidget {
 
     void setPresenter(Presenter p);
 
-    boolean shouldValidate();
+    // boolean shouldValidate();
 }
