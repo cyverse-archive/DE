@@ -49,7 +49,8 @@ public class DeController {
     @RequestMapping("/de/")
     public String showDe(final HttpSession session,
                          final Model model) {
-        DiscoveryEnvironmentMaintenance maintenance = new DiscoveryEnvironmentMaintenance(maintenanceFile);
+        DiscoveryEnvironmentMaintenance maintenance = new DiscoveryEnvironmentMaintenance(System.getProperty("user.dir")
+                + "/" + maintenanceFile);
         if(maintenance.isUnderMaintenance()){
             session.invalidate();
             LOG.info("Invalidating session");
