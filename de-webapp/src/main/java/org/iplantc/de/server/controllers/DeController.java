@@ -54,7 +54,7 @@ public class DeController {
         if(maintenance.isUnderMaintenance()){
             session.invalidate();
             LOG.info("Invalidating session");
-            return "redirect:/login";
+            return "redirect:/de/logout";
         }
         final boolean isProd = Boolean.parseBoolean(isProduction);
         model.addAttribute("isProduction", isProd);
