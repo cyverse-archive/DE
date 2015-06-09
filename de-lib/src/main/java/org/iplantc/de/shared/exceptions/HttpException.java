@@ -6,10 +6,14 @@ import java.io.IOException;
 
 public class HttpException extends IOException implements IsSerializable{
 
-    private int statusCode;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1713287268088080003L;
+    private  int statusCode;
     public int getStatusCode() { return statusCode; }
 
-    private String responseBody;
+    private  String responseBody;
     public String getResponseBody() { return responseBody; }
 
     public HttpException() {
@@ -17,8 +21,8 @@ public class HttpException extends IOException implements IsSerializable{
         responseBody = "";
     }
 
-    public HttpException(int statusCode, String responseBody) {
-        super("the server returned status code " + statusCode);
+    public HttpException(final int statusCode, final String responseBody) {
+        super(responseBody);
         this.statusCode = statusCode;
         this.responseBody = responseBody;
     }
