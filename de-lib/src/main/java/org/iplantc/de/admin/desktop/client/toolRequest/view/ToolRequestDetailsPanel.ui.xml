@@ -16,7 +16,7 @@
         <ui:attributes width="1" height="-1" margins="{margins}"/>
     </ui:with>
 
-    <gxt:ContentPanel headingText="{appearance.detailsPanelHeading}}">
+    <gxt:ContentPanel headingText="{appearance.detailsPanelHeading}">
         <container:VerticalLayoutContainer ui:field="con">
             <container:child layoutData="{layoutData}">
                 <form:FieldLabel text="{appearance.additionalDataFileLabel}">
