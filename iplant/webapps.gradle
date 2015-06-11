@@ -42,6 +42,8 @@ project(':de-webapp') {
 
         compile("org.hibernate:hibernate-validator:4.2.0.Final")
 
+        compile("org.yaml:snakeyaml:1.15")
+
         testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
     }
 
