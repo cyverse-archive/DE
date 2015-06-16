@@ -29,10 +29,10 @@ public interface AppTemplateWizardAppearance {
         @SafeHtmlTemplates.Template("<p style='text-overflow: ellipsis;overflow: hidden;white-space: nowrap;'><span style='color: red;'>*&nbsp</span>{0}</p>")
         SafeHtml contentPanelHeaderRequired(SafeHtml label);
 
-        @SafeHtmlTemplates.Template("{0}&nbsp;<img src='{1}' qtip='{2}'></img>")
+        @SafeHtmlTemplates.Template("{0}&nbsp;<img src='{1}' title='{2}'></img>")
         SafeHtml fieldLabelImg(SafeHtml label, SafeUri img, String toolTip);
 
-        @SafeHtmlTemplates.Template("{0}<img style='float: right;' src='{1}' qtip='{2}'></img>")
+        @SafeHtmlTemplates.Template("{0}<img style='float: right;' src='{1}' title='{2}'></img>")
         SafeHtml fieldLabelImgFloatRight(SafeHtml label, SafeUri img, String toolTip);
 
         @SafeHtmlTemplates.Template("<span style='color: red;'>*&nbsp</span>")
