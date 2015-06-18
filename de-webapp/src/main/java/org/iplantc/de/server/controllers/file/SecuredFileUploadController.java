@@ -9,7 +9,6 @@ import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
@@ -72,13 +71,7 @@ public class SecuredFileUploadController {
 
         // Create multi value map for multi-part request
         LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-        final ByteArrayResource byteArrayResource = new ByteArrayResource(file.getBytes()){
-            @Override
-            public String getFilename() {
-                return file.getOriginalFilename();
-            }
-        };
-        map.add("file", byteArrayResource);
+        map.add("file", file);
 
         // Create request entity with multi-part map
         HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map);
