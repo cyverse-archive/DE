@@ -84,12 +84,12 @@ public class SecuredFileUploadController {
         //  Make request
         final ResponseEntity<Object> stringResponseEntity = restTemplate.postForEntity(uriTemplate, requestEntity, Object.class, proxyToken, dest);
 
-        MDC.put(RESPONSE_BODY_KEY, stringResponseEntity.toString());
+        MDC.put(REQUEST_RESPONSE_BODY_KEY, stringResponseEntity.toString());
         LOG.debug("result = {}", stringResponseEntity.toString());
 
         MDC.remove(REQUEST_KEY);
         MDC.remove(REQUEST_METHOD_KEY);
-        MDC.remove(RESPONSE_BODY_KEY);
+        MDC.remove(REQUEST_RESPONSE_BODY_KEY);
         return stringResponseEntity;
     }
 

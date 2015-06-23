@@ -1,7 +1,6 @@
 package org.iplantc.de.server.services;
 
 import static org.iplantc.de.server.AppLoggerConstants.*;
-import org.iplantc.de.server.AppLoggerConstants;
 import org.iplantc.de.server.ServiceCallResolver;
 import org.iplantc.de.server.auth.UrlConnector;
 import org.iplantc.de.shared.exceptions.AuthenticationException;
@@ -12,10 +11,6 @@ import org.iplantc.de.shared.services.DEService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.base.Strings;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 import com.google.gwt.user.client.rpc.SerializationException;
 
 import org.apache.commons.io.IOUtils;
@@ -81,31 +76,45 @@ public class DEServiceImpl implements DEService,
         String json = null;
         if (isValidServiceCall(wrapper)) {
             String address = retrieveServiceAddress(wrapper);
-            String endpoint = getEndpointLoggerString(address);
-            Logger jsonLogger = LoggerFactory.getLogger(API_JSON_RESPONSE_LOGGER + endpoint);
-            Logger apiLogger = LoggerFactory.getLogger(API_REQUEST_LOGGER + endpoint);
+            String endpoint = getEndpointFromRequestAddress(address);
+            /*
+             * Parse UUID out of endpoint.
+             * Place UUID into other MDC variable
+             */
+            final String uuid_regex = "[A-Fa-f0-9]{8}-(?:[A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}";
+            final String endpointPartRegex = "/\\w+";
+            final String endpointRegex = "^(?:" + endpointPartRegex + ")+(?:/)(" + uuid_regex + ")(?:" + endpointPartRegex + ")*";
+
+            if(endpoint.matches(endpointRegex)){
+                String updateEndpoint = endpoint.replaceAll(uuid_regex, "[UUID]");
+                String uuid = endpoint.replaceAll(endpointRegex, "$1");
+                endpoint = updateEndpoint;
+                MDC.put(REQUEST_UUID_KEY, uuid);
+            }
+
 
             CloseableHttpClient client = HttpClients.createDefault();
             try {
                 json = getResponseBody(getResponse(client, wrapper, address));
-                if (jsonLogger.isTraceEnabled()
+                MDC.put(REQUEST_ENDPOINT_KEY, endpoint);
+                MDC.put(REQUEST_METHOD_KEY, wrapper.getType());
+                if (LOGGER.isTraceEnabled()
                         && !Strings.isNullOrEmpty(json)) {
-                    MDC.put(RESPONSE_ENDPOINT_KEY, endpoint.replace(".","/"));
-                    MDC.put(RESPONSE_BODY_KEY, json);
-                    jsonLogger.trace("{} {}", wrapper.getType(), wrapper.getAddress(), json);
+                    MDC.put(REQUEST_RESPONSE_BODY_KEY, json);
                 }
+                LOGGER.trace("RESPONSE: {} {}", wrapper.getType(), wrapper.getAddress());
             } catch (AuthenticationException | HttpException ex) {
-                apiLogger.error(ex.getMessage(), ex);
-                doLogError(ex);
+                LOGGER.error(ex.getMessage(), ex);
                 throw ex;
             } catch (Exception ex) {
-                apiLogger.error(ex.getMessage(), ex);
-                LOGGER.error("", ex);
+                LOGGER.error(ex.getMessage(), ex);
                 throw new SerializationException(ex);
             } finally {
                 IOUtils.closeQuietly(client);
-                MDC.remove(RESPONSE_ENDPOINT_KEY);
-                MDC.remove(RESPONSE_BODY_KEY);
+                MDC.remove(REQUEST_UUID_KEY);
+                MDC.remove(REQUEST_ENDPOINT_KEY);
+                MDC.remove(REQUEST_METHOD_KEY);
+                MDC.remove(REQUEST_RESPONSE_BODY_KEY);
             }
 
 
@@ -184,18 +193,6 @@ public class DEServiceImpl implements DEService,
         return client.execute(clientRequest);
     }
 
-    private void doLogError(Exception ex) {
-        if (LOGGER.isErrorEnabled()) {
-            Gson prettyGson = new GsonBuilder().create();
-            String errMsg = ex.getMessage();
-            try {
-                errMsg = prettyGson.toJson(new JsonParser().parse(ex.getMessage()));
-            } catch (JsonSyntaxException ignored) {
-            }
-            LOGGER.error(errMsg, ex);
-        }
-    }
-
     /**
      * Sends an HTTP GET request to another services.
      *
@@ -209,12 +206,12 @@ public class DEServiceImpl implements DEService,
         return client.execute(getRequest);
     }
 
-    private String getEndpointLoggerString(final String address){
+    private String getEndpointFromRequestAddress(final String address){
         int slashSlash = address.indexOf("//") + 2;
         int singleSlash = address.indexOf("/", slashSlash);
         int questionMark = address.contains("?") ? address.indexOf("?") : address.length();
 
-        return address.substring(singleSlash, questionMark).replace("/", ".");
+        return address.substring(singleSlash, questionMark);
     }
 
     /**
@@ -230,28 +227,36 @@ public class DEServiceImpl implements DEService,
                                      final String resolvedAddress)
         throws IOException {
 
-        String endpoint = getEndpointLoggerString(resolvedAddress);
+        String endpoint = getEndpointFromRequestAddress(resolvedAddress);
+        final String uuid_regex = "[A-Fa-f0-9]{8}-(?:[A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}";
+        final String endpointPartRegex = "/\\w+";
+        final String endpointRegex = "^(?:" + endpointPartRegex + ")+(?:/)(" + uuid_regex + ")(?:" + endpointPartRegex + ")*";
 
-        Logger apiLogger = LoggerFactory.getLogger(API_REQUEST_LOGGER + endpoint);
-        Logger jsonReqLogger = LoggerFactory.getLogger(AppLoggerConstants.API_JSON_REQUEST_LOGGER + endpoint);
+        if(endpoint.matches(endpointRegex)){
+            // Replace the matched UUID with a constant string
+            String updatedEndpoint = endpoint.replaceAll(uuid_regex, "[UUID]");
+            String uuid = endpoint.replaceAll(endpointRegex, "$1");
+            endpoint = updatedEndpoint;
+            MDC.put(REQUEST_UUID_KEY, uuid);
+        }
+        if(!Strings.isNullOrEmpty(wrapper.getBody())
+            && LOGGER.isTraceEnabled()){
+            MDC.put(REQUEST_BODY_KEY, wrapper.getBody());
+        }
 
         MDC.put(REQUEST_KEY, resolvedAddress);
-        MDC.put(REQUEST_ENDPOINT_KEY, endpoint.replace(".", "/"));
+        MDC.put(REQUEST_ENDPOINT_KEY, endpoint);
         MDC.put(REQUEST_METHOD_KEY, wrapper.getType());
 
         String body = updateRequestBody(wrapper.getBody());
-        if (jsonReqLogger.isTraceEnabled()
-            && !Strings.isNullOrEmpty(body)) {
-            MDC.put(REQUEST_BODY_KEY, body);
-            jsonReqLogger.trace("{} {}", wrapper.getType(), resolvedAddress, body);
-        }
-        apiLogger.info("{} {}", wrapper.getType(), resolvedAddress);
+        LOGGER.info("{} {}", wrapper.getType(), resolvedAddress);
 
         // Clear MDC
+        MDC.remove(REQUEST_UUID_KEY);
+        MDC.remove(REQUEST_BODY_KEY);
         MDC.remove(REQUEST_KEY);
-        MDC.remove(RESPONSE_ENDPOINT_KEY);
+        MDC.remove(REQUEST_ENDPOINT_KEY);
         MDC.remove(REQUEST_METHOD_KEY);
-        MDC.remove(RESPONSE_BODY_KEY);
 
         BaseServiceCallWrapper.Type type = wrapper.getType();
         switch (type) {

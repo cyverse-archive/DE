@@ -40,13 +40,10 @@
     </appender>
 
     <!-- LOGGERS -->
-    <logger name="de.ui.login" level="INFO" />
-    <logger name="de.ui.api" level="INFO"/>
-    <logger name="de.ui.api.json" level="TRACE" />
     <logger name="org.springframework" level="INFO"/>
     <logger name="org.apache.http.wire" level="OFF"/>
 
-    <root level="WARN">
+    <root level="INFO">
         <appender-ref ref="STDOUT-JSON"/>
     </root>
 </configuration>

@@ -19,24 +19,6 @@ public interface AppLoggerConstants {
     String API_REQUEST_LOGGER = "de.ui.api.request";
 
     /**
-     * Logs DE API json requests.
-     *
-     * <b><u>Suggested Logging Level:</u></b> TRACE
-     *
-     * <b>NOTE:</b> This logger should only be used as necessary. It should not be turned on by default
-     */
-    String API_JSON_REQUEST_LOGGER = "de.ui.api.json.request";
-
-    /**
-     * Logs DE API json responses.
-     *
-     * <b><u>Suggested Logging Level:</u></b> TRACE
-     *
-     * <b>NOTE:</b> This logger should only be used as necessary. It should not be turned on by default
-     */
-    String API_JSON_RESPONSE_LOGGER = "de.ui.api.json.response";
-
-    /**
      * Logs successful login events.
      */
     String LOGIN = "de.ui.login";
@@ -47,15 +29,15 @@ public interface AppLoggerConstants {
      */
     String USERNAME_MDC_KEY = "user";
 
-    String RESPONSE_BODY_KEY = "response_body";
+    String REQUEST_RESPONSE_BODY_KEY = "request.responseBody";
 
     String RESPONSE_ENDPOINT_KEY = "response_endpoint";
 
     String REQUEST_KEY = "request";
-    String REQUEST_ENDPOINT_KEY = "request_endpoint";
-    String REQUEST_METHOD_KEY = "request_method";
-    String REQUEST_BODY_KEY = "request_body";
-
+    String REQUEST_ENDPOINT_KEY = "request.endpoint";
+    String REQUEST_METHOD_KEY = "request.method";
+    String REQUEST_BODY_KEY = "request.body";
 
     String SERVICE_MDC_KEY = "service";
+    String REQUEST_UUID_KEY = "request.uuid";
 }
