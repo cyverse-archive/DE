@@ -1,8 +1,10 @@
 package org.iplantc.de.server.controllers.file;
 
-import org.apache.log4j.MDC;
+import static org.iplantc.de.server.AppLoggerConstants.*;
 import org.iplantc.de.server.AppLoggerConstants;
 import org.iplantc.de.server.util.CasUtils;
+
+import org.apache.log4j.MDC;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,11 +32,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.IOException;
 import java.net.URL;
-
-import static org.iplantc.de.server.AppLoggerConstants.API_REQUEST_LOGGER;
-import static org.iplantc.de.server.AppLoggerConstants.REQUEST_KEY;
-import static org.iplantc.de.server.AppLoggerConstants.REQUEST_METHOD_KEY;
-import static org.iplantc.de.server.AppLoggerConstants.REQUEST_RESPONSE_BODY_KEY;
 
 /**
  * Performs secured file uploads.
