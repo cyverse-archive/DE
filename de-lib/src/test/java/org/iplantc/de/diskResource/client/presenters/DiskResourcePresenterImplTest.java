@@ -169,7 +169,7 @@ public class DiskResourcePresenterImplTest {
         verify(dataSearchPresenterMock).addUpdateSavedSearchesEventHandler(eq(navigationPresenterMock));
         verify(dataSearchPresenterMock).addSavedSearchDeletedEventHandler(eq(searchFieldMock));
 
-        verify(detailsPresenterMock, times(10)).getView();
+        verify(detailsPresenterMock, times(11)).getView();
         verify(gridViewPresenterMock, times(9)).getView();
         verify(navigationPresenterMock, times(5)).getView();
         verify(toolbarPresenterMock, times(21)).getView();
