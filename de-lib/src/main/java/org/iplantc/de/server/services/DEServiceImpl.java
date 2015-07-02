@@ -1,6 +1,7 @@
 package org.iplantc.de.server.services;
 
 import static org.iplantc.de.server.AppLoggerConstants.*;
+import org.iplantc.de.server.AppLoggerConstants;
 import org.iplantc.de.server.ServiceCallResolver;
 import org.iplantc.de.server.auth.UrlConnector;
 import org.iplantc.de.shared.exceptions.AuthenticationException;
@@ -43,6 +44,7 @@ import javax.servlet.http.HttpServletRequest;
 public class DEServiceImpl implements DEService,
                                       HasHttpServletRequest {
     private final Logger LOGGER = LoggerFactory.getLogger(DEServiceImpl.class);
+    private final Logger API_METRICS_LOG = LoggerFactory.getLogger(AppLoggerConstants.API_METRICS_LOGGER);
 
     /**
      * The current servlet request.
@@ -98,16 +100,18 @@ public class DEServiceImpl implements DEService,
                 json = getResponseBody(getResponse(client, wrapper, address));
                 MDC.put(REQUEST_ENDPOINT_KEY, endpoint);
                 MDC.put(REQUEST_METHOD_KEY, wrapper.getType());
-                if (LOGGER.isTraceEnabled()
+                if (API_METRICS_LOG.isTraceEnabled()
                         && !Strings.isNullOrEmpty(json)) {
                     MDC.put(REQUEST_RESPONSE_BODY_KEY, json);
                 }
-                LOGGER.trace("RESPONSE: {} {}", wrapper.getType(), wrapper.getAddress());
+                API_METRICS_LOG.trace("RESPONSE: {} {}", wrapper.getType(), wrapper.getAddress());
             } catch (AuthenticationException | HttpException ex) {
                 LOGGER.error(ex.getMessage(), ex);
+                API_METRICS_LOG.error(ex.getMessage(), ex);
                 throw ex;
             } catch (Exception ex) {
                 LOGGER.error(ex.getMessage(), ex);
+                API_METRICS_LOG.error(ex.getMessage(), ex);
                 throw new SerializationException(ex);
             } finally {
                 IOUtils.closeQuietly(client);
@@ -240,7 +244,7 @@ public class DEServiceImpl implements DEService,
             MDC.put(REQUEST_UUID_KEY, uuid);
         }
         if(!Strings.isNullOrEmpty(wrapper.getBody())
-            && LOGGER.isTraceEnabled()){
+            && API_METRICS_LOG.isTraceEnabled()){
             MDC.put(REQUEST_BODY_KEY, wrapper.getBody());
         }
 
@@ -249,7 +253,7 @@ public class DEServiceImpl implements DEService,
         MDC.put(REQUEST_METHOD_KEY, wrapper.getType());
 
         String body = updateRequestBody(wrapper.getBody());
-        LOGGER.info("{} {}", wrapper.getType(), resolvedAddress);
+        API_METRICS_LOG.info("{} {}", wrapper.getType(), resolvedAddress);
 
         // Clear MDC
         MDC.remove(REQUEST_UUID_KEY);

@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class FileDownloadController {
 
-    private final Logger API_REQUEST_LOG = LoggerFactory.getLogger(AppLoggerConstants.API_REQUEST_LOGGER + ".secured.fileio.download");
+    private final Logger API_REQUEST_LOG = LoggerFactory.getLogger(AppLoggerConstants.API_METRICS_LOGGER);
 
     @Value("${org.iplantc.services.de-data-mgmt.base}") String dataMgmtServiceBaseUrl;
 

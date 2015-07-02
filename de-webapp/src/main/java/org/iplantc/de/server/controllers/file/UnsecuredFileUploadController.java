@@ -41,7 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class UnsecuredFileUploadController {
 
-    private final Logger API_REQUEST_LOG = LoggerFactory.getLogger(AppLoggerConstants.API_REQUEST_LOGGER + ".fileio.upload");
+    private final Logger API_REQUEST_LOG = LoggerFactory.getLogger(AppLoggerConstants.API_METRICS_LOGGER);
 
     @Value("${org.iplantc.services.file-io.secured.file-upload}") String securedFileUploadUrl;
     @Value("${org.iplantc.services.file-io.file-upload}") String unsecuredFileUploadUrl;

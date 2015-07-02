@@ -45,7 +45,7 @@ import static org.iplantc.de.server.AppLoggerConstants.REQUEST_RESPONSE_BODY_KEY
 public class SecuredFileUploadController {
 
     private final Logger LOG = LoggerFactory.getLogger(SecuredFileUploadController.class);
-    private final Logger API_REQUEST_LOG = LoggerFactory.getLogger(API_REQUEST_LOGGER + ".secured.fileio.upload");
+    private final Logger API_REQUEST_LOG = LoggerFactory.getLogger(API_METRICS_LOGGER);
 
     @Value("${org.iplantc.services.file-io.secured.file-upload}") String securedFileUploadUrl;
 

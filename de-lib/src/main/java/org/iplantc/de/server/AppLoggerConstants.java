@@ -14,9 +14,9 @@ package org.iplantc.de.server;
  */
 public interface AppLoggerConstants {
     /**
-     * Tracks the applications DE API requests.
+     * Tracks the applications DE API requests for metrics.
      */
-    String API_REQUEST_LOGGER = "de.ui.api.request";
+    String API_METRICS_LOGGER = "de.ui.api.metrics";
 
     /**
      * Logs successful login events.
@@ -38,6 +38,5 @@ public interface AppLoggerConstants {
     String REQUEST_METHOD_KEY = "request.method";
     String REQUEST_BODY_KEY = "request.body";
 
-    String SERVICE_MDC_KEY = "service";
     String REQUEST_UUID_KEY = "request.uuid";
 }
