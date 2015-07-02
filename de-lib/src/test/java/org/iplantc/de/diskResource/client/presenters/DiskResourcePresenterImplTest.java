@@ -113,6 +113,7 @@ public class DiskResourcePresenterImplTest {
         verify(detailsViewMock).addManageSharingSelectedEventHandler(eq(gridViewPresenterMock));
         verify(detailsViewMock).addEditInfoTypeSelectedEventHandler(eq(gridViewPresenterMock));
         verify(detailsViewMock).addResetInfoTypeSelectedHandler(eq(gridViewPresenterMock));
+        verify(detailsViewMock).addMd5ValueClickedHandler(eq(gridViewPresenterMock));
         verify(detailsViewMock).addSubmitDiskResourceQueryEventHandler(eq(gridViewMock));
         verify(detailsViewMock).addSubmitDiskResourceQueryEventHandler(eq(gridViewPresenterMock));
         verify(detailsViewMock).addSendToCogeSelectedHandler(eq(uut));

@@ -13,6 +13,7 @@ import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEve
 import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
+import org.iplantc.de.diskResource.client.events.selection.Md5ValueClicked;
 import org.iplantc.de.diskResource.client.events.selection.ResetInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.selection.SendToCogeSelected;
 import org.iplantc.de.diskResource.client.events.selection.SendToEnsemblSelected;
@@ -48,6 +49,7 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
+import com.sencha.gxt.core.client.util.Format;
 import com.sencha.gxt.data.shared.event.StoreUpdateEvent;
 import com.sencha.gxt.widget.core.client.Composite;
 
@@ -94,6 +96,10 @@ public class DetailsViewImpl extends Composite implements DetailsView,
     @UiField @Ignore InlineLabel size;
     @UiField TableRowElement sizeRow;
     @UiField TableElement table;
+    @UiField
+    TableRowElement md5Row;
+    @UiField
+    InlineHyperlink md5link;
     @UiField(provided = true) TagsView tagListView;
     private static final DetailsViewImplUiBinder ourUiBinder = GWT.create(DetailsViewImplUiBinder.class);
     private final Logger LOG = Logger.getLogger(DetailsViewImpl.class.getSimpleName());
@@ -144,6 +150,11 @@ public class DetailsViewImpl extends Composite implements DetailsView,
     }
 
     @Override
+    public HandlerRegistration addMd5ValueClickedHandler(Md5ValueClicked.Md5ValueClickedHandler handler) {
+        return addHandler(handler, Md5ValueClicked.TYPE);
+    }
+
+    @Override
     public HandlerRegistration addSendToCogeSelectedHandler(SendToCogeSelected.SendToCogeSelectedHandler handler) {
         return addHandler(handler, SendToCogeSelected.TYPE);
     }
@@ -185,6 +196,7 @@ public class DetailsViewImpl extends Composite implements DetailsView,
             mimeTypeRow.removeClassName(appearance.css().hidden());
             infoTypeRow.removeClassName(appearance.css().hidden());
             sendToRow.removeClassName(appearance.css().hidden());
+            md5Row.removeClassName(appearance.css().hidden());
 
             // Hide rows
             fileFolderNumRow.addClassName(appearance.css().hidden());
@@ -258,6 +270,11 @@ public class DetailsViewImpl extends Composite implements DetailsView,
         fireEvent(new EditInfoTypeSelected(Lists.newArrayList(boundValue)));
     }
 
+    @UiHandler("md5link")
+    void onMd5Clicked(ClickEvent event) {
+        fireEvent(new Md5ValueClicked(boundValue));
+    }
+
     @UiHandler("resetInfoTypeIcon")
     void onResetInfoTypeClicked(ClickEvent event) {
         if (boundValue == null) {
@@ -315,6 +332,7 @@ public class DetailsViewImpl extends Composite implements DetailsView,
         sharing.setText("");
         infoType.setText("");
         sendTo.setText("");
+        md5link.setText("");
 
         if (resource == null) {
             return;
@@ -326,6 +344,7 @@ public class DetailsViewImpl extends Composite implements DetailsView,
             size.setText(diskResourceUtil.formatFileSize(file.getSize() + ""));
             mimeType.setText(file.getContentType());
             infoType.setText(file.getInfoType());
+            md5link.setText(Format.ellipse(file.getMd5(), 10));
         } else if (resource instanceof Folder) {
             Folder folder = (Folder) resource;
             // file/folder count

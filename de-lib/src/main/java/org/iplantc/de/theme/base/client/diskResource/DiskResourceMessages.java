@@ -151,4 +151,5 @@ public interface DiskResourceMessages extends Messages {
     String ncbiSraProject();
 
     String ncbiCreateFolderStructureSuccess();
+
 }

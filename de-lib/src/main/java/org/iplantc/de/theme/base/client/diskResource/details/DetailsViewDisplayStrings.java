@@ -56,4 +56,6 @@ public interface DetailsViewDisplayStrings extends Messages{
 
     String typeLabel();
 
+    String md5CheckSum();
+
 }

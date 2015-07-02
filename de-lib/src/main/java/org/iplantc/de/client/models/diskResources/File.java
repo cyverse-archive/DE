@@ -15,8 +15,13 @@ public interface File extends DiskResource {
     @PropertyName("content-type")
     String getContentType();
 
+    @Override
     String getInfoType();
 
     void setInfoType(String infoType);
+
+    String getMd5();
+
+    void setMd5(String md5);
 
 }

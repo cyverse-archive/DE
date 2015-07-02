@@ -15,6 +15,7 @@ import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected.
 import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelected.ManageCommentsSelectedEventHandler;
 import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelected.ManageMetadataSelectedEventHandler;
 import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected.ManageSharingSelectedEventHandler;
+import org.iplantc.de.diskResource.client.events.selection.Md5ValueClicked.Md5ValueClickedHandler;
 import org.iplantc.de.diskResource.client.events.selection.ResetInfoTypeSelected.ResetInfoTypeSelectedHandler;
 import org.iplantc.de.diskResource.client.events.selection.SaveMetadataSelected.SaveMetadataSelectedEventHandler;
 import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelected.ShareByDataLinkSelectedEventHandler;
@@ -113,7 +114,8 @@ public interface GridView extends IsWidget,
                                 SubmitDiskResourceQueryEventHandler,
                                 HasStoreUpdateHandlers<DiskResource>,
                                 EditInfoTypeSelectedEventHandler,
-                                ResetInfoTypeSelectedHandler {
+                       ResetInfoTypeSelectedHandler,
+                       Md5ValueClickedHandler {
 
         interface Appearance {
 
@@ -168,6 +170,10 @@ public interface GridView extends IsWidget,
             String copyMetadataSuccess();
 
             String copyMetadataFailure();
+
+            String md5Checksum();
+
+            String checksum();
 
         }
 

@@ -38,6 +38,7 @@ import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
+import org.iplantc.de.diskResource.client.events.selection.Md5ValueClicked;
 import org.iplantc.de.diskResource.client.events.selection.ResetInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.selection.SaveMetadataSelected;
 import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelected;
@@ -47,6 +48,7 @@ import org.iplantc.de.diskResource.client.model.DiskResourceModelKeyProvider;
 import org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.presenters.grid.proxy.SelectDiskResourceByIdStoreAddHandler;
 import org.iplantc.de.diskResource.client.views.dialogs.InfoTypeEditorDialog;
+import org.iplantc.de.diskResource.client.views.dialogs.Md5DisplayDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.MetadataCopyDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
 import org.iplantc.de.diskResource.client.views.grid.DiskResourceColumnModel;
@@ -498,6 +500,17 @@ public class GridViewPresenterImpl implements
     @Override
     public void onResetInfoTypeSelected(ResetInfoTypeSelected event) {
         setInfoType(event.getDiskResource(), "");
+    }
+
+    @Override
+    public void onMd5Clicked(Md5ValueClicked event) {
+        File f = (File) event.getDiskResource();
+        Md5DisplayDialog dialog = new Md5DisplayDialog(appearance.checksum(),
+                                                       appearance.md5Checksum(),
+                                                       128,
+                                                       f.getMd5(),
+                                                       null);
+        dialog.show();
     }
 
     // </editor-fold>

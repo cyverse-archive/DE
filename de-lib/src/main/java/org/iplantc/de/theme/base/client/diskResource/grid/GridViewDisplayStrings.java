@@ -70,4 +70,8 @@ public interface GridViewDisplayStrings extends Messages {
     String copyMetadataSuccess();
 
     String copyMetadataFailure();
+
+    String md5Checksum();
+
+    String checksum();
 }

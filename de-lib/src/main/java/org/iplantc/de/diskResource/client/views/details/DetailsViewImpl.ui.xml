@@ -46,6 +46,7 @@
                                        styleName="{appearance.css.hyperlink}"/>
                 </td>
             </tr>
+
             <!-- IF it is a File-->
 
             <tr class="{appearance.css.row}"
@@ -78,6 +79,17 @@
                              resource="{appearance.deselectInfoTypeIcon}"
                              styleName="{appearance.css.deselectIcon}"
                              visible="false"/>
+                </td>
+            </tr>
+                        
+             <tr class="{appearance.css.row}"
+                ui:field="md5Row">
+                <td class="{appearance.css.label}">
+                    <ui:text from="{appearance.md5CheckSum}" />
+                </td>
+                <td class="{appearance.css.value}">
+                    <g:InlineHyperlink ui:field="md5link"
+                                       styleName="{appearance.css.hyperlink}"/>
                 </td>
             </tr>
             <!-- If not in trash -->

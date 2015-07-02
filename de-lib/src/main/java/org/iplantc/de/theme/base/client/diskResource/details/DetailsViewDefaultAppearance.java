@@ -196,4 +196,9 @@ public class DetailsViewDefaultAppearance implements DetailsView.Appearance {
         return lastModified() + ":";
     }
 
+    @Override
+    public String md5CheckSum() {
+        return displayStrings.md5CheckSum();
+    }
+
 }

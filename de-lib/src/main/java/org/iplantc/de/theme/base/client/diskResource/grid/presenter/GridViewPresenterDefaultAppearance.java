@@ -163,4 +163,14 @@ public class GridViewPresenterDefaultAppearance implements GridView.Presenter.Ap
     public String copyMetadataFailure() {
         return displayStrings.copyMetadataFailure();
     }
+
+    @Override
+    public String md5Checksum() {
+        return displayStrings.md5Checksum();
+    }
+
+    @Override
+    public String checksum() {
+        return displayStrings.checksum();
+    }
 }

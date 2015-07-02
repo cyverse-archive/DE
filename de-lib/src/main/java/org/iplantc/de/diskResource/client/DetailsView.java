@@ -6,11 +6,14 @@ import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEve
 import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
 import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected.HasEditInfoTypeSelectedEventHandlers;
 import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected.HasManageSharingSelectedEventHandlers;
+import org.iplantc.de.diskResource.client.events.selection.Md5ValueClicked.HasMd5ValueClickedHandlers;
+import org.iplantc.de.diskResource.client.events.selection.Md5ValueClicked.Md5ValueClickedHandler;
 import org.iplantc.de.diskResource.client.events.selection.ResetInfoTypeSelected.HasResetInfoTypeSelectedHandlers;
 import org.iplantc.de.diskResource.client.events.selection.SendToCogeSelected.HasSendToCogeSelectedHandlers;
 import org.iplantc.de.diskResource.client.events.selection.SendToEnsemblSelected.HasSendToEnsemblSelectedHandlers;
 import org.iplantc.de.diskResource.client.events.selection.SendToTreeViewerSelected.HasSendToTreeViewerSelectedHandlers;
 
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -30,7 +33,8 @@ public interface DetailsView extends IsWidget,
                                      HasSubmitDiskResourceQueryEventHandlers,
                                      HasSendToTreeViewerSelectedHandlers,
                                      HasSendToCogeSelectedHandlers,
-                                     HasSendToEnsemblSelectedHandlers {
+                            HasSendToEnsemblSelectedHandlers,
+                            HasMd5ValueClickedHandlers {
     interface Appearance {
         interface DetailsViewStyle extends CssResource {
 
@@ -102,6 +106,8 @@ public interface DetailsView extends IsWidget,
         String sendToLabel();
 
         String infoTypeLabel();
+
+        String md5CheckSum();
 
         String typeLabel();
 
