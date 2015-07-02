@@ -77,7 +77,8 @@ public class FlagArgumentPropertyEditor extends AbstractArgumentPropertyEditor {
         unCheckedArgOption.addValidator(argOptValidator);
         unCheckedValue.addValidator(argValueValidator);
 
-        toolTipLabel.setHTML(appearance.createContextualHelpLabel(appLabels.toolTipText(), help.toolTip()));
+        toolTipLabel.setHTML(appearance.createChkBoxContextualHelpLabel(appLabels.toolTipText(),
+                                                                  help.toolTip()));
         doNotDisplay.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(appLabels.doNotDisplay()).toSafeHtml());
 
         argumentOptionEditor = new FlagArgumentOptionEditor(checkedArgOption, checkedValue, unCheckedArgOption, unCheckedValue,

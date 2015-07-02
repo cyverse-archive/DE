@@ -158,4 +158,23 @@ public class AppTemplateWizardAppearanceImpl implements AppTemplateWizardAppeara
         return IPlantSimpleHtmlSanitizer.sanitizeHtml(html);
     }
 
+    @Override
+    public SafeHtml createChkBoxContextualHelpLabel(String labelToolTipText, String propertyToolTip) {
+        return templates.fieldLabelImgFloatRightChkBox(SafeHtmlUtils.fromString(labelToolTipText),
+                                                 res.help().getSafeUri(),
+                                                 propertyToolTip);
+    }
+
+    @Override
+    public SafeHtml createChkBoxContextualHelpLabelNoFloat(String label, String toolTip) {
+        return templates.fieldLabelImgChkBox(SafeHtmlUtils.fromString(label),
+                                             res.help().getSafeUri(),
+                                             toolTip);
+    }
+
+    @Override
+    public SafeHtml getChkBoxContextualHelpLabel(SafeHtml label, String contextualHelp) {
+        return templates.fieldLabelImgFloatRightChkBox(label, res.info().getSafeUri(), contextualHelp);
+    }
+
 }

@@ -64,7 +64,11 @@ public class LabelLeafEditor<T> implements LeafValueEditor<T> {
             if (Strings.isNullOrEmpty(description) || EMPTY_GROUP_ARG_ID.equals(id)) {
                 labelText.append(safeHtmlLabel);
             } else {
-                labelText.append(appearance.getContextualHelpLabel(safeHtmlLabel, description));
+                if (Flag.equals(argumentType)) {
+                    labelText.append(appearance.getChkBoxContextualHelpLabel(safeHtmlLabel, description));
+                } else {
+                    labelText.append(appearance.getContextualHelpLabel(safeHtmlLabel, description));
+                }
             }
         }
         return labelText.toSafeHtml();

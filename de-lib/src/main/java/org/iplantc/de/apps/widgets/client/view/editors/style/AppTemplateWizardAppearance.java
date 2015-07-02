@@ -29,11 +29,17 @@ public interface AppTemplateWizardAppearance {
         @SafeHtmlTemplates.Template("<p style='text-overflow: ellipsis;overflow: hidden;white-space: nowrap;'><span style='color: red;'>*&nbsp</span>{0}</p>")
         SafeHtml contentPanelHeaderRequired(SafeHtml label);
 
-        @SafeHtmlTemplates.Template("{0}&nbsp;<img src='{1}' title='{2}'></img>")
+        @SafeHtmlTemplates.Template("{0}&nbsp;<img src='{1}' qtip='{2}' ></img>")
         SafeHtml fieldLabelImg(SafeHtml label, SafeUri img, String toolTip);
 
-        @SafeHtmlTemplates.Template("{0}<img style='float: right;' src='{1}' title='{2}'></img>")
+        @SafeHtmlTemplates.Template("{0}<img style='float: right;' src='{1}' qtip='{2}'></img>")
         SafeHtml fieldLabelImgFloatRight(SafeHtml label, SafeUri img, String toolTip);
+
+        @SafeHtmlTemplates.Template("{0}&nbsp;<img src='{1}' title='{2}'></img>")
+        SafeHtml fieldLabelImgChkBox(SafeHtml label, SafeUri img, String toolTip);
+
+        @SafeHtmlTemplates.Template("{0}<img style='float: right;' src='{1}' title='{2}'></img>")
+        SafeHtml fieldLabelImgFloatRightChkBox(SafeHtml label, SafeUri img, String toolTip);
 
         @SafeHtmlTemplates.Template("<span style='color: red;'>*&nbsp</span>")
         SafeHtml fieldLabelRequired();
@@ -86,6 +92,17 @@ public interface AppTemplateWizardAppearance {
     SafeHtml createContextualHelpLabel(String label, String toolTip);
 
     SafeHtml createContextualHelpLabelNoFloat(String label, String toolTip);
+
+    /**
+     * spl. casing for chkbox
+     * 
+     * @param label
+     * @param toolTip
+     * @return
+     */
+    SafeHtml createChkBoxContextualHelpLabel(String label, String toolTip);
+
+    SafeHtml createChkBoxContextualHelpLabelNoFloat(String label, String toolTip);
 
     /**
      * @return the character limit which is applied to the <code>AppTemplate</code> <i>name</i> field in
@@ -144,6 +161,14 @@ public interface AppTemplateWizardAppearance {
      * @return an html representation of a contextual help label.
      */
     SafeHtml getContextualHelpLabel(SafeHtml label, String contextualHelp);
+
+    /**
+     * 
+     * @param label
+     * @param contextualHelp
+     * @return an html representation of a contextual help label spl. cased for check box.
+     */
+    SafeHtml getChkBoxContextualHelpLabel(SafeHtml label, String contextualHelp);
 
     SafeHtml sanitizeHtml(String html);
 }
