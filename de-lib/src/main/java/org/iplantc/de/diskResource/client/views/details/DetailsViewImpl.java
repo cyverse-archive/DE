@@ -349,6 +349,7 @@ public class DetailsViewImpl extends Composite implements DetailsView,
             Folder folder = (Folder) resource;
             // file/folder count
             fileFolderNum.setText(folder.getFileCount() + " / " + folder.getDirCount());
+            md5Row.addClassName(appearance.css().hidden());
         }
 
         // Update sharing label
