@@ -727,6 +727,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
             }
         }
         combo.setTriggerAction(TriggerAction.ALL);
+        combo.setAllowBlank(!attribute.isRequired());
         return combo;
 
     }
