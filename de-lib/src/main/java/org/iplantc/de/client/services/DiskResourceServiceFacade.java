@@ -278,13 +278,6 @@ public interface DiskResourceServiceFacade {
     void restoreAll(AsyncCallback<String> callback);
 
     /**
-     * Method to use when user selects all items in a folder.
-     * 
-     * @param parentFolderId the id of the folder whose contents will be downloaded.
-     */
-    void downloadContents(String parentFolderId, AsyncCallback<String> callback);
-
-    /**
      * Method used to retrieve list of metadata templates
      */
     void getMetadataTemplateListing(AsyncCallback<List<MetadataTemplateInfo>> callback);

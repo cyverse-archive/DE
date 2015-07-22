@@ -512,16 +512,6 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     }
 
     @Override
-    public void downloadContents(String parentFolderId, AsyncCallback<String> callback) {
-        final String address = deProperties.getDataMgmtBaseUrl() + "download-contents"; //$NON-NLS-1$
-        JSONObject body = new JSONObject();
-        body.put("path", new JSONString(parentFolderId));
-        final ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
-        callService(wrapper, callback);
-    }
-
-
-    @Override
     public String getEncodedSimpleDownloadURL(String path) {
         // We must proxy the download requests through a servlet, since the actual download service may
         // be on a port behind a firewall that the servlet can access, but the client can not.
