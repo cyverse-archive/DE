@@ -184,7 +184,11 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
 
             @Override
             protected Folder convertFrom(String object) {
-                return decode(Folder.class, object);
+                // Filter root folders from the response, so the "contents" view is consistent with
+                // the "navigation" view.
+                Folder result = decode(Folder.class, object);
+                result.setFolders(filterRoots(result.getFolders()));
+                return result;
             }
         });
 
@@ -206,25 +210,21 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
                     // Decode JSON result into a folder
                     Folder folderListing = decode(Folder.class, result);
 
-                    // KLUDGE The folder in the result may have a different ID if parent is a root.
-                    // This can be removed once folders have persistent IDs separate from their paths.
-                    // folderListing.setId(folder.getId());
-
                     // Store or update the folder's subfolders.
-                    saveSubFolders(folderListing);
-
-                    return getSubFolders(folderListing);
+                    return saveSubFolders(folderListing);
                 }
             });
         }
     }
 
-    private void saveSubFolders(final Folder folder) {
+    private List<Folder> saveSubFolders(final Folder folder) {
         if (folder == null) {
-            return;
+            return null;
         }
 
-        List<Folder> subfolders = folder.getFolders();
+        // Filter root folders from results to avoid duplicate folder issues in the navigation tree.
+        List<Folder> subfolders = filterRoots(folder.getFolders());
+
         Folder parent = findModel(folder);
         if (parent != null && subfolders != null) {
             parent.setFolders(subfolders);
@@ -239,6 +239,8 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
                 }
             }
         }
+
+        return subfolders;
     }
 
     private List<Folder> getSubFolders(final Folder folder) {
@@ -251,6 +253,32 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
 
     private boolean hasFoldersLoaded(final Folder folder) {
         return folder != null && folder.getFolders() != null;
+    }
+
+    /**
+     * A root folder may be included as a child of another root folder in API responses
+     * (e.g. the user's home folder is included under the "Shared with Me" folder).
+     * In order to avoid selection model problems in the navigation view, root folders should be
+     * filtered out of subfolder lists before being cached and returned to view stores.
+     *
+     * @param subfolders
+     * @return List of subfolders with root folders removed.
+     */
+    private List<Folder> filterRoots(List<Folder> subfolders) {
+        if (subfolders == null) {
+            return null;
+        }
+
+        List<Folder> filteredFolders = Lists.newArrayList();
+        List<Folder> roots = getRootItems();
+        for (Folder f : subfolders) {
+            Folder current = findModel(f);
+            if (current == null || !roots.contains(current)) {
+                filteredFolders.add(f);
+            }
+        }
+
+        return filteredFolders;
     }
 
     private String getDirectoryListingEndpoint(final String path, boolean includeFiles) {
