@@ -265,16 +265,15 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
      * @return List of subfolders with root folders removed.
      */
     private List<Folder> filterRoots(List<Folder> subfolders) {
-        if (subfolders == null) {
-            return null;
-        }
-
         List<Folder> filteredFolders = Lists.newArrayList();
-        List<Folder> roots = getRootItems();
-        for (Folder f : subfolders) {
-            Folder current = findModel(f);
-            if (current == null || !roots.contains(current)) {
-                filteredFolders.add(f);
+
+        if (subfolders != null) {
+            List<Folder> roots = getRootItems();
+            for (Folder f : subfolders) {
+                Folder current = findModel(f);
+                if (current == null || !roots.contains(current)) {
+                    filteredFolders.add(f);
+                }
             }
         }
 
