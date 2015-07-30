@@ -260,7 +260,7 @@ public class NavigationViewPresenterImplTest {
         when(eventMock.getFolder()).thenReturn(folderMock);
 
         /** CALL METHOD UNDER TEST **/
-        spy.onRequestFolderRefresh(eventMock);
+        spy.onFolderRefresh(eventMock);
 
         verify(eventMock).getFolder();
         verify(spy).refreshFolder(eq(folderMock));

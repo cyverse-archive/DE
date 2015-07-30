@@ -31,6 +31,8 @@ import java.util.Set;
  */
 public interface DiskResourceServiceFacade {
 
+    void refreshFolder(Folder folder);
+
     DiskResource combineDiskResources(DiskResource from, DiskResource into);
 
     Folder convertToFolder(DiskResource diskResource);

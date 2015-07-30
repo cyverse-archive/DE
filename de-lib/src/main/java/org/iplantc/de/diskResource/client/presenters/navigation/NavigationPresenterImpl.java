@@ -242,7 +242,7 @@ public class NavigationPresenterImpl implements
     }
 
     @Override
-    public void onRequestFolderRefresh(FolderRefreshEvent event) {
+    public void onFolderRefresh(FolderRefreshEvent event) {
         refreshFolder(event.getFolder());
     }
 

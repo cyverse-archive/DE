@@ -62,8 +62,7 @@ import java.util.logging.Logger;
  * 
  */
 public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
-                                                                    DiskResourceServiceFacade,
-                                                                    FolderRefreshEventHandler {
+                                                                    DiskResourceServiceFacade {
 
     private final DiskResourceAutoBeanFactory factory;
     private final DEProperties deProperties;
@@ -71,6 +70,7 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     private final DEClientConstants constants;
     private final UserInfo userInfo;
     @Inject DiskResourceUtil diskResourceUtil;
+    @Inject EventBus eventBus;
 
     Logger LOG = Logger.getLogger(DiskResourceServiceFacadeImpl.class.getName());
 
@@ -95,7 +95,6 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         this.factory = factory;
         this.userInfo = userInfo;
         GWT.log("DISK RESOURCE SERVICE FACADE CONSTRUCTOR");
-        eventBus.addHandler(FolderRefreshEvent.TYPE, this);
     }
 
     private <T> String encode(final T entity) {
@@ -509,15 +508,26 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         }
     }
 
-    @Override
-    public void onRequestFolderRefresh(FolderRefreshEvent event) {
-        Folder folder = findModel(event.getFolder());
+    public void refreshFolder(Folder parent) {
+        final Folder folder = findModel(parent);
         if (folder == null) {
             return;
         }
 
         removeChildren(folder);
         folder.setFolders(null);
+
+        getSubFolders(folder, new AsyncCallback<List<Folder>>() {
+            @Override
+            public void onSuccess(List<Folder> result) {
+                eventBus.fireEvent(new FolderRefreshEvent(folder));
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                GWT.log("refreshFolder failed", caught);
+            }
+        });
     }
 
     @Override

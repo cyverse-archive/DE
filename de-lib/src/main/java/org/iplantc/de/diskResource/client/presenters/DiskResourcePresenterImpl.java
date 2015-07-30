@@ -414,7 +414,7 @@ public class DiskResourcePresenterImpl implements
     @Override
     public void onRefreshFolderSelected(RefreshFolderSelected event) {
         checkState(event.getSelectedFolder() != null, "Selected folder should not be null");
-        navigationPresenter.refreshFolder(event.getSelectedFolder());
+        diskResourceService.refreshFolder(event.getSelectedFolder());
     }
 
     @Override
@@ -703,7 +703,7 @@ public class DiskResourcePresenterImpl implements
 
             @Override
             public void onSuccess(String result) {
-                navigationPresenter.refreshFolder(navigationPresenter.getFolderByPath(userInfo.getTrashPath()));
+                diskResourceService.refreshFolder(navigationPresenter.getFolderByPath(userInfo.getTrashPath()));
                 view.unmask();
             }
         });

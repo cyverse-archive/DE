@@ -9,7 +9,7 @@ import com.google.gwt.event.shared.GwtEvent;
 public class FolderRefreshEvent extends GwtEvent<FolderRefreshEventHandler> {
 
     public interface FolderRefreshEventHandler extends EventHandler {
-        void onRequestFolderRefresh(FolderRefreshEvent event);
+        void onFolderRefresh(FolderRefreshEvent event);
     }
 
     public static final GwtEvent.Type<FolderRefreshEventHandler> TYPE = new GwtEvent.Type<FolderRefreshEventHandler>();
@@ -22,7 +22,7 @@ public class FolderRefreshEvent extends GwtEvent<FolderRefreshEventHandler> {
 
     @Override
     protected void dispatch(FolderRefreshEventHandler handler) {
-        handler.onRequestFolderRefresh(this);
+        handler.onFolderRefresh(this);
     }
 
     @Override
