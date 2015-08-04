@@ -61,7 +61,7 @@
     <!-- LOGGERS -->
     <logger name="org.springframework" level="INFO"/>
     <logger name="org.apache.http.wire" level="OFF"/>
-    <logger name="de.ui.api.metrics" level="INFO" additivity="false">
+    <logger name="de.ui.api.metrics" level="INFO">
         <appender-ref ref="METRICS-JSON" />
     </logger>
 
