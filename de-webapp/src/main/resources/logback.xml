@@ -12,6 +12,17 @@
             </fieldNames>
         </encoder>
     </appender>
+    <appender name="STDOUT-METRICS" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder" >
+            <includeContext>false</includeContext>
+            <customFields>{"service":"ui", "tags": ["metrics"]}</customFields>
+            <fieldNames>
+                <logger>loggerName</logger>
+                <thread>thread</thread>
+                <levelValue>[ignore]</levelValue>
+            </fieldNames>
+        </encoder>
+    </appender>
     <appender name="METRICS-JSON" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>log/metrics-ui</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -61,8 +72,12 @@
     <!-- LOGGERS -->
     <logger name="org.springframework" level="INFO"/>
     <logger name="org.apache.http.wire" level="OFF"/>
-    <logger name="de.ui.api.metrics" level="INFO">
+    <logger name="de.ui.login" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT-METRICS" />
+    </logger>
+    <logger name="de.ui.api.metrics" level="INFO" additivity="false">
         <appender-ref ref="METRICS-JSON" />
+        <appender-ref ref="STDOUT-METRICS" />
     </logger>
 
     <root level="INFO">
