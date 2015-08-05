@@ -180,11 +180,6 @@ public class DiskResourceServiceFacadeStub implements DiskResourceServiceFacade 
     }
 
     @Override
-    public void downloadContents(String parentFolderId, AsyncCallback<String> callback) {
-
-    }
-
-    @Override
     public void getMetadataTemplateListing(AsyncCallback<List<MetadataTemplateInfo>> callback) {
 
     }
