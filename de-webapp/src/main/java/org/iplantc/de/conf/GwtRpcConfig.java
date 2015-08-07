@@ -20,6 +20,8 @@ import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 
 import java.util.Properties;
 
+import javax.servlet.ServletConfig;
+
 /**
  * Configuration and Spring MVC integration for GWT RPC classes.
  *
@@ -32,6 +34,7 @@ public class GwtRpcConfig {
     @Autowired private ServiceCallResolver serviceCallResolver;
     @Autowired private IplantEmailClient emailClient;
     @Autowired private UrlConnector urlConnector;
+    @Autowired private ServletConfig servletConfig;
 
     @Value("${org.iplantc.discoveryenvironment.about.defaultBuildNumber}") private String defaultBuildNumber;
     @Value("${org.iplantc.discoveryenvironment.about.releaseVersion}") private String releaseVersion;
@@ -39,7 +42,8 @@ public class GwtRpcConfig {
     @Bean
     public GwtRpcController aboutRpcService(){
         return new GwtRpcController(new AboutApplicationServiceImpl(defaultBuildNumber,
-                                                                    releaseVersion));
+                                                                    releaseVersion,
+                                                                    servletConfig));
     }
 
     @Bean

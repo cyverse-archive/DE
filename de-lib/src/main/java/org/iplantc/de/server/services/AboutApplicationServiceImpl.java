@@ -7,7 +7,6 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.context.ServletConfigAware;
 
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -21,7 +20,7 @@ import javax.servlet.ServletConfig;
  *
  * @author lenards, jstroot
  */
-public class AboutApplicationServiceImpl implements AboutApplicationService, ServletConfigAware {
+public class AboutApplicationServiceImpl implements AboutApplicationService {
 
     private static final String BUILD_BRANCH_ATTR = "Git-Branch";
     private static final String BUILD_COMMIT_ATTR = "Git-Ref";
@@ -38,22 +37,19 @@ public class AboutApplicationServiceImpl implements AboutApplicationService, Ser
     private String defaultBuildNumber;
     private Attributes manifestAttrs;
     private String releaseVersion;
-    private ServletConfig servletConfig;
+    private final ServletConfig servletConfig;
 
     public AboutApplicationServiceImpl(final String defaultBuildNumber,
-                                       final String releaseVersion){
+                                       final String releaseVersion,
+                                       final ServletConfig servletConfig){
         this.defaultBuildNumber = defaultBuildNumber;
         this.releaseVersion = releaseVersion;
+        this.servletConfig = servletConfig;
     }
 
     @Override
     public String getAboutInfo() {
         return produceInfo();
-    }
-
-    @Override
-    public void setServletConfig(ServletConfig servletConfig) {
-        this.servletConfig = servletConfig;
     }
 
     /**
