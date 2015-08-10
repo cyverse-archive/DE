@@ -82,8 +82,6 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
     VerticalLayoutContainer con;
     @UiField
     CheckBox chkDeleted;
-    @UiField
-    CheckBox chkPartialSave;
 
     private final MetadataTemplateAttributeProperties mta_props;
     private Presenter presenter;
@@ -207,7 +205,7 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
             @Override
             public void onSelect(SelectEvent event) {
                 if (eve.validateEnumValues()) {
-                    store.update(eve.get());
+                    mta.setValues(eve.get());
                     ipd.hide();
                 } else {
                     IplantAnnouncer.getInstance()
@@ -458,9 +456,8 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
             return true;
         }
 
-        public MetadataTemplateAttribute get() {
-            mta.setValues(enum_store.getAll());
-            return mta;
+        public List<TemplateAttributeSelectionItem> get() {
+            return enum_store.getAll();
         }
 
     }
