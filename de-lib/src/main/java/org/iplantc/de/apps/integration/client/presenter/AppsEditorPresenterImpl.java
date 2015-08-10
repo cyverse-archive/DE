@@ -242,7 +242,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
             setIcon(MessageBox.ICONS.question());
             setPredefinedButtons(PredefinedButton.YES, PredefinedButton.NO, PredefinedButton.CANCEL);
             this.component = component;
-            com.google.gwt.widget.client.TextButton gtb = new com.google.gwt.widget.client.TextButton();
+            TextButton gtb = new TextButton();
             gtb.setEnabled(false);
             TextButton xtb = new TextButton();
             xtb.setEnabled(true);

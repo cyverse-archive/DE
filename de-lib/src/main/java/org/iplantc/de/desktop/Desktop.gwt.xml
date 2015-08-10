@@ -13,8 +13,6 @@
     <!-- I18N -->
     <inherits name="com.google.gwt.i18n.I18N"/>
     <inherits name="com.google.gwt.resources.Resources"/>
-    <!-- for server push -->
-    <inherits name="com.google.gwt.rpc.RPC"/>
 
     <!-- GXT -->
     <inherits name='com.sencha.gxt.ui.GXT'/>

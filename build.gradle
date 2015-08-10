@@ -31,6 +31,16 @@ subprojects {
 
     repositories {
         mavenCentral()
+        maven {
+            url 'https://maven.sencha.com/repo/support-commercial-release'
+            credentials {
+                // To download the GXT deps, place your Sencha support username and password in your
+                //   ~/.gradle/gradle.properties file
+                username = "${sencha_support_user}"
+                password = "${sencha_support_password}"
+            }
+
+        }
     }
 
     group = 'org.iplantc.de'
