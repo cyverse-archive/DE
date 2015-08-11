@@ -47,7 +47,6 @@
             <form:widget>
               <g:HorizontalPanel>
                 <form:CheckBox ui:field="chkDeleted" boxLabel="Mark As Deleted" />
-                <form:CheckBox ui:field="chkPartialSave" boxLabel="Allow Partial Save" />
               </g:HorizontalPanel>
             </form:widget>
           </form:FieldLabel>

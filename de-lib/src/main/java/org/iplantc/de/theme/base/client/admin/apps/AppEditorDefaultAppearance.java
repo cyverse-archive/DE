@@ -67,11 +67,6 @@ public class AppEditorDefaultAppearance implements AppEditor.AppEditorAppearance
     }
 
     @Override
-    public String defaultAppDocTemplate() {
-        return displayStrings.defaultAppDocTemplate();
-    }
-
-    @Override
     public String docHelpHtml() {
         return displayStrings.docHelpHtml();
     }

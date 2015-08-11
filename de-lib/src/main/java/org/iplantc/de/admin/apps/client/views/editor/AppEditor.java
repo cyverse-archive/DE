@@ -37,9 +37,7 @@ import com.sencha.gxt.widget.core.client.form.validator.RegExValidator;
 /**
  * @author jstroot
  */
-public class AppEditor implements Editor<App>,
-                                  IsWidget,
-                                  SaveAppSelected.HasSaveAppSelectedHandlers {
+public class AppEditor implements Editor<App>, IsWidget, SaveAppSelected.HasSaveAppSelectedHandlers {
 
     public interface AppEditorAppearance {
 
@@ -52,8 +50,6 @@ public class AppEditor implements Editor<App>,
         String appNameRestrictedChars();
 
         String appNameRestrictedStartingChars();
-
-        String defaultAppDocTemplate();
 
         String docHelpHtml();
 
@@ -92,34 +88,58 @@ public class AppEditor implements Editor<App>,
 
     Driver driver = GWT.create(Driver.class);
 
-
-    @UiField @Ignore Window window;
-    @UiField TextField name;
-    @UiField FieldLabel appNameFieldLabel;
-    @UiField TextField integratorName;
-    @UiField FieldLabel integratorNameFieldLabel;
-    @UiField TextField integratorEmail;
-    @UiField FieldLabel integratorEmailFieldLabel;
-    @UiField CheckBox disabled;
-    @UiField FieldLabel appDisabledCheckBoxLabel;
-    @UiField TextArea description;
-    @UiField FieldLabel appDescFieldLabel;
-    @UiField TextField wikiUrl;
-    @UiField FieldLabel wikiUrlFieldLabel;
-    @UiField @Ignore TextButton saveButton;
-    @UiField @Ignore TextButton cancelButton;
-    @UiField FieldLabel appDocLbl;
-    @UiField @Ignore TextArea appDoc;
-    @UiField @Ignore HTML docHelp;
-    @UiField(provided = true) @Ignore IPlantAnchor templateLink;
-    @UiField(provided = true) AppEditorAppearance appearance = GWT.create(AppEditorAppearance.class);
+    @UiField
+    @Ignore
+    Window window;
+    @UiField
+    TextField name;
+    @UiField
+    FieldLabel appNameFieldLabel;
+    @UiField
+    TextField integratorName;
+    @UiField
+    FieldLabel integratorNameFieldLabel;
+    @UiField
+    TextField integratorEmail;
+    @UiField
+    FieldLabel integratorEmailFieldLabel;
+    @UiField
+    CheckBox disabled;
+    @UiField
+    FieldLabel appDisabledCheckBoxLabel;
+    @UiField
+    TextArea description;
+    @UiField
+    FieldLabel appDescFieldLabel;
+    @UiField
+    TextField wikiUrl;
+    @UiField
+    FieldLabel wikiUrlFieldLabel;
+    @UiField
+    @Ignore
+    TextButton saveButton;
+    @UiField
+    @Ignore
+    TextButton cancelButton;
+    @UiField
+    FieldLabel appDocLbl;
+    @UiField
+    @Ignore
+    TextArea appDoc;
+    @UiField
+    @Ignore
+    HTML docHelp;
+    @UiField(provided = true)
+    @Ignore
+    IPlantAnchor templateLink;
+    @UiField(provided = true)
+    AppEditorAppearance appearance = GWT.create(AppEditorAppearance.class);
 
     private final Widget widget;
 
     private final AppDoc doc;
 
-    public AppEditor(final App app,
-                     final AppDoc doc) {
+    public AppEditor(final App app, final AppDoc doc) {
         templateLink = new IPlantAnchor(appearance.templateLinkTitle());
         widget = uiBinder.createAndBindUi(this);
         this.doc = doc;
@@ -127,10 +147,10 @@ public class AppEditor implements Editor<App>,
 
         // Add validators
         final RegExValidator regExValidator = new RegExValidator(Format.substitute("[^{0}{1}][^{1}]*",
-                                                                              appearance.appNameRestrictedStartingChars(),
-                                                                              RegExp.escapeCharacterClassSet(appearance.appNameRestrictedChars())),
-                                                            appearance.invalidAppNameMsg(appearance.appNameRestrictedStartingChars(),
-                                                                                         appearance.appNameRestrictedChars()));
+                                                                                   appearance.appNameRestrictedStartingChars(),
+                                                                                   RegExp.escapeCharacterClassSet(appearance.appNameRestrictedChars())),
+                                                                 appearance.invalidAppNameMsg(appearance.appNameRestrictedStartingChars(),
+                                                                                              appearance.appNameRestrictedChars()));
         name.addValidator(regExValidator);
         integratorEmail.addValidator(new BasicEmailValidator3());
         wikiUrlFieldLabel.setHTML(appearance.wikiUrlFieldLabel());
@@ -151,16 +171,13 @@ public class AppEditor implements Editor<App>,
 
     private void initTemplateLink() {
         templateLink.addClickHandler(new ClickHandler() {
-            
+
             @Override
             public void onClick(ClickEvent event) {
-                IPlantDialog popup = new IPlantDialog();
-                popup.setHeadingText(appearance.templateLinkPopupHeading());
-                TextArea area = new TextArea();
-                area.setValue(appearance.defaultAppDocTemplate());
-                area.setSize("350px", "250px");
-                popup.add(area);
-                popup.show();
+                com.google.gwt.user.client.Window.open(GWT.getHostPageBaseURL() + "app-doc-template.txt",
+                                                       "_blank",
+                                                       null);
+
             }
         });
     }
@@ -198,6 +215,5 @@ public class AppEditor implements Editor<App>,
     void onCancelClick(SelectEvent event) {
         window.hide();
     }
-
 
 }
