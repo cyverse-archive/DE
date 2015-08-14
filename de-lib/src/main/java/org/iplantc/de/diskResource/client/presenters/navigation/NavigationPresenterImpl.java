@@ -1,7 +1,7 @@
 package org.iplantc.de.diskResource.client.presenters.navigation;
 
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.events.diskResources.FolderRefreshEvent;
+import org.iplantc.de.client.events.diskResources.FolderRefreshedEvent;
 import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.UserInfo;
@@ -13,7 +13,17 @@ import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.NavigationView;
-import org.iplantc.de.diskResource.client.events.*;
+import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourceRenamedEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourcesDeletedEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourcesMovedEvent;
+import org.iplantc.de.diskResource.client.events.FolderCreatedEvent;
+import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
+import org.iplantc.de.diskResource.client.events.RequestImportFromUrlEvent;
+import org.iplantc.de.diskResource.client.events.RequestSimpleUploadEvent;
+import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent;
+import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
 import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.events.search.UpdateSavedSearchesEvent;
 import org.iplantc.de.diskResource.client.events.selection.ImportFromUrlSelected;
@@ -47,7 +57,7 @@ import java.util.List;
 public class NavigationPresenterImpl implements
                                     NavigationView.Presenter,
                                     FolderSelectionEvent.FolderSelectionEventHandler,
-                                    FolderRefreshEvent.FolderRefreshEventHandler,
+                                    FolderRefreshedEvent.FolderRefreshedEventHandler,
                                     DiskResourcesDeletedEvent.DiskResourcesDeletedEventHandler,
                                     DiskResourceRenamedEvent.DiskResourceRenamedEventHandler,
                                     FolderCreatedEvent.FolderCreatedEventHandler,
@@ -126,7 +136,7 @@ public class NavigationPresenterImpl implements
         this.treeLoader.addLoadHandler(new CachedFolderTreeStoreBinding(treeStore));
 
         // Wire up global event handlers
-        handlerRegistrations.add(eventBus.addHandler(FolderRefreshEvent.TYPE, this));
+        handlerRegistrations.add(eventBus.addHandler(FolderRefreshedEvent.TYPE, this));
         handlerRegistrations.add(eventBus.addHandler(DiskResourcesDeletedEvent.TYPE, this));
         handlerRegistrations.add(eventBus.addHandler(DiskResourceRenamedEvent.TYPE, this));
         handlerRegistrations.add(eventBus.addHandler(FolderCreatedEvent.TYPE, this));
@@ -189,7 +199,7 @@ public class NavigationPresenterImpl implements
 
     @Override
     public void onDiskResourcesDeleted(Collection<DiskResource> resources, Folder parentFolder) {
-        refreshFolder(parentFolder);
+        reloadTreeStoreFolderChildren(parentFolder);
     }
 
     @Override
@@ -199,8 +209,8 @@ public class NavigationPresenterImpl implements
         Folder selectedFolder = getSelectedFolder();
         // moved contents only not the folder itself
         if (event.isMoveContents()) {
-            refreshFolder(destinationFolder);
-            refreshFolder(selectedFolder);
+            reloadTreeStoreFolderChildren(destinationFolder);
+            reloadTreeStoreFolderChildren(selectedFolder);
         } else if (resourcesToMove.contains(selectedFolder)) {
             selectedFolderMovedFromNavTree(selectedFolder, destinationFolder);
         } else {
@@ -210,7 +220,7 @@ public class NavigationPresenterImpl implements
 
     @Override
     public void onFolderCreated(Folder parentFolder, Folder newFolder) {
-        refreshFolder(parentFolder);
+        reloadTreeStoreFolderChildren(parentFolder);
     }
 
     @Override
@@ -237,13 +247,13 @@ public class NavigationPresenterImpl implements
     public void onRename(DiskResource originalDr, DiskResource newDr) {
         Folder parent = getFolderByPath(diskResourceUtil.parseParent(newDr.getPath()));
         if (parent != null) {
-            refreshFolder(parent);
+            reloadTreeStoreFolderChildren(parent);
         }
     }
 
     @Override
-    public void onFolderRefresh(FolderRefreshEvent event) {
-        refreshFolder(event.getFolder());
+    public void onFolderRefreshed(FolderRefreshedEvent event) {
+        reloadTreeStoreFolderChildren(event.getFolder());
     }
 
     @Override
@@ -358,7 +368,7 @@ public class NavigationPresenterImpl implements
     }
 
     @Override
-    public void refreshFolder(Folder folder) {
+    public void reloadTreeStoreFolderChildren(Folder folder) {
         if (folder == null || treeStore.findModel(folder) == null) {
             return;
         }
@@ -491,9 +501,9 @@ public class NavigationPresenterImpl implements
                  * Refresh the selected folder since it has lost a child. This will also reload the
                  * selected folder's contents in the grid.
                  */
-                refreshFolder(selectedFolder);
+                reloadTreeStoreFolderChildren(selectedFolder);
                 // Refresh the destination folder since it has gained a child.
-                refreshFolder(destinationFolder);
+                reloadTreeStoreFolderChildren(destinationFolder);
                 return;
             }
         }
@@ -520,12 +530,12 @@ public class NavigationPresenterImpl implements
              * The parent is under the destination, so we only need to view the destination folder's
              * contents and refresh its children.
              */
-            refreshFolder(destinationFolder);
+            reloadTreeStoreFolderChildren(destinationFolder);
         } else {
             // Refresh the parent folder since it has lost a child.
-            refreshFolder(parentFolder);
+            reloadTreeStoreFolderChildren(parentFolder);
             // Refresh the destination folder since it has gained a child.
-            refreshFolder(destinationFolder);
+            reloadTreeStoreFolderChildren(destinationFolder);
         }
 
         // View the destination folder's contents.

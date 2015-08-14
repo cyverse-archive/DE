@@ -1,7 +1,7 @@
 package org.iplantc.de.diskResource.client.presenters.navigation;
 
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.events.diskResources.FolderRefreshEvent;
+import org.iplantc.de.client.events.diskResources.FolderRefreshedEvent;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.diskResource.client.DiskResourceView;
@@ -249,21 +249,21 @@ public class NavigationViewPresenterImplTest {
     @Test public void onRequestFolderRefresh_methodCalled() {
         final NavigationPresenterImpl spy = spy(new NavigationPresenterImpl(viewFactoryMock, treeStoreMock, folderRpcProxyMock, diskResourceUtilMock, eventBusMock, appearanceMock) {
             @Override
-            public void refreshFolder(Folder folder) {
+            public void reloadTreeStoreFolderChildren(Folder folder) {
             }
         });
         verify(viewMock, times(2)).addFolderSelectedEventHandler(Matchers.<FolderSelectionEvent.FolderSelectionEventHandler>any());
         verify(viewMock, times(2)).getTree();
         verify(eventBusMock, times(10)).addHandler(Matchers.<GwtEvent.Type<NavigationPresenterImpl>>any(), Matchers.<NavigationPresenterImpl>any());
-        FolderRefreshEvent eventMock = mock(FolderRefreshEvent.class);
+        FolderRefreshedEvent eventMock = mock(FolderRefreshedEvent.class);
         Folder folderMock = mock(Folder.class);
         when(eventMock.getFolder()).thenReturn(folderMock);
 
         /** CALL METHOD UNDER TEST **/
-        spy.onFolderRefresh(eventMock);
+        spy.onFolderRefreshed(eventMock);
 
         verify(eventMock).getFolder();
-        verify(spy).refreshFolder(eq(folderMock));
+        verify(spy).reloadTreeStoreFolderChildren(eq(folderMock));
 
         verifyNoMoreInteractions(viewMock,
                                  eventMock,

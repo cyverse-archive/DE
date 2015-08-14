@@ -2,17 +2,32 @@ package org.iplantc.de.client.services.impl;
 
 import static org.iplantc.de.shared.ServiceFacadeLoggerConstants.METRIC_TYPE_KEY;
 import static org.iplantc.de.shared.ServiceFacadeLoggerConstants.SHARE_EVENT;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.DELETE;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
+
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.events.diskResources.FolderRefreshEvent;
-import org.iplantc.de.client.events.diskResources.FolderRefreshEvent.FolderRefreshEventHandler;
+import org.iplantc.de.client.events.diskResources.FolderRefreshedEvent;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.dataLink.DataLink;
 import org.iplantc.de.client.models.dataLink.DataLinkList;
-import org.iplantc.de.client.models.diskResources.*;
+import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
+import org.iplantc.de.client.models.diskResources.DiskResourceExistMap;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadataList;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplateList;
+import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.diskResources.MetadataTemplate;
+import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
+import org.iplantc.de.client.models.diskResources.MetadataTemplateInfoList;
+import org.iplantc.de.client.models.diskResources.RootFolders;
+import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.services.DiskResourceMove;
 import org.iplantc.de.client.models.services.DiskResourceRename;
 import org.iplantc.de.client.models.viewer.InfoType;
@@ -520,7 +535,7 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         getSubFolders(folder, new AsyncCallback<List<Folder>>() {
             @Override
             public void onSuccess(List<Folder> result) {
-                eventBus.fireEvent(new FolderRefreshEvent(folder));
+                eventBus.fireEvent(new FolderRefreshedEvent(folder));
             }
 
             @Override

@@ -241,13 +241,13 @@ public class SelectFolderByPathLoadHandlerTest {
         when(presenterMock.isLoaded(targetFolderParent)).thenReturn(true);
 
         // Since deferred commands can't be tested, the refreshFolder method will be overridden to ensure
-        // the DiskResourceView.Presenter#onFolderRefresh method is called.
+        // the DiskResourceView.Presenter#onFolderRefreshed method is called.
         loadHandlerUnderTest = new SelectFolderByPathLoadHandler(folderToSelectMock, presenterMock,
                                                                  appearanceMock,
                                                                  maskableMock, announcerMock) {
             @Override
             void refreshFolder(final Folder folder) {
-                presenterMock.refreshFolder(folder);
+                presenterMock.reloadTreeStoreFolderChildren(folder);
             }
         };
         loadHandlerUnderTest.setHandlerRegistration(mock(HandlerRegistration.class));
@@ -255,8 +255,8 @@ public class SelectFolderByPathLoadHandlerTest {
         verify(presenterMock, times(2)).getFolderByPath(anyString());
         verify(presenterMock).isLoaded(eq(targetFolderParent));
 
-        // The handler's constructor should call presenterMock#onFolderRefresh on targetFolderParentPath.
-        verify(presenterMock).refreshFolder(targetFolderParent);
+        // The handler's constructor should call presenterMock#onFolderRefreshed on targetFolderParentPath.
+        verify(presenterMock).reloadTreeStoreFolderChildren(targetFolderParent);
 
         when(eventMock.getLoadConfig()).thenReturn(targetFolderParent);
         when(presenterMock.getFolderByPath(targetFolderPath)).thenReturn(folderToSelectMock);
@@ -286,21 +286,21 @@ public class SelectFolderByPathLoadHandlerTest {
         when(presenterMock.isLoaded(targetFolderParent)).thenReturn(true);
 
         // Since deferred commands can't be tested, the refreshFolder method will be overridden to ensure
-        // the DiskResourceView.Presenter#onFolderRefresh method is called.
+        // the DiskResourceView.Presenter#onFolderRefreshed method is called.
         loadHandlerUnderTest = new SelectFolderByPathLoadHandler(folderToSelectMock, presenterMock,
                                                                  appearanceMock,
                                                                  maskableMock, announcerMock) {
             @Override
             void refreshFolder(final Folder folder) {
-                presenterMock.refreshFolder(folder);
+                presenterMock.reloadTreeStoreFolderChildren(folder);
             }
         };
         loadHandlerUnderTest.setHandlerRegistration(mock(HandlerRegistration.class));
         verifyPresenterInit();
         verify(presenterMock, times(2)).getFolderByPath(anyString());
         verify(presenterMock).isLoaded(targetFolderParent);
-        // The handler's constructor should call presenterMock#onFolderRefresh on targetFolderParentPath.
-        verify(presenterMock).refreshFolder(targetFolderParent);
+        // The handler's constructor should call presenterMock#onFolderRefreshed on targetFolderParentPath.
+        verify(presenterMock).reloadTreeStoreFolderChildren(targetFolderParent);
 
         when(eventMock.getLoadConfig()).thenReturn(targetFolderParent);
         when(presenterMock.getFolderByPath(targetFolderPath)).thenReturn(null);

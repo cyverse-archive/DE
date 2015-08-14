@@ -115,7 +115,13 @@ public interface NavigationView extends IsWidget,
          */
         boolean isLoaded(Folder folder);
 
-        void refreshFolder(Folder folder);
+        /**
+         * Reloads the child folders under the given Folder for this view's TreeStore only.
+         * May trigger a re-selection of the currently selected folder.
+         *
+         * @param folder The folder that has been refreshed from the service.
+         */
+        void reloadTreeStoreFolderChildren(Folder folder);
 
         boolean rootsLoaded();
 

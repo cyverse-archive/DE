@@ -32,7 +32,7 @@ public class NcbiSraSetupCompleteCallback extends DiskResourceServiceCallback<St
     @Override
     public void onSuccess(String result) {
         unmaskCaller();
-        presenter.refreshFolder(parentFolder);
+        presenter.reloadTreeStoreFolderChildren(parentFolder);
         IplantAnnouncer.getInstance()
                        .schedule(new SuccessAnnouncementConfig(appearance.ncbiCreateFolderStructureSuccess()));
 

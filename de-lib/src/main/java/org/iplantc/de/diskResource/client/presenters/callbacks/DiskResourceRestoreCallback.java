@@ -52,7 +52,7 @@ public class DiskResourceRestoreCallback extends DiskResourceServiceCallback<Str
         super.onSuccess(result);
 
         checkForPartialRestore(result);
-        navigationPresenter.refreshFolder(navigationPresenter.getSelectedFolder());
+        navigationPresenter.reloadTreeStoreFolderChildren(navigationPresenter.getSelectedFolder());
     }
 
     @Override
