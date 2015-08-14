@@ -473,7 +473,7 @@ public class NavigationPresenterImpl implements
         }
 
         treeStore.removeChildren(folder);
-        folder.setFolders(null);
+
         // Set folder node as not-loaded, to prevent problems in lazy-loader logic.
         view.getTree().findNode(folder).setLoaded(false);
     }
