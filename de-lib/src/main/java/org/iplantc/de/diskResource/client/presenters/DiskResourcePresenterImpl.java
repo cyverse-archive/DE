@@ -414,7 +414,19 @@ public class DiskResourcePresenterImpl implements
     @Override
     public void onRefreshFolderSelected(RefreshFolderSelected event) {
         checkState(event.getSelectedFolder() != null, "Selected folder should not be null");
-        diskResourceService.refreshFolder(event.getSelectedFolder());
+        view.mask(appearance.loadingMask());
+        diskResourceService.refreshFolder(event.getSelectedFolder(), new AsyncCallback<List<Folder>>() {
+            @Override
+            public void onSuccess(List<Folder> result) {
+                view.unmask();
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                view.unmask();
+                announcer.schedule(new ErrorAnnouncementConfig(appearance.warning()));
+            }
+        });
     }
 
     @Override
@@ -703,8 +715,19 @@ public class DiskResourcePresenterImpl implements
 
             @Override
             public void onSuccess(String result) {
-                diskResourceService.refreshFolder(navigationPresenter.getFolderByPath(userInfo.getTrashPath()));
-                view.unmask();
+                diskResourceService.refreshFolder(navigationPresenter.getFolderByPath(userInfo.getTrashPath()),
+                                                  new AsyncCallback<List<Folder>>() {
+                                                      @Override
+                                                      public void onSuccess(List<Folder> result) {
+                                                          view.unmask();
+                                                      }
+
+                                                      @Override
+                                                      public void onFailure(Throwable caught) {
+                                                          view.unmask();
+                                                          announcer.schedule(new ErrorAnnouncementConfig(appearance.warning()));
+                                                      }
+                                                  });
             }
         });
     }

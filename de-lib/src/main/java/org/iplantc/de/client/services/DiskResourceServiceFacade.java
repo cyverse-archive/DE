@@ -31,7 +31,7 @@ import java.util.Set;
  */
 public interface DiskResourceServiceFacade {
 
-    void refreshFolder(Folder folder);
+    void refreshFolder(Folder folder, final AsyncCallback<List<Folder>> callback);
 
     DiskResource combineDiskResources(DiskResource from, DiskResource into);
 

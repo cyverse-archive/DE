@@ -523,7 +523,8 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         }
     }
 
-    public void refreshFolder(Folder parent) {
+    @Override
+    public void refreshFolder(Folder parent, final AsyncCallback<List<Folder>> callback) {
         final Folder folder = findModel(parent);
         if (folder == null) {
             return;
@@ -535,12 +536,13 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         getSubFolders(folder, new AsyncCallback<List<Folder>>() {
             @Override
             public void onSuccess(List<Folder> result) {
+                callback.onSuccess(result);
                 eventBus.fireEvent(new FolderRefreshedEvent(folder));
             }
 
             @Override
             public void onFailure(Throwable caught) {
-                GWT.log("refreshFolder failed", caught);
+                callback.onFailure(caught);
             }
         });
     }
