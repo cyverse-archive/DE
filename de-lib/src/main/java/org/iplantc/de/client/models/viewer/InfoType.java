@@ -5,6 +5,7 @@ public enum InfoType {
     ACE("ace"),
     BAM("bam"),
     BASH("bash"),
+    BED("bed"),
     BLAST("blast"),
     BOWTIE("bowtie"),
     CLUSTALW("clustalw"),
