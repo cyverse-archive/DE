@@ -41,14 +41,8 @@ public class MDCFilter implements Filter {
         if(authentication != null){
             // This put is also performed in the ApplicationAuthenticationListener. This is intentional.
             MDC.put(USERNAME_MDC_KEY, authentication.getName());
-            if(LOG.isTraceEnabled()) {
-                final Enumeration<String> headerNames = ((HttpServletRequestWrapper) servletRequest).getHeaderNames();
-                String out = "";
-                for (; headerNames.hasMoreElements(); ) {
-                    out += headerNames.nextElement() + ", ";
-                }
-                LOG.trace("HEADERS: {}", out);
-            }
+
+            logHeaders((HttpServletRequestWrapper) servletRequest);
         }
         try {
             filterChain.doFilter(servletRequest, servletResponse);
@@ -57,6 +51,18 @@ public class MDCFilter implements Filter {
                 MDC.remove(USERNAME_MDC_KEY);
             }
         }
+    }
+
+    private void logHeaders(HttpServletRequestWrapper servletRequestWrapper){
+          if(LOG.isTraceEnabled()) {
+                final Enumeration<String> headerNames = servletRequestWrapper.getHeaderNames();
+                String out = "";
+                for (; headerNames.hasMoreElements(); ) {
+                    final String s = headerNames.nextElement();
+                    out += s + " = " + servletRequestWrapper.getHeader(s)+ ", ";
+                }
+                LOG.trace("HEADERS: {}", out);
+            }
     }
 
     @Override
