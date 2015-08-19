@@ -345,16 +345,19 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     @Override
     public void saveFile() {
         // Locate any dirty editors
-        for(FileViewer viewer : viewers){
-            // First viewer wins
-            if(viewer.isDirty()){
+        LOG.fine("no.of viewers:" + viewers.size());
+        // assuming the widget that is active is the dirty widget. save it
+        for (FileViewer viewer : viewers) {
+            if (viewer.isDirty()) {
                 saveFile(viewer);
+                break;
             }
         }
     }
 
     @Override
     public void saveFile(final FileViewer fileViewer) {
+        LOG.fine("saving file...");
         if(file == null) {
             saveAsDialogProvider.get(new AsyncCallback<SaveAsDialog>() {
                 @Override
@@ -427,7 +430,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     @Override
     public void setViewDirtyState(boolean dirty, FileViewer dirtyViewer) {
         // Return if state has not changed
-        if(this.isDirty == dirty){
+        if (this.isDirty == dirty) {
             return;
         }
         this.isDirty = dirty;

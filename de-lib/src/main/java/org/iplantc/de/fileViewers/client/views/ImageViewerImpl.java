@@ -46,4 +46,9 @@ public class ImageViewerImpl extends AbstractFileViewer {
 
     @Override
     public void setData(Object data) { /* Do nothing intentionally */ }
+
+    @Override
+    public boolean isDirty() {
+        return false;
+    }
 }

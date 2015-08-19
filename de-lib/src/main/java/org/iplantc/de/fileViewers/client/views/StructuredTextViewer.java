@@ -61,7 +61,6 @@ public class StructuredTextViewer extends AbstractStructuredTextViewer {
 
     private static final StructuredTextViewerUiBinder BINDER = GWT.create(StructuredTextViewerUiBinder.class);
     private int columns;
-    private boolean dirty;
     private boolean hasHeader;
     private Splittable headerRow;
     private GridInlineEditing<Splittable> rowEditing;
@@ -86,6 +85,7 @@ public class StructuredTextViewer extends AbstractStructuredTextViewer {
             this.columns = columns;
             LOG.info("Columns: " + columns);
             setData(createNewStructuredText(columns));
+            setDirty(true);
         }
     }
 
@@ -105,6 +105,7 @@ public class StructuredTextViewer extends AbstractStructuredTextViewer {
 
     @Override
     public boolean isDirty() {
+        LOG.fine("is dirty ?: " + dirty);
         return dirty;
     }
 
@@ -219,14 +220,7 @@ public class StructuredTextViewer extends AbstractStructuredTextViewer {
 
     }
 
-    void setDirty(Boolean dirty) {
-        this.dirty = dirty;
-        if (presenter.isDirty() == dirty) {
-            return;
-        }
-        presenter.setViewDirtyState(dirty, this);
-    }
-
+    @Override
     @SuppressWarnings("unchecked")
     void setEditing(boolean editing) {
         if (grid == null) {

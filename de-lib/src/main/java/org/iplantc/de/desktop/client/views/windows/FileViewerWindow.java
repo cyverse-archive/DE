@@ -42,7 +42,7 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable,
     Logger LOG = Logger.getLogger(FileViewerWindow.class.getName());
     private FileViewerWindowConfig configAB;
     private final IplantDisplayStrings displayStrings;
-    private FileViewer.Presenter presenter;
+    private final FileViewer.Presenter presenter;
 
     @Inject
     FileViewerWindow(final IplantDisplayStrings displayStrings,
@@ -102,6 +102,7 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable,
                 @Override
                 public void onDialogHide(DialogHideEvent event) {
                     if (PredefinedButton.YES.equals(event.getHideButton())) {
+                        cmb.hide();
                         presenter.saveFile();
                     } else if (PredefinedButton.NO.equals(event.getHideButton())) {
                         FileViewerWindow.super.doHide();
@@ -123,7 +124,8 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable,
     @Override
     public void onEditorDirtyStateChanged(DirtyStateChangedEvent event) {
         if (event.isDirty()) {
-            setHeadingText(getHeader().getText() + "<span style='color:red; vertical-align: super'> * </span>");
+            setHeadingHtml(getHeader().getHTML()
+                    + "<span style='color:red; vertical-align: super'> * </span>");
         } else {
             setHeadingText(presenter.getTitle());
         }

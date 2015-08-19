@@ -64,7 +64,5 @@ public abstract class AbstractFileViewer extends Composite implements FileViewer
     }
 
     @Override
-    public boolean isDirty() {
-        return false;
-    }
+    public abstract boolean isDirty();
 }

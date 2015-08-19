@@ -110,7 +110,7 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
     protected final FileViewer.Presenter presenter;
 
     protected Logger LOG;
-    private boolean dirty;
+    protected boolean dirty;
 
     public AbstractStructuredTextViewer(final File file,
                                         final String infoType,
@@ -213,7 +213,7 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
         grid.reconfigure(listStore, columnModel);
         grid.getView().refresh(true);
         setEditing(editing);
-        setDirty(false);
+        // setDirty(false);
     }
 
     void setEditing(boolean editing) {
@@ -274,6 +274,7 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
 
     @Override
     public boolean isDirty() {
+        LOG.fine("is dirty : " + dirty);
         return dirty;
     }
 
@@ -282,6 +283,7 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
     }
 
     void doSetDirty(boolean dirty) {
+        LOG.fine("set dirty : " + dirty);
         this.dirty = dirty;
         presenter.setViewDirtyState(dirty, this);
     }

@@ -72,8 +72,8 @@ public class MarkDownRendererViewImpl extends AbstractFileViewer {
     }
 
     public static native String render(String val) /*-{
-        var markdown = $wnd.Markdown.getSanitizingConverter();
-        return markdown.makeHtml(val);
+		var markdown = $wnd.Markdown.getSanitizingConverter();
+		return markdown.makeHtml(val);
     }-*/;
 
     @Override
@@ -95,6 +95,11 @@ public class MarkDownRendererViewImpl extends AbstractFileViewer {
         renderHtml = render(previewData);
         return new HtmlLayoutContainer("<link href=\"./markdown.css\" rel=\"stylesheet\"></link><div class=\"markdown\">"
                                            + renderHtml + "</div>");
+    }
+
+    @Override
+    public boolean isDirty() {
+        return false;
     }
 
 }

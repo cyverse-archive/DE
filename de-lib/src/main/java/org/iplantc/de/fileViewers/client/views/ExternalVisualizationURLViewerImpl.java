@@ -228,4 +228,9 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
         return button;
     }
 
+    @Override
+    public boolean isDirty() {
+        return false;
+    }
+
 }
