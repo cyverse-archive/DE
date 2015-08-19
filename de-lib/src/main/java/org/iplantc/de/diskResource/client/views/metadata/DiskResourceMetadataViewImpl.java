@@ -374,7 +374,9 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
                 helpVlc.setScrollMode(ScrollMode.AUTOY);
                 for (MetadataTemplateAttribute mta : attributes) {
                     HTML l = new HTML("<b>" + mta.getName() + ":</b> <br/>");
-                    HTML helpText = new HTML(mta.getDescription() + "<br/>");
+                                                             HTML helpText = new HTML("<p>"
+                                                                     + mta.getDescription()
+                                                                     + "</p><br/>");
                     helpVlc.add(l, new VerticalLayoutData(.25, -1));
                     helpVlc.add(helpText, new VerticalLayoutData(.90, -1));
                 }
