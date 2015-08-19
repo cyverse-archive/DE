@@ -2,11 +2,14 @@ package org.iplantc.de.server;
 
 import static org.iplantc.de.server.AppLoggerConstants.USERNAME_MDC_KEY;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.IOException;
+import java.util.Enumeration;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -14,6 +17,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
  * This filter is responsible for removing the authenticated username to the logging
@@ -24,6 +28,7 @@ import javax.servlet.ServletResponse;
  */
 public class MDCFilter implements Filter {
 
+    private final Logger LOG = LoggerFactory.getLogger(MDCFilter.class);
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException { }
@@ -36,6 +41,14 @@ public class MDCFilter implements Filter {
         if(authentication != null){
             // This put is also performed in the ApplicationAuthenticationListener. This is intentional.
             MDC.put(USERNAME_MDC_KEY, authentication.getName());
+            if(LOG.isTraceEnabled()) {
+                final Enumeration<String> headerNames = ((HttpServletRequestWrapper) servletRequest).getHeaderNames();
+                String out = "";
+                for (; headerNames.hasMoreElements(); ) {
+                    out += headerNames.nextElement() + ", ";
+                }
+                LOG.trace("HEADERS: {}", out);
+            }
         }
         try {
             filterChain.doFilter(servletRequest, servletResponse);
