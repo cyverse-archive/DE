@@ -34,6 +34,10 @@ import com.sencha.gxt.core.client.resources.CommonStyles;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.StringLabelProvider;
+import com.sencha.gxt.dnd.core.client.GridDragSource;
+import com.sencha.gxt.dnd.core.client.GridDropTarget;
+import com.sencha.gxt.dnd.core.client.DND.Feedback;
+import com.sencha.gxt.dnd.core.client.DND.Operation;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
@@ -110,6 +114,11 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
         widget = uiBinder.createAndBindUi(this);
         createGridEditing();
         grid.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        new GridDragSource<>(grid);
+        GridDropTarget<MetadataTemplateAttribute> tar = new GridDropTarget<>(grid);
+        tar.setAllowSelfAsSource(true);
+        tar.setFeedback(Feedback.INSERT);
+        tar.setOperation(Operation.MOVE);
     }
 
     @Override
