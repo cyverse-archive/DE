@@ -39,4 +39,8 @@ public interface AppLoggerConstants {
     String REQUEST_BODY_KEY = "request.body";
 
     String REQUEST_UUID_KEY = "request.uuid";
+
+    String USER_IP_HEADER_NAME = "x-real-ip";
+    String USER_IP_KEY = "clientip";
+    String REQUEST_HEADER_KEY = "request.header";
 }

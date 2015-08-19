@@ -2,6 +2,8 @@ package org.iplantc.de.server;
 
 import static org.iplantc.de.server.AppLoggerConstants.USERNAME_MDC_KEY;
 
+import com.google.common.base.Strings;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -42,26 +44,40 @@ public class MDCFilter implements Filter {
             // This put is also performed in the ApplicationAuthenticationListener. This is intentional.
             MDC.put(USERNAME_MDC_KEY, authentication.getName());
 
-            logHeaders((HttpServletRequestWrapper) servletRequest);
+            final HttpServletRequestWrapper servletRequestWrapper = (HttpServletRequestWrapper) servletRequest;
+
+            // Look for NGINX ip header. If it doesn't exist, use the default.
+            String remoteIP = servletRequestWrapper.getHeader(AppLoggerConstants.USER_IP_HEADER_NAME);
+            if(Strings.isNullOrEmpty(remoteIP)) {
+                remoteIP = servletRequest.getRemoteAddr();
+            }
+            MDC.put(AppLoggerConstants.USER_IP_KEY, remoteIP);
+
+            logHeaders(servletRequestWrapper);
         }
         try {
             filterChain.doFilter(servletRequest, servletResponse);
         } finally {
             if(authentication != null) {
                 MDC.remove(USERNAME_MDC_KEY);
+                MDC.remove(AppLoggerConstants.USER_IP_KEY);
             }
         }
     }
 
+    /**
+     * This method adds the request's header names/values to the MDC if trace-level debugging is on
+     * for this class.
+     * @param servletRequestWrapper
+     */
     private void logHeaders(HttpServletRequestWrapper servletRequestWrapper){
           if(LOG.isTraceEnabled()) {
                 final Enumeration<String> headerNames = servletRequestWrapper.getHeaderNames();
-                String out = "";
                 for (; headerNames.hasMoreElements(); ) {
-                    final String s = headerNames.nextElement();
-                    out += s + " = " + servletRequestWrapper.getHeader(s)+ ", ";
+                    final String headerName = headerNames.nextElement();
+                    final String headerValue = servletRequestWrapper.getHeader(headerName);
+                    MDC.put(AppLoggerConstants.REQUEST_HEADER_KEY + "." + headerName, headerValue);
                 }
-                LOG.trace("HEADERS: {}", out);
             }
     }
 

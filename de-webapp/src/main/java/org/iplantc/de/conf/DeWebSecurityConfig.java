@@ -33,6 +33,7 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 import org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.context.request.RequestContextListener;
 
 @Configuration
 @EnableWebMvcSecurity
@@ -135,6 +136,11 @@ public class DeWebSecurityConfig extends WebSecurityConfigurerAdapter {
     public SessionAuthenticationStrategy deSessionStrategy() {
         SessionAuthenticationStrategy sessionStrategy = new SessionFixationProtectionStrategy();
         return sessionStrategy;
+    }
+
+    @Bean
+    public RequestContextListener requestContextListener(){
+        return new RequestContextListener();
     }
 
     public SingleSignOutFilter deSingleSignOutFilter() {
