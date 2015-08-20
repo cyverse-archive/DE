@@ -1,5 +1,7 @@
 package org.iplantc.de.diskResource.client.presenters;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.HasPath;
@@ -56,7 +58,6 @@ import org.iplantc.de.diskResource.client.views.dialogs.RenameFolderDialog;
 import org.iplantc.de.diskResource.client.views.search.DiskResourceSearchField;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 
-import static com.google.common.base.Preconditions.checkState;
 import com.google.common.base.Strings;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.inject.client.AsyncProvider;
@@ -88,7 +89,6 @@ public class DiskResourcePresenterImpl implements
                                       DeleteDiskResourcesSelected.DeleteDiskResourcesSelectedEventHandler,
                                       EmptyTrashSelected.EmptyTrashSelectedHandler,
                                       MoveDiskResourcesSelected.MoveDiskResourcesSelectedHandler,
-                                      RefreshFolderSelected.RefreshFolderSelectedHandler,
                                       RenameDiskResourceSelected.RenameDiskResourceSelectedHandler,
                                       RestoreDiskResourcesSelected.RestoreDiskResourcesSelectedHandler,
                                       SendToTreeViewerSelected.SendToTreeViewerSelectedHandler,

@@ -7,6 +7,7 @@ import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.NavigationView;
+import org.iplantc.de.diskResource.client.events.selection.RefreshFolderSelected;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -36,6 +37,7 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
     private final IsMaskable maskable;
     private final Stack<String> pathsToLoad = new Stack<>();
     private final LinkedList<String> path;
+    private final RefreshFolderSelected.RefreshFolderSelectedHandler refreshHandler;
     private final NavigationView.Presenter.Appearance appearance;
     HandlerRegistration handlerRegistration;
     private boolean rootsLoaded;
@@ -48,6 +50,7 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
 
     SelectFolderByPathLoadHandler(final HasPath folderToSelect,
                                   final NavigationView.Presenter navigationPresenter,
+                                  final RefreshFolderSelected.RefreshFolderSelectedHandler refreshHandler,
                                   final NavigationView.Presenter.Appearance appearance,
                                   final IsMaskable maskable,
                                   final IplantAnnouncer announcer,
@@ -59,6 +62,7 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
         maskable.mask(""); //$NON-NLS-1$
         this.folderToSelect = folderToSelect;
         this.navigationPresenter = navigationPresenter;
+        this.refreshHandler = refreshHandler;
         this.announcer = announcer;
 
         // Split the string on "/"
@@ -75,11 +79,12 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
 
     public SelectFolderByPathLoadHandler(final HasPath folderToSelect,
                                          final NavigationView.Presenter navigationPresenter,
+                                         final RefreshFolderSelected.RefreshFolderSelectedHandler refreshHandler,
                                          final NavigationView.Presenter.Appearance appearance,
                                          final IsMaskable maskable,
                                          final IplantAnnouncer announcer) {
 
-        this(folderToSelect, navigationPresenter, appearance, maskable, announcer, null);
+        this(folderToSelect, navigationPresenter, refreshHandler, appearance, maskable, announcer, null);
     }
 
     public void setHandlerRegistration(HandlerRegistration handlerRegistration) {
@@ -208,7 +213,7 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
                 // handling other events (such as showing the Data window). This means the
                 // presenter's refresh handler will be deferred and will not handle this
                 // refresh event.
-                navigationPresenter.reloadTreeStoreFolderChildren(folder);
+                refreshHandler.onRefreshFolderSelected(new RefreshFolderSelected(folder));
             }
         });
     }

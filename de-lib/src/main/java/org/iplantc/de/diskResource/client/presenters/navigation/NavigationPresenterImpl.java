@@ -449,6 +449,7 @@ public class NavigationPresenterImpl implements
             // Create and add the SelectFolderByIdLoadHandler to the treeLoader.
             final SelectFolderByPathLoadHandler handler = new SelectFolderByPathLoadHandler(hasPath,
                                                                                             this,
+                                                                                            parentPresenter,
                                                                                             appearance,
                                                                                             maskable,
                                                                                             announcer);

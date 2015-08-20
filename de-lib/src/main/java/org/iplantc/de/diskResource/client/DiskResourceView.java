@@ -11,6 +11,7 @@ import org.iplantc.de.diskResource.client.events.FolderSelectionEvent.HasFolderS
 import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent.HasRootFoldersRetrievedEventHandlers;
 import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent.HasSavedSearchesRetrievedEventHandlers;
 import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
+import org.iplantc.de.diskResource.client.events.selection.RefreshFolderSelected;
 import org.iplantc.de.diskResource.client.presenters.navigation.proxy.SelectFolderByPathLoadHandler;
 
 import com.google.gwt.user.client.ui.HasOneWidget;
@@ -48,7 +49,8 @@ public interface DiskResourceView extends IsWidget,
     interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter,
                                 IsMaskable,
                                 HasDiskResourceSelectionChangedEventHandlers,
-                                HasFolderSelectionEventHandlers {
+                                HasFolderSelectionEventHandlers,
+                                RefreshFolderSelected.RefreshFolderSelectedHandler {
 
         interface Appearance {
 
