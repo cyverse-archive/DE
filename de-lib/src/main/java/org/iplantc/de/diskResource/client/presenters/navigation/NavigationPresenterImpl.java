@@ -340,11 +340,6 @@ public class NavigationPresenterImpl implements
     }
 
     @Override
-    public Iterable<Folder> getRootItems() {
-        return treeStore.getRootItems();
-    }
-
-    @Override
     public Folder getSelectedFolder() {
         return view.getTree().getSelectionModel().getSelectedItem();
     }
@@ -365,6 +360,21 @@ public class NavigationPresenterImpl implements
     @Override
     public boolean isLoaded(Folder folder) {
         return view.getTree().findNode(folder).isLoaded();
+    }
+
+    @Override
+    public boolean isPathUnderKnownRoot(String path) {
+        if (!Strings.isNullOrEmpty(path)) {
+            for (Folder root : treeStore.getRootItems()) {
+                String rootPath = root.getPath();
+
+                if (path.equals(rootPath) || path.startsWith(rootPath + "/")) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     @Override

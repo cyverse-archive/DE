@@ -109,15 +109,7 @@ public class SelectFolderByPathLoadHandler {
         }
 
         // Check if the requested folder's path is under a known root path.
-        boolean matched = false;
-        for (Folder root : navigationPresenter.getRootItems()) {
-            if (folderToSelect.getPath().startsWith(root.getPath())) {
-                matched = true;
-                break;
-            }
-        }
-
-        if (!matched) {
+        if (!navigationPresenter.isPathUnderKnownRoot(folderToSelect.getPath())) {
             String errMsg = appearance.diskResourceDoesNotExist(folderToSelect.getPath());
             announcer.schedule(new ErrorAnnouncementConfig(SafeHtmlUtils.fromTrustedString(errMsg)));
 

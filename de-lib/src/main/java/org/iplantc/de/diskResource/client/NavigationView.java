@@ -100,8 +100,6 @@ public interface NavigationView extends IsWidget,
 
         Folder getFolderByPath(String path);
 
-        Iterable<Folder> getRootItems();
-
         Folder getSelectedFolder();
 
         Folder getSelectedUploadFolder();
@@ -114,6 +112,8 @@ public interface NavigationView extends IsWidget,
          * @return true if the given folder is loaded.
          */
         boolean isLoaded(Folder folder);
+
+        boolean isPathUnderKnownRoot(String path);
 
         /**
          * Reloads the child folders under the given Folder for this view's TreeStore only.
