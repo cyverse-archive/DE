@@ -382,11 +382,6 @@ public class NavigationPresenterImpl implements
         }
 
         removeChildren(folder);
-        if (!isDescendant) {
-            // Only trigger a load of the refreshed folder if selectedFolder is not a descendant of
-            // the refreshed folder, otherwise the lazy-loader will handle the reload.
-            treeLoader.load(folder);
-        }
 
         if (isCurrent || isDescendant) {
             if (!(selectedFolder instanceof DiskResourceQueryTemplate)) {
@@ -394,6 +389,12 @@ public class NavigationPresenterImpl implements
                 // or to trigger lazy-loading
                 setSelectedFolder((HasPath)selectedFolder);
             }
+        }
+
+        if (!isDescendant) {
+            // Only trigger a load of the refreshed folder if selectedFolder is not its descendant,
+            // otherwise the lazy-loader will handle expanding and loading the refreshed folder.
+            treeLoader.load(folder);
         }
     }
 
