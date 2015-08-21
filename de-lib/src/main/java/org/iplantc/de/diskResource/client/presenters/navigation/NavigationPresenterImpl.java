@@ -454,14 +454,7 @@ public class NavigationPresenterImpl implements
                                                                                             appearance,
                                                                                             maskable,
                                                                                             announcer);
-            /*
-             * Only add handler if no root items have been loaded, or the hasPath has a common root with
-             * the treestore.
-             */
-            if (treeStore.getRootCount() < 1 || handler.isRootFolderDetected()) {
-                HandlerRegistration handlerRegistration = treeLoader.addLoadHandler(handler);
-                handler.setHandlerRegistration(handlerRegistration);
-            }
+            handler.registerFolderLoader(treeLoader);
         }
     }
 
