@@ -24,6 +24,7 @@ public enum InfoType {
     GENBANK("genbank"),
     GENSCAN("genscan"),
     GFF("gff"),
+    GTF("gtf"),
     HMMER("hmmer"),
     JAR("jar"),
     MASE("mase"),
