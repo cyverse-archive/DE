@@ -33,6 +33,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -126,6 +129,30 @@ public class DEServiceImpl implements DEService,
 
 
         return json;
+    }
+
+    @Override
+    public String getServiceData(ServiceCallWrapper wrapper,
+                                 HashMap<String, String> extraLoggerMdcItems) throws SerializationException, AuthenticationException, HttpException {
+        final Set<Map.Entry<String, String>> entries = extraLoggerMdcItems.entrySet();
+        for(Map.Entry<String, String> entry : entries){
+            MDC.put(entry.getKey(), entry.getValue());
+        }
+        String ret = null;
+        try {
+            ret = getServiceData(wrapper);
+        } catch (SerializationException e) {
+            throw e;
+        } catch (AuthenticationException e) {
+            throw e;
+        } catch (HttpException e) {
+            throw e;
+        } finally {
+            for(Map.Entry<String, String> entry : entries){
+                MDC.remove(entry.getKey());
+            }
+        }
+        return ret;
     }
 
     /**

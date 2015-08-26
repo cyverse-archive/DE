@@ -55,11 +55,11 @@ public interface AppTemplateServices {
 
     /**
      * Retrieves an <code>AppTemplate</code> with all of the values from the given analysisId.
-     * 
-     * @param analysisId the ID of the analysis for which the <code>AppTemplate</code> should be fetched.
+     *  @param analysisId the ID of the analysis for which the <code>AppTemplate</code> should be fetched.
+     * @param appId
      * @param callback
      */
-    void rerunAnalysis(HasId analysisId, AsyncCallback<AppTemplate> callback);
+    void rerunAnalysis(HasId analysisId, String appId, AsyncCallback<AppTemplate> callback);
 
     /**
      * Performs an initial publishing of new AppTemplates to the database, or updates of existing ones

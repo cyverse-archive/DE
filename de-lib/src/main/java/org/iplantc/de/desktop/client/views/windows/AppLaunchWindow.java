@@ -145,7 +145,9 @@ public class AppLaunchWindow extends IplantWindowBase implements AnalysisLaunchE
             // KLUDGE JDS This call to forceLayout should not be necessary.
             forceLayout();
         } else if (config.isRelaunchAnalysis()) {
-            templateService.rerunAnalysis(config.getAnalysisId(), new AppTemplateCallback(presenter, errorStrings));
+            templateService.rerunAnalysis(config.getAnalysisId(),
+                                          config.getAppId(),
+                                          new AppTemplateCallback(presenter, errorStrings));
         } else {
             templateService.getAppTemplate(CommonModelUtils.getInstance().createHasIdFromString(config.getAppId()),
                                            new AppTemplateCallback(presenter, errorStrings));

@@ -1,5 +1,6 @@
 package org.iplantc.de.client.services.impl;
 
+import static org.iplantc.de.shared.ServiceFacadeLoggerConstants.*;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
@@ -17,6 +18,7 @@ import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
@@ -25,6 +27,7 @@ import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Queue;
 import java.util.logging.Logger;
@@ -137,18 +140,29 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppBuilderM
     public void launchAnalysis(AppTemplate at, JobExecution je, AsyncCallback<String> callback) {
         String address = ANALYSES;
         Splittable assembledPayload = doAssembleLaunchAnalysisPayload(at, je);
+        HashMap<String, String> mdcMap = Maps.newHashMap();
+        mdcMap.put(METRIC_TYPE_KEY, APP_EVENT);
+        mdcMap.put(APP_ID, at.getId());
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, assembledPayload.getPayload());
-        deServiceFacade.getServiceData(wrapper, callback);
+        deServiceFacade.getServiceData(wrapper,
+                                       mdcMap,
+                                       callback);
     }
 
     @Override
-    public void rerunAnalysis(HasId analysisId, AsyncCallback<AppTemplate> callback) {
+    public void rerunAnalysis(HasId analysisId, String appId, AsyncCallback<AppTemplate> callback) {
         String address = ANALYSES + "/" + analysisId.getId() + "/relaunch-info";
+        HashMap<String, String> mdcMap = Maps.newHashMap();
+        mdcMap.put(METRIC_TYPE_KEY, APP_EVENT);
+        mdcMap.put(APP_ID, appId);
+        mdcMap.put(ANALYSIS_ID, analysisId.getId());
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
 
-        deServiceFacade.getServiceData(wrapper, new AppTemplateCallbackConverter(factory, callback));
+        deServiceFacade.getServiceData(wrapper,
+                                       mdcMap,
+                                       new AppTemplateCallbackConverter(factory, callback));
     }
 
     @Override

@@ -1,7 +1,8 @@
 package org.iplantc.de.client.services.impl;
 
+import static org.iplantc.de.shared.ServiceFacadeLoggerConstants.METRIC_TYPE_KEY;
+import static org.iplantc.de.shared.ServiceFacadeLoggerConstants.SHARE_EVENT;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
-
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.diskResources.FolderRefreshEvent;
@@ -25,6 +26,7 @@ import org.iplantc.de.shared.services.ServiceCallWrapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONArray;
@@ -47,6 +49,7 @@ import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -625,19 +628,27 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     @Override
     public void shareDiskResource(JSONObject body, AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "share"; //$NON-NLS-1$
+        HashMap<String, String> mdcMap = Maps.newHashMap();
+        mdcMap.put(METRIC_TYPE_KEY, SHARE_EVENT);
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
 
-        deServiceFacade.getServiceData(wrapper, callback);
+        deServiceFacade.getServiceData(wrapper,
+                                       mdcMap,
+                                       callback);
     }
 
     @Override
     public void unshareDiskResource(JSONObject body, AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "unshare"; //$NON-NLS-1$
+        HashMap<String, String> mdcMap = Maps.newHashMap();
+        mdcMap.put(METRIC_TYPE_KEY, SHARE_EVENT);
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
 
-        deServiceFacade.getServiceData(wrapper, callback);
+        deServiceFacade.getServiceData(wrapper,
+                                       mdcMap,
+                                       callback);
     }
 
     @Override
