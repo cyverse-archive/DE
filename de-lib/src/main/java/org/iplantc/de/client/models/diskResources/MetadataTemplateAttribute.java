@@ -14,9 +14,9 @@ public interface MetadataTemplateAttribute extends HasId, HasName,
 
 	void setType(String type);
 
-	void setRequired(boolean required);
+    void setRequired(Boolean required);
 
-	boolean isRequired();
+    Boolean isRequired();
 
     // Applicable only for Enum type
     List<TemplateAttributeSelectionItem> getValues();
