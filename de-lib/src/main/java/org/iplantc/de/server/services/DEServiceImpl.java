@@ -260,7 +260,7 @@ public class DEServiceImpl implements DEService,
 
         String endpoint = getEndpointFromRequestAddress(resolvedAddress);
         final String uuid_regex = "[A-Fa-f0-9]{8}-(?:[A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}";
-        final String endpointPartRegex = "/\\w+";
+        final String endpointPartRegex = "/[-\\w]+";
         final String endpointRegex = "^(?:" + endpointPartRegex + ")+(?:/)(" + uuid_regex + ")(?:" + endpointPartRegex + ")*";
 
         if(endpoint.matches(endpointRegex)){
