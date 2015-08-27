@@ -13,6 +13,7 @@ import org.iplantc.de.client.services.AppTemplateServices;
 import org.iplantc.de.client.services.converters.AppTemplateCallbackConverter;
 import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.client.util.JsonUtil;
+import org.iplantc.de.shared.ServiceFacadeLoggerConstants;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -85,8 +86,13 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppBuilderM
     @Override
     public void getAppTemplate(HasId appId, AsyncCallback<AppTemplate> callback) {
         String address = APPS + "/" + appId.getId();
+        HashMap<String, String> mdcMap = Maps.newHashMap();
+        mdcMap.put(METRIC_TYPE_KEY, APP_EVENT);
+        mdcMap.put(APP_ID, appId.getId());
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        deServiceFacade.getServiceData(wrapper, new AppTemplateCallbackConverter(factory, callback));
+        deServiceFacade.getServiceData(wrapper,
+                                       mdcMap,
+                                       new AppTemplateCallbackConverter(factory, callback));
     }
 
     @Override
@@ -97,8 +103,13 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppBuilderM
     @Override
     public void getAppTemplateForEdit(HasId appId, AsyncCallback<AppTemplate> callback) {
         String address = APPS + "/" + appId.getId() + "/ui";
+        HashMap<String, String> mdcMap = Maps.newHashMap();
+        mdcMap.put(METRIC_TYPE_KEY, APP_EVENT);
+        mdcMap.put(APP_ID, appId.getId());
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        deServiceFacade.getServiceData(wrapper, new AppTemplateCallbackConverter(factory, callback));
+        deServiceFacade.getServiceData(wrapper,
+                                       mdcMap,
+                                       new AppTemplateCallbackConverter(factory, callback));
     }
 
     @Override
@@ -143,6 +154,8 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppBuilderM
         HashMap<String, String> mdcMap = Maps.newHashMap();
         mdcMap.put(METRIC_TYPE_KEY, APP_EVENT);
         mdcMap.put(APP_ID, at.getId());
+        mdcMap.put(ServiceFacadeLoggerConstants.ANALYSIS_NAME, je.getName());
+        mdcMap.put(ServiceFacadeLoggerConstants.ANALYSIS_OUTPUT_DIR, je.getOutputDirectory());
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, assembledPayload.getPayload());
         deServiceFacade.getServiceData(wrapper,

@@ -19,6 +19,8 @@ public interface ServiceFacadeLoggerConstants {
     String APP_ID = "app.id";
 
     String ANALYSIS_ID = "analysis.id";
+    String ANALYSIS_NAME = "analysis.name";
+    String ANALYSIS_OUTPUT_DIR = "analysis.output_dir";
 
     String SHARE_EVENT = "share_event";
 }
