@@ -172,7 +172,7 @@ public class UserSearchField implements IsWidget {
 
                     @Override
                     public String getKey(Collaborator item) {
-                        return item.getId();
+                return item.getUserName();
                     }
 
                 });

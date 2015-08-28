@@ -172,7 +172,7 @@ public class CollaboratorsUtil {
 
     public boolean isCurrentCollaborator(Collaborator c) {
         for (Collaborator current : getCurrentCollaborators()) {
-            if (current.getId().equals(c.getId())) {
+            if (current.getUserName().equals(c.getUserName())) {
                 return true;
             }
         }

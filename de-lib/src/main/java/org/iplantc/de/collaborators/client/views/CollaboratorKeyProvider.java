@@ -11,7 +11,7 @@ public class CollaboratorKeyProvider implements ModelKeyProvider<Collaborator> {
 
     @Override
     public String getKey(Collaborator item) {
-        return item.getId();
+        return item.getUserName();
     }
 
 }

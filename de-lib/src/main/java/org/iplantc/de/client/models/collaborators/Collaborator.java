@@ -11,12 +11,6 @@ import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
  */
 public interface Collaborator {
 
-    @PropertyName("id")
-    public void setId(String id);
-
-    @PropertyName("id")
-    public String getId();
-
     @PropertyName("username")
     public void setUserName(String username);
 
