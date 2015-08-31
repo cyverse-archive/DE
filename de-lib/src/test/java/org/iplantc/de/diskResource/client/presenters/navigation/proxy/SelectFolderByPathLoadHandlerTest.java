@@ -19,14 +19,12 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.diskResource.client.events.selection.RefreshFolderSelected;
 
-import com.google.common.collect.Lists;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwtmockito.GxtMockitoTestRunner;
 
 import com.sencha.gxt.data.shared.loader.LoadEvent;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -52,6 +50,7 @@ public class SelectFolderByPathLoadHandlerTest {
     @Mock LoadEvent<Folder, List<Folder>> eventMock;
     @Mock Scheduler deferredSchedulerMock;
     @Mock IsMaskable maskableMock;
+    @Mock HandlerRegistration handlerRegistrationMock;
     @Mock NavigationView.Presenter.Appearance appearanceMock;
 
     private SelectFolderByPathLoadHandler loadHandlerUnderTest;
@@ -101,27 +100,28 @@ public class SelectFolderByPathLoadHandlerTest {
         Folder targetFolderParent = initMockFolder(targetFolderParentPath, "targetFolderParent");
         InOrder expandInOrder = inOrder(presenterMock);
 
-        // Start with only the rootPath loaded in the treeStoreMock, but no children loaded under it.
-        when(presenterMock.getRootItems()).thenReturn(Lists.newArrayList(rootPathFolderMock));
+        when(presenterMock.isPathUnderKnownRoot(targetFolderPath)).thenReturn(true);
 
-        // The SelectFolderByPathLoadHandler constructor will search as far down the path to the target
-        // folder as possible for a folder already loaded in the viewMock.
+        // Start with only the rootPath loaded in the presenterMock, but no children loaded under it.
+        // The SelectFolderByPathLoadHandler#initPathsToLoad method will search as far down the path
+        // to the target folder as possible for a folder already loaded in the presenterMock.
         when(presenterMock.getFolderByPath(targetFolderPath)).thenReturn(null);
         when(presenterMock.getFolderByPath(targetFolderParentPath)).thenReturn(null);
         when(presenterMock.getFolderByPath(targetFolderParentParentPath)).thenReturn(null);
         when(presenterMock.getFolderByPath(rootPath)).thenReturn(rootPathFolderMock);
 
-        // The handler's constructor should call viewMock#expandFolder on rootPath.
         loadHandlerUnderTest = spy(new SelectFolderByPathLoadHandler(folderToSelectMock, presenterMock,
                                                                      folderRefresherMock, appearanceMock,
-                                                                     maskableMock, announcerMock));
-        loadHandlerUnderTest.setHandlerRegistration(mock(HandlerRegistration.class));
+                                                                     maskableMock, announcerMock,
+                                                                     handlerRegistrationMock));
+        // The initPathsToLoad method should call presenterMock#expandFolder on rootPath.
+        loadHandlerUnderTest.initPathsToLoad();
         verifyPresenterInit();
         verify(presenterMock, times(4)).getFolderByPath(anyString());
         verify(presenterMock).isLoaded(rootPathFolderMock);
         expandInOrder.verify(presenterMock).expandFolder(rootPathFolderMock);
 
-        // The next onLoad method should call viewMock#expandFolder on targetFolderParentParentPath.
+        // The next onLoad method should call presenterMock#expandFolder on targetFolderParentParentPath.
         when(eventMock.getLoadConfig()).thenReturn(rootPathFolderMock);
         when(presenterMock.getFolderByPath(targetFolderParentParentPath))
                 .thenReturn(targetFolderParentParent);
@@ -129,21 +129,19 @@ public class SelectFolderByPathLoadHandlerTest {
         loadHandlerUnderTest.onLoad(eventMock);
         expandInOrder.verify(presenterMock).expandFolder(targetFolderParentParent);
 
-        // The next onLoad method should call viewMock#expandFolder on targetFolderParentPath.
+        // The next onLoad method should call presenterMock#expandFolder on targetFolderParentPath.
         when(eventMock.getLoadConfig()).thenReturn(targetFolderParentParent);
         when(presenterMock.getFolderByPath(targetFolderParentPath)).thenReturn(targetFolderParent);
 
         loadHandlerUnderTest.onLoad(eventMock);
         expandInOrder.verify(presenterMock).expandFolder(targetFolderParent);
 
-        // The last onLoad method should find folderToSelectMock in the viewMock.
+        // The last onLoad method should find folderToSelectMock in the presenterMock.
         when(presenterMock.getFolderByPath(targetFolderPath)).thenReturn(folderToSelectMock);
         loadHandlerUnderTest.onLoad(eventMock);
         verify(presenterMock).setSelectedFolder(folderToSelectMock);
         verify(loadHandlerUnderTest).unmaskView();
         verifyPresenterCleanup();
-
-//        verifyNoMoreInteractions(presenterMock);
     }
 
     /**
@@ -157,11 +155,11 @@ public class SelectFolderByPathLoadHandlerTest {
         Folder targetFolderParent = initMockFolder(targetFolderParentPath, "targetFolderParent");
         InOrder expandInOrder = inOrder(presenterMock);
 
-        // Start with only the rootPath loaded in the treeStoreMock, but no children loaded under it.
-        when(presenterMock.getRootItems()).thenReturn(Lists.newArrayList(rootPathFolderMock));
+        when(presenterMock.isPathUnderKnownRoot(targetFolderPath)).thenReturn(true);
 
-        // The SelectFolderByPathLoadHandler constructor will search as far down the path to the target
-        // folder as possible for a folder already loaded in the viewMock.
+        // Start with only the rootPath loaded in the presenterMock, but no children loaded under it.
+        // The SelectFolderByPathLoadHandler#initPathsToLoad method will search as far down the path
+        // to the target folder as possible for a folder already loaded in the presenterMock.
         when(presenterMock.getFolderByPath(targetFolderPath)).thenReturn(null);
         when(presenterMock.getFolderByPath(targetFolderParentPath)).thenReturn(null);
         when(presenterMock.getFolderByPath(targetFolderParentParentPath)).thenReturn(null);
@@ -169,14 +167,15 @@ public class SelectFolderByPathLoadHandlerTest {
 
         loadHandlerUnderTest = spy(new SelectFolderByPathLoadHandler(folderToSelectMock, presenterMock,
                                                                      folderRefresherMock, appearanceMock,
-                                                                     maskableMock, announcerMock));
-        loadHandlerUnderTest.setHandlerRegistration(mock(HandlerRegistration.class));
+                                                                     maskableMock, announcerMock,
+                                                                     handlerRegistrationMock));
+        loadHandlerUnderTest.initPathsToLoad();
         verifyPresenterInit();
         verify(presenterMock, times(4)).getFolderByPath(anyString());
         verify(presenterMock).isLoaded(rootPathFolderMock);
         expandInOrder.verify(presenterMock).expandFolder(rootPathFolderMock);
 
-        // The next onLoad method should call viewMock#expandFolder on targetFolderParentParentPath.
+        // The next onLoad method should call presenterMock#expandFolder on targetFolderParentParentPath.
         when(eventMock.getLoadConfig()).thenReturn(rootPathFolderMock);
         when(presenterMock.getFolderByPath(targetFolderParentParentPath))
                 .thenReturn(targerFolderParentParent);
@@ -184,7 +183,7 @@ public class SelectFolderByPathLoadHandlerTest {
         loadHandlerUnderTest.onLoad(eventMock);
         expandInOrder.verify(presenterMock).expandFolder(targerFolderParentParent);
 
-        // The next onLoad method should call viewMock#expandFolder on targetFolderParentPath.
+        // The next onLoad method should call presenterMock#expandFolder on targetFolderParentPath.
         when(eventMock.getLoadConfig()).thenReturn(targerFolderParentParent);
         when(presenterMock.getFolderByPath(targetFolderParentPath)).thenReturn(targetFolderParent);
 
@@ -197,13 +196,11 @@ public class SelectFolderByPathLoadHandlerTest {
         loadHandlerUnderTest.onLoad(eventMock);
 
         // Since the targetFolderParentPath was loaded but targetFolderPath was not found in the
-        // viewMock, the handler should select the target folder's parent (folderMock) and display an
-        // error message.
+        // presenterMock, the handler should select targetFolderParent and display an error message.
         verify(presenterMock).setSelectedFolder(targetFolderParent);
         verify(announcerMock).schedule(any(ErrorAnnouncementConfig.class));
         verify(loadHandlerUnderTest).unmaskView();
         verifyPresenterCleanup();
-//        verifyNoMoreInteractions(presenterMock);
     }
 
     /**
@@ -212,27 +209,27 @@ public class SelectFolderByPathLoadHandlerTest {
      * but they have not yet been loaded into the view's TreeStore.
      */
     @Test public void testLoad_TargetCached() {
-        Folder rootPathFolderMock = initMockFolder(rootPath, "rootPathFolderMock");
         when(presenterMock.rootsLoaded()).thenReturn(false);
 
-        // Start with no roots loaded in the treeStoreMock. This causes the handler to wait until the
-        // first onLoad callback, which means that the roots have just been loaded into the viewMock.
-        when(presenterMock.getRootItems()).thenReturn(Collections.<Folder>emptyList());
+        // Start with no roots loaded in the presenterMock. This causes the handler to wait until the
+        // first onLoad callback, which means that the roots have just been loaded into the presenterMock.
         loadHandlerUnderTest = new SelectFolderByPathLoadHandler(folderToSelectMock, presenterMock,
                                                                  folderRefresherMock, appearanceMock,
-                                                                 maskableMock, announcerMock, mock(HandlerRegistration.class));
-        verify(maskableMock).mask(any(String.class));
-        verify(presenterMock).rootsLoaded();
+                                                                 maskableMock, announcerMock,
+                                                                 handlerRegistrationMock);
+        loadHandlerUnderTest.initPathsToLoad();
+        verifyPresenterInit();
+        verifyNoMoreInteractions(presenterMock);
 
+        when(presenterMock.rootsLoaded()).thenReturn(true);
+        when(presenterMock.isPathUnderKnownRoot(targetFolderPath)).thenReturn(true);
         when(presenterMock.getFolderByPath(targetFolderPath)).thenReturn(folderToSelectMock);
-        when(presenterMock.getRootItems()).thenReturn(Lists.newArrayList(rootPathFolderMock));
+
         loadHandlerUnderTest.onLoad(eventMock);
 
-        verify(presenterMock).getSelectedFolder();
-        // The onLoad method should have found folderToSelectMock in the viewMock.
+        // The onLoad method should have found folderToSelectMock in the presenterMock.
         verify(presenterMock).setSelectedFolder(folderToSelectMock);
         verifyPresenterCleanup();
-//        verifyNoMoreInteractions(presenterMock);
         verifyZeroInteractions(eventMock);
     }
 
@@ -243,32 +240,33 @@ public class SelectFolderByPathLoadHandlerTest {
      */
     @Test public void testLoad_ParentCached_TargetNew() {
         Folder targetFolderParent = initMockFolder(targetFolderParentPath, "targetFolderParent");
-        Folder rootPathFolderMock = initMockFolder(rootPath, "rootPathFolderMock");
         final RefreshFolderSelected refreshFolderSelected = mock(RefreshFolderSelected.class);
 
         // Start with the target's parent and its children already loaded in the treeStoreMock, but not
         // the target.
-        when(presenterMock.getRootItems()).thenReturn(Lists.newArrayList(rootPathFolderMock));
+        when(presenterMock.isPathUnderKnownRoot(targetFolderPath)).thenReturn(true);
         when(presenterMock.getFolderByPath(targetFolderPath)).thenReturn(null);
         when(presenterMock.getFolderByPath(targetFolderParentPath)).thenReturn(targetFolderParent);
         when(presenterMock.isLoaded(targetFolderParent)).thenReturn(true);
 
         // Since deferred commands can't be tested, the refreshFolder method will be overridden to ensure
-        // the DiskResourceView.Presenter#onFolderRefreshed method is called.
+        // the RefreshFolderSelectedHandler#onFolderRefreshed method is called.
         loadHandlerUnderTest = new SelectFolderByPathLoadHandler(folderToSelectMock, presenterMock,
                                                                  folderRefresherMock, appearanceMock,
-                                                                 maskableMock, announcerMock) {
+                                                                 maskableMock, announcerMock,
+                                                                 handlerRegistrationMock) {
             @Override
             void refreshFolder(final Folder folder) {
                 folderRefresherMock.onRefreshFolderSelected(refreshFolderSelected);
             }
         };
-        loadHandlerUnderTest.setHandlerRegistration(mock(HandlerRegistration.class));
+        loadHandlerUnderTest.initPathsToLoad();
         verifyPresenterInit();
         verify(presenterMock, times(2)).getFolderByPath(anyString());
         verify(presenterMock).isLoaded(eq(targetFolderParent));
 
-        // The handler's constructor should call presenterMock#onFolderRefreshed on targetFolderParentPath.
+        // The handler's constructor should call RefreshFolderSelectedHandler#onFolderRefreshed on
+        // targetFolderParentPath.
         verify(folderRefresherMock).onRefreshFolderSelected(refreshFolderSelected);
 
         when(eventMock.getLoadConfig()).thenReturn(targetFolderParent);
@@ -279,7 +277,6 @@ public class SelectFolderByPathLoadHandlerTest {
         // The onLoad method should have found folderToSelectMock in the viewMock.
         verify(presenterMock).setSelectedFolder(folderToSelectMock);
         verifyPresenterCleanup();
-        verifyNoMoreInteractions(presenterMock);
     }
 
     /**
@@ -289,31 +286,32 @@ public class SelectFolderByPathLoadHandlerTest {
      */
     @Test public void testLoad_ParentCached_TargetDeleted() {
         Folder targetFolderParent = initMockFolder(targetFolderParentPath, "targetFolderParent");
-        Folder rootPathFolderMock = initMockFolder(rootPath, "rootPathFolderMock");
         final RefreshFolderSelected refreshFolderSelected = mock(RefreshFolderSelected.class);
 
-        // Start with the target's parent and its children already loaded in the treeStoreMock, but not
+        // Start with the target's parent and its children already loaded in the presenterMock, but not
         // the target.
-        when(presenterMock.getRootItems()).thenReturn(Lists.newArrayList(rootPathFolderMock));
+        when(presenterMock.isPathUnderKnownRoot(targetFolderPath)).thenReturn(true);
         when(presenterMock.getFolderByPath(targetFolderPath)).thenReturn(null);
         when(presenterMock.getFolderByPath(targetFolderParentPath)).thenReturn(targetFolderParent);
         when(presenterMock.isLoaded(targetFolderParent)).thenReturn(true);
 
         // Since deferred commands can't be tested, the refreshFolder method will be overridden to ensure
-        // the DiskResourceView.Presenter#onFolderRefreshed method is called.
+        // the RefreshFolderSelectedHandler#onFolderRefreshed method is called.
         loadHandlerUnderTest = new SelectFolderByPathLoadHandler(folderToSelectMock, presenterMock,
                                                                  folderRefresherMock, appearanceMock,
-                                                                 maskableMock, announcerMock) {
+                                                                 maskableMock, announcerMock,
+                                                                 handlerRegistrationMock) {
             @Override
             void refreshFolder(final Folder folder) {
                 folderRefresherMock.onRefreshFolderSelected(refreshFolderSelected);
             }
         };
-        loadHandlerUnderTest.setHandlerRegistration(mock(HandlerRegistration.class));
+        loadHandlerUnderTest.initPathsToLoad();
         verifyPresenterInit();
         verify(presenterMock, times(2)).getFolderByPath(anyString());
         verify(presenterMock).isLoaded(targetFolderParent);
-        // The handler's constructor should call presenterMock#onFolderRefreshed on targetFolderParentPath.
+        // The handler's constructor should call RefreshFolderSelectedHandler#onFolderRefreshed on
+        // targetFolderParentPath.
         verify(folderRefresherMock).onRefreshFolderSelected(refreshFolderSelected);
 
         when(eventMock.getLoadConfig()).thenReturn(targetFolderParent);
@@ -323,12 +321,10 @@ public class SelectFolderByPathLoadHandlerTest {
         verify(presenterMock, times(3)).getFolderByPath(anyString());
 
         // Since the targetFolderParentPath was reloaded but targetFolderPath was not found in the
-        // viewMock, the handler should select the target folder's parent (folderMock) and display an
-        // error message.
+        // presenterMock, the handler should select targetFolderParent and display an error message.
         verify(presenterMock).setSelectedFolder(targetFolderParent);
         verify(announcerMock).schedule(any(ErrorAnnouncementConfig.class));
         verifyPresenterCleanup();
-//        verifyNoMoreInteractions(presenterMock);
     }
 
     /**
@@ -338,7 +334,6 @@ public class SelectFolderByPathLoadHandlerTest {
     private void verifyPresenterInit() {
         verify(maskableMock).mask(any(String.class));
         verify(presenterMock).rootsLoaded();
-        verify(presenterMock).getRootItems();
     }
 
     /**
@@ -346,6 +341,7 @@ public class SelectFolderByPathLoadHandlerTest {
      * will unregister itself as a handler and unmask the presenter.
      */
     private void verifyPresenterCleanup() {
+        verify(handlerRegistrationMock).removeHandler();
         verify(maskableMock).unmask();
     }
 }

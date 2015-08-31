@@ -458,13 +458,13 @@ public class NavigationPresenterImpl implements
             setSelectedFolder(folder);
         } else {
             // Create and add the SelectFolderByIdLoadHandler to the treeLoader.
-            final SelectFolderByPathLoadHandler handler = new SelectFolderByPathLoadHandler(hasPath,
-                                                                                            this,
-                                                                                            parentPresenter,
-                                                                                            appearance,
-                                                                                            maskable,
-                                                                                            announcer);
-            handler.registerFolderLoader(treeLoader);
+            SelectFolderByPathLoadHandler.registerFolderLoader(hasPath,
+                                                               this,
+                                                               parentPresenter,
+                                                               appearance,
+                                                               maskable,
+                                                               announcer,
+                                                               treeLoader);
         }
     }
 

@@ -5,7 +5,6 @@ import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.diskResource.client.events.selection.RefreshFolderSelected;
 
@@ -20,7 +19,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 import com.sencha.gxt.data.shared.loader.LoadEvent;
 import com.sencha.gxt.data.shared.loader.LoadHandler;
-import com.sencha.gxt.data.shared.loader.LoadHandler.HasLoadHandlers;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -33,7 +31,7 @@ import java.util.Stack;
  * @author psarando, jstroot
  * 
  */
-public class SelectFolderByPathLoadHandler {
+public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<Folder>> {
 
     private final IsMaskable maskable;
     private final Stack<String> pathsToLoad = new Stack<>();
@@ -54,8 +52,9 @@ public class SelectFolderByPathLoadHandler {
                                   final NavigationView.Presenter.Appearance appearance,
                                   final IsMaskable maskable,
                                   final IplantAnnouncer announcer,
-                                  final HandlerRegistration handlerRegistration) {
+                                  HandlerRegistration handlerRegistration) {
         this.appearance = appearance;
+        this.handlerRegistration = handlerRegistration;
 
         this.maskable = maskable;
         maskable.mask(""); //$NON-NLS-1$
@@ -71,21 +70,34 @@ public class SelectFolderByPathLoadHandler {
                                            .split(folderToSelect.getPath()));
     }
 
-    public SelectFolderByPathLoadHandler(final HasPath folderToSelect,
-                                         final NavigationView.Presenter navigationPresenter,
-                                         final RefreshFolderSelected.RefreshFolderSelectedHandler refreshHandler,
-                                         final NavigationView.Presenter.Appearance appearance,
-                                         final IsMaskable maskable,
-                                         final IplantAnnouncer announcer) {
-
+    SelectFolderByPathLoadHandler(final HasPath folderToSelect,
+                                  final NavigationView.Presenter navigationPresenter,
+                                  final RefreshFolderSelected.RefreshFolderSelectedHandler refreshHandler,
+                                  final NavigationView.Presenter.Appearance appearance,
+                                  final IsMaskable maskable,
+                                  final IplantAnnouncer announcer) {
         this(folderToSelect, navigationPresenter, refreshHandler, appearance, maskable, announcer, null);
     }
 
-    public void registerFolderLoader(HasLoadHandlers<Folder, List<Folder>> loader) {
-        if (loader != null && handlerRegistration == null) {
-            handlerRegistration = loader.addLoadHandler(new FolderPathLoadHandler());
-            initPathsToLoad();
+    public static void registerFolderLoader(final HasPath folderToSelect,
+                                            final NavigationView.Presenter navigationPresenter,
+                                            final RefreshFolderSelected.RefreshFolderSelectedHandler refreshHandler,
+                                            final NavigationView.Presenter.Appearance appearance,
+                                            final IsMaskable maskable,
+                                            final IplantAnnouncer announcer,
+                                            HasLoadHandlers<Folder, List<Folder>> loader) {
+        if (loader == null) {
+            return;
         }
+
+        SelectFolderByPathLoadHandler handler = new SelectFolderByPathLoadHandler(folderToSelect,
+                                                                                  navigationPresenter,
+                                                                                  refreshHandler,
+                                                                                  appearance,
+                                                                                  maskable,
+                                                                                  announcer);
+        handler.handlerRegistration = loader.addLoadHandler(handler);
+        handler.initPathsToLoad();
     }
 
     private String getNextPathToLoad() {
@@ -93,16 +105,16 @@ public class SelectFolderByPathLoadHandler {
     }
 
     /**
-     * Verify if the desired selected folder has already been loaded in the {@link DiskResourceView}.
+     * Verify if the desired selected folder has already been loaded in the {@link NavigationView}.
      * This only needs to occur once, but only after the root folders have been loaded. This method will
      * determine how much of the target folder's path has already been loaded, and if a parent of the
      * target folder needs to be expanded in order to trigger a load of its children, or a refresh to
      * force a reload of its children, in order to start the
-     * {@link FolderPathLoadHandler#onLoad(LoadEvent)} callbacks.
+     * {@link #onLoad(LoadEvent)} callbacks.
      *
      * Must be called after this handler has been registered.
      */
-    private void initPathsToLoad() {
+    protected void initPathsToLoad() {
         rootsLoaded = navigationPresenter.rootsLoaded();
         if (!rootsLoaded) {
             return;
@@ -147,6 +159,53 @@ public class SelectFolderByPathLoadHandler {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * This method will be called whenever folders are loaded in the navigation tree of the
+     * {@link NavigationView}, which may include after the root folders are initially loaded.
+     *
+     * <ul>
+     * This method will handle these possible cases, and either select the target folder, or
+     * trigger a load of one of its parents.
+     * <li>The root folders have just been loaded.</li>
+     * <li>Some parent of the target folder has just been loaded.</li>
+     * <li>Some parent of the target folder has been loaded and its children have already been loaded.</li>
+     * <li>The target folder has just been loaded.</li>
+     * </ul>
+     */
+    @Override
+    public void onLoad(LoadEvent<Folder, List<Folder>> event) {
+        if (!rootsLoaded) {
+            // This onLoad was triggered by the initial load of the root folders.
+            initPathsToLoad();
+            return;
+        }
+
+        path.add(pathsToLoad.pop());
+        Folder folder = navigationPresenter.getFolderByPath(getNextPathToLoad());
+
+        if (folder != null) {
+            if (pathsToLoad.isEmpty()) {
+                // Exit condition
+                navigationPresenter.setSelectedFolder(folder);
+                unmaskView();
+            } else {
+                // Trigger remote load by expanding folder
+                navigationPresenter.expandFolder(folder);
+            }
+        } else {
+            // This handler has loaded as much as it can, but has encountered a folder along the
+            // path that does not exist. Select the last folder loaded, then report the error.
+            String folderName = SafeHtmlUtils.htmlEscape(path.getLast());
+            SafeHtml errMsg = SafeHtmlUtils.fromTrustedString(appearance.diskResourceDoesNotExist(folderName));
+            announcer.schedule(new ErrorAnnouncementConfig(errMsg));
+
+            navigationPresenter.setSelectedFolder(event.getLoadConfig());
+            unmaskView();
+        }
+    }
+
     void refreshFolder(final Folder folder) {
         Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 
@@ -168,54 +227,5 @@ public class SelectFolderByPathLoadHandler {
             handlerRegistration = null;
         }
         maskable.unmask();
-    }
-
-    private class FolderPathLoadHandler implements LoadHandler<Folder, List<Folder>> {
-        /**
-         * {@inheritDoc}
-         *
-         * This method will be called whenever folders are loaded in the navigation tree of the
-         * {@link DiskResourceView}, which may include after the root folders are initially loaded.
-         *
-         * <ul>
-         * This method will handle these possible cases, and either select the target folder, or
-         * trigger a load of one of its parents.
-         * <li>The root folders have just been loaded.</li>
-         * <li>Some parent of the target folder has just been loaded.</li>
-         * <li>Some parent of the target folder has been loaded and its children have already been loaded.</li>
-         * <li>The target folder has just been loaded.</li>
-         * </ul>
-         */
-        @Override
-        public void onLoad(LoadEvent<Folder, List<Folder>> event) {
-            if (!rootsLoaded) {
-                // This onLoad was triggered by the initial load of the root folders.
-                initPathsToLoad();
-                return;
-            }
-
-            path.add(pathsToLoad.pop());
-            Folder folder = navigationPresenter.getFolderByPath(getNextPathToLoad());
-
-            if (folder != null) {
-                if (pathsToLoad.isEmpty()) {
-                    // Exit condition
-                    navigationPresenter.setSelectedFolder(folder);
-                    unmaskView();
-                } else {
-                    // Trigger remote load by expanding folder
-                    navigationPresenter.expandFolder(folder);
-                }
-            } else {
-                // This handler has loaded as much as it can, but has encountered a folder along the
-                // path that does not exist. Select the last folder loaded, then report the error.
-                String folderName = SafeHtmlUtils.htmlEscape(path.getLast());
-                SafeHtml errMsg = SafeHtmlUtils.fromTrustedString(appearance.diskResourceDoesNotExist(folderName));
-                announcer.schedule(new ErrorAnnouncementConfig(errMsg));
-
-                navigationPresenter.setSelectedFolder(event.getLoadConfig());
-                unmaskView();
-            }
-        }
     }
 }
