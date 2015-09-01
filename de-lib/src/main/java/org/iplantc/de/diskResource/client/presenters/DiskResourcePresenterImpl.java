@@ -413,9 +413,10 @@ public class DiskResourcePresenterImpl implements
 
     @Override
     public void onRefreshFolderSelected(RefreshFolderSelected event) {
-        checkState(event.getSelectedFolder() != null, "Selected folder should not be null");
+        final Folder selectedFolder = event.getSelectedFolder();
+        checkState(selectedFolder != null, "Selected folder should not be null");
         view.mask(appearance.loadingMask());
-        diskResourceService.refreshFolder(event.getSelectedFolder(), new AsyncCallback<List<Folder>>() {
+        diskResourceService.refreshFolder(selectedFolder, new AsyncCallback<List<Folder>>() {
             @Override
             public void onSuccess(List<Folder> result) {
                 view.unmask();
@@ -424,7 +425,7 @@ public class DiskResourcePresenterImpl implements
             @Override
             public void onFailure(Throwable caught) {
                 view.unmask();
-                announcer.schedule(new ErrorAnnouncementConfig(appearance.warning()));
+                announcer.schedule(new ErrorAnnouncementConfig(appearance.folderRefreshFailed(selectedFolder.getName())));
             }
         });
     }

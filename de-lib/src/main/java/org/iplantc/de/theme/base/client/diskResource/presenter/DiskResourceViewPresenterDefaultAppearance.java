@@ -122,6 +122,11 @@ public class DiskResourceViewPresenterDefaultAppearance implements DiskResourceV
     }
 
     @Override
+    public String folderRefreshFailed(String folder) {
+        return iplantErrorStrings.folderRefreshFailed(folder);
+    }
+
+    @Override
     public String unsupportedCogeInfoType() {
         return diskResourceMessages.unsupportedCogeInfoType();
     }

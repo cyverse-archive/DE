@@ -90,6 +90,8 @@ public interface DiskResourceView extends IsWidget,
 
             String renameDiskResourcesLoadingMask();
 
+            String folderRefreshFailed(String folder);
+
             String unsupportedCogeInfoType();
 
             String unsupportedEnsemblInfoType();
