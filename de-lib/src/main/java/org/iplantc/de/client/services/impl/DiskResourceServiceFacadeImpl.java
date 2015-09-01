@@ -433,9 +433,12 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         }
 
         // Update the folder's path to its new location, then cache it in the TreeStore.
+        String folderName = diskResourceUtil.parseNameFromPath(folder.getPath());
+        String newPath = diskResourceUtil.appendNameToPath(dest.getPath(), folderName);
+        folder.setPath(newPath);
         add(dest, folder);
 
-        // Move the folder's children to the new location in the cache, updating their paths first.
+        // Move the folder's children to the new location in the cache.
         List<Folder> children = folder.getFolders();
         if (children != null) {
             for (Folder child : children) {
