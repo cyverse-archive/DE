@@ -2,6 +2,7 @@ package org.iplantc.de.apps.client.views.grid.cells;
 
 import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent;
 import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.theme.base.client.apps.AppsMessages;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
 import static com.google.gwt.dom.client.BrowserEvents.MOUSEOUT;
@@ -29,14 +30,17 @@ public class AppCommentCell extends AbstractCell<App> {
 
     private final AppCommentCellAppearance appearance;
     private HasHandlers hasHandlers;
+    private final AppsMessages appMsgs;
 
     public AppCommentCell() {
-        this(GWT.<AppCommentCellAppearance> create(AppCommentCellAppearance.class));
+        this(GWT.<AppCommentCellAppearance> create(AppCommentCellAppearance.class),
+             GWT.<AppsMessages> create(AppsMessages.class));
     }
 
-    public AppCommentCell(AppCommentCellAppearance appearance) {
+    public AppCommentCell(AppCommentCellAppearance appearance, AppsMessages appMsgs) {
         super(CLICK, MOUSEOVER, MOUSEOUT);
         this.appearance = appearance;
+        this.appMsgs = appMsgs;
     }
 
     @Override
@@ -56,8 +60,13 @@ public class AppCommentCell extends AbstractCell<App> {
 
             switch (Event.as(event).getTypeInt()) {
                 case Event.ONCLICK:
-                    if(hasHandlers != null){
+                    if (hasHandlers != null && !value.getAppType().equalsIgnoreCase(App.EXTERNAL_APP)) {
                         hasHandlers.fireEvent(new AppCommentSelectedEvent(value));
+                    }
+                    break;
+                case Event.ONMOUSEOVER:
+                    if (value.getAppType().equalsIgnoreCase(App.EXTERNAL_APP)) {
+                        eventTarget.setTitle(appMsgs.featureNotSupported());
                     }
                     break;
                 default:

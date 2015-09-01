@@ -109,4 +109,6 @@ public interface AppsMessages extends Messages {
     String version();
 
     String workflow();
+
+    String featureNotSupported();
 }

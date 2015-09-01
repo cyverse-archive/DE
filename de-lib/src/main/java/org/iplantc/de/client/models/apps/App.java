@@ -33,6 +33,8 @@ public interface App extends HasId,
     String WIKI_URL_KEY = "wiki_url";
     String REFERENCES_KEY = "references";
 
+    String EXTERNAL_APP = "external";
+
     @PropertyName(APP_TYPE_KEY)
     String getAppType();
 

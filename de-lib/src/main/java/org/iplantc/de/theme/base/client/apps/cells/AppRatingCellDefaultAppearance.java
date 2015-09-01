@@ -62,6 +62,7 @@ public class AppRatingCellDefaultAppearance implements AppRatingCell.AppRatingCe
     private final Templates templates;
     private final Resources resources;
     private final List<String> ratings;
+    private final AppsMessages appMsgs;
 
     public AppRatingCellDefaultAppearance() {
         this(GWT.<Templates> create(Templates.class),
@@ -75,6 +76,7 @@ public class AppRatingCellDefaultAppearance implements AppRatingCell.AppRatingCe
         this.templates = templates;
         this.resources = resources;
         this.resources.css().ensureInjected();
+        this.appMsgs = appsMessages;
         ratings = Lists.newArrayList();
         ratings.add(0, appsMessages.hateIt());
         ratings.add(1, appsMessages.didNotLike());
@@ -102,7 +104,8 @@ public class AppRatingCellDefaultAppearance implements AppRatingCell.AppRatingCe
     @Override
     public void onMouseOut(Element parent, App value) {
         int rating = (int)((value.getRating().getUserRating() != 0) ? value.getRating().getUserRating()
-                               : Math.floor(value.getRating().getAverageRating()));
+                                                                   : Math.floor(value.getRating()
+                                                                                     .getAverageRating()));
         int total = value.getRating().getTotal();
 
         for (int i = 0; i < parent.getChildCount(); i++) {
@@ -134,7 +137,12 @@ public class AppRatingCellDefaultAppearance implements AppRatingCell.AppRatingCe
     }
 
     @Override
-    public void onMouseOver(Element parent, Element eventTarget) {
+    public void onMouseOver(Element parent, Element eventTarget, App app) {
+
+        if (app.getAppType().equalsIgnoreCase(App.EXTERNAL_APP)) {
+            eventTarget.setTitle(appMsgs.featureNotSupported());
+            return;
+        }
 
         boolean setWhiteStar = false;
         if (eventTarget.getAttribute("name").startsWith("Rating")) {
@@ -164,13 +172,12 @@ public class AppRatingCellDefaultAppearance implements AppRatingCell.AppRatingCe
 
     @Override
     public void render(SafeHtmlBuilder sb, App app) {
-        if(app == null){
+        if (app == null) {
             return;
         }
-
         int rating = (int)((app.getRating().getUserRating() != 0) ? app.getRating().getUserRating()
-                                                                   : Math.floor(app.getRating()
-                                                                                     .getAverageRating()));
+                                                                 : Math.floor(app.getRating()
+                                                                                 .getAverageRating()));
         int total = app.getRating().getTotal();
         // Build five rating stars
         for (int i = 0; i < ratings.size(); i++) {

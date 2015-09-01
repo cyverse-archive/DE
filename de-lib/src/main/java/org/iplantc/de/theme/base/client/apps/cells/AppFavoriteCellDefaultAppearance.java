@@ -30,6 +30,8 @@ public class AppFavoriteCellDefaultAppearance implements AppFavoriteCell.AppFavo
         String favorite();
 
         String favoriteDisabled();
+
+        String favoriteAdd();
     }
 
     interface FavoriteCellResources extends ClientBundle {
@@ -92,6 +94,11 @@ public class AppFavoriteCellDefaultAppearance implements AppFavoriteCell.AppFavo
     @Override
     public String favoriteDisabledClass() {
         return resources.css().favoriteDisabled();
+    }
+
+    @Override
+    public String favoriteAddClass() {
+        return resources.css().favoriteAdd();
     }
 
     @Override

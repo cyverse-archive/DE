@@ -3,8 +3,10 @@ package org.iplantc.de.apps.client.views.grid.cells;
 import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
 import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.theme.base.client.apps.AppsMessages;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
+
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
@@ -31,6 +33,8 @@ public class AppFavoriteCell extends AbstractCell<App> {
 
         String remAppFromFav();
 
+        String favoriteAddClass();
+
         void render(SafeHtmlBuilder sb, String imgName, String imgClassName, String imgToolTip,
                     String debugId);
     }
@@ -38,14 +42,16 @@ public class AppFavoriteCell extends AbstractCell<App> {
     private final AppFavoriteCellAppearance appearance;
     private String baseID;
     private HasHandlers hasHandlers;
+    private final AppsMessages appMsgs;
 
     public AppFavoriteCell() {
-        this(GWT.<AppFavoriteCellAppearance> create(AppFavoriteCellAppearance.class));
+        this(GWT.<AppFavoriteCellAppearance> create(AppFavoriteCellAppearance.class),  GWT.<AppsMessages> create(AppsMessages.class));
     }
 
-    public AppFavoriteCell(final AppFavoriteCellAppearance appearance) {
+    public AppFavoriteCell(final AppFavoriteCellAppearance appearance, AppsMessages appMsgs) {
         super(CLICK);
         this.appearance = appearance;
+        this.appMsgs = appMsgs;
     }
 
     @Override
@@ -55,14 +61,18 @@ public class AppFavoriteCell extends AbstractCell<App> {
         }
 
         String imgName, imgClassName, imgToolTip;
-
-        if (!value.isDisabled() && value.isFavorite()) {
+        
+        if (value.getAppType().equalsIgnoreCase(App.EXTERNAL_APP)) {
+            imgName = "disabled";
+            imgClassName = appearance.favoriteDisabledClass();
+            imgToolTip = appMsgs.featureNotSupported();
+        } else if (!value.isDisabled() && value.isFavorite()) {
             imgName = "fav";
             imgClassName = appearance.favoriteClass();
             imgToolTip = appearance.remAppFromFav();
         } else if (!value.isDisabled() && !value.isFavorite()) {
             imgName = "fav";
-            imgClassName = appearance.favoriteDisabledClass();
+            imgClassName = appearance.favoriteAddClass();
             imgToolTip = appearance.addAppToFav();
         } else{
             imgName = "disabled";

@@ -30,7 +30,7 @@ public class AppRatingCell extends AbstractCell<App> {
 
         void onMouseOut(Element parent, App value);
 
-        void onMouseOver(Element parent, Element eventTarget);
+        void onMouseOver(Element parent, Element eventTarget, App app);
 
         void onUnRate(Element eventTarget);
 
@@ -78,7 +78,7 @@ public class AppRatingCell extends AbstractCell<App> {
                     onRatingClicked(eventTarget, value);
                     break;
                 case Event.ONMOUSEOVER:
-                    appearance.onMouseOver(parent, eventTarget);
+                    appearance.onMouseOver(parent, eventTarget, value);
                     break;
                 case Event.ONMOUSEOUT:
                     appearance.onMouseOut(parent, value);
@@ -89,22 +89,23 @@ public class AppRatingCell extends AbstractCell<App> {
         }
     }
 
-    public void setHasHandlers(final HasHandlers hasHandlers){
+    public void setHasHandlers(final HasHandlers hasHandlers) {
         this.hasHandlers = hasHandlers;
     }
 
-    private void onRatingClicked(final Element eventTarget,
-                                 final App value) {
-        if(appearance.isRatingCell(eventTarget)) {
-            final int score = appearance.getRatingScore(eventTarget);
-            if(hasHandlers != null) {
-                hasHandlers.fireEvent(new AppRatingSelected(value, score));
-            }
+    private void onRatingClicked(final Element eventTarget, final App value) {
+        if (!value.getAppType().equalsIgnoreCase(App.EXTERNAL_APP)) {
+            if (appearance.isRatingCell(eventTarget)) {
+                final int score = appearance.getRatingScore(eventTarget);
+                if (hasHandlers != null) {
+                    hasHandlers.fireEvent(new AppRatingSelected(value, score));
+                }
 
-        } else if (appearance.isUnRateCell(eventTarget)) {
-            appearance.onUnRate(eventTarget);
-            if(hasHandlers != null){
-                hasHandlers.fireEvent(new AppRatingDeselected(value));
+            } else if (appearance.isUnRateCell(eventTarget)) {
+                appearance.onUnRate(eventTarget);
+                if (hasHandlers != null) {
+                    hasHandlers.fireEvent(new AppRatingDeselected(value));
+                }
             }
         }
 
