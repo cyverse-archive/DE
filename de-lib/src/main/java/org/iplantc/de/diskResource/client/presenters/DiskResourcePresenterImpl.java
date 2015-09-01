@@ -413,7 +413,10 @@ public class DiskResourcePresenterImpl implements
 
     @Override
     public void onRefreshFolderSelected(RefreshFolderSelected event) {
-        final Folder selectedFolder = event.getSelectedFolder();
+        refreshFolder(event.getSelectedFolder());
+    }
+
+    private void refreshFolder(final Folder selectedFolder) {
         checkState(selectedFolder != null, "Selected folder should not be null");
         view.mask(appearance.loadingMask());
         diskResourceService.refreshFolder(selectedFolder, new AsyncCallback<List<Folder>>() {
@@ -717,19 +720,7 @@ public class DiskResourcePresenterImpl implements
 
             @Override
             public void onSuccess(String result) {
-                diskResourceService.refreshFolder(navigationPresenter.getFolderByPath(userInfo.getTrashPath()),
-                                                  new AsyncCallback<List<Folder>>() {
-                                                      @Override
-                                                      public void onSuccess(List<Folder> result) {
-                                                          view.unmask();
-                                                      }
-
-                                                      @Override
-                                                      public void onFailure(Throwable caught) {
-                                                          view.unmask();
-                                                          announcer.schedule(new ErrorAnnouncementConfig(appearance.warning()));
-                                                      }
-                                                  });
+                refreshFolder(navigationPresenter.getFolderByPath(userInfo.getTrashPath()));
             }
         });
     }
