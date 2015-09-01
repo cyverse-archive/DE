@@ -462,9 +462,10 @@ public class DiskResourcePresenterImpl implements
 
         mask(""); //$NON-NLS-1$
 
-        DiskResourceRestoreCallback callback = new DiskResourceRestoreCallback(navigationPresenter,
+        DiskResourceRestoreCallback callback = new DiskResourceRestoreCallback(this,
                                                                                this,
                                                                                drFactory,
+                                                                               navigationPresenter.getSelectedFolder(),
                                                                                selectedResources);
         if (gridViewPresenter.isSelectAllChecked()) {
             diskResourceService.restoreAll(callback);
@@ -570,7 +571,7 @@ public class DiskResourcePresenterImpl implements
         list.toArray(paths);
         diskResourceService.createNcbiSraFolderStructure(selectedFolder,
                                                          paths,
-                                                         new NcbiSraSetupCompleteCallback(navigationPresenter,
+                                                         new NcbiSraSetupCompleteCallback(this,
                                                                                           selectedFolder,
                                                                                           view));
     }

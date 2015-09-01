@@ -7,8 +7,7 @@ import org.iplantc.de.client.models.errors.diskResources.ErrorCreateFolder;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
-import org.iplantc.de.diskResource.client.NavigationView;
-import org.iplantc.de.diskResource.client.NavigationView.Presenter;
+import org.iplantc.de.diskResource.client.events.selection.RefreshFolderSelected;
 
 import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.autobean.shared.AutoBean;
@@ -18,21 +17,21 @@ public class NcbiSraSetupCompleteCallback extends DiskResourceServiceCallback<St
 
     private final Folder parentFolder;
     private final DiskResourceCallbackAppearance appearance = GWT.create(DiskResourceCallbackAppearance.class);
-    private final Presenter presenter;
+    private final RefreshFolderSelected.RefreshFolderSelectedHandler refreshHandler;
 
 
-    public NcbiSraSetupCompleteCallback(NavigationView.Presenter navigationPresenter,
+    public NcbiSraSetupCompleteCallback(RefreshFolderSelected.RefreshFolderSelectedHandler refreshHandler,
                                         Folder parentFolder,
                                         IsMaskable maskedCaller) {
         super(maskedCaller);
         this.parentFolder = parentFolder;
-        this.presenter = navigationPresenter;
+        this.refreshHandler = refreshHandler;
     }
 
     @Override
     public void onSuccess(String result) {
         unmaskCaller();
-        presenter.reloadTreeStoreFolderChildren(parentFolder);
+        refreshHandler.onRefreshFolderSelected(new RefreshFolderSelected(parentFolder));
         IplantAnnouncer.getInstance()
                        .schedule(new SuccessAnnouncementConfig(appearance.ncbiCreateFolderStructureSuccess()));
 

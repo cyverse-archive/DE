@@ -45,6 +45,7 @@ public class DiskResourceMoveCallback extends DiskResourceServiceCallback<DiskRe
     public void onSuccess(DiskResourceMove result) {
         unmaskCaller();
         // FIXME CORE-5300 Round-robin. Fix
+        // TODO psarando CORE-6952: May be refactored similar to refresh events if a fix is still necessary.
 
         String successMsg = appearance.diskResourceMoveSuccess(result.getDest(), result.getSources());
         IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(successMsg));
