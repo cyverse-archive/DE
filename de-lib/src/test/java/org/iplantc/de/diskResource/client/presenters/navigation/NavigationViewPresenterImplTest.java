@@ -1,5 +1,17 @@
 package org.iplantc.de.diskResource.client.presenters.navigation;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.anyBoolean;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.diskResources.FolderRefreshedEvent;
 import org.iplantc.de.client.models.diskResources.Folder;
@@ -24,10 +36,6 @@ import com.sencha.gxt.data.shared.loader.TreeLoader;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.TreeSelectionModel;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -246,7 +254,7 @@ public class NavigationViewPresenterImplTest {
                                  eventBusMock);
     }
 
-    @Test public void onRequestFolderRefresh_methodCalled() {
+    @Test public void onFolderRefreshed_methodCalled() {
         final NavigationPresenterImpl spy = spy(new NavigationPresenterImpl(viewFactoryMock, treeStoreMock, folderRpcProxyMock, diskResourceUtilMock, eventBusMock, appearanceMock) {
             @Override
             public void reloadTreeStoreFolderChildren(Folder folder) {
