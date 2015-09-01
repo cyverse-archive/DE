@@ -76,6 +76,7 @@ public class AppLaunchPresenterImpl implements AppLaunchView.Presenter, RequestA
         final JobExecution je = factory.jobExecution().as();
         je.setAppTemplateId(appTemplate.getId());
         je.setEmailNotificationEnabled(userSettings.isEnableEmailNotification());
+        je.setJobType(appTemplate.getAppType());
         // JDS Replace all Cmd Line restricted chars with underscores
         String regex = Format.substitute("[{0}]",
                                          RegExp.escapeCharacterClassSet(valConstants.restrictedCmdLineChars()

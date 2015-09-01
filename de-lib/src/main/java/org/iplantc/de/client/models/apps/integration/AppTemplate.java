@@ -59,4 +59,10 @@ public interface AppTemplate extends HasId, HasLabel, HasName, HasDescription {
 
     @PropertyName("is_public")
     public void setPublic(Boolean is_public);
+
+    @PropertyName("app_type")
+    void setAppType(String appType);
+
+    @PropertyName("app_type")
+    String getAppType();
 }

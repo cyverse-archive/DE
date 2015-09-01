@@ -3,6 +3,7 @@ package org.iplantc.de.apps.widgets.client.view.editors;
 import org.iplantc.de.apps.widgets.client.view.LaunchAnalysisView;
 import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance;
 import org.iplantc.de.apps.widgets.client.view.editors.validation.AnalysisOutputValidator;
+import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.integration.JobExecution;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.Folder;
@@ -111,6 +112,9 @@ public class LaunchAnalysisViewImpl implements LaunchAnalysisView {
 
     @Override
     public void edit(JobExecution je) {
+        if (je.getJobType().equalsIgnoreCase(App.EXTERNAL_APP)) {
+            retainInputs.hide();
+        }
         editorDriver.edit(je);
         // Update header on initial binding.
         updateHeader(je.getName());
