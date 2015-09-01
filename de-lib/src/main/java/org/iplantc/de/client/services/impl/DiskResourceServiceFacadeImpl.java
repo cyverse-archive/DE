@@ -599,21 +599,31 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         callService(wrapper, new AsyncCallbackConverter<String, HasPaths>(callback) {
             @Override
             protected HasPaths convertFrom(final String json) {
-                HasPaths deletedIds = decode(HasPaths.class, json);
+                HasPaths deletedPaths = decode(HasPaths.class, json);
 
                 // Remove any folders found in the response from the TreeStore.
-                if (deletedIds != null && deletedIds.getPaths() != null) {
-                    for (String path : deletedIds.getPaths()) {
-                        Folder deleted = findModelWithKey(path);
-                        if (deleted != null) {
-                            remove(deleted);
-                        }
-                    }
+                if (deletedPaths != null) {
+                    removeFoldersByPath(deletedPaths.getPaths());
                 }
 
-                return deletedIds;
+                return deletedPaths;
             }
         });
+    }
+
+    private void removeFoldersByPath(List<String> deletedPaths) {
+        if (deletedPaths != null) {
+            for (Folder folder : getAll()) {
+                for (String path : deletedPaths) {
+                    if (folder.getPath().equals(path)) {
+                        Folder parent = getParent(folder);
+                        parent.getFolders().remove(folder);
+                        remove(folder);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -886,19 +896,14 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         callService(wrapper, new AsyncCallbackConverter<String, HasPaths>(callback) {
             @Override
             protected HasPaths convertFrom(final String json) {
-                HasPaths deletedIds = decode(HasPaths.class, json);
+                HasPaths deletedPaths = decode(HasPaths.class, json);
 
                 // Remove any folders found in the response from the TreeStore.
-                if (deletedIds != null && deletedIds.getPaths() != null) {
-                    for (String path : deletedIds.getPaths()) {
-                        Folder deleted = findModelWithKey(path);
-                        if (deleted != null) {
-                            remove(deleted);
-                        }
-                    }
+                if (deletedPaths != null) {
+                    removeFoldersByPath(deletedPaths.getPaths());
                 }
 
-                return deletedIds;
+                return deletedPaths;
             }
         });
     }
