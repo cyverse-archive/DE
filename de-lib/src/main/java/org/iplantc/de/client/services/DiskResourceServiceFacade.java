@@ -31,6 +31,14 @@ import java.util.Set;
  */
 public interface DiskResourceServiceFacade {
 
+
+    /**
+     * Calledto reload the given folder's subfolders from the service. After refreshing the folder,
+     * a global refresh event is fired so all views can update the folder's subfolders.
+     *
+     * @param folder The parent of the subfolders to refresh from the service.
+     * @param callback executed when RPC call completes.
+     */
     void refreshFolder(Folder folder, final AsyncCallback<List<Folder>> callback);
 
     DiskResource combineDiskResources(DiskResource from, DiskResource into);
