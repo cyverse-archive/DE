@@ -111,8 +111,8 @@ public class LaunchAnalysisViewImpl implements LaunchAnalysisView {
     }
 
     @Override
-    public void edit(JobExecution je) {
-        if (je.getJobType().equalsIgnoreCase(App.EXTERNAL_APP)) {
+    public void edit(JobExecution je, String app_type) {
+        if (app_type.equalsIgnoreCase(App.EXTERNAL_APP)) {
             retainInputs.hide();
         }
         editorDriver.edit(je);

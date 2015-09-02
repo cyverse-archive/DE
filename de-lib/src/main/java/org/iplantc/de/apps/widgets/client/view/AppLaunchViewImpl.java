@@ -68,7 +68,7 @@ public class AppLaunchViewImpl extends Composite implements AppLaunchView {
 
     @Override
     public void edit(final AppTemplate appTemplate, final JobExecution je) {
-        law.edit(je);
+        law.edit(je, appTemplate.getAppType());
         editorDriver.edit(appTemplate);
         wizard.insertFirstInAccordion(law);
     }

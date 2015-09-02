@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface LaunchAnalysisView extends IsWidget, Editor<JobExecution> {
 
-    void edit(JobExecution je);
+    void edit(JobExecution je, String app_type);
 
     JobExecution flushJobExecution();
 
