@@ -27,6 +27,7 @@ import org.iplantc.de.diskResource.client.gin.factory.NavigationViewFactory;
 import org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.views.navigation.NavigationViewDnDHandler;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwtmockito.GxtMockitoTestRunner;
 
@@ -35,6 +36,8 @@ import com.sencha.gxt.data.shared.loader.BeforeLoadEvent;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.TreeSelectionModel;
+
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -278,5 +281,32 @@ public class NavigationViewPresenterImplTest {
                                  eventBusMock);
     }
 
+    @Test public void isPathUnderKnownRoot() {
+        List<Folder> roots = Lists.newArrayList(initMockFolder("/test/path1"),
+                                                initMockFolder("/test/path2"),
+                                                initMockFolder("/test/path3"));
+
+        when(treeStoreMock.getRootItems()).thenReturn(roots);
+
+        assertEquals(true, uut.isPathUnderKnownRoot("/test/path1"));
+        assertEquals(true, uut.isPathUnderKnownRoot("/test/path2"));
+        assertEquals(true, uut.isPathUnderKnownRoot("/test/path3"));
+        assertEquals(true, uut.isPathUnderKnownRoot("/test/path1/test1"));
+        assertEquals(true, uut.isPathUnderKnownRoot("/test/path2/test2"));
+        assertEquals(true, uut.isPathUnderKnownRoot("/test/path3/test3"));
+
+        assertEquals(false, uut.isPathUnderKnownRoot("/"));
+        assertEquals(false, uut.isPathUnderKnownRoot("/test"));
+        assertEquals(false, uut.isPathUnderKnownRoot("/foo/bar/baz"));
+        assertEquals(false, uut.isPathUnderKnownRoot("/test/path4/test4"));
+        assertEquals(false, uut.isPathUnderKnownRoot("/test/path1-test/5"));
+    }
+
+    private Folder initMockFolder(String path) {
+        Folder folder = mock(Folder.class);
+        when(folder.getPath()).thenReturn(path);
+
+        return folder;
+    }
 
 }
