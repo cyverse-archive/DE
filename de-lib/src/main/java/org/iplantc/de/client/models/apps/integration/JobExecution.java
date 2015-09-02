@@ -22,10 +22,6 @@ public interface JobExecution extends HasName, HasDescription {
 
     void setAppTemplate(AppTemplate at);
 
-    String getJobType();
-
-    void setJobType(String jobType);
-
     @PropertyName("debug")
     Boolean isRetainInputs();
 
