@@ -79,6 +79,23 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
         this(folderToSelect, navigationPresenter, refreshHandler, appearance, maskable, announcer, null);
     }
 
+    /**
+     * This method will instantiate a SelectFolderByPathLoadHandler, add it to the given loader,
+     * then initialize the lazy-loading logic. It's important to add this LoadHandler to the Folder
+     * Loader before lazy-loading logic is initialized, since folders may be cached in the UI and
+     * the {@link #onLoad(LoadEvent)} method may be called immediately during initialization.
+     *
+     * @param folderToSelect The folder to load and select, potentially after many
+     *                       {@link #onLoad(LoadEvent)} method calls.
+     * @param navigationPresenter The presenter that has the folder tree and will trigger
+     *                            lazy-loading by expanding folders.
+     * @param refreshHandler The handler that may have to refresh a folder if it's already loaded
+     *                       but a target child is not found.
+     * @param appearance The appearance that has folder loading error messages.
+     * @param maskable The view to unmask once lazy-loading is complete.
+     * @param announcer The announcer that displays loading error messages.
+     * @param loader The Folder Loader in which this LoadHandler will be registered.
+     */
     public static void registerFolderLoader(final HasPath folderToSelect,
                                             final NavigationView.Presenter navigationPresenter,
                                             final RefreshFolderSelected.RefreshFolderSelectedHandler refreshHandler,
@@ -96,6 +113,7 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
                                                                                   appearance,
                                                                                   maskable,
                                                                                   announcer);
+        // Must add the LoadHandler to the Folder Loader before initPathsToLoad is called!
         handler.handlerRegistration = loader.addLoadHandler(handler);
         handler.initPathsToLoad();
     }
