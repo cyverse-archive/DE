@@ -81,9 +81,10 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
 
     /**
      * This method will instantiate a SelectFolderByPathLoadHandler, add it to the given loader,
-     * then initialize the lazy-loading logic. It's important to add this LoadHandler to the Folder
-     * Loader before lazy-loading logic is initialized, since folders may be cached in the UI and
-     * the {@link #onLoad(LoadEvent)} method may be called immediately during initialization.
+     * then initialize the lazy-loading logic. This method guarantees that the LoadHandler is added
+     * to the Folder Loader before lazy-loading logic is initialized, since folders may be cached
+     * and the {@link #onLoad(LoadEvent)} method may need to be called immediately during
+     * initialization.
      *
      * @param folderToSelect The folder to load and select, potentially after many
      *                       {@link #onLoad(LoadEvent)} method calls.
@@ -114,6 +115,7 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
                                                                                   maskable,
                                                                                   announcer);
         // Must add the LoadHandler to the Folder Loader before initPathsToLoad is called!
+        // Folders may be cached and the onLoad method may need to be called immediately during init.
         handler.handlerRegistration = loader.addLoadHandler(handler);
         handler.initPathsToLoad();
     }
