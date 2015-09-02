@@ -52,7 +52,7 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
                                   final NavigationView.Presenter.Appearance appearance,
                                   final IsMaskable maskable,
                                   final IplantAnnouncer announcer,
-                                  HandlerRegistration handlerRegistration) {
+                                  final HandlerRegistration handlerRegistration) {
         this.appearance = appearance;
         this.handlerRegistration = handlerRegistration;
 
@@ -105,12 +105,58 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * This method will be called whenever folders are loaded in the navigation tree of the
+     * {@link NavigationView}, which may include after the root folders are initially loaded.
+     *
+     * <ul>
+     * This method will handle these possible cases, and either select the target folder, or trigger a
+     * load of one of its parents.
+     * <li>The root folders have just been loaded.</li>
+     * <li>Some parent of the target folder has just been loaded.</li>
+     * <li>Some parent of the target folder has been loaded and its children have already been loaded.</li>
+     * <li>The target folder has just been loaded.</li>
+     * </ul>
+     */
+    @Override
+    public void onLoad(LoadEvent<Folder, List<Folder>> event) {
+        if (!rootsLoaded) {
+            // This onLoad was triggered by the initial load of the root folders.
+            initPathsToLoad();
+            return;
+        }
+
+        path.add(pathsToLoad.pop());
+        Folder folder = navigationPresenter.getFolderByPath(getNextPathToLoad());
+
+        if (folder != null) {
+            if (pathsToLoad.isEmpty()) {
+                // Exit condition
+                navigationPresenter.setSelectedFolder(folder);
+                unmaskView();
+            } else {
+                // Trigger remote load by expanding folder
+                navigationPresenter.expandFolder(folder);
+            }
+        } else {
+            // This handler has loaded as much as it can, but has encountered a folder along the path
+            // that does not exist. Select the last folder loaded, then report the error.
+            String folderName = SafeHtmlUtils.htmlEscape(path.getLast());
+            SafeHtml errMsg = SafeHtmlUtils.fromTrustedString(appearance.diskResourceDoesNotExist(folderName));
+            announcer.schedule(new ErrorAnnouncementConfig(errMsg));
+
+            navigationPresenter.setSelectedFolder(event.getLoadConfig());
+            unmaskView();
+        }
+    }
+
+    /**
      * Verify if the desired selected folder has already been loaded in the {@link NavigationView}.
      * This only needs to occur once, but only after the root folders have been loaded. This method will
      * determine how much of the target folder's path has already been loaded, and if a parent of the
      * target folder needs to be expanded in order to trigger a load of its children, or a refresh to
-     * force a reload of its children, in order to start the
-     * {@link #onLoad(LoadEvent)} callbacks.
+     * force a reload of its children, in order to start the {@link #onLoad(LoadEvent)} callbacks.
      *
      * Must be called after this handler has been registered.
      */
@@ -156,53 +202,6 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
                 // next folder in the path to the view's treeStore.
                 navigationPresenter.expandFolder(folder);
             }
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * This method will be called whenever folders are loaded in the navigation tree of the
-     * {@link NavigationView}, which may include after the root folders are initially loaded.
-     *
-     * <ul>
-     * This method will handle these possible cases, and either select the target folder, or
-     * trigger a load of one of its parents.
-     * <li>The root folders have just been loaded.</li>
-     * <li>Some parent of the target folder has just been loaded.</li>
-     * <li>Some parent of the target folder has been loaded and its children have already been loaded.</li>
-     * <li>The target folder has just been loaded.</li>
-     * </ul>
-     */
-    @Override
-    public void onLoad(LoadEvent<Folder, List<Folder>> event) {
-        if (!rootsLoaded) {
-            // This onLoad was triggered by the initial load of the root folders.
-            initPathsToLoad();
-            return;
-        }
-
-        path.add(pathsToLoad.pop());
-        Folder folder = navigationPresenter.getFolderByPath(getNextPathToLoad());
-
-        if (folder != null) {
-            if (pathsToLoad.isEmpty()) {
-                // Exit condition
-                navigationPresenter.setSelectedFolder(folder);
-                unmaskView();
-            } else {
-                // Trigger remote load by expanding folder
-                navigationPresenter.expandFolder(folder);
-            }
-        } else {
-            // This handler has loaded as much as it can, but has encountered a folder along the
-            // path that does not exist. Select the last folder loaded, then report the error.
-            String folderName = SafeHtmlUtils.htmlEscape(path.getLast());
-            SafeHtml errMsg = SafeHtmlUtils.fromTrustedString(appearance.diskResourceDoesNotExist(folderName));
-            announcer.schedule(new ErrorAnnouncementConfig(errMsg));
-
-            navigationPresenter.setSelectedFolder(event.getLoadConfig());
-            unmaskView();
         }
     }
 
