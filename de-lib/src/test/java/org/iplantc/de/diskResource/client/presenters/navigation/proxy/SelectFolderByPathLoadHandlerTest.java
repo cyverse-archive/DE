@@ -80,6 +80,7 @@ public class SelectFolderByPathLoadHandlerTest {
         when(folderToSelectMock.getId()).thenReturn(targetFolderPath);
         when(folderToSelectMock.getPath()).thenReturn(targetFolderPath);
         when(presenterMock.rootsLoaded()).thenReturn(true);
+        when(presenterMock.isPathUnderKnownRoot(targetFolderPath)).thenReturn(true);
         when(appearanceMock.diskResourceDoesNotExist(anyString())).thenReturn("sample");
     }
 
@@ -99,8 +100,6 @@ public class SelectFolderByPathLoadHandlerTest {
         Folder targetFolderParentParent = initMockFolder(targetFolderParentParentPath, "targerFolderParentParent");
         Folder targetFolderParent = initMockFolder(targetFolderParentPath, "targetFolderParent");
         InOrder expandInOrder = inOrder(presenterMock);
-
-        when(presenterMock.isPathUnderKnownRoot(targetFolderPath)).thenReturn(true);
 
         // Start with only the rootPath loaded in the presenterMock, but no children loaded under it.
         // The SelectFolderByPathLoadHandler#initPathsToLoad method will search as far down the path
@@ -154,8 +153,6 @@ public class SelectFolderByPathLoadHandlerTest {
         Folder targerFolderParentParent = initMockFolder(targetFolderParentParentPath, "targerFolderParentParent");
         Folder targetFolderParent = initMockFolder(targetFolderParentPath, "targetFolderParent");
         InOrder expandInOrder = inOrder(presenterMock);
-
-        when(presenterMock.isPathUnderKnownRoot(targetFolderPath)).thenReturn(true);
 
         // Start with only the rootPath loaded in the presenterMock, but no children loaded under it.
         // The SelectFolderByPathLoadHandler#initPathsToLoad method will search as far down the path
@@ -222,7 +219,6 @@ public class SelectFolderByPathLoadHandlerTest {
         verifyNoMoreInteractions(presenterMock);
 
         when(presenterMock.rootsLoaded()).thenReturn(true);
-        when(presenterMock.isPathUnderKnownRoot(targetFolderPath)).thenReturn(true);
         when(presenterMock.getFolderByPath(targetFolderPath)).thenReturn(folderToSelectMock);
 
         loadHandlerUnderTest.onLoad(eventMock);
@@ -244,7 +240,6 @@ public class SelectFolderByPathLoadHandlerTest {
 
         // Start with the target's parent and its children already loaded in the treeStoreMock, but not
         // the target.
-        when(presenterMock.isPathUnderKnownRoot(targetFolderPath)).thenReturn(true);
         when(presenterMock.getFolderByPath(targetFolderPath)).thenReturn(null);
         when(presenterMock.getFolderByPath(targetFolderParentPath)).thenReturn(targetFolderParent);
         when(presenterMock.isLoaded(targetFolderParent)).thenReturn(true);
@@ -290,7 +285,6 @@ public class SelectFolderByPathLoadHandlerTest {
 
         // Start with the target's parent and its children already loaded in the presenterMock, but not
         // the target.
-        when(presenterMock.isPathUnderKnownRoot(targetFolderPath)).thenReturn(true);
         when(presenterMock.getFolderByPath(targetFolderPath)).thenReturn(null);
         when(presenterMock.getFolderByPath(targetFolderParentPath)).thenReturn(targetFolderParent);
         when(presenterMock.isLoaded(targetFolderParent)).thenReturn(true);
