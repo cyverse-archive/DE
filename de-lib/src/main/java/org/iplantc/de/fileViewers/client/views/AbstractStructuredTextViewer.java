@@ -213,7 +213,7 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
         grid.reconfigure(listStore, columnModel);
         grid.getView().refresh(true);
         setEditing(editing);
-        // setDirty(false);
+        setDirty(false);
     }
 
     void setEditing(boolean editing) {
