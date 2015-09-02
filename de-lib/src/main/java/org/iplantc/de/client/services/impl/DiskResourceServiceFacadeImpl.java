@@ -740,7 +740,7 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
      * @param wrapper the wrapper used to get to the actual service via the service proxy.
      * @param callback executed when RPC call completes.
      */
-    private void callService(ServiceCallWrapper wrapper, AsyncCallback<String> callback) {
+    void callService(ServiceCallWrapper wrapper, AsyncCallback<String> callback) {
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
