@@ -489,6 +489,15 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String folderReadable(String arg0);
 
     /**
+     * Translated "Could not refresh the contents of the folder {0}".
+     *
+     * @return translated "Could not refresh the contents of the folder {0}"
+     */
+    @DefaultMessage("Could not refresh the contents of the folder {0}")
+    @Key("folderRefreshFailed")
+    String folderRefreshFailed(String folder);
+
+    /**
      * Translated "The following folder(s) are writable:<br />
      * {0}".
      * 

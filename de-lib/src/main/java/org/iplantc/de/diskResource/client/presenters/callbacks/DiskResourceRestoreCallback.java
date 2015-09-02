@@ -3,6 +3,7 @@ package org.iplantc.de.diskResource.client.presenters.callbacks;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
+import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.RestoreResponse;
 import org.iplantc.de.client.models.diskResources.RestoreResponse.RestoredResource;
 import org.iplantc.de.client.models.errors.diskResources.DiskResourceErrorAutoBeanFactory;
@@ -10,7 +11,7 @@ import org.iplantc.de.client.models.errors.diskResources.ErrorDiskResourceMove;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
-import org.iplantc.de.diskResource.client.NavigationView;
+import org.iplantc.de.diskResource.client.events.selection.RefreshFolderSelected;
 
 import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.autobean.shared.AutoBean;
@@ -26,20 +27,23 @@ import java.util.List;
  * 
  */
 public class DiskResourceRestoreCallback extends DiskResourceServiceCallback<String> {
-    private final NavigationView.Presenter navigationPresenter;
+    private final RefreshFolderSelected.RefreshFolderSelectedHandler refreshHandler;
     private final DiskResourceAutoBeanFactory drFactory;
     private final List<DiskResource> selectedResources;
     private final DiskResourceCallbackAppearance appearance = GWT.create(DiskResourceCallbackAppearance.class);
+    private final Folder trashFolder;
 
-    public DiskResourceRestoreCallback(final NavigationView.Presenter navigationPresenter,
+    public DiskResourceRestoreCallback(final RefreshFolderSelected.RefreshFolderSelectedHandler refreshHandler,
                                        final IsMaskable maskable,
                                        final DiskResourceAutoBeanFactory drFactory,
+                                       final Folder trashFolder,
                                        final List<DiskResource> selectedResources) {
         super(maskable);
 
         this.drFactory = drFactory;
+        this.trashFolder = trashFolder;
         this.selectedResources = selectedResources;
-        this.navigationPresenter = navigationPresenter;
+        this.refreshHandler = refreshHandler;
     }
 
     @Override
@@ -52,7 +56,7 @@ public class DiskResourceRestoreCallback extends DiskResourceServiceCallback<Str
         super.onSuccess(result);
 
         checkForPartialRestore(result);
-        navigationPresenter.refreshFolder(navigationPresenter.getSelectedFolder());
+        refreshHandler.onRefreshFolderSelected(new RefreshFolderSelected(trashFolder));
     }
 
     @Override

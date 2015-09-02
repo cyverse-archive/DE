@@ -1,5 +1,7 @@
 package org.iplantc.de.diskResource.client.presenters;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.HasPath;
@@ -56,7 +58,6 @@ import org.iplantc.de.diskResource.client.views.dialogs.RenameFolderDialog;
 import org.iplantc.de.diskResource.client.views.search.DiskResourceSearchField;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 
-import static com.google.common.base.Preconditions.checkState;
 import com.google.common.base.Strings;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.inject.client.AsyncProvider;
@@ -88,7 +89,6 @@ public class DiskResourcePresenterImpl implements
                                       DeleteDiskResourcesSelected.DeleteDiskResourcesSelectedEventHandler,
                                       EmptyTrashSelected.EmptyTrashSelectedHandler,
                                       MoveDiskResourcesSelected.MoveDiskResourcesSelectedHandler,
-                                      RefreshFolderSelected.RefreshFolderSelectedHandler,
                                       RenameDiskResourceSelected.RenameDiskResourceSelectedHandler,
                                       RestoreDiskResourcesSelected.RestoreDiskResourcesSelectedHandler,
                                       SendToTreeViewerSelected.SendToTreeViewerSelectedHandler,
@@ -413,8 +413,24 @@ public class DiskResourcePresenterImpl implements
 
     @Override
     public void onRefreshFolderSelected(RefreshFolderSelected event) {
-        checkState(event.getSelectedFolder() != null, "Selected folder should not be null");
-        navigationPresenter.refreshFolder(event.getSelectedFolder());
+        refreshFolder(event.getSelectedFolder());
+    }
+
+    private void refreshFolder(final Folder selectedFolder) {
+        checkState(selectedFolder != null, "Selected folder should not be null");
+        view.mask(appearance.loadingMask());
+        diskResourceService.refreshFolder(selectedFolder, new AsyncCallback<List<Folder>>() {
+            @Override
+            public void onSuccess(List<Folder> result) {
+                view.unmask();
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                view.unmask();
+                announcer.schedule(new ErrorAnnouncementConfig(appearance.folderRefreshFailed(selectedFolder.getName())));
+            }
+        });
     }
 
     @Override
@@ -450,9 +466,10 @@ public class DiskResourcePresenterImpl implements
 
         mask(""); //$NON-NLS-1$
 
-        DiskResourceRestoreCallback callback = new DiskResourceRestoreCallback(navigationPresenter,
+        DiskResourceRestoreCallback callback = new DiskResourceRestoreCallback(this,
                                                                                this,
                                                                                drFactory,
+                                                                               navigationPresenter.getSelectedFolder(),
                                                                                selectedResources);
         if (gridViewPresenter.isSelectAllChecked()) {
             diskResourceService.restoreAll(callback);
@@ -558,7 +575,7 @@ public class DiskResourcePresenterImpl implements
         list.toArray(paths);
         diskResourceService.createNcbiSraFolderStructure(selectedFolder,
                                                          paths,
-                                                         new NcbiSraSetupCompleteCallback(navigationPresenter,
+                                                         new NcbiSraSetupCompleteCallback(this,
                                                                                           selectedFolder,
                                                                                           view));
     }
@@ -703,8 +720,7 @@ public class DiskResourcePresenterImpl implements
 
             @Override
             public void onSuccess(String result) {
-                navigationPresenter.refreshFolder(navigationPresenter.getFolderByPath(userInfo.getTrashPath()));
-                view.unmask();
+                refreshFolder(navigationPresenter.getFolderByPath(userInfo.getTrashPath()));
             }
         });
     }

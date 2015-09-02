@@ -2,17 +2,32 @@ package org.iplantc.de.client.services.impl;
 
 import static org.iplantc.de.shared.ServiceFacadeLoggerConstants.METRIC_TYPE_KEY;
 import static org.iplantc.de.shared.ServiceFacadeLoggerConstants.SHARE_EVENT;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.DELETE;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
+
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.events.diskResources.FolderRefreshEvent;
-import org.iplantc.de.client.events.diskResources.FolderRefreshEvent.FolderRefreshEventHandler;
+import org.iplantc.de.client.events.diskResources.FolderRefreshedEvent;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.dataLink.DataLink;
 import org.iplantc.de.client.models.dataLink.DataLinkList;
-import org.iplantc.de.client.models.diskResources.*;
+import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
+import org.iplantc.de.client.models.diskResources.DiskResourceExistMap;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadataList;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplateList;
+import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.diskResources.MetadataTemplate;
+import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
+import org.iplantc.de.client.models.diskResources.MetadataTemplateInfoList;
+import org.iplantc.de.client.models.diskResources.RootFolders;
+import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.services.DiskResourceMove;
 import org.iplantc.de.client.models.services.DiskResourceRename;
 import org.iplantc.de.client.models.viewer.InfoType;
@@ -62,8 +77,7 @@ import java.util.logging.Logger;
  * 
  */
 public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
-                                                                    DiskResourceServiceFacade,
-                                                                    FolderRefreshEventHandler {
+                                                                    DiskResourceServiceFacade {
 
     private final DiskResourceAutoBeanFactory factory;
     private final DEProperties deProperties;
@@ -71,6 +85,7 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     private final DEClientConstants constants;
     private final UserInfo userInfo;
     @Inject DiskResourceUtil diskResourceUtil;
+    @Inject EventBus eventBus;
 
     Logger LOG = Logger.getLogger(DiskResourceServiceFacadeImpl.class.getName());
 
@@ -95,7 +110,6 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         this.factory = factory;
         this.userInfo = userInfo;
         GWT.log("DISK RESOURCE SERVICE FACADE CONSTRUCTOR");
-        eventBus.addHandler(FolderRefreshEvent.TYPE, this);
     }
 
     private <T> String encode(final T entity) {
@@ -510,14 +524,27 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     }
 
     @Override
-    public void onRequestFolderRefresh(FolderRefreshEvent event) {
-        Folder folder = findModel(event.getFolder());
+    public void refreshFolder(Folder parent, final AsyncCallback<List<Folder>> callback) {
+        final Folder folder = findModel(parent);
         if (folder == null) {
             return;
         }
 
         removeChildren(folder);
         folder.setFolders(null);
+
+        getSubFolders(folder, new AsyncCallback<List<Folder>>() {
+            @Override
+            public void onSuccess(List<Folder> result) {
+                callback.onSuccess(result);
+                eventBus.fireEvent(new FolderRefreshedEvent(folder));
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+        });
     }
 
     @Override
@@ -572,21 +599,31 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         callService(wrapper, new AsyncCallbackConverter<String, HasPaths>(callback) {
             @Override
             protected HasPaths convertFrom(final String json) {
-                HasPaths deletedIds = decode(HasPaths.class, json);
+                HasPaths deletedPaths = decode(HasPaths.class, json);
 
                 // Remove any folders found in the response from the TreeStore.
-                if (deletedIds != null && deletedIds.getPaths() != null) {
-                    for (String path : deletedIds.getPaths()) {
-                        Folder deleted = findModelWithKey(path);
-                        if (deleted != null) {
-                            remove(deleted);
-                        }
-                    }
+                if (deletedPaths != null) {
+                    removeFoldersByPath(deletedPaths.getPaths());
                 }
 
-                return deletedIds;
+                return deletedPaths;
             }
         });
+    }
+
+    private void removeFoldersByPath(List<String> deletedPaths) {
+        if (deletedPaths != null) {
+            for (Folder folder : getAll()) {
+                for (String path : deletedPaths) {
+                    if (folder.getPath().equals(path)) {
+                        Folder parent = getParent(folder);
+                        parent.getFolders().remove(folder);
+                        remove(folder);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -703,7 +740,7 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
      * @param wrapper the wrapper used to get to the actual service via the service proxy.
      * @param callback executed when RPC call completes.
      */
-    private void callService(ServiceCallWrapper wrapper, AsyncCallback<String> callback) {
+    void callService(ServiceCallWrapper wrapper, AsyncCallback<String> callback) {
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
@@ -859,19 +896,14 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         callService(wrapper, new AsyncCallbackConverter<String, HasPaths>(callback) {
             @Override
             protected HasPaths convertFrom(final String json) {
-                HasPaths deletedIds = decode(HasPaths.class, json);
+                HasPaths deletedPaths = decode(HasPaths.class, json);
 
                 // Remove any folders found in the response from the TreeStore.
-                if (deletedIds != null && deletedIds.getPaths() != null) {
-                    for (String path : deletedIds.getPaths()) {
-                        Folder deleted = findModelWithKey(path);
-                        if (deleted != null) {
-                            remove(deleted);
-                        }
-                    }
+                if (deletedPaths != null) {
+                    removeFoldersByPath(deletedPaths.getPaths());
                 }
 
-                return deletedIds;
+                return deletedPaths;
             }
         });
     }
