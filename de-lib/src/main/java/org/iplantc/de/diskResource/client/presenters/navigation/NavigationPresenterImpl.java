@@ -6,7 +6,6 @@ import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.util.DiskResourceUtil;
@@ -63,7 +62,7 @@ public class NavigationPresenterImpl implements
                                     FolderCreatedEvent.FolderCreatedEventHandler,
                                     DiskResourcesMovedEvent.DiskResourcesMovedEventHandler {
 
-    private static class FolderStoreDataChangeHandler implements
+    class FolderStoreDataChangeHandler implements
                                                      StoreDataChangeEvent.StoreDataChangeHandler<Folder> {
         private final NavigationView.Appearance appearance;
         private final Tree<Folder, Folder> tree;
@@ -91,16 +90,10 @@ public class NavigationPresenterImpl implements
     }
 
     final TreeStore<Folder> treeStore;
-    @Inject
-    IplantAnnouncer announcer;
-    @Inject
-    NavigationView.Presenter.Appearance appearance;
-    @Inject
-    DiskResourceUtil diskResourceUtil;
-    @Inject
-    DiskResourceAutoBeanFactory factory;
-    @Inject
-    UserInfo userInfo;
+    @Inject IplantAnnouncer announcer;
+    @Inject NavigationView.Presenter.Appearance appearance;
+    private final DiskResourceUtil diskResourceUtil;
+    @Inject UserInfo userInfo;
     private final EventBus eventBus;
     private final DiskResourceView.FolderRpcProxy folderRpcProxy;
     private final List<HandlerRegistration> handlerRegistrations;
@@ -119,12 +112,8 @@ public class NavigationPresenterImpl implements
         this.treeStore = treeStore;
         this.folderRpcProxy = folderRpcProxy;
         this.eventBus = eventBus;
-        treeLoader = new TreeLoader<Folder>(folderRpcProxy) {
-            @Override
-            public boolean hasChildren(Folder parent) {
-                return parent.hasSubDirs();
-            }
-        };
+        this.diskResourceUtil = diskResourceUtil;
+        treeLoader = initTreeLoader(folderRpcProxy);
         view = viewFactory.create(treeStore, treeLoader, new NavigationViewDnDHandler(diskResourceUtil,
                                                                                       this,
                                                                                       appearance));
@@ -141,6 +130,15 @@ public class NavigationPresenterImpl implements
         handlerRegistrations.add(eventBus.addHandler(DiskResourceRenamedEvent.TYPE, this));
         handlerRegistrations.add(eventBus.addHandler(FolderCreatedEvent.TYPE, this));
         handlerRegistrations.add(eventBus.addHandler(DiskResourcesMovedEvent.TYPE, this));
+    }
+
+    TreeLoader<Folder> initTreeLoader(final DiskResourceView.FolderRpcProxy rpcProxy){
+       return new TreeLoader<Folder>(rpcProxy) {
+            @Override
+            public boolean hasChildren(Folder parent) {
+                return parent.hasSubDirs();
+            }
+        };
     }
 
     // <editor-fold desc="Handler Registrations">
