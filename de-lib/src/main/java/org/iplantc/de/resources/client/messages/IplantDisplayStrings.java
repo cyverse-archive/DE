@@ -483,15 +483,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @Key("collaboratorRemoved")
     String collaboratorRemoved();
 
-    /**
-     * Translated "Your search exceeded the threshold. Please refine your search.".
-     *
-     * @return translated "Your search exceeded the threshold. Please refine your search."
-     */
-    @DefaultMessage("Your search exceeded the threshold. Please refine your search.")
-    @Key("collaboratorSearchTruncated")
-    String collaboratorSearchTruncated();
-
     /** Translated "Cannot add yourself as collaborator.".
     *
     * @return translated "Cannot add yourself as collaborator!"

@@ -64,11 +64,6 @@ public class CollaboratorsUtil {
         AutoBean<CollaboratorsList> bean = AutoBeanCodex
                 .decode(factory, CollaboratorsList.class, result);
         JSONObject obj = jsonUtil.getObject(result);
-        boolean truncated = jsonUtil.getBoolean(obj, "truncated", false);
-        if (truncated) {
-            IplantAnnouncer.getInstance().schedule(
-                    new ErrorAnnouncementConfig(SafeHtmlUtils.fromString(I18N.DISPLAY.collaboratorSearchTruncated()), false));
-        }
         return bean.as().getCollaborators();
     }
 
