@@ -6,6 +6,7 @@ import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
 
 import com.sencha.gxt.core.client.resources.ThemeStyles;
@@ -25,6 +26,13 @@ public class AnalysesViewDefaultAppearance implements AnalysesView.Appearance {
 
         @Source("file_view.gif")
         ImageResource fileView();
+
+        @Source("AnalysisInfoStyle.css")
+        AnalysisInfoStyle css();
+    }
+
+    public interface AnalysisInfoStyle extends CssResource {
+        String row();
     }
 
     public AnalysesViewDefaultAppearance() {
@@ -32,6 +40,7 @@ public class AnalysesViewDefaultAppearance implements AnalysesView.Appearance {
              GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class),
              GWT.<IplantResources> create(IplantResources.class),
              GWT.<AnalysesResources> create(AnalysesResources.class));
+   
     }
 
     AnalysesViewDefaultAppearance(final AnalysesMessages analysesMessages,
@@ -42,8 +51,13 @@ public class AnalysesViewDefaultAppearance implements AnalysesView.Appearance {
         this.iplantDisplayStrings = iplantDisplayStrings;
         this.iplantResources = iplantResources;
         this.resources = resources;
+        resources.css().ensureInjected();
     }
 
+    @Override
+    public AnalysisInfoStyle css() {
+        return resources.css();
+   }
     @Override
     public String analysesExecDeleteWarning() {
         return analysesMessages.analysesExecDeleteWarning();
@@ -242,5 +256,20 @@ public class AnalysesViewDefaultAppearance implements AnalysesView.Appearance {
     @Override
     public String warning() {
         return iplantDisplayStrings.warning();
+    }
+
+    @Override
+    public String viewAnalysisStepInfo() {
+        return analysesMessages.viewAnalysisStepInfo();
+    }
+
+    @Override
+    public String stepType() {
+        return analysesMessages.stepType();
+    }
+
+    @Override
+    public String jobId() {
+        return analysesMessages.jobId();
     }
 }

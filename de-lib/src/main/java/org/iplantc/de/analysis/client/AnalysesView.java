@@ -4,6 +4,7 @@ import org.iplantc.de.analysis.client.events.HTAnalysisExpandEvent;
 import org.iplantc.de.analysis.client.events.selection.AnalysisAppSelectedEvent;
 import org.iplantc.de.analysis.client.events.selection.AnalysisNameSelectedEvent;
 import org.iplantc.de.client.models.analysis.Analysis;
+import org.iplantc.de.theme.base.client.analyses.AnalysesViewDefaultAppearance.AnalysisInfoStyle;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -101,6 +102,14 @@ public interface AnalysesView extends IsWidget,
         String saveAs();
 
         String warning();
+
+        String viewAnalysisStepInfo();
+
+        String stepType();
+
+        String jobId();
+
+        AnalysisInfoStyle css();
     }
 
     interface Presenter {
@@ -124,6 +133,8 @@ public interface AnalysesView extends IsWidget,
             String deleteAnalysisError();
 
             String stopAnalysisError(String name);
+
+            String analysisStepInfoError();
         }
 
         void cancelSelectedAnalyses(List<Analysis> analysesToDelete);
@@ -149,6 +160,8 @@ public interface AnalysesView extends IsWidget,
         void setViewDebugId(String baseId);
 
         void updateAnalysisComment(Analysis value, String comment);
+
+        void getAnalysisStepInfo(Analysis value);
     }
 
     void filterByAnalysisId(String id, String name);

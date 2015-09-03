@@ -12,6 +12,7 @@ import org.iplantc.de.analysis.client.presenter.proxy.AnalysisRpcProxy;
 import org.iplantc.de.analysis.client.views.AnalysesToolBarImpl;
 import org.iplantc.de.analysis.client.views.AnalysesViewImpl;
 import org.iplantc.de.analysis.client.views.AnalysisColumnModel;
+import org.iplantc.de.analysis.client.views.AnalysisStepsView;
 import org.iplantc.de.analysis.client.views.parameters.AnalysisParamViewColumnModel;
 import org.iplantc.de.analysis.client.views.parameters.AnalysisParametersViewImpl;
 import org.iplantc.de.client.models.analysis.Analysis;
@@ -34,6 +35,7 @@ public class AnalysisGinModule extends AbstractGinModule {
         bind(AnalysesView.Presenter.class).to(AnalysesPresenterImpl.class);
         bind(AnalysisParametersView.Presenter.class).to(AnalysisParametersPresenterImpl.class);
         bind(AnalysisRpcProxy.class);
+        bind(AnalysisStepsView.class);
 
         install(new GinFactoryModuleBuilder()
                     .implement(AnalysesView.class, AnalysesViewImpl.class)

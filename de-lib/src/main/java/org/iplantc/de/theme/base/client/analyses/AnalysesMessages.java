@@ -67,4 +67,12 @@ public interface AnalysesMessages extends Messages {
     String viewParamLbl();
 
     String viewParameters(String name);
+
+    String analysisStepInfoError();
+
+    String viewAnalysisStepInfo();
+
+    String stepType();
+
+    String jobId();
 }

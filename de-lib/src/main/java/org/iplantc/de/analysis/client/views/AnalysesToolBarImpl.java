@@ -1,6 +1,7 @@
 package org.iplantc.de.analysis.client.views;
 
 import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.*;
+
 import org.iplantc.de.analysis.client.AnalysesView;
 import org.iplantc.de.analysis.client.AnalysisToolBarView;
 import org.iplantc.de.analysis.client.views.dialogs.AnalysisCommentsDialog;
@@ -55,6 +56,8 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
     @UiField ToolBar menuBar;
     @UiField MenuItem goToFolderMI;
     @UiField MenuItem viewParamsMI;
+    @UiField
+    MenuItem viewJobInfoMI;
     @UiField MenuItem relaunchMI;
     @UiField MenuItem cancelMI;
     @UiField MenuItem deleteMI;
@@ -67,6 +70,7 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
     @UiField AnalysisSearchField searchField;
     @UiField(provided = true) final AnalysesView.Appearance appearance;
     @Inject AsyncProvider<AnalysisParametersDialog> analysisParametersDialogAsyncProvider;
+
 
     private List<Analysis> currentSelection;
     private final AnalysesView.Presenter presenter;
@@ -147,6 +151,7 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
 
         goToFolderMI.setEnabled(goToFolderEnabled);
         viewParamsMI.setEnabled(viewParamsEnabled);
+        viewJobInfoMI.setEnabled(viewParamsEnabled);
         relaunchMI.setEnabled(relaunchEnabled);
         cancelMI.setEnabled(cancelEnabled);
         deleteMI.setEnabled(deleteEnabled);
@@ -164,6 +169,8 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
                 + AnalysisModule.Ids.MENUITEM_GO_TO_FOLDER);
         viewParamsMI.ensureDebugId(baseID + AnalysisModule.Ids.MENUITEM_ANALYSES
                 + AnalysisModule.Ids.MENUITEM_VIEW_PARAMS);
+        viewJobInfoMI.ensureDebugId(baseID + AnalysisModule.Ids.MENUITEM_ANALYSES
+                + AnalysisModule.Ids.MENUITEM_VIEW_ANALYSES_INFO);
         relaunchMI.ensureDebugId(baseID + AnalysisModule.Ids.MENUITEM_ANALYSES
                 + AnalysisModule.Ids.MENUITEM_RELAUNCH);
         cancelMI.ensureDebugId(baseID + AnalysisModule.Ids.MENUITEM_ANALYSES
@@ -340,6 +347,11 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
                 result.show(currentSelection.iterator().next());
             }
         });
+    }
+
+    @UiHandler("viewJobInfoMI")
+    void onViewAnalysisStepsInfo(SelectionEvent<Item> event) {
+        presenter.getAnalysisStepInfo(currentSelection.get(0));
     }
 
     @UiHandler("refreshTb")

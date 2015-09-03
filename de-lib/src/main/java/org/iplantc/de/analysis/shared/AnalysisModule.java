@@ -12,6 +12,7 @@ public interface AnalysisModule {
         String MENUITEM_ANALYSES = ".analyses";
         String MENUITEM_GO_TO_FOLDER = ".goToFolder";
         String MENUITEM_VIEW_PARAMS = ".viewParams";
+        String MENUITEM_VIEW_ANALYSES_INFO = ".viewInfo";
         String MENUITEM_RELAUNCH = ".relaunch";
         String MENUITEM_DELETE = ".delete";
         String MENUITEM_CANCEL = ".cancel";

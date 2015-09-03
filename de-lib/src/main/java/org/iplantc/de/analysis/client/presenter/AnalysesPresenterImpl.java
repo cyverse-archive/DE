@@ -7,10 +7,13 @@ import org.iplantc.de.analysis.client.events.selection.AnalysisAppSelectedEvent;
 import org.iplantc.de.analysis.client.events.selection.AnalysisNameSelectedEvent;
 import org.iplantc.de.analysis.client.gin.factory.AnalysesViewFactory;
 import org.iplantc.de.analysis.client.presenter.proxy.AnalysisRpcProxy;
+import org.iplantc.de.analysis.client.views.AnalysisStepsView;
+import org.iplantc.de.analysis.client.views.dialogs.AnalysisStepsInfoDialog;
 import org.iplantc.de.analysis.client.views.widget.AnalysisSearchField;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.diskResources.OpenFolderEvent;
 import org.iplantc.de.client.models.analysis.Analysis;
+import org.iplantc.de.client.models.analysis.AnalysisStepsInfo;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
@@ -43,10 +46,11 @@ import java.util.List;
  * 
  * @author sriram, jstroot
  */
-public class AnalysesPresenterImpl implements AnalysesView.Presenter,
-                                              AnalysisNameSelectedEvent.AnalysisNameSelectedEventHandler,
-                                              AnalysisAppSelectedEvent.AnalysisAppSelectedEventHandler,
-                                              HTAnalysisExpandEvent.HTAnalysisExpandEventHandler {
+public class AnalysesPresenterImpl implements
+                                  AnalysesView.Presenter,
+                                  AnalysisNameSelectedEvent.AnalysisNameSelectedEventHandler,
+                                  AnalysisAppSelectedEvent.AnalysisAppSelectedEventHandler,
+                                  HTAnalysisExpandEvent.HTAnalysisExpandEventHandler {
 
     private final class CancelAnalysisServiceCallback implements AsyncCallback<String> {
         private final Analysis ae;
@@ -87,7 +91,8 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
      * @author psarando
      * 
      */
-    private class FirstLoadHandler implements LoadHandler<FilterPagingLoadConfig, PagingLoadResult<Analysis>> {
+    private class FirstLoadHandler implements
+                                  LoadHandler<FilterPagingLoadConfig, PagingLoadResult<Analysis>> {
 
         private final List<Analysis> selectedAnalyses;
 
@@ -159,9 +164,15 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
         }
     }
 
-    @Inject AnalysisServiceFacade analysisService;
-    @Inject IplantAnnouncer announcer;
-    @Inject AnalysesView.Presenter.Appearance appearance;
+    @Inject
+    AnalysisServiceFacade analysisService;
+    @Inject
+    IplantAnnouncer announcer;
+    @Inject
+    AnalysesView.Presenter.Appearance appearance;
+    @Inject
+    AnalysisStepsView analysisStepView;
+
     private final ListStore<Analysis> listStore;
 
     private final AnalysesView view;
@@ -191,8 +202,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     @Override
     public void cancelSelectedAnalyses(final List<Analysis> analysesToCancel) {
         for (Analysis analysis : analysesToCancel) {
-            analysisService.stopAnalysis(analysis,
-                                         new CancelAnalysisServiceCallback(analysis));
+            analysisService.stopAnalysis(analysis, new CancelAnalysisServiceCallback(analysis));
         }
     }
 
@@ -219,8 +229,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
 
     @Override
     public void setSelectedAnalyses(final List<Analysis> selectedAnalyses) {
-        if (selectedAnalyses == null
-                || selectedAnalyses.isEmpty()) {
+        if (selectedAnalyses == null || selectedAnalyses.isEmpty()) {
             return;
         }
 
@@ -242,8 +251,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     }
 
     @Override
-    public void go(final HasOneWidget container,
-                   final List<Analysis> selectedAnalyses) {
+    public void go(final HasOneWidget container, final List<Analysis> selectedAnalyses) {
         if (selectedAnalyses != null && !selectedAnalyses.isEmpty()) {
             handlerFirstLoad = loader.addLoadHandler(new FirstLoadHandler(selectedAnalyses));
         }
@@ -269,8 +277,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     @Override
     public void goToSelectedAnalysisFolder(final Analysis selectedAnalysis) {
         // Request disk resource window
-        eventBus.fireEvent(new OpenFolderEvent(selectedAnalysis.getResultFolderId(),
-                                               true));
+        eventBus.fireEvent(new OpenFolderEvent(selectedAnalysis.getResultFolderId(), true));
     }
 
     @Override
@@ -303,13 +310,10 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     }
 
     @Override
-    public void renameSelectedAnalysis(final Analysis selectedAnalysis,
-                                       final String newName) {
+    public void renameSelectedAnalysis(final Analysis selectedAnalysis, final String newName) {
         analysisService.renameAnalysis(selectedAnalysis,
                                        newName,
-                                       new RenameAnalysisCallback(selectedAnalysis,
-                                                                  newName,
-                                                                  listStore));
+                                       new RenameAnalysisCallback(selectedAnalysis, newName, listStore));
     }
 
     @Override
@@ -318,17 +322,35 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     }
 
     @Override
-    public void updateAnalysisComment(final Analysis value,
-                                      final String comment) {
-        analysisService.updateAnalysisComments(value,
-                                               comment,
-                                               new UpdateCommentsCallback(value,
-                                                                          comment,
-                                                                          listStore));
+    public void updateAnalysisComment(final Analysis value, final String comment) {
+        analysisService.updateAnalysisComments(value, comment, new UpdateCommentsCallback(value,
+                                                                                          comment,
+                                                                                          listStore));
     }
 
     @Override
     public void onHTAnalysisExpanded(HTAnalysisExpandEvent event) {
         view.filterByParentAnalysisId(event.getValue().getId());
+    }
+
+    @Override
+    public void getAnalysisStepInfo(Analysis value) {
+        analysisService.getAnalysisSteps(value, new AsyncCallback<AnalysisStepsInfo>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                IplantAnnouncer.getInstance()
+                               .schedule(new ErrorAnnouncementConfig(appearance.analysisStepInfoError()));
+
+            }
+
+            @Override
+            public void onSuccess(AnalysisStepsInfo result) {
+                AnalysisStepsInfoDialog asid = new AnalysisStepsInfoDialog(analysisStepView);
+                asid.show();
+                analysisStepView.setData(result.getSteps());
+            }
+        });
+
     }
 }

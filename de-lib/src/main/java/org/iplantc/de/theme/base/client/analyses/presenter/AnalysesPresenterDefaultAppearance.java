@@ -69,4 +69,10 @@ public class AnalysesPresenterDefaultAppearance implements AnalysesView.Presente
     public String stopAnalysisError(String name) {
         return analysesMessages.stopAnalysisError(name);
     }
+
+    @Override
+    public String analysisStepInfoError() {
+        return analysesMessages.analysisStepInfoError();
+    }
+
 }

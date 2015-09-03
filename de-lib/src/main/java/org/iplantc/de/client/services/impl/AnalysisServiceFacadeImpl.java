@@ -9,6 +9,7 @@ import org.iplantc.de.client.models.analysis.AnalysesList;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
 import org.iplantc.de.client.models.analysis.AnalysisParametersList;
+import org.iplantc.de.client.models.analysis.AnalysisStepsInfo;
 import org.iplantc.de.client.models.analysis.SimpleValue;
 import org.iplantc.de.client.models.apps.integration.ArgumentType;
 import org.iplantc.de.client.models.apps.integration.SelectionItem;
@@ -120,6 +121,25 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
             parsedList.add(ap);
             return parsedList;
         }
+    }
+    
+    private class StringAnalaysisStepInfoConverter extends
+                                                  AsyncCallbackConverter<String, AnalysisStepsInfo> {
+
+        private final AnalysesAutoBeanFactory factory;
+
+        public StringAnalaysisStepInfoConverter(AsyncCallback<AnalysisStepsInfo> callback,
+                                                AnalysesAutoBeanFactory factory) {
+            super(callback);
+            this.factory = factory;
+        }
+
+        @Override
+        protected AnalysisStepsInfo convertFrom(String object) {
+            AnalysisStepsInfo as = AutoBeanCodex.decode(factory, AnalysisStepsInfo.class, object).as();
+            return as;
+        }
+        
     }
 
     private final AnalysesAutoBeanFactory factory;
@@ -258,6 +278,14 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address, body.getPayload());
         deServiceFacade.getServiceData(wrapper, new StringToVoidCallbackConverter(callback));
+    }
+
+    @Override
+    public void getAnalysisSteps(Analysis analysis, AsyncCallback<AnalysisStepsInfo> callback) {
+        String address = ANALYSES + "/" + analysis.getId() + "/steps";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
+        deServiceFacade.getServiceData(wrapper, new StringAnalaysisStepInfoConverter(callback, factory));
+
     }
 }
 

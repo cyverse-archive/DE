@@ -31,6 +31,10 @@
                                        text="{appearance.relaunchAnalysis}"
                                        icon="{appearance.runIcon}"
                                        enabled="false"/>
+                        <menu:MenuItem ui:field="viewJobInfoMI"
+                                       text="{appearance.viewAnalysisStepInfo}"
+                                       icon="{appearance.fileViewIcon}"
+                                       enabled="false"/>               
                         <menu:MenuItem ui:field="cancelMI"
                                        text="{appearance.cancelAnalysis}"
                                        icon="{appearance.deleteIcon}"

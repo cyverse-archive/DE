@@ -2,6 +2,7 @@ package org.iplantc.de.client.services;
 
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
+import org.iplantc.de.client.models.analysis.AnalysisStepsInfo;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -48,4 +49,12 @@ public interface AnalysisServiceFacade {
     void getAnalysisParams(Analysis analysis, AsyncCallback<List<AnalysisParameter>> callback);
 
     void updateAnalysisComments(Analysis analysis, String newComment, AsyncCallback<Void> callback);
+
+    /**
+     * 
+     * @sriram: the URL path for the new service will be `/analyses/:analysis-id/steps`
+     * @param analysis
+     * @param callback
+     */
+    void getAnalysisSteps(Analysis analysis, AsyncCallback<AnalysisStepsInfo> callback);
 }

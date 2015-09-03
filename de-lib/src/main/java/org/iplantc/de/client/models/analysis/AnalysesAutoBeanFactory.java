@@ -24,4 +24,8 @@ public interface AnalysesAutoBeanFactory extends AutoBeanFactory {
     AutoBean<SelectionItem> getSelectionItem();
 
     AutoBean<SimpleValue> getSimpleValue();
+
+    AutoBean<AnalysisStepsInfo> getAnalysisStepsInfo();
+
+    AutoBean<AnalysisStep> getAnalysisStep();
 }
