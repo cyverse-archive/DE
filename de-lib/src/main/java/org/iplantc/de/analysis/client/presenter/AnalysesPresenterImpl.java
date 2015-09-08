@@ -348,6 +348,7 @@ public class AnalysesPresenterImpl implements
             public void onSuccess(AnalysisStepsInfo result) {
                 AnalysisStepsInfoDialog asid = new AnalysisStepsInfoDialog(analysisStepView);
                 asid.show();
+                analysisStepView.clearData();
                 analysisStepView.setData(result.getSteps());
             }
         });

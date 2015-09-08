@@ -158,4 +158,8 @@ public class AnalysisStepsView extends Composite {
         listStore.addAll(steps);
     }
 
+    public void clearData() {
+        listStore.clear();
+    }
+
 }
