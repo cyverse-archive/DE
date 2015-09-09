@@ -202,7 +202,7 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
         final App app = appFavoritedEvent.getApp();
         final AppCategory currentCategory = getSelectedAppCategory();
 
-        if (!FAVORITES.equals(currentCategory.getName())) {
+        if (currentCategory == null || !FAVORITES.equals(currentCategory.getName())) {
             // Adjust favorite category count.
             final AppCategory favoriteCategory = findAppCategoryByName(FAVORITES);
             int favCountAdjustment = app.isFavorite() ? 1 : -1;

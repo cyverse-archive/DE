@@ -371,6 +371,55 @@ public class AppCategoriesPresenterImplTest {
     }
 
     /**
+     * Verify that when the current category null i.e when searching, that the favorites category count
+     * is updated
+     */
+    @Test
+    public void favoritesCategoryCountUpdated_onAppFavorited_onSearch() {
+
+        final AppCategoriesPresenterImpl spy = spy(new AppCategoriesPresenterImpl(treeStoreMock,
+                                                                                  propsMock,
+                                                                                  jsonUtilMock,
+                                                                                  eventBusMock,
+                                                                                  viewFactoryMock));
+        // Setup fav category
+        uut.FAVORITES = "Favorites";
+        AppCategory favoritesCat = mock(AppCategory.class);
+        when(favoritesCat.getName()).thenReturn(uut.FAVORITES);
+        int startingFavCount = 4;
+        when(favoritesCat.getAppCount()).thenReturn(startingFavCount);
+
+        // Set current category as null
+        AppCategory appCategoryMock = null;
+        when(selectionModelMock.getSelectedItem()).thenReturn(appCategoryMock);
+
+        // Set treeStore items
+        when(treeStoreMock.getAll()).thenReturn(Lists.newArrayList(favoritesCat));
+
+        AppFavoritedEvent mockEvent = mock(AppFavoritedEvent.class);
+        final App mockApp = mock(App.class);
+        when(mockEvent.getApp()).thenReturn(mockApp);
+        when(mockApp.isFavorite()).thenReturn(true);
+
+        /*** CALL METHOD UNDER TEST ***/
+        spy.onAppFavorited(mockEvent);
+
+        verify(spy).findAppCategoryByName(eq(uut.FAVORITES));
+
+        // Verify count is incremented when app is favorite
+        verify(spy).updateAppCategoryAppCount(eq(favoritesCat), eq(startingFavCount + 1));
+
+        // Set app to NOT favorite, and repeat test
+        when(mockApp.isFavorite()).thenReturn(false);
+
+        /*** CALL METHOD UNDER TEST ***/
+        spy.onAppFavorited(mockEvent);
+
+        // Verify count is incremented when app is favorite
+        verify(spy).updateAppCategoryAppCount(eq(favoritesCat), eq(startingFavCount - 1));
+    }
+
+    /**
      * Verify that the {@link AppDetailsDialog} is properly constructed and shown
      * on App info selection.
      */
