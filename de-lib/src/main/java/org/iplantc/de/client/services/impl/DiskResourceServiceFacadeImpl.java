@@ -773,9 +773,13 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         }
         body.put("paths", tickets);
 
+        HashMap<String, String> mdcMap = Maps.newHashMap();
+        mdcMap.put(METRIC_TYPE_KEY, SHARE_EVENT);
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, fullAddress, body.toString());
         wrapper.setArguments(args);
-        callService(wrapper, new AsyncCallbackConverter<String, List<DataLink>>(callback) {
+        deServiceFacade.getServiceData(wrapper,
+                                       mdcMap,
+                                       new AsyncCallbackConverter<String, List<DataLink>>(callback) {
             @Override
             protected List<DataLink> convertFrom(String object) {
                 AutoBean<DataLinkList> tickets = AutoBeanCodex.decode(factory, DataLinkList.class, object);
@@ -803,9 +807,13 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
 
         JSONObject body = new JSONObject();
         body.put("tickets", buildArrayFromStrings(dataLinkIds));
+        HashMap<String, String> mdcMap = Maps.newHashMap();
+        mdcMap.put(METRIC_TYPE_KEY, SHARE_EVENT);
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, fullAddress, body.toString());
-        callService(wrapper, callback);
+        deServiceFacade.getServiceData(wrapper,
+                                       mdcMap,
+                                       callback);
     }
 
     JSONArray buildArrayFromStrings(List<?> items) {
