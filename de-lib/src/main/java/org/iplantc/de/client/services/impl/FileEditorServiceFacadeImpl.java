@@ -151,7 +151,7 @@ public class FileEditorServiceFacadeImpl implements FileEditorServiceFacade {
 
     @Override
     public void viewGenomes(JSONObject pathArray, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "coge/load-genomes";
+        String address = deProperties.getUnproctedMuleServiceBaseUrl() + "coge/genomes/load";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address,
                 pathArray.toString());
         callService(wrapper, callback);
