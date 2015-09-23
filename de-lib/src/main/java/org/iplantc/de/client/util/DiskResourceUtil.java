@@ -7,6 +7,7 @@ import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.client.models.diskResources.DiskResourceFavorite;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
@@ -180,9 +181,10 @@ public class DiskResourceUtil {
     }
 
     public boolean canUploadTo(DiskResource resource) {
-        return (isOwner(resource)|| isWritable(resource))
-                       && (resource instanceof Folder)
+        return (resource instanceof Folder)
+                       && !(resource instanceof DiskResourceFavorite)
                        && !(resource instanceof DiskResourceQueryTemplate)
+                       && (isOwner(resource)|| isWritable(resource))
                        && !inTrash(resource);
     }
 

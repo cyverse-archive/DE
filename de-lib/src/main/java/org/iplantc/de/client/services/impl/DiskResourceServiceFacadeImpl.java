@@ -527,6 +527,11 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     public void refreshFolder(Folder parent, final AsyncCallback<List<Folder>> callback) {
         final Folder folder = findModel(parent);
         if (folder == null) {
+            // If this folder is not in the cache, it may be a pseudo-folder like 'Favorites'.
+            // Notify all listeners now so they can handle refreshing this kind of folder.
+            List<Folder> result = Lists.newArrayList();
+            callback.onSuccess(result);
+            eventBus.fireEvent(new FolderRefreshedEvent(parent));
             return;
         }
 
