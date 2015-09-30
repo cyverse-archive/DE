@@ -72,6 +72,8 @@ public interface DiskResourceModule {
 
         String MENU_ITEM_NCBI_SRA = ".ncbisra";
 
+        String MENU_ITEM_IMPORT_FROM_COGE = ".CogeImport";
+
     }
 
     interface MetadataIds {

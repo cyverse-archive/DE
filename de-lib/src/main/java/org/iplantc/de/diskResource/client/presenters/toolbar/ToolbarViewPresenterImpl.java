@@ -2,11 +2,17 @@ package org.iplantc.de.diskResource.client.presenters.toolbar;
 
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.diskResources.OpenFolderEvent;
+import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
+import org.iplantc.de.client.models.genomes.GenomeAutoBeanFactory;
+import org.iplantc.de.client.models.genomes.GenomeList;
 import org.iplantc.de.client.models.viewer.MimeType;
+import org.iplantc.de.client.services.FileEditorServiceFacade;
+import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
+import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
@@ -24,20 +30,27 @@ import org.iplantc.de.diskResource.client.gin.factory.DataLinkPresenterFactory;
 import org.iplantc.de.diskResource.client.gin.factory.ToolbarViewFactory;
 import org.iplantc.de.diskResource.client.views.dialogs.CreateFolderDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.CreateNcbiSraFolderStructureDialog;
+import org.iplantc.de.diskResource.client.views.dialogs.GenomeSearchDialog;
 import org.iplantc.de.diskResource.client.views.toolbar.dialogs.TabFileConfigDialog;
 
 import com.google.common.base.Preconditions;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import com.google.web.bindery.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import static com.sencha.gxt.widget.core.client.Dialog.PredefinedButton.CANCEL;
 import static com.sencha.gxt.widget.core.client.Dialog.PredefinedButton.OK;
 
+import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
+import com.sencha.gxt.widget.core.client.box.MessageBox;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @author jstroot
@@ -48,16 +61,28 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
     @Inject ToolbarView.Presenter.Appearance appearance;
     @Inject DataLinkPresenterFactory dataLinkPresenterFactory;
     @Inject EventBus eventBus;
+
+    FileEditorServiceFacade facade;
+
+    private final GenomeSearchDialog genomeSearchView;
+    final private GenomeAutoBeanFactory gFactory;
     private final DiskResourceView.Presenter parentPresenter;
     private final ToolbarView view;
 
+    Logger LOG = Logger.getLogger(ToolbarViewPresenterImpl.class.getSimpleName());
+
     @Inject
     ToolbarViewPresenterImpl(final ToolbarViewFactory viewFactory,
+                             GenomeSearchDialog genomeSearchView,
+                             GenomeAutoBeanFactory gFactory,
                              @Assisted DiskResourceView.Presenter parentPresenter) {
         this.parentPresenter = parentPresenter;
         this.view = viewFactory.create(this);
-
+        this.facade = ServicesInjector.INSTANCE.getFileEditorServiceFacade();
         view.addSimpleDownloadSelectedHandler(this);
+        this.genomeSearchView = genomeSearchView;
+        this.genomeSearchView.setPresenter(this);
+        this.gFactory = gFactory;
     }
 
     @Override
@@ -196,6 +221,56 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
     public void onSimpleDownloadSelected(SimpleDownloadSelected event) {
         eventBus.fireEvent(new RequestSimpleDownloadEvent(event.getSelectedDiskResources(),
                                                           event.getSelectedFolder()));
+    }
+
+    @Override
+    public void onImportFromCoge() {
+        view.openViewForGenomeSearch(genomeSearchView);
+
+    }
+
+    @Override
+    public void searchGenomeInCoge(String searchTerm) {
+        facade.searchGenomesInCoge(searchTerm, new AsyncCallback<String>() {
+
+            @Override
+            public void onSuccess(String result) {
+                AutoBean<GenomeList> genomesBean = AutoBeanCodex.decode(gFactory, GenomeList.class, result);
+                GenomeList list = genomesBean.as();
+                genomeSearchView.loadResults(list.getGenomes());
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                IplantAnnouncer.getInstance()
+                               .schedule(new ErrorAnnouncementConfig(appearance.cogeSearchError()));
+
+            }
+        });
+
+    }
+
+    @Override
+    public void importGenomeFromCoge(Integer id) {
+        facade.importGenomeFromCoge(id, true, new AsyncCallback<String>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                IplantAnnouncer.getInstance()
+                               .schedule(new ErrorAnnouncementConfig(appearance.cogeImportGenomeError()));
+
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                MessageBox amb = new MessageBox(appearance.importFromCoge(),
+                                                          appearance.cogeImportGenomeSucess());
+                amb.setIcon(MessageBox.ICONS.info());
+                amb.show();
+            }
+
+        });
+
     }
 
 }

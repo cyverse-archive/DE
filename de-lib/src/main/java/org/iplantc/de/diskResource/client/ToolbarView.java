@@ -24,6 +24,7 @@ import org.iplantc.de.diskResource.client.events.selection.SendToTreeViewerSelec
 import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelected.HasShareByDataLinkSelectedEventHandlers;
 import org.iplantc.de.diskResource.client.events.selection.SimpleDownloadSelected.HasSimpleDownloadSelectedHandlers;
 import org.iplantc.de.diskResource.client.events.selection.SimpleUploadSelected.HasSimpleUploadSelectedHandlers;
+import org.iplantc.de.diskResource.client.views.dialogs.GenomeSearchDialog;
 import org.iplantc.de.diskResource.client.views.search.DiskResourceSearchField;
 
 import com.google.gwt.resources.client.ImageResource;
@@ -214,6 +215,8 @@ public interface ToolbarView extends IsWidget,
         String saveMetadataMenuItem();
         
         String sendToNcbiSraItem();
+
+        String importFromCoge();
     }
 
     interface Presenter {
@@ -237,6 +240,14 @@ public interface ToolbarView extends IsWidget,
             int manageDataLinksDialogWidth();
 
             String manageDataLinksHelp();
+
+            String cogeSearchError();
+
+            String cogeImportGenomeError();
+
+            String cogeImportGenomeSucess();
+
+            String importFromCoge();
         }
 
         ToolbarView getView();
@@ -261,6 +272,12 @@ public interface ToolbarView extends IsWidget,
 
         void onOpenTrashFolderSelected();
 
+        void onImportFromCoge();
+
+        void searchGenomeInCoge(String searchTerm);
+
+        void importGenomeFromCoge(Integer id);
+
     }
 
     DiskResourceSearchField getSearchField();
@@ -276,4 +293,6 @@ public interface ToolbarView extends IsWidget,
     void unmaskSendToEnsembl();
 
     void unmaskSendToTreeViewer();
+
+    void openViewForGenomeSearch(GenomeSearchDialog view);
 }

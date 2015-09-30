@@ -220,7 +220,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
         JSONArray pathArr = new JSONArray();
         pathArr.set(0, new JSONString(file.getPath()));
         obj.put("paths", pathArr);
-        fileEditorServiceProvider.get().viewGenomes(obj, new LoadGenomeInCoGeCallback(null));
+        fileEditorServiceProvider.get().loadGenomesInCoge(obj, new LoadGenomeInCoGeCallback(null));
     }
 
     @Override

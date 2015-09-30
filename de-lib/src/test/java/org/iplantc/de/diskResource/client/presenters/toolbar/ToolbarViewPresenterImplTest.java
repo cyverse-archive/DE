@@ -3,16 +3,19 @@ package org.iplantc.de.diskResource.client.presenters.toolbar;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.genomes.GenomeAutoBeanFactory;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.ToolbarView;
 import org.iplantc.de.diskResource.client.events.RequestSimpleDownloadEvent;
 import org.iplantc.de.diskResource.client.events.selection.SimpleDownloadSelected;
 import org.iplantc.de.diskResource.client.gin.factory.ToolbarViewFactory;
+import org.iplantc.de.diskResource.client.views.dialogs.GenomeSearchDialog;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,12 +36,18 @@ public class ToolbarViewPresenterImplTest {
     @Mock DiskResourceView.Presenter parentPresenterMock;
     @Mock EventBus eventBusMock;
     @Mock ToolbarView viewMock;
+    @Mock
+    GenomeSearchDialog genomeSearchView;
+    @Mock
+    GenomeAutoBeanFactory gFactory;
 
     private ToolbarViewPresenterImpl uut;
 
     @Before public void setUp() {
         when(viewFactoryMock.create(Matchers.<ToolbarView.Presenter>any())).thenReturn(viewMock);
         uut = new ToolbarViewPresenterImpl(viewFactoryMock,
+                                           genomeSearchView,
+                                           gFactory,
                                            parentPresenterMock);
         uut.eventBus = eventBusMock;
     }

@@ -128,5 +128,9 @@
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.search.cells.DiskResourceSearchCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.search.cells.DiskResourceSearchCell.DiskResourceSearchCellAppearance"/>
     </replace-with>
-
+    
+    <!-- Coge genome import -->
+      <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.GenomeSearchDialogDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.GenomeSearchDialog.Appearance"/>
+    </replace-with>
 </module>

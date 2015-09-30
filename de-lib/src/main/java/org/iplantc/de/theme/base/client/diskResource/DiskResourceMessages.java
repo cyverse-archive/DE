@@ -152,4 +152,31 @@ public interface DiskResourceMessages extends Messages {
 
     String ncbiCreateFolderStructureSuccess();
 
+    /**
+     * Genome Import Dialog strings
+     */
+    String heading();
+
+    String loading();
+
+    String importText();
+
+    String searchGenome();
+
+    String organismName();
+
+    String version();
+
+    String chromosomeCount();
+
+    String sequenceType();
+
+    String cogeSearchError();
+
+    String cogeImportGenomeError();
+
+    String cogeImportGenomeSucess();
+
+    String importFromCoge();
+
 }

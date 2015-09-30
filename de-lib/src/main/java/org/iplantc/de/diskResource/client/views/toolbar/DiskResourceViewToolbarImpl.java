@@ -10,8 +10,27 @@ import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.diskResource.client.ToolbarView;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.events.selection.*;
+import org.iplantc.de.diskResource.client.events.selection.CopyMetadataSelected;
+import org.iplantc.de.diskResource.client.events.selection.DeleteDiskResourcesSelected;
+import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
+import org.iplantc.de.diskResource.client.events.selection.EmptyTrashSelected;
+import org.iplantc.de.diskResource.client.events.selection.ImportFromUrlSelected;
+import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelected;
+import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelected;
+import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
+import org.iplantc.de.diskResource.client.events.selection.MoveDiskResourcesSelected;
+import org.iplantc.de.diskResource.client.events.selection.RefreshFolderSelected;
+import org.iplantc.de.diskResource.client.events.selection.RenameDiskResourceSelected;
+import org.iplantc.de.diskResource.client.events.selection.RestoreDiskResourcesSelected;
+import org.iplantc.de.diskResource.client.events.selection.SaveMetadataSelected;
 import org.iplantc.de.diskResource.client.events.selection.SaveMetadataSelected.SaveMetadataSelectedEventHandler;
+import org.iplantc.de.diskResource.client.events.selection.SendToCogeSelected;
+import org.iplantc.de.diskResource.client.events.selection.SendToEnsemblSelected;
+import org.iplantc.de.diskResource.client.events.selection.SendToTreeViewerSelected;
+import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelected;
+import org.iplantc.de.diskResource.client.events.selection.SimpleDownloadSelected;
+import org.iplantc.de.diskResource.client.events.selection.SimpleUploadSelected;
+import org.iplantc.de.diskResource.client.views.dialogs.GenomeSearchDialog;
 import org.iplantc.de.diskResource.client.views.search.DiskResourceSearchField;
 import org.iplantc.de.diskResource.share.DiskResourceModule.Ids;
 
@@ -68,7 +87,8 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
  sendToEnsemblMi,
             sendToTreeViewerMi, createNcbiSraMi;
     @UiField MenuItem simpleDownloadMi, bulkDownloadMi;
-    @UiField MenuItem simpleUploadMi, bulkUploadMi, importFromUrlMi;
+    @UiField
+    MenuItem simpleUploadMi, bulkUploadMi, importFromUrlMi, importFromCogeMi;
     @UiField TextButton trashMenu;
     @UiField TextButton uploadMenu;
     @UiField
@@ -283,6 +303,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         simpleUploadMi.setEnabled(simpleUploadMiEnabled);
         bulkUploadMi.setEnabled(bulkUploadMiEnabled);
         importFromUrlMi.setEnabled(importFromUrlMiEnabled);
+        importFromCogeMi.setEnabled(simpleUploadMiEnabled);
 
         newFolderMi.setEnabled(newFolderMiEnabled);
         createNcbiSraMi.setEnabled(newFolderMiEnabled);
@@ -511,6 +532,11 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
     void onSimpleUploadClicked(SelectionEvent<Item> event) {
         fireEvent(new SimpleUploadSelected(selectedFolder));
     }
+
+    @UiHandler("importFromCogeMi")
+    void onImportFormCoge(SelectionEvent<Item> event) {
+        presenter.onImportFromCoge();
+    }
     //</editor-fold>
 
     @Override
@@ -567,6 +593,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         simpleUploadMi.ensureDebugId(baseID + Ids.UPLOAD_MENU + Ids.MENU_ITEM_SIMPLE_UPLOAD);
         bulkUploadMi.ensureDebugId(baseID + Ids.UPLOAD_MENU + Ids.MENU_ITEM_BULK_UPLOAD);
         importFromUrlMi.ensureDebugId(baseID + Ids.UPLOAD_MENU + Ids.MENU_ITEM_IMPORT_FROM_URL);
+        importFromCogeMi.ensureDebugId(baseID + Ids.UPLOAD_MENU + Ids.MENU_ITEM_IMPORT_FROM_COGE);
 
         // File menu
         newWindowMi.ensureDebugId(baseID + Ids.FILE_MENU + Ids.MENU_ITEM_NEW_WINDOW);
@@ -667,5 +694,14 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
     public HandlerRegistration
             addSaveMetadataSelectedEventHandler(SaveMetadataSelectedEventHandler handler) {
         return addHandler(handler, SaveMetadataSelected.TYPE);
+    }
+
+    @Override
+    public void openViewForGenomeSearch(GenomeSearchDialog view) {
+        GenomeSearchDialog dialog = view;
+        dialog.clearView();
+        dialog.setSize("600px", "300px");
+        dialog.show();
+
     }
 }

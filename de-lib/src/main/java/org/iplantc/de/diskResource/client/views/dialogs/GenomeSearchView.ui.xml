@@ -1,0 +1,51 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
+	xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+	xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+	xmlns:menu="urn:import:com.sencha.gxt.widget.core.client.menu"
+	xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+	xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+	xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid">
+
+	<ui:with
+		type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData"
+		field="toolBarLayoutData">
+		<ui:attributes width="1" height="-1" />
+	</ui:with>
+
+	<ui:with
+		type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData"
+		field="gridLayoutData">
+		<ui:attributes width="1" height="1" />
+	</ui:with>
+
+	<ui:with type="com.sencha.gxt.data.shared.ListStore" field="store" />
+
+	<ui:with type="com.sencha.gxt.widget.core.client.grid.ColumnModel"
+		field="cm" />
+
+	<ui:with type="com.sencha.gxt.widget.core.client.grid.GridView"
+		field="view">
+		<ui:attributes stripeRows="true"></ui:attributes>
+	</ui:with>
+
+	<ui:with type="com.sencha.gxt.data.shared.StringLabelProvider"
+		field="labelProvider" />
+
+<container:SimpleContainer pixelSize="590, 290">
+	<container:VerticalLayoutContainer>
+		<container:child layoutData="{toolBarLayoutData}">
+			<toolbar:ToolBar>
+				<toolbar:LabelToolItem label="Search Genomes:" />
+				<form:TextField width="250" ui:field="searchtxt">
+				</form:TextField>
+				<button:TextButton ui:field="importBtn" text="Import" enabled="false"></button:TextButton>
+			</toolbar:ToolBar>
+		</container:child>
+		<container:child layoutData="{gridLayoutData}">
+			<grid:Grid ui:field="grid" cm="{cm}" store="{store}" view="{view}" />
+		</container:child>
+	</container:VerticalLayoutContainer>
+	</container:SimpleContainer>
+</ui:UiBinder>

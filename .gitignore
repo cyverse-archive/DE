@@ -38,5 +38,7 @@ applications/config*
 #ignore class files
 *.class
 
-$ignore bin
+#ignore bin
 bin/
+#ignore logs
+log/

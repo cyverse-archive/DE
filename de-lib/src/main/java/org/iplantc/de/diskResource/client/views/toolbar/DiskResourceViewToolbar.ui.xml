@@ -26,6 +26,8 @@
 							text="{appearance.bulkUploadFromDesktop}" icon="{appearance.importDataIcon}" />
 						<menu:MenuItem ui:field="importFromUrlMi"
 							text="{appearance.importFromUrlMenuItem}" icon="{appearance.importDataIcon}" />
+						<menu:MenuItem ui:field="importFromCogeMi" text="{appearance.importFromCoge}"
+							icon="{appearance.importDataIcon}" />
 					</menu:Menu>
 				</button:menu>
 			</button:TextButton>

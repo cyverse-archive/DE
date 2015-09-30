@@ -156,7 +156,7 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
                 JSONArray pathArr = new JSONArray();
                 pathArr.set(0, new JSONString(file.getPath()));
                 obj.put("paths", pathArr);
-                fileEditorService.viewGenomes(obj, new LoadGenomeInCoGeCallback(ExternalVisualizationURLViewerImpl.this));
+                fileEditorService.loadGenomesInCoge(obj, new LoadGenomeInCoGeCallback(ExternalVisualizationURLViewerImpl.this));
             }
         });
         return button;

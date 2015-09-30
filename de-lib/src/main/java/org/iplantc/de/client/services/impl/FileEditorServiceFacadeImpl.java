@@ -1,12 +1,14 @@
 package org.iplantc.de.client.services.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
+
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
+import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -150,11 +152,28 @@ public class FileEditorServiceFacadeImpl implements FileEditorServiceFacade {
     }
 
     @Override
-    public void viewGenomes(JSONObject pathArray, AsyncCallback<String> callback) {
+    public void loadGenomesInCoge(JSONObject pathArray, AsyncCallback<String> callback) {
         String address = deProperties.getUnproctedMuleServiceBaseUrl() + "coge/genomes/load";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address,
                 pathArray.toString());
         callService(wrapper, callback);
 
     }
+
+    @Override
+    public void searchGenomesInCoge(String searchTxt, AsyncCallback<String> callback) {
+        String address = deProperties.getUnproctedMuleServiceBaseUrl() + "coge/genomes?search="
+                + URL.encodeQueryString(searchTxt);
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.GET, address);
+        callService(wrapper, callback);
+    }
+
+    @Override
+    public void importGenomeFromCoge(Integer id, boolean notify, AsyncCallback<String> callback) {
+        String address = deProperties.getUnproctedMuleServiceBaseUrl() + "coge/genomes/" + id
+                + "/export-fasta?notify=true";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.POST, address, "{}");
+        callService(wrapper, callback);
+    }
+
 }

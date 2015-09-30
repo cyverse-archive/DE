@@ -73,4 +73,24 @@ public class ToolbarViewPresenterDefaultAppearance implements ToolbarView.Presen
     public String manageDataLinksHelp() {
         return displayMessages.manageDataLinksHelp();
     }
+
+    @Override
+    public String importFromCoge() {
+        return diskResourceMessages.importFromCoge();
+    }
+
+    @Override
+    public String cogeSearchError() {
+        return diskResourceMessages.cogeSearchError();
+    }
+
+    @Override
+    public String cogeImportGenomeError() {
+        return diskResourceMessages.cogeImportGenomeError();
+    }
+
+    @Override
+    public String cogeImportGenomeSucess() {
+        return diskResourceMessages.cogeImportGenomeSucess();
+    }
 }

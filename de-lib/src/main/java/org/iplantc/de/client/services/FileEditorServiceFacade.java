@@ -67,8 +67,12 @@ public interface FileEditorServiceFacade {
      * @param pathArray
      * @param callback
      */
-    void viewGenomes(JSONObject pathArray,AsyncCallback<String> callback);
+    void loadGenomesInCoge(JSONObject pathArray,AsyncCallback<String> callback);
+
+    void searchGenomesInCoge(String searchTxt, AsyncCallback<String> callback);
 
     void uploadTextAsFile(String destination, String fileContents, boolean newFile, AsyncCallback<File> callback);
+    
+    void importGenomeFromCoge(Integer id, boolean notify, AsyncCallback<String> callback);
 
 }

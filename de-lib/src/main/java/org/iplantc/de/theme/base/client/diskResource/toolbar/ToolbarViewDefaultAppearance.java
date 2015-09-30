@@ -464,7 +464,13 @@ public class ToolbarViewDefaultAppearance implements ToolbarView.Appearance {
         return displayMessages.saveMetadataMenuItem();
     }
 
+    @Override
     public String sendToNcbiSraItem() {
         return displayMessages.sendToNcbiSraItem();
+    }
+
+    @Override
+    public String importFromCoge() {
+        return displayMessages.importFromCoge();
     }
 }

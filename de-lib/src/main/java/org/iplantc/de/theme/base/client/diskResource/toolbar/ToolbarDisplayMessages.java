@@ -121,4 +121,6 @@ public interface ToolbarDisplayMessages extends Messages {
     String saveMetadataMenuItem();
 
     String sendToNcbiSraItem();
+
+    String importFromCoge();
 }
