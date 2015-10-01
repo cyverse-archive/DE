@@ -1,189 +1,156 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	         xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	         xmlns:con="urn:import:com.sencha.gxt.widget.core.client.container"
-	         xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
-	         xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
-	         xmlns:comWidgets="urn:import:org.iplantc.de.commons.client.widgets">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:con="urn:import:com.sencha.gxt.widget.core.client.container"
+	xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client" xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+	xmlns:comWidgets="urn:import:org.iplantc.de.commons.client.widgets">
 	<ui:with field="res"
-	         type="org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance"/>
-    <ui:with field="icons"
-             type="org.iplantc.de.resources.client.IplantResources" />
-    <ui:with field="strings"
-             type="org.iplantc.de.resources.client.uiapps.integration.AppIntegrationMessages"/>
-    <ui:with field="contextHelp"
-             type="org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsContextualHelpMessages"/>
-    <ui:with field="margins"
-            type="com.sencha.gxt.core.client.util.Margins">
-      <ui:attributes top="0"
-                     right="2"
-                     bottom="1"
-                     left="2" />
-    </ui:with>
-    <ui:with type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData" field="childData">
-        <ui:attributes margins="{margins}" />
-    </ui:with>
+		type="org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance" />
+	<ui:with field="icons"
+		type="org.iplantc.de.resources.client.IplantResources" />
+	<ui:with field="strings"
+		type="org.iplantc.de.resources.client.uiapps.integration.AppIntegrationMessages" />
+	<ui:with field="contextHelp"
+		type="org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsContextualHelpMessages" />
+	<ui:with field="margins" type="com.sencha.gxt.core.client.util.Margins">
+		<ui:attributes top="0" right="2" bottom="1" left="2" />
+	</ui:with>
+	<ui:with
+		type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData"
+		field="childData">
+		<ui:attributes margins="{margins}" />
+	</ui:with>
 	<con:VerticalLayoutContainer scrollMode="AUTOY">
-	   
+
 		<con:child layoutData="{childData}">
-			<g:Image ui:field="group" 
-			         resource="{icons.inputSection}"
-			         styleName="{res.getStyle.grab}" />
+			<g:Image ui:field="group" resource="{icons.inputSection}"
+				styleName="{res.getStyle.grab}" />
 		</con:child>
-	   <gxt:ContentPanel headingText="{strings.fileFolderCategoryTitle}"
-	                     collapsible="true"
-	                     titleCollapse="true"
-	                     expanded="true">
-	       <gxt:tool>
-               <button:ToolButton ui:field="fileFolderCategoryHelpBtn"/>
-           </gxt:tool>
-	       <con:VerticalLayoutContainer>
+		<gxt:ContentPanel headingText="{strings.fileFolderCategoryTitle}"
+			collapsible="true" titleCollapse="true" expanded="true">
+			<gxt:tool>
+				<button:ToolButton ui:field="fileFolderCategoryHelpBtn" />
+			</gxt:tool>
+			<con:VerticalLayoutContainer>
 				<con:child layoutData="{childData}">
-					<g:Image ui:field="multiFileSelector"
-						     resource="{icons.inputFileMulti}"
-						     styleName="{res.getStyle.grab}" />
+					<g:Image ui:field="multiFileSelector" resource="{icons.inputFileMulti}"
+						styleName="{res.getStyle.grab}" />
 				</con:child>
 				<con:child layoutData="{childData}">
-					<g:Image ui:field="fileInput"
-						     resource="{icons.inputFile}"
-						     styleName="{res.getStyle.grab}" />
+					<g:Image ui:field="fileInput" resource="{icons.inputFile}"
+						styleName="{res.getStyle.grab}" />
 				</con:child>
 				<con:child layoutData="{childData}">
-		            <g:Image ui:field="folderInput"
-		                     resource="{icons.inputFolder}"
-						     styleName="{res.getStyle.grab}"/>
-		        </con:child>
-	       </con:VerticalLayoutContainer>
-	   </gxt:ContentPanel>
-	   
-	   <gxt:ContentPanel headingText="{strings.listsCategoryTitle}"
-                         collapsible="true"
-                         titleCollapse="true"
-                         expanded="true">
-            <gxt:tool>
-               <button:ToolButton ui:field="listsCategoryHelpBtn"/>
-           </gxt:tool>
-            <con:VerticalLayoutContainer>
-				<con:child layoutData="{childData}">
-					<g:Image ui:field="singleSelect"
-						     resource="{icons.inputSelectSingle}"
-						     styleName="{res.getStyle.grab}" />
+					<g:Image ui:field="folderInput" resource="{icons.inputFolder}"
+						styleName="{res.getStyle.grab}" />
 				</con:child>
+			</con:VerticalLayoutContainer>
+		</gxt:ContentPanel>
+
+		<gxt:ContentPanel headingText="{strings.textNumericalInputCategoryTitle}"
+			collapsible="true" titleCollapse="true" expanded="true">
+			<gxt:tool>
+				<button:ToolButton ui:field="textNumericalInputCategoryHelpBtn" />
+			</gxt:tool>
+			<con:VerticalLayoutContainer>
 				<con:child layoutData="{childData}">
-				    <g:Image ui:field="integerSelection"
-				             resource="{icons.inputSelectInteger}"
-						     styleName="{res.getStyle.grab}"/>
+					<g:Image ui:field="info" resource="{icons.generalInfoText}"
+						styleName="{res.getStyle.grab}" />
 				</con:child>
-				<con:child layoutData="{childData}">
-				    <g:Image ui:field="doubleSelection"
-				             resource="{icons.inputSelectDouble}"
-						     styleName="{res.getStyle.grab}"/>
-				</con:child>
-				<con:child layoutData="{childData}">
-					<g:Image ui:field="treeSelection"
-						     resource="{icons.inputSelectGrouped}"
-						     styleName="{res.getStyle.grab}" />
-				</con:child>
-            </con:VerticalLayoutContainer>	   
-	   </gxt:ContentPanel>
-	   
-	   <gxt:ContentPanel headingText="{strings.textNumericalInputCategoryTitle}"
-                         collapsible="true"
-                         titleCollapse="true"
-                         expanded="true">
-           <gxt:tool>
-               <button:ToolButton ui:field="textNumericalInputCategoryHelpBtn"/>
-           </gxt:tool>
-	       <con:VerticalLayoutContainer>
-                <con:child layoutData="{childData}">
-		           <g:Image ui:field="info" 
-		                    resource="{icons.generalInfoText}"
-						     styleName="{res.getStyle.grab}" />
-                </con:child>
 
 				<con:child layoutData="{childData}">
-					<g:Image ui:field="text" 
-					         resource="{icons.inputTextSingle}"
-						     styleName="{res.getStyle.grab}" />
+					<g:Image ui:field="text" resource="{icons.inputTextSingle}"
+						styleName="{res.getStyle.grab}" />
 				</con:child>
 				<con:child layoutData="{childData}">
-					<g:Image ui:field="multiLineText"
-						     resource="{icons.inputTextMulti}"
-						     styleName="{res.getStyle.grab}" />
+					<g:Image ui:field="multiLineText" resource="{icons.inputTextMulti}"
+						styleName="{res.getStyle.grab}" />
 				</con:child>
 				<con:child layoutData="{childData}">
-					<g:Image ui:field="flag" 
-					         resource="{icons.inputCheckBox}"
-						     styleName="{res.getStyle.grab}" />
+					<g:Image ui:field="flag" resource="{icons.inputCheckBox}"
+						styleName="{res.getStyle.grab}" />
 				</con:child>
 				<con:child layoutData="{childData}">
-					<g:Image ui:field="environmentVariable"
-						     resource="{icons.inputEnvVar}"
-						     styleName="{res.getStyle.grab}" />
+					<g:Image ui:field="environmentVariable" resource="{icons.inputEnvVar}"
+						styleName="{res.getStyle.grab}" />
 				</con:child>
 				<con:child layoutData="{childData}">
-					<g:Image ui:field="integerInput"
-						     resource="{icons.inputNumberInteger}"
-						     styleName="{res.getStyle.grab}" />
+					<g:Image ui:field="integerInput" resource="{icons.inputNumberInteger}"
+						styleName="{res.getStyle.grab}" />
 				</con:child>
 				<con:child layoutData="{childData}">
-				    <g:Image ui:field="doubleInput"
-				             resource="{icons.inputNumberDouble}"
-						     styleName="{res.getStyle.grab}"/>
+					<g:Image ui:field="doubleInput" resource="{icons.inputNumberDouble}"
+						styleName="{res.getStyle.grab}" />
 				</con:child>
-	       </con:VerticalLayoutContainer>
-	   </gxt:ContentPanel>
-	   
-	   <gxt:ContentPanel headingText="{strings.outputCategoryTitle}"
-                         collapsible="true"
-                         titleCollapse="true"
-                         expanded="true">
-	       <gxt:tool>
-	           <button:ToolButton ui:field="outputCategoryHelpBtn"/>
-	       </gxt:tool>
-	       <con:VerticalLayoutContainer>
+			</con:VerticalLayoutContainer>
+		</gxt:ContentPanel>
+
+		<gxt:ContentPanel headingText="{strings.listsCategoryTitle}"
+			collapsible="true" titleCollapse="true" expanded="true">
+			<gxt:tool>
+				<button:ToolButton ui:field="listsCategoryHelpBtn" />
+			</gxt:tool>
+			<con:VerticalLayoutContainer>
 				<con:child layoutData="{childData}">
-				    <g:Image ui:field="fileOutput"
-				             resource="{icons.outputFileName}"
-						     styleName="{res.getStyle.grab}"/>
+					<g:Image ui:field="singleSelect" resource="{icons.inputSelectSingle}"
+						styleName="{res.getStyle.grab}" />
 				</con:child>
 				<con:child layoutData="{childData}">
-				    <g:Image ui:field="folderOutput"
-				             resource="{icons.outputFolderName}"
-						     styleName="{res.getStyle.grab}"/>
+					<g:Image ui:field="integerSelection" resource="{icons.inputSelectInteger}"
+						styleName="{res.getStyle.grab}" />
 				</con:child>
 				<con:child layoutData="{childData}">
-				    <g:Image ui:field="multiFileOutput"
-				             resource="{icons.outputMultiFile}"
-						     styleName="{res.getStyle.grab}"/>
+					<g:Image ui:field="doubleSelection" resource="{icons.inputSelectDouble}"
+						styleName="{res.getStyle.grab}" />
 				</con:child>
-	       </con:VerticalLayoutContainer>
-	   </gxt:ContentPanel>
-	   
-	   <gxt:ContentPanel headingText="{strings.referenceGenomeCategoryTitle}"
-	                     collapsible="true"
-	                     titleCollapse="true"
-	                     expanded="true">
-	       <gxt:tool>
-	           <button:ToolButton ui:field="referenceGenomeCategoryHelpBtn"/>
-	       </gxt:tool>
-	       <con:VerticalLayoutContainer>
-	           <con:child layoutData="{childData}">
-	               <g:Image ui:field="referenceGenome"
-	                        resource="{icons.referenceGenome}"
-						     styleName="{res.getStyle.grab}"/>
-	           </con:child>
-	           <con:child layoutData="{childData}">
-	               <g:Image ui:field="referenceSequence"
-	                        resource="{icons.referenceSequence}"
-						     styleName="{res.getStyle.grab}"/>
-	           </con:child>
-	           <con:child layoutData="{childData}">
-	               <g:Image ui:field="referenceAnnotation"
-	                        resource="{icons.referenceAnnotation}"
-						     styleName="{res.getStyle.grab}"/>
-	           </con:child>
-	      </con:VerticalLayoutContainer>
-	   </gxt:ContentPanel>
+				<con:child layoutData="{childData}">
+					<g:Image ui:field="treeSelection" resource="{icons.inputSelectGrouped}"
+						styleName="{res.getStyle.grab}" />
+				</con:child>
+			</con:VerticalLayoutContainer>
+		</gxt:ContentPanel>
+
+
+
+		<gxt:ContentPanel headingText="{strings.outputCategoryTitle}"
+			collapsible="true" titleCollapse="true" expanded="true">
+			<gxt:tool>
+				<button:ToolButton ui:field="outputCategoryHelpBtn" />
+			</gxt:tool>
+			<con:VerticalLayoutContainer>
+				<con:child layoutData="{childData}">
+					<g:Image ui:field="fileOutput" resource="{icons.outputFileName}"
+						styleName="{res.getStyle.grab}" />
+				</con:child>
+				<con:child layoutData="{childData}">
+					<g:Image ui:field="folderOutput" resource="{icons.outputFolderName}"
+						styleName="{res.getStyle.grab}" />
+				</con:child>
+				<con:child layoutData="{childData}">
+					<g:Image ui:field="multiFileOutput" resource="{icons.outputMultiFile}"
+						styleName="{res.getStyle.grab}" />
+				</con:child>
+			</con:VerticalLayoutContainer>
+		</gxt:ContentPanel>
+
+		<gxt:ContentPanel headingText="{strings.referenceGenomeCategoryTitle}"
+			collapsible="true" titleCollapse="true" expanded="true">
+			<gxt:tool>
+				<button:ToolButton ui:field="referenceGenomeCategoryHelpBtn" />
+			</gxt:tool>
+			<con:VerticalLayoutContainer>
+				<con:child layoutData="{childData}">
+					<g:Image ui:field="referenceGenome" resource="{icons.referenceGenome}"
+						styleName="{res.getStyle.grab}" />
+				</con:child>
+				<con:child layoutData="{childData}">
+					<g:Image ui:field="referenceSequence" resource="{icons.referenceSequence}"
+						styleName="{res.getStyle.grab}" />
+				</con:child>
+				<con:child layoutData="{childData}">
+					<g:Image ui:field="referenceAnnotation" resource="{icons.referenceAnnotation}"
+						styleName="{res.getStyle.grab}" />
+				</con:child>
+			</con:VerticalLayoutContainer>
+		</gxt:ContentPanel>
 	</con:VerticalLayoutContainer>
 </ui:UiBinder> 
