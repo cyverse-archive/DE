@@ -1,104 +1,111 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-             xmlns:g="urn:import:com.google.gwt.user.client.ui"
-             xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
-             xmlns:tabs="urn:import:com.sencha.gxt.widget.core.client"
-             xmlns:appWidgets="urn:import:org.iplantc.de.apps.client.views.grid.cells">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+	xmlns:tabs="urn:import:com.sencha.gxt.widget.core.client"
+	xmlns:appWidgets="urn:import:org.iplantc.de.apps.client.views.grid.cells">
 
-    <ui:with field="appearance"
-             type="org.iplantc.de.apps.client.AppDetailsView.AppDetailsAppearance" />
+	<ui:with field="appearance"
+		type="org.iplantc.de.apps.client.AppDetailsView.AppDetailsAppearance" />
 
-    <ui:with field="informationTabConfig"
-             type="com.sencha.gxt.widget.core.client.TabItemConfig">
-        <ui:attributes text="{appearance.informationTabLabel}" />
-    </ui:with>
-    <ui:with field="toolTabConfig"
-             type="com.sencha.gxt.widget.core.client.TabItemConfig">
-        <ui:attributes text="{appearance.toolInformationTabLabel}" />
-    </ui:with>
+	<ui:with field="informationTabConfig"
+		type="com.sencha.gxt.widget.core.client.TabItemConfig">
+		<ui:attributes text="{appearance.informationTabLabel}" />
+	</ui:with>
+	<ui:with field="toolTabConfig"
+		type="com.sencha.gxt.widget.core.client.TabItemConfig">
+		<ui:attributes text="{appearance.toolInformationTabLabel}" />
+	</ui:with>
 
-    <tabs:TabPanel ui:field="tabPanel"
-                   bodyBorder="false"
-                   borders="false"
-                   styleName="{appearance.css.tabPanel}">
-        <tabs:child config="{informationTabConfig}">
-            <g:HTMLPanel>
-                <!-- Favorite Icon -->
-                <appWidgets:AppFavoriteCellWidget ui:field="favIcon"/>
-                <table class="{appearance.css.detailsTable}">
-                    <!-- Description -->
-                    <tr>
-                        <td class="{appearance.css.label}">
-                            <ui:text from="{appearance.descriptionLabel}"/>
+	<tabs:TabPanel ui:field="tabPanel" bodyBorder="false"
+		borders="false" styleName="{appearance.css.tabPanel}">
+		<tabs:child config="{informationTabConfig}">
+			<g:HTMLPanel>
+				<!-- Favorite Icon -->
+				<appWidgets:AppFavoriteCellWidget
+					ui:field="favIcon" />
+				<table class="{appearance.css.detailsTable}">
+					<!-- Description -->
+					<tr>
+						<td class="{appearance.css.label}">
+							<ui:text from="{appearance.descriptionLabel}" />
+						</td>
+						<td class="{appearance.css.value}">
+							<div ui:field="descriptionElement" />
+						</td>
+					</tr>
+					<!-- Details -->
+					<tr class="{appearance.css.detailsRow}">
+						<td>
+							<ui:text from="{appearance.detailsLabel}" />
+						</td>
+					</tr>
+					<tr>
+						<td class="{appearance.css.label}">
+							<ui:text from="{appearance.publishedOnLabel}" />
+						</td>
+						<td class="{appearance.css.value}">
+							<g:DateLabel ui:field="publishedOn" />
+						</td>
+					</tr>
+					<tr>
+						<td class="{appearance.css.label}">
+							<ui:text from="{appearance.integratorNameLabel}" />
+						</td>
+						<td class="{appearance.css.value}">
+							<div ui:field="integratorNameDiv" />
+						</td>
+					</tr>
+					<tr>
+						<td class="{appearance.css.label}">
+							<ui:text from="{appearance.integratorEmailLabel}" />
+						</td>
+						<td class="{appearance.css.value}">
+							<g:InlineLabel ui:field="integratorEmail" />
+						</td>
+					</tr>
+					<tr>
+						<td class="{appearance.css.label}">
+							<ui:text from="{appearance.helpLabel}" />
+						</td>
+						<td class="{appearance.css.value}">
+							<g:InlineHyperlink ui:field="helpLink"
+								styleName="{appearance.css.hyperlink}" text="{appearance.userManual}" />
+						</td>
+					</tr>
+					<tr>
+						<td class="{appearance.css.label}">
+							<ui:text from="{appearance.ratingLabel}" />
+						</td>
+						<td class="{appearance.css.value}">
+							<!-- Rating cell -->
+							<appWidgets:AppRatingCellWidget
+								ui:field="ratings" />
+						</td>
+					</tr>
+					<tr>
+						<td class="{appearance.css.label}">
+							<ui:text from="{appearance.categoriesLabel}" />
+						</td>
+						<td>
+							<div ui:field="categories" />
+						</td>
+					</tr>
+					<tr>
+					<td class="{appearance.css.label}">
+                                <ui:text from="{appearance.url}" />
                         </td>
-                        <td class="{appearance.css.value}">
-                            <div ui:field="descriptionElement" />
-                        </td>
-                    </tr>
-                    <!-- Details -->
-                    <tr class="{appearance.css.detailsRow}">
-                        <td>
-                            <ui:text from="{appearance.detailsLabel}" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="{appearance.css.label}">
-                            <ui:text from="{appearance.publishedOnLabel}"/>
-                        </td>
-                        <td class="{appearance.css.value}">
-                            <g:DateLabel ui:field="publishedOn"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="{appearance.css.label}">
-                            <ui:text from="{appearance.integratorNameLabel}"/>
-                        </td>
-                        <td class="{appearance.css.value}">
-                            <div ui:field="integratorNameDiv"/>
-                        </td>
-                    </tr>
-                     <tr>
-                         <td class="{appearance.css.label}">
-                            <ui:text from="{appearance.integratorEmailLabel}"/>
-                        </td>
-                         <td class="{appearance.css.value}">
-                            <g:InlineLabel ui:field="integratorEmail" />
-                        </td>
-                    </tr>
-                     <tr>
-                         <td class="{appearance.css.label}">
-                            <ui:text from="{appearance.helpLabel}" />
-                        </td>
-                         <td class="{appearance.css.value}">
-                             <g:InlineHyperlink ui:field="helpLink"
-                                                styleName="{appearance.css.hyperlink}"
-                                                text="{appearance.userManual}"/>
-                        </td>
-                    </tr>
-                     <tr>
-                         <td class="{appearance.css.label}">
-                            <ui:text from="{appearance.ratingLabel}" />
-                        </td>
-                        <td class="{appearance.css.value}">
-                            <!-- Rating cell -->
-                            <appWidgets:AppRatingCellWidget ui:field="ratings" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="{appearance.css.label}">
-                            <ui:text from="{appearance.categoriesLabel}" />
-                        </td>
-                        <td>
-                            <div ui:field="categories" />
-                        </td>
-                    </tr>
-                </table>
-            </g:HTMLPanel>
-        </tabs:child>
-        <tabs:child config="{toolTabConfig}">
-            <container:AccordionLayoutContainer ui:field="toolsContainer"
-                                                borders="false"/>
-        </tabs:child>
+						<td class="{appearance.css.value}">
+							<g:Anchor ui:field="url" styleName="{appearance.css.hyperlink}"/>
+						</td>
+					</tr>
 
-    </tabs:TabPanel>
+				</table>
+			</g:HTMLPanel>
+		</tabs:child>
+		<tabs:child config="{toolTabConfig}">
+			<container:AccordionLayoutContainer
+				ui:field="toolsContainer" borders="false" />
+		</tabs:child>
+
+	</tabs:TabPanel>
 </ui:UiBinder>

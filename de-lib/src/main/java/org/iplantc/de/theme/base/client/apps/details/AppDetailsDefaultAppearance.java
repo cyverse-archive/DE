@@ -153,4 +153,19 @@ public class AppDetailsDefaultAppearance implements AppDetailsView.AppDetailsApp
     public String userManual() {
         return iplantDisplayStrings.documentation();
     }
+
+    @Override
+    public String url() {
+        return appsMessages.url();
+    }
+
+    @Override
+    public String appUrl() {
+        return appsMessages.appUrl();
+    }
+
+    @Override
+    public String copyAppUrl() {
+        return appsMessages.copyAppUrl();
+    }
 }

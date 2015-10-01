@@ -111,4 +111,10 @@ public interface AppsMessages extends Messages {
     String workflow();
 
     String featureNotSupported();
+
+    String url();
+
+    String appUrl();
+
+    String copyAppUrl();
 }

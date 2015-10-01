@@ -15,6 +15,8 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppDoc;
 import org.iplantc.de.client.models.tool.Tool;
+import org.iplantc.de.commons.client.views.dialogs.IPlantPromptDialog;
+import org.iplantc.de.desktop.client.presenter.DesktopPresenterImpl;
 
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
@@ -24,6 +26,7 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.editor.client.adapters.EditorSource;
 import com.google.gwt.editor.client.adapters.ListEditor;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -31,6 +34,7 @@ import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.DateLabel;
 import com.google.gwt.user.client.ui.InlineHyperlink;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -38,6 +42,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 import com.sencha.gxt.widget.core.client.Composite;
+import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.TabPanel;
 import com.sencha.gxt.widget.core.client.container.AccordionLayoutContainer;
 
@@ -46,12 +51,13 @@ import java.util.List;
 /**
  * @author jstroot
  */
-public class AppDetailsViewImpl extends Composite implements AppDetailsView,
-                                                             SaveMarkdownSelected.SaveMarkdownSelectedHandler {
-
+public class AppDetailsViewImpl extends Composite implements
+                                                 AppDetailsView,
+                                                 SaveMarkdownSelected.SaveMarkdownSelectedHandler {
 
     @UiTemplate("AppDetailsViewImpl.ui.xml")
-    interface AppInfoViewUiBinder extends UiBinder<TabPanel, AppDetailsViewImpl> { }
+    interface AppInfoViewUiBinder extends UiBinder<TabPanel, AppDetailsViewImpl> {
+    }
 
     static class HighlightEditor implements LeafValueEditor<String> {
 
@@ -94,11 +100,11 @@ public class AppDetailsViewImpl extends Composite implements AppDetailsView,
             final ToolDetailsView toolDetailsView = new ToolDetailsView();
             toolsContainer.insert(toolDetailsView.asWidget(), index);
 
-            if(index == 0){
+            if (index == 0) {
                 toolsContainer.setActiveWidget(toolDetailsView.asWidget());
             }
 
-            if(!Strings.isNullOrEmpty(baseId)){
+            if (!Strings.isNullOrEmpty(baseId)) {
                 toolDetailsView.ensureDebugId(baseId + AppsModule.Ids.APP_TOOLS + "." + index);
             }
             return toolDetailsView;
@@ -109,34 +115,56 @@ public class AppDetailsViewImpl extends Composite implements AppDetailsView,
             subEditor.asWidget().removeFromParent();
         }
 
-        public void setBaseDebugId(final String baseId){
+        public void setBaseDebugId(final String baseId) {
             this.baseId = baseId;
         }
     }
 
-    interface AppDetailsEditorDriver extends SimpleBeanEditorDriver<App, AppDetailsViewImpl> {}
+    interface AppDetailsEditorDriver extends SimpleBeanEditorDriver<App, AppDetailsViewImpl> {
+    }
 
     private final AppInfoViewUiBinder BINDER = GWT.create(AppInfoViewUiBinder.class);
     private final AppDetailsEditorDriver editorDriver = GWT.create(AppDetailsEditorDriver.class);
 
-    @UiField @Path("") AppFavoriteCellWidget favIcon; // Bind to app
+    @UiField
+    @Path("")
+    AppFavoriteCellWidget favIcon; // Bind to app
 
-    @UiField(provided = true) final AppDetailsAppearance appearance;
-    @UiField @Ignore DivElement integratorNameDiv;
+    @UiField(provided = true)
+    final AppDetailsAppearance appearance;
+    @UiField
+    @Ignore
+    DivElement integratorNameDiv;
     final HighlightEditor integratorName;
-    @UiField InlineLabel integratorEmail;
-    @UiField @Ignore DivElement categories;
-    @UiField @Path("") AppRatingCellWidget ratings; // Bind to app
-    @UiField @Ignore InlineHyperlink helpLink;
-    @UiField AccordionLayoutContainer toolsContainer;
-    @UiField @Ignore DivElement descriptionElement;
+    @UiField
+    InlineLabel integratorEmail;
+    @UiField
+    @Ignore
+    DivElement categories;
+    @UiField
+    @Path("")
+    AppRatingCellWidget ratings; // Bind to app
+    @UiField
+    @Ignore
+    InlineHyperlink helpLink;
+    @UiField
+    AccordionLayoutContainer toolsContainer;
+    @UiField
+    @Ignore
+    DivElement descriptionElement;
     final HighlightEditor description;
-    @UiField @Path("integrationDate") DateLabel publishedOn;
+    @UiField
+    @Path("integrationDate")
+    DateLabel publishedOn;
+    @UiField
+    @Ignore
+    Anchor url;
 
     final ListEditor<Tool, ToolDetailsView> tools;
     private final App app;
 
-    @Inject UserInfo userInfo;
+    @Inject
+    UserInfo userInfo;
     private final ToolEditorSource toolEditorSource;
 
     @Inject
@@ -157,8 +185,8 @@ public class AppDetailsViewImpl extends Composite implements AppDetailsView,
         this.tools = ListEditor.of(toolEditorSource);
 
         /*
-         * Debug id has to be set before binding the editor to ensure that UI elements get the
-         * debug id before they are rendered/created.
+         * Debug id has to be set before binding the editor to ensure that UI elements get the debug id
+         * before they are rendered/created.
          */
         ensureDebugId(AppsModule.Ids.DETAILS_VIEW);
 
@@ -166,6 +194,25 @@ public class AppDetailsViewImpl extends Composite implements AppDetailsView,
         ratings.setHasHandlers(this);
         editorDriver.initialize(this);
         editorDriver.edit(app);
+        if (app.isPublic()) {
+            url.setText(appearance.appUrl());
+            url.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    IPlantPromptDialog ipd = new IPlantPromptDialog(appearance.appUrl(),
+                                                                    1024,
+                                                                    GWT.getHostPageBaseURL()
+                                                                            + "?type="
+                                                                            + DesktopPresenterImpl.TypeQueryValues.APPS
+                                                                            + "&app-id=" + app.getId(),
+                                                                    null);
+                    ipd.setHeadingHtml(appearance.copyAppUrl());
+                    ipd.setWidth("500px");
+                    ipd.setPredefinedButtons(PredefinedButton.OK);
+                    ipd.show();
+                }
+            });
+        }
     }
 
     @Override
@@ -178,27 +225,32 @@ public class AppDetailsViewImpl extends Composite implements AppDetailsView,
     }
 
     @Override
-    public HandlerRegistration addAppDetailsDocSelectedHandler(AppDetailsDocSelected.AppDetailsDocSelectedHandler handler) {
+    public HandlerRegistration
+            addAppDetailsDocSelectedHandler(AppDetailsDocSelected.AppDetailsDocSelectedHandler handler) {
         return addHandler(handler, AppDetailsDocSelected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addAppFavoriteSelectedEventHandlers(AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler handler) {
+    public HandlerRegistration
+            addAppFavoriteSelectedEventHandlers(AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler handler) {
         return favIcon.addAppFavoriteSelectedEventHandlers(handler);
     }
 
     @Override
-    public HandlerRegistration addAppRatingDeselectedHandler(AppRatingDeselected.AppRatingDeselectedHandler handler) {
+    public HandlerRegistration
+            addAppRatingDeselectedHandler(AppRatingDeselected.AppRatingDeselectedHandler handler) {
         return addHandler(handler, AppRatingDeselected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addAppRatingSelectedHandler(AppRatingSelected.AppRatingSelectedHandler handler) {
+    public HandlerRegistration
+            addAppRatingSelectedHandler(AppRatingSelected.AppRatingSelectedHandler handler) {
         return addHandler(handler, AppRatingSelected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addSaveMarkdownSelectedHandler(SaveMarkdownSelected.SaveMarkdownSelectedHandler handler) {
+    public HandlerRegistration
+            addSaveMarkdownSelectedHandler(SaveMarkdownSelected.SaveMarkdownSelectedHandler handler) {
         return addHandler(handler, SaveMarkdownSelected.TYPE);
     }
 
@@ -227,7 +279,8 @@ public class AppDetailsViewImpl extends Composite implements AppDetailsView,
         fireEvent(new AppDetailsDocSelected(app));
     }
 
-    @UiFactory @Ignore
+    @UiFactory
+    @Ignore
     DateLabel createDateLabel() {
         return new DateLabel(DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_MEDIUM));
     }

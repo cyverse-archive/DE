@@ -35,6 +35,7 @@ import org.iplantc.de.commons.client.requests.KeepaliveTimer;
 import org.iplantc.de.commons.client.util.WindowUtil;
 import org.iplantc.de.commons.client.views.dialogs.IplantErrorDialog;
 import org.iplantc.de.commons.client.views.window.configs.AnalysisWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.AppWizardConfig;
 import org.iplantc.de.commons.client.views.window.configs.AppsWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.DiskResourceWindowConfig;
@@ -50,6 +51,7 @@ import org.iplantc.de.shared.services.PropertyServiceAsync;
 import org.iplantc.de.systemMessages.client.view.NewMessageView;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -98,9 +100,10 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
         String APP_CATEGORY = "app-category";
         String FOLDER = "folder";
         String TYPE = "type";
+        String APP_ID = "app-id";
     }
 
-    interface TypeQueryValues {
+    public interface TypeQueryValues {
         String APPS = "apps";
         String DATA = "data";
     }
@@ -527,8 +530,15 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
                     if (TypeQueryValues.APPS.equalsIgnoreCase(paramValue)) {
                         final AppsWindowConfig appsConfig = ConfigFactory.appsWindowConfig();
                         final String appCategoryId = Window.Location.getParameter(QueryStrings.APP_CATEGORY);
-                        appsConfig.setSelectedAppCategory(CommonModelUtils.getInstance().createHasIdFromString(appCategoryId));
-                        windowConfig = appsConfig;
+                        final String appId = Window.Location.getParameter(QueryStrings.APP_ID);
+                        if (!Strings.isNullOrEmpty(appCategoryId)) {
+                            appsConfig.setSelectedAppCategory(CommonModelUtils.getInstance().createHasIdFromString(appCategoryId));
+                            windowConfig = appsConfig;
+                        } else if (!Strings.isNullOrEmpty(appId)) {
+                            AppWizardConfig config = ConfigFactory.appWizardConfig(appId);
+                            show(config);
+                        }
+                        
                     } else if (TypeQueryValues.DATA.equalsIgnoreCase(paramValue)) {
                         hasDataTypeParameter = true;
                         DiskResourceWindowConfig drConfig = ConfigFactory.diskResourceWindowConfig(true);

@@ -85,6 +85,12 @@ public interface AppDetailsView extends IsWidget,
         String toolAttributionLabel();
 
         String userManual();
+
+        String url();
+
+        String appUrl();
+
+        String copyAppUrl();
     }
 
     interface Presenter extends AppFavoriteSelectedEvent.HasAppFavoriteSelectedEventHandlers,
