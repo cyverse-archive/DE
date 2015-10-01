@@ -1,5 +1,12 @@
 package org.iplantc.de.server.auth;
 
+import static org.iplantc.de.server.AppLoggerConstants.REQUEST_KEY;
+import org.iplantc.de.server.AppLoggerConstants;
+import org.iplantc.de.server.AppLoggerUtil;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPatch;
@@ -8,10 +15,14 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.client.utils.URIBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,6 +30,8 @@ import javax.servlet.http.HttpServletRequest;
  * Performs actions common to most URL connectors.
  */
 abstract class BaseUrlConnector implements UrlConnector {
+    private final Logger LOGGER = LoggerFactory.getLogger(BaseUrlConnector.class);
+    private final Logger API_METRICS_LOG = LoggerFactory.getLogger(AppLoggerConstants.API_METRICS_LOGGER);
 
     /**
      * Disables redirects for an HTTP request.
@@ -125,6 +138,16 @@ abstract class BaseUrlConnector implements UrlConnector {
      */
     protected <T extends HttpRequestBase> T copyUserAgent(HttpServletRequest req, T c) {
         c.addHeader("User-Agent", req.getHeader("User-Agent"));
+        final Map<String, Object> requestMap = AppLoggerUtil.getInstance().createMdcRequestMap(c);
+        try {
+            final String mapAsString = new ObjectMapper().writeValueAsString(requestMap);
+            MDC.put(REQUEST_KEY, mapAsString);
+            API_METRICS_LOG.info("{} {}", requestMap.get("request-method"), requestMap.get("uri"));
+        } catch (JsonProcessingException e) {
+            API_METRICS_LOG.info(requestMap.get("request-method") + " " + requestMap.get("uri"), e);
+        } finally {
+            MDC.remove(REQUEST_KEY);
+        }
         return c;
     }
 }

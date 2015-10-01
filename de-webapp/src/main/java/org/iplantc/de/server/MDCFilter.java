@@ -1,17 +1,22 @@
 package org.iplantc.de.server;
 
-import static org.iplantc.de.server.AppLoggerConstants.USERNAME_MDC_KEY;
+import static org.iplantc.de.server.AppLoggerConstants.USERINFO_KEY;
+import static org.iplantc.de.server.AppLoggerConstants.USER_IP_KEY;
 
 import com.google.common.base.Strings;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.springframework.security.cas.authentication.CasAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Map;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -41,26 +46,28 @@ public class MDCFilter implements Filter {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication != null){
-            // This put is also performed in the ApplicationAuthenticationListener. This is intentional.
-            MDC.put(USERNAME_MDC_KEY, authentication.getName());
-
             final HttpServletRequestWrapper servletRequestWrapper = (HttpServletRequestWrapper) servletRequest;
+            Map<String, Object> userMap = AppLoggerUtil.getInstance().createUserInfoMap((CasAuthenticationToken) authentication);
+            ObjectMapper mapper = new ObjectMapper();
+            // This put is also performed in the ApplicationAuthenticationListener. This is intentional.
+            MDC.put(USERINFO_KEY, mapper.writeValueAsString(userMap));
 
             // Look for NGINX ip header. If it doesn't exist, use the default.
             String remoteIP = servletRequestWrapper.getHeader(AppLoggerConstants.USER_IP_HEADER_NAME);
             if(Strings.isNullOrEmpty(remoteIP)) {
                 remoteIP = servletRequest.getRemoteAddr();
             }
-            MDC.put(AppLoggerConstants.USER_IP_KEY, remoteIP);
+            MDC.put(USER_IP_KEY, remoteIP);
 
-            logHeaders(servletRequestWrapper);
+//            logHeaders(servletRequestWrapper);
+
         }
         try {
             filterChain.doFilter(servletRequest, servletResponse);
         } finally {
             if(authentication != null) {
-                MDC.remove(USERNAME_MDC_KEY);
-                MDC.remove(AppLoggerConstants.USER_IP_KEY);
+                MDC.remove(USERINFO_KEY);
+                MDC.remove(USER_IP_KEY);
             }
         }
     }

@@ -1,7 +1,11 @@
 package org.iplantc.de.server.controllers.file;
 
 import static org.iplantc.de.server.AppLoggerConstants.REQUEST_KEY;
-import static org.iplantc.de.server.AppLoggerConstants.REQUEST_METHOD_KEY;
+import static org.iplantc.de.server.AppLoggerConstants.RESPONSE_KEY;
+import org.iplantc.de.server.AppLoggerConstants;
+import org.iplantc.de.server.AppLoggerUtil;
+import org.iplantc.de.server.util.CasUtils;
+import org.iplantc.de.shared.services.BaseServiceCallWrapper;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
@@ -10,12 +14,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.iplantc.de.server.AppLoggerConstants;
-import org.iplantc.de.server.util.CasUtils;
-
-import org.apache.log4j.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -40,10 +41,12 @@ import javax.servlet.http.HttpServletResponse;
 public class FileDownloadController {
 
     private final Logger API_REQUEST_LOG = LoggerFactory.getLogger(AppLoggerConstants.API_METRICS_LOGGER);
+    private final AppLoggerUtil appLoggerUtil = AppLoggerUtil.getInstance();
 
     @Value("${org.iplantc.services.de-data-mgmt.base}") String dataMgmtServiceBaseUrl;
 
     @Value("${org.iplantc.services.file-io.base.secured}download") String fileIoBaseUrl;
+
 
     @RequestMapping(value = "/de/secured/fileDownload", method = RequestMethod.GET)
     public void doSecureFileDownload(@RequestParam("path") final String path,
@@ -59,23 +62,33 @@ public class FileDownloadController {
 
         // Prepare to process the request.
         final URI logRequestUri = buildUri(url, path);
-        prepareForRequest(logRequestUri.toString());
 
         // Create the request.
         final URI uri = buildUri(url, path, getProxyToken(request, extractServiceName(logRequestUri)));
         final HttpGet get = new HttpGet(uri);
         get.setHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        prepareForRequest(get, logRequestUri.toString());
 
         // Send the request.
         CloseableHttpClient client = HttpClients.createDefault();
         try {
-            sendResponse(response, client.execute(get));
-        } finally {
+            final long requestStartTime = System.currentTimeMillis();
+            final CloseableHttpResponse incomingResponse = client.execute(get);
+            final long responseRecvTime = System.currentTimeMillis();
+            final String responseJson = appLoggerUtil.createMdcResponseMapJson(incomingResponse,
+                                                                               BaseServiceCallWrapper.Type.GET,
+                                                                               logRequestUri.toString(),
+                                                                               null,
+                                                                               responseRecvTime - requestStartTime);
+            MDC.put(RESPONSE_KEY, responseJson);
+            API_REQUEST_LOG.info("GET {}", logRequestUri.toString());
+            sendResponse(response, incomingResponse);
+        } catch (Exception e){
+            API_REQUEST_LOG.error("GET " + logRequestUri.toString(), e);
+        }finally {
+            MDC.remove(RESPONSE_KEY);
             client.close();
         }
-
-        // Clean up.
-        cleanUpAfterRequest();
     }
 
     /**
@@ -83,24 +96,21 @@ public class FileDownloadController {
      * Mapped Diagnostic Context (MDC). The URI itself also needs to be placed in the API request
      * log.
      *
+     * @param get the request
      * @param logRequestUri the URI to use when forwarding the request.
      */
-    private void prepareForRequest(final String logRequestUri) {
+    private void prepareForRequest(HttpGet get, final String logRequestUri) {
 
-        // Add the URL to the MDC.
-        MDC.put(REQUEST_KEY, logRequestUri);
-        MDC.put(REQUEST_METHOD_KEY, "GET");
+        try {
+            String request = appLoggerUtil.createMdcRequestMapAsJsonString(get);
+            MDC.put(REQUEST_KEY, request);
+            API_REQUEST_LOG.info("GET {}", logRequestUri);
+        } catch (Exception e) {
+            API_REQUEST_LOG.error("GET " + logRequestUri, e);
+        } finally {
+            MDC.remove(REQUEST_KEY);
 
-        // Log the request.
-        API_REQUEST_LOG.info("GET {}", logRequestUri);
-    }
-
-    /**
-     * Cleans up the Mapped Diagnostic Context (MDC) after a request has been processed.
-     */
-    private void cleanUpAfterRequest() {
-        MDC.remove(REQUEST_KEY);
-        MDC.remove(REQUEST_METHOD_KEY);
+        }
     }
 
     /**

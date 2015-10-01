@@ -27,18 +27,13 @@ public interface AppLoggerConstants {
     /**
      * The key used to track the authenticated user in the {@link org.slf4j.MDC}
      */
-    String USERNAME_MDC_KEY = "user";
+    String USERINFO_KEY = "user-info";
 
-    String REQUEST_RESPONSE_BODY_KEY = "request.responseBody";
 
-    String RESPONSE_ENDPOINT_KEY = "response_endpoint";
+    String RESPONSE_KEY = "response";
 
     String REQUEST_KEY = "request";
-    String REQUEST_ENDPOINT_KEY = "request.endpoint";
-    String REQUEST_METHOD_KEY = "request.method";
-    String REQUEST_BODY_KEY = "request.body";
-
-    String REQUEST_UUID_KEY = "request.uuid";
+    String REQUEST_RESPONSE_BODY_KEY = "request.responseBody";
 
     String USER_IP_HEADER_NAME = "x-real-ip";
     String USER_IP_KEY = "clientip";

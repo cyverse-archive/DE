@@ -1,5 +1,15 @@
 package org.iplantc.de.server.controllers.file;
 
+import static org.iplantc.de.server.AppLoggerConstants.API_METRICS_LOGGER;
+import static org.iplantc.de.server.AppLoggerConstants.REQUEST_KEY;
+import static org.iplantc.de.server.AppLoggerConstants.REQUEST_RESPONSE_BODY_KEY;
+import static org.iplantc.de.server.AppLoggerConstants.RESPONSE_KEY;
+import org.iplantc.de.server.AppLoggerUtil;
+import org.iplantc.de.server.util.CasUtils;
+import org.iplantc.de.shared.services.BaseServiceCallWrapper;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -9,11 +19,9 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.log4j.MDC;
-import org.iplantc.de.server.AppLoggerConstants;
-import org.iplantc.de.server.util.CasUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,18 +31,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Part;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static org.iplantc.de.server.AppLoggerConstants.API_METRICS_LOGGER;
-import static org.iplantc.de.server.AppLoggerConstants.REQUEST_KEY;
-import static org.iplantc.de.server.AppLoggerConstants.REQUEST_METHOD_KEY;
-import static org.iplantc.de.server.AppLoggerConstants.REQUEST_RESPONSE_BODY_KEY;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Performs secured file uploads.
@@ -45,8 +48,8 @@ import static org.iplantc.de.server.AppLoggerConstants.REQUEST_RESPONSE_BODY_KEY
 @Controller
 public class SecuredFileUploadController {
 
-    private final Logger LOG = LoggerFactory.getLogger(SecuredFileUploadController.class);
     private final Logger API_REQUEST_LOG = LoggerFactory.getLogger(API_METRICS_LOGGER);
+    private final AppLoggerUtil loggerUtil = AppLoggerUtil.getInstance();
 
     @Value("${org.iplantc.services.file-io.secured.file-upload}") String securedFileUploadUrl;
 
@@ -58,24 +61,34 @@ public class SecuredFileUploadController {
 
         // Prepare to process the request.
         final URI logRequestUri = buildUri(dest);
-        prepareForRequest(logRequestUri.toString());
 
         // Create the request.
         final URI uri = buildUri(dest, getProxyToken(request, extractServiceName(logRequestUri)));
         final HttpPost post = new HttpPost(uri);
         post.setEntity(buildMultipartEntity(file));
+        prepareForRequest(post, logRequestUri.toString());
 
         // Send the request.
         CloseableHttpClient client = HttpClients.createDefault();
         ResponseEntity<Object> response = null;
         try {
-            response = formatResponse(client.execute(post));
+            final long requestStartTime = System.currentTimeMillis();
+            final CloseableHttpResponse incomingResponse = client.execute(post);
+            final long responseRecvTime = System.currentTimeMillis();
+            final String responseJson = loggerUtil.createMdcResponseMapJson(incomingResponse,
+                                                                            BaseServiceCallWrapper.Type.GET,
+                                                                            logRequestUri.toString(),
+                                                                            null,
+                                                                            responseRecvTime - requestStartTime);
+            MDC.put(RESPONSE_KEY, responseJson);
+            API_REQUEST_LOG.info("POST {}", logRequestUri.toString());
+            response = formatResponse(incomingResponse);
+        } catch(Exception e) {
+            API_REQUEST_LOG.error("POST " + logRequestUri.toString(), e);
         } finally {
+            MDC.remove(RESPONSE_KEY);
             client.close();
         }
-
-        // Clean up.
-        cleanUpAfterRequest();
 
         return response;
     }
@@ -85,24 +98,21 @@ public class SecuredFileUploadController {
      * Mapped Diagnostic Context (MDC). The URI itself also needs to be placed in the API request
      * log.
      *
+     * @param post the request
      * @param logRequestUri the URI to use when forwarding the request.
      */
-    private void prepareForRequest(final String logRequestUri) {
+    private void prepareForRequest(HttpPost post, final String logRequestUri) {
 
-        // Add the URL to the MDC.
-        MDC.put(REQUEST_KEY, logRequestUri);
-        MDC.put(AppLoggerConstants.RESPONSE_ENDPOINT_KEY, logRequestUri);
-        MDC.put(REQUEST_METHOD_KEY, "POST");
+        try {
+            String request = loggerUtil.createMdcRequestMapAsJsonString(post);
+            MDC.put(REQUEST_KEY, request);
+            API_REQUEST_LOG.info("POST {}", logRequestUri);
+        } catch (Exception e) {
+            API_REQUEST_LOG.error("POST " + logRequestUri, e);
+        } finally {
+            MDC.remove(REQUEST_KEY);
+        }
 
-        // Log the request.
-        API_REQUEST_LOG.info("POST {}", logRequestUri);
-    }
-
-    private void cleanUpAfterRequest() {
-        MDC.remove(REQUEST_KEY);
-        MDC.remove(AppLoggerConstants.RESPONSE_ENDPOINT_KEY);
-        MDC.remove(REQUEST_METHOD_KEY);
-        MDC.remove(REQUEST_RESPONSE_BODY_KEY);
     }
 
     /**

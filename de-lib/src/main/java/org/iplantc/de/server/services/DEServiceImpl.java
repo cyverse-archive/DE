@@ -1,7 +1,8 @@
 package org.iplantc.de.server.services;
 
-import static org.iplantc.de.server.AppLoggerConstants.*;
+import static org.iplantc.de.server.AppLoggerConstants.RESPONSE_KEY;
 import org.iplantc.de.server.AppLoggerConstants;
+import org.iplantc.de.server.AppLoggerUtil;
 import org.iplantc.de.server.ServiceCallResolver;
 import org.iplantc.de.server.auth.UrlConnector;
 import org.iplantc.de.shared.exceptions.AuthenticationException;
@@ -11,8 +12,9 @@ import org.iplantc.de.shared.services.BaseServiceCallWrapper;
 import org.iplantc.de.shared.services.DEService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
-import com.google.common.base.Strings;
 import com.google.gwt.user.client.rpc.SerializationException;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
@@ -28,9 +30,9 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.log4j.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -46,8 +48,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class DEServiceImpl implements DEService,
                                       HasHttpServletRequest {
-    private final Logger LOGGER = LoggerFactory.getLogger(DEServiceImpl.class);
     private final Logger API_METRICS_LOG = LoggerFactory.getLogger(AppLoggerConstants.API_METRICS_LOGGER);
+    private final AppLoggerUtil loggerUtil = AppLoggerUtil.getInstance();
 
     /**
      * The current servlet request.
@@ -82,52 +84,34 @@ public class DEServiceImpl implements DEService,
         if (isValidServiceCall(wrapper)) {
             String address = retrieveServiceAddress(wrapper);
             String endpoint = getEndpointFromRequestAddress(address);
-            /*
-             * Parse UUID out of endpoint.
-             * Place UUID into other MDC variable
-             */
-            final String uuid_regex = "[A-Fa-f0-9]{8}-(?:[A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}";
-            final String endpointPartRegex = "/\\w+";
-            final String endpointRegex = "^(?:" + endpointPartRegex + ")+(?:/)(" + uuid_regex + ")(?:" + endpointPartRegex + ")*";
-
-            if(endpoint.matches(endpointRegex)){
-                String updateEndpoint = endpoint.replaceAll(uuid_regex, "[UUID]");
-                String uuid = endpoint.replaceAll(endpointRegex, "$1");
-                endpoint = updateEndpoint;
-                MDC.put(REQUEST_UUID_KEY, uuid);
-            }
-
 
             CloseableHttpClient client = HttpClients.createDefault();
             try {
-                json = getResponseBody(getResponse(client, wrapper, address));
-                MDC.put(REQUEST_ENDPOINT_KEY, endpoint);
-                MDC.put(REQUEST_METHOD_KEY, wrapper.getType());
-                if (API_METRICS_LOG.isTraceEnabled()
-                        && !Strings.isNullOrEmpty(json)) {
-                    MDC.put(REQUEST_RESPONSE_BODY_KEY, json);
-                }
-                API_METRICS_LOG.trace("RESPONSE: {} {}", wrapper.getType(), wrapper.getAddress());
+                final long requestStartTime = System.currentTimeMillis();
+                final HttpResponse response = getResponse(client, wrapper, address);
+                final long requestEndTime = System.currentTimeMillis();
+                json = getResponseBody(response);
+                final Map<String, Object> responseMap = loggerUtil.updateMdcResponseMap(response,
+                                                                                        wrapper.getType(),
+                                                                                        endpoint,
+                                                                                        json,
+                                                                                        requestEndTime - requestStartTime);
+                ObjectMapper mapper = new ObjectMapper();
+                String responseAsString = mapper.writeValueAsString(responseMap);
+                MDC.put(RESPONSE_KEY, responseAsString);
+                API_METRICS_LOG.info("{} {}", wrapper.getType(), endpoint);
+
             } catch (AuthenticationException | HttpException ex) {
-                LOGGER.error(ex.getMessage(), ex);
-                API_METRICS_LOG.error(ex.getMessage(), ex);
+                API_METRICS_LOG.error(wrapper.getType() + " " + endpoint, ex);
                 throw ex;
             } catch (Exception ex) {
-                LOGGER.error(ex.getMessage(), ex);
-                API_METRICS_LOG.error(ex.getMessage(), ex);
+                API_METRICS_LOG.error(wrapper.getType() + " " + endpoint, ex);
                 throw new SerializationException(ex);
             } finally {
                 IOUtils.closeQuietly(client);
-                MDC.remove(REQUEST_UUID_KEY);
-                MDC.remove(REQUEST_ENDPOINT_KEY);
-                MDC.remove(REQUEST_METHOD_KEY);
-                MDC.remove(REQUEST_RESPONSE_BODY_KEY);
+                MDC.remove(RESPONSE_KEY);
             }
-
-
         }
-
-
         return json;
     }
 
@@ -258,36 +242,9 @@ public class DEServiceImpl implements DEService,
                                      final String resolvedAddress)
         throws IOException {
 
-        String endpoint = getEndpointFromRequestAddress(resolvedAddress);
-        final String uuid_regex = "[A-Fa-f0-9]{8}-(?:[A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}";
-        final String endpointPartRegex = "/[-\\w]+";
-        final String endpointRegex = "^(?:" + endpointPartRegex + ")+(?:/)(" + uuid_regex + ")(?:" + endpointPartRegex + ")*";
-
-        if(endpoint.matches(endpointRegex)){
-            // Replace the matched UUID with a constant string
-            String updatedEndpoint = endpoint.replaceAll(uuid_regex, "[UUID]");
-            String uuid = endpoint.replaceAll(endpointRegex, "$1");
-            endpoint = updatedEndpoint;
-            MDC.put(REQUEST_UUID_KEY, uuid);
-        }
-        if(!Strings.isNullOrEmpty(wrapper.getBody())
-            && API_METRICS_LOG.isTraceEnabled()){
-            MDC.put(REQUEST_BODY_KEY, wrapper.getBody());
-        }
-
-        MDC.put(REQUEST_KEY, resolvedAddress);
-        MDC.put(REQUEST_ENDPOINT_KEY, endpoint);
-        MDC.put(REQUEST_METHOD_KEY, wrapper.getType());
-
         String body = updateRequestBody(wrapper.getBody());
-        API_METRICS_LOG.info("{} {}", wrapper.getType(), resolvedAddress);
-
-        // Clear MDC
-        MDC.remove(REQUEST_UUID_KEY);
-        MDC.remove(REQUEST_BODY_KEY);
-        MDC.remove(REQUEST_KEY);
-        MDC.remove(REQUEST_ENDPOINT_KEY);
-        MDC.remove(REQUEST_METHOD_KEY);
+        // Add request body to MDC
+        loggerUtil.addBodyToMdcRequestMap(wrapper.getBody());
 
         BaseServiceCallWrapper.Type type = wrapper.getType();
         switch (type) {
