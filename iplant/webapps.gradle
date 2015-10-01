@@ -10,6 +10,7 @@ project(':de-webapp') {
     apply plugin: 'spring-boot'
 
     configurations {
+        providedCompile
         providedRuntime
     }
 
@@ -39,6 +40,7 @@ project(':de-webapp') {
 
         compile("org.springframework.boot:spring-boot-starter-security")
         compile("org.springframework.security:spring-security-cas")
+        providedCompile("javax.servlet:javax.servlet-api:3.1.0")
         compile("javax.servlet:jstl:1.2")
 
         compile("org.hibernate:hibernate-validator:4.2.0.Final")
