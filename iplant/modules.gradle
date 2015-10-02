@@ -20,11 +20,12 @@ project(':de-lib') {
         compile 'commons-fileupload:commons-fileupload:1.2.1'
         compile 'commons-io:commons-io:2.0.1'
         compile "com.sencha.gxt:gxt:$gxtVersion"
+        compile 'javax.servlet:javax.servlet-api:3.1.0'
         compile 'net.sf.json-lib:json-lib:2.4:jdk15'
         compile 'org.antlr:stringtemplate:4.0.2'
         compile 'org.apache.httpcomponents:httpclient:4.4.1'
         compile 'org.apache.httpcomponents:httpmime:4.3.4'
-        compile 'javax.servlet:javax.servlet-api:3.1.0'
+        compile 'org.bitbucket.b_c:jose4j:0.4.4'
 
         compile("org.springframework:spring-core:4.1.6.RELEASE")
         compile("org.springframework:spring-web:4.1.6.RELEASE")
