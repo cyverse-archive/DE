@@ -1,5 +1,6 @@
 package org.iplantc.de.server.services;
 
+import static org.iplantc.de.server.AppLoggerConstants.REQUEST_KEY;
 import static org.iplantc.de.server.AppLoggerConstants.RESPONSE_KEY;
 import org.iplantc.de.server.AppLoggerConstants;
 import org.iplantc.de.server.AppLoggerUtil;
@@ -21,11 +22,10 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -83,33 +83,18 @@ public class DEServiceImpl implements DEService,
         String json = null;
         if (isValidServiceCall(wrapper)) {
             String address = retrieveServiceAddress(wrapper);
-            String endpoint = getEndpointFromRequestAddress(address);
 
             CloseableHttpClient client = HttpClients.createDefault();
             try {
-                final long requestStartTime = System.currentTimeMillis();
-                final HttpResponse response = getResponse(client, wrapper, address);
-                final long requestEndTime = System.currentTimeMillis();
-                json = getResponseBody(response);
-                final Map<String, Object> responseMap = loggerUtil.updateMdcResponseMap(response,
-                                                                                        wrapper.getType(),
-                                                                                        endpoint,
-                                                                                        json,
-                                                                                        requestEndTime - requestStartTime);
-                ObjectMapper mapper = new ObjectMapper();
-                String responseAsString = mapper.writeValueAsString(responseMap);
-                MDC.put(RESPONSE_KEY, responseAsString);
-                API_METRICS_LOG.info("{} {}", wrapper.getType(), endpoint);
+                json = getResponse(client, wrapper, address);
+
 
             } catch (AuthenticationException | HttpException ex) {
-                API_METRICS_LOG.error(wrapper.getType() + " " + endpoint, ex);
                 throw ex;
             } catch (Exception ex) {
-                API_METRICS_LOG.error(wrapper.getType() + " " + endpoint, ex);
                 throw new SerializationException(ex);
             } finally {
                 IOUtils.closeQuietly(client);
-                MDC.remove(RESPONSE_KEY);
             }
         }
         return json;
@@ -195,32 +180,6 @@ public class DEServiceImpl implements DEService,
         return new StringEntity(body, ContentType.APPLICATION_JSON);
     }
 
-    /**
-     * Sends an HTTP DELETE request to another services.
-     *
-     * @param client  the HTTP client to use.
-     * @param address the address to connect to.
-     * @return the response.
-     * @throws IOException if an error occurs.
-     */
-    private HttpResponse delete(HttpClient client, String address) throws IOException {
-        HttpDelete clientRequest = urlConnector.deleteRequest(getRequest(), address);
-        return client.execute(clientRequest);
-    }
-
-    /**
-     * Sends an HTTP GET request to another services.
-     *
-     * @param client  the HTTP client to use.
-     * @param address the address to connect to.
-     * @return the response.
-     * @throws IOException if an error occurs.
-     */
-    private HttpResponse get(HttpClient client, String address) throws IOException {
-        final HttpGet getRequest = urlConnector.getRequest(getRequest(), address);
-        return client.execute(getRequest);
-    }
-
     private String getEndpointFromRequestAddress(final String address){
         int slashSlash = address.indexOf("//") + 2;
         int singleSlash = address.indexOf("/", slashSlash);
@@ -237,35 +196,87 @@ public class DEServiceImpl implements DEService,
      * @return the response.
      * @throws IOException if an I/O error occurs.
      */
-    private HttpResponse getResponse(final HttpClient client,
+    private String getResponse(final HttpClient client,
                                      final ServiceCallWrapper wrapper,
-                                     final String resolvedAddress)
-        throws IOException {
+                                     final String resolvedAddress) throws IOException {
 
         String body = updateRequestBody(wrapper.getBody());
-        // Add request body to MDC
-        loggerUtil.addBodyToMdcRequestMap(wrapper.getBody());
+        String endpoint = getEndpointFromRequestAddress(resolvedAddress);
 
         BaseServiceCallWrapper.Type type = wrapper.getType();
-        switch (type) {
-            case GET:
-                return get(client, resolvedAddress);
+        HttpRequestBase request = null;
+        HttpResponse response;
+        String responseBody;
 
-            case PUT:
-                return put(client, resolvedAddress, body);
+        try {
 
-            case POST:
-                return post(client, resolvedAddress, body);
+            switch (type) {
+                case GET:
+                    request = urlConnector.getRequest(getRequest(), resolvedAddress);
+                    break;
 
-            case DELETE:
-                return delete(client, resolvedAddress);
+                case PUT:
+                    request = urlConnector.putRequest(getRequest(), resolvedAddress);
+                    ((HttpPut)request).setEntity(createEntity(body));
+                    break;
 
-            case PATCH:
-                return patch(client, resolvedAddress, body);
+                case POST:
+                    request = urlConnector.postRequest(getRequest(), resolvedAddress);
+                    ((HttpPost)request).setEntity(createEntity(body));
+                    break;
 
-            default:
-                throw new UnsupportedOperationException("HTTP method " + type + " not supported");
+                case DELETE:
+                    request = urlConnector.deleteRequest(getRequest(), resolvedAddress);
+                    break;
+
+                case PATCH:
+                    HttpPatch clientRequest3 = urlConnector.patchRequest(getRequest(), resolvedAddress);
+                    clientRequest3.setEntity(createEntity(body));
+                    break;
+
+                default:
+                    throw new UnsupportedOperationException("HTTP method " + type + " not supported");
+            }
+
+            // Add request to MDC
+            final Map<String, Object> requestMap = loggerUtil.createMdcRequestMap(request, body);
+            final String mapAsString = new ObjectMapper().writeValueAsString(requestMap);
+
+            // Log Request
+            MDC.put(REQUEST_KEY, mapAsString);
+            API_METRICS_LOG.info("{} {}", type.toString(), endpoint);
+            MDC.remove(REQUEST_KEY);
+
+            // Send request to API
+            final long requestStartTime = System.currentTimeMillis();
+            response = client.execute(request);
+            response = loggerUtil.copyRequestIdHeader(request, response);
+
+            // Set return value
+            responseBody = getResponseBody(response);
+            final long requestEndTime = System.currentTimeMillis();
+
+            final String responseMapJson = loggerUtil.createMdcResponseMapJson(response,
+                                                                               wrapper.getType(),
+                                                                               endpoint,
+                                                                               responseBody,
+                                                                               requestEndTime - requestStartTime);
+
+            // Log Response
+            MDC.put(RESPONSE_KEY, responseMapJson);
+            API_METRICS_LOG.info("{} {}", wrapper.getType(), endpoint);
+            MDC.remove(RESPONSE_KEY);
+
+        } catch (Exception e) {
+            API_METRICS_LOG.error(type.toString() + " " + endpoint, e);
+            throw e;
+        } finally {
+            MDC.remove(REQUEST_KEY);
+            MDC.remove(RESPONSE_KEY);
         }
+
+        return responseBody;
+
     }
 
     /**
@@ -323,51 +334,6 @@ public class DEServiceImpl implements DEService,
      */
     private boolean isValidString(String in) {
         return (in != null && in.length() > 0);
-    }
-
-    /**
-     * Sends an HTTP PATCH request to another services.
-     *
-     * @param client  the HTTP client to use.
-     * @param address the address to send the request to.
-     * @param body    the request body.
-     * @return the response.
-     * @throws IOException if an I/O error occurs.
-     */
-    private HttpResponse patch(HttpClient client, String address, String body) throws IOException {
-        HttpPatch clientRequest = urlConnector.patchRequest(getRequest(), address);
-        clientRequest.setEntity(createEntity(body));
-        return client.execute(clientRequest);
-    }
-
-    /**
-     * Sends an HTTP POST request to another services.
-     *
-     * @param client  the HTTP client to use.
-     * @param address the address to connect to.
-     * @param body    the request body.
-     * @return the response.
-     * @throws IOException if an error occurs.
-     */
-    private HttpResponse post(HttpClient client, String address, String body) throws IOException {
-        HttpPost clientRequest = urlConnector.postRequest(getRequest(), address);
-        clientRequest.setEntity(createEntity(body));
-        return client.execute(clientRequest);
-    }
-
-    /**
-     * Sends an HTTP PUT request to another services.
-     *
-     * @param client  the HTTP client to use.
-     * @param address the address to connect to.
-     * @param body    the request body.
-     * @return the response.
-     * @throws IOException if an error occurs.
-     */
-    private HttpResponse put(HttpClient client, String address, String body) throws IOException {
-        HttpPut clientRequest = urlConnector.putRequest(getRequest(), address);
-        clientRequest.setEntity(createEntity(body));
-        return client.execute(clientRequest);
     }
 
     /**

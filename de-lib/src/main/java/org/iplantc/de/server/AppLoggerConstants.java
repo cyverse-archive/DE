@@ -33,9 +33,9 @@ public interface AppLoggerConstants {
     String RESPONSE_KEY = "response";
 
     String REQUEST_KEY = "request";
-    String REQUEST_RESPONSE_BODY_KEY = "request.responseBody";
+
+    String USER_IP_KEY = "clientip";
 
     String USER_IP_HEADER_NAME = "x-real-ip";
-    String USER_IP_KEY = "clientip";
-    String REQUEST_HEADER_KEY = "request.header";
+    String REQUEST_ID_HEADER = "X-de-req-id";
 }

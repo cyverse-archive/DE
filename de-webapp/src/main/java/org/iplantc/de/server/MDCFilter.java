@@ -15,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.Map;
 
 import javax.servlet.Filter;
@@ -59,8 +58,6 @@ public class MDCFilter implements Filter {
             }
             MDC.put(USER_IP_KEY, remoteIP);
 
-//            logHeaders(servletRequestWrapper);
-
         }
         try {
             filterChain.doFilter(servletRequest, servletResponse);
@@ -70,22 +67,6 @@ public class MDCFilter implements Filter {
                 MDC.remove(USER_IP_KEY);
             }
         }
-    }
-
-    /**
-     * This method adds the request's header names/values to the MDC if trace-level debugging is on
-     * for this class.
-     * @param servletRequestWrapper
-     */
-    private void logHeaders(HttpServletRequestWrapper servletRequestWrapper){
-          if(LOG.isTraceEnabled()) {
-                final Enumeration<String> headerNames = servletRequestWrapper.getHeaderNames();
-                for (; headerNames.hasMoreElements(); ) {
-                    final String headerName = headerNames.nextElement();
-                    final String headerValue = servletRequestWrapper.getHeader(headerName);
-                    MDC.put(AppLoggerConstants.REQUEST_HEADER_KEY + "." + headerName, headerValue);
-                }
-            }
     }
 
     @Override

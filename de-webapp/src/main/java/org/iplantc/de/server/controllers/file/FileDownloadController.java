@@ -41,7 +41,8 @@ import javax.servlet.http.HttpServletResponse;
 public class FileDownloadController {
 
     private final Logger API_REQUEST_LOG = LoggerFactory.getLogger(AppLoggerConstants.API_METRICS_LOGGER);
-    private final AppLoggerUtil appLoggerUtil = AppLoggerUtil.getInstance();
+    private final AppLoggerUtil loggerUtil = AppLoggerUtil.getInstance();
+    private final AppLoggerUtil appLoggerUtil = loggerUtil;
 
     @Value("${org.iplantc.services.de-data-mgmt.base}") String dataMgmtServiceBaseUrl;
 
@@ -73,7 +74,7 @@ public class FileDownloadController {
         CloseableHttpClient client = HttpClients.createDefault();
         try {
             final long requestStartTime = System.currentTimeMillis();
-            final CloseableHttpResponse incomingResponse = client.execute(get);
+            final CloseableHttpResponse incomingResponse = loggerUtil.copyRequestIdHeader(get, client.execute(get));
             final long responseRecvTime = System.currentTimeMillis();
             final String responseJson = appLoggerUtil.createMdcResponseMapJson(incomingResponse,
                                                                                BaseServiceCallWrapper.Type.GET,
@@ -102,7 +103,8 @@ public class FileDownloadController {
     private void prepareForRequest(HttpGet get, final String logRequestUri) {
 
         try {
-            String request = appLoggerUtil.createMdcRequestMapAsJsonString(get);
+            HttpGet reqWithIdHeader = loggerUtil.addRequestIdHeader(get);
+            String request = appLoggerUtil.createMdcRequestMapAsJsonString(reqWithIdHeader);
             MDC.put(REQUEST_KEY, request);
             API_REQUEST_LOG.info("GET {}", logRequestUri);
         } catch (Exception e) {

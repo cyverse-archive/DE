@@ -2,13 +2,10 @@ package org.iplantc.de.server.controllers.file;
 
 import static org.iplantc.de.server.AppLoggerConstants.API_METRICS_LOGGER;
 import static org.iplantc.de.server.AppLoggerConstants.REQUEST_KEY;
-import static org.iplantc.de.server.AppLoggerConstants.REQUEST_RESPONSE_BODY_KEY;
 import static org.iplantc.de.server.AppLoggerConstants.RESPONSE_KEY;
 import org.iplantc.de.server.AppLoggerUtil;
 import org.iplantc.de.server.util.CasUtils;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
@@ -73,7 +70,7 @@ public class SecuredFileUploadController {
         ResponseEntity<Object> response = null;
         try {
             final long requestStartTime = System.currentTimeMillis();
-            final CloseableHttpResponse incomingResponse = client.execute(post);
+            final CloseableHttpResponse incomingResponse = loggerUtil.copyRequestIdHeader(post, client.execute(post));
             final long responseRecvTime = System.currentTimeMillis();
             final String responseJson = loggerUtil.createMdcResponseMapJson(incomingResponse,
                                                                             BaseServiceCallWrapper.Type.GET,
@@ -104,7 +101,8 @@ public class SecuredFileUploadController {
     private void prepareForRequest(HttpPost post, final String logRequestUri) {
 
         try {
-            String request = loggerUtil.createMdcRequestMapAsJsonString(post);
+            HttpPost reqWithHeader = loggerUtil.addRequestIdHeader(post);
+            String request = loggerUtil.createMdcRequestMapAsJsonString(reqWithHeader);
             MDC.put(REQUEST_KEY, request);
             API_REQUEST_LOG.info("POST {}", logRequestUri);
         } catch (Exception e) {
@@ -200,7 +198,6 @@ public class SecuredFileUploadController {
     private ResponseEntity<Object> formatResponse(CloseableHttpResponse response) throws IOException {
         try {
             final String body = IOUtils.toString(response.getEntity().getContent());
-            MDC.put(REQUEST_RESPONSE_BODY_KEY, body);
             return new ResponseEntity<Object>(body, HttpStatus.OK);
         } finally {
             response.close();
