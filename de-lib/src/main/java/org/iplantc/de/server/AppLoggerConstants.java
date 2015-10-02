@@ -37,5 +37,6 @@ public interface AppLoggerConstants {
     String USER_IP_KEY = "clientip";
 
     String USER_IP_HEADER_NAME = "x-real-ip";
-    String REQUEST_ID_HEADER = "X-de-req-id";
+    String REQUEST_ID_HEADER = "X-DE-request-id";
+    String REQUEST_ID_HEADER_FWD = "X-DE-forwarded-request-id";
 }

@@ -42,7 +42,7 @@ public class AppLoggerUtil {
     }
 
     public <T extends HttpRequestBase> T addRequestIdHeader(T request) {
-        final String requestId = UUID.randomUUID().toString();
+        final String requestId = "UI-" + UUID.randomUUID().toString();
         API_METRICS_LOG.trace("Adding unique request id to constructed request. Request-Id = {}", requestId);
         request.addHeader(REQUEST_ID_HEADER, requestId);
         return request;
