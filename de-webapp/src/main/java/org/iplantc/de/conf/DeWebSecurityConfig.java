@@ -7,8 +7,6 @@ import org.iplantc.de.server.MDCFilter;
 import org.iplantc.de.server.auth.CasLogoutSuccessHandler;
 
 import static org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN;
-import org.jasig.cas.client.proxy.ProxyGrantingTicketStorage;
-import org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl;
 import org.jasig.cas.client.session.SingleSignOutFilter;
 import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
 import org.slf4j.Logger;
@@ -45,7 +43,6 @@ public class DeWebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${org.iplantc.discoveryenvironment.cas.base-url}") private String casServerUrlPrefix;
     @Value("${org.iplantc.discoveryenvironment.maintenance-file}") private String deMaintenanceFile;
     @Value("${org.iplantc.discoveryenvironment.cas.logout-url}") private String logoutUrl;
-    @Value("${org.iplantc.discoveryenvironment.cas.proxy-receptor}") private String proxyReceptorUrl;
     @Value("${org.iplantc.discoveryenvironment.cas.server-name}/de") private String serverName;
     @Value("${org.iplantc.discoveryenvironment.cas.validation}") private String validation;
 
@@ -69,8 +66,6 @@ public class DeWebSecurityConfig extends WebSecurityConfigurerAdapter {
         CasAuthenticationFilter casAuthenticationFilter = new CasAuthenticationFilter();
         casAuthenticationFilter.setAuthenticationManager(authenticationManager());
         casAuthenticationFilter.setFilterProcessesUrl(validation);
-        casAuthenticationFilter.setProxyGrantingTicketStorage(deProxyGrantingTicketStorage());
-        casAuthenticationFilter.setProxyReceptorUrl(proxyReceptorUrl);
         casAuthenticationFilter.setSessionAuthenticationStrategy(deSessionStrategy());
         return casAuthenticationFilter;
     }
@@ -103,11 +98,6 @@ public class DeWebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public ProxyGrantingTicketStorage deProxyGrantingTicketStorage() {
-        return new ProxyGrantingTicketStorageImpl();
-    }
-
-    @Bean
     public LogoutFilter deRequestSingleLogoutFilter() {
         LogoutFilter logoutFilter = new LogoutFilter(deLogoutSuccessHandler(),
                                                      new SecurityContextLogoutHandler());
@@ -125,11 +115,7 @@ public class DeWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public Cas20ServiceTicketValidator deServiceTicketValidator() {
-        final Cas20ServiceTicketValidator ticketValidator = new Cas20ServiceTicketValidator(casServerUrlPrefix);
-        ticketValidator.setProxyGrantingTicketStorage(deProxyGrantingTicketStorage());
-        ticketValidator.setProxyCallbackUrl(serverName + proxyReceptorUrl);
-        // cannot set 'acceptAnyProxy'
-        return ticketValidator;
+        return new Cas20ServiceTicketValidator(casServerUrlPrefix);
     }
 
     @Bean

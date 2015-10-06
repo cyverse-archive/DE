@@ -8,8 +8,6 @@ import org.iplantc.de.server.auth.CasGroupUserDetailsService;
 import org.iplantc.de.server.auth.CasLogoutSuccessHandler;
 
 import static org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN;
-import org.jasig.cas.client.proxy.ProxyGrantingTicketStorage;
-import org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl;
 import org.jasig.cas.client.session.SingleSignOutFilter;
 import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,7 +49,6 @@ public class AdminWebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${org.iplantc.discoveryenvironment.cas.base-url}") private String casServerUrlPrefix;
     @Value("${org.iplantc.discoveryenvironment.maintenance-file}") private String deMaintenanceFile;
     @Value("${org.iplantc.discoveryenvironment.cas.logout-url}") private String logoutUrl;
-    @Value("${org.iplantc.discoveryenvironment.cas.proxy-receptor}") private String proxyReceptor;
     @Value("${org.iplantc.discoveryenvironment.cas.server-name}/belphegor") private String serverName;
     @Value("${org.iplantc.discoveryenvironment.cas.validation}") private String validation;
 
@@ -74,8 +71,6 @@ public class AdminWebSecurityConfig extends WebSecurityConfigurerAdapter {
         CasAuthenticationFilter casAuthenticationFilter = new CasAuthenticationFilter();
         casAuthenticationFilter.setAuthenticationManager(authenticationManager());
         casAuthenticationFilter.setFilterProcessesUrl(validation);
-        casAuthenticationFilter.setProxyGrantingTicketStorage(adminProxyGrantingTicketStorage());
-        casAuthenticationFilter.setProxyReceptorUrl(proxyReceptor);
         casAuthenticationFilter.setSessionAuthenticationStrategy(adminSessionStrategy());
         return casAuthenticationFilter;
     }
@@ -112,11 +107,6 @@ public class AdminWebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public ProxyGrantingTicketStorage adminProxyGrantingTicketStorage() {
-        return new ProxyGrantingTicketStorageImpl();
-    }
-
-    @Bean
     public LogoutFilter adminRequestSingleLogoutFilter() {
         LogoutFilter logoutFilter = new LogoutFilter(adminLogoutSuccessHandler(),
                                                      new SecurityContextLogoutHandler());
@@ -145,10 +135,7 @@ public class AdminWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public Cas20ServiceTicketValidator adminTicketValidator() {
-        final Cas20ServiceTicketValidator ticketValidator = new Cas20ServiceTicketValidator(casServerUrlPrefix);
-        ticketValidator.setProxyGrantingTicketStorage(adminProxyGrantingTicketStorage());
-        ticketValidator.setProxyCallbackUrl(serverName + proxyReceptor);
-        return ticketValidator;
+        return new Cas20ServiceTicketValidator(casServerUrlPrefix);
     }
 
     @Override
