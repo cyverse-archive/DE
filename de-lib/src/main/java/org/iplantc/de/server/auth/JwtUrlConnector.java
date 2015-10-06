@@ -121,7 +121,7 @@ public class JwtUrlConnector extends BaseUrlConnector implements UrlConnector {
         claims.setClaim("given_name", firstName);
         claims.setClaim("family_name", lastName);
         claims.setClaim("name", firstName + " " + lastName);
-        claims.setClaim("entitlement", extractGroups(principal));
+        claims.setClaim("org.iplantc.de:entitlement", extractGroups(principal));
 
         // Sign the key.
         JsonWebSignature jws = new JsonWebSignature();
