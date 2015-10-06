@@ -8,13 +8,21 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.iplantc.de.server.AppLoggerConstants;
 import org.jasig.cas.client.authentication.AttributePrincipal;
+import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
+import org.jose4j.lang.JoseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.PrivateKey;
 
+import static org.iplantc.de.server.auth.PemKeyUtils.loadPrivateKey;
 import static org.iplantc.de.server.util.CasUtils.attributePrincipalFromServletRequest;
 
 /**
@@ -23,8 +31,27 @@ import static org.iplantc.de.server.util.CasUtils.attributePrincipalFromServletR
  *
  * @author dennis
  */
+@Component
 public class JwtUrlConnector extends BaseUrlConnector implements UrlConnector {
     private final Logger API_METRICS_LOG = LoggerFactory.getLogger(AppLoggerConstants.API_METRICS_LOGGER);
+
+    @Value("${org.iplantc.discoveryenvironment.jwt.private-key-path}") private String privateKeyPath;
+    @Value("${org.iplantc.discoveryenvironment.jwt.private-key-password}") private String privateKeyPassword;
+
+    private PrivateKey privateKey;
+
+    private PrivateKey getPrivateKey() {
+        if (privateKey == null) {
+            try {
+                privateKey = loadPrivateKey(privateKeyPath, privateKeyPassword);
+            } catch (IOException e) {
+                throw new IllegalArgumentException("Unable to load JWT signing key", e);
+            } catch (GeneralSecurityException e) {
+                throw new IllegalArgumentException("Unable to load JWT signing key", e);
+            }
+        }
+        return privateKey;
+    }
 
     @Override
     public HttpGet getRequest(HttpServletRequest request, String address) throws IOException {
@@ -58,8 +85,19 @@ public class JwtUrlConnector extends BaseUrlConnector implements UrlConnector {
      * @param c the outgoing HttpRequestBase.
      * @return the outgoing request.
      */
-    private <T extends HttpRequestBase> T addHeaders(final HttpServletRequest request, final T c) {
-        c.addHeader("X-Iplant-De-Jwt", buildJwt(request));
+    private <T extends HttpRequestBase> T addHeaders(final HttpServletRequest request, final T c)
+            throws IOException {
+
+        // Build the JWT.
+        String jwt;
+        try {
+            jwt = buildJwt(request);
+        } catch (JoseException e) {
+            throw new IOException("Unable to build and sign JWT", e);
+        }
+
+        // Update the message headers.
+        c.addHeader("X-Iplant-De-Jwt", jwt);
         return copyUserAgent(request, c);
     }
 
@@ -69,7 +107,7 @@ public class JwtUrlConnector extends BaseUrlConnector implements UrlConnector {
      * @param request the incoming servlet request.
      * @return a signed jwt.
      */
-    private String buildJwt(final HttpServletRequest request) {
+    private String buildJwt(final HttpServletRequest request) throws JoseException {
         final AttributePrincipal principal = attributePrincipalFromServletRequest(request);
 
         // Extract the user's first and last name from the attributes.
@@ -85,7 +123,13 @@ public class JwtUrlConnector extends BaseUrlConnector implements UrlConnector {
         claims.setClaim("name", firstName + " " + lastName);
         claims.setClaim("entitlement", extractGroups(principal));
 
-        return null;
+        // Sign the key.
+        JsonWebSignature jws = new JsonWebSignature();
+        jws.setPayload(claims.toJson());
+        jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
+        jws.setKey(getPrivateKey());
+
+        return jws.getCompactSerialization();
     }
 
     /**

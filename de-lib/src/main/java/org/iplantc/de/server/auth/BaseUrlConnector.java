@@ -24,8 +24,6 @@ import javax.servlet.http.HttpServletRequest;
  * Performs actions common to most URL connectors.
  */
 abstract class BaseUrlConnector implements UrlConnector {
-    private final Logger LOGGER = LoggerFactory.getLogger(BaseUrlConnector.class);
-    private final Logger API_METRICS_LOG = LoggerFactory.getLogger(AppLoggerConstants.API_METRICS_LOGGER);
 
     /**
      * Disables redirects for an HTTP request.

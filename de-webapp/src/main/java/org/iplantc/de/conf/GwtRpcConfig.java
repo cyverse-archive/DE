@@ -1,6 +1,7 @@
 package org.iplantc.de.conf;
 
 import org.iplantc.de.server.ServiceCallResolver;
+import org.iplantc.de.server.auth.JwtUrlConnector;
 import org.iplantc.de.server.auth.UrlConnector;
 import org.iplantc.de.server.rpc.DeGwtRemoteLoggingServiceImpl;
 import org.iplantc.de.server.rpc.GwtRpcController;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 
 import java.util.Properties;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletConfig;
 
 /**

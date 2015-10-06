@@ -26,6 +26,8 @@ project(':de-lib') {
         compile 'org.apache.httpcomponents:httpclient:4.4.1'
         compile 'org.apache.httpcomponents:httpmime:4.3.4'
         compile 'org.bitbucket.b_c:jose4j:0.4.4'
+        compile 'org.bouncycastle:bcprov-jdk15on:1.52'
+        compile 'org.bouncycastle:bcpkix-jdk15on:1.52'
 
         compile("org.springframework:spring-core:4.1.6.RELEASE")
         compile("org.springframework:spring-web:4.1.6.RELEASE")
