@@ -107,10 +107,14 @@ public class TemplatesListingViewImpl implements IsWidget, TemplateListingView {
         ColumnConfig<MetadataTemplateInfo, String> createdByCol = new ColumnConfig<>(props.createdBy(),
                                                                                      160,
                                                                                      appearance.createdBy());
+        ColumnConfig<MetadataTemplateInfo, Boolean> deletedCol = new ColumnConfig<>(props.deleted(),
+                                                                                    50,
+                                                                                    appearance.deleted());
         List<ColumnConfig<MetadataTemplateInfo, ?>> columns = new ArrayList<ColumnConfig<MetadataTemplateInfo, ?>>();
         columns.add(nameCol);
         columns.add(createdOnCol);
         columns.add(createdByCol);
+        columns.add(deletedCol);
         return new ColumnModel<>(columns);
 
     }

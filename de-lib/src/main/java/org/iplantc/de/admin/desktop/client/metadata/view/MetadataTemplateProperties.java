@@ -18,4 +18,5 @@ public interface MetadataTemplateProperties extends PropertyAccess<MetadataTempl
 
     ValueProvider<MetadataTemplateInfo, String> createdBy();
 
+    ValueProvider<MetadataTemplateInfo, Boolean> deleted();
 }

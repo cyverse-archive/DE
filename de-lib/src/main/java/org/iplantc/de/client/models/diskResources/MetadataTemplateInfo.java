@@ -7,7 +7,7 @@ import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
 import java.util.Date;
 
-public interface MetadataTemplateInfo  extends HasId, HasName{
+public interface MetadataTemplateInfo  extends HasId, HasName {
 
     void setId(String id);
 
@@ -35,4 +35,9 @@ public interface MetadataTemplateInfo  extends HasId, HasName{
     @PropertyName("created_by")
     void setCreatedBy(String userName);
 
+    @PropertyName("deleted")
+    Boolean isDeleted();
+
+    @PropertyName("deleted")
+    void setDeleted(Boolean delete);
 }

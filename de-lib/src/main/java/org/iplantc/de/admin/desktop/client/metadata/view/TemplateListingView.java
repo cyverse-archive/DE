@@ -17,6 +17,8 @@ public interface TemplateListingView extends IsWidget, IsMaskable {
 
         String delete();
 
+        String deleted();
+
         String edit();
 
         ImageResource addIcon();

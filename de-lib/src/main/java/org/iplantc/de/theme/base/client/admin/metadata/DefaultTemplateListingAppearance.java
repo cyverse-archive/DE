@@ -38,6 +38,11 @@ public class DefaultTemplateListingAppearance implements TemplateListingAppearan
     }
 
     @Override
+    public String deleted() {
+        return iplantDisplayStrings.deleted();
+    }
+
+    @Override
     public String edit() {
         return iplantDisplayStrings.edit();
     }

@@ -67,7 +67,7 @@ public class MetadataTemplatesPresenterImpl implements TemplateListingView.Prese
 
     private void loadTemplates() {
         view.mask("loading");
-        drSvcFac.getMetadataTemplateListing(new AsyncCallback<List<MetadataTemplateInfo>>() {
+        mdSvcFac.getMetadataTemplateListing(new AsyncCallback<List<MetadataTemplateInfo>>() {
 
             @Override
             public void onSuccess(List<MetadataTemplateInfo> result) {
@@ -105,8 +105,7 @@ public class MetadataTemplatesPresenterImpl implements TemplateListingView.Prese
                         public void onSuccess(String result) {
                             IplantAnnouncer.getInstance()
                                            .schedule(new SuccessAnnouncementConfig(appearance.deleteTemplateSuccess()));
-                            view.remove(template);
-
+                            loadTemplates();
                         }
                     });
                 }

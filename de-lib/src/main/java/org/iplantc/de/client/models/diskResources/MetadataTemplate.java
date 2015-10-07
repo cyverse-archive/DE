@@ -10,10 +10,4 @@ public interface MetadataTemplate extends MetadataTemplateInfo {
 	List<MetadataTemplateAttribute> getAttributes();
 
     void setAttributes(List<MetadataTemplateAttribute> attributes);
-
-    @PropertyName("deleted")
-    boolean isDeleted();
-    
-    @PropertyName("deleted")
-    void setDeleted(boolean delete);
 }

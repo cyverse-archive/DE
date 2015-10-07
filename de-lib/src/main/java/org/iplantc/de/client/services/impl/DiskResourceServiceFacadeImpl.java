@@ -67,8 +67,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Provides access to remote services for folder operations.
@@ -86,8 +84,6 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     private final UserInfo userInfo;
     @Inject DiskResourceUtil diskResourceUtil;
     @Inject EventBus eventBus;
-
-    Logger LOG = Logger.getLogger(DiskResourceServiceFacadeImpl.class.getName());
 
     @Inject
     public DiskResourceServiceFacadeImpl(final DiscEnvApiService deServiceFacade,
@@ -935,8 +931,8 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         callService(wrapper, new AsyncCallbackConverter<String, List<MetadataTemplateInfo>>(callback) {
             @Override
             protected List<MetadataTemplateInfo> convertFrom(String object) {
-                AutoBean<MetadataTemplateInfoList> bean = AutoBeanCodex.decode(factory, MetadataTemplateInfoList.class, object);
-                return bean.as().getTemplates();
+                MetadataTemplateInfoList templateInfoList = AutoBeanCodex.decode(factory, MetadataTemplateInfoList.class, object).as();
+                return templateInfoList.getTemplates();
             }
         });
     }
@@ -1010,7 +1006,6 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
                               boolean override,
                               AsyncCallback<String> callback) {
         String address = null;
-        LOG.log(Level.SEVERE, paths.getPayload() + "<=");
         if(override) {
             address = deProperties.getDataMgmtBaseUrl() + srcUUID + "/metadata/copy?force="
                 + override;
