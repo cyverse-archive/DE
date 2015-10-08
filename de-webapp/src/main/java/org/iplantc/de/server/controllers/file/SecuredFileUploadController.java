@@ -1,12 +1,5 @@
 package org.iplantc.de.server.controllers.file;
 
-import static org.iplantc.de.server.AppLoggerConstants.API_METRICS_LOGGER;
-import static org.iplantc.de.server.AppLoggerConstants.REQUEST_KEY;
-import static org.iplantc.de.server.AppLoggerConstants.RESPONSE_KEY;
-import org.iplantc.de.server.AppLoggerUtil;
-import org.iplantc.de.server.util.CasUtils;
-import org.iplantc.de.shared.services.BaseServiceCallWrapper;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -16,9 +9,15 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.iplantc.de.server.AppLoggerUtil;
+import org.iplantc.de.server.auth.DESecurityConstants;
+import org.iplantc.de.server.auth.JwtBuilder;
+import org.iplantc.de.shared.services.BaseServiceCallWrapper;
+import org.jose4j.lang.JoseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,13 +27,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
+import static org.iplantc.de.server.AppLoggerConstants.API_METRICS_LOGGER;
+import static org.iplantc.de.server.AppLoggerConstants.REQUEST_KEY;
+import static org.iplantc.de.server.AppLoggerConstants.RESPONSE_KEY;
 
 /**
  * Performs secured file uploads.
@@ -48,6 +50,8 @@ public class SecuredFileUploadController {
     private final Logger API_REQUEST_LOG = LoggerFactory.getLogger(API_METRICS_LOGGER);
     private final AppLoggerUtil loggerUtil = AppLoggerUtil.getInstance();
 
+    @Autowired private JwtBuilder jwtBuilder;
+
     @Value("${org.iplantc.services.file-io.secured.file-upload}") String securedFileUploadUrl;
 
     @RequestMapping(value = "/de/secured/fileUpload", method = RequestMethod.POST)
@@ -60,10 +64,17 @@ public class SecuredFileUploadController {
         final URI logRequestUri = buildUri(dest);
 
         // Create the request.
-        final URI uri = buildUri(dest, getProxyToken(request, extractServiceName(logRequestUri)));
+        final URI uri = buildUri(dest);
         final HttpPost post = new HttpPost(uri);
-        post.setEntity(buildMultipartEntity(file));
-        prepareForRequest(post, logRequestUri.toString());
+        try {
+            post.setHeader(DESecurityConstants.JWT_CUSTOM_HEADER, jwtBuilder.buildJwt(request));
+            post.setEntity(buildMultipartEntity(file));
+            prepareForRequest(post, logRequestUri.toString());
+        } catch (JoseException e) {
+            API_REQUEST_LOG.error("GET " + logRequestUri.toString(), e);
+            MDC.remove(RESPONSE_KEY);
+            throw new IOException("unable to generate JWT", e);
+        }
 
         // Send the request.
         CloseableHttpClient client = HttpClients.createDefault();
@@ -118,56 +129,12 @@ public class SecuredFileUploadController {
      * is used in the actual request. The destination is used in log messages and in the request.
      *
      * @param dest the destination path to place in the query string.
-     * @param proxyToken the proxy token to place in the query string. Omitted if null.
-     * @return the URI.
-     * @throws URISyntaxException if the base URI {@code securedFileUploadUrl} is malformed.
-     */
-    private URI buildUri(final String dest, final String proxyToken) throws URISyntaxException {
-        final URIBuilder uriBuilder = new URIBuilder(securedFileUploadUrl).setParameter("dest", dest);
-
-        // Add the proxy token if it's present.
-        if (proxyToken != null) {
-            uriBuilder.setParameter("proxyToken", proxyToken);
-        }
-
-        return uriBuilder.build();
-    }
-
-    /**
-     * Builds the request URI containing only a destination. This version of the method is used to build
-     * URIs that are used in log messages.
-     *
-     * @param dest the destination path to place in the query string.
      * @return the URI.
      * @throws URISyntaxException if the base URI {@code securedFileUploadUrl} is malformed.
      */
     private URI buildUri(final String dest) throws URISyntaxException {
-        return buildUri(dest, null);
-    }
-
-    /**
-     * Extracts the CAS service name from a request URI.
-     *
-     * @param uri the request URI.
-     * @return the CAS service name.
-     */
-    private String extractServiceName(URI uri) {
-        return new StringBuilder()
-                .append(uri.getScheme())
-                .append("://")
-                .append(uri.getAuthority())
-                .toString();
-    }
-
-    /**
-     * Obtains a CAS proxy token for the authenticated user.
-     *
-     * @param request the incoming servlet request.
-     * @param serviceName the service name to use for the CAS proxy token.
-     * @return the proxy token.
-     */
-    private String getProxyToken(final HttpServletRequest request, final String serviceName) {
-        return CasUtils.attributePrincipalFromServletRequest(request).getProxyTicketFor(serviceName);
+        final URIBuilder uriBuilder = new URIBuilder(securedFileUploadUrl).setParameter("dest", dest);
+        return uriBuilder.build();
     }
 
     /**

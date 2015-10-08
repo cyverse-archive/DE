@@ -16,6 +16,12 @@ import java.util.Map;
 @SuppressWarnings("serial")
 public class DESecurityConstants {
 
+    // Prevent instantiation.
+    private DESecurityConstants() {}
+
+    // The custom header used for JWT assertions.
+    public static final String JWT_CUSTOM_HEADER = "X-Iplant-De-Jwt";
+
     // The names of the attributes containing the Shibboleth session ID.
     public static final String REMOTE_SHIB_SESSION_ID = "HTTP_SHIB_SESSION_ID";
     public static final String LOCAL_SHIB_SESSION_ID = "shibbolethSessionId";
