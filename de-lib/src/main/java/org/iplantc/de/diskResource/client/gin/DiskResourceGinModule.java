@@ -8,6 +8,7 @@ import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.diskResource.client.SearchView;
 import org.iplantc.de.diskResource.client.ToolbarView;
+import org.iplantc.de.diskResource.client.gin.factory.BulkMetadataDialogFactory;
 import org.iplantc.de.diskResource.client.gin.factory.DataLinkPresenterFactory;
 import org.iplantc.de.diskResource.client.gin.factory.DataLinkViewFactory;
 import org.iplantc.de.diskResource.client.gin.factory.DetailsViewFactory;
@@ -32,6 +33,7 @@ import org.iplantc.de.diskResource.client.presenters.toolbar.ToolbarViewPresente
 import org.iplantc.de.diskResource.client.views.DiskResourceViewImpl;
 import org.iplantc.de.diskResource.client.views.dataLink.DataLinkViewImpl;
 import org.iplantc.de.diskResource.client.views.details.DetailsViewImpl;
+import org.iplantc.de.diskResource.client.views.dialogs.BulkMetadataDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.GenomeSearchDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.InfoTypeEditorDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
@@ -123,6 +125,7 @@ public class DiskResourceGinModule extends AbstractGinModule {
                     .implement(DetailsView.class, DetailsViewImpl.class)
                     .build(DetailsViewFactory.class));
 
+        install(new GinFactoryModuleBuilder().build(BulkMetadataDialogFactory.class));
 
         // Dialogs
         bind(InfoTypeEditorDialog.class);

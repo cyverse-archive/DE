@@ -93,4 +93,31 @@ public class ToolbarViewPresenterDefaultAppearance implements ToolbarView.Presen
     public String cogeImportGenomeSucess() {
         return diskResourceMessages.cogeImportGenomeSucess();
     }
+
+    @Override
+    public String templatesError() {
+        return diskResourceMessages.templatesError();
+    }
+
+    @Override
+    public String bulkMetadataSuccess() {
+        return diskResourceMessages.bulkMetadataSuccess();
+    }
+
+    @Override
+    public String bulkMetadataError() {
+        return diskResourceMessages.bulkMetadataError();
+    }
+
+    public String overWiteMetadata() {
+        return diskResourceMessages.overWiteMetadata();
+    }
+
+    public String applyBulkMetadata() {
+        return diskResourceMessages.applyBulkMetadata();
+    }
+
+    public String selectMetadataFile() {
+        return displayMessages.selectMetadataFile();
+    }
 }

@@ -1032,4 +1032,34 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         callService(wrapper, callback);
 
     }
+
+    @Override
+    public void uploadBulkMetadata(String template_id,
+                                   String destFolder,
+                                   boolean force,
+                                   AsyncCallback<String> callback) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void setBulkMetadataFromFile(String metadataFilePath,
+                                        String template_id,
+                                        String destFolder,
+                                        boolean force,
+                                        AsyncCallback<String> callback) {
+        StringBuilder address = new StringBuilder(deProperties.getDataMgmtBaseUrl()
+                + "metadata/csv-parser?");
+
+        address.append("dest=" + destFolder);
+        address.append("&src=" + metadataFilePath);
+        address.append("&force=" + force);
+
+        if (!Strings.isNullOrEmpty(template_id)) {
+            address.append("&template-id=" + template_id);
+        }
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address.toString(), "{}");
+        callService(wrapper, callback);
+    }
 }

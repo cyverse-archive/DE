@@ -473,4 +473,14 @@ public class ToolbarViewDefaultAppearance implements ToolbarView.Appearance {
     public String importFromCoge() {
         return displayMessages.importFromCoge();
     }
+
+    @Override
+    public String applyBulkMetadata() {
+        return displayMessages.applyBulkMetadata();
+    }
+
+    @Override
+    public String selectMetadata() {
+        return displayMessages.selectMetadataFile();
+    }
 }

@@ -133,4 +133,8 @@
       <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.GenomeSearchDialogDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.GenomeSearchDialog.Appearance"/>
     </replace-with>
+    
+         <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.BulkMetadataDialogDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.BulkMetadataDialog.Appearance"/>
+    </replace-with>
 </module>

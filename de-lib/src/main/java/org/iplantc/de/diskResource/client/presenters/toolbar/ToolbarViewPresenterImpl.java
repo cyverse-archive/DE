@@ -6,13 +6,19 @@ import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
+import org.iplantc.de.client.models.errorHandling.ServiceErrorCode;
+import org.iplantc.de.client.models.errors.diskResources.DiskResourceErrorAutoBeanFactory;
+import org.iplantc.de.client.models.errors.diskResources.ErrorDiskResource;
 import org.iplantc.de.client.models.genomes.GenomeAutoBeanFactory;
 import org.iplantc.de.client.models.genomes.GenomeList;
 import org.iplantc.de.client.models.viewer.MimeType;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
@@ -26,8 +32,11 @@ import org.iplantc.de.diskResource.client.events.RequestSimpleDownloadEvent;
 import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
 import org.iplantc.de.diskResource.client.events.selection.SimpleDownloadSelected;
 import org.iplantc.de.diskResource.client.events.selection.SimpleDownloadSelected.SimpleDownloadSelectedHandler;
+import org.iplantc.de.diskResource.client.gin.factory.BulkMetadataDialogFactory;
 import org.iplantc.de.diskResource.client.gin.factory.DataLinkPresenterFactory;
+import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorFieldFactory;
 import org.iplantc.de.diskResource.client.gin.factory.ToolbarViewFactory;
+import org.iplantc.de.diskResource.client.views.dialogs.BulkMetadataDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.CreateFolderDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.CreateNcbiSraFolderStructureDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.GenomeSearchDialog;
@@ -44,8 +53,11 @@ import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import static com.sencha.gxt.widget.core.client.Dialog.PredefinedButton.CANCEL;
 import static com.sencha.gxt.widget.core.client.Dialog.PredefinedButton.OK;
 
-import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
+import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
+import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.box.MessageBox;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent.DialogHideHandler;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 
@@ -58,13 +70,71 @@ import java.util.logging.Logger;
 public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
                                                  SimpleDownloadSelectedHandler {
 
+
+    private final class BulkMetadataCallback implements AsyncCallback<String> {
+
+
+        private final String filePath;
+        private final String templateId;
+        private final String destFolder;
+
+        public BulkMetadataCallback(String filePath, String templateId, String destFolder) {
+            this.filePath = filePath;
+            this.templateId = templateId;
+            this.destFolder = destFolder;
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+
+            AutoBean<ErrorDiskResource> ab = AutoBeanCodex.decode(drFactory,
+                                                                  ErrorDiskResource.class,
+                                                                  caught.getMessage());
+            if (ab.as().getErrorCode().equals(ServiceErrorCode.ERR_NOT_UNIQUE.toString())) {
+                ConfirmMessageBox cmb = new ConfirmMessageBox(appearance.applyBulkMetadata(),
+                                                              appearance.overWiteMetadata());
+                cmb.addDialogHideHandler(new DialogHideHandler() {
+
+                    @Override
+                    public void onDialogHide(DialogHideEvent event) {
+                        if (event.getHideButton().equals(PredefinedButton.YES)) {
+                            submitBulkMetadataFromExistingFile(filePath, templateId, destFolder, true);
+                        }
+                    }
+
+                });
+
+                cmb.show();
+
+            } else {
+                IplantAnnouncer.getInstance()
+                               .schedule(new ErrorAnnouncementConfig(appearance.bulkMetadataError()));
+            }
+
+        }
+
+        @Override
+        public void onSuccess(String result) {
+            IplantAnnouncer.getInstance()
+                           .schedule(new SuccessAnnouncementConfig(appearance.bulkMetadataSuccess()));
+
+        }
+    }
+
     @Inject ToolbarView.Presenter.Appearance appearance;
     @Inject DataLinkPresenterFactory dataLinkPresenterFactory;
+    @Inject
+    DiskResourceSelectorFieldFactory drSelectorFactory;
     @Inject EventBus eventBus;
+    @Inject
+    DiskResourceServiceFacade drFacade;
 
-    FileEditorServiceFacade facade;
+    @Inject
+    DiskResourceErrorAutoBeanFactory drFactory;
+    FileEditorServiceFacade feFacade;
 
     private final GenomeSearchDialog genomeSearchView;
+    private final BulkMetadataDialogFactory bulkMetadataViewFactory;
     final private GenomeAutoBeanFactory gFactory;
     private final DiskResourceView.Presenter parentPresenter;
     private final ToolbarView view;
@@ -74,11 +144,13 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
     @Inject
     ToolbarViewPresenterImpl(final ToolbarViewFactory viewFactory,
                              GenomeSearchDialog genomeSearchView,
+                             BulkMetadataDialogFactory bulkMetadataViewFactory,
                              GenomeAutoBeanFactory gFactory,
                              @Assisted DiskResourceView.Presenter parentPresenter) {
         this.parentPresenter = parentPresenter;
         this.view = viewFactory.create(this);
-        this.facade = ServicesInjector.INSTANCE.getFileEditorServiceFacade();
+        this.bulkMetadataViewFactory = bulkMetadataViewFactory;
+        this.feFacade = ServicesInjector.INSTANCE.getFileEditorServiceFacade();
         view.addSimpleDownloadSelectedHandler(this);
         this.genomeSearchView = genomeSearchView;
         this.genomeSearchView.setPresenter(this);
@@ -231,7 +303,7 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
 
     @Override
     public void searchGenomeInCoge(String searchTerm) {
-        facade.searchGenomesInCoge(searchTerm, new AsyncCallback<String>() {
+        feFacade.searchGenomesInCoge(searchTerm, new AsyncCallback<String>() {
 
             @Override
             public void onSuccess(String result) {
@@ -252,7 +324,7 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
 
     @Override
     public void importGenomeFromCoge(Integer id) {
-        facade.importGenomeFromCoge(id, true, new AsyncCallback<String>() {
+        feFacade.importGenomeFromCoge(id, true, new AsyncCallback<String>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -270,6 +342,46 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
             }
 
         });
+
+    }
+
+    @Override
+    public void onBulkMetadataSelected(final BulkMetadataDialog.BULK_MODE mode) {
+        drFacade.getMetadataTemplateListing(new AsyncCallback<List<MetadataTemplateInfo>>() {
+
+            @Override
+            public void onSuccess(List<MetadataTemplateInfo> templates) {
+                BulkMetadataDialog bmd = bulkMetadataViewFactory.create(drSelectorFactory,
+                                                                        parentPresenter.getSelectedDiskResources()
+                                                                                       .get(0)
+                                                                                       .getPath(),
+                                                                        templates,
+                                                                        mode);
+                bmd.setPresenter(ToolbarViewPresenterImpl.this);
+                view.openViewBulkMetadata(bmd);
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                IplantAnnouncer.getInstance()
+                               .schedule(new ErrorAnnouncementConfig(appearance.templatesError()));
+
+            }
+        });
+
+    }
+
+    @Override
+    public void
+ submitBulkMetadataFromExistingFile(String filePath,
+                                                   String templateId,
+                                                   String destFolder,
+                                                   boolean force) {
+        drFacade.setBulkMetadataFromFile(filePath,
+                                         templateId,
+                                         destFolder,
+                                         force,
+                                         new BulkMetadataCallback(filePath, templateId, destFolder));
 
     }
 

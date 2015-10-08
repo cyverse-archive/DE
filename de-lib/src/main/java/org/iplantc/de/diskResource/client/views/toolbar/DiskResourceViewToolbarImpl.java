@@ -30,6 +30,7 @@ import org.iplantc.de.diskResource.client.events.selection.SendToTreeViewerSelec
 import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelected;
 import org.iplantc.de.diskResource.client.events.selection.SimpleDownloadSelected;
 import org.iplantc.de.diskResource.client.events.selection.SimpleUploadSelected;
+import org.iplantc.de.diskResource.client.views.dialogs.BulkMetadataDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.GenomeSearchDialog;
 import org.iplantc.de.diskResource.client.views.search.DiskResourceSearchField;
 import org.iplantc.de.diskResource.share.DiskResourceModule.Ids;
@@ -64,35 +65,51 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
     @UiTemplate("DiskResourceViewToolbar.ui.xml")
     interface DiskResourceViewToolbarUiBinder extends UiBinder<Widget, DiskResourceViewToolbarImpl> {
     }
-    @UiField(provided = true) final ToolbarView.Appearance appearance;
-    @UiField(provided = true) final DiskResourceSearchField searchField;
-    @Inject DiskResourceUtil diskResourceUtil;
-    @UiField TextButton downloadMenu;
-    @UiField TextButton editMenu;
-    @UiField TextButton fileMenu;
-    @UiField MenuItem newFileMi;
-    @UiField MenuItem newPathListMi;
-    @UiField MenuItem newWindowMi, newWindowAtLocMi, newFolderMi,
-        duplicateMi, newPlainTextFileMi,
-        newTabularDataFileMi, moveToTrashMi, newRFileMi, newPerlFileMi, newPythonFileMi,
-        newShellScriptFileMi, newMdFileMi;
-    @UiField MenuItem openTrashMi, restoreMi, emptyTrashMi;
-    @UiField TextButton refreshButton;
-    @UiField MenuItem renameMi, moveMi, deleteMi,
- editFileMi, editCommentsMi, editInfoTypeMi, metadataMi,
-            copymetadataMi;
-    @UiField MenuItem shareFolderLocationMi;
-    @UiField TextButton shareMenu;
-    @UiField MenuItem shareWithCollaboratorsMi, createPublicLinkMi, sendToCogeMi,
- sendToEnsemblMi,
+
+    @UiField(provided = true)
+    final ToolbarView.Appearance appearance;
+    @UiField(provided = true)
+    final DiskResourceSearchField searchField;
+    @Inject
+    DiskResourceUtil diskResourceUtil;
+    @UiField
+    TextButton downloadMenu;
+    @UiField
+    TextButton editMenu;
+    @UiField
+    TextButton fileMenu;
+    @UiField
+    MenuItem newFileMi;
+    @UiField
+    MenuItem newPathListMi;
+    @UiField
+    MenuItem newWindowMi, newWindowAtLocMi, newFolderMi, duplicateMi, newPlainTextFileMi,
+            newTabularDataFileMi, moveToTrashMi, newRFileMi, newPerlFileMi, newPythonFileMi,
+            newShellScriptFileMi, newMdFileMi;
+    @UiField
+    MenuItem openTrashMi, restoreMi, emptyTrashMi;
+    @UiField
+    TextButton refreshButton;
+    @UiField
+    MenuItem renameMi, moveMi, deleteMi, editFileMi, editCommentsMi, editInfoTypeMi, metadataMi,
+            savemetadatami,
+ copymetadataMi, editmetadataMi, bulkmetadataMi,
+            selectmetadataMi;
+    @UiField
+    MenuItem shareFolderLocationMi;
+    @UiField
+    TextButton shareMenu;
+    @UiField
+    MenuItem shareWithCollaboratorsMi, createPublicLinkMi, sendToCogeMi, sendToEnsemblMi,
             sendToTreeViewerMi, createNcbiSraMi;
-    @UiField MenuItem simpleDownloadMi, bulkDownloadMi;
+    @UiField
+    MenuItem simpleDownloadMi, bulkDownloadMi;
     @UiField
     MenuItem simpleUploadMi, bulkUploadMi, importFromUrlMi, importFromCogeMi;
-    @UiField TextButton trashMenu;
-    @UiField TextButton uploadMenu;
     @UiField
-    MenuItem savemetadatami;
+    TextButton trashMenu;
+    @UiField
+    TextButton uploadMenu;
     private static final DiskResourceViewToolbarUiBinder BINDER = GWT.create(DiskResourceViewToolbarUiBinder.class);
     private final ToolbarView.Presenter presenter;
     private final UserInfo userInfo;
@@ -111,34 +128,40 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         initWidget(BINDER.createAndBindUi(this));
     }
 
-    //<editor-fold desc="Handler Registrations">
+    // <editor-fold desc="Handler Registrations">
     @Override
-    public HandlerRegistration addDeleteSelectedDiskResourcesSelectedEventHandler(DeleteDiskResourcesSelected.DeleteDiskResourcesSelectedEventHandler handler) {
+    public HandlerRegistration
+            addDeleteSelectedDiskResourcesSelectedEventHandler(DeleteDiskResourcesSelected.DeleteDiskResourcesSelectedEventHandler handler) {
         return addHandler(handler, DeleteDiskResourcesSelected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addEditInfoTypeSelectedEventHandler(EditInfoTypeSelected.EditInfoTypeSelectedEventHandler handler) {
+    public HandlerRegistration
+            addEditInfoTypeSelectedEventHandler(EditInfoTypeSelected.EditInfoTypeSelectedEventHandler handler) {
         return addHandler(handler, EditInfoTypeSelected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addEmptyTrashSelectedHandler(EmptyTrashSelected.EmptyTrashSelectedHandler handler) {
+    public HandlerRegistration
+            addEmptyTrashSelectedHandler(EmptyTrashSelected.EmptyTrashSelectedHandler handler) {
         return addHandler(handler, EmptyTrashSelected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addImportFromUrlSelectedHandler(ImportFromUrlSelected.ImportFromUrlSelectedHandler handler) {
+    public HandlerRegistration
+            addImportFromUrlSelectedHandler(ImportFromUrlSelected.ImportFromUrlSelectedHandler handler) {
         return addHandler(handler, ImportFromUrlSelected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addManageCommentsSelectedEventHandler(ManageCommentsSelected.ManageCommentsSelectedEventHandler handler) {
+    public HandlerRegistration
+            addManageCommentsSelectedEventHandler(ManageCommentsSelected.ManageCommentsSelectedEventHandler handler) {
         return addHandler(handler, ManageCommentsSelected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addManageMetadataSelectedEventHandler(ManageMetadataSelected.ManageMetadataSelectedEventHandler handler) {
+    public HandlerRegistration
+            addManageMetadataSelectedEventHandler(ManageMetadataSelected.ManageMetadataSelectedEventHandler handler) {
         return addHandler(handler, ManageMetadataSelected.TYPE);
     }
 
@@ -149,62 +172,74 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
     }
 
     @Override
-    public HandlerRegistration addManageSharingSelectedEventHandler(ManageSharingSelected.ManageSharingSelectedEventHandler handler) {
+    public HandlerRegistration
+            addManageSharingSelectedEventHandler(ManageSharingSelected.ManageSharingSelectedEventHandler handler) {
         return addHandler(handler, ManageSharingSelected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addMoveDiskResourcesSelectedHandler(MoveDiskResourcesSelected.MoveDiskResourcesSelectedHandler handler) {
+    public HandlerRegistration
+            addMoveDiskResourcesSelectedHandler(MoveDiskResourcesSelected.MoveDiskResourcesSelectedHandler handler) {
         return addHandler(handler, MoveDiskResourcesSelected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addRefreshFolderSelectedHandler(RefreshFolderSelected.RefreshFolderSelectedHandler handler) {
+    public HandlerRegistration
+            addRefreshFolderSelectedHandler(RefreshFolderSelected.RefreshFolderSelectedHandler handler) {
         return addHandler(handler, RefreshFolderSelected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addRenameDiskResourceSelectedHandler(RenameDiskResourceSelected.RenameDiskResourceSelectedHandler handler) {
+    public HandlerRegistration
+            addRenameDiskResourceSelectedHandler(RenameDiskResourceSelected.RenameDiskResourceSelectedHandler handler) {
         return addHandler(handler, RenameDiskResourceSelected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addRestoreDiskResourcesSelectedHandler(RestoreDiskResourcesSelected.RestoreDiskResourcesSelectedHandler handler) {
+    public HandlerRegistration
+            addRestoreDiskResourcesSelectedHandler(RestoreDiskResourcesSelected.RestoreDiskResourcesSelectedHandler handler) {
         return addHandler(handler, RestoreDiskResourcesSelected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addSendToCogeSelectedHandler(SendToCogeSelected.SendToCogeSelectedHandler handler) {
+    public HandlerRegistration
+            addSendToCogeSelectedHandler(SendToCogeSelected.SendToCogeSelectedHandler handler) {
         return addHandler(handler, SendToCogeSelected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addSendToEnsemblSelectedHandler(SendToEnsemblSelected.SendToEnsemblSelectedHandler handler) {
+    public HandlerRegistration
+            addSendToEnsemblSelectedHandler(SendToEnsemblSelected.SendToEnsemblSelectedHandler handler) {
         return addHandler(handler, SendToEnsemblSelected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addSendToTreeViewerSelectedHandler(SendToTreeViewerSelected.SendToTreeViewerSelectedHandler handler) {
+    public HandlerRegistration
+            addSendToTreeViewerSelectedHandler(SendToTreeViewerSelected.SendToTreeViewerSelectedHandler handler) {
         return addHandler(handler, SendToTreeViewerSelected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addShareByDataLinkSelectedEventHandler(ShareByDataLinkSelected.ShareByDataLinkSelectedEventHandler handler) {
+    public HandlerRegistration
+            addShareByDataLinkSelectedEventHandler(ShareByDataLinkSelected.ShareByDataLinkSelectedEventHandler handler) {
         return addHandler(handler, ShareByDataLinkSelected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addSimpleDownloadSelectedHandler(SimpleDownloadSelected.SimpleDownloadSelectedHandler handler) {
+    public HandlerRegistration
+            addSimpleDownloadSelectedHandler(SimpleDownloadSelected.SimpleDownloadSelectedHandler handler) {
         return addHandler(handler, SimpleDownloadSelected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addSimpleUploadSelectedHandler(SimpleUploadSelected.SimpleUploadSelectedHandler handler) {
+    public HandlerRegistration
+            addSimpleUploadSelectedHandler(SimpleUploadSelected.SimpleUploadSelectedHandler handler) {
         return addHandler(handler, SimpleUploadSelected.TYPE);
     }
-    //</editor-fold>
 
-    //<editor-fold desc="Selection Handlers">
+    // </editor-fold>
+
+    // <editor-fold desc="Selection Handlers">
     @Override
     public void onDiskResourceSelectionChanged(DiskResourceSelectionChangedEvent event) {
 
@@ -231,24 +266,38 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         renameMiEnabled = !isSelectionEmpty && isSingleSelection && isOwner && !isSelectionInTrash;
         moveMiEnabled = !isSelectionEmpty && isOwner && !isSelectionInTrash;
         deleteMiEnabled = !isSelectionEmpty && isOwner;
-        editFileMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selectedDiskResources) && isOwner && !isSelectionInTrash;
-        editCommentsMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash && isReadable(selectedDiskResources.get(0));
-        editInfoTypeMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash && containsFile(selectedDiskResources) && isOwner;
-        metadataMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash && isReadable(selectedDiskResources.get(0));
+        editFileMiEnabled = !isSelectionEmpty && isSingleSelection
+                && containsFile(selectedDiskResources) && isOwner && !isSelectionInTrash;
+        editCommentsMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash
+                && isReadable(selectedDiskResources.get(0));
+        editInfoTypeMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash
+                && containsFile(selectedDiskResources) && isOwner;
+        metadataMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash
+                && isReadable(selectedDiskResources.get(0));
 
         simpleDownloadMiEnabled = !isSelectionEmpty && containsFile(selectedDiskResources);
         bulkDownloadMiEnabled = !isSelectionEmpty;
-        sendToCogeMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selectedDiskResources) && !isSelectionInTrash
-                                  && diskResourceUtil.isGenomeVizInfoType(getInfoTypeFromSingletonCollection(selectedDiskResources));
-        sendToEnsemblMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selectedDiskResources) && !isSelectionInTrash
-                                     && diskResourceUtil.isEnsemblInfoType(getInfoTypeFromSingletonCollection(selectedDiskResources));
-        sendToTreeViewerMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selectedDiskResources) && !isSelectionInTrash
-                                        && diskResourceUtil.isTreeInfoType(getInfoTypeFromSingletonCollection(selectedDiskResources));
+        sendToCogeMiEnabled = !isSelectionEmpty
+                && isSingleSelection
+                && containsFile(selectedDiskResources)
+                && !isSelectionInTrash
+                && diskResourceUtil.isGenomeVizInfoType(getInfoTypeFromSingletonCollection(selectedDiskResources));
+        sendToEnsemblMiEnabled = !isSelectionEmpty
+                && isSingleSelection
+                && containsFile(selectedDiskResources)
+                && !isSelectionInTrash
+                && diskResourceUtil.isEnsemblInfoType(getInfoTypeFromSingletonCollection(selectedDiskResources));
+        sendToTreeViewerMiEnabled = !isSelectionEmpty
+                && isSingleSelection
+                && containsFile(selectedDiskResources)
+                && !isSelectionInTrash
+                && diskResourceUtil.isTreeInfoType(getInfoTypeFromSingletonCollection(selectedDiskResources));
 
         shareWithCollaboratorsMiEnabled = !isSelectionEmpty && isOwner && !isSelectionInTrash;
-        createPublicLinkMiEnabled = !isSelectionEmpty && isOwner && !isSelectionInTrash && containsFile(selectedDiskResources);
-        shareFolderLocationMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash && containsOnlyFolders(selectedDiskResources);
-
+        createPublicLinkMiEnabled = !isSelectionEmpty && isOwner && !isSelectionInTrash
+                && containsFile(selectedDiskResources);
+        shareFolderLocationMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash
+                && containsOnlyFolders(selectedDiskResources);
 
         restoreMiEnabled = !isSelectionEmpty && isSelectionInTrash && isOwner;
 
@@ -264,6 +313,8 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         metadataMi.setEnabled(metadataMiEnabled);
         copymetadataMi.setEnabled(metadataMiEnabled);
         savemetadatami.setEnabled(metadataMiEnabled);
+        bulkmetadataMi.setEnabled(metadataMiEnabled);
+        editmetadataMi.setEnabled(metadataMiEnabled);
 
         simpleDownloadMi.setEnabled(simpleDownloadMiEnabled);
         bulkDownloadMi.setEnabled(bulkDownloadMiEnabled);
@@ -286,7 +337,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         boolean refreshButtonEnabled;
 
         selectedFolder = event.getSelectedFolder();
-        final boolean isFolderInTrash = isSelectionInTrash(Lists.<DiskResource>newArrayList(selectedFolder));
+        final boolean isFolderInTrash = isSelectionInTrash(Lists.<DiskResource> newArrayList(selectedFolder));
         final boolean isNull = selectedFolder == null;
         final boolean canUploadTo = canUploadTo(selectedFolder);
 
@@ -313,9 +364,10 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
 
         refreshButton.setEnabled(refreshButtonEnabled);
     }
-    //</editor-fold>
 
-    //<editor-fold desc="UI Handlers">
+    // </editor-fold>
+
+    // <editor-fold desc="UI Handlers">
     @UiHandler("bulkDownloadMi")
     void onBulkDownloadClicked(SelectionEvent<Item> event) {
         MessageBox bulkDownloadInfoBox = new MessageBox(appearance.bulkDownloadInfoBoxHeading(),
@@ -343,12 +395,12 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
     }
 
     @UiHandler("duplicateMi")
-    void onDuplicateClicked(SelectionEvent<Item> event) {/* Do Nothing */ }
+    void onDuplicateClicked(SelectionEvent<Item> event) {/* Do Nothing */
+    }
 
     @UiHandler("editCommentsMi")
     void onEditCommentClicked(SelectionEvent<Item> event) {
-        Preconditions.checkState(selectedDiskResources != null
-                                     && selectedDiskResources.size() == 1);
+        Preconditions.checkState(selectedDiskResources != null && selectedDiskResources.size() == 1);
         fireEvent(new ManageCommentsSelected(selectedDiskResources.iterator().next()));
     }
 
@@ -362,11 +414,15 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         fireEvent(new EditInfoTypeSelected(selectedDiskResources));
     }
 
-    @UiHandler("metadataMi")
+    @UiHandler("editmetadataMi")
     void onEditMetadataClicked(SelectionEvent<Item> event) {
-        Preconditions.checkState(selectedDiskResources != null
-                                     && selectedDiskResources.size() == 1);
+        Preconditions.checkState(selectedDiskResources != null && selectedDiskResources.size() == 1);
         fireEvent(new ManageMetadataSelected(selectedDiskResources.iterator().next()));
+    }
+
+    @UiHandler("selectmetadataMi")
+    void onSelectMetadataClicked(SelectionEvent<Item> event) {
+        presenter.onBulkMetadataSelected(BulkMetadataDialog.BULK_MODE.SELECT);
     }
 
     @UiHandler("copymetadataMi")
@@ -456,34 +512,34 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         presenter.onOpenNewWindowAtLocationSelected(selectedFolder);
     }
 
-    //---------- File ----------
+    // ---------- File ----------
     @UiHandler("newWindowMi")
     void onNewWindowClicked(SelectionEvent<Item> event) {
         presenter.onOpenNewWindowSelected();
     }
 
-    //------------- Trash ---------------
+    // ------------- Trash ---------------
     @UiHandler("openTrashMi")
     void onOpenTrashClicked(SelectionEvent<Item> event) {
         presenter.onOpenTrashFolderSelected();
     }
 
-    //------------ Refresh --------------
+    // ------------ Refresh --------------
     @UiHandler("refreshButton")
     void onRefreshClicked(SelectEvent event) {
         fireEvent(new RefreshFolderSelected(selectedFolder));
     }
 
-    //----------- Edit -----------
+    // ----------- Edit -----------
     @UiHandler("renameMi")
     void onRenameClicked(SelectionEvent<Item> event) {
         Preconditions.checkNotNull(selectedDiskResources);
         Preconditions.checkArgument(selectedDiskResources.size() == 1);
         /*
-          * FIXME Open RenameFileDialog or RenameFolderDialog from here
-          * Handle 'ok' event from dialog, gather information from dialog and fire event to request
-          * rename. See DiskResourcePresenter and the Dialogs mentioned above for more information.
-          */
+         * FIXME Open RenameFileDialog or RenameFolderDialog from here Handle 'ok' event from dialog,
+         * gather information from dialog and fire event to request rename. See DiskResourcePresenter and
+         * the Dialogs mentioned above for more information.
+         */
         fireEvent(new RenameDiskResourceSelected(selectedDiskResources.iterator().next()));
     }
 
@@ -513,21 +569,20 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         fireEvent(new ShareByDataLinkSelected(selectedFolder));
     }
 
-    //--------- Sharing -------------
+    // --------- Sharing -------------
     @UiHandler("shareWithCollaboratorsMi")
     void onShareWithCollaboratorsClicked(SelectionEvent<Item> event) {
-        Preconditions.checkState(selectedDiskResources != null
-                                     && !selectedDiskResources.isEmpty());
+        Preconditions.checkState(selectedDiskResources != null && !selectedDiskResources.isEmpty());
         fireEvent(new ManageSharingSelected(selectedDiskResources));
     }
 
-    //---------- Download --------------
+    // ---------- Download --------------
     @UiHandler("simpleDownloadMi")
     void onSimpleDownloadClicked(SelectionEvent<Item> event) {
         fireEvent(new SimpleDownloadSelected(selectedFolder, selectedDiskResources));
     }
 
-    //-------- Upload ---------------
+    // -------- Upload ---------------
     @UiHandler("simpleUploadMi")
     void onSimpleUploadClicked(SelectionEvent<Item> event) {
         fireEvent(new SimpleUploadSelected(selectedFolder));
@@ -537,7 +592,8 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
     void onImportFormCoge(SelectionEvent<Item> event) {
         presenter.onImportFromCoge();
     }
-    //</editor-fold>
+
+    // </editor-fold>
 
     @Override
     public DiskResourceSearchField getSearchField() {
@@ -627,9 +683,11 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         bulkDownloadMi.ensureDebugId(baseID + Ids.DOWNLOAD_MENU + Ids.MENU_ITEM_BULK_DOWNLOAD);
 
         // Share menu
-        shareWithCollaboratorsMi.ensureDebugId(baseID + Ids.SHARE_MENU + Ids.MENU_ITEM_SHARE_WITH_COLLABORATORS);
+        shareWithCollaboratorsMi.ensureDebugId(baseID + Ids.SHARE_MENU
+                + Ids.MENU_ITEM_SHARE_WITH_COLLABORATORS);
         createPublicLinkMi.ensureDebugId(baseID + Ids.SHARE_MENU + Ids.MENU_ITEM_CREATE_PUBLIC_LINK);
-        shareFolderLocationMi.ensureDebugId(baseID + Ids.SHARE_MENU + Ids.MENU_ITEM_SHARE_FOLDER_LOCATION);
+        shareFolderLocationMi.ensureDebugId(baseID + Ids.SHARE_MENU
+                + Ids.MENU_ITEM_SHARE_FOLDER_LOCATION);
         sendToCogeMi.ensureDebugId(baseID + Ids.SHARE_MENU + Ids.MENU_ITEM_SEND_TO_COGE);
         sendToEnsemblMi.ensureDebugId(baseID + Ids.SHARE_MENU + Ids.MENU_ITEM_SEND_TO_ENSEMBL);
         sendToTreeViewerMi.ensureDebugId(baseID + Ids.SHARE_MENU + Ids.MENU_ITEM_SEND_TO_TREE_VIEWER);
@@ -702,6 +760,13 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         dialog.clearView();
         dialog.setSize("600px", "300px");
         dialog.show();
+
+    }
+
+    @Override
+    public void openViewBulkMetadata(BulkMetadataDialog bmd) {
+        bmd.setSize("600px", "200px");
+        bmd.show();
 
     }
 }

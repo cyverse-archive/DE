@@ -24,6 +24,8 @@ import org.iplantc.de.diskResource.client.events.selection.SendToTreeViewerSelec
 import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelected.HasShareByDataLinkSelectedEventHandlers;
 import org.iplantc.de.diskResource.client.events.selection.SimpleDownloadSelected.HasSimpleDownloadSelectedHandlers;
 import org.iplantc.de.diskResource.client.events.selection.SimpleUploadSelected.HasSimpleUploadSelectedHandlers;
+import org.iplantc.de.diskResource.client.views.dialogs.BulkMetadataDialog;
+import org.iplantc.de.diskResource.client.views.dialogs.BulkMetadataDialog.BULK_MODE;
 import org.iplantc.de.diskResource.client.views.dialogs.GenomeSearchDialog;
 import org.iplantc.de.diskResource.client.views.search.DiskResourceSearchField;
 
@@ -217,6 +219,10 @@ public interface ToolbarView extends IsWidget,
         String sendToNcbiSraItem();
 
         String importFromCoge();
+
+        String applyBulkMetadata();
+
+        String selectMetadata();
     }
 
     interface Presenter {
@@ -248,6 +254,16 @@ public interface ToolbarView extends IsWidget,
             String cogeImportGenomeSucess();
 
             String importFromCoge();
+
+            String bulkMetadataError();
+
+            String bulkMetadataSuccess();
+
+            String templatesError();
+
+            String applyBulkMetadata();
+
+            String overWiteMetadata();
         }
 
         ToolbarView getView();
@@ -278,6 +294,13 @@ public interface ToolbarView extends IsWidget,
 
         void importGenomeFromCoge(Integer id);
 
+        void onBulkMetadataSelected(BULK_MODE mode);
+
+        void submitBulkMetadataFromExistingFile(String filePath,
+                                                String destFolder,
+                                                String templateId,
+                                                boolean force);
+
     }
 
     DiskResourceSearchField getSearchField();
@@ -295,4 +318,6 @@ public interface ToolbarView extends IsWidget,
     void unmaskSendToTreeViewer();
 
     void openViewForGenomeSearch(GenomeSearchDialog view);
+
+    void openViewBulkMetadata(BulkMetadataDialog bmd);
 }

@@ -26,8 +26,8 @@
 							text="{appearance.bulkUploadFromDesktop}" icon="{appearance.importDataIcon}" />
 						<menu:MenuItem ui:field="importFromUrlMi"
 							text="{appearance.importFromUrlMenuItem}" icon="{appearance.importDataIcon}" />
-						<menu:MenuItem ui:field="importFromCogeMi" text="{appearance.importFromCoge}"
-							icon="{appearance.importDataIcon}" />
+						<menu:MenuItem ui:field="importFromCogeMi"
+							text="{appearance.importFromCoge}" icon="{appearance.importDataIcon}" />
 					</menu:Menu>
 				</button:menu>
 			</button:TextButton>
@@ -110,19 +110,38 @@
 						<menu:MenuItem ui:field="editInfoTypeMi"
 							text="{appearance.editInfoTypeMenuItem}" icon="{appearance.infoIcon}"
 							enabled="false" />
-						<menu:MenuItem ui:field="metadataMi"
-							text="{appearance.metadataMenuItem}" icon="{appearance.metadataIcon}"
-							enabled="false" />
-						<menu:MenuItem ui:field="copymetadataMi"
-							text="{appearance.copyMetadataMenuItem}" icon="{appearance.metadataIcon}"
-							enabled="false" />
-
-						<menu:MenuItem ui:field="savemetadatami"
-							text="{appearance.saveMetadataMenuItem}" icon="{appearance.metadataIcon}"
-							enabled="false" />
-
 						<menu:MenuItem ui:field="moveMi" text="{appearance.moveMenuItem}"
 							icon="{appearance.editIcon}" enabled="false" />
+						<menu:MenuItem ui:field="metadataMi" text="Metadata"
+							icon="{appearance.metadataIcon}" enabled="false">
+							<menu:submenu>
+								<menu:Menu ui:field="metadataMenu">
+									<menu:MenuItem ui:field="bulkmetadataMi" text="{appearance.applyBulkMetadata}"
+										icon="{appearance.metadataIcon}" enabled="false">
+										<menu:submenu>
+											<menu:Menu>
+												<menu:MenuItem ui:field="selectmetadataMi"
+													text="{appearance.selectMetadata}" icon="{appearance.metadataIcon}"
+													/>
+											</menu:Menu>
+										</menu:submenu>
+									</menu:MenuItem>
+
+									<menu:MenuItem ui:field="editmetadataMi"
+										text="{appearance.metadataMenuItem}" icon="{appearance.metadataIcon}"
+										enabled="false" />
+
+									<menu:MenuItem ui:field="copymetadataMi"
+										text="{appearance.copyMetadataMenuItem}" icon="{appearance.metadataIcon}"
+										enabled="false" />
+
+									<menu:MenuItem ui:field="savemetadatami"
+										text="{appearance.saveMetadataMenuItem}" icon="{appearance.metadataIcon}"
+										enabled="false" />
+
+								</menu:Menu>
+							</menu:submenu>
+						</menu:MenuItem>
 					</menu:Menu>
 				</button:menu>
 			</button:TextButton>

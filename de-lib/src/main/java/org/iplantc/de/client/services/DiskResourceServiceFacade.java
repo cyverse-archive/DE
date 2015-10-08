@@ -354,4 +354,30 @@ public interface DiskResourceServiceFacade {
     void createNcbiSraFolderStructure(Folder parentFolder,
                                       String[] foldersToCreate,
                                       AsyncCallback<String> callback);
+    
+    /**
+     * 
+     * @param template_id template to match when applying metadata
+     * @param destFolder folder containing files to which metadata will be applied
+     * @param force set true to overwrite metadata
+     * @param callback callback object
+     */
+    void uploadBulkMetadata(String template_id,
+                            String destFolder,
+                            boolean force,
+                            AsyncCallback<String> callback);
+
+    /**
+     * 
+     * @param metadataFilePath path to CSV/ TSV metadata file
+     * @param template_id template to match when applying metadata
+     * @param destFolder folder containing files to which metadata will be applied
+     * @param force set true to overwrite metadata
+     * @param callback callback object
+     */
+    void setBulkMetadataFromFile(String metadataFilePath,
+                                 String template_id,
+                                 String destFolder,
+                                 boolean force,
+                                 AsyncCallback<String> callback);
 }

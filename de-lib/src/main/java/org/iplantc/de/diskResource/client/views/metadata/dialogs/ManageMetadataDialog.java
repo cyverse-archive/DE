@@ -3,7 +3,6 @@ package org.iplantc.de.diskResource.client.views.metadata.dialogs;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.MetadataView;

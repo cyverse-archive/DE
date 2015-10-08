@@ -179,4 +179,22 @@ public interface DiskResourceMessages extends Messages {
 
     String importFromCoge();
 
+    String bulkMetadataHeading();
+
+    String selectMetadataFile();
+
+    String selectTemplate();
+
+    String applyBulkMetadata();
+
+    String uploadMetadata();
+
+    String templatesError();
+
+    String bulkMetadataSuccess();
+
+    String bulkMetadataError();
+
+    String overWiteMetadata();
+
 }
