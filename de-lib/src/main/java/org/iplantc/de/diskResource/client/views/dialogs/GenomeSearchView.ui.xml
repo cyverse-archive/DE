@@ -8,6 +8,9 @@
 	xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
 	xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid">
 
+
+<ui:with field="appearance"
+        type="org.iplantc.de.diskResource.client.ToolbarView.Appearance" />
 	<ui:with
 		type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData"
 		field="toolBarLayoutData">
