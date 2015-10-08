@@ -32,7 +32,7 @@ public class SplittableToSelectionArgListConverter implements Converter<Splittab
 
     @Override
     public List<SelectionItem> convertModelValue(Splittable object) {
-        if(!object.isIndexed()){
+        if(object == null || !object.isIndexed()){
             return Collections.emptyList();
         }
         List<SelectionItem> ret = Lists.newArrayList();
