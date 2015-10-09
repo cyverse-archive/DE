@@ -194,7 +194,7 @@ public class AppDetailsViewImpl extends Composite implements
         ratings.setHasHandlers(this);
         editorDriver.initialize(this);
         editorDriver.edit(app);
-        if (app.isPublic()) {
+        if (app.isPublic() || app.getAppType().equalsIgnoreCase(App.EXTERNAL_APP)) {
             url.setText(appearance.appUrl());
             url.addClickHandler(new ClickHandler() {
                 @Override
