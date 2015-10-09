@@ -11,6 +11,7 @@
 
 <ui:with field="appearance"
         type="org.iplantc.de.diskResource.client.ToolbarView.Appearance" />
+
 	<ui:with
 		type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData"
 		field="toolBarLayoutData">
@@ -43,7 +44,7 @@
 				<toolbar:LabelToolItem label="Search Genomes:" />
 				<form:TextField width="250" ui:field="searchtxt">
 				</form:TextField>
-				<button:TextButton ui:field="importBtn" text="Import" enabled="false"></button:TextButton>
+				<button:TextButton ui:field="importBtn" text="Import" enabled="false" icon="{appearance.importDataIcon}"></button:TextButton>
 			</toolbar:ToolBar>
 		</container:child>
 		<container:child layoutData="{gridLayoutData}">

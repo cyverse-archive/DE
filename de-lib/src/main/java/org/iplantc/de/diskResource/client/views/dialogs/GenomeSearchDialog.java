@@ -97,6 +97,7 @@ public class GenomeSearchDialog extends Window {
             public void onKeyUp(KeyUpEvent event) {
                 String term = searchtxt.getCurrentValue();
                 if (term != null && term.length() > 2) {
+                    grid.mask(apperance.loading());
                     GenomeSearchDialog.this.presenter.searchGenomeInCoge(term);
                 }
             }
@@ -182,7 +183,6 @@ public class GenomeSearchDialog extends Window {
     }
 
     public void loadResults(List<Genome> genomes) {
-        grid.mask(apperance.loading());
         store.clear();
         store.addAll(genomes);
         grid.unmask();
