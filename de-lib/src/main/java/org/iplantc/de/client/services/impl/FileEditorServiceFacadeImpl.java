@@ -102,7 +102,7 @@ public class FileEditorServiceFacadeImpl implements FileEditorServiceFacade {
 
         Splittable splittable = StringQuoter.createSplittable();
         StringQuoter.create(file.getPath()).assign(splittable, "path");
-        StringQuoter.create(URL.encode(delimiter)).assign(splittable, "separator");
+        StringQuoter.create(URL.encodePathSegment(delimiter)).assign(splittable, "separator");
 
         // Endpoint has to take these numbers as strings
         StringQuoter.create(String.valueOf(pageNumber)).assign(splittable, "page");
