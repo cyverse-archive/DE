@@ -174,7 +174,7 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
                             + "&sort-col=" + sortInfo.getSortField()
                             + "&limit=" + loadConfig.getLimit()
                             + "&offset=" + loadConfig.getOffset()
-                            + "&sort-order=" + sortInfo.getSortDir().toString();
+                            + "&sort-dir=" + sortInfo.getSortDir().toString();
         }
 
         // Apply entity type query parameter if applicable

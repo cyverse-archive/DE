@@ -137,7 +137,7 @@ public class FileSystemMetadataServiceFacadeImpl implements FileSystemMetadataSe
         address += "sort-col=" + sortInfo.getSortField()
                        + "&limit=" + configBean.getLimit()
                        + "&offset=" + configBean.getOffset()
-                       + "&sort-order=" + sortInfo.getSortDir().toString();
+                       + "&sort-dir=" + sortInfo.getSortDir().toString();
 
         // Apply entity type query parameter if applicable
         if(entityType != null){
