@@ -230,8 +230,8 @@ public class DEServiceImpl implements DEService,
                     break;
 
                 case PATCH:
-                    HttpPatch clientRequest3 = urlConnector.patchRequest(getRequest(), resolvedAddress);
-                    clientRequest3.setEntity(createEntity(body));
+                    request = urlConnector.patchRequest(getRequest(), resolvedAddress);
+                    ((HttpPatch)request).setEntity(createEntity(body));
                     break;
 
                 default:
