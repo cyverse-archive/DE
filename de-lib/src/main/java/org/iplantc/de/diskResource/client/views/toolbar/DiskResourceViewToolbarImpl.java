@@ -259,6 +259,8 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         final boolean isSingleSelection = selectedDiskResources.size() == 1;
         final boolean isOwner = isOwner(selectedDiskResources);
         final boolean isSelectionInTrash = isSelectionInTrash(selectedDiskResources);
+        final boolean isFolderSelect = !isSelectionEmpty
+                && selectedDiskResources.get(0) instanceof Folder;
 
         duplicateMiEnabled = !isSelectionEmpty && isOwner && !isSelectionInTrash;
         moveToTrashMiEnabled = !isSelectionEmpty && isOwner && !isSelectionInTrash;
@@ -313,7 +315,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         metadataMi.setEnabled(metadataMiEnabled);
         copymetadataMi.setEnabled(metadataMiEnabled);
         savemetadatami.setEnabled(metadataMiEnabled);
-        bulkmetadataMi.setEnabled(metadataMiEnabled && (selectedDiskResources.get(0) instanceof Folder));
+        bulkmetadataMi.setEnabled(metadataMiEnabled && isFolderSelect);
         editmetadataMi.setEnabled(metadataMiEnabled);
 
         simpleDownloadMi.setEnabled(simpleDownloadMiEnabled);
