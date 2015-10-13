@@ -313,7 +313,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         metadataMi.setEnabled(metadataMiEnabled);
         copymetadataMi.setEnabled(metadataMiEnabled);
         savemetadatami.setEnabled(metadataMiEnabled);
-        bulkmetadataMi.setEnabled(metadataMiEnabled);
+        bulkmetadataMi.setEnabled(metadataMiEnabled && (selectedDiskResources.get(0) instanceof Folder));
         editmetadataMi.setEnabled(metadataMiEnabled);
 
         simpleDownloadMi.setEnabled(simpleDownloadMiEnabled);
