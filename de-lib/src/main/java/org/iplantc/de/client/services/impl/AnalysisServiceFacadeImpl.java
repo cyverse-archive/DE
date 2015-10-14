@@ -80,6 +80,8 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
                     }
                 } else if (appTemplateUtils.isSelectionArgumentType(ap.getType())) {
                     parsedList.addAll(parseSelectionValue(ap));
+                } else if (ap.getType().equals(ArgumentType.FileOutput)) {
+                    parsedList.addAll(parseStringValue(ap));
                 }
             }
 
