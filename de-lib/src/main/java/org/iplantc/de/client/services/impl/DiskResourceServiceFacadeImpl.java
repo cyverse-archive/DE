@@ -197,11 +197,7 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
 
             @Override
             protected Folder convertFrom(String object) {
-                // Filter root folders from the response, so the "contents" view is consistent with
-                // the "navigation" view.
-                Folder result = decode(Folder.class, object);
-                result.setFolders(filterRoots(result.getFolders()));
-                return result;
+                return decode(Folder.class, object);
             }
         });
 
