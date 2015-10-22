@@ -198,8 +198,6 @@ public class TestDefaultServiceCallResolver {
                 "http://emma.iplantcollaborative.org/info-types");
         expectedProps.put("org.iplantc.services.zoidberg.inprogress",
                 "http://emma.iplantcollaborative.org/in-progress");
-        expectedProps.put("org.iplantc.services.de-data-mgmt.getuserhomedir",
-                "http://emma.iplantcollaborative.org/nibblonian/home");
         expectedProps.put("org.iplantc.services.file-io.file-upload",
                 "http://emma.iplantcollaborative.org/scruffian/upload");
         return expectedProps;
