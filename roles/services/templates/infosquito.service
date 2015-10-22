@@ -1,0 +1,24 @@
+[Unit]
+Description={{infosquito.service_description}}
+BindsTo=docker.service
+PartOf=docker.service
+After=docker.service
+Requisite=docker.service
+
+[Service]
+User=iplant
+ExecStartPre=-/usr/bin/docker rm -v {{infosquito.container_name}}
+ExecStart=/usr/bin/docker run --name {{infosquito.container_name}} \
+-v {{ de_config_dir }}:/etc/iplant/de \
+-v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
+--log-driver={{docker.log_driver}} \
+{{docker.user}}/{{infosquito.image_name}}:{{docker.tag}} --config /etc/iplant/de/{{infosquito.properties_file}}
+ExecStop=-/usr/bin/docker stop {{infosquito.container_name}}
+Restart=on-failure
+
+SyslogIdentifier={{infosquito.container_name}}
+SyslogFacility={{systemd.syslogFacility}}
+
+[Install]
+WantedBy=multi-user.target
+

@@ -2,60 +2,11 @@
 - hosts: services
   sudo: True
   roles:
-    - anon-files
-    - condor-log-monitor
-    - data-info
-    - donkey
-    - iplant-email
-    - clockwork
-    - { role: info-typer, when: (not parasitic) }
-    - { role: infosquito, when: (not parasitic) }
-    - jex-events
+    - role: notify-chat
+      msg: "Updating services."
+
     - jex
-    - metadactyl
-    - { role: monkey, when: (not parasitic) }
-    - notificationagent
-    - kifshare
-    - { role: dewey, when: (not parasitic) }
-    - saved-searches
-    - tree-urls
-    - user-sessions
-    - user-preferences
+    - services
 
-  tasks:
-  # - include: tasks/yum-prep.yaml
-  #
-  # - include: tasks/java7.yaml
-  #
-  # - name: Install Python 2.6
-  #   yum: name=python26 state=latest
-  #
-  # - name: Install python-ssl
-  #   yum: name=python-ssl state=latest
-  #
-  # - name: Download get-pip.py
-  #   get_url: url=https://bootstrap.pypa.io/get-pip.py dest=/tmp/get-pip.py
-  #
-  # - name: Run get-pip.py
-  #   command: python2.6 /tmp/get-pip.py
-  #
-  # - name: Install supervisord
-  #   pip: executable=pip2.6 name=supervisor version=3.0
-
-    #########################################
-    ## Remove defunct Services from the boxes
-    #########################################
-  - name: remove iplant-service-config
-    yum: name=iplant-service-config state=absent
-
-  - name: remove panopticon
-    yum: name=panopticon state=absent
-
-  - name: remove conrad
-    yum: name=conrad state=absent
-
-  - name: remove porklock
-    yum: name=porklock state=absent
-
-  - name: remove osm
-    yum: name=osm state=absent
+    - role: notify-chat
+      msg: "Done updating services."

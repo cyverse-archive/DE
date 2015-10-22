@@ -1,4 +1,0 @@
----
-- name: restart jex-events
-  sudo: yes
-  supervisorctl: name=jex-events state=restarted

@@ -1,4 +1,0 @@
----
-- name: restart clockwork
-  sudo: yes
-  supervisorctl: name=clockwork state=restarted

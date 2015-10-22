@@ -1,0 +1,28 @@
+[Unit]
+Description={{iplant_email.service_description}}
+BindsTo=docker.service {{exim.service_name}}
+PartOf=docker.service {{exim.service_name}} {{data_container.service_name}}
+After=docker.service {{exim.service_name}}
+Requires= {{exim.service_name}}
+Requisite=docker.service
+
+[Service]
+User=iplant
+ExecStartPre=-/usr/bin/docker rm -v {{iplant_email.container_name}}
+ExecStart=/usr/bin/docker run --name {{iplant_email.container_name}} \
+        --link {{exim.container_name}}:local-exim \
+        -v {{ de_config_dir }}:/etc/iplant/de \
+        -v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
+        -p {{iplant_email.port}}:60000 \
+        --log-driver={{docker.log_driver}} \
+        {{docker.user}}/{{iplant_email.image_name}}:{{docker.tag}} \
+        --config /etc/iplant/de/{{iplant_email.properties_file}}
+ExecStop=-/usr/bin/docker stop {{iplant_email.container_name}}
+Restart=on-failure
+
+SyslogIdentifier={{iplant_email.container_name}}
+SyslogFacility={{systemd.syslogFacility}}
+
+[Install]
+WantedBy=multi-user.target
+

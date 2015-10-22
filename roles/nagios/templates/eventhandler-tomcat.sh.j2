@@ -1,9 +1,0 @@
-#!/bin/sh
-
-readonly LOG=/var/log/restart-tomcat.log
-
-echo "Restarting Tomcat `date`" >> $LOG
-{{ eventhandler_dir }}/restart-tomcat.sh >> $LOG
-echo "Finished `date`" >> $LOG 
-echo "-------------------------Finished `date`-----------------------------"
-

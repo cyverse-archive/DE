@@ -1,11 +1,4 @@
 - hosts: condor-submission
   sudo: True
-  tasks:
-    - name: Copy event_log file to /etc/condor/config.d/
-      copy: src=remote_files/event_log dest=/etc/condor/config.d/ owner=root group=root mode=0644
-
-    - name: Copy group_config file to /etc/condor/config.d/
-      template: src=templates/group_config.js dest=/etc/condor/config.d/group_config owner=root group=root mode=0644
-
-    - name: Running condor_reconfig
-      command: /usr/sbin/condor_reconfig
+  roles:
+    - condor-submitter

@@ -1,37 +1,83 @@
 ---
-- name: update jex
+- name: create /var/log/jex
   sudo: yes
-  sudo_user: root
-  yum: name=jex state=latest
+  file: path=/var/log/jex owner=condor group=condor mode=0777 state=directory
   tags:
     - jex
+
+- name: update jex
+  sudo: yes
+  shell: docker pull {{docker.user}}/jex:{{docker.tag}}
+  tags:
+    - jex
+    - docker_pull
+    - docker_pull_jex
+
+- name: create the /usr/local/lib/jex/ directory
+  sudo: yes
+  file: path=/usr/local/lib/jex/ owner=iplant group=iplant state=directory
+  tags:
+    - jex
+
+- include: CentOS-7-stop.yaml
+  when: ansible_distribution == "CentOS" and
+        ansible_distribution_major_version == "7"
+
+- name: install jex
+  sudo: yes
+  shell: docker run --rm -v /usr/local/lib/jex:/jex --entrypoint "cp" {{docker.user}}/jex:{{docker.tag}} /jex-standalone.jar /jex/jex-standalone.jar
+  tags:
+    - jex
+    - docker_pull
+    - docker_pull_jex
+
+- name: install jex logback.xml file
+  sudo: yes
+  shell: docker run --rm -v /usr/local/lib/jex:/jex --entrypoint "cp" {{docker.user}}/jex:{{docker.tag}} /logback.xml /jex/logback.xml
+  tags:
+    - jex
+    - docker_pull
+    - docker_pull_jex
+
+- name: set perms for logback.xml
+  sudo: yes
+  file: path=/usr/local/lib/jex/logback.xml owner=root group=root mode=0644 state=file
+  tags:
+    - jex
+    - docker_pull
+    - docker_pull_jex
+
+- name: install jex submitnerator.sh file
+  sudo: yes
+  shell: docker run --rm -v /usr/local/bin/:/jex --entrypoint "cp" {{docker.user}}/jex:{{docker.tag}} /submitnerator.sh /jex/submitnerator.sh
+  tags:
+    - jex
+    - docker_pull
+    - docker_pull_jex
+
+- name: set perms for submitnerator.sh
+  sudo: yes
+  file: path=/usr/local/bin/submitnerator.sh owner=root group=root mode=0755 state=file
+  tags:
+    - jex
+    - docker_pull
+    - docker_pull_jex
+
+- name: ensure that /etc/iplant/de exists
+  sudo: yes
+  file: path={{ de_config_dir }} state=directory mode=0755
+  tags:
+    - jex
+    - config
 
 - name: configure jex
   sudo: yes
-  sudo_user: root
-  template: src=jex.properties.j2 dest=/etc/iplant/de/jex.properties owner=root group=root mode=0644
-  notify:
-    - restart jex
+  template: src=jex.properties.j2 dest={{ de_config_dir }}/jex.properties owner=root group=root mode=0644
   tags:
     - jex
+    - config
+    - config_jex
 
-- name: Copy the /etc/iplant/de/supervisord/jex.ini file
-  sudo: yes
-  sudo_user: root
-  copy: src=jex.ini dest=/etc/iplant/de/supervisord/ owner=root group=root mode=0644
-  notify:
-    - restart jex
-  tags:
-    - jex
-
-- name: jex is present in supervisord
-  sudo: yes
-  supervisorctl: name=jex state=present
-  tags:
-    - jex
-
-- name: jex is running
-  sudo: yes
-  supervisorctl: name=jex state=started
-  tags:
-    - jex
+- include: CentOS-7-start.yaml
+  when: ansible_distribution == "CentOS" and
+        ansible_distribution_major_version == "7"

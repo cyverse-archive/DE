@@ -16,7 +16,7 @@
     elasticsearch_number_of_replicas:                   "{{ groups['elasticsearch']|length - 1 }}"  # This is a hack to work around a bug in the gpstathis.elasticsearch role
     elasticsearch_memory_bootstrap_mlockall:            true
 
-    elasticsearch_node_master: "{{ 'true' if [ansible_hostname, ansible_domain]|join('.') ==
+    elasticsearch_node_master: "{{ 'true' if [ansible_hostname, ansible_domain]|join('.') == 
                                              groups['elasticsearch']|first
                                    else 'false' }}"
 
@@ -25,7 +25,7 @@
     elasticsearch_slowlog_threshold_fetch_warn:  3s
     elasticsearch_slowlog_threshold_query_debug: 2s
     elasticsearch_slowlog_threshold_query_warn:  3s
-
+    elasticsearch_service_startonboot: yes
     elasticsearch_thread_pools:
       - 'threadpool.bulk.queue_size: -1'
       - 'indices.fielddata.cache.size: 50%'  # This is a hack and should be done somewhere else
@@ -34,13 +34,9 @@
     elasticsearch_timezone: America/Phoenix
 
   roles:
+    - role: notify-chat
+      msg: "Updating elasticsearch"
     - gpstathis.elasticsearch
     - { role: elasticsearch-master, when: elasticsearch_node_master }
-
-  post_tasks:
-# This is a work around for a bug in ansible's service module
-# See https://github.com/ansible/ansible-modules-core/issues/237
-    - name: ensure elasticsearch starts on boot
-      tags:
-        - elastic-boot
-      command: /usr/sbin/update-rc.d elasticsearch enable
+    - role: notify-chat
+      msg: "Done updating elasticsearch"

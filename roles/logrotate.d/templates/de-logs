@@ -1,0 +1,18 @@
+/var/log/metrics
+/var/log/de/de-all.log
+/var/log/de/de-error.log
+
+{% for service in systemd.services -%}
+{{logging.dir}}/{{service.log_file}}
+{% endfor -%} {
+    daily
+    missingok
+    dateext
+    rotate 30
+    compress
+    maxage 60
+    sharedscripts
+    postrotate
+        systemctl restart rsyslog
+    endscript
+}

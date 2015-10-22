@@ -1,0 +1,60 @@
+{
+    "network": {
+        "servers": [ "{{ elk_host }}:{{elk.logstash.port}}" ],
+        "ssl certificate": "{{ data_container.ssl.cert }}",
+        "ssl key": "{{ data_container.ssl.key }}",
+        "ssl ca": "{{ data_container.ssl.gd_bundle_crt }}"
+    },
+    "files": [
+         {
+            "paths": [ "/var/log/de/metrics-ui" ],
+            "fields": { "type": "metrics",
+                        "service": "ui",
+                        "logsource": "{{ansible_hostname}}",
+                        "de_version": "{{de_version}}",
+                        "drop_number": "{{drop_number}}"}
+         },
+         {
+            "paths": [ "/var/log/metrics" ],
+            "fields": { "type": "metrics",
+                        "logsource": "{{ansible_hostname}}",
+                        "de_version": "{{de_version}}",
+                        "drop_number": "{{drop_number}}"}
+         },
+         {
+            "paths": [ "/var/log/de/de-error.log" ],
+            "fields": { "type": "de-error",
+                        "logsource": "{{ansible_hostname}}",
+                        "de_version": "{{de_version}}",
+                        "drop_number": "{{drop_number}}"}
+         },
+{% for service in systemd.services %}
+         {
+            "paths": [ "{{logging.dir}}/{{service.log_file}}" ],
+            "fields": { "type": "{{service.service_name_short}}-log",
+                        "logsource": "{{ansible_hostname}}",
+                        "de_version": "{{de_version}}",
+                        "drop_number": "{{drop_number}}"}
+         },
+{% endfor %}
+         {
+            "paths": [ "/var/log/de/de-all.log" ],
+            "fields": { "type": "de-all-log",
+                        "logsource": "{{ansible_hostname}}",
+                        "de_version": "{{de_version}}",
+                        "drop_number": "{{drop_number}}"}
+         },
+         {
+            "paths": [ "/var/log/registry/iplant-registry.log" ],
+            "fields": { "type": "registry-log",
+                        "logsource": "{{ansible_hostname}}"}
+         },
+         {
+            "paths": [ "/var/log/registry/iplant-registry-redis.log" ],
+            "fields": { "type": "registry-log",
+                        "logsource": "{{ansible_hostname}}"}
+         }
+
+
+    ]
+}

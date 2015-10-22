@@ -1,4 +1,0 @@
----
-- name: restart jex
-  sudo: yes
-  supervisorctl: name=jex state=restarted

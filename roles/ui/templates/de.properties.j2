@@ -1,0 +1,143 @@
+###############################################################################
+# Configuration Properties for the Discovery Environment (DE)
+###############################################################################
+
+###############################################################################
+# Deployed Version Metadata
+#
+# This values are used since reading the MANIFEST.MF file from a deployed WAR
+# is a tricky environment.
+###############################################################################
+org.iplantc.discoveryenvironment.about.defaultBuildNumber = {{ app_version_name }}
+org.iplantc.discoveryenvironment.about.releaseVersion     = {{ app_version }}
+
+###############################################################################
+# CAS Authentication Settings
+###############################################################################
+org.iplantc.discoveryenvironment.cas.base-url       = {{ cas_base }}
+org.iplantc.discoveryenvironment.cas.server-name    = {{ app_server_base_url }}
+org.iplantc.discoveryenvironment.cas.validation     = /iplant-cas-ticket-validator
+org.iplantc.discoveryenvironment.cas.proxy-receptor = /iplant-cas-proxy-receptor
+org.iplantc.discoveryenvironment.cas.logout-url     = /iplant-cas-logout
+org.iplantc.discoveryenvironment.cas.app-name       = {{ app_description }}
+org.iplantc.discoveryenvironment.cas.login-url      = /login
+org.iplantc.admin.cas.authorized-groups             = {{ admin_groups }}
+org.iplantc.admin.cas.group-attribute-name          = {{ cas_group_attribute }}
+org.iplantc.discoveryenvironment.cas.no-logout-url  = {{ cas_no_logout_url }}
+org.iplantc.discoveryenvironment.cas.app-list       = {{ cas_app_list }}
+
+###############################################################################
+# CAS Session Keepalive Settings
+###############################################################################
+org.iplantc.discoveryenvironment.keepalive.service  = {{ app_server_base_url }}/de/{{ app_rpc_name }}/{{ app_empty_url }}
+org.iplantc.discoveryenvironment.keepalive.target   = {{ cas_base }}/login?service={{ app_server_base_url }}/de/{{ app_rpc_name }}/{{ app_empty_url }}
+org.iplantc.discoveryenvironment.keepalive.interval = 90
+
+###############################################################################
+# Backend Services URL/Endpoint Configuration
+###############################################################################
+# this is the service-endpoint keys prefix
+# (this value is utilized by classes/components in de-common-*.jar)
+prefix=org.iplantc.services
+rpc.prefix=discoveryenvironment/deservice
+
+# The URL prefix to use when accessing the DE Mule services.
+org.iplantc.discoveryenvironment.muleServiceBaseUrl            = {{ donkey_base }}/secured/
+org.iplantc.discoveryenvironment.unprotectedMuleServiceBaseUrl = {{ donkey_base }}/
+
+
+# Bootstrap
+org.iplantc.services.bootstrap                                 = {{ donkey_base }}/secured/bootstrap
+org.iplantc.services.logout                                    = {{ donkey_base }}/secured/logout
+
+# DE Data Management Endpoints
+org.iplantc.services.de-data-mgmt.base                         = {{ donkey_base }}/secured/filesystem/
+org.iplantc.services.de-data-mgmt.getuserhomedir               = {{ donkey_base }}/secured/filesystem/home
+org.iplantc.services.admin.de-data-mgmt.base                   = {{ donkey_base }}/admin/filesystem/
+
+# DE File I/O endpoints
+org.iplantc.services.file-io.base.secured                      = {{ donkey_base }}/secured/fileio/
+org.iplantc.services.file-io.file-upload                       = {{ donkey_base }}/fileio/upload
+org.iplantc.services.file-io.secured.file-upload               = {{ donkey_base }}/secured/fileio/upload
+
+# Buggalo Endpoint
+#FIXME change 'buggalo' name
+org.iplantc.services.buggalo.baseUrl                           = {{ donkey_base }}/secured/tree-viewer-urls
+
+# Tool Request Endpoint
+org.iplantc.services.toolRequests                              = {{ donkey_base }}/tool-requests
+org.iplantc.services.toolRequests.statusCodes                  = {{ donkey_base }}/tool-requests/status-codes
+org.iplantc.services.admin.toolRequests                        = {{ donkey_base }}/admin/tool-requests
+
+# Apps endponts
+org.iplantc.services.apps                                      = {{ donkey_base }}/apps
+org.iplantc.services.apps.ids                                  = {{ donkey_base }}/apps/ids
+org.iplantc.services.apps.categories                           = {{ donkey_base }}/apps/categories
+org.iplantc.services.apps.elements                             = {{ donkey_base }}/apps/elements
+org.iplantc.services.apps.elements.tools                       = {{ donkey_base }}/apps/elements/tools
+org.iplantc.services.apps.elements.infoTypes                   = {{ donkey_base }}/apps/elements/info-types
+org.iplantc.services.apps.elements.dataSources                 = {{ donkey_base }}/apps/elements/data-sources
+org.iplantc.services.apps.argPreview                           = {{ donkey_base }}/apps/arg-preview
+org.iplantc.services.admin.apps                                = {{ donkey_base }}/admin/apps
+org.iplantc.services.admin.apps.categories                     = {{ donkey_base }}/admin/apps/categories
+
+# Pipelines endpoints
+org.iplantc.services.apps.pipelines                            = {{ donkey_base }}/apps/pipelines
+
+# Reference Genomes
+org.iplantc.services.admin.referenceGenomes                    = {{ donkey_base }}/admin/reference-genomes
+org.iplantc.services.referenceGenomes                          = {{ donkey_base }}/reference-genomes
+
+# Analysis Endpoints
+org.iplantc.services.analyses                                  = {{ donkey_base }}/analyses
+
+# Tools Endpoints
+org.iplantc.services.tools                                     = {{ donkey_base }}/tools
+
+# Path List File Identifier
+org.iplantc.pathList.fileIdentifier                            = {{ path_list_file_identifier }}
+
+org.iplantc.services.filesystem.index                          = {{ donkey_base }}/secured/filesystem/index
+org.iplantc.services.filesystem.index-status                   = {{ donkey_base }}/secured/filesystem/index-status
+
+# The base URL used to contact the iPlant e-mail service
+org.iplantc.services.email-base                                = {{ email_base }}/
+
+# System-Message Services
+org.iplantc.services.admin.notifications.system                = {{ donkey_base }}/admin/notifications/system
+org.iplantc.services.admin.notifications.system.types          = {{ donkey_base }}/admin/notifications/system-types
+
+###############################################################################
+# Default workspace App Categories.
+###############################################################################
+org.iplantc.discoveryenvironment.workspace.rootAppCategory           = {{ metadactyl_user_root }}
+org.iplantc.discoveryenvironment.workspace.defaultAppCategories      = {{ metadactyl_user_subs }}
+org.iplantc.discoveryenvironment.workspace.defaultBetaAppCategoryId  = {{ metadactyl_beta_category }}
+org.iplantc.discoveryenvironment.workspace.defaultTrashAppCategoryId = {{ metadactyl_trash_category }}
+
+###############################################################################
+# Enable / Disable right click for QA team. QA Team will use the right click functionality
+# to access the context menu from some of their testing tools.
+# Should be set to false in all environments other than QA
+###############################################################################
+org.iplantc.discoveryenvironment.contextMenu.enabled = {{ app_context_menu_enabled }}
+
+# Default community data directory
+org.iplantc.communitydata.path = /iplant/home/shared
+
+###############################################################################
+# Maintenance Settings
+###############################################################################
+org.iplantc.discoveryenvironment.maintenance-file = {{ de_maintenance_file }}
+
+###############################################################################
+# Environment Information
+###############################################################################
+org.iplantc.discoveryenvironment.environment.name            = {{ environment_name }}
+org.iplantc.discoveryenvironment.environment.prod-deployment = {{ prod_deployment }}
+
+###############################################################################
+# Notification Agent Settings
+###############################################################################
+# The Notification Polling Interval in Seconds
+org.iplantc.discoveryenvironment.notifications.poll-interval = {{ de_notification_poll }}

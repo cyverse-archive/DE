@@ -1,0 +1,6 @@
+---
+
+- name: Install logrotate conf for DE logs
+  hosts: docker-ready
+  roles:
+      - logrotate.d

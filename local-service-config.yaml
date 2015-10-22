@@ -1,0 +1,21 @@
+# extra-vars: de_config_dir="/etc/iplant/de" service="dest-service-name" config_name="dest-name.properties" config_template="roles/path-to-role/templates/template-name.properties.j2"
+# This playbook will write local donkey configs by default.
+#
+# This playbook will do funny things with old versions of ansible, due to changes in how variable expansion works. If something weird is happening, probably update your ansible version.
+#
+# For example:
+# Write local configs for donkey to /etc/iplant/de/donkey.properties, using de-2 services but using a local data-info service.
+# ansible-playbook local-service-config.yaml -i inventories/... --extra-vars "donkey_host=localhost data_info_host=localhost"
+#
+# Write local configs for data-info to /etc/iplant/de/data-info.properties, using de-2 services.
+# ansible-playbook local-service-config.yaml -i inventories/... --extra-vars "service=data-info"
+---
+- hosts: services
+  vars:
+    svc: "{{ service | default('donkey') }}"
+    config_template: "roles/services/templates/{{ svc }}.properties.j2"
+    config_name: "{{ svc }}.properties"
+  tasks:
+  - debug: msg="writing {{ config_template }} to {{ de_config_dir }}/{{ config_name }}"
+  - name: write local service configs
+    local_action: template src="{{ config_template }}" dest="{{ de_config_dir }}/{{ config_name }}" mode=0644

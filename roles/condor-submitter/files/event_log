@@ -1,0 +1,2 @@
+EVENT_LOG = /var/log/condor/event_log
+EVENT_LOG_JOB_AD_INFORMATION_ATTRS = IpcUuid

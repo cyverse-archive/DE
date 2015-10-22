@@ -1,4 +1,0 @@
----
-- hosts: services
-  roles:
-    - { role: info-typer, when: (not parasitic) }

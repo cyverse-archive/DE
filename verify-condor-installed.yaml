@@ -1,0 +1,26 @@
+---
+- name: Verify Condor is installed
+  hosts: condor:condor-submission
+  gather_facts: false
+  tasks:
+      - name: Verify condor is installed
+        shell: yum list installed condor
+        register: verify_condor_installed
+
+      - fail: msg="Condor is not installed"
+        when: verify_condor_installed.rc != 0
+
+      - name: Condor is enabled
+        shell: systemctl is-enabled condor.service
+        register: verify_condor_enabled
+
+      - fail: msg="Condor is not enabled"
+        when: verify_condor_installed.rc != 0
+
+      - name: Condor is active
+        shell: systemctl is-active condor.service
+        register: verify_condor_active
+
+      - fail: msg="Condor is not active"
+        when: verify_condor_active.rc != 0
+

@@ -1,4 +1,0 @@
----
-- name: restart iplant-email
-  sudo: yes
-  supervisorctl: name=iplant-email state=restarted

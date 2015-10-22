@@ -1,4 +1,0 @@
----
-war_url: "{{ bg_war_url_prefix }}/{{ bg_war_name }}"
-war_name: "{{ bg_war_name }}"
-context_path: "{{ bg_app_name }}"

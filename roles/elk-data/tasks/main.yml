@@ -1,0 +1,44 @@
+---
+# tasks file for elk-data
+- name: pull elk images
+  shell: docker pull {{ elk.data.image_name }}
+  register: docker_pull_v
+  changed_when: docker_pull_v.stdout.find('Image is up to date') == -1
+  tags:
+      - docker_pull
+      - docker_pull_elk_data
+
+- name: place Systemd service files
+  template: src={{ elk.data.service_name }} dest=/usr/lib/systemd/system group=root owner=root mode=0664
+  register: service_file_v
+  tags:
+      - update_service_files
+      - update_service_files_elk_data
+
+- name: Reload systemd
+  shell: systemctl daemon-reload  
+  when: service_file_v.changed 
+  tags:
+      - update_service_files
+      - update_service_files_elk_data
+
+- name: enable elk data service
+  service: name={{elk.data.service_name}} enabled={{enable_services}}
+  when: service_file_v.changed 
+  tags:
+      - enable_services
+      - enable_data
+
+- name: Container exists
+  shell: "docker ps -aq -f 'name={{elk.data.container_name}}'"  
+  register: container_exists
+  changed_when: container_exists.stdout == ""
+
+  # Only restart if container doesn't exist.
+- name: restart elk data service
+  service: name={{elk.data.service_name}} state=restarted
+  when: container_exists.changed
+  tags:
+      - restart_services
+      - restart_data
+        

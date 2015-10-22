@@ -1,4 +1,0 @@
----
-- name: restart metadactyl
-  sudo: yes
-  supervisorctl: name=metadactyl state=restarted

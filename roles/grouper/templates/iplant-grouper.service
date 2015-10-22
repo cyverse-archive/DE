@@ -1,0 +1,27 @@
+[Unit]
+Description={{grouper.service_description}}
+BindsTo=docker.service
+PartOf=docker.service
+After=docker.service
+Requisite=docker.service
+
+[Service]
+User=iplant
+ExecStartPre=-/usr/bin/docker rm -v {{grouper.container_name}}
+ExecStart=/usr/bin/docker run --name {{grouper.container_name}} \
+    -p 8080 \
+    -v /etc/grouper:/etc/grouper \
+    -v /etc/tomcat/server.xml:/opt/tomcat/conf/server.xml \
+    -v /etc/tomcat/tomcat-users.xml:/opt/tomcat/conf/tomcat-users.xml \
+    -v /etc/tomcat/setenv.sh:/opt/tomcat/bin/setenv.sh \
+    -v /var/log/grouper:/var/log/grouper \
+    -v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
+    --log-driver={{grouper.log_driver}} \
+    {{remote_registry}}/{{grouper.image_name}}:{{docker.tag}}
+ExecStop=/usr/bin/docker stop {{grouper.container_name}}
+Restart=on-failure
+
+SyslogIdentifier={{grouper.container_name}}
+
+[Install]
+WantedBy=multi-user.target

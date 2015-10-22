@@ -1,4 +1,0 @@
----
-- name: restart infosquito
-  sudo: yes
-  supervisorctl: name=infosquito state=restarted

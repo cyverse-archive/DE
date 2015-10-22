@@ -1,4 +1,0 @@
----
-war_url: "{{ de_war_url_prefix }}/{{ de_war_name }}"
-war_name: "{{ de_war_name }}"
-context_path: "{{ de_app_name }}"

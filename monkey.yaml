@@ -1,4 +1,0 @@
----
-- hosts: services
-  roles:
-    - { role: monkey, when: (not parasitic) }

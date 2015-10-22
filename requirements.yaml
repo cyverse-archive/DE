@@ -1,5 +1,8 @@
 ---
-- src: gpstathis.elasticsearch
+# Temporarily use iPlant's fork
+#- src: gpstathis.elasticsearch
+- src: https://github.com/iPlantCollaborativeOpenSource/ansible-elasticsearch
+  name: gpstathis.elasticsearch
 
 # Temporarily use iPlant's fork
 #- src: Rackspace_Automation.epel

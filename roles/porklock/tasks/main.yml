@@ -1,0 +1,23 @@
+---
+- name: allow condor to run docker commands
+  sudo: yes
+  user: name=condor groups=docker
+
+- name: Update porklock
+  sudo: yes
+  shell: docker pull {{docker.user}}/porklock:{{docker.tag}}
+  tags:
+      - docker_pull
+
+- name: Update curl-wrapper
+  sudo: yes
+  shell: docker pull {{docker.user}}/curl-wrapper:{{docker.tag}}
+  tags:
+      - docker_pull
+
+# - name: set condor_config.local.j2
+#   sudo: yes
+#   template: src=condor_config.local.j2 dest=/etc/condor/condor_config.local owner=root group=root mode=0644
+
+# - name: Running condor_reconfig
+#   command: /usr/sbin/condor_reconfig

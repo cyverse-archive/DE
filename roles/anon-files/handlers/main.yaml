@@ -1,4 +1,0 @@
----
-- name: restart anon-files
-  sudo: yes
-  supervisorctl: name=anon-files state=restarted

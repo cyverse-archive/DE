@@ -1,4 +1,0 @@
----
-- hosts: services
-  roles:
-    - { role: dewey, when: (not parasitic) }

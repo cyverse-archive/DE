@@ -1,21 +1,33 @@
-- name: facepalm is installed
-  shell: yum install -y facepalm
-
-- name: install postgresql92 yum repo file
+---
+- name: install centos5 postgresql92 yum repo file
+  sudo: yes
   yum: name=pgdg-centos92 state=latest
+  when: ansible_distribution == "CentOS" and
+        ansible_distribution_major_version == "5"
 
-- name: postgresql-server is installed
-  yum: name=postgresql92-server state=present
+- name: install centos6 postgresql92 yum repo file
+  sudo: yes
+  yum: name=http://yum.postgresql.org/9.2/redhat/rhel-6.6-x86_64/pgdg-centos92-9.2-6.noarch.rpm state=present
+  when: ansible_distribution == "CentOS" and
+        ansible_distribution_major_version == "6"
 
-- name: postgresql is installed
+- name: install centos7 postgresql92 yum repo file
+  sudo: yes
+  yum: name=http://yum.postgresql.org/9.2/redhat/rhel-7-x86_64/pgdg-centos92-9.2-1.noarch.rpm state=present
+  when: ansible_distribution == "CentOS" and
+        ansible_distribution_major_version == "7"
+
+- name: postgresql is installed via yum
+  sudo: yes
   yum: name=postgresql92 state=present
+  when: ansible_distribution == "CentOS"
 
-- name: postgresl-contrib is installed
-  yum: name=postgresql92-contrib state=present
-
-- name: psycopg2 is installed
+- name: psycopg2 is installed via yum
+  sudo: yes
   yum: name=python-psycopg2 state=present
+  when: ansible_distribution == "CentOS"
 
 - name: place .pgpass
-  sudo: False
+  sudo: yes
   template: src=postgres.pgpass.j2 dest=~/.pgpass mode=0600 backup=yes
+

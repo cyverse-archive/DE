@@ -1,0 +1,4 @@
+---
+- hosts: condor
+  roles:
+    - data-container-condor-deployer

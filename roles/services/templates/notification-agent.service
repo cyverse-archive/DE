@@ -1,0 +1,25 @@
+[Unit]
+Description={{notificationagent.service_description}}
+BindsTo=docker.service
+PartOf=docker.service
+After=docker.service
+Requisite=docker.service
+
+[Service]
+User=iplant
+ExecStartPre=-/usr/bin/docker rm -v {{notificationagent.container_name}}
+ExecStart=/usr/bin/docker run --name {{notificationagent.container_name}} \
+-v {{ de_config_dir }}:/etc/iplant/de \
+-v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
+-p {{notificationagent.port}}:60000 \
+--log-driver={{docker.log_driver}} \
+{{docker.user}}/{{notificationagent.image_name}}:{{docker.tag}} --config /etc/iplant/de/{{notificationagent.properties_file}}
+ExecStop=-/usr/bin/docker stop {{notificationagent.container_name}}
+Restart=on-failure
+
+SyslogIdentifier={{notificationagent.container_name}}
+SyslogFacility={{systemd.syslogFacility}}
+
+[Install]
+WantedBy=multi-user.target
+

@@ -1,27 +1,45 @@
-ansible_ssh_port: 
-services_ver: 4.1.5
+ansible_ssh_port: 22
+global_config_dir: /etc/iplant
+de_config_dir: "{{ global_config_dir }}/de"
+local_cfg_dest: cfg_files
 
+docker:
+  log_driver: syslog
+  tag: dev
+  user: discoenv
+  version: 1.8.2
+  registry:
+    port: 5000
+
+java:
+  version: 1.7.0
+
+logstash_forwarder:
+  service_description: logstash forwarder service
+  service_name: logstash-forwarder.service
+  service_name_short: logstash-forwarder
+  image_name: willdurand/logstash-forwarder
+  container_name: logstash-fowarder
+
+# Indicates whether or not this environment is a complete environment or piggybacks off some other
+# environment
 parasitic: false
 
-### WAR Settings
-de_war_name: de.war
-bg_war_name: belphegor.war
-
-de_war_url_prefix:
-bg_war_url_prefix:
-
-de_war_url: "{{ de_war_url_prefix }}/{{ de_war_name }}"
-bg_war_url: "{{ bg_war_url_prefix }}/{{ bg_war_name }}"
-
-de_app_name: de
-bg_app_name: belphegor
+denyhosts_allowed:
+#  - 192.168.0.[1-127]
+#  - 172.16.0.*
+#  - 10.0.0.*
 
 ################################################################################
 #                         Configuration Settings
 ################################################################################
 admin_groups:
 
+default_service_port: 60000
+
 agave_base_url: https://agave.iplantc.org
+agave_read_timeout: 10000
+agave_page_length: 5000
 agave_oauth_refresh_window: 5
 
 agave_client_key:
@@ -49,14 +67,71 @@ amqp_irods_message_auto_ack: true
 amqp_irods_connection_health_check_interval: 5000
 
 anon_files_base_url:
+anon_files_proxy_url:
 anon_files_anon_user: anonymous
-anon_files_port:
-anon_files_log_file: /var/log/anon-files/anon-files.log
+anon_files_log_file: /home/iplant/logs/anon-files.log
+anon_files:
+  service_name: anon-files.service
+  service_name_short: anon-files
+  service_description: anon-files service
+  port:
+  image_name: anon-files
+  log_driver: "{{ docker.log_driver }}"
+  container_name: anon-files
+  properties_file: anon-files.properties
+  log_file: anon-files-docker.log
 
-belphegor_base:
-belphegor_name: the iPlant Tool Administration Utility
+## App Settings
+de_base:
+de:
+  service_name: de-ui.service
+  service_name_short: ui
+  service_description: DE UI; iPlant Discovery Environment user interface
+  image_name: de
+  container_name: de_ui
+  log_driver: "{{ docker.log_driver }}"
+  log_file: de-ui.log
+  http_server:
+    service_name: de-ui-nginx.service
+    service_name_short: de-ui-nginx
+    service_description: DE UI nginx
+    image_name: nginx-ssl
+    container_name: de_ui_nginx
+    log_driver: "{{ docker.log_driver }}"
+    log_file: nginx-de-ui.log
+    ssl:
+      server_name: "{{ nginx_ssl.server_name }}"
+      cert: "{{ nginx_ssl.cert }}"
+      cert_key: "{{ nginx_ssl.cert_key }}"
+      insecure_redirects:
+        - server_name: "{{ nginx_ssl.server_name }}"
+          return: "https://$host$request_uri"
+#      redirects:
+#        - server_name: "~^(?<basename>[^.]+)[.]example[.]com$"
+#          return: "https://$basename.example.org$request_uri"
+#          ssl_certificate: "/etc/ssl/example.com.crt"
+#          ssl_certificate_key: "/etc/ssl/example.com.key"
 
-belphegor_enable_ctx: "{{ de_enable_ctx }}"
+app_context_menu_enabled: false
+app_description: the iPlant Discovery Environment
+
+app_empty_url: empty
+app_name: de
+
+app_rpc_name: discoveryenvironment
+
+app_version_name: Phthalo
+app_version: 2.1.0
+
+app_server_base_url: "http://{{ ansible_default_ipv4.address }}:8080"
+
+de_feedback_to_addr: ""
+de_mail_from_addr: "{{ de_feedback_to_addr }}"
+de_mail_to_addr: "{{ de_feedback_to_addr }}"
+
+de_maintenance_file: de-maintenance
+
+de_notification_poll: 15
 
 cas_base:
 cas_group_attribute: entitlement
@@ -65,39 +140,53 @@ cas_uid_domain:
 cas_no_logout_url: http://user.iplantcollaborative.org
 cas_app_list: all iPlant applications
 
+chat_room_url:
+
+condor_submission_ip_range:
+condor_allow_write: "*.example.org,{{ condor_submission_ip_range }}"
+condor:
+  host:
+  admin: grid@example.org
+  collector_name: "{{ environment_name }} pool"
+  flock_to:
+  filesystem_domain: example.org
+  uid_domain: example.org
+  allow_write: "{{ condor_allow_write }}"
+  allow_read: "{{ condor_allow_write }}"
+
 condor_log_monitor_event_log: /var/log/condor/event_log
+condor_log_monitor:
+  service_name: condor-log-monitor.service
+  service_name_short: condor-log-monitor
+  service_description: CLM; Condor log monitor
+  image_name: condor-log-monitor
+  container_name: clm
+  properties_file: condor_log_monitor.properties
+  log_file: condor-log-monitor-docker.log
 
 coge_genome_load_url: https://genomevolution.org/CoGe/services/service.pl/genome/load
 
 coge_user: coge
 
-confluence_base: https://pods.iplantcollaborative.org/wiki
-confluence_parent_page: List of Applications
-confluence_user:
-confluence_password:
-confluence_space_name:
-confluence_space_url:
-confluence_rating_suffix:
-confluence_valid_wikiurl:
+clockwork:
+  service_name: clockwork.service
+  service_name_short: clockwork
+  service_description: clockwork service
+  image_name: clockwork
+  container_name: clockwork
+  properties_file: clockwork.properties
+  log_file: clockwork-docker.log
 
 data_info_host: localhost
-data_info_port:
-
-de_base:
-
-de_enable_ctx: false
-
-de_feedback_to_addr: ""
-de_mail_from_addr: "{{ de_feedback_to_addr }}"
-de_mail_to_addr: "{{ de_feedback_to_addr }}"
-
-de_version_name: Phthalo
-de_version: 1.9.5
-de_name: the iPlant Discovery Environment
-
-de_maintenance_file: /etc/de-maintenance
-
-de_notification_poll: 15
+data_info:
+  service_name: data-info.service
+  service_name_short: data-info
+  service_description: data-info service
+  port:
+  image_name: data-info
+  container_name: data-info
+  properties_file: data-info.properties
+  log_file: data-info-docker.log
 
 dewey_listen_port:
 
@@ -111,25 +200,169 @@ db_admin: postgres
 db_admin_password:
 
 db_vendor: postgresql
+db_allowed_IPv4_remote:
+#  - "X.X.X.X/XX"
 
-donkey_host:
-donkey_port:
-donkey_base: http://{{ donkey_host }}:{{ donkey_port }}
+dewey:
+  service_name: dewey.service
+  service_name_short: dewey
+  service_description: dewey service
+  image_name: dewey
+  container_name: dewey
+  properties_file: dewey.properties
+  log_file: dewey-docker.log
+
+systemd:
+  syslogFacility: local6
+  services:
+          - "{{dewey}}"
+          - "{{data_info}}"
+          - "{{anon_files}}"
+          - "{{de}}"
+          - "{{condor_log_monitor}}"
+          - "{{clockwork}}"
+          - "{{donkey}}"
+          - "{{iplant_email}}"
+          - "{{exim}}"
+          - "{{infosquito}}"
+          - "{{info_typer}}"
+          - "{{jexevents}}"
+          - "{{kifshare}}"
+          - "{{metadactyl}}"
+          - "{{metadata}}"
+          - "{{monkey}}"
+          - "{{notificationagent}}"
+          - "{{saved_searches}}"
+          - "{{tree_urls}}"
+          - "{{user_preferences}}"
+          - "{{user_sessions}}"
+          - "{{jex}}"
+
+donkey_host: "{{ ansible_local.dev.services.donkey_host }}"
+donkey_base: http://{{ donkey_host }}:{{ donkey.port }}
+donkey:
+  service_name: donkey.service
+  service_name_short: donkey
+  service_description: donkey service
+  port:
+  image_name: donkey
+  container_name: donkey
+  properties_file: donkey.properties
+  log_file: donkey-docker.log
 
 email_smtp_host: 127.0.0.1
 email_smtp_from_address:
-email_port:
-email_host:
-email_base: http://{{ email_host }}:{{ email_port }}
+email_host: "{{ ansible_local.dev.services.email_host }}"
+email_base: http://{{ email_host }}:{{ iplant_email.port }}
+iplant_email:
+  service_name: iplant-email.service
+  service_name_short: iplant-email
+  service_description: iPlant Email service
+  port:
+  image_name: iplant-email
+  container_name: iplant-email
+  properties_file: iplant-email.properties
+  log_file: iplant-email-docker.log
 
 environment_name:
+
+elasticsearch_network_http_port:
+
+elk:
+  conf_dir: "{{de_config_dir}}/elk"
+  logstash:
+    port: 5000
+    container_name: elk_logstash
+    service_name: elk-logstash.service
+    service_name_short: elk-logstash
+    service_description: ELK logstash
+    image_name: de-logstash
+  data:
+    container_name: elk_data
+    service_name: elk-data.service
+    service_name_short: elk-data
+    service_description: ELK data container
+    image_name: busybox
+  elasticsearch:
+    port: 9200
+    container_name: elk_elasticsearch
+    service_name: elk-elasticsearch.service
+    service_name_short: elk-elasticsearch
+    service_description: ELK elasticsearch
+    image_name: elasticsearch
+    heap_size: "12g"
+    cluster_name: "de-elk-dev"
+  kibana:
+    port: 5601
+    container_name: elk_kibana
+    service_name: elk-kibana.service
+    service_name_short: elk-kibana
+    service_description: ELK kibana
+    version: 4.1.2
+    image_name: "kibana:4.1.2"
 
 es_base: "http://{{ es_host }}:{{ es_port }}"
 es_host:
 es_port:
 es_scroll_size: 1000
 
+exim:
+  service_name: exim-sender.service
+  service_name_short: exim-sender
+  service_description: exim-sender service
+  image_name: exim-sender
+  container_name: exim
+  log_file: exim-docker.log
+
 fs_max_paths_in_request: 1000
+
+gpg_home_dir:
+
+group_config:
+
+grouper:
+  service_name: iplant-grouper.service
+  service_name_short: iplant-grouper
+  service_description: Grouper UI and Web Services
+  image_name: iplant-grouper
+  container_name: iplant-grouper
+  log_driver: "{{ docker.log_driver }}"
+  admin:
+    user:
+    pass:
+  api:
+    env_name:
+  container_name: grouper
+  db:
+    url:
+    user:
+    pass:
+  http_server:
+    service_name: grouper-nginx.service
+    service_name_short: grouper-nginx
+    service_description: Grouper nginx
+    image_name: "{{ de.http_server.image_name }}"
+    container_name: grouper-nginx
+    log_driver: "{{ docker.log_driver }}"
+    ssl:
+      servers:
+        - server_name: "{{ nginx_ssl.server_name }}"
+          ssl_certificate: "{{ nginx_ssl.cert }}"
+          ssl_certificate_key: "{{ nginx_ssl.cert_key }}"
+      insecure_redirects:
+        - server_name: "{{ nginx_ssl.server_name }}"
+          return: "https://$host$request_uri"
+  subject_source:
+    id:
+    name:
+    url:
+    auth_type:
+    principal:
+    credentials:
+  ui:
+    base_url:
+  ws:
+    base_url:
 
 icat_host:
 icat_port:
@@ -140,16 +373,53 @@ icat_db:
 infosquito_notify_enabled: true
 infosquito_notify_count: 10000
 infosquito_retry_interval: 900
+infosquito:
+  service_name: infosquito.service
+  service_name_short: infosquito
+  service_description: infosquito service
+  image_name: infosquito
+  container_name: infosquito
+  properties_file: infosquito.properties
+  log_file: infosquito-docker.log
+
+info_typer:
+  service_name: info-typer.service
+  service_name_short: info-typer
+  service_description: info-typer service
+  image_name: info-typer
+  container_name: info-typer
+  properties_file: info-typer.properties
+  log_file: info-typer-docker.log
+
+iplant_groups_host:
+iplant_groups_port:
+iplant_groups:
+  service_name: iplant-groups.service
+  service_name_short: iplant-groups
+  service_description: iplant-groups service
+  host: "{{ iplant_groups_host }}"
+  port: "{{ iplant_groups_port }}"
+  base_url: "http://{{ iplant_groups_host }}:{{ iplant_groups_port }}"
+  image_name: iplant-groups
+  container_name: iplant-groups
+  properties_file: iplant-groups.properties
+  log_file: iplant-groups-docker.log
+  grouper:
+    username: "{{ grouper.admin.user }}"
+    password: "{{ grouper.admin.pass }}"
+    api_version: "v2_2_000"
+    base_url: "{{ grouper.ws.base_url }}"
 
 irods_host:
 irods_port: 1247
 irods_user:
 irods_password:
 irods_zone: iplant
-irods_home: /{{irods_zone}}/home
+irods_home: /{{ irods_zone }}/home
 irods_default_resource: ""
-irods_admin_users:
-irods_temp_dir:
+irods_admins: "rodsadmin"
+irods_admin_users: "{{ irods_user }},{{ irods_admins }}"
+irods_bad_chars: \u0060\u0027\u000A\u0009
 
 jex_host:
 jex_port:
@@ -157,32 +427,56 @@ jex_base: http://{{ jex_host }}:{{ jex_port }}
 jex_batch_group: batch_processing
 jex_nfs_base:
 jex_icommands_path: /usr/local/icommands/:/usr/local2/icommands/:/usr/local/bin/:/usr/local2/bin/:/usr/bin/
-jex_request_disk: 175000000
-jex_events:
+jex_request_disk: 0
 
-jexdb_driver: org.postgresql.Driver
-jexdb_host:
+# Jex does not actually have a container. The container name is how most syslog entries
+# are identified. See rsyslog-config role.
+jex:
+  service_name: jex.service
+  service_name_short: jex
+  log_file: jex/jex.log
+  container_name: jex
+
+jexdb_driver: "{{db_driver}}"
+jexdb_host: "{{db_host}}"
 jexdb_db: jex
-jexdb_password:
-jexdb_port: 5432
-jexdb_user:
-jexdb_vendor: postgresql
-jex_events_listen_port:
+jexdb_password: "{{db_password}}"
+jexdb_port: "{{db_port}}"
+jexdb_user: "{{db_user}}"
+jexdb_vendor: "{{db_vendor}}"
+
+jex_events:
 jex_events_event_url:
+jexevents:
+  service_name: jex-events.service
+  service_name_short: jex-events
+  service_description: jex events service
+  port:
+  image_name: jex-events
+  container_name: jex-events
+  properties_file: jex-events.properties
+  log_file: jex-events-docker.log
 
 job_status_poll_interval: 15
 
 kifshare_de_url: \{\{url\}\}/d/\{\{ticket-id\}\}/\{\{filename\}\}
 kifshare_external_url:
-kifshare_port:
 kifshare_mode: prod
 kifshare_download_buffer_size: 100
+kifshare:
+  service_name: kifshare.service
+  service_name_short: kifshare
+  service_description: kifshare service
+  port:
+  image_name: kifshare
+  container_name: kifshare
+  properties_file: kifshare.properties
+  log_file: kifshare-docker.log
 
 max_edit_file_size: 2147483647
 
-metadactyl_base: "http://{{ metadactyl_host }}:{{ metadactyl_port }}"
+metadactyl_base: "http://{{ metadactyl_host }}:{{ metadactyl.port }}"
 metadactyl_host:
-metadactyl_port:
 
 metadactyl_out_dir: analyses
 metadactyl_path_list_max_paths: 16
@@ -192,6 +486,15 @@ metadactyl_beta_category: 5401bd14-6c14-4470-aedd-57b47ea1b979
 metadactyl_user_root: Workspace
 metadactyl_user_subs: "[\"Apps under development\",\"Favorite Apps\"]"
 metadactyl_trash_category: Trash
+metadactyl:
+  service_name: metadactyl.service
+  service_name_short: metadactyl
+  service_description: metadactyl service
+  port:
+  image_name: metadactyl
+  container_name: metadactyl
+  properties_file: metadactyl.properties
+  log_file: metadactyl-docker.log
 
 metadata_db_driver: "{{ db_driver }}"
 metadata_db_vendor: "{{ db_vendor }}"
@@ -202,56 +505,146 @@ metadata_db_password: "{{ db_password }}"
 metadata_db_name: metadata
 metadata_db_admin: "{{ db_admin }}"
 metadata_db_admin_password: "{{ db_admin_password }}"
+metadata:
+  service_name: metadata.service
+  service_name_short: metadata
+  service_description: metadata service
+  port:
+  image_name: metadata
+  container_name: metadata
+  properties_file: metadata.properties
+  log_file: metadata-docker.log
 
-nibblonian_perms_filter:
+metadata_host: localhost
 
-notificationagent_base: "http://{{ notificationagent_host }}:{{ notificationagent_port }}"
+monkey:
+  service_name: monkey.service
+  service_name_short: monkey
+  service_description: monkey service
+  image_name: monkey
+  container_name: monkey
+  properties_file: monkey.properties
+  log_file: monkey-docker.log
+
+nginx_ssl:
+  server_name:
+  cert:
+  cert_key:
+# server_name: "~^[^.]+[.]example[.]org$"
+# cert: "/etc/ssl/example.crt"
+# cert_key: "/etc/ssl/example.key"
+
+nibblonian_perms_filter: "{{ irods_admins }}"
+
+notificationagent_base: "http://{{ notificationagent_host }}:{{ notificationagent.port }}"
 notificationagent_host:
-notificationagent_port:
+notificationagent:
+  service_name: notification-agent.service
+  service_name_short: notificationagent
+  service_description: notification agent service
+  port:
+  image_name: notificationagent
+  container_name: notificationagent
+  properties_file: notificationagent.properties
+  log_file: notificationagent-docker.log
 
 notification_clean_start: "1:45:00"
 notification_clean_age: 90
 notification_clean_enable: "true"
 notification_db_driver: "{{ db_driver }}"
 notification_db_vendor: "{{ db_vendor }}"
-notification_db_host:
-notification_db_port:
+notification_db_port: "{{ db_port }}"
+notification_db_host: "{{ db_host }}"
 notification_db_name: notifications
-notification_db_user:
-notification_db_password:
+notification_db_password: "{{ db_password }}"
+notification_db_user: "{{ db_user }}"
+notification_db_admin: "{{ db_admin }}"
+notification_db_admin_password: "{{ db_admin_password }}"
 
 path_list_file_identifier: "# application/vnd.de.path-list+csv; version=1"
 path_list_info_type: ht-analysis-path-list
 
-pgp_keyring_path:
+pgp_keyring_path: "{{ gpg_home_dir }}/secring.gpg"
 pgp_key_password:
 
 prod_deployment: false
 
 saved_searches_host:
-saved_searches_port:
-saved_searches_log_file: /var/log/saved-searches/saved-searches.log
+saved_searches_log_file: /home/iplant/logs/saved-searches.log
+saved_searches:
+  service_name: saved-searches.service
+  service_name_short: saved-searches
+  service_description: saved searches services
+  port:
+  image_name: saved-searches
+  container_name: saved-searches
+  properties_file: saved-searches.properties
+  log_file: saved-searches-docker.log
 
 search_default_limit: 200
 
 tree_parser_base: http://portnoy.iplantcollaborative.org/parseTree
 
 tree_urls_host:
-tree_urls_port:
-tree_urls_log_file: /var/log/tree-urls/tree-urls.log
+tree_urls_log_file: /home/iplant/logs/tree-urls.log
 tree_urls_cleanup_age: 30
 tree_urls_cleanup_start: "1:30:00"
 tree_urls_cleanup_enable: "true"
 tree_urls_avu: tree-urls
+tree_urls:
+  service_name: tree-urls.service
+  service_name_short: tree-urls
+  service_description: Tree urls service
+  port:
+  image_name: tree-urls
+  container_name: tree-urls
+  properties_file: tree-urls.properties
+  log_file: tree-urls-docker.log
+
+timezone: America/Phoenix
 
 user_info_base:
 user_info_client_key:
 user_info_client_secret:
 
 user_preferences_host:
-user_preferences_port:
-user_preferences_log_file: /var/log/user-preferences/user-preferences.log
+user_preferences_log_file: /home/iplant/logs/user-preferences.log
+user_preferences:
+  service_name: user-preferences.service
+  service_name_short: user-preferences
+  service_description: user preferences service
+  port:
+  image_name: user-preferences
+  container_name: user-preferences
+  properties_file: user-preferences.properties
+  log_file: user-preferences-docker.log
 
 user_sessions_host:
-user_sessions_port:
-user_sessions_log_file: /var/log/user-sessions/user-sessions.log
+user_sessions_log_file: /home/iplant/logs/user-sessions.log
+user_sessions:
+  service_name: user-sessions.service
+  service_name_short: user-sessions
+  service_description: user sessions service
+  port:
+  image_name: user-sessions
+  container_name: user-sessions
+  properties_file: user-sessions.properties
+  log_file: user-sessions-docker.log
+
+## iPlant data container
+data_container:
+  image_name: iplant_data
+  container_name: iplant_data
+  service_name: iplant-data.service
+  service_name_short: iplant-data
+  service_description: The iPlant Discovery Environment data container
+  ssl:
+    cert: "{{ nginx_ssl.cert }}"
+    key: "{{ nginx_ssl.cert_key }}"
+    gd_bundle_crt: /etc/ssl/gd_bundle.crt
+
+time: "{{ansible_date_time.date}}:{{ansible_date_time.time}}"
+
+logging:
+  dir: /var/log/de
+  conf_dir: "{{de_config_dir}}/logging"

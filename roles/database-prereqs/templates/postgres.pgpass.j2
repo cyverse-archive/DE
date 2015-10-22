@@ -1,12 +1,16 @@
 # hostname:port:database:username:password
 {{db_host}}:*:{{db_name}}:{{db_user}}:{{db_password}}
 {{db_host}}:*:*:{{db_admin}}:{{db_admin_password}}
-{{notif_db_host}}:*:{{notif_db_name}}:{{notif_db_user}}:{{notif_db_password}}
-{{notif_db_host}}:*:*:{{notif_db_admin}}:{{notif_db_admin_password}}
+{{notification_db_host}}:*:{{notification_db_name}}:{{notification_db_user}}:{{notification_db_password}}
+{{notification_db_host}}:*:*:{{db_admin}}:{{db_admin_password}}
 {{metadata_db_host}}:*:{{metadata_db_name}}:{{metadata_db_user}}:{{metadata_db_password}}
-{{metadata_db_host}}:*:*:{{metadata_db_admin}}:{{metadata_db_admin_password}}
-{{jex_db_host}}:*:{{jex_db_name}}:{{jex_db_user}}:{{jex_db_password}}
-{{jex_db_host}}:*:*:{{jex_db_admin}}:{{jex_db_admin_password}}
-{{ansible_fqdn}}:*:{{db_name}}:{{db_user}}:{{db_password}}
-{{ansible_fqdn}}:*:{{notif_db_name}}:{{notif_db_user}}:{{notif_db_password}}
-{{icat_host}}:*:{{icat_name}}:{{icat_user}}:{{icat_password}}
+{{metadata_db_host}}:*:*:{{db_admin}}:{{db_admin_password}}
+{{jexdb_host}}:*:{{jexdb_db}}:{{jexdb_user}}:{{jexdb_password}}
+{{jexdb_host}}:*:*:{{db_admin}}:{{db_admin_password}}
+{{metadata_db_host}}:*:{{metadata_db_name}}:{{metadata_db_user}}:{{metadata_db_password}}
+{{icat_host}}:*:{{icat_db}}:{{icat_user}}:{{icat_password}}
+{% if prod_dbs is defined and prod_dbs != None -%}
+{% for _, db in prod_dbs.iteritems() -%}
+    {{db.host}}:*:{{db.name}}:{{db.user}}:{{db.password}}
+{% endfor %}
+{% endif %}

@@ -1,6 +1,0 @@
----
-dependencies:
-  - { role: database-prereqs, sudo: True }
-  - { role: init-database-public-schema }
-  - { role: init-database-from-prod }
-  - { role: update-database, fmode: "update" }

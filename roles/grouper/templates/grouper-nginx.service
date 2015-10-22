@@ -1,0 +1,28 @@
+[Unit]
+Description={{grouper.http_server.service_description}}
+BindsTo=docker.service {{grouper.service_name}}
+PartOf=docker.service {{grouper.service_name}} {{data_container.service_name}}
+After=docker.service {{grouper.service_name}} 
+Requisite=docker.service 
+Requires={{grouper.service_name}}
+
+[Service]
+User=iplant
+ExecStartPre=-/usr/bin/docker rm -v {{grouper.http_server.container_name}}
+ExecStart=/usr/bin/docker run --name {{grouper.http_server.container_name}} \
+    -p 80:80 -p 443:443 \
+    --link {{grouper.container_name}}:grouper-host \
+    -v /etc/nginx/nginx.conf:/etc/nginx/nginx.conf \
+    -v /etc/localtime:/etc/localtime \
+    -v /etc/timezone:/etc/timezone \
+    --volumes-from {{data_container.container_name}} \
+    --log-driver={{de.http_server.log_driver}} \
+    {{docker.user}}/{{grouper.http_server.image_name}}:{{docker.tag}}
+ExecStop=/usr/bin/docker stop {{grouper.http_server.container_name}} 
+Restart=on-failure
+
+SyslogIdentifier={{grouper.http_server.container_name}}
+
+[Install]
+WantedBy=multi-user.target
+

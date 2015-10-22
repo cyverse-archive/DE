@@ -1,0 +1,25 @@
+[Unit] 
+Description={{elk.elasticsearch.service_description}}
+BindsTo=docker.service
+PartOf=docker.service {{elk.data.service_name}}
+After=docker.service
+Requisite=docker.service
+
+[Service]
+ExecStartPre=-/usr/bin/docker rm -v {{elk.elasticsearch.container_name}}
+ExecStart=/usr/bin/docker run --name {{elk.elasticsearch.container_name}} \
+--volumes-from {{elk.data.container_name}} \
+-v {{ de_config_dir }}:/etc/iplant/de \
+-v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
+-v {{elk.conf_dir}}/elasticsearch.yml:/etc/elasticsearch/elasticsearch.yml \
+-p 9200:9200 \
+-e ES_HEAP_SIZE={{elk.elasticsearch.heap_size}} \
+{{elk.elasticsearch.image_name}}
+ExecStop=/usr/bin/docker stop {{elk.elasticsearch.container_name}}
+Restart=on-failure
+
+SyslogIdentifier=elk-elasticsearch
+
+[Install]
+WantedBy=multi-user.target
+

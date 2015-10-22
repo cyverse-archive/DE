@@ -1,0 +1,10 @@
+---
+# CentOS 7
+
+- include: CentOS-7_update-service-files.yaml
+- include: CentOS-7_stop-services.yaml
+
+- include: CentOS-7_enable-services.yaml
+- include: CentOS-7_restart-services.yaml
+- include: CentOS-7_log_cfg.yaml
+

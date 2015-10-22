@@ -1,4 +1,0 @@
----
-dependencies:
-    - { role: java7 }
-    - { role: yum-prep }

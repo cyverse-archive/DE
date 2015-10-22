@@ -1,4 +1,0 @@
----
-- name: restart data-info
-  sudo: yes
-  supervisorctl: name=data-info state=restarted

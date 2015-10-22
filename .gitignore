@@ -1,6 +1,6 @@
 *.*un~
 cfg_files/
-local-vagrant/.vagrant
 de-ansible.iml
 de-ansible.ipr
 de-ansible.iws
+*.swp

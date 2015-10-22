@@ -1,0 +1,5 @@
+registry_host: "{{ groups['docker-registry'][0]}}"
+remote_registry: "{{ registry_host }}:{{ docker.registry.port }}"
+data_image_tag: "latest"
+data_container_name: "{{ data_image_name }}"
+remove_image: True

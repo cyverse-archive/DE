@@ -1,8 +1,0 @@
----
-dependencies:
-  - { role: database-prereqs, sudo: True }
-  - { role: init-database-public-schema }
-  - { role: init-database-exentions }
-  - { role: init-database-from-prod,
-      extra_pgdump_opts: "--exclude-table-data=access_tokens --exclude-table-data=authorization_requests --exclude-table-data=job_steps --exclude-table-data=jobs" }
-  - { role: update-database, fmode: "update" }

@@ -1,4 +1,0 @@
----
-- name: restart info-typer
-  sudo: yes
-  supervisorctl: name=info-typer state=restarted

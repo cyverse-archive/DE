@@ -1,3 +1,0 @@
----
-- name: restart donkey
-  supervisorctl: name=donkey state=restarted

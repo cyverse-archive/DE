@@ -1,0 +1,133 @@
+---
+- name: create the /var/log/de directory
+  file: path={{logging.dir}} owner=root group=root mode=0755 state=directory
+  tags:
+      - config
+
+- name: create the /etc/nginx directory
+  file: path=/etc/nginx owner=iplant group=iplant mode=0755 state=directory
+  tags:
+      - config
+
+- name: place the /etc/nginx/nginx.conf file
+  template: src=nginx.conf.j2 dest="/etc/nginx/nginx.conf" mode=0644
+  register: config_nginx_v
+  tags:
+      - config
+      - config_de-ui
+
+- name: ensure that /etc/iplant/de exists
+  file: path={{ de_config_dir }} state=directory mode=0755
+  tags:
+      - local_config
+      - config
+
+- name: ensure that {{logging.conf_dir}} exists
+  file: path={{ logging.conf_dir }} state=directory mode=0755
+  tags:
+      - local_config
+      - config
+
+- name: place the /etc/iplant/de/de.properties file
+  template: src=de.properties.j2 dest="{{ de_config_dir }}/de.properties" mode=0644
+  register: config_de_props_v
+  tags:
+      - local_config
+      - config
+      - config_de-ui
+
+- name: place the ui logback file
+  template: src=logback.xml.j2 dest={{ logging.conf_dir }}/de-ui.xml mode=0644
+  register: config_logback_v
+  tags:
+      - local_config
+      - config
+      - config_de-ui
+
+- name: place the /etc/iplant/de/de-application.yaml file
+  copy: src=de-application.yaml dest="{{ de_config_dir }}/de-application.yaml" mode=0644
+  register: config_de_application_v
+  tags:
+      - local_config
+      - config
+      - config_de-ui
+
+- name: pull the nginx-ssl image
+  shell: docker pull {{docker.user}}/{{de.http_server.image_name}}:{{docker.tag}}
+  register: docker_pull_nginx_v
+  changed_when: docker_pull_nginx_v.stdout.find('Image is up to date') == -1
+  tags:
+      - docker_pull
+      - docker_pull_de-ui
+
+- name: pull the de ui image
+  shell: docker pull {{docker.user}}/{{de.image_name}}:{{docker.tag}}
+  register: docker_pull_ui_v
+  changed_when: docker_pull_ui_v.stdout.find('Image is up to date') == -1
+  tags:
+      - docker_pull
+      - docker_pull_de-ui
+
+#- name: stop de-ui service
+#  service: name={{de.service_name}} state=stopped
+#  tags:
+#      - stop_services
+#      - stop_de-ui
+
+        ## Stopping the ui service should stop the nginx service
+#- name: verify de-ui-nginx service is stopped
+#  service: name={{de.http_server.service_name}} state=stopped
+
+- name: place de-ui Systemd service file
+  template: src={{de.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  register: service_file_ui_v
+  tags:
+      - update_service_files
+      - update_service_file_de-ui
+
+- name: place de-ui-nginx Systemd service file
+  template: src={{de.http_server.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  register: service_file_ui_nginx_v
+  tags:
+      - update_service_files
+      - update_service_file_de-ui
+      - update_service_file_de-ui-nginx
+
+- name: reload systemd
+  shell: systemctl daemon-reload
+  when: service_file_ui_v.changed or
+        service_file_ui_nginx_v.changed
+  tags:
+      - update_service_files
+      - update_service_file_de-ui
+
+- name: enable de-ui services
+  service: name={{ item }} enabled={{enable_services}}
+  when: service_file_ui_v.changed or
+        service_file_ui_nginx_v.changed
+  with_items:
+      - "{{de.service_name}}"
+      - "{{de.http_server.service_name}}"
+  tags:
+      - enable_services
+      - enable_de-ui
+
+- name: restart de-ui service
+  service: name={{de.service_name}} state=restarted
+  when: service_file_ui_v.changed or
+        config_de_props_v.changed or
+        config_logback_v.changed or
+        config_de_application_v.changed or
+        docker_pull_ui_v.changed
+  tags:
+      - restart_services
+      - restart_de-ui
+
+- name: restart de-ui-nginx service
+  service: name={{de.http_server.service_name}} state=restarted
+  when: service_file_ui_nginx_v.changed or
+        config_nginx_v.changed or
+        docker_pull_nginx_v.changed
+  tags:
+      - restart_services
+      - restart_de-ui-nginx

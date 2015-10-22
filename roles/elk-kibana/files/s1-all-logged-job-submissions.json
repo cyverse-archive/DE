@@ -1,0 +1,14 @@
+{
+  "title": "All logged job submissions",
+  "description": "",
+  "columns": [
+    "_source"
+  ],
+  "sort": [
+    "@timestamp",
+    "desc"
+  ],
+  "kibanaSavedObjectMeta": {
+    "searchSourceJSON": "{\"index\":\"de-metrics\",\"highlight\":{\"pre_tags\":[\"@kibana-highlighted-field@\"],\"post_tags\":[\"@/kibana-highlighted-field@\"],\"fields\":{\"*\":{}},\"fragment_size\":2147483647},\"filter\":[],\"query\":{\"query_string\":{\"query\":\"_type: \\\"app_event\\\" AND request.endpoint: \\\"\\\\/analyses\\\" AND request.method: \\\"POST\\\"\",\"analyze_wildcard\":true}}}"
+  }
+}

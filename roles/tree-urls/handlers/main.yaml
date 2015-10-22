@@ -1,4 +1,0 @@
----
-- name: restart tree-urls
-  sudo: yes
-  supervisorctl: name=tree-urls state=restarted

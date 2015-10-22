@@ -1,0 +1,8 @@
+{
+  "title": "Top 25 Users by Sharing Activity",
+  "visState": "{\"aggs\":[{\"id\":\"1\",\"params\":{},\"schema\":\"metric\",\"type\":\"count\"},{\"id\":\"2\",\"params\":{\"field\":\"user.raw\",\"order\":\"desc\",\"orderBy\":\"1\",\"size\":25},\"schema\":\"segment\",\"type\":\"terms\"},{\"id\":\"3\",\"params\":{\"filters\":[{\"input\":{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"request.endpoint: \\\"/secured/filesystem/tickets\\\"\"}}}},{\"input\":{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"request.endpoint: \\\"/secured/share\\\"\"}}}},{\"input\":{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"request.endpoint: \\\"/secured/filesystem/delete-tickets\\\"\"}}}},{\"input\":{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"request.endpoint: \\\"/secured/unshare\\\"\"}}}}]},\"schema\":\"group\",\"type\":\"filters\"}],\"listeners\":{},\"params\":{\"addLegend\":true,\"addTimeMarker\":false,\"addTooltip\":true,\"defaultYExtents\":false,\"mode\":\"stacked\",\"scale\":\"linear\",\"setYExtents\":false,\"shareYAxis\":true,\"times\":[],\"yAxis\":{}},\"type\":\"histogram\"}",
+  "description": "Displays the number of times a user has shared/unshared files through the Discovery Environment, and the times they have created/deleted public links to their files.",
+  "kibanaSavedObjectMeta": {
+    "searchSourceJSON": "{\"index\":\"de-metrics\",\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"_type: \\\"share_event\\\"\"}},\"filter\":[]}"
+  }
+}

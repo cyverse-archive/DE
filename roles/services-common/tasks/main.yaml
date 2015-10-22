@@ -1,4 +1,34 @@
 ---
-- include: python.yaml
 
-- include: supervisord.yaml
+- name: add the iplant group
+  sudo: yes
+  group: name=iplant state=present
+  tags:
+      - init_users
+      - init_iplant_user
+
+- name: add the iplant user
+  sudo: yes
+  user: name=iplant shell=/bin/bash groups=iplant append=yes
+  tags:
+      - init_users
+      - init_iplant_user
+
+- name: add the docker group to iplant user
+  sudo: yes
+  user: name=iplant groups=docker append=yes
+  when: ansible_fqdn in groups['docker-ready']
+  tags:
+      - init_users
+      - init_iplant_user
+
+- name: add the docker group to condor user
+  sudo: yes
+  user: name=condor groups=docker append=yes
+  when: ansible_fqdn in groups['docker-ready']
+  tags:
+      - init_users
+
+- name: create /var/log/de/
+  sudo: yes
+  file: path={{logging.dir}} owner=root group=root mode=0755 state=directory

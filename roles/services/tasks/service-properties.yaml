@@ -1,0 +1,204 @@
+---
+#####
+# anon-files setup
+#####
+- name: configure anon-files
+  sudo: yes
+  template: src=anon-files.properties.j2 dest={{ de_config_dir }}/anon-files.properties owner=root group=root mode=0644
+  tags:
+      - config
+      - config_anon-files
+
+#####
+# saved-searches
+#####
+- name: configure saved-searches
+  sudo: yes
+  template: src=saved-searches.properties.j2 dest={{ de_config_dir }}/saved-searches.properties owner=root group=root mode=0644
+  tags:
+      - config
+      - config_saved-searches
+
+#####
+# user-preferences
+#####
+- name: configure user-preferences
+  sudo: yes
+  template: src=user-preferences.properties.j2 dest={{ de_config_dir }}/user-preferences.properties owner=root group=root mode=0644
+  tags:
+      - config
+      - config_user-preferences
+
+#####
+# user-sessions
+#####
+- name: configure user-sessions
+  sudo: yes
+  template: src=user-sessions.properties.j2 dest={{ de_config_dir }}/user-sessions.properties owner=root group=root mode=0644
+  tags:
+      - config
+      - config_user-sessions
+
+#####
+# tree-urls
+#####
+- name: configure tree-urls
+  sudo: yes
+  template: src=tree-urls.properties.j2 dest={{ de_config_dir }}/tree-urls.properties owner=root group=root mode=0644
+  tags:
+      - config
+      - config_tree-urls
+
+#####
+# notificationagent
+#####
+- name: configure notificationagent
+  sudo: yes
+  template: src=notificationagent.properties.j2 dest={{ de_config_dir }}/notificationagent.properties owner=root group=root mode=0644
+  tags:
+      - config
+      - config_notification-agent
+
+#####
+# monkey
+#####
+- name: configure monkey
+  sudo: yes
+  template: src=monkey.properties.j2 dest={{ de_config_dir }}/monkey.properties owner=root group=root mode=0644
+  when: (not parasitic)
+  tags:
+      - config
+      - config_monkey
+
+#####
+# metadactyl
+#####
+- name: configure metadactyl
+  sudo: yes
+  template: src=metadactyl.properties.j2 dest={{ de_config_dir }}/metadactyl.properties owner=root group=root mode=0644
+  tags:
+      - config
+      - config_metadactyl
+
+#####
+# kifshare
+#####
+- name: configure kifshare
+  sudo: yes
+  template: src=kifshare.properties.j2 dest={{ de_config_dir }}/kifshare.properties owner=root group=root mode=0644
+  tags:
+      - config
+      - config_kifshare
+
+#####
+# jex-events
+#####
+- name: configure jex-events
+  sudo: yes
+  template: src=jex-events.properties.j2 dest={{ de_config_dir }}/jex-events.properties owner=root group=root mode=0644
+  tags:
+      - config
+      - config_jex-events
+
+#####
+# iplant-email
+#####
+- name: configure iplant-email
+  sudo: yes
+  template: src=iplant-email.properties.j2 dest={{ de_config_dir }}/iplant-email.properties owner=root group=root mode=0644
+  tags:
+      - config
+      - config_iplant-email
+
+#####
+# infosquito
+#####
+- name: configure infosquito
+  sudo: yes
+  template: src=infosquito.properties.j2 dest={{ de_config_dir }}/infosquito.properties owner=root group=root mode=0644
+  when: (not parasitic)
+  tags:
+      - config
+      - config_infosquito
+
+#####
+# info-typer
+#####
+- name: configure info-typer
+  sudo: yes
+  template: src=info-typer.properties.j2 dest={{ de_config_dir }}/info-typer.properties owner=root group=root mode=0644
+  when: (not parasitic)
+  tags:
+      - config
+      - config_info-typer
+
+#####
+# donkey
+#####
+- name: configure donkey
+  sudo: yes
+  template: src=donkey.properties.j2 dest={{ de_config_dir }}/donkey.properties owner=root group=root mode=0644
+  tags:
+      - config
+      - config_donkey
+
+#####
+# dewey
+#####
+- name: configure dewey
+  sudo: yes
+  template: src=dewey.properties.j2 dest={{ de_config_dir }}/dewey.properties owner=root group=root mode=0644
+  tags:
+      - config
+      - config_dewey
+  when: (not parasitic)
+
+#####
+# data-info
+#####
+- name: configure data-info
+  sudo: yes
+  template: src=data-info.properties.j2 dest={{ de_config_dir }}/data-info.properties owner=root group=root mode=0644
+  tags:
+      - config
+      - config_data-info
+
+#####
+# metadata
+#####
+- name: configure metadata
+  sudo: yes
+  template: src=metadata.properties.j2 dest={{ de_config_dir }}/metadata.properties owner=root group=root mode=0644
+  tags:
+      - config
+      - config_metadata
+
+#####
+# condor-log-monitor
+#####
+- name: configure condor-log-monitor
+  sudo: yes
+  template: src=condor_log_monitor.properties.j2 dest={{ de_config_dir }}/condor_log_monitor.properties owner=root group=root mode=0644
+  tags:
+      - config
+      - config_condor-log-monitor
+
+###########
+# clockwork
+###########
+- name: configure clockwork
+  sudo: yes
+  template: src=clockwork.properties.j2 dest={{ de_config_dir }}/clockwork.properties owner=root group=root mode=0644
+  tags:
+      - config
+      - config_clockwork
+
+###############
+# iplant-groups
+###############
+- name: configure iplant-groups
+  sudo: yes
+  template: src=iplant-groups.properties.j2 dest={{ de_config_dir }}/iplant-groups.properties owner=root group=root mode=0644
+  tags:
+    - config
+    - config_iplant-groups

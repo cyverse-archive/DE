@@ -1,6 +1,0 @@
----
-- hosts: ui
-  roles:
-    - role: belphegor
-      war_url: "{{ bg_war_url }}"
-      context_path: "{{ bg_app_name }}"

@@ -1,4 +1,0 @@
----
-- hosts: services
-  roles:
-    - { role: infosquito, when: (not parasitic) }

@@ -1,4 +1,0 @@
----
-- name: restart condor-log-monitor
-  sudo: yes
-  supervisorctl: name=clm state=restarted

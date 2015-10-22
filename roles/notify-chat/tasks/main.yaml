@@ -1,0 +1,8 @@
+---
+- name: notify chatroom
+  when: chat_room_url is defined and chat_room_url != None and ((not ansible_ssh_host is defined) or ansible_ssh_host != "127.0.0.1")
+  command: curl -X POST
+           -d '{"channel":"#ansible", "username":"{{username}}", "text":"[{{ ansible_user_id }}@{{ ansible_hostname }}] {{ msg }}", "icon_emoji":"{{icon}}"}'
+           {{ chat_room_url }}
+  ignore_errors: True
+  changed_when: false

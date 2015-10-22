@@ -1,0 +1,34 @@
+---
+- name: remove /etc/iplant/de/logstash.d
+  file: path="{{ de_config_dir }}/logstash.d" state=absent
+  tags:
+      - config
+      - config_logstash
+
+- name: create /etc/iplant/de/logstash.d
+  file: path="{{ de_config_dir }}/logstash.d" owner=iplant group=iplant mode=0777 state=directory
+  tags: 
+      - config
+      - config_logstash
+
+- name: place 01-lumberjack-input
+  template: src=01-lumberjack-input.conf.j2 dest="{{ de_config_dir }}/logstash.d/01-lumberjack-input.conf" group=root owner=root mode=0644
+  tags: 
+      - config
+      - config_logstash
+
+- name: place logstash files
+  copy: src={{ item }} dest="{{ de_config_dir }}/logstash.d" group=root owner=root mode=0644
+  with_items:
+    - 10-de-log.conf
+    - 11-ui-metrics.conf
+    - 12-timestamp.conf
+    - 13-embed-requests.conf
+    - 20-clone-by-metric-type.conf
+    - 30-embed-app.conf
+    - 31-embed-analysis.conf
+    - 50-lumberjack-output.conf
+  tags: 
+      - config
+      - config_logstash
+

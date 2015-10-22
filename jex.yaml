@@ -1,4 +1,16 @@
+# ansible-playbook -i inventories/... -K --tags "update_service_files" jex.yaml
 ---
 - hosts: services
   roles:
-    - jex
+      - role: notify-chat
+        username: JEX
+        icon: ":rainbowpuke:"
+        msg: ":warning: Deploying JEX"
+
+      - jex
+
+      - role: notify-chat
+        username: JEX
+        icon: ":rainbowpuke:"
+        msg: ":white_check_mark: Done deploying JEX"
+

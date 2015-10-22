@@ -1,0 +1,23 @@
+[Unit] 
+Description={{elk.logstash.service_description}}
+BindsTo=docker.service {{elk.elasticsearch.service_name}}
+PartOf=docker.service
+After=docker.service {{elk.elasticsearch.service_name}}
+Requisite=docker.service {{elk.elasticsearch.service_name}}
+
+[Service]
+ExecStartPre=-/usr/bin/docker rm -v {{elk.logstash.container_name}}
+ExecStart=/usr/bin/docker run --name {{elk.logstash.container_name}} \
+-p 5000:5000 \
+-v {{ de_config_dir }}/logstash.d:/config-dir \
+-v {{ de_config_dir }}:/etc/iplant/de \
+-v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
+--volumes-from {{data_container.container_name}} \
+--link {{elk.elasticsearch.container_name}}:elasticsearch {{docker.user}}/{{elk.logstash.image_name}} logstash -f /config-dir
+ExecStop=/usr/bin/docker stop {{elk.logstash.container_name}}
+
+SyslogIdentifier=elk-logstash
+
+[Install]
+WantedBy=multi-user.target
+

@@ -1,0 +1,25 @@
+[Unit]
+Description={{user_preferences.service_description}}
+BindsTo=docker.service
+PartOf=docker.service
+After=docker.service
+Requisite=docker.service
+
+[Service]
+User=iplant
+ExecStartPre=-/usr/bin/docker rm -v {{user_preferences.container_name}}
+ExecStart=/usr/bin/docker run --name {{user_preferences.container_name}} \
+-v {{ de_config_dir }}:/etc/iplant/de \
+-v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
+-p {{user_preferences.port}}:60000 \
+--log-driver={{docker.log_driver}} \
+{{docker.user}}/{{user_preferences.image_name}}:{{docker.tag}} --config /etc/iplant/de/{{user_preferences.properties_file}}
+ExecStop=-/usr/bin/docker stop {{user_preferences.container_name}}
+Restart=on-failure
+
+SyslogIdentifier={{user_preferences.container_name}}
+SyslogFacility={{systemd.syslogFacility}}
+
+[Install]
+WantedBy=multi-user.target
+

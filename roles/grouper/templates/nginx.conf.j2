@@ -1,0 +1,43 @@
+events {
+    worker_connections 4096;
+}
+
+http {
+    client_max_body_size 2G;
+    underscores_in_headers on;
+
+{% if grouper.http_server.ssl.insecure_redirects is defined and grouper.http_server.ssl.insecure_redirects != None %}
+{% for redirect in grouper.http_server.ssl.insecure_redirects %}
+    server {
+        listen 80;
+        server_name {{ redirect.server_name }};
+        return 301 {{ redirect.return }};
+    }
+{% endfor %}
+{% endif %}
+
+{% for server in grouper.http_server.ssl.servers %}
+    server {
+        listen 443 ssl;
+        server_name {{ server.server_name }};
+
+        ssl_certificate {{ server.ssl_certificate }};
+        ssl_certificate_key {{ server.ssl_certificate_key }};
+
+        access_log /var/log/nginx/access.log;
+        error_log /var/log/nginx/error.log;
+
+        location / {
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-By $server_addr:$server_port;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+
+            proxy_read_timeout 3600s;
+
+            proxy_pass http://grouper-host:8080/;
+        }
+    }
+{% endfor %}
+}

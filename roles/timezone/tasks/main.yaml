@@ -1,0 +1,19 @@
+---
+- name: ensure that tzdata is installed via yum
+  sudo: yes
+  yum: name=tzdata state=latest
+  when: ansible_distribution == "CentOS"
+
+- name: ensure that tzdata-java is installed via yum
+  sudo: yes
+  yum: name=tzdata-java state=latest
+  when: ansible_distribution == "CentOS"
+
+- name: link the correct time zone to /etc/localtime
+  sudo: yes
+  file: path=/etc/localtime state=link src="/usr/share/zoneinfo/{{ timezone }}" force=yes mode=0644
+
+- name: set current time zone in /etc/timezone
+  sudo: yes
+  template: src=timezone.j2 dest=/etc/timezone owner=root group=root mode=0644
+

@@ -1,0 +1,25 @@
+[Unit]
+Description={{jexevents.service_description}}
+BindsTo=docker.service
+PartOf=docker.service
+After=docker.service
+Requisite=docker.service
+
+[Service]
+User=iplant
+ExecStartPre=-/usr/bin/docker rm -v {{jexevents.container_name}}
+ExecStart=/usr/bin/docker run --name {{jexevents.container_name}} \
+-v {{ de_config_dir }}:/etc/iplant/de \
+-v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
+-p {{jexevents.port}}:60000 \
+--log-driver={{docker.log_driver}} \
+{{docker.user}}/{{jexevents.image_name}}:{{docker.tag}} --config /etc/iplant/de/{{jexevents.properties_file}}
+ExecStop=-/usr/bin/docker stop {{jexevents.container_name}}
+Restart=on-failure
+
+SyslogIdentifier={{jexevents.container_name}}
+SyslogFacility={{systemd.syslogFacility}}
+
+[Install]
+WantedBy=multi-user.target
+

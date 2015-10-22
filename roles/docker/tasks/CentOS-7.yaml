@@ -1,0 +1,26 @@
+---
+
+- name: Uninstall previous docker
+  sudo: yes
+  yum: name=docker-engine state=absent
+  tags: 
+      - install
+
+- name: Get docker repo and install docker
+  sudo: yes
+  shell: curl -sSL https://get.docker.com | sh
+  tags: 
+      - install
+
+- name: Place updated docker.service file        
+  sudo: yes
+  copy: src=docker.service dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  tags:
+      - update_service_files
+
+- name: reload systemd
+  sudo: yes
+  shell: systemctl daemon-reload
+  tags:
+      - update_service_files
+

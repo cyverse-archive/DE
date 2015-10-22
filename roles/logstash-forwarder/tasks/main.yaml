@@ -1,0 +1,59 @@
+# Assume that iplant data container is already updated and created
+---
+- name: pull logstash-forwarder container
+  shell: docker pull {{logstash_forwarder.image_name}}
+  register: docker_pull_v
+  changed_when: docker_pull_v.stdout.find('Image is up to date') == -1
+  tags:
+      - docker_pull
+
+- name: create logstash-forwarder dir
+  file: path=/etc/logstash-forwarder state=directory mode=0777
+  ignore_errors: yes
+  tags:
+      - config
+
+- name: placing logstash-forwarder config file
+  template: src=logstash-forwarder-conf.json.j2 dest="/etc/logstash-forwarder/config.json"
+  register: config_file_v
+  tags:
+      - config
+
+- name: place systemd service file
+  template: src=logstash-forwarder.service dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  register: service_file_v
+  tags:
+      - update_service_files
+
+- name: reload systemd
+  shell: systemctl daemon-reload
+  when: service_file_v.changed 
+  tags:
+      - update_service_files
+
+- name: enable logstash-forwarder service
+  service: name=logstash-forwarder.service enabled={{enable_services}}
+  when: service_file_v.changed
+  tags:
+      - enable_services
+      - enable_logstash_forwarder
+
+- name: services are running
+  shell: systemctl is-active logstash-forwarder.service
+  register: verify_service_running
+  ignore_errors: true
+
+- name: restart logstash-forwarder service
+  service: name=logstash-forwarder.service state=restarted
+  when: service_file_v.changed or
+        config_file_v.changed or
+        docker_pull_v.changed or
+        verify_service_running.rc != 0
+  tags:
+      - docker_pull
+      - update_service_files
+      - config
+      - restart_services
+      - restart_logstash
+
+

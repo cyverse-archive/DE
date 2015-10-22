@@ -1,0 +1,26 @@
+[Unit]
+Description={{donkey.service_description}}
+BindsTo=docker.service 
+PartOf=docker.service {{data_container.service_name}}
+After=docker.service 
+Requisite=docker.service
+
+[Service]
+User=iplant
+ExecStartPre=-/usr/bin/docker rm -v {{donkey.container_name}}
+ExecStart=/usr/bin/docker run --name {{donkey.container_name}} \
+-v {{ de_config_dir }}:/etc/iplant/de \
+-v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
+--volumes-from {{data_container.container_name}} \
+-p {{donkey.port}}:60000 \
+--log-driver={{docker.log_driver}} \
+{{docker.user}}/{{donkey.image_name}}:{{docker.tag}} --config /etc/iplant/de/{{donkey.properties_file}}
+ExecStop=-/usr/bin/docker stop {{donkey.container_name}}
+Restart=on-failure
+
+SyslogIdentifier={{donkey.container_name}}
+SyslogFacility={{systemd.syslogFacility}}
+
+[Install]
+WantedBy=multi-user.target
+

@@ -1,4 +1,0 @@
----
-dependencies:
-  - { role: database-prereqs, sudo: True }
-  - { role: update-database, fmode: "init" }

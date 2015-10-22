@@ -1,0 +1,127 @@
+# Connection details.
+donkey.app.listen-port = {{ default_service_port }}
+
+# Environment information.
+donkey.app.environment-name = {{ environment_name }}
+
+# Route flags.
+donkey.routes.notifications = true
+donkey.routes.apps          = true
+donkey.routes.metadata      = true
+donkey.routes.prefs         = true
+donkey.routes.user-info     = true
+donkey.routes.data          = true
+donkey.routes.tree-viewer   = true
+donkey.routes.session       = true
+donkey.routes.collaborator  = true
+donkey.routes.coge          = true
+donkey.routes.search        = true
+
+# Donkey base URL.
+donkey.base-url = {{ donkey_base }}
+
+# iPlant Email service connection settings.
+donkey.email.base-url          = {{ email_base }}
+donkey.email.tool-request-dest = {{ de_mail_to_addr }}
+donkey.email.tool-request-src  = {{ de_mail_from_addr }}
+donkey.email.feedback-dest     = {{ de_feedback_to_addr }}
+
+# Metadactyl connection settings
+donkey.metadactyl.base-url = {{ metadactyl_base }}
+
+# Metadata connection settings
+donkey.metadata.base-url = http://{{ metadata_host }}:{{ metadata.port }}
+
+# Notification agent connection settings.
+donkey.notificationagent.base-url = {{ notificationagent_base }}
+
+# CAS Settings
+donkey.cas.cas-server        = {{ cas_base }}/
+donkey.cas.server-name       = {{ donkey_base }}
+donkey.cas.pgt-callback-base = {{ de_base }}
+donkey.cas.pgt-callback-path = /secured/pgt-callback
+
+# The settings to use for authorization.
+donkey.cas.group-attr-name = {{ cas_group_attribute }}
+donkey.cas.allowed-groups  = {{ admin_groups }}
+
+# The domain name to append to the user id to get the fully qualified user id.
+donkey.uid.domain = {{ cas_uid_domain }}
+
+# iplant-groups connection settings
+donkey.iplant-groups.base-url = {{ iplant_groups.base_url }}
+donkey.iplant-groups.default-search-limit = 50
+
+# JEX connection settings
+donkey.jex.base-url = {{ jex_base }}/
+
+# Tree viewer settings
+donkey.tree-viewer.base-url = {{ tree_parser_base }}
+
+# Elastic Search settings
+donkey.infosquito.es-url = {{ es_base }}
+
+# App execution settings
+donkey.job-exec.default-output-folder = {{ metadactyl_out_dir }}
+
+# iRODS configuration
+donkey.irods.host          = {{ irods_host }}
+donkey.irods.port          = {{ irods_port }}
+donkey.irods.user          = {{ irods_user }}
+donkey.irods.pass          = {{ irods_password }}
+donkey.irods.home          = {{ irods_home }}
+donkey.irods.zone          = {{ irods_zone }}
+donkey.irods.resc          =
+donkey.irods.max-retries   = 10
+donkey.irods.retry-sleep   = 1000
+donkey.irods.use-trash     = true
+donkey.irods.admin-users   = {{ irods_admin_users }}
+
+# ICAT configuration
+donkey.icat.host           = {{ icat_host }}
+donkey.icat.port           = {{ icat_port }}
+donkey.icat.user           = {{ icat_user }}
+donkey.icat.password       = {{ icat_password }}
+donkey.icat.db             = {{ icat_db }}
+
+# Garnish configuration
+donkey.garnish.type-attribute = ipc-filetype
+donkey.garnish.filetype-read-amount = 1024
+
+# File IO settings
+donkey.fileio.url-import-app = 1E8F719B-0452-4D39-A2F3-8714793EE3E6
+donkey.fileio.max-edit-file-size = {{ max_edit_file_size }}
+
+# Filesystem settings
+donkey.data-info.base-url            = http://{{ data_info_host }}:{{ data_info.port }}
+donkey.fs.preview-size               = 8000
+donkey.fs.data-threshold             = 8000
+donkey.fs.community-data             = {{ irods_home }}/shared
+donkey.fs.bad-names                  = cacheServiceTempDir
+donkey.fs.perms-filter               = {{ nibblonian_perms_filter }}
+donkey.fs.copy-key                   = ipc-de-copy-from
+donkey.fs.bad-chars                  = {{ irods_bad_chars }}
+donkey.fs.max-paths-in-request       = {{ fs_max_paths_in_request }}
+donkey.fs.kifshare-download-template = {{ kifshare_de_url }}
+donkey.fs.kifshare-external-url      = {{ kifshare_external_url }}
+donkey.fs.anon-user                  = {{ anon_files_anon_user }}
+donkey.fs.anon-files-base-url        = {{ anon_files_base_url }}
+
+# COGE settings
+donkey.coge.user = {{ coge_user }}
+donkey.coge.genome-load-url = {{ coge_genome_load_url }}
+
+# Search settings
+donkey.search.default-limit = {{ search_default_limit }}
+
+# User Preferences Settings
+donkey.preferences.host = http://{{ user_preferences_host }}:{{ user_preferences.port }}
+
+# User Sessions Settings
+donkey.sessions.host = http://{{ user_sessions_host }}:{{ user_sessions.port }}
+
+# Saved Searches Settings
+donkey.saved-searches.host = http://{{ saved_searches_host }}:{{ saved_searches.port }}
+
+# Tree URLs Settings
+donkey.tree-urls.host = http://{{ tree_urls_host }}:{{ tree_urls.port }}

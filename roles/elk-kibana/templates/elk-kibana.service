@@ -1,0 +1,22 @@
+[Unit] 
+Description={{elk.kibana.service_description}}
+BindsTo=docker.service {{elk.elasticsearch.service_name}}
+PartOf=docker.service
+After=docker.service {{elk.elasticsearch.service_name}}
+Requisite=docker.service {{elk.elasticsearch.service_name}}
+
+[Service]
+ExecStartPre=-/usr/bin/docker rm -v {{elk.kibana.container_name}}
+ExecStart=/usr/bin/docker run --name {{elk.kibana.container_name}} \
+-v {{ de_config_dir }}:/etc/iplant/de \
+-v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
+-p 5601:5601 \
+--link {{elk.elasticsearch.container_name}}:elasticsearch \
+{{elk.kibana.image_name}}
+ExecStop=/usr/bin/docker stop {{elk.kibana.container_name}}
+
+SyslogIdentifier=elk-kibana
+
+[Install]
+WantedBy=multi-user.target
+

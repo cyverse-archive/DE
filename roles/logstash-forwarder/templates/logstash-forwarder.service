@@ -1,0 +1,24 @@
+[Unit]
+Description={{logstash_forwarder.service_description}}
+BindsTo=docker.service
+PartOf=docker.service {{data_container.service_name}}
+After=docker.service
+Requisite=docker.service
+
+[Service]
+ExecStartPre=-/usr/bin/docker rm -v {{logstash_forwarder.container_name}}
+ExecStart=/usr/bin/docker run --name {{logstash_forwarder.container_name}} \
+-e LOGSTASH_IP={{ logstash_server_ip }} \
+--volumes-from {{ data_container.container_name }} \
+-v /var/log/:/var/log/ \
+-v /etc/logstash-forwarder/config.json:/etc/logstash-forwarder/config.json \
+-v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
+{{logstash_forwarder.image_name}}
+ExecStop=/usr/bin/docker stop {{logstash_forwarder.container_name}}
+
+SyslogIdentifier={{logstash_forwarder.container_name}}
+SyslogFacility={{systemd.syslogFacility}}
+
+[Install]
+WantedBy=multi-user.target
+

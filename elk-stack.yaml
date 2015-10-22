@@ -1,0 +1,24 @@
+# cat roles/elk-stack/README.md
+# ansible-playbook -i inventories/... -K --tags "update_service_files" elk-stack.yaml
+# ansible-playbook -i inventories/... -K --tags "restart_services" elk-stack.yaml
+
+
+---
+- name: Deploy ELK Stack
+  hosts: elk
+  sudo: true
+  roles:
+    - role: notify-chat
+      username: ELK STACK
+      icon: ":horse_racing:"
+      msg: ":warning: Deploying ELK stack"
+
+    - role: elk-data
+    - role: elk-elasticsearch
+    - role: elk-logstash
+    - role: elk-kibana
+
+    - role: notify-chat
+      username: ELK STACK
+      icon: ":horse_racing:"
+      msg: ":white_check_mark: Completed deploying ELK stack"

@@ -1,0 +1,184 @@
+
+---
+##########################
+# Update all service files
+##########################
+- name: place anon-files service file
+  sudo: yes
+  template: src={{anon_files.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  tags:
+      - update_service_files
+      - update_service_file_anon-files
+
+- name: place exim service file
+  sudo: yes
+  template: src={{exim.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  tags:
+      - update_service_files
+      - update_service_file_iplant-email
+
+- name: place saved-searches service file
+  sudo: yes
+  template: src={{saved_searches.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  tags:
+      - update_service_files
+      - update_service_file_saved-searches
+
+- name: place user-preferences service file
+  sudo: yes
+  template: src={{user_preferences.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  tags:
+      - update_service_files
+      - update_service_file_user-preferences
+
+- name: place user-sessions service file
+  sudo: yes
+  template: src={{user_sessions.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  tags:
+      - update_service_files
+      - update_service_file_user-sessions
+
+- name: place tree-urls service file
+  sudo: yes
+  template: src={{tree_urls.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  tags:
+      - update_service_files
+      - update_service_file_tree-urls
+
+- name: place notificationagent service file
+  sudo: yes
+  template: src={{notificationagent.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  tags:
+      - update_service_files
+      - update_service_file_notification-agent
+
+- name: place metadactyl service file
+  sudo: yes
+  template: src={{metadactyl.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  tags:
+      - update_service_files
+      - update_service_file_metadactyl
+
+- name: place kifshare service file
+  sudo: yes
+  template: src={{kifshare.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  tags:
+      - update_service_files
+      - update_service_file_kifshare
+
+- name: place jex-events service file
+  sudo: yes
+  template: src={{jexevents.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  tags:
+      - update_service_files
+      - update_service_file_jex-events
+
+- name: place iplant-email service file
+  sudo: yes
+  template: src={{iplant_email.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  tags:
+      - update_service_files
+      - update_service_file_iplant-email
+
+- name: place iplant-groups service file
+  sudo: yes
+  template: src={{iplant_groups.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  tags:
+      - update_service_files
+      - update_service_file_iplant-groups
+
+- name: place donkey service file
+  sudo: yes
+  template: src={{donkey.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  tags:
+      - update_service_files
+      - update_service_file_donkey
+
+- name: place data-info service file
+  sudo: yes
+  template: src={{data_info.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  tags:
+      - update_service_files
+      - update_service_file_data-info
+
+- name: place metadata service file
+  sudo: yes
+  template: src={{metadata.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  tags:
+      - update_service_files
+      - update_service_file_metadata
+
+- name: place condor-log-monitor service file
+  sudo: yes
+  template: src={{condor_log_monitor.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  tags:
+      - update_service_files
+      - update_service_file_condor-log-monitor
+
+- name: place clockwork service file
+  sudo: yes
+  template: src={{clockwork.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  tags:
+      - update_service_files
+      - update_service_file_clockwork
+
+################################
+# Update parasitic service files
+################################
+- name: place monkey service file
+  sudo: yes
+  template: src={{monkey.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  when: (not parasitic)
+  tags:
+      - update_service_files
+      - update_service_file_monkey
+
+- name: place infosquito service file
+  sudo: yes
+  template: src={{infosquito.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  when: (not parasitic)
+  tags:
+      - update_service_files
+      - update_service_file_infosquito
+
+- name: place info-typer service file
+  sudo: yes
+  template: src={{info_typer.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  when: (not parasitic)
+  tags:
+      - update_service_files
+      - update_service_file_info-typer
+
+- name: place dewey service file
+  sudo: yes
+  template: src={{dewey.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  when: (not parasitic)
+  tags:
+      - update_service_files
+      - update_service_file_dewey
+
+- name: reload systemd
+  sudo: yes
+  shell: systemctl daemon-reload
+  tags:
+      - update_service_files
+      - update_service_file_anon-files
+      - update_service_file_iplant-email
+      - update_service_file_saved-searches
+      - update_service_file_user-preferences
+      - update_service_file_user-sessions
+      - update_service_file_tree-urls
+      - update_service_file_notification-agent
+      - update_service_file_metadactyl
+      - update_service_file_kifshare
+      - update_service_file_jex-events
+      - update_service_file_iplant-groups
+      - update_service_file_donkey
+      - update_service_file_data-info
+      - update_service_file_metadata
+      - update_service_file_condor-log-monitor
+      - update_service_file_clockwork
+      - update_service_file_monkey
+      - update_service_file_infosquito
+      - update_service_file_info-typer
+      - update_service_file_dewey

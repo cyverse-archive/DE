@@ -1,0 +1,7 @@
+---
+
+- name: Ensure self-executing jars will run on Condor nodes
+  hosts: docker-ready
+  sudo: yes
+  roles:
+     - condor-exec-jar

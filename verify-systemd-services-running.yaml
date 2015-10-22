@@ -1,0 +1,116 @@
+---
+# Verifies that all services are running in the appropriate hosts
+#
+# ansible-playbook -i inventories/.. -K verify-systemd-services-running.yaml
+#
+### Only verify (services,ui,elk,docker-ready) hosts
+# ansible-playbook -i inventories/.. -K --tags "services" verify-systemd-services-running.yaml
+# ansible-playbook -i inventories/.. -K --tags "ui" verify-systemd-services-running.yaml
+# ansible-playbook -i inventories/.. -K --tags "elk" verify-systemd-services-running.yaml
+# ansible-playbook -i inventories/.. -K --tags "docker-ready" verify-systemd-services-running.yaml
+
+- name: Verify services running on service hosts
+  hosts: services
+  sudo: yes
+  tasks:
+      - name: services are running
+        shell: systemctl is-active {{item.service_name}}
+        register: verify_services_running
+        ignore_errors: yes
+        with_items: 
+                  - "{{dewey}}"
+                  - "{{data_info}}"
+                  - "{{anon_files}}"
+                  - "{{condor_log_monitor}}"
+                  - "{{clockwork}}"
+                  - "{{donkey}}"
+                  - "{{iplant_email}}"
+                  - "{{iplant_groups}}"
+                  - "{{exim}}"
+                  - "{{infosquito}}"
+                  - "{{info_typer}}"
+                  - "{{jexevents}}"
+                  - "{{kifshare}}"
+                  - "{{metadactyl}}"
+                  - "{{metadata}}"
+                  - "{{monkey}}"
+                  - "{{notificationagent}}"
+                  - "{{saved_searches}}"
+                  - "{{tree_urls}}"
+                  - "{{user_preferences}}"
+                  - "{{user_sessions}}"
+                  - "{{jex}}"
+        tags:
+            - services
+
+
+      - fail: msg="{{item.item.service_name}} does not appear to be running"
+        when: item.rc != 0
+        with_items: "{{verify_services_running.results}}"
+        tags:
+            - services
+
+
+- name: Verify services running on ui hosts
+  hosts: ui
+  sudo: yes
+  tasks: 
+      - name: services are running
+        shell: systemctl is-active {{item.service_name}}
+        register: verify_services_running
+        ignore_errors: yes
+        with_items: 
+                  - "{{de}}"
+                  - "{{de.http_server}}"
+        tags:
+            - ui
+
+      - fail: msg="{{item.item.service_name}} does not appear to be running"
+        when: item.rc != 0
+        with_items: "{{verify_services_running.results}}"
+        tags:
+            - ui
+
+
+- name: Verify services running on elk hosts
+  hosts: elk
+  sudo: yes
+  tasks: 
+      - name: services are running
+        shell: systemctl is-active {{item.service_name}}
+        register: verify_services_running
+        ignore_errors: yes
+        with_items: 
+                  - "{{elk.elasticsearch}}"
+                  - "{{elk.kibana}}"
+                  - "{{elk.logstash}}"
+        tags:
+            - elk
+
+      - fail: msg="{{item.item.service_name}} does not appear to be running"
+        when: item.rc != 0
+        with_items: "{{verify_services_running.results}}"
+        tags:
+            - elk
+
+
+- name: Verify services running on docker-ready hosts
+  hosts: docker-ready
+  sudo: yes
+  tasks: 
+      - name: services are running
+        shell: systemctl is-active {{item.service_name}}
+        register: verify_services_running
+        ignore_errors: yes
+        with_items: 
+                  - "{{logstash_forwarder}}"
+        tags:
+            - docker_ready
+
+      - fail: msg="{{item.item.service_name}} does not appear to be running"
+        when: item.rc != 0
+        with_items: "{{verify_services_running.results}}"
+        tags:
+            - docker_ready
+
+

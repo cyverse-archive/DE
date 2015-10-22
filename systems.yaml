@@ -5,17 +5,21 @@
 
 - hosts: systems
   sudo: true
+  roles:
+    - role: notify-chat
+      msg: "Updating {{ inventory_hostname }} system packages"
+
   tasks:
     - group_by: key={{ ansible_distribution }}
+      changed_when: false
+
+    - group_by: key={{ ansible_distribution }}_{{ ansible_distribution_major_version }}
       changed_when: false
 
 - hosts: CentOS:RedHat
   gather_facts: false
   sudo: true
   tasks:
-    - name: install epel repo
-      yum: name=epel-release state=latest
-
     - name: upgrade system packages
       yum: name=* state=latest
 
@@ -33,27 +37,19 @@
     - name: ensure DE DBMS starts on boot
       service: name=postgresql-9.2 enabled=true
 
-- hosts: Ubuntu
-  gather_facts: false
-  sudo: true
-  tasks:
-    - name: update APT repo cache
-      apt: update_cache=yes cache_valid_time=86400
-
-    - name: upgrade system packages
-      apt: upgrade=safe
-
-- hosts: systems
+- hosts: systems:!CentOS_7
   gather_facts: false
   sudo: true
   roles:
     - denyhosts
-    - nagios
 
-  post_tasks:
+- hosts: systems
+  gather_facts: false
+  sudo: true
+  pre_tasks:
     - name: reboot server
       when: reboot|default(false)
-      command: reboot
+      command: /sbin/shutdown -r +2
 
     - name: wait for server to stop
       sudo: false
@@ -64,3 +60,7 @@
       sudo: false
       when: reboot|default(false)
       local_action: wait_for host="{{ inventory_hostname }}" port={{ ansible_ssh_port }} state=started
+
+  roles:
+    - role: notify-chat
+      msg: "Done updating {{ inventory_hostname }} system packages"

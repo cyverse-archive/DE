@@ -1,31 +1,17 @@
 ---
-#- name: database exists
-#  postgresql_db: name={{curr_db_name}} state=present login_host={{curr_db_host}} port={{curr_db_port}} login_user={{curr_db_user}} login_password={{curr_db_password}}
-#  register: postgresql_db_result
-
-#- name: database user exists
-#  postgresql_user: name={{curr_db_user}} password={{curr_db_password}} db={{curr_db_name}} login_host={{curr_db_host}} port={{curr_db_port}} login_user={{curr_db_admin}} login_password={{curr_db_admin_password}} state=present role_attr_flags=CREATEDB,NOCREATEROLE,NOCREATEUSER
-
-# Why does the postgres user still own the public schema?
-#- name: fix public schema ownership
-#  when: postgresql_db_result|changed
-#  shell: psql -h {{curr_db_host}} -d {{curr_db_name}} -U {{curr_db_admin}} --command="ALTER SCHEMA public OWNER TO {{curr_db_user}}"
-#  register: psql_output
-
-#- debug: var=psql_output.stdout
-#  when: postgresql_db_result|changed
-
-- name: remove old database tarball
-  file: path=~/{{tgz_name}} state=absent
-
-- name: upload database tarball
-  when: tgz_file is defined
-  copy: src={{tgz_file}} dest=~/{{tgz_name}} force=True mode=0664
-
 - debug: msg="{{fmode}} mode for {{curr_db_user}}@{{curr_db_host}}:{{curr_db_port}}/{{curr_db_name}} from {{tgz_flag|default('-q latest')}}"
 
-- name: init/update the database with facepalm
-  shell: java -jar /usr/local/lib/facepalm/facepalm-{{ services_ver }}-standalone.jar -m {{fmode}} {{db_version_flag|default('')}} -h {{curr_db_host}} -p {{curr_db_port}} -d {{curr_db_name}} -U {{curr_db_user}} -A {{curr_db_admin}} {{tgz_flag|default('-q latest')}}
+- name: pull latest facepalm docker container
+  sudo: true
+  shell: docker pull {{docker.user}}/facepalm:{{docker.tag}}
+  when: (ansible_distribution == "CentOS" and
+        (ansible_distribution_major_version == "6" or ansible_distribution_major_version == "7"))
+
+- name: init/update the database with facepalm docker container
+  sudo: true
+  shell: docker run --rm -v ~/.pgpass:/root/.pgpass {{docker.user}}/facepalm:{{docker.tag}} -m {{fmode}} {{db_version_flag|default('')}} -h {{curr_db_host}} -p {{curr_db_port}} -d {{curr_db_name}} -U {{curr_db_user}} -A {{curr_db_admin}} {{tgz_flag}}
   register: facepalm_output
+  when: (ansible_distribution == "CentOS" and
+        (ansible_distribution_major_version == "6" or ansible_distribution_major_version == "7"))
 
 - debug: var=facepalm_output.stdout_lines

@@ -1,53 +1,71 @@
 - name: make sure OpenJDK7 is installed
   sudo: True
-  yum: name=java-1.7.0-openjdk state=present
+  yum: name=java-1.7.0-openjdk state=latest
+  when: ansible_distribution == "CentOS" and
+        ansible_distribution_major_version == "7"
   tags:
     - java
 
 - name: make sure OpenJDK7 Devel is installed
   sudo: True
   yum: name=java-1.7.0-openjdk-devel state=present
+  when: ansible_distribution == "CentOS" and
+        ansible_distribution_major_version == "7"
   tags:
     - java
 
 - name: make sure the /usr/bin/java link is set to /etc/alternatives/java
   sudo: True
   file: src=/etc/alternatives/java path=/usr/bin/java state=link force=yes
+  when: ansible_distribution == "CentOS" and
+        ansible_distribution_major_version == "7"
   tags:
     - java
 
 - name: make sure the /usr/bin/javac link is set to /etc/alternatives/javac
   sudo: True
   file: src=/etc/alternatives/javac path=/usr/bin/javac state=link force=yes
+  when: ansible_distribution == "CentOS" and
+        ansible_distribution_major_version == "7"
   tags:
     - java
 
 - name: make sure the /usr/bin/javadoc link is set to /etc/alternatives/javadoc
   sudo: True
   file: src=/etc/alternatives/javadoc path=/usr/bin/javadoc state=link force=yes
+  when: ansible_distribution == "CentOS" and
+        ansible_distribution_major_version == "7"
   tags:
     - java
 
 - name: make sure the /usr/bin/javah link is set to /etc/alternatives/javah
   sudo: True
   file: src=/etc/alternatives/javah path=/usr/bin/javah state=link force=yes
+  when: ansible_distribution == "CentOS" and
+        ansible_distribution_major_version == "7"
   tags:
     - java
 
 - name: make sure the /usr/bin/javap link is set to /etc/alternatives/javap
   sudo: True
   file: src=/etc/alternatives/javap path=/usr/bin/javap state=link force=yes
+  when: ansible_distribution == "CentOS" and
+        ansible_distribution_major_version == "7"
   tags:
     - java
 
 - name: make sure the /usr/bin/jar link is set to /etc/alternatives/jar
   sudo: True
   file: src=/etc/alternatives/jar path=/usr/bin/jar state=link force=yes
+  when: ansible_distribution == "CentOS" and
+        ansible_distribution_major_version == "7"
   tags:
     - java
 
 - name: make sure the /usr/bin/jarsigner link is set to /etc/alternatives/jarsigner
   sudo: True
   file: src=/etc/alternatives/jarsigner path=/usr/bin/jarsigner state=link force=yes
+  when: ansible_distribution == "CentOS" and
+        ansible_distribution_major_version == "7"
   tags:
     - java

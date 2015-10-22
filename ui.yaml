@@ -1,4 +1,21 @@
 ---
-- hosts: ui
+## cat roles/ui/README.md
+# ansible-playbook -i inventories/... -K --tags "update_service_files" ui.yaml
+# ansible-playbook -i inventories/... -K --tags "restart_services" ui.yaml
+
+- name: Deploy UI
+  hosts: ui
+  sudo: yes
   roles:
-    - role: ui
+      - role: notify-chat
+        username: UI
+        icon: ":cinema:"
+        msg: "Deploying UI"
+
+      - role: ui
+
+      - role: notify-chat
+        username: UI
+        icon: ":cinema:"
+        msg: ":heavy_check_mark: Done deploying UI"
+

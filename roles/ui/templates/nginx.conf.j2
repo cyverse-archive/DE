@@ -1,0 +1,97 @@
+events {
+    worker_connections 4096;
+}
+
+http {
+    client_max_body_size 2G;
+
+{% if de.http_server.ssl.insecure_redirects is defined and de.http_server.ssl.insecure_redirects != None %}
+{% for redirect in de.http_server.ssl.insecure_redirects %}
+    server {
+        listen 80;
+        server_name {{ redirect.server_name }};
+        return 301 {{ redirect.return }};
+    }
+{% endfor %}
+{% endif %}
+
+{% if de.http_server.ssl.redirects is defined and de.http_server.ssl.redirects != None %}
+{% for redirect in de.http_server.ssl.redirects %}
+    server {
+        listen 443 ssl;
+        server_name {{ redirect.server_name }};
+
+        ssl_certificate {{ redirect.ssl_certificate }};
+        ssl_certificate_key {{ redirect.ssl_certificate_key }};
+
+        access_log /var/log/nginx/access.log;
+        error_log /var/log/nginx/error.log;
+
+        return 301 {{ redirect.return }};
+    }
+{% endfor %}
+{% endif %}
+
+    server {
+        listen 443 ssl;
+        server_name {{ de.http_server.ssl.server_name }};
+
+        ssl_certificate {{ de.http_server.ssl.cert }};
+        ssl_certificate_key {{ de.http_server.ssl.cert_key }};
+
+        access_log /var/log/nginx/access.log;
+        error_log /var/log/nginx/error.log;
+
+        location /anon-files/ {
+            add_header 'Access-Control-Allow-Origin' '*';
+            add_header 'Access-Control-Allow-Credentials' 'true';
+            add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+            add_header 'Access-Control-Allow-Headers' 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Content-Range,Range';
+
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded_Proto $scheme;
+
+            proxy_pass {{ anon_files_base_url }};
+        }
+
+        location /dl/ {
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded_Proto $scheme;
+
+            proxy_pass http://{{ donkey_host }}:{{ kifshare.port }}/;
+        }
+
+        location /de/secured/pgt-callback {
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded_Proto $scheme;
+
+            proxy_pass {{ donkey_base }}/secured/pgt-callback;
+        }
+
+        location /de/agave-cb {
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded_Proto $scheme;
+
+            proxy_pass {{ metadactyl_base }}/callbacks/agave-job;
+        }
+
+        location / {
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded_Proto $scheme;
+
+            proxy_read_timeout 3600s;
+
+            proxy_pass http://de-host:8080/;
+        }
+    }
+}

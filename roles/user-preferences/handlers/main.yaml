@@ -1,4 +1,0 @@
----
-- name: restart user-preferences
-  sudo: yes
-  supervisorctl: name=user-preferences state=restarted

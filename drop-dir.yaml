@@ -1,9 +1,0 @@
-# extra-vars: de_version, drop_number
-
-- hosts: drop-host
-  vars:
-    drop_name: "{{de_version}}-QA{{drop_number}}"
-    drop_dir: "{{drop_dir_base}}/{{drop_name}}/"
-
-  roles:
-    - role: drop-dir

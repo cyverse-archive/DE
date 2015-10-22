@@ -1,4 +1,0 @@
----
-- name: restart kifshare
-  sudo: yes
-  supervisorctl: name=kifshare state=restarted

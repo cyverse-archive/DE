@@ -1,6 +1,0 @@
----
-- name: copy the rpms to {{rpm_to_dir}}
-  shell: chdir={{rpm_base_dir}} cp -p {{rpm_from_dir}}*{{rpm_version}}*.rpm {{rpm_to_dir}}
-
-- name: update the yum repository
-  command: chdir={{rpm_base_dir}} createrepo --update {{rpm_to_dir}}

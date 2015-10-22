@@ -1,4 +1,0 @@
----
-- name: restart dewey
-  sudo: yes
-  supervisorctl: name=dewey state=restarted

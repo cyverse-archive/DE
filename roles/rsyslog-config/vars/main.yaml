@@ -1,0 +1,2 @@
+---
+rsyslog_conf_dir: /etc/rsyslog.d
