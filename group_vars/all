@@ -5,7 +5,7 @@ local_cfg_dest: cfg_files
 
 docker:
   log_driver: syslog
-  tag: dev
+  tag: latest
   user: discoenv
   version: 1.8.2
   registry:
