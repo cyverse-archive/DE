@@ -1,20 +1,27 @@
-# extra-vars: de_config_dir="/etc/iplant/de" service="dest-service-name" config_name="dest-name.properties" config_template="roles/path-to-role/templates/template-name.properties.j2"
-# This playbook will write local donkey configs by default.
+# Setup ansible hosts file and host_vars/localhost as described in doc/work_instructions/UI.md
+#
+# Supported extra-vars: service="dest-service-name"
+#                       de_config_dir="/etc/iplant/de"
+#                       config_name="service.properties"
+#                       config_template="roles/path-to-role/templates/service.properties.j2"
+#                       @local_dev/service.json
 #
 # This playbook will do funny things with old versions of ansible, due to changes in how variable expansion works. If something weird is happening, probably update your ansible version.
 #
+# This playbook will write local donkey configs by default.
+#
 # For example:
 # Write local configs for donkey to /etc/iplant/de/donkey.properties, using de-2 services but using a local data-info service.
-# ansible-playbook local-service-config.yaml -i inventories/... --extra-vars "donkey_host=localhost data_info_host=localhost"
+# ansible-playbook local-service-config.yaml --extra-vars="@local_dev/donkey.json" --extra-vars="@local_dev/data-info.json"
 #
 # Write local configs for data-info to /etc/iplant/de/data-info.properties, using de-2 services.
-# ansible-playbook local-service-config.yaml -i inventories/... --extra-vars "service=data-info"
+# ansible-playbook local-service-config.yaml --extra-vars="service=data-info"
 ---
 - hosts: services
   vars:
-    svc: "{{ service | default('donkey') }}"
-    config_template: "roles/services/templates/{{ svc }}.properties.j2"
-    config_name: "{{ svc }}.properties"
+    svce: "{{ service | default('donkey') }}"
+    config_template: "roles/services/templates/{{ svce }}.properties.j2"
+    config_name: "{{ svce }}.properties"
   tasks:
   - debug: msg="writing {{ config_template }} to {{ de_config_dir }}/{{ config_name }}"
   - name: write local service configs

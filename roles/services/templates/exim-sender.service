@@ -13,13 +13,10 @@ ExecStart=/usr/bin/docker run --name {{exim.container_name}} \
         -e ALLOWED_HOSTS=* \
         -v /etc/localtime:/etc/localtime \
         -v /etc/timezone:/etc/timezone \
-        --log-driver={{docker.log_driver}} \
+        --log-driver={{docker.log_driver}} --log-opt syslog-tag={{exim.service_name_short}} \
         {{docker.user}}/{{exim.image_name}}
 ExecStop=-/usr/bin/docker stop {{exim.container_name}}
 Restart=on-failure
-
-SyslogIdentifier={{exim.container_name}}
-SyslogFacility={{systemd.syslogFacility}}
 
 [Install]
 WantedBy=multi-user.target

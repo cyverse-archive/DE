@@ -10,18 +10,16 @@ Requires={{de.service_name}}
 User=iplant
 ExecStartPre=-/usr/bin/docker rm -v {{de.http_server.container_name}}
 ExecStart=/usr/bin/docker run --name {{de.http_server.container_name}} \
--p 80:80 -p 443:443 \
---link {{de.container_name}}:de-host \
--v /etc/nginx/nginx.conf:/etc/nginx/nginx.conf \
--v /etc/localtime:/etc/localtime \
--v /etc/timezone:/etc/timezone \
---volumes-from {{data_container.container_name}} \
---log-driver={{de.http_server.log_driver}} \
-{{docker.user}}/{{de.http_server.image_name}}:{{docker.tag}}
+        -p 80:80 -p 443:443 \
+        --link {{de.container_name}}:de-host \
+        -v /etc/nginx/nginx.conf:/etc/nginx/nginx.conf \
+        -v /etc/localtime:/etc/localtime \
+        -v /etc/timezone:/etc/timezone \
+        --volumes-from {{data_container.container_name}} \
+        --log-driver={{docker.log_driver}} --log-opt syslog-tag={{de.http_server.service_name_short}} \
+        {{docker.user}}/{{de.http_server.image_name}}:{{docker.tag}}
 ExecStop=/usr/bin/docker stop {{de.http_server.container_name}} 
 Restart=on-failure
-
-SyslogIdentifier={{de.http_server.container_name}}
 
 [Install]
 WantedBy=multi-user.target

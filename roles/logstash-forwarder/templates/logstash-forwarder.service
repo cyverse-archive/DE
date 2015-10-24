@@ -8,16 +8,14 @@ Requisite=docker.service
 [Service]
 ExecStartPre=-/usr/bin/docker rm -v {{logstash_forwarder.container_name}}
 ExecStart=/usr/bin/docker run --name {{logstash_forwarder.container_name}} \
--e LOGSTASH_IP={{ logstash_server_ip }} \
---volumes-from {{ data_container.container_name }} \
--v /var/log/:/var/log/ \
--v /etc/logstash-forwarder/config.json:/etc/logstash-forwarder/config.json \
--v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
-{{logstash_forwarder.image_name}}
+        -e LOGSTASH_IP={{ logstash_server_ip }} \
+        --volumes-from {{ data_container.container_name }} \
+        -v /var/log/:/var/log/ \
+        -v /etc/logstash-forwarder/config.json:/etc/logstash-forwarder/config.json \
+        -v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
+        --log-driver={{docker.log_driver}} --log-opt syslog-tag={{logstash_forwarder.service_name_short}} \
+        {{logstash_forwarder.image_name}}
 ExecStop=/usr/bin/docker stop {{logstash_forwarder.container_name}}
-
-SyslogIdentifier={{logstash_forwarder.container_name}}
-SyslogFacility={{systemd.syslogFacility}}
 
 [Install]
 WantedBy=multi-user.target

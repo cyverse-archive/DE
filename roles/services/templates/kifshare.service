@@ -9,16 +9,13 @@ Requisite=docker.service
 User=iplant
 ExecStartPre=-/usr/bin/docker rm -v {{kifshare.container_name}}
 ExecStart=/usr/bin/docker run --name {{kifshare.container_name}} \
--v {{ de_config_dir }}:/etc/iplant/de \
--v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
--p {{kifshare.port}}:60000 \
---log-driver={{docker.log_driver}} \
-{{docker.user}}/{{kifshare.image_name}}:{{docker.tag}} --config /etc/iplant/de/{{kifshare.properties_file}}
+        -v {{ de_config_dir }}:/etc/iplant/de \
+        -v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
+        -p {{kifshare.port}}:60000 \
+        --log-driver={{docker.log_driver}} --log-opt syslog-tag={{kifshare.service_name_short}} \
+        {{docker.user}}/{{kifshare.image_name}}:{{docker.tag}} --config /etc/iplant/de/{{kifshare.properties_file}}
 ExecStop=-/usr/bin/docker stop {{kifshare.container_name}}
 Restart=on-failure
-
-SyslogIdentifier={{kifshare.container_name}}
-SyslogFacility={{systemd.syslogFacility}}
 
 [Install]
 WantedBy=multi-user.target

@@ -8,7 +8,7 @@
 
 - name: Place anon-files logging config file
   sudo: yes
-  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}.xml owner=root group=root mode=0644
+  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}-logging.xml owner=root group=root mode=0644
   with_items:
       - {name: "{{anon_files.service_name_short}}"}
   tags:
@@ -18,7 +18,7 @@
 
 - name: Place saved-searches logging config file
   sudo: yes
-  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}.xml owner=root group=root mode=0644
+  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}-logging.xml owner=root group=root mode=0644
   with_items:
       - {name: "{{saved_searches.service_name_short}}"}
   tags:
@@ -28,7 +28,7 @@
 
 - name: Place user-preferences logging config file
   sudo: yes
-  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}.xml owner=root group=root mode=0644
+  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}-logging.xml owner=root group=root mode=0644
   with_items:
       - {name: "{{user_preferences.service_name_short}}"}
   tags:
@@ -38,7 +38,7 @@
 
 - name: Place user-sessions logging config file
   sudo: yes
-  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}.xml owner=root group=root mode=0644
+  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}-logging.xml owner=root group=root mode=0644
   with_items:
       - {name: "{{user_sessions.service_name_short}}"}
   tags:
@@ -48,7 +48,7 @@
 
 - name: Place tree-urls logging config file
   sudo: yes
-  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}.xml owner=root group=root mode=0644
+  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}-logging.xml owner=root group=root mode=0644
   with_items:
       - {name: "{{tree_urls.service_name_short}}"}
   tags:
@@ -58,7 +58,7 @@
 
 - name: Place notificationagent logging config file
   sudo: yes
-  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}.xml owner=root group=root mode=0644
+  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}-logging.xml owner=root group=root mode=0644
   with_items:
       - {name: "{{notificationagent.service_name_short}}"}
   tags:
@@ -68,7 +68,7 @@
 
 - name: Place monkey logging config file
   sudo: yes
-  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}.xml owner=root group=root mode=0644
+  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}-logging.xml owner=root group=root mode=0644
   with_items:
       - {name: "{{monkey.service_name_short}}"}
   when: (not parasitic)
@@ -79,7 +79,7 @@
 
 - name: Place metadactyl logging config file
   sudo: yes
-  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}.xml owner=root group=root mode=0644
+  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}-logging.xml owner=root group=root mode=0644
   with_items:
       - {name: "{{metadactyl.service_name_short}}"}
   tags:
@@ -89,7 +89,7 @@
 
 - name: Place kifshare logging config file
   sudo: yes
-  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}.xml owner=root group=root mode=0644
+  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}-logging.xml owner=root group=root mode=0644
   with_items:
       - {name: "{{kifshare.service_name_short}}"}
   tags:
@@ -99,7 +99,7 @@
 
 - name: Place jex-events logging config file
   sudo: yes
-  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}.xml owner=root group=root mode=0644
+  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}-logging.xml owner=root group=root mode=0644
   with_items:
       - {name: "{{jexevents.service_name_short}}"}
   tags:
@@ -109,7 +109,7 @@
 
 - name: Place iplant-email logging config file
   sudo: yes
-  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}.xml owner=root group=root mode=0644
+  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}-logging.xml owner=root group=root mode=0644
   with_items:
       - {name: "{{iplant_email.service_name_short}}"}
   tags:
@@ -119,7 +119,7 @@
 
 - name: Place iplant-groups logging config file
   sudo: yes
-  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}.xml owner=root group=root mode=0644
+  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}-logging.xml owner=root group=root mode=0644
   with_items:
       - {name: "{{iplant_groups.service_name_short}}"}
   tags:
@@ -129,7 +129,7 @@
 
 - name: Place infosquito logging config file
   sudo: yes
-  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}.xml owner=root group=root mode=0644
+  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}-logging.xml owner=root group=root mode=0644
   with_items:
       - {name: "{{infosquito.service_name_short}}"}
   when: (not parasitic)
@@ -140,7 +140,7 @@
 
 - name: Place info-typer logging config file
   sudo: yes
-  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}.xml owner=root group=root mode=0644
+  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}-logging.xml owner=root group=root mode=0644
   with_items:
       - {name: "{{info_typer.service_name_short}}"}
   when: (not parasitic)
@@ -151,7 +151,7 @@
 
 - name: Place donkey logging config file
   sudo: yes
-  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}.xml owner=root group=root mode=0644
+  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}-logging.xml owner=root group=root mode=0644
   with_items:
       - {name: "{{donkey.service_name_short}}"}
   tags:
@@ -161,7 +161,7 @@
 
 - name: Place dewey logging config file
   sudo: yes
-  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}.xml owner=root group=root mode=0644
+  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}-logging.xml owner=root group=root mode=0644
   with_items:
       - {name: "{{dewey.service_name_short}}"}
   tags:
@@ -172,7 +172,7 @@
 
 - name: Place data-info logging config file
   sudo: yes
-  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}.xml owner=root group=root mode=0644
+  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}-logging.xml owner=root group=root mode=0644
   with_items:
       - {name: "{{data_info.service_name_short}}"}
   tags:
@@ -182,7 +182,7 @@
 
 - name: Place metadata logging config file
   sudo: yes
-  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}.xml owner=root group=root mode=0644
+  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}-logging.xml owner=root group=root mode=0644
   with_items:
       - {name: "{{metadata.service_name_short}}"}
   tags:
@@ -192,7 +192,7 @@
 
 - name: Place condor-log-monitor logging config file
   sudo: yes
-  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}.xml owner=root group=root mode=0644
+  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}-logging.xml owner=root group=root mode=0644
   with_items:
       - {name: "{{condor_log_monitor.service_name_short}}"}
   tags:
@@ -202,7 +202,7 @@
 
 - name: Place clockwork logging config file
   sudo: yes
-  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}.xml owner=root group=root mode=0644
+  template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}-logging.xml owner=root group=root mode=0644
   with_items:
       - {name: "{{clockwork.service_name_short}}"}
   tags:

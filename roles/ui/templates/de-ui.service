@@ -9,16 +9,15 @@ Requisite=docker.service
 User=iplant
 ExecStartPre=-/usr/bin/docker rm -v {{de.container_name}}
 ExecStart=/usr/bin/docker run --name {{de.container_name}} \
--p 8080 \
--v {{ de_config_dir }}:/etc/iplant/de \
--v /var/log/de:/home/iplant/log \
--v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
---log-driver={{de.log_driver}} \
-{{docker.user}}/{{de.image_name}}:{{docker.tag}}
+        -p 8080 \
+        -v {{ de_config_dir }}:/etc/iplant/de \
+        -v {{ logging.dir }}:/home/iplant/log \
+        -v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
+        --volumes-from {{data_container.container_name}} \
+        --log-driver={{docker.log_driver}} --log-opt syslog-tag={{de.service_name_short}} \
+        {{docker.user}}/{{de.image_name}}:{{docker.tag}}
 ExecStop=/usr/bin/docker stop {{de.container_name}}
 Restart=on-failure
-
-SyslogIdentifier={{de.container_name}}
 
 [Install]
 WantedBy=multi-user.target

@@ -17,8 +17,7 @@
         shell: systemctl is-active {{item.service_name}}
         register: verify_services_running
         ignore_errors: yes
-        with_items: 
-                  - "{{dewey}}"
+        with_items:
                   - "{{data_info}}"
                   - "{{anon_files}}"
                   - "{{condor_log_monitor}}"
@@ -27,13 +26,10 @@
                   - "{{iplant_email}}"
                   - "{{iplant_groups}}"
                   - "{{exim}}"
-                  - "{{infosquito}}"
-                  - "{{info_typer}}"
                   - "{{jexevents}}"
                   - "{{kifshare}}"
                   - "{{metadactyl}}"
                   - "{{metadata}}"
-                  - "{{monkey}}"
                   - "{{notificationagent}}"
                   - "{{saved_searches}}"
                   - "{{tree_urls}}"
@@ -47,6 +43,26 @@
       - fail: msg="{{item.item.service_name}} does not appear to be running"
         when: item.rc != 0
         with_items: "{{verify_services_running.results}}"
+        tags:
+            - services
+
+      - name: non-parasitic services are running
+        shell: systemctl is-active {{item.service_name}}
+        register: verify_non_parasitic_services_running
+        ignore_errors: yes
+        when: not parasitic
+        with_items:
+                  - "{{dewey}}"
+                  - "{{infosquito}}"
+                  - "{{info_typer}}"
+                  - "{{monkey}}"
+        tags:
+            - services
+
+
+      - fail: msg="{{item.item.service_name}} does not appear to be running"
+        when: not parasitic and item.rc != 0
+        with_items: "{{verify_non_parasitic_services_running.results}}"
         tags:
             - services
 

@@ -21,10 +21,15 @@
   copy: src={{ item }} dest="{{ de_config_dir }}/logstash.d" group=root owner=root mode=0644
   with_items:
     - 10-de-log.conf
-    - 11-ui-metrics.conf
     - 12-timestamp.conf
     - 13-embed-requests.conf
-    - 20-clone-by-metric-type.conf
+    - 14-embed-responses.conf
+    - 15-embed-user.conf
+    - 16-merge-requests-and-responses.conf
+    - 17-embed-exception.conf
+    - 20-clone-to-error.conf
+    - 21-clone-to-metrics.conf
+    - 22-clone-by-metric-type.conf
     - 30-embed-app.conf
     - 31-embed-analysis.conf
     - 50-lumberjack-output.conf

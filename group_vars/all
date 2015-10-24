@@ -121,7 +121,7 @@ app_name: de
 app_rpc_name: discoveryenvironment
 
 app_version_name: Phthalo
-app_version: 2.1.0
+app_version: 2.2.0
 
 app_server_base_url: "http://{{ ansible_default_ipv4.address }}:8080"
 
@@ -159,13 +159,13 @@ condor_log_monitor:
   service_name: condor-log-monitor.service
   service_name_short: condor-log-monitor
   service_description: CLM; Condor log monitor
-  image_name: condor-log-monitor
+  image_name: jex-events
   container_name: clm
-  properties_file: condor_log_monitor.properties
+  properties_file: jex-events.properties
   log_file: condor-log-monitor-docker.log
 
-coge_genome_load_url: https://genomevolution.org/CoGe/services/service.pl/genome/load
-
+coge_base_url: https://genomevolution.org/coge/api/v1
+coge_data_folder_name: coge_data
 coge_user: coge
 
 clockwork:
@@ -195,7 +195,7 @@ db_user:
 db_password:
 db_host:
 db_name:
-db_port:
+db_port: 5432
 db_admin: postgres
 db_admin_password:
 
@@ -215,17 +215,23 @@ dewey:
 systemd:
   syslogFacility: local6
   services:
-          - "{{dewey}}"
-          - "{{data_info}}"
           - "{{anon_files}}"
-          - "{{de}}"
-          - "{{condor_log_monitor}}"
           - "{{clockwork}}"
+          - "{{condor_log_monitor}}"
+          - "{{data_info}}"
+          - "{{de.http_server}}"
+          - "{{de}}"
+          - "{{dewey}}"
           - "{{donkey}}"
-          - "{{iplant_email}}"
+          - "{{elk.elasticsearch}}"
+          - "{{elk.kibana}}"
+          - "{{elk.logstash}}"
           - "{{exim}}"
           - "{{infosquito}}"
           - "{{info_typer}}"
+          - "{{iplant_email}}"
+          - "{{iplant_groups}}"
+          - "{{jex}}"
           - "{{jexevents}}"
           - "{{kifshare}}"
           - "{{metadactyl}}"
@@ -236,7 +242,6 @@ systemd:
           - "{{tree_urls}}"
           - "{{user_preferences}}"
           - "{{user_sessions}}"
-          - "{{jex}}"
 
 donkey_host: "{{ ansible_local.dev.services.donkey_host }}"
 donkey_base: http://{{ donkey_host }}:{{ donkey.port }}
@@ -277,6 +282,7 @@ elk:
     service_name_short: elk-logstash
     service_description: ELK logstash
     image_name: de-logstash
+    log_file: elk-logstash-docker.log
   data:
     container_name: elk_data
     service_name: elk-data.service
@@ -292,6 +298,7 @@ elk:
     image_name: elasticsearch
     heap_size: "12g"
     cluster_name: "de-elk-dev"
+    log_file: elk-elasticsearch-docker.log
   kibana:
     port: 5601
     container_name: elk_kibana
@@ -300,6 +307,7 @@ elk:
     service_description: ELK kibana
     version: 4.1.2
     image_name: "kibana:4.1.2"
+    log_file: elk-kibana-docker.log
 
 es_base: "http://{{ es_host }}:{{ es_port }}"
 es_host:
@@ -365,10 +373,10 @@ grouper:
     base_url:
 
 icat_host:
-icat_port:
+icat_port: 5432
 icat_user:
 icat_password:
-icat_db:
+icat_db: ICAT
 
 infosquito_notify_enabled: true
 infosquito_notify_count: 10000
@@ -426,7 +434,7 @@ jex_port:
 jex_base: http://{{ jex_host }}:{{ jex_port }}
 jex_batch_group: batch_processing
 jex_nfs_base:
-jex_icommands_path: /usr/local/icommands/:/usr/local2/icommands/:/usr/local/bin/:/usr/local2/bin/:/usr/bin/
+jex_icommands_path: /usr/local/icommands/:/usr/local/bin/:/usr/bin/
 jex_request_disk: 0
 
 # Jex does not actually have a container. The container name is how most syslog entries
@@ -458,6 +466,19 @@ jexevents:
   log_file: jex-events-docker.log
 
 job_status_poll_interval: 15
+
+jwt:
+  signing_key:
+    private: "{{ global_config_dir }}/crypto/private-key.pem"
+    public: "{{ global_config_dir }}/crypto/public-key.pem"
+    password:
+    algorithm: "rs256"
+  accepted_keys:
+    dir: "{{ global_config_dir }}/crypto/accepted_keys"
+  validity_window:
+    end: 300
+  wso2:
+    header: x-jwt-assertion-iplant-org
 
 kifshare_de_url: \{\{url\}\}/d/\{\{ticket-id\}\}/\{\{filename\}\}
 kifshare_external_url:
@@ -642,6 +663,10 @@ data_container:
     cert: "{{ nginx_ssl.cert }}"
     key: "{{ nginx_ssl.cert_key }}"
     gd_bundle_crt: /etc/ssl/gd_bundle.crt
+  keystore:
+    path: /etc/ssl/example.pkcs12
+    password:
+    type: pkcs12
 
 time: "{{ansible_date_time.date}}:{{ansible_date_time.time}}"
 

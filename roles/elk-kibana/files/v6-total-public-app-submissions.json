@@ -3,7 +3,7 @@
   "visState": "{\"type\":\"metric\",\"params\":{\"fontSize\":60},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}}],\"listeners\":{}}",
   "description": "Displays the total number of public App submissions (i.e. does not include user's private apps).",
   "kibanaSavedObjectMeta": {
-    "searchSourceJSON": "{\"index\":\"de-metrics\",\"query\":{\"query_string\":{\"query\":\"_type: \\\"app_event\\\" AND request.endpoint: \\\"/analyses\\\" AND request.method: \\\"POST\\\"\",\"analyze_wildcard\":true}},\"filter\":[]}"
+    "searchSourceJSON": "{\"index\":\"de-metrics\",\"query\":{\"query_string\":{\"query\":\"_type: \\\"app_event\\\" AND request.path-info: \\\"/analyses\\\" AND request.request-method: \\\"POST\\\"\",\"analyze_wildcard\":true}},\"filter\":[]}"
   }
 }
 

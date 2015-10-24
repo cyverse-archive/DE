@@ -114,20 +114,20 @@
 
 - name: restart de-ui service
   service: name={{de.service_name}} state=restarted
-  when: service_file_ui_v.changed or
-        config_de_props_v.changed or
-        config_logback_v.changed or
-        config_de_application_v.changed or
-        docker_pull_ui_v.changed
   tags:
       - restart_services
       - restart_de-ui
+#  when: service_file_ui_v.changed or
+#        config_de_props_v.changed or
+#        config_logback_v.changed or
+#        config_de_application_v.changed or
+#        docker_pull_ui_v.changed
 
 - name: restart de-ui-nginx service
   service: name={{de.http_server.service_name}} state=restarted
-  when: service_file_ui_nginx_v.changed or
-        config_nginx_v.changed or
-        docker_pull_nginx_v.changed
   tags:
       - restart_services
       - restart_de-ui-nginx
+#  when: service_file_ui_nginx_v.changed or
+#        config_nginx_v.changed or
+#        docker_pull_nginx_v.changed

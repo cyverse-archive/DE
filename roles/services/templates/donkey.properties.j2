@@ -38,8 +38,6 @@ donkey.notificationagent.base-url = {{ notificationagent_base }}
 # CAS Settings
 donkey.cas.cas-server        = {{ cas_base }}/
 donkey.cas.server-name       = {{ donkey_base }}
-donkey.cas.pgt-callback-base = {{ de_base }}
-donkey.cas.pgt-callback-path = /secured/pgt-callback
 
 # The settings to use for authorization.
 donkey.cas.group-attr-name = {{ cas_group_attribute }}
@@ -105,11 +103,23 @@ donkey.fs.max-paths-in-request       = {{ fs_max_paths_in_request }}
 donkey.fs.kifshare-download-template = {{ kifshare_de_url }}
 donkey.fs.kifshare-external-url      = {{ kifshare_external_url }}
 donkey.fs.anon-user                  = {{ anon_files_anon_user }}
-donkey.fs.anon-files-base-url        = {{ anon_files_base_url }}
+donkey.fs.anon-files-base-url        = {{ anon_files_proxy_url }}
+
+# JWT settings
+donkey.jwt.signing-key.private   = {{ jwt.signing_key.private }}
+donkey.jwt.signing-key.password  = {{ jwt.signing_key.password }}
+donkey.jwt.signing-key.public    = {{ jwt.signing_key.public }}
+donkey.jwt.signing-key.algorithm = {{ jwt.signing_key.algorithm }}
+donkey.jwt.accepted-keys.dir     = {{ jwt.accepted_keys.dir }}
+donkey.jwt.validity-window.end   = {{ jwt.validity_window.end }}
+
+# WSO2 JWT settings
+donkey.wso2.jwt-header = {{ jwt.wso2.header }}
 
 # COGE settings
-donkey.coge.user = {{ coge_user }}
-donkey.coge.genome-load-url = {{ coge_genome_load_url }}
+donkey.coge.user             = {{ coge_user }}
+donkey.coge.data-folder-name = {{ coge_data_folder_name }}
+donkey.coge.base-url         = {{ coge_base_url }}
 
 # Search settings
 donkey.search.default-limit = {{ search_default_limit }}

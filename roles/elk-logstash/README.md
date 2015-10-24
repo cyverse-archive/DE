@@ -1,5 +1,5 @@
 Elk-Logstash
-=========
+============
 
 For deploying and configuring the logstash instance for the DE ELK stack.
 
@@ -14,7 +14,7 @@ NOTE: Logstash conf files
 Requirements
 ------------
 
-systemd
+systemd, docker
 
 Role Variables
 --------------

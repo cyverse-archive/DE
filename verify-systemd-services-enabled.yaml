@@ -18,7 +18,6 @@
         register: verify_services_enabled
         ignore_errors: yes
         with_items: 
-                  - "{{dewey}}"
                   - "{{data_info}}"
                   - "{{anon_files}}"
                   - "{{condor_log_monitor}}"
@@ -27,13 +26,10 @@
                   - "{{iplant_email}}"
                   - "{{iplant_groups}}"
                   - "{{exim}}"
-                  - "{{infosquito}}"
-                  - "{{info_typer}}"
                   - "{{jexevents}}"
                   - "{{kifshare}}"
                   - "{{metadactyl}}"
                   - "{{metadata}}"
-                  - "{{monkey}}"
                   - "{{notificationagent}}"
                   - "{{saved_searches}}"
                   - "{{tree_urls}}"
@@ -47,6 +43,26 @@
       - fail: msg="{{item.item.service_name}} does not appear to be enabled"
         when: item.rc != 0
         with_items: "{{verify_services_enabled.results}}"
+        tags:
+            - services
+
+      - name: non-parasitic services are enabled
+        shell: systemctl is-enabled {{item.service_name}}
+        register: verify_non_parasitic_services_enabled
+        ignore_errors: yes
+        when: not parasitic
+        with_items:
+                  - "{{dewey}}"
+                  - "{{infosquito}}"
+                  - "{{info_typer}}"
+                  - "{{monkey}}"
+        tags:
+            - services
+
+
+      - fail: msg="{{item.item.service_name}} does not appear to be enabled"
+        when: not parasitic and item.rc != 0
+        with_items: "{{verify_non_parasitic_services_enabled.results}}"
         tags:
             - services
 

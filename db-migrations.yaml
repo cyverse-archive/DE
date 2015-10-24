@@ -9,10 +9,10 @@
       icon: ":facepalm:"
       msg: ":warning: Updating databases"
 
-    - update-database-de
-    - update-database-notifications
-    - update-database-metadata
-    - update-database-jex
+    - { role: update-database-de, tags: ["de-db"] }
+    - { role: update-database-notifications, tags: ["notification-db"] }
+    - { role: update-database-metadata, tags: ["metadata-db"] }
+    - { role: update-database-jex, tags: ["jex-db"] }
 
     - role: notify-chat
       username: "DB Updater"

@@ -15,3 +15,5 @@
         (ansible_distribution_major_version == "6" or ansible_distribution_major_version == "7"))
 
 - debug: var=facepalm_output.stdout_lines
+- debug: var=facepalm_output.warnings
+- debug: var=facepalm_output.stderr

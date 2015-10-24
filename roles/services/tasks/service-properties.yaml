@@ -178,7 +178,7 @@
 #####
 - name: configure condor-log-monitor
   sudo: yes
-  template: src=condor_log_monitor.properties.j2 dest={{ de_config_dir }}/condor_log_monitor.properties owner=root group=root mode=0644
+  template: src=jex-events.properties.j2 dest={{ de_config_dir }}/jex-events.properties owner=root group=root mode=0644
   tags:
       - config
       - config_condor-log-monitor

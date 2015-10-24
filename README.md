@@ -6,6 +6,7 @@
 
 ## Work Instructions
 * [Backend Deploy/Update Instructions](doc/work_instructions/Backend.md)
+* [UI Deploy/Update Instructions](doc/work_instructions/UI.md)
 * [Database Instructions](doc/work_instructions/Database.md)
 
 ## Builds

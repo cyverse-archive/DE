@@ -1,8 +1,8 @@
 {
   "title": "Top 25 Users by App Submission",
-  "visState": "{\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"user.raw\",\"size\":25,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+  "visState": "{\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"user-info.user.raw\",\"size\":25,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
   "description": "Displays the top 25 users by the total number of both public and private apps submitted through the Discovery Environment.",
   "kibanaSavedObjectMeta": {
-    "searchSourceJSON": "{\"index\":\"de-metrics\",\"query\":{\"query_string\":{\"query\":\"_type: \\\"metrics\\\" AND  request.endpoint: \\\"/analyses\\\" AND request.method: \\\"POST\\\"\",\"analyze_wildcard\":true}},\"filter\":[]}"
+    "searchSourceJSON": "{\"index\":\"de-metrics\",\"query\":{\"query_string\":{\"query\":\"_type: \\\"metrics\\\" AND  request.path-info: \\\"/analyses\\\" AND request.request-method: \\\"POST\\\"\",\"analyze_wildcard\":true}},\"filter\":[]}"
   }
 }

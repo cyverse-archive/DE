@@ -14,14 +14,11 @@ ExecStart=/usr/bin/docker run --name {{iplant_email.container_name}} \
         -v {{ de_config_dir }}:/etc/iplant/de \
         -v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
         -p {{iplant_email.port}}:60000 \
-        --log-driver={{docker.log_driver}} \
+        --log-driver={{docker.log_driver}} --log-opt syslog-tag={{iplant_email.service_name_short}} \
         {{docker.user}}/{{iplant_email.image_name}}:{{docker.tag}} \
         --config /etc/iplant/de/{{iplant_email.properties_file}}
 ExecStop=-/usr/bin/docker stop {{iplant_email.container_name}}
 Restart=on-failure
-
-SyslogIdentifier={{iplant_email.container_name}}
-SyslogFacility={{systemd.syslogFacility}}
 
 [Install]
 WantedBy=multi-user.target

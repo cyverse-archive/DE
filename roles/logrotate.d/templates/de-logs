@@ -1,7 +1,6 @@
-/var/log/metrics
-/var/log/de/de-all.log
-/var/log/de/de-error.log
-
+{{logging.dir}}/de-docker.log
+/var/log/registry/iplant-registry.log
+/var/log/registry/iplant-registry-redis.log
 {% for service in systemd.services -%}
 {{logging.dir}}/{{service.log_file}}
 {% endfor -%} {

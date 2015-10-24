@@ -5,6 +5,17 @@
         <fieldNames>
             <logger>loggerName</logger>
             <thread>thread</thread>
+            <levelValue>[ignore]</levelValue>
+        </fieldNames>
+    </encoder>
+  </appender>
+ <appender name="METRICS-CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+        <customFields>{"service":"{{item.name}}", "tags": ["metrics"]}</customFields>
+        <fieldNames>
+            <logger>loggerName</logger>
+            <thread>thread</thread>
+            <levelValue>[ignore]</levelValue>
         </fieldNames>
     </encoder>
   </appender>
@@ -12,7 +23,9 @@
   <!-- Configuration Logging -->
   <Logger name="clojure-commons.config" level="INFO"/>
   <!-- Request Logging -->
-  <Logger name="AccessLogger" level="INFO" />
+  <Logger name="AccessLogger" level="INFO" additivity="false">
+    <appender-ref ref="METRICS-CONSOLE" />
+  </Logger>
   <!-- Jargon Logging -->
   <Logger name="org.irods.jargon" level="ERROR" />
   <!-- Service Call Trace Message Logging -->

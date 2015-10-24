@@ -9,17 +9,14 @@ Requisite=docker.service
 User=iplant
 ExecStartPre=-/usr/bin/docker rm -v {{metadactyl.container_name}}
 ExecStart=/usr/bin/docker run --name {{metadactyl.container_name}} \
--v {{ de_config_dir }}:/etc/iplant/de \
--v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
---volumes-from {{data_container.container_name}} \
--p {{metadactyl.port}}:60000 \
---log-driver={{docker.log_driver}} \
-{{docker.user}}/{{metadactyl.image_name}}:{{docker.tag}} --config /etc/iplant/de/{{metadactyl.properties_file}}
+        -v {{ de_config_dir }}:/etc/iplant/de \
+        -v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
+        --volumes-from {{data_container.container_name}} \
+        -p {{metadactyl.port}}:60000 \
+        --log-driver={{docker.log_driver}} --log-opt syslog-tag={{metadactyl.service_name_short}} \
+        {{docker.user}}/{{metadactyl.image_name}}:{{docker.tag}} --config /etc/iplant/de/{{metadactyl.properties_file}}
 ExecStop=-/usr/bin/docker stop {{metadactyl.container_name}}
 Restart=on-failure
-
-SyslogIdentifier={{metadactyl.container_name}}
-SyslogFacility={{systemd.syslogFacility}}
 
 [Install]
 WantedBy=multi-user.target
