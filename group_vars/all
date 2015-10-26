@@ -335,6 +335,8 @@ grouper:
   image_name: iplant-grouper
   container_name: iplant-grouper
   log_driver: "{{ docker.log_driver }}"
+  max_heap_size: 2048M
+  max_perm_size: 256M
   admin:
     user:
     pass:
