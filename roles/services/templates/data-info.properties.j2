@@ -3,14 +3,11 @@ data-info.anon-user                  = {{ anon_files_anon_user }}
 data-info.bad-chars                  = {{ irods_bad_chars }}
 data-info.community-data             = {{ irods_home }}/shared
 data-info.copy-key                   = ipc-de-copy-from
-data-info.data-threshold             = 8000
 data-info.kifshare-download-template = {{ kifshare_de_url }}
-data-info.kifshare-external-url      = {{ kifshare_external_url }}
 data-info.max-paths-in-request       = {{ fs_max_paths_in_request }}
 data-info.metadata.base-url          = http://{{ metadata_host }}:{{ metadata.port }}
 data-info.perms-filter               = {{ nibblonian_perms_filter }}
 data-info.port                       = {{ default_service_port }}
-data-info.preview-size               = 8000
 
 # ICAT configuration
 data-info.icat.host           = {{ icat_host }}
@@ -34,5 +31,3 @@ data-info.irods.admin-users   = {{ irods_admin_users }}
 
 # file typing configuration
 data-info.type-detect.type-attribute       = ipc-filetype
-data-info.type-detect.filetype-script      = /usr/local/bin/guess-2.pl
-data-info.type-detect.filetype-read-amount = 1024
