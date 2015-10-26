@@ -20,7 +20,6 @@ import org.iplantc.de.client.models.diskResources.DiskResourceExistMap;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadataList;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplateList;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.MetadataTemplate;
@@ -624,18 +623,17 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     }
 
     @Override
-    public void getDiskResourceMetaData(DiskResource resource, AsyncCallback<List<DiskResourceMetadata>> callback) {
-        String fullAddress = deProperties.getDataMgmtBaseUrl() + "metadata" + "?path=" //$NON-NLS-1$ //$NON-NLS-2$
-                + URL.encodePathSegment(resource.getPath());
+    public void getDiskResourceMetaData(DiskResource resource, AsyncCallback<DiskResourceMetadataList> callback) {
+        String fullAddress = deProperties.getDataMgmtBaseUrl() + resource.getId() + "/metadata";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, fullAddress);
-        callService(wrapper, new AsyncCallbackConverter<String, List<DiskResourceMetadata>>(callback) {
+
+        callService(wrapper, new AsyncCallbackConverter<String, DiskResourceMetadataList>(callback) {
             @Override
-            protected List<DiskResourceMetadata> convertFrom(String object) {
-                AutoBean<DiskResourceMetadataList> bean = AutoBeanCodex.decode(factory, DiskResourceMetadataList.class, object);
-                return bean.as().getMetadata();
+            protected DiskResourceMetadataList convertFrom(String object) {
+                DiskResourceMetadataList metadata = AutoBeanCodex.decode(factory, DiskResourceMetadataList.class, object).as();
+                return metadata;
             }
         });
-
     }
 
     @Override
@@ -953,27 +951,6 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         final String body = encode(diskResourcePaths);
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body);
         callService(wrapper, callback);
-    }
-
-    @Override
-    public void getMetadataTemplateAvus(DiskResource resource,
-                                        AsyncCallback<DiskResourceMetadataTemplate> callback) {
-        String address = deProperties.getDataMgmtBaseUrl() + resource.getId() + "/template-avus"; //$NON-NLS-1$
-        final ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
-
-        callService(wrapper, new AsyncCallbackConverter<String, DiskResourceMetadataTemplate>(callback) {
-
-            @Override
-            protected DiskResourceMetadataTemplate convertFrom(String result) {
-                DiskResourceMetadataTemplateList list = decode(DiskResourceMetadataTemplateList.class,
-                                                               result);
-                if (list != null && list.getTemplates().size() > 0) {
-                    return list.getTemplates().get(0);
-                } else {
-                    return null;
-                }
-            }
-        });
     }
 
     @Override

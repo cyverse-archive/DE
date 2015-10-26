@@ -6,6 +6,7 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceExistMap;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadataList;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
@@ -167,7 +168,7 @@ public interface DiskResourceServiceFacade {
      * @param callback callback executed when service call completes.
      */
     void getDiskResourceMetaData(DiskResource resource,
-                                 AsyncCallback<List<DiskResourceMetadata>> callback);
+                                 AsyncCallback<DiskResourceMetadataList> callback);
 
     /**
      * Calls service to set disk resource metadata.
@@ -306,9 +307,6 @@ public interface DiskResourceServiceFacade {
      * @param callback callback object
      */
     void shareWithAnonymous(final HasPaths diskResourcePaths, final AsyncCallback<String> callback);
-
-    void getMetadataTemplateAvus(final DiskResource resource,
-                                 final AsyncCallback<DiskResourceMetadataTemplate> callback);
 
     void setMetadataTemplateAvus(final DiskResource resource,
                                  final DiskResourceMetadataTemplate templateAvus,
