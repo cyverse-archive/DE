@@ -36,7 +36,7 @@ http {
 
             proxy_read_timeout 3600s;
 
-            proxy_pass http://grouper-host:8080/;
+            proxy_pass http://{{ ansible_hostname }}:8080/;
         }
     }
 {% endfor %}

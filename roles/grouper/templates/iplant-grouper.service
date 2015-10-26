@@ -9,7 +9,7 @@ Requisite=docker.service
 User=iplant
 ExecStartPre=-/usr/bin/docker rm -v {{grouper.container_name}}
 ExecStart=/usr/bin/docker run --name {{grouper.container_name}} \
-    -p 8080 \
+    -p 8080:8080 \
     -v /etc/grouper:/etc/grouper \
     -v /etc/tomcat/server.xml:/opt/tomcat/conf/server.xml \
     -v /etc/tomcat/tomcat-users.xml:/opt/tomcat/conf/tomcat-users.xml \
