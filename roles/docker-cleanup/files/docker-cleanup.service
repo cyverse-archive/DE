@@ -1,0 +1,15 @@
+[Unit]
+Description=Cleans up unnecessary docker images, containers, and volumes
+ConditionPathExists=/etc/docker-gc-exclude
+ConditionPathExists=/etc/docker-gc-exclude-containers
+
+[Service]
+Type=oneshot
+ExecStartPre=-/usr/bin/docker rm -v docker-gc
+ExecStartPre=/bin/echo "Starting disk usage" ; /bin/df -h
+ExecStart=/usr/bin/docker run --name docker-gc -v /var/run/docker.sock:/var/run/docker.sock -v /etc:/etc spotify/docker-gc
+ExecStart=-/usr/bin/bash -c "/usr/bin/docker rmi $(/usr/bin/docker images -q -f 'dangling=true')"
+ExecStart=/usr/bin/docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker:/var/lib/docker --rm martin/docker-cleanup-volumes
+ExecStart=/usr/bin/docker rm -v docker-gc
+ExecStartPost=/bin/echo "Final disk usage" ; /bin/df -h
+

@@ -17,6 +17,12 @@
   tags:
       - config
 
+- name: Add the condor user to the docker group
+  user: name=condor groups=docker append=yes
+  when: "'condor' in group_names"  
+  tags:
+      - config
+
 - include: CentOS-7.yaml
   when: ansible_distribution == "CentOS" and
         ansible_distribution_major_version == "7" 
@@ -44,3 +50,4 @@
   pip: name=docker-py version=1.1.0 state=present
   tags:
       - install_docker-py
+

@@ -10,6 +10,7 @@ docker:
   version: 1.8.2
   registry:
     port: 5000
+    base: "{{ groups['docker-registry'][0] }}:5000"
 
 java:
   version: 1.7.0

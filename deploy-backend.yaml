@@ -3,11 +3,11 @@
 
 - include: data-container-services.yaml
 
-- include: elk-stack.yaml
-
 - include: logstash-forwarder.yaml
 
 - include: update-services.yaml
+
+- include: elk-stack.yaml
 
 - include: porklock.yaml
 
