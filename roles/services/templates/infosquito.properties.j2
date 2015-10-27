@@ -1,22 +1,22 @@
 # ElasticSearch Settings
-infosquito.es.host        = {{ es_host }}
-infosquito.es.port        = {{ es_port }}
-infosquito.es.scroll-size = {{ es_scroll_size }}
+infosquito.es.host        = {{ elasticsearch.host }}
+infosquito.es.port        = {{ elasticsearch.port }}
+infosquito.es.scroll-size = {{ elasticsearch.scroll_size }}
 
 # ICAT Database Connection Settings
-infosquito.icat.host     = {{ icat_host }}
-infosquito.icat.port     = {{ icat_port }}
-infosquito.icat.user     = {{ icat_user }}
-infosquito.icat.password = {{ icat_password }}
-infosquito.icat.db       = {{ icat_db }}
+infosquito.icat.host     = {{ icat.host }}
+infosquito.icat.port     = {{ icat.port }}
+infosquito.icat.user     = {{ icat.user }}
+infosquito.icat.password = {{ icat.password }}
+infosquito.icat.db       = {{ icat.db }}
 
 # Indexing Options
-infosquito.base-collection  = "/{{ irods_zone }}"
+infosquito.base-collection  = "/{{ irods.zone }}"
 infosquito.index-batch-size = 100
 
 # AMQP Settings
-infosquito.amqp.host                 = {{ amqp_broker_host }}
-infosquito.amqp.port                 = {{ amqp_broker_port }}
+infosquito.amqp.host                 = {{ amqp_broker.host }}
+infosquito.amqp.port                 = {{ amqp_broker.port }}
 infosquito.amqp.user                 = {{ amqp_user }}
 infosquito.amqp.password             = {{ amqp_password }}
 infosquito.amqp.reindex-queue        = infosquito.reindex
@@ -25,8 +25,8 @@ infosquito.amqp.exchange.durable     = {{ amqp_de_exchange_durable }}
 infosquito.amqp.exchange.auto-delete = {{ amqp_de_exchange_auto_delete }}
 
 # Progress Notification Settings
-infosquito.notify.enabled = {{ infosquito_notify_enabled }}
-infosquito.notify.count   = {{ infosquito_notify_count }}
+infosquito.notify.enabled = {{ infosquito.notify_enabled }}
+infosquito.notify.count   = {{ infosquito.notify_count }}
 
 # Retry Interval (in seconds)
-infosquito.retry-interval = {{ infosquito_retry_interval }}
+infosquito.retry-interval = {{ infosquito.retry_interval }}

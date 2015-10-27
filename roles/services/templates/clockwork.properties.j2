@@ -1,22 +1,22 @@
 # Tree URL cleanup settings.
-clockwork.tree-urls-cleanup-age     = {{ tree_urls_cleanup_age }}
-clockwork.tree-urls-cleanup-start   = {{ tree_urls_cleanup_start }}
-clockwork.tree-urls-cleanup-enabled = {{ tree_urls_cleanup_enable }}
+clockwork.tree-urls-cleanup-age     = {{ tree_urls.cleanup_age }}
+clockwork.tree-urls-cleanup-start   = {{ tree_urls.cleanup_start }}
+clockwork.tree-urls-cleanup-enabled = {{ tree_urls.cleanup_enable }}
 
 # iRODS configuration settings.
-clockwork.tree-urls-avu  = {{ tree_urls_avu }}
-clockwork.irods-host     = {{ irods_host }}
-clockwork.irods-port     = {{ irods_port }}
-clockwork.irods-user     = {{ irods_user }}
-clockwork.irods-password = {{ irods_password }}
-clockwork.irods-home     = {{ irods_home }}
-clockwork.irods-zone     = {{ irods_zone }}
-clockwork.irods-resource = {{ irods_default_resource }}
+clockwork.tree-urls-avu  = {{ tree_urls.avu }}
+clockwork.irods-host     = {{ irods.host }}
+clockwork.irods-port     = {{ irods.port }}
+clockwork.irods-user     = {{ irods.user }}
+clockwork.irods-password = {{ irods.password }}
+clockwork.irods-home     = {{ irods.home }}
+clockwork.irods-zone     = {{ irods.zone }}
+clockwork.irods-resource = {{ irods.default_resource }}
 
 # Notification cleanup settings.
-clockwork.notifications.cleanup-start  = {{ notification_clean_start }}
-clockwork.notifications.cleanup-age    = {{ notification_clean_age }}
-clockwork.notifications.cleanup-enable = {{ notification_clean_enable }}
+clockwork.notifications.cleanup-start  = {{ notificationagent.clean_start }}
+clockwork.notifications.cleanup-age    = {{ notificationagent.clean_age }}
+clockwork.notifications.cleanup-enable = {{ notificationagent.clean_enable }}
 
 # Notifiction database connection settings.
 clockwork.notifications.db.driver      = {{ notification_db_driver }}

@@ -13,7 +13,7 @@ Requirements
 
 Role Variables
 --------------
-registry_host: the host of the docker registry
+docker.registry.host: the host of the docker registry
 remote_registry: docker registry path for docker commands
 
 Role Tags

@@ -1,6 +1,6 @@
 ---
 - name: ensure elasticsearch has started
-  wait_for: port={{ elasticsearch_network_http_port }}
+  wait_for: port={{ elasticsearch.network_http_port }}
 
 - name: check data index existence
   uri: url={{ data_resource_url }} method=HEAD

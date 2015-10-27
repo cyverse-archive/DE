@@ -2,20 +2,20 @@ info-typer.type-attribute       = ipc-filetype
 info-typer.filetype-read-amount = 1024
 
 # iRODS configuration
-info-typer.irods.host        = {{ irods_host }}
-info-typer.irods.port        = {{ irods_port }}
-info-typer.irods.user        = {{ irods_user }}
-info-typer.irods.pass        = {{ irods_password }}
-info-typer.irods.zone        = {{ irods_zone }}
-info-typer.irods.home        = {{ irods_home }}
+info-typer.irods.host        = {{ irods.host }}
+info-typer.irods.port        = {{ irods.port }}
+info-typer.irods.user        = {{ irods.user }}
+info-typer.irods.pass        = {{ irods.password }}
+info-typer.irods.zone        = {{ irods.zone }}
+info-typer.irods.home        = {{ irods.home }}
 info-typer.irods.resc        =
 info-typer.irods.max-retries = 10
 info-typer.irods.retry-sleep = 1000
 info-typer.irods.use-trash   = true
 
 # AMQP settings
-info-typer.amqp.host                 = {{ amqp_broker_host }}
-info-typer.amqp.port                 = {{ amqp_broker_port }}
+info-typer.amqp.host                 = {{ amqp_broker.host }}
+info-typer.amqp.port                 = {{ amqp_broker.port }}
 info-typer.amqp.user                 = {{ amqp_user }}
 info-typer.amqp.pass                 = {{ amqp_password }}
 info-typer.amqp.retry-sleep          = 10000
