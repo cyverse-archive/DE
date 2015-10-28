@@ -1,4 +1,9 @@
-FROM discoenv/javabase
+FROM java:8
+
+RUN useradd -m -U -s /bin/bash -u 1337 iplant
+USER iplant
+RUN mkdir -p /home/iplant/logs/
+WORKDIR /home/iplant
 
 ADD target/de.war /home/iplant/
 USER root
