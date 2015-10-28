@@ -1,8 +1,9 @@
 package org.iplantc.de.diskResource.client.presenters.metadata;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadataList;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplateList;
 import org.iplantc.de.client.models.diskResources.MetadataTemplate;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
@@ -31,17 +32,6 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
         this.view = view;
         this.drService = drService;
         view.setPresenter(this);
-        drService.getDiskResourceMetaData(resource, new AsyncCallback<List<DiskResourceMetadata>>() {
-            @Override
-            public void onSuccess(final List<DiskResourceMetadata> result) {
-                view.loadMetadata(result);
-            }
-
-            @Override
-            public void onFailure(Throwable caught) {
-                ErrorHandler.post(caught);
-            }
-        });
         drService.getMetadataTemplateListing(new AsyncCallback<List<MetadataTemplateInfo>>() {
 
             @Override
@@ -52,18 +42,29 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
             @Override
             public void onSuccess(final List<MetadataTemplateInfo> result) {
                 view.populateTemplates(result);
+                loadMetadata();
             }
         });
-        drService.getMetadataTemplateAvus(resource, new AsyncCallback<DiskResourceMetadataTemplate>() {
+    }
 
+    private void loadMetadata() {
+        drService.getDiskResourceMetaData(resource, new AsyncCallback<DiskResourceMetadataList>() {
             @Override
-            public void onSuccess(DiskResourceMetadataTemplate result) {
-                view.loadMetadataTemplate(result);
+            public void onSuccess(final DiskResourceMetadataList result) {
+                view.loadMetadata(result.getMetadata());
+
+                final DiskResourceMetadataTemplateList metadataTemplateList = result.getMetadataTemplates();
+                if (metadataTemplateList != null) {
+                    final List<DiskResourceMetadataTemplate> templates = metadataTemplateList.getTemplates();
+                    if (templates != null && !templates.isEmpty()) {
+                        view.loadMetadataTemplate(templates.get(0));
+                    }
+                }
             }
 
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post("Unable to retrieve template AVUs.", caught);
+                ErrorHandler.post(caught);
             }
         });
     }
