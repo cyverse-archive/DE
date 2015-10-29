@@ -5,6 +5,7 @@ import org.iplantc.de.client.models.WindowType;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
+import org.iplantc.de.desktop.client.views.windows.DEAppsWindow;
 import org.iplantc.de.desktop.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.desktop.client.views.windows.util.WindowFactory;
 
@@ -155,10 +156,22 @@ public class DesktopWindowManager {
                 if (desktopContainer != null) {
                     window.setContainer(desktopContainer);
                 }
+
                 window.show(config, constructWindowId(config), true);
+                moveOutOfBoundsWindow(window);
                 windowManager.bringToFront(window.asWindow());
             }
         });
+    }
+
+    private void moveOutOfBoundsWindow(IPlantWindowInterface window) {
+        final int desktopContainerBottom = desktopContainer.getAbsoluteBottom();
+        final int desktopContainerRight = desktopContainer.getAbsoluteRight();
+        final int windowRight = window.asWindow().getElement().getAbsoluteRight();
+        final int windowBottom = window.asWindow().getElement().getAbsoluteBottom();
+        if (windowRight > desktopContainerRight || windowBottom > desktopContainerBottom){
+            window.setPagePosition(0,0);
+        }
     }
 
     String constructWindowId(WindowConfig config) {
