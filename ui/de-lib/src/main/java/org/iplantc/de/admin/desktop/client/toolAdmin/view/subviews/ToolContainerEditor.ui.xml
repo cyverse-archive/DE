@@ -1,0 +1,144 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+             xmlns:d="urn:import:org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews"
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
+
+    <ui:with field="appearance"
+             type="org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView.ToolAdminViewAppearance"/>
+
+    <ui:with field="margins"
+             type="com.sencha.gxt.core.client.util.Margins">
+        <ui:attributes top="0" right="5" bottom="0" left="0"/>
+    </ui:with>
+    <ui:with field="marginsTop"
+             type="com.sencha.gxt.core.client.util.Margins">
+        <ui:attributes top="15" right="5" bottom="0" left="0"/>
+    </ui:with>
+    <ui:with field="layoutData"
+             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+        <ui:attributes width="1" height="-1" margins="{margins}"/>
+    </ui:with>
+    <ui:with field="layoutDataPadded"
+             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+        <ui:attributes width="1" height="-1" margins="{marginsTop}"/>
+    </ui:with>
+
+    <g:FormPanel>
+        <container:VerticalLayoutContainer ui:field="layoutContainer">
+            <container:child layoutData="{layoutDataPadded}">
+                <d:ToolImageEditor ui:field="imageEditor"/>
+            </container:child>
+            <container:child layoutData="{layoutDataPadded}">
+                <form:FieldSet ui:field="containerFieldSet"
+                               headingText="{appearance.containerDetailsFieldSetLabel}"
+                               collapsible="true">
+                    <container:VerticalLayoutContainer>
+                        <container:child layoutData="{layoutData}">
+                            <form:FieldLabel text="{appearance.containerNameLabel}">
+                                <form:widget>
+                                    <form:TextField readOnly="false"
+                                                    enabled="true"
+                                                    ui:field="nameEditor"/>
+                                </form:widget>
+                            </form:FieldLabel>
+                        </container:child>
+                        <container:child layoutData="{layoutData}">
+                            <form:FieldLabel text="{appearance.containerWorkingDirLabel}">
+                                <form:widget>
+                                    <form:TextField readOnly="false"
+                                                    enabled="true"
+                                                    ui:field="workingDirectoryEditor"/>
+                                </form:widget>
+                            </form:FieldLabel>
+                        </container:child>
+                        <container:child layoutData="{layoutData}">
+                            <form:FieldLabel text="{appearance.containerEntryPointLabel}">
+                                <form:widget>
+                                    <form:TextField readOnly="false"
+                                                    enabled="true"
+                                                    ui:field="entryPointEditor"/>
+                                </form:widget>
+                            </form:FieldLabel>
+                        </container:child>
+                        <container:child layoutData="{layoutData}">
+                            <form:FieldLabel text="{appearance.containerMemoryLimitLabel}">
+                                <form:widget>
+                                    <form:IntegerField readOnly="false"
+                                                       enabled="true"
+                                                       ui:field="memoryLimitEditor"/>
+                                </form:widget>
+                            </form:FieldLabel>
+                        </container:child>
+                        <container:child layoutData="{layoutData}">
+                            <form:FieldLabel text="{appearance.containerCPUSharesLabel}">
+                                <form:widget>
+                                    <form:IntegerField readOnly="false"
+                                                       enabled="true"
+                                                       ui:field="cpuSharesEditor"/>
+                                </form:widget>
+                            </form:FieldLabel>
+                        </container:child>
+                        <container:child layoutData="{layoutData}">
+                            <form:FieldLabel text="{appearance.containerNetworkModeLabel}">
+                                <form:widget>
+                                    <form:TextField readOnly="false"
+                                                    enabled="true"
+                                                    ui:field="networkModeEditor"/>
+                                </form:widget>
+                            </form:FieldLabel>
+                        </container:child>
+
+                        <container:child layoutData="{layoutData}">
+                            <form:FieldLabel text="{appearance.containerDevicesLabel}"/>
+                        </container:child>
+                        <container:child layoutData="{layoutData}">
+                            <toolbar:ToolBar title="">
+                                <button:TextButton ui:field="addDeviceButton" text="Add"
+                                                   icon="{appearance.addIcon}"/>
+                                <button:TextButton ui:field="deleteDeviceButton" text="Delete"
+                                                   icon="{appearance.deleteIcon}"/>
+                            </toolbar:ToolBar>
+                        </container:child>
+                        <container:child layoutData="{layoutData}">
+                            <d:ToolDeviceListEditor ui:field="deviceListEditor"/>
+                        </container:child>
+
+                        <container:child layoutData="{layoutData}">
+                            <form:FieldLabel text="{appearance.containerVolumesLabel}" labelWidth="200"/>
+                        </container:child>
+                        <container:child layoutData="{layoutData}">
+                            <toolbar:ToolBar title="">
+                                <button:TextButton ui:field="addVolumesButton" text="Add"
+                                                   icon="{appearance.addIcon}"/>
+                                <button:TextButton ui:field="deleteVolumesButton" text="Delete"
+                                                   icon="{appearance.deleteIcon}"/>
+                            </toolbar:ToolBar>
+                        </container:child>
+                        <container:child layoutData="{layoutData}">
+                            <d:ToolVolumeListEditor ui:field="containerVolumesEditor"/>
+                        </container:child>
+
+                        <container:child layoutData="{layoutData}">
+                            <form:FieldLabel text="{appearance.containerVolumesFromLabel}" labelWidth="300"/>
+                        </container:child>
+                        <container:child layoutData="{layoutData}">
+                            <toolbar:ToolBar title="">
+                                <button:TextButton ui:field="addVolumesFromButton" text="Add"
+                                                   icon="{appearance.addIcon}"/>
+                                <button:TextButton ui:field="deleteVolumesFromButton" text="Delete"
+                                                   icon="{appearance.deleteIcon}"/>
+                            </toolbar:ToolBar>
+                        </container:child>
+                        <container:child layoutData="{layoutData}">
+                            <d:ToolVolumesFromListEditor ui:field="containerVolumesFromEditor"/>
+                        </container:child>
+                    </container:VerticalLayoutContainer>
+                </form:FieldSet>
+            </container:child>
+        </container:VerticalLayoutContainer>
+    </g:FormPanel>
+</ui:UiBinder>

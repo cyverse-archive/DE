@@ -1,0 +1,53 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+             xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
+             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
+
+    <ui:with field="appearance"
+             type="org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView.ToolAdminViewAppearance"/>
+
+    <ui:with field="northData"
+             type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
+        <ui:attributes size="30"
+                       maxSize="30"/>
+    </ui:with>
+    <ui:with field="centerData"
+             type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
+        <ui:attributes size="1"/>
+    </ui:with>
+
+    <ui:with type="com.sencha.gxt.widget.core.client.grid.ColumnModel"
+             field="cm"/>
+    <ui:with type="com.sencha.gxt.data.shared.ListStore"
+             field="listStore"/>
+    <ui:with type="com.sencha.gxt.widget.core.client.grid.GridView"
+             field="view">
+        <ui:attributes stripeRows="true" forceFit="true" autoFill="true"/>
+    </ui:with>
+
+
+    <container:BorderLayoutContainer borders="true">
+        <container:north layoutData="{northData}">
+            <toolbar:ToolBar>
+                <toolbar:child>
+                    <button:TextButton ui:field="addButton"
+                                       text="{appearance.add}"
+                                       icon="{appearance.addIcon}"/>
+                </toolbar:child>
+                <toolbar:child>
+                    <form:TextField ui:field="filterField"
+                                    emptyText="{appearance.filter}"/>
+                </toolbar:child>
+            </toolbar:ToolBar>
+        </container:north>
+        <container:center layoutData="{centerData}">
+            <grid:Grid ui:field="grid"
+                       cm="{cm}"
+                       store="{listStore}"
+                       view="{view}"/>
+        </container:center>
+    </container:BorderLayoutContainer>
+</ui:UiBinder> 

@@ -41,6 +41,11 @@
     <replace-with class="org.iplantc.de.theme.base.client.admin.toolRequest.presenter.ToolRequestPresenterDefaultAppearance">
         <when-type-is class="org.iplantc.de.admin.desktop.client.toolRequest.ToolRequestView.Presenter.ToolRequestPresenterAppearance" />
     </replace-with>
+
+    <!--Tool Admin-->
+    <replace-with class="org.iplantc.de.theme.base.client.admin.toolAdmin.ToolAdminViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView.ToolAdminViewAppearance" />
+    </replace-with>
     
     <!--  Metadata -->
      <replace-with class="org.iplantc.de.theme.base.client.admin.metadata.DefaultTemplateListingAppearance">

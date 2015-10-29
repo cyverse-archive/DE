@@ -1,0 +1,53 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
+
+    <ui:with field="appearance"
+             type="org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView.ToolAdminViewAppearance"/>
+
+    <ui:with field="margins"
+             type="com.sencha.gxt.core.client.util.Margins">
+        <ui:attributes top="0" right="5" bottom="0" left="5"/>
+    </ui:with>
+    <ui:with field="layoutData"
+             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+        <ui:attributes width="1" height="-1" margins="{margins}"/>
+    </ui:with>
+
+    <g:FormPanel>
+        <form:FieldSet headingText="{appearance.containerImageFieldSetLabel}">
+            <container:VerticalLayoutContainer ui:field="layoutContainer">
+                <container:child layoutData="{layoutData}">
+                    <form:FieldLabel ui:field="nameLabel">
+                        <form:widget>
+                            <form:TextField readOnly="false"
+                                            enabled="true"
+                                            allowBlank="false"
+                                            ui:field="nameEditor"/>
+                        </form:widget>
+                    </form:FieldLabel>
+                </container:child>
+                <container:child layoutData="{layoutData}">
+                    <form:FieldLabel text="{appearance.containerImageTagLabel}">
+                        <form:widget>
+                            <form:TextField readOnly="false"
+                                            enabled="true"
+                                            ui:field="tagEditor"/>
+                        </form:widget>
+                    </form:FieldLabel>
+                </container:child>
+                <container:child layoutData="{layoutData}">
+                    <form:FieldLabel text="{appearance.containerImageURLLabel}">
+                        <form:widget>
+                            <form:TextField readOnly="false"
+                                            enabled="true"
+                                            ui:field="urlEditor"/>
+                        </form:widget>
+                    </form:FieldLabel>
+                </container:child>
+            </container:VerticalLayoutContainer>
+        </form:FieldSet>
+    </g:FormPanel>
+</ui:UiBinder> 

@@ -31,6 +31,8 @@ public interface BelphegorView extends IsWidget {
         String toolRequests();
 
         String systemMessages();
+
+        String toolAdmin();
     }
 
     public interface Presenter {

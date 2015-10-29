@@ -48,9 +48,13 @@
              type="com.sencha.gxt.widget.core.client.TabItemConfig">
         <ui:attributes text="Metadata Templates"/>
     </ui:with>
-      <ui:with field="permIdConfig"
+    <ui:with field="permIdConfig"
              type="com.sencha.gxt.widget.core.client.TabItemConfig">
         <ui:attributes text="Permanent Id Requests"/>
+    </ui:with>
+    <ui:with field="toolAdminConfig"
+             type="com.sencha.gxt.widget.core.client.TabItemConfig">
+        <ui:attributes text="Tool Admin"/>
     </ui:with>
     <con:Viewport>
         <con:BorderLayoutContainer>
@@ -68,6 +72,9 @@
                     </gxt:child>
                     <gxt:child config="{toolReqTabConfig}">
                         <con:SimpleContainer ui:field="toolRequestPanel"/>
+                    </gxt:child>
+                    <gxt:child config="{toolAdminConfig}">
+                        <con:SimpleContainer ui:field="toolAdminPanel"/>
                     </gxt:child>
                     <gxt:child config="{sysMsgTabConfig}">
                         <con:SimpleContainer ui:field="systemMessagesPanel"/>

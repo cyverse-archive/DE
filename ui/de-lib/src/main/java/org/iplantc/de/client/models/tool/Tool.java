@@ -18,18 +18,19 @@ public interface Tool extends HasId, HasDescription, HasName {
     void setType(String type);
 
     @PropertyName("type")
-    String getType();   
-    
+    String getType();
+
     @PropertyName("attribution")
     String getAttribution();
-    
+
     @PropertyName("attribution")
     void setAttribution(String attribution);
-    
+
     @PropertyName("version")
     void setVersion(String version);
-    
+
     @PropertyName("version")
     String getVersion();
-    
+
+
 }
