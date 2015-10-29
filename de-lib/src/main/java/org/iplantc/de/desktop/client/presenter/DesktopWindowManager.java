@@ -169,8 +169,11 @@ public class DesktopWindowManager {
         final int desktopContainerRight = desktopContainer.getAbsoluteRight();
         final int windowRight = window.asWindow().getElement().getAbsoluteRight();
         final int windowBottom = window.asWindow().getElement().getAbsoluteBottom();
-        if (windowRight > desktopContainerRight || windowBottom > desktopContainerBottom){
-            window.setPagePosition(0,0);
+        if (windowRight > desktopContainerRight){
+            window.setPagePosition(0, window.getWindowState().getWinTop());
+        }
+        if (windowBottom > desktopContainerBottom){
+            window.setPagePosition(window.getWindowState().getWinLeft(), 0);
         }
     }
 
