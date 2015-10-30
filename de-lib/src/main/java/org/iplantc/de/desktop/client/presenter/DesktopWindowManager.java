@@ -5,7 +5,6 @@ import org.iplantc.de.client.models.WindowType;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
-import org.iplantc.de.desktop.client.views.windows.DEAppsWindow;
 import org.iplantc.de.desktop.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.desktop.client.views.windows.util.WindowFactory;
 
@@ -169,10 +168,10 @@ public class DesktopWindowManager {
         final int desktopContainerRight = desktopContainer.getAbsoluteRight();
         final int windowRight = window.asWindow().getElement().getAbsoluteRight();
         final int windowBottom = window.asWindow().getElement().getAbsoluteBottom();
-        if (windowRight > desktopContainerRight){
+        if (windowRight > desktopContainerRight) {
             window.setPagePosition(0, window.getWindowState().getWinTop());
         }
-        if (windowBottom > desktopContainerBottom){
+        if (windowBottom > desktopContainerBottom) {
             window.setPagePosition(window.getWindowState().getWinLeft(), 0);
         }
     }
