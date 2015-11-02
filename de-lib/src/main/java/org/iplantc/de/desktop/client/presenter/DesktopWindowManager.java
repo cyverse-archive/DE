@@ -155,10 +155,25 @@ public class DesktopWindowManager {
                 if (desktopContainer != null) {
                     window.setContainer(desktopContainer);
                 }
+
                 window.show(config, constructWindowId(config), true);
+                moveOutOfBoundsWindow(window);
                 windowManager.bringToFront(window.asWindow());
             }
         });
+    }
+
+    private void moveOutOfBoundsWindow(IPlantWindowInterface window) {
+        final int desktopContainerBottom = desktopContainer.getAbsoluteBottom();
+        final int desktopContainerRight = desktopContainer.getAbsoluteRight();
+        final int windowRight = window.asWindow().getElement().getAbsoluteRight();
+        final int windowBottom = window.asWindow().getElement().getAbsoluteBottom();
+        if (windowRight > desktopContainerRight) {
+            window.setPagePosition(0, window.getWindowState().getWinTop());
+        }
+        if (windowBottom > desktopContainerBottom) {
+            window.setPagePosition(window.getWindowState().getWinLeft(), 0);
+        }
     }
 
     String constructWindowId(WindowConfig config) {
