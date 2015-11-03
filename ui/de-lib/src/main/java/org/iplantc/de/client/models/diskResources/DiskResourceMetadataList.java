@@ -14,4 +14,7 @@ public interface DiskResourceMetadataList {
 
     @PropertyName("metadata")
     List<DiskResourceMetadata> getMetadata();
+
+    @PropertyName("template-avus")
+    DiskResourceMetadataTemplateList getMetadataTemplates();
 }

@@ -61,7 +61,7 @@ project(':de-webapp') {
         src += files(project(':de-lib').sourceSets.main.allJava.srcDirs) + files(project(':de-lib').sourceSets.main.output.resourcesDir)
 
         superDev { noPrecompile = true }
-        maxHeapSize = '1024M'
+        maxHeapSize = '2g'
         compiler {
 //            enableClosureCompiler = true;
             disableClassMetadata = true;
