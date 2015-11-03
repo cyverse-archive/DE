@@ -1,0 +1,14 @@
+.nameStyle {
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 12px;
+    height: 15px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    color: black;
+}
+
+.nameStyle:hover {
+    text-decoration: underline;
+}
+

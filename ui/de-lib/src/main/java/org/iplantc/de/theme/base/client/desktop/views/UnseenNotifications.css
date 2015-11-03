@@ -1,0 +1,40 @@
+.lsOverStyle {
+    background: repeat-x scroll left top #EFEFEF;
+    border: 1px solid #ddd !important;
+}
+
+.lvItemSelector {
+    float: left;
+    margin: 4px 0 4px 4px;
+    display: block;
+    overflow: hidden;
+    text-align: left;
+}
+
+.lvSelStyle {
+    background: none repeat scroll 0 50% #DFE8F6;
+    border: 1px dotted #A3BAE9 !important;
+}
+
+.cell {
+    background: none repeat scroll 0 0 ;
+    padding: 3px;
+    font-size: 11px;
+    border-bottom: 1px solid #DDDDDD;
+    overflow: hidden;
+    cursor: pointer;
+    text-align: left;
+    white-space: normal;
+    text-overflow: ellipsis;
+}
+
+.cellHighlight {
+    background: none repeat scroll 0 0 #DDDDDD;
+    padding: 3px;
+    font-size: 11px;
+    overflow: hidden;
+    cursor: pointer;
+    text-align: left;
+    white-space: normal;
+    text-overflow: ellipsis;
+}

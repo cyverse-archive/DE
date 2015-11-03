@@ -1,0 +1,44 @@
+# files to be excluded from tracking by Git
+*~
+
+# eclipse-related files
+.classpath
+.options
+.project
+.settings
+
+# ignore war directory
+war
+
+# ignore directories related to GWT Unit Tests
+tomcat
+gwt-unitCache
+.gwt
+
+# ignore gradle build directory
+build
+target
+
+.gradle
+.metadata
+ucdetector_reports
+
+# the Mac .DS_Store directory
+.DS_Store
+
+# ignore intellij files
+*.ipr
+*.iws
+*.ids
+*.iml
+out/
+applications/config*
+.idea/
+
+#ignore class files
+*.class
+
+#ignore bin
+bin/
+#ignore logs
+log/

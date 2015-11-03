@@ -1,0 +1,83 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:con="urn:import:com.sencha.gxt.widget.core.client.container"
+	xmlns:form="urn:import:org.iplantc.de.commons.client.widgets"
+	xmlns:gxtForm="urn:import:com.sencha.gxt.widget.core.client.form"
+	xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+	xmlns:selector="urn:import:org.iplantc.de.diskResource.client.views.widgets"
+	xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client">
+
+	<ui:with field="appearance"
+		type="org.iplantc.de.diskResource.client.views.dialogs.SimpleFileUploadDialog.SimpleFileUploadDialogAppearance" />
+		
+		<ui:with field="bulkapp"
+        type="org.iplantc.de.diskResource.client.views.dialogs.BulkMetadataDialog.Appearance" />
+
+	<ui:with field="sideMargins" type="com.sencha.gxt.core.client.util.Margins">
+		<ui:attributes top="4" right="4" bottom="4" left="4" />
+	</ui:with>
+
+	<ui:with field="centerMargins" type="com.sencha.gxt.core.client.util.Margins">
+		<ui:attributes top="4" right="0" bottom="4" left="0" />
+	</ui:with>
+
+	<ui:with field="centerLayoutData"
+		type="com.sencha.gxt.widget.core.client.container.HorizontalLayoutContainer.HorizontalLayoutData">
+		<ui:attributes width="1" height="1" margins="{centerMargins}" />
+	</ui:with>
+
+	<ui:with field="sideLayoutData"
+		type="com.sencha.gxt.widget.core.client.container.HorizontalLayoutContainer.HorizontalLayoutData">
+		<ui:attributes width="-1" height="1" margins="{sideMargins}" />
+	</ui:with>
+
+	<ui:with field="fileSelLabel"
+		type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+		<ui:attributes width="1" height="-1" margins="{sideMargins}" />
+	</ui:with>
+
+	<ui:with field="preferenceLayoutData"
+		type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+		<ui:attributes width="1" height="-1" margins="{sideMargins}" />
+	</ui:with>
+
+	<con:VerticalLayoutContainer>
+		<con:child layoutData="{fileSelLabel}">
+			<g:HTML text="{bulkapp.uploadMetadata}" ui:field="upFileLbl"/>
+		</con:child>
+		<con:child layoutData="{preferenceLayoutData}">
+			<gxtForm:FormPanel ui:field="form0" borders="false">
+				<con:HorizontalLayoutContainer>
+					<con:child layoutData="{sideLayoutData}">
+						<button:TextButton ui:field="btn0" toolTip="{appearance.reset}"
+							icon="{appearance.arrowUndoIcon}" debugId="idBtnReset0" />
+					</con:child>
+					<con:child layoutData="{centerLayoutData}">
+						<form:IPCFileUploadField ui:field="fuf0"
+							debugId="idFileUpld0" name="file" />
+					</con:child>
+					<con:child layoutData="{sideLayoutData}">
+						<gxt:Status ui:field="status0" />
+					</con:child>
+				</con:HorizontalLayoutContainer>
+			</gxtForm:FormPanel>
+		</con:child>
+		
+		<con:child layoutData="{fileSelLabel}">
+            <g:HTML HTML="{bulkapp.selectMetadataFile}"  ui:field="selLbl"/>
+        </con:child>
+        <con:child layoutData="{preferenceLayoutData}">
+            <selector:FileSelectorField ui:field="fileSelector"
+                debugId="idFileSelector" validatePermissions="true" />
+        </con:child>
+		<con:child layoutData="{fileSelLabel}">
+            <g:HTML HTML="{bulkapp.selectTemplate}" />
+        </con:child>
+        <con:child layoutData="{preferenceLayoutData}">
+                               <gxtForm:ComboBox ui:field="templateCombo"
+                                   allowBlank="true"
+                                   forceSelection="true"
+                                   triggerAction="ALL"/>
+        </con:child>
+	</con:VerticalLayoutContainer>
+</ui:UiBinder>

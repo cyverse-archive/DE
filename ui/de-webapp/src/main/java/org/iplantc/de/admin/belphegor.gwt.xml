@@ -1,0 +1,33 @@
+<module rename-to='belphegor'>
+    <!-- Inherit the core Web Toolkit stuff.                        -->
+    <inherits name='com.google.gwt.user.User'/>
+    <inherits name="com.google.common.collect.Collect"/>
+
+    <!-- GXT -->
+    <inherits name='com.sencha.gxt.ui.GXT' />
+    <inherits name='com.sencha.gxt.theme.gray.Gray' />
+    <stylesheet src="reset.css" />
+
+    <!-- iPlant Dependencies -->
+    <inherits name="org.iplantc.de.admin.desktop.AdminDesktop" />
+
+    <!-- iPlant Theme -->
+    <inherits name="org.iplantc.de.theme.base.Base" />
+
+    <!-- Configure logging. -->
+    <inherits name="com.google.gwt.logging.Logging"/>
+    <set-property name="gwt.logging.logLevel" value="WARNING"/>
+    <set-property name="gwt.logging.enabled" value="TRUE"/>
+    <set-property name="gwt.logging.simpleRemoteHandler" value="ENABLED"/>
+    <set-property name="gwt.logging.consoleHandler" value="DISABLED"/>
+
+    <replace-with class="org.iplantc.de.theme.base.client.commons.widgets.IPlantAnchorDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.widgets.IPlantAnchor.IPlantAnchorAppearance" />
+    </replace-with>
+
+    <!-- Specify the app entry point class. -->
+    <entry-point class='org.iplantc.de.admin.client.Belphegor' />
+
+    <!-- Specify the paths for translatable code -->
+    <source path='client' />
+</module>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.6.1//EN"
+  "http://gwtproject.org/doctype/2.6.1/gwt-module.dtd">
+<module>
+    <!-- iPlant module inherits -->
+    <inherits name="org.iplantc.de.commons.ui-commons"/>
+    <inherits name="org.iplantc.de.collaborators.Collaborators" />
+    <inherits name="org.iplantc.de.tags.Tags" />
+
+    <source path="client"/>
+</module>

@@ -1,0 +1,72 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
+    xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+    xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+    xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
+    xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar">
+
+    <ui:with
+        field="strings"
+        type="org.iplantc.de.resources.client.messages.IplantDisplayStrings" />
+    <ui:with
+        field="icons"
+        type="org.iplantc.de.resources.client.IplantResources" />
+    <ui:with
+        field="northData"
+        type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
+        <ui:attributes
+            size="30"
+            maxSize="30" />
+    </ui:with>
+    <ui:with
+        field="pipelineAppStore"
+        type="com.sencha.gxt.data.shared.ListStore" />
+    <ui:with
+        field="cm"
+        type="com.sencha.gxt.widget.core.client.grid.ColumnModel" />
+    <ui:with
+        field="gridView"
+        type="com.sencha.gxt.widget.core.client.grid.GridView">
+        <ui:attributes
+            forceFit="true"
+            autoFill="true" />
+    </ui:with>
+
+    <container:BorderLayoutContainer ui:field="appOrderPanel">
+        <container:north layoutData="{northData}">
+            <toolbar:ToolBar>
+                <button:TextButton
+                    ui:field="addAppsBtn"
+                    debugId="idBtnAddApps"
+                    text="{strings.add}"
+                    icon="{icons.add}" />
+                <button:TextButton
+                    ui:field="removeAppBtn"
+                    debugId="idBtnRemoveApp"
+                    text="{strings.remove}"
+                    icon="{icons.delete}" />
+                <toolbar:SeparatorToolItem />
+                <button:TextButton
+                    ui:field="moveUpBtn"
+                    debugId="idBtnMoveUp"
+                    text="{strings.moveUp}"
+                    icon="{icons.arrowUp}" />
+                <button:TextButton
+                    ui:field="moveDownBtn"
+                    debugId="idBtnMoveDown"
+                    text="{strings.moveDown}"
+                    icon="{icons.arrowDown}" />
+            </toolbar:ToolBar>
+        </container:north>
+        <container:center>
+            <grid:Grid
+                ui:field="appOrderGrid"
+                cm="{cm}"
+                store="{pipelineAppStore}"
+                view="{gridView}" />
+        </container:center>
+    </container:BorderLayoutContainer>
+</ui:UiBinder>

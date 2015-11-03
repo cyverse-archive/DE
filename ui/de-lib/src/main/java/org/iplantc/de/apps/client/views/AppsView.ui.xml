@@ -1,0 +1,67 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+             xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
+             xmlns:appsWidgets="urn:import:org.iplantc.de.apps.client"
+             xmlns:toolBar="urn:import:org.iplantc.de.apps.client">
+
+    <!-- Border Layout Data -->
+   <ui:with field="westMargins"
+            type="com.sencha.gxt.core.client.util.Margins">
+      <ui:attributes top="0"
+                     right="0"
+                     bottom="0"
+                     left="0" />
+   </ui:with>
+   <ui:with field="centerMargins"
+            type="com.sencha.gxt.core.client.util.Margins">
+      <ui:attributes top="0"
+                     right="0"
+                     bottom="0"
+                     left="0" />
+   </ui:with>
+   <ui:with field="northData"
+            type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
+      <ui:attributes size="30"
+                     maxSize="30"
+                     hidden="false"/>
+   </ui:with>
+   <ui:with field="westData"
+            type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
+      <ui:attributes margins="{westMargins}"
+                     size="200"
+                     collapsible="true"
+                     split="true" />
+   </ui:with>
+   <ui:with field="centerData"
+            type="com.sencha.gxt.widget.core.client.container.MarginData">
+      <ui:attributes margins="{centerMargins}" />
+   </ui:with>
+   <ui:with field="eastData"
+            type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
+      <ui:attributes size="150"
+                     hidden="true"/>
+   </ui:with>
+
+    <container:BorderLayoutContainer borders="true">
+        <!-- This is the tool bar -->
+        <container:north layoutData="{northData}">
+            <toolBar:AppsToolbarView ui:field="toolBar" />
+        </container:north>
+
+        <!-- This is the navigation panel -->
+        <container:west layoutData="{westData}">
+           <appsWidgets:AppCategoriesView ui:field="appCategoriesView" />
+        </container:west>
+
+        <!-- This is the main panel -->
+        <container:center layoutData="{centerData}">
+            <appsWidgets:AppsGridView ui:field="appsGridView" />
+        </container:center>
+
+        <!-- This is the details panel -->
+        <container:east layoutData="{eastData}">
+            <gxt:ContentPanel ui:field="eastPanel" />
+        </container:east>
+    </container:BorderLayoutContainer>
+</ui:UiBinder>

@@ -1,0 +1,22 @@
+<module rename-to="discoveryenvironment">
+    <inherits name="org.iplantc.de.discoveryenvironment" />
+
+    <!-- Super Dev Mode -->
+    <add-linker name="xsiframe" />
+    <set-configuration-property name="devModeRedirectEnabled" value="true" />
+    <set-property name="compiler.useSourceMaps" value="true" />
+
+    <!-- Configure Dev Mode Logging -->
+    <inherits name="com.google.gwt.logging.Logging"/>
+    <set-property name="gwt.logging.logLevel" value="FINE"/>          # To change the default logLevel
+    <set-property name="gwt.logging.enabled" value="TRUE"/>
+    <set-property name="gwt.logging.simpleRemoteHandler" value="ENABLED"/>
+    <set-property name="gwt.logging.consoleHandler" value="ENABLED"/>
+
+    <!-- Turn on CssResource pretty printing -->
+    <set-configuration-property name="CssResource.style" value="pretty"/>
+
+    <replace-with class="org.iplantc.de.theme.base.client.desktop.window.AboutApplicationDevAppearance">
+        <when-type-is class="org.iplantc.de.desktop.client.views.windows.AboutApplicationWindow.AboutApplicationAppearance" />
+    </replace-with>
+</module>

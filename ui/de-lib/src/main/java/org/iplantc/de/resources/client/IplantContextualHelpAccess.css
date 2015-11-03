@@ -1,0 +1,7 @@
+@CHARSET "UTF-8";
+@sprite .contextualHelp {
+	gwt-image: "help";
+	height: 15px;
+	width: 15px;
+	padding-right: 3px;
+}

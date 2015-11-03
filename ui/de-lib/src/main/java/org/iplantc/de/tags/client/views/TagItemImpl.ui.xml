@@ -1,0 +1,13 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+             xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+        
+    <g:HTMLPanel ui:field="tagPanel">
+        <div ui:field="tagDiv">
+            <!-- Necessary to start both tags in one line, otherwise HTML will include a space gap between both divs -->
+            <g:Label ui:field="value"></g:Label>
+             <div name="tagEdit" ui:field="editOption"></div>
+             <div name="tagDelete" ui:field="deleteOption"></div>
+        </div>
+       
+   </g:HTMLPanel>
+</ui:UiBinder>

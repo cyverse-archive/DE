@@ -1,0 +1,88 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:menu="urn:import:com.sencha.gxt.widget.core.client.menu"
+             xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+             xmlns:search="urn:import:org.iplantc.de.analysis.client.views.widget">
+
+    <ui:with field="appearance"
+             type="org.iplantc.de.analysis.client.AnalysesView.Appearance" />
+
+    <ui:with field="flexBoxData"
+             type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
+        <ui:attributes flex="3"/>
+    </ui:with>
+
+    <toolbar:ToolBar ui:field="menuBar">
+        <toolbar:child>
+            <button:TextButton ui:field="analysesTb"
+                               text="{appearance.analysesMenuLbl}">
+                <button:menu>
+                    <menu:Menu>
+                        <menu:MenuItem ui:field="goToFolderMI"
+                                       text="{appearance.goToOutputFolder}"
+                                       icon="{appearance.folderIcon}"
+                                       enabled="false"/>
+                        <menu:MenuItem ui:field="viewParamsMI"
+                                       text="{appearance.viewParamLbl}"
+                                       icon="{appearance.fileViewIcon}"
+                                       enabled="false"/>
+                        <menu:MenuItem ui:field="relaunchMI"
+                                       text="{appearance.relaunchAnalysis}"
+                                       icon="{appearance.runIcon}"
+                                       enabled="false"/>
+                        <menu:MenuItem ui:field="viewJobInfoMI"
+                                       text="{appearance.viewAnalysisStepInfo}"
+                                       icon="{appearance.fileViewIcon}"
+                                       enabled="false"/>               
+                        <menu:MenuItem ui:field="cancelMI"
+                                       text="{appearance.cancelAnalysis}"
+                                       icon="{appearance.deleteIcon}"
+                                       enabled="false"/>
+                        <menu:MenuItem ui:field="deleteMI"
+                                       text="{appearance.delete}"
+                                       icon="{appearance.cancelIcon}"
+                                       enabled="false"/>
+                    </menu:Menu>
+                </button:menu>
+            </button:TextButton>
+        </toolbar:child>
+
+        <toolbar:child>
+            <button:TextButton ui:field="editTb"
+                               text="{appearance.editMenuLbl}">
+                <button:menu>
+                    <menu:Menu>
+                        <menu:MenuItem ui:field="renameMI"
+                                       text="{appearance.renameMenuItem}"
+                                       icon="{appearance.fileRenameIcon}"
+                                       enabled="false"/>
+                        <menu:MenuItem ui:field="updateCommentsMI"
+                                       text="{appearance.updateComments}"
+                                       icon="{appearance.userCommentIcon}"
+                                       enabled="false"/>
+                    </menu:Menu>
+                </button:menu>
+            </button:TextButton>
+        </toolbar:child>
+
+        <toolbar:child>
+            <button:TextButton ui:field="refreshTb"
+                               text="{appearance.refresh}"
+                               icon="{appearance.refreshIcon}" />
+        </toolbar:child>
+        <toolbar:child>
+            <toolbar:SeparatorToolItem />
+        </toolbar:child>
+        <toolbar:child>
+            <button:TextButton ui:field="showAllTb"
+                               text="{appearance.showAll}"
+                               icon="{appearance.arrow_undoIcon}"
+                               enabled="false"/>
+        </toolbar:child>
+        <toolbar:child layoutData="{flexBoxData}">
+            <search:AnalysisSearchField ui:field="searchField"
+                                        emptyText="{appearance.searchFieldEmptyText}"/>
+        </toolbar:child>
+    </toolbar:ToolBar>
+</ui:UiBinder>

@@ -1,0 +1,212 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+             xmlns:widgets="urn:import:org.iplantc.de.commons.client.widgets">
+
+    <ui:style>
+        .beta {
+            color: #F00;
+            font-size: .9em;
+        }
+    </ui:style>
+
+    <ui:with field="margins0000"
+             type="com.sencha.gxt.core.client.util.Margins">
+        <ui:attributes top="0" right="0" bottom="0" left="0"/>
+    </ui:with>
+    <ui:with field="margins0500"
+             type="com.sencha.gxt.core.client.util.Margins">
+        <ui:attributes top="0" right="5" bottom="0" left="0"/>
+    </ui:with>
+    <ui:with field="margins0505"
+             type="com.sencha.gxt.core.client.util.Margins">
+        <ui:attributes top="0" right="5" bottom="5" left="5"/>
+    </ui:with>
+    <ui:with field="margins5000"
+             type="com.sencha.gxt.core.client.util.Margins">
+        <ui:attributes top="15" right="0" bottom="0" left="5"/>
+    </ui:with>
+    <ui:with field="margins0050"
+             type="com.sencha.gxt.core.client.util.Margins">
+        <ui:attributes top="0" right="0" bottom="15" left="5"/>
+    </ui:with>
+    <ui:with field="padding5"
+             type="com.sencha.gxt.core.client.util.Padding">
+        <ui:attributes top="5" right="5" bottom="5" left="5"/>
+    </ui:with>
+
+    <ui:with field="verticalLayoutData"
+             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+        <ui:attributes width=".80" height="-1" margins="{margins0505}"/>
+    </ui:with>
+
+    <ui:with field="verticalLayoutDataWithTopMargins"
+             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+        <ui:attributes width=".80" height="-1" margins="{margins5000}"/>
+    </ui:with>
+    <ui:with field="verticalLayoutDataWithBottomMargins"
+             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+        <ui:attributes width=".80" height="-1" margins="{margins0050}"/>
+    </ui:with>
+
+    <ui:with field="boxLayoutDataMargins0505"
+             type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
+        <ui:attributes margins="{margins0505}"/>
+    </ui:with>
+
+    <container:VerticalLayoutContainer ui:field="con">
+
+        <container:child layoutData="{verticalLayoutData}">
+            <form:FieldLabel text="File/Folder name has the words"
+                             labelAlign="TOP">
+                <form:widget>
+                    <form:TextField ui:field="fileQuery"
+                                    emptyText="Enter values..."/>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+
+        <container:child layoutData="{verticalLayoutData}">
+            <form:FieldLabel text="File/Folder name doesn't have"
+                             labelAlign="TOP">
+                <form:widget>
+                    <form:TextField ui:field="negatedFileQuery" emptyText="Enter values..."/>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+
+
+        <container:child layoutData="{verticalLayoutDataWithTopMargins}">
+            <form:FieldLabel text="Created within" labelAlign="TOP">
+                <form:widget>
+                    <form:SimpleComboBox ui:field="createdWithinCombo"
+                                         forceSelection="true"
+                                         triggerAction="ALL"
+                            />
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+
+        <container:child layoutData="{verticalLayoutDataWithBottomMargins}">
+            <form:FieldLabel text="Modified within" labelAlign="TOP">
+                <form:widget>
+                    <form:SimpleComboBox ui:field="modifiedWithinCombo"
+                                         forceSelection="true"
+                                         triggerAction="ALL"
+                            />
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+
+
+        <container:child layoutData="{verticalLayoutData}">
+            <form:FieldLabel text="Metadata attribute has the words"
+                             labelAlign="TOP">
+                <form:widget>
+                    <form:TextField ui:field="metadataAttributeQuery"
+                                    emptyText="Enter values..."/>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+
+
+        <container:child layoutData="{verticalLayoutData}">
+            <form:FieldLabel text="Metadata value has the words"
+                             labelAlign="TOP">
+                <form:widget>
+                    <form:TextField ui:field="metadataValueQuery"
+                                    emptyText="Enter values..."/>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+
+
+        <container:child layoutData="{verticalLayoutData}">
+            <form:FieldLabel text="Owned by"
+                             labelAlign="TOP">
+                <form:widget>
+                    <form:TextField ui:field="ownedBy"
+                                    emptyText="Enter iPlant user name"/>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+
+
+        <container:child layoutData="{verticalLayoutData}">
+            <form:FieldLabel text="Shared with"
+                             labelAlign="TOP">
+                <form:widget>
+                    <form:TextField ui:field="sharedWith"
+                                    emptyText="Enter iPlant user name"/>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+
+
+        <container:child layoutData="{verticalLayoutData}">
+            <form:FieldLabel text="File size is bigger than or equal to"
+                             labelAlign="TOP">
+                <form:widget>
+                    <container:HBoxLayoutContainer padding="{padding5}" hBoxLayoutAlign="TOP">
+                        <container:child layoutData="{boxLayoutDataMargins0505}">
+                            <form:NumberField ui:field="fileSizeGreaterThan"/>
+                        </container:child>
+
+                        <container:child layoutData="{boxLayoutDataMargins0505}">
+                            <form:SimpleComboBox ui:field="greaterThanComboBox"
+                                                 width="64"
+                                                 triggerAction="ALL"
+                                                 forceSelection="true"/>
+                        </container:child>
+                    </container:HBoxLayoutContainer>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+
+        <container:child layoutData="{verticalLayoutData}">
+            <form:FieldLabel text="File size is smaller than or equal to"
+                             labelAlign="TOP">
+                <form:widget>
+                    <container:HBoxLayoutContainer padding="{padding5}" hBoxLayoutAlign="TOP">
+                        <container:child layoutData="{boxLayoutDataMargins0505}">
+                            <form:NumberField ui:field="fileSizeLessThan"/>
+                        </container:child>
+
+                        <container:child layoutData="{boxLayoutDataMargins0505}">
+                            <form:SimpleComboBox ui:field="lessThanComboBox"
+                                                 width="64"
+                                                 triggerAction="ALL"
+                                                 forceSelection="true"/>
+                        </container:child>
+                    </container:HBoxLayoutContainer>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+
+        <container:child layoutData="{verticalLayoutData}">
+            <form:CheckBox ui:field="includeTrashItems" boxLabel="Include items in Trash"/>
+        </container:child>
+
+
+        <container:child layoutData="{verticalLayoutData}">
+            <container:HBoxLayoutContainer hBoxLayoutAlign="TOP" pack="END">
+                <container:child layoutData="{boxLayoutDataMargins0505}">
+                    <button:TextButton ui:field="searchButton"
+                                       text="Search"/>
+                </container:child>
+                <container:child layoutData="{boxLayoutDataMargins0505}">
+                    <g:Label styleName="{style.beta}"
+                             title="Search functionality is currently in beta.">(beta)
+                    </g:Label>
+                </container:child>
+                <container:child layoutData="{boxLayoutDataMargins0505}">
+                    <widgets:IPlantAnchor ui:field="createFilterLink"/>
+                </container:child>
+            </container:HBoxLayoutContainer>
+        </container:child>
+
+    </container:VerticalLayoutContainer>
+</ui:UiBinder>

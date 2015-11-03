@@ -1,0 +1,76 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven {
+            url 'http://dl.bintray.com/steffenschaefer/maven'
+        }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE")
+        classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.6'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+// Establish extended properties for all projects
+apply from: 'versions.gradle'
+
+group = 'org.iplantc.de'
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+
+    repositories {
+        mavenCentral()
+        maven {
+            url 'https://maven.sencha.com/repo/support-commercial-release'
+            credentials {
+                // To download the GXT deps, place your Sencha support username and password in your
+                //   ~/.gradle/gradle.properties file
+                username = "${sencha_support_user}"
+                password = "${sencha_support_password}"
+            }
+
+        }
+    }
+
+    group = 'org.iplantc.de'
+
+    // Exclude all GwtTests from normal java compiles
+    test {
+        exclude '**/GwtTest**'
+        // Disable the test report for the individual test task
+        reports.html.enabled = false
+    }
+}
+
+task testReport(type: TestReport) {
+    destinationDir = file("$buildDir/reports/allTests")
+    // Include the results from the `test` task in all subprojects
+    reportOn subprojects*.test
+}
+
+apply from: 'iplant/webapps.gradle'
+apply from: 'iplant/modules.gradle'
+
+dependencies {
+    compile project(':de-webapp')
+}
+
+clean {
+    delete "./target"
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.3'
+}
+

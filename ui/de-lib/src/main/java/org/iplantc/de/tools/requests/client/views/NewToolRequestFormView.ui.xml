@@ -1,0 +1,199 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:con="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+             xmlns:ipc="urn:import:org.iplantc.de.tools.requests.client.views"
+             xmlns:dr="urn:import:org.iplantc.de.diskResource.client.views.widgets">
+
+    <ui:with field="strings"
+             type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>
+
+    <ui:with field="constants"
+             type="org.iplantc.de.client.DEClientConstants"/>
+
+    <ui:with field="layoutData"
+             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+        <ui:attributes height="-1" width=".95"/>
+    </ui:with>
+
+    <con:VerticalLayoutContainer ui:field="container"
+                                 width="450">
+        <con:child layoutData="{layoutData}">
+            <con:HtmlLayoutContainer ui:field="intro"></con:HtmlLayoutContainer>
+        </con:child>
+        <form:FieldSet headingText="{strings.toolTab}"
+                       collapsible="true">
+            <con:VerticalLayoutContainer>
+                <con:child layoutData="{layoutData}">
+                    <form:FieldLabel ui:field="toolNameLbl"
+                                     labelSeparator="" labelAlign="TOP">
+                        <form:widget>
+                            <form:TextField debugId="idTxtToolName" ui:field="toolName"
+                                            allowBlank="false"/>
+                        </form:widget>
+                    </form:FieldLabel>
+                </con:child>
+                <con:child layoutData="{layoutData}">
+                    <form:FieldLabel ui:field="toolDescLbl" labelAlign="TOP">
+                        <form:widget>
+                            <form:TextArea debugId="idTxtToolDesc" ui:field="toolDesc"
+                                           allowBlank="false" height="150"/>
+                        </form:widget>
+                    </form:FieldLabel>
+                </con:child>
+                <con:child layoutData="{layoutData}">
+                    <form:FieldLabel text="{strings.toolAttributionLabel}"
+                                     labelAlign="TOP">
+                        <form:widget>
+                            <form:TextArea debugId="idTxtAttrib" ui:field="toolAttrib"
+                                           allowBlank="true" height="150"/>
+                        </form:widget>
+                    </form:FieldLabel>
+                </con:child>
+                <con:child layoutData="{layoutData}">
+                    <form:FieldLabel ui:field="srcLbl" labelAlign="TOP">
+                        <form:widget>
+                            <g:HorizontalPanel spacing="3">
+                                <form:Radio debugId="idRdoTooLink" ui:field="toolLink"
+                                            name="binRadioGroup" boxLabel="{strings.link}"
+                                            value="false"/>
+                                <form:Radio debugId="idRdoToolUpld" ui:field="toolUpld"
+                                            name="binRadioGroup" boxLabel="{strings.uploadNew}"
+                                            value="true"/>
+                                <form:Radio debugId="idRdoToolSlt" ui:field="toolSlt"
+                                            name="binRadioGroup"
+                                            boxLabel="{strings.selectExsisting}" value="false"/>
+                            </g:HorizontalPanel>
+                        </form:widget>
+                    </form:FieldLabel>
+                </con:child>
+                <con:child layoutData="{layoutData}">
+                    <con:CardLayoutContainer ui:field="binOptions">
+                        <ipc:UploadForm ui:field="binUpld" allowBlank="true"
+                                        visible="true" enabled="true"/>
+                        <form:FieldLabel text="" labelSeparator=""
+                                         labelAlign="TOP">
+                            <form:widget>
+                                <form:TextField debugId="idTxtToolUrl" ui:field="binLink"
+                                                allowBlank="false" visible="true" enabled="true"/>
+                            </form:widget>
+                        </form:FieldLabel>
+                        <dr:FileSelectorField ui:field="binSelect"
+                                              visible="true" enabled="true"
+                                              required="false"></dr:FileSelectorField>
+                    </con:CardLayoutContainer>
+                </con:child>
+
+
+                <con:child layoutData="{layoutData}">
+                    <form:FieldLabel ui:field="docUrlLbl" labelAlign="TOP"
+                                     labelSeparator="">
+                        <form:widget>
+                            <form:TextField debugId="idTxToolDocUrl" ui:field="toolDoc"
+                                            allowBlank="false"/>
+                        </form:widget>
+                    </form:FieldLabel>
+                </con:child>
+                <con:child layoutData="{layoutData}">
+                    <form:FieldLabel ui:field="versionLbl" labelAlign="TOP"
+                                     labelSeparator="">
+                        <form:widget>
+                            <form:TextField debugId="idTxtVersion" ui:field="toolVersion"
+                                            allowBlank="false"/>
+                        </form:widget>
+                    </form:FieldLabel>
+                </con:child>
+                <con:child layoutData="{layoutData}">
+                    <form:FieldLabel ui:field="archLbl" labelAlign="TOP"
+                                     labelSeparator="">
+                        <form:widget>
+                            <form:ComboBox debugId="idCboArch" ui:field="archCbo"
+                                           allowBlank="true" forceSelection="true"
+                                           triggerAction="ALL"
+                                           editable="false"/>
+                        </form:widget>
+                    </form:FieldLabel>
+                </con:child>
+                <con:child layoutData="{layoutData}">
+                    <form:FieldLabel ui:field="multiLbl" labelAlign="TOP"
+                                     labelSeparator="">
+                        <form:widget>
+                            <form:ComboBox debugId="idCboMultiThreaded"
+                                           ui:field="multiThreadCbo" allowBlank="true"
+                                           forceSelection="true"
+                                           triggerAction="ALL" editable="false"/>
+                        </form:widget>
+                    </form:FieldLabel>
+                </con:child>
+            </con:VerticalLayoutContainer>
+        </form:FieldSet>
+        <form:FieldSet headingText="{strings.otherTab}"
+                       collapsible="true">
+            <con:VerticalLayoutContainer>
+                <con:child layoutData="{layoutData}">
+                    <form:FieldLabel ui:field="testLbl" labelAlign="TOP">
+                        <form:widget>
+                            <g:HorizontalPanel spacing="3">
+                                <form:Radio debugId="idRdoTestUpld" ui:field="testUpld"
+                                            name="testRadioGroup" boxLabel="{strings.uploadNew}"
+                                            value="true"/>
+                                <form:Radio debugId="idRdoTestSlt" ui:field="testSlt"
+                                            name="testRadioGroup"
+                                            boxLabel="{strings.selectExsisting}" value="false"/>
+                            </g:HorizontalPanel>
+                        </form:widget>
+                    </form:FieldLabel>
+                </con:child>
+                <con:child layoutData="{layoutData}">
+                    <con:CardLayoutContainer ui:field="testDataOptions">
+                        <ipc:UploadForm ui:field="testDataUpld" allowBlank="false"/>
+                        <dr:FileSelectorField ui:field="testDataSelect"
+                                              visible="true" enabled="true"
+                                              required="false"></dr:FileSelectorField>
+                    </con:CardLayoutContainer>
+                </con:child>
+                <con:child layoutData="{layoutData}">
+                    <form:FieldLabel ui:field="cmdLineLbl" labelAlign="TOP">
+                        <form:widget>
+                            <form:TextArea debugId="idTxtCmdLine" ui:field="runInfo"
+                                           allowBlank="false" height="150"/>
+                        </form:widget>
+                    </form:FieldLabel>
+                </con:child>
+                <con:child layoutData="{layoutData}">
+                    <form:FieldLabel ui:field="otherLbl" text="{strings.otherData}"
+                                     labelAlign="TOP">
+                        <form:widget>
+                            <g:HorizontalPanel spacing="3">
+                                <form:Radio debugId="idRdoOtherUpld" ui:field="otherUpld"
+                                            name="otherRadioGroup" boxLabel="{strings.uploadNew}"
+                                            value="true"/>
+                                <form:Radio debugId="idRdootherSlt" ui:field="otherSlt"
+                                            name="otherRadioGroup"
+                                            boxLabel="{strings.selectExsisting}" value="false"/>
+                            </g:HorizontalPanel>
+                        </form:widget>
+                    </form:FieldLabel>
+                </con:child>
+                <con:child layoutData="{layoutData}">
+                    <con:CardLayoutContainer ui:field="otherDataOptions">
+                        <ipc:UploadForm ui:field="otherDataUpld"/>
+                        <dr:FileSelectorField ui:field="otherDataSelect"
+                                              visible="true" enabled="true"
+                                              required="false"></dr:FileSelectorField>
+                    </con:CardLayoutContainer>
+                </con:child>
+                <con:child layoutData="{layoutData}">
+                    <form:FieldLabel text="{strings.otherInfo}"
+                                     labelAlign="TOP">
+                        <form:widget>
+                            <form:TextArea debugId="idTxtAddnlInfo" ui:field="otherInfo"
+                                           allowBlank="true" height="150"/>
+                        </form:widget>
+                    </form:FieldLabel>
+                </con:child>
+            </con:VerticalLayoutContainer>
+        </form:FieldSet>
+    </con:VerticalLayoutContainer>
+</ui:UiBinder>

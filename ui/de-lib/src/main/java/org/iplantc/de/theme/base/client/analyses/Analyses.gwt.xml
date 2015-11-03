@@ -1,0 +1,38 @@
+<module>
+
+    <!-- View -->
+    <replace-with class="org.iplantc.de.theme.base.client.analyses.AnalysesViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.analysis.client.AnalysesView.Appearance"/>
+    </replace-with>
+
+    <!-- Parameters View-->
+    <replace-with class="org.iplantc.de.theme.base.client.analyses.AnalysisParametersViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.analysis.client.AnalysisParametersView.Appearance"/>
+    </replace-with>
+
+    <!-- Cells -->
+    <replace-with class="org.iplantc.de.theme.base.client.analyses.cells.AnalysisCommentCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.analysis.client.views.cells.AnalysisCommentCell.AnalysisCommentCellAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.analyses.cells.AnalysisAppNameCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.analysis.client.views.cells.AnalysisAppNameCell.AnalysisAppNameCellAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.analyses.cells.AnalysisNameCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.analysis.client.views.cells.AnalysisNameCell.AnalysisNameCellAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.analyses.cells.AnalysisParamNameCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.analysis.client.views.parameters.cells.AnalysisParamNameCell.AnalysisParamNameCellAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.analyses.cells.AnalysisParamValueCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.analysis.client.views.parameters.cells.AnalysisParamValueCell.AnalysisParamValueCellAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.analyses.presenter.AnalysesPresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.analysis.client.AnalysesView.Presenter.Appearance"/>
+    </replace-with>
+
+</module>
