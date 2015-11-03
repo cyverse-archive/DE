@@ -1,0 +1,58 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+    <ui:with field="appearance"
+             type="org.iplantc.de.apps.client.AppDetailsView.AppDetailsAppearance" />
+
+    <g:HTMLPanel>
+        <table>
+            <tr>
+                <td>
+                    <ui:text from="{appearance.detailsLabel}"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="{appearance.css.label}">
+                    <ui:text from="{appearance.toolNameLabel}"/>
+                </td>
+                <td class="{appearance.css.value}">
+                    <g:InlineLabel ui:field="name" />
+                </td>
+            </tr>
+            <tr>
+                <td class="{appearance.css.label}">
+                    <ui:text from="{appearance.descriptionLabel}"/>
+                </td>
+                <td class="{appearance.css.value}">
+                    <g:InlineLabel ui:field="description" />
+                </td>
+            </tr>
+            <tr>
+                <td class="{appearance.css.label}">
+                    <ui:text from="{appearance.toolPathLabel}"/>
+                </td>
+                <td class="{appearance.css.value}">
+                    <g:InlineLabel ui:field="location" />
+                </td>
+            </tr>
+            <tr>
+                <td class="{appearance.css.label}">
+                    <ui:text from="{appearance.toolVersionLabel}"/>
+                </td>
+                <td class="{appearance.css.value}">
+                    <g:InlineLabel ui:field="version" />
+                </td>
+            </tr>
+            <tr>
+                <td class="{appearance.css.label}">
+                    <ui:text from="{appearance.toolAttributionLabel}"/>
+                </td>
+                <td class="{appearance.css.value}">
+                    <g:InlineLabel ui:field="attribution" />
+                </td>
+            </tr>
+        </table>
+    </g:HTMLPanel>
+
+</ui:UiBinder>

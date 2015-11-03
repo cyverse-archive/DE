@@ -1,0 +1,36 @@
+@sprite .iplantcLogo {
+	gwt-image: "headerLogo";
+	cursor: pointer;
+}
+
+@sprite .iplantcHeader {
+	gwt-image: "headerLogoFill";
+}
+
+.headerMenu {
+	position: fixed;
+	top: 15px;
+	right: 40px;	
+}
+
+.headerMenuBody {
+	background-color: white;
+	outline: none;
+	border-color: #0098AA;
+	border-width: 3px;
+}
+
+.footer {
+	background-color: #FEFDDD;
+}
+
+.nsfText {
+	font-size: 10px;
+	position: absolute;
+	right: 10px;
+}
+
+.copyright {
+	font-size: 10px;
+	padding-left: 10px;
+}

@@ -1,0 +1,76 @@
+---
+# tasks file for elk-elasticsearch
+
+- name: pull elk images
+  shell: docker pull {{ elk.elasticsearch.image_name }}
+  register: docker_pull_v
+  changed_when: docker_pull_v.stdout.find('Image is up to date') == -1
+  tags:
+      - docker_pull
+      - docker_pull_elasticsearch
+
+- name: place Systemd service files
+  template: src={{ elk.elasticsearch.service_name }} dest=/usr/lib/systemd/system group=root owner=root mode=0664
+  register: service_file_v
+  tags:
+      - update_service_files
+      - update_service_files_elasticsearch
+ 
+- name: create {{elk.conf_dir}}
+  file: path={{elk.conf_dir}} owner=iplant group=iplant mode=0644 state=directory
+  tags: 
+      - config
+      - config_elasticsearch
+
+- name: place elasticsearch config files
+  template: src=elasticsearch.yml.j2 dest="{{elk.conf_dir}}/elasticsearch.yml" group=root owner=root mode=0664
+  register: config_file_v
+  tags:
+      - config
+      - config_elasticsearch
+
+- name: Reload systemd
+  shell: systemctl daemon-reload  
+  when: service_file_v.changed 
+  tags:
+      - update_service_files
+      - update_service_files_elasticsearch
+
+- name: enable elasticsearch service
+  service: name={{elk.elasticsearch.service_name}} enabled={{enable_services}}
+  when: service_file_v.changed 
+  tags:
+      - enable_services
+      - enable_elasticsearch
+
+- name: services are running
+  shell: systemctl is-active {{elk.elasticsearch.service_name}}
+  register: verify_service_running
+  ignore_errors: true
+  tags:
+      - start_services
+      - start_elasticsearch
+
+- name: start elasticsearch service
+  service: name={{elk.elasticsearch.service_name}} state=started
+  when: verify_service_running.rc != 0
+  tags:
+      - start_services
+      - start_elasticsearch
+
+  # Only restart if service file or config file changed, or if the image has been updated.
+- name: restart elasticsearch service
+  service: name={{elk.elasticsearch.service_name}} state=restarted
+  when: service_file_v.changed or 
+        config_file_v.changed or 
+        docker_pull_v.changed
+  tags:
+      - restart_services
+      - restart_elasticsearch
+
+- name: Wait for ES to come back
+  wait_for: host="{{elk_host}}" port="{{elk.elasticsearch.port}}" state=started
+
+- include: index-templates.yaml
+- include: apps-lookup-index.yaml
+

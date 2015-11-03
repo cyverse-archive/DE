@@ -1,0 +1,16 @@
+.disabledApp {
+	color: red;
+	cursor: default;
+	text-decoration: none;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.enabledApp {
+	color: black;
+	cursor: pointer;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}

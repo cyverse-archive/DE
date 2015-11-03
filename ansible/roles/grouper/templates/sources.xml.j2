@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+Grouper's subject resolver configuration
+-->
+
+<sources>
+
+  <!-- Group Subject Resolver -->
+
+  <!--
+    NOTE: It is recommended that you **not** change the default
+          values for this source adapter.
+  -->
+  <source adapterClass="edu.internet2.middleware.grouper.GrouperSourceAdapter">
+    <id>g:gsa</id>
+    <name>Grouper: Group Source Adapter</name>
+    <type>group</type>
+
+    <init-param>
+      <param-name>subjectVirtualAttribute_0_searchAttribute0</param-name>
+      <param-value>${subject.getAttributeValue('name')},${subject.getAttributeValue('displayName')},${subject.getAttributeValue('alternateName')}</param-value>
+    </init-param>
+    <init-param>
+      <param-name>sortAttribute0</param-name>
+      <param-value>displayExtension</param-value>
+    </init-param>
+    <init-param>
+      <param-name>searchAttribute0</param-name>
+      <param-value>searchAttribute0</param-value>
+    </init-param>
+    <!-- on a findPage() this is the most results returned -->
+    <init-param>
+      <param-name>maxPageSize</param-name>
+      <param-value>100</param-value>
+    </init-param>
+    <internal-attribute>searchAttribute0</internal-attribute>
+  </source>
+
+  <!-- Group Subject Resolver -->
+
+  <!--
+    NOTE: It is recommended that you **not** change the default
+          values for this source adapter.
+  -->
+  <source adapterClass="edu.internet2.middleware.grouper.entity.EntitySourceAdapter">
+    <id>grouperEntities</id>
+    <name>Grouper: Entity Source Adapter</name>
+    <type>application</type>
+
+    <init-param>
+      <param-name>subjectVirtualAttribute_0_searchAttribute0</param-name>
+      <param-value>${subject.getAttributeValue('name')},${subject.getAttributeValue('displayName')},${subject.getAttributeValue('alternateName')}</param-value>
+    </init-param>
+    <init-param>
+      <param-name>sortAttribute0</param-name>
+      <param-value>name</param-value>
+    </init-param>
+    <init-param>
+      <param-name>searchAttribute0</param-name>
+      <param-value>searchAttribute0</param-value>
+    </init-param>
+    <internal-attribute>searchAttribute0</internal-attribute>
+  </source>
+
+  <!-- Entity Subject Resolver -->
+
+  <source adapterClass="edu.internet2.middleware.grouper.subj.GrouperJndiSourceAdapter">
+    <id>{{ grouper.subject_source.id }}</id>
+    <name>{{ grouper.subject_source.name }}</name>
+    <type>person</type>
+    <init-param>
+      <param-name>INITIAL_CONTEXT_FACTORY</param-name>
+      <param-value>com.sun.jndi.ldap.LdapCtxFactory</param-value>
+    </init-param>
+    <init-param>
+      <param-name>PROVIDER_URL</param-name>
+      <param-value>{{ grouper.subject_source.url }}</param-value>
+    </init-param>
+    <init-param>
+      <param-name>SECURITY_AUTHENTICATION</param-name>
+      <param-value>{{ grouper.subject_source.auth_type }}</param-value>
+    </init-param>
+    <init-param>
+      <param-name>SECURITY_PRINCIPAL</param-name>
+      <param-value>{{ grouper.subject_source.principal }}</param-value>
+    </init-param>
+    <init-param>
+      <param-name>SECURITY_CREDENTIALS</param-name>
+      <param-value>{{ grouper.subject_source.credentials }}</param-value>
+    </init-param>
+    <init-param>
+      <param-name>SubjectID_AttributeType</param-name>
+      <param-value>uid</param-value>
+    </init-param>
+     <init-param>
+      <param-name>SubjectID_formatToLowerCase</param-name>
+      <param-value>false</param-value>
+    </init-param>
+    <init-param>
+      <param-name>Name_AttributeType</param-name>
+      <param-value>cn</param-value>
+    </init-param>
+    <init-param>
+      <param-name>Description_AttributeType</param-name>
+      <param-value>cn</param-value>
+    </init-param>
+
+    <search>
+        <searchType>searchSubject</searchType>
+        <param>
+            <param-name>filter</param-name>
+            <param-value>
+                (&amp; (uid:caseExactMatch:=%TERM%) (objectclass=person))
+            </param-value>
+        </param>
+        <param>
+            <param-name>scope</param-name>
+            <param-value>
+                SUBTREE_SCOPE
+            </param-value>
+        </param>
+        <param>
+            <param-name>base</param-name>
+            <param-value>
+                ou=people,dc=iplantcollaborative,dc=org
+            </param-value>
+        </param>
+    </search>
+
+    <search>
+        <searchType>searchSubjectByIdentifier</searchType>
+        <param>
+            <param-name>filter</param-name>
+            <param-value>
+                (&amp; (uid:caseExactmatch:=%TERM%) (objectclass=person))
+            </param-value>
+        </param>
+        <param>
+            <param-name>scope</param-name>
+            <param-value>
+                SUBTREE_SCOPE
+            </param-value>
+        </param>
+        <param>
+            <param-name>base</param-name>
+            <param-value>
+                ou=people,dc=iplantcollaborative,dc=org
+            </param-value>
+        </param>
+    </search>
+
+    <search>
+       <searchType>search</searchType>
+         <param>
+            <param-name>filter</param-name>
+            <param-value>
+                (&amp; (|(|(uid:caseExactmatch:=%TERM%)(cn=*%TERM%*))(mail=*%TERM%*))(objectclass=person))
+            </param-value>
+        </param>
+        <param>
+            <param-name>scope</param-name>
+            <param-value>
+                SUBTREE_SCOPE
+            </param-value>
+        </param>
+         <param>
+            <param-name>base</param-name>
+            <param-value>
+                ou=people,dc=iplantcollaborative,dc=org
+            </param-value>
+        </param>
+    </search>
+    <init-param>
+      <param-name>subjectVirtualAttribute_0_searchAttribute0</param-name>
+      <param-value>${subjectUtils.defaultIfBlank(subject.getAttributeValueOrCommaSeparated('uid'), "")},${subjectUtils.defaultIfBlank(subject.getAttributeValueOrCommaSeparated('cn'), "")},${subjectUtils.defaultIfBlank(subject.getAttributeValueOrCommaSeparated('mail'), "")}</param-value>
+    </init-param>
+    <init-param>
+      <param-name>sortAttribute0</param-name>
+      <param-value>cn</param-value>
+    </init-param>
+    <init-param>
+      <param-name>searchAttribute0</param-name>
+      <param-value>searchAttribute0</param-value>
+    </init-param>
+
+    <internal-attribute>searchAttribute0</internal-attribute>
+
+    ///Attributes you would like to display when doing a search
+    <attribute>cn</attribute>
+    <attribute>givenName</attribute>
+    <attribute>sn</attribute>
+    <attribute>o</attribute>
+    <attribute>uid</attribute>
+    <attribute>mail</attribute>
+  </source>
+</sources>

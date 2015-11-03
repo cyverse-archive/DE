@@ -1,0 +1,61 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:con="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+             xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
+             xmlns:drFields="urn:import:org.iplantc.de.diskResource.client.views.widgets">
+    <ui:with field="strings"
+             type="org.iplantc.de.resources.client.messages.IplantDisplayStrings" />
+    <ui:with field="appWidgetStrings"
+             type="org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsDisplayMessages"/>
+    <ui:with field="margins"
+             type="com.sencha.gxt.core.client.util.Margins">
+      <ui:attributes top="0"
+                     right="10"
+                     bottom="0"
+                     left="10" />
+    </ui:with>             
+    <ui:with type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData" 
+             field="fieldLayoutData">
+        <ui:attributes width="1" 
+                       height="-1" 
+                       margins="{margins}"/>
+    </ui:with>
+    
+    <gxt:ContentPanel ui:field="contentPanel"
+                      collapsible="true"
+                      titleCollapse="true">
+		<con:VerticalLayoutContainer scrollMode="AUTOY"
+	                                 adjustForScroll="true">
+		    <con:child layoutData="{fieldLayoutData}">
+		        <form:FieldLabel text="{appWidgetStrings.analysisName}"
+		                         labelAlign="TOP">
+		            <form:widget>
+		                <form:TextField ui:field="name"
+		                                allowBlank="false"/>
+		            </form:widget>
+		        </form:FieldLabel> 
+		    </con:child>                    
+		    <con:child layoutData="{fieldLayoutData}">
+		        <form:FieldLabel text="{strings.comments}"
+		                         labelAlign="TOP">
+		            <form:widget>
+		                <form:TextArea ui:field="description"/>
+		            </form:widget>
+		        </form:FieldLabel> 
+		    </con:child>                    
+		    <con:child layoutData="{fieldLayoutData}">
+		        <form:FieldLabel text="{appWidgetStrings.selectOutputFolder}"
+		                         labelAlign="TOP">
+		            <form:widget>
+		                <drFields:FolderSelectorField ui:field="awFolderSel"/>
+		            </form:widget>
+		        </form:FieldLabel> 
+		    </con:child>                    
+		    <con:child layoutData="{fieldLayoutData}">
+		        <form:CheckBox ui:field="retainInputs" 
+		                       boxLabel="{appWidgetStrings.retainInputs}"/>
+	        </con:child>                    
+	    </con:VerticalLayoutContainer>
+    </gxt:ContentPanel>         
+</ui:UiBinder> 

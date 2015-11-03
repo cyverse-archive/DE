@@ -1,0 +1,26 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" 
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
+	xmlns:con="urn:import:com.sencha.gxt.widget.core.client.container"
+	xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+	xmlns:ipc="urn:import:org.iplantc.de.commons.client.widgets">
+
+<ui:with field="constants" type="org.iplantc.de.client.DEClientConstants"/>
+
+<ui:with field="layoutData" 
+    type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+  <ui:attributes height="-1" width="1"/>
+</ui:with>
+
+<form:FormPanel ui:field="form" action="{constants.fileUploadServlet}" method="POST" 
+    encoding="MULTIPART">
+  <con:VerticalLayoutContainer>
+    <con:child layoutData="{layoutData}">
+      <ipc:IPCFileUploadField ui:field="fileField" name="file"/>
+    </con:child>
+    <g:Hidden ui:field="userField" name="user"/>
+    <g:Hidden ui:field="destinationField" name="dest"/>
+  </con:VerticalLayoutContainer>
+</form:FormPanel>
+
+</ui:UiBinder> 

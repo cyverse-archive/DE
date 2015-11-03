@@ -1,0 +1,17 @@
+.warning {
+	color: red;
+}
+
+@if user.agent gecko gecko1_8 gecko1_9 {
+	.warning {
+		position: absolute;
+	}
+} 
+
+.title {
+	float: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 50%;
+}

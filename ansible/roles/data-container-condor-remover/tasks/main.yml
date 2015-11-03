@@ -1,0 +1,13 @@
+---
+- debug: msg="Preparing to remove {{ data_container_name }} container and {{ remote_registry }}/{{ data_image_name }}:{{ data_image_tag }} image."
+
+- name: remove data container
+  sudo: yes
+  shell: "docker rm -v {{ data_container_name }}"
+  ignore_errors: True
+
+- name: remove data container image
+  sudo: yes
+  shell: "docker rmi {{ remote_registry }}/{{ data_image_name }}:{{ data_image_tag }}"
+  when: remove_image
+  ignore_errors: True

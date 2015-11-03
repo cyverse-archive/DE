@@ -1,0 +1,8 @@
+.warning {
+	font-size: 8px;
+	font-style: italic;
+	color: red;
+	margin-left: auto;
+	margin-right: auto;
+	width: 50%;
+}

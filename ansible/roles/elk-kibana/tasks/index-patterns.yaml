@@ -1,0 +1,50 @@
+---
+# Index pattern tasks for elk-kibana
+- name: index-pattern - de-logs
+  uri: url="{{ i1_url }}" method=PUT
+      body={{ lookup('file', 'i1-de-logs.json')|replace('\n', '')|to_nice_json }}
+  register: de_logs_index
+  changed_when: de_logs_index.status != 200 or
+                de_logs_index.status != 201
+  failed_when: de_logs_index.status != 200 and 
+               de_logs_index.status != 201
+  tags:
+      - config
+      - config_kibana
+
+- name: index-pattern - de-error-logs
+  uri: url="{{ i2_url }}" method=PUT
+      body={{ lookup('file', 'i2-de-error-logs.json')|replace('\n', '')|to_nice_json }}
+  register: de_error_logs_index
+  changed_when: de_error_logs_index.status != 200 or
+                de_error_logs_index.status != 201
+  failed_when: de_error_logs_index.status != 200 and 
+               de_error_logs_index.status != 201
+  tags:
+      - config
+      - config_kibana
+
+- name: index-pattern - de-metrics
+  uri: url="{{ i3_url }}" method=PUT
+      body={{ lookup('file', 'i3-de-metrics.json')|replace('\n', '')|to_nice_json }}
+  register: de_metrics_index
+  changed_when: de_metrics_index.status != 200 or
+                de_metrics_index.status != 201
+  failed_when: de_metrics_index.status != 200 and 
+               de_metrics_index.status != 201
+  tags:
+      - config
+      - config_kibana
+
+- name: set default index-pattern 
+  uri: url="{{ i0_url }}" method=PUT
+       body={{ lookup('file', 'i0-default-index.json')|replace('\n', '')|to_nice_json }}
+  register: default_index
+  changed_when: default_index.status != 200 or
+                default_index.status != 201
+  failed_when: default_index.status != 200 and 
+               default_index.status != 201
+  tags:
+      - config
+      - config_kibana
+

@@ -1,0 +1,47 @@
+<module>
+    <inherits name="org.iplantc.de.desktop.Desktop" />
+
+    <replace-with class="org.iplantc.de.theme.base.client.desktop.views.BaseUnseenNotificationsAppearance" >
+        <when-type-is class="org.iplantc.de.desktop.client.views.widgets.UnseenNotificationsView.UnseenNotificationsAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.desktop.BaseDesktopAppearance">
+        <when-type-is class="org.iplantc.de.desktop.client.DesktopView.DesktopAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.desktop.views.BaseFeedbackDialogAppearance">
+        <when-type-is class="org.iplantc.de.desktop.client.views.widgets.DEFeedbackDialog.FeedbackAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.desktop.views.taskbar.TaskBarBaseAppearance">
+        <when-type-is class="org.iplantc.de.desktop.client.views.widgets.TaskBar.TaskBarAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.desktop.views.taskButton.TaskButtonCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.desktop.client.views.widgets.TaskButtonCell.TaskButtonCellAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.desktop.window.IPlantGrayContentPanelAppearance">
+        <when-type-is class="com.sencha.gxt.widget.core.client.ContentPanel.ContentPanelAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.desktop.window.IplantBaseWindowAppearance">
+        <when-type-is class="org.iplantc.de.desktop.client.views.windows.IplantWindowBase.IplantWindowAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.desktop.window.AboutApplicationDefaultAppearance">
+        <when-type-is class="org.iplantc.de.desktop.client.views.windows.AboutApplicationWindow.AboutApplicationAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.desktop.window.AppEditorWindowBaseAppearance">
+        <when-type-is class="org.iplantc.de.desktop.client.views.windows.AppEditorWindow.AppEditorAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.desktop.PreferencesViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.desktop.client.views.widgets.PreferencesDialog.PreferencesViewAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.desktop.presenter.DesktopPresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.desktop.client.DesktopView.Presenter.DesktopPresenterAppearance" />
+    </replace-with>
+</module>

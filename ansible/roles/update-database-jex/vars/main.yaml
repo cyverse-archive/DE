@@ -1,0 +1,11 @@
+---
+fmode: "{{facepalm_mode|default('update')}}"
+tgz_name: jex-db.tar.gz
+tgz_flag: "-f {{tgz_name}}"
+curr_db_host: "{{jexdb_host}}"
+curr_db_port: "{{jexdb_port|default(5432)}}"
+curr_db_user: "{{jexdb_user}}"
+curr_db_password: "{{jexdb_password}}"
+curr_db_name: "{{jexdb_db}}"
+curr_db_admin: "{{db_admin}}"
+curr_db_admin_password: "{{db_admin_password}}"

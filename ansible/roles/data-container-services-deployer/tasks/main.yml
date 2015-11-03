@@ -1,0 +1,19 @@
+---
+- name: remove old iplant_data container
+  sudo: yes
+  shell: "docker rm {{ data_container.container_name }}"
+  ignore_errors: yes
+  when: replace_container
+  tags:
+      - docker_rm_iplant_data
+
+- name:  pull iplant_data container
+  sudo: yes
+  shell: docker pull "{{ remote_registry }}/{{ data_container.image_name }}:latest"
+  tags:
+      - docker_pull
+
+- include: CentOS-7.yaml
+  when: ansible_distribution == "CentOS" and
+        ansible_distribution_major_version == "7"
+

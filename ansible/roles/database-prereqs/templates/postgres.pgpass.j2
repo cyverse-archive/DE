@@ -1,0 +1,16 @@
+# hostname:port:database:username:password
+{{db_host}}:*:{{db_name}}:{{db_user}}:{{db_password}}
+{{db_host}}:*:*:{{db_admin}}:{{db_admin_password}}
+{{notification_db_host}}:*:{{notification_db_name}}:{{notification_db_user}}:{{notification_db_password}}
+{{notification_db_host}}:*:*:{{db_admin}}:{{db_admin_password}}
+{{metadata_db_host}}:*:{{metadata_db_name}}:{{metadata_db_user}}:{{metadata_db_password}}
+{{metadata_db_host}}:*:*:{{db_admin}}:{{db_admin_password}}
+{{jexdb_host}}:*:{{jexdb_db}}:{{jexdb_user}}:{{jexdb_password}}
+{{jexdb_host}}:*:*:{{db_admin}}:{{db_admin_password}}
+{{metadata_db_host}}:*:{{metadata_db_name}}:{{metadata_db_user}}:{{metadata_db_password}}
+{{icat_host}}:*:{{icat_db}}:{{icat_user}}:{{icat_password}}
+{% if prod_dbs is defined and prod_dbs != None -%}
+{% for _, db in prod_dbs.iteritems() -%}
+    {{db.host}}:*:{{db.name}}:{{db.user}}:{{db.password}}
+{% endfor %}
+{% endif %}

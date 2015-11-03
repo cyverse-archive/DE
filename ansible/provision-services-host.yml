@@ -1,0 +1,10 @@
+---
+- hosts: docker-ready
+  roles:
+    - role: pip
+    - role: docker
+    - role: cron-stats
+
+- hosts: systems
+  roles:
+    - role: services-common

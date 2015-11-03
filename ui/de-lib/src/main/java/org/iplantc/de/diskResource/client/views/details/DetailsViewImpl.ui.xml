@@ -1,0 +1,130 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+             xmlns:g='urn:import:com.google.gwt.user.client.ui'
+             xmlns:tags="urn:import:org.iplantc.de.tags.client">
+
+    <ui:with field="appearance"
+             type="org.iplantc.de.diskResource.client.DetailsView.Appearance" />
+    <g:HTMLPanel ui:field="panel">
+        <div ui:field="emptyDetails"
+                class="{appearance.css.emptyDetails}">
+            <ui:text from="{appearance.noDetails}"/>
+        </div>
+        <table ui:field="table"
+               class="{appearance.css.table} {appearance.css.hidden}">
+            <tr class="{appearance.css.row}">
+                <td class="{appearance.css.label}">
+                    <ui:text from="{appearance.lastModifiedLabel}"/>
+                </td>
+                <td class="{appearance.css.value}">
+                    <g:DateLabel ui:field="lastModified"/>
+                </td>
+            </tr>
+            <tr class="{appearance.css.row}">
+                <td class="{appearance.css.label}">
+                    <ui:text from="{appearance.createdDateLabel}"/>
+                </td>
+                <td class="{appearance.css.value}">
+                    <g:DateLabel ui:field="dateCreated"/>
+                </td>
+            </tr>
+            <tr class="{appearance.css.row}">
+                <td class="{appearance.css.label}">
+                    <ui:text from="{appearance.permissionsLabel}" />
+                </td>
+                <td class="{appearance.css.value}">
+                    <g:InlineLabel ui:field="permission"/>
+                </td>
+            </tr>
+            <!-- If not in trash -->
+            <tr class="{appearance.css.row}"
+                ui:field="shareRow">
+                <td class="{appearance.css.label}">
+                    <ui:text from="{appearance.shareLabel}" />
+                </td>
+                <td class="{appearance.css.value}">
+                    <g:InlineHyperlink ui:field="sharing"
+                                       styleName="{appearance.css.hyperlink}"/>
+                </td>
+            </tr>
+
+            <!-- IF it is a File-->
+
+            <tr class="{appearance.css.row}"
+                ui:field="sizeRow">
+                <td class="{appearance.css.label}">
+                    <ui:text from="{appearance.sizeLabel}" />
+                </td>
+                <td class="{appearance.css.value}">
+                    <g:InlineLabel ui:field="size"/>
+                </td>
+            </tr>
+            <tr class="{appearance.css.row}"
+                ui:field="mimeTypeRow">
+                <td class="{appearance.css.label}">
+                    <ui:text from="{appearance.typeLabel}"/>
+                </td>
+                <td class="{appearance.css.value}">
+                    <g:InlineLabel ui:field="mimeType"/>
+                </td>
+            </tr>
+            <tr class="{appearance.css.row}"
+                ui:field="infoTypeRow">
+                <td class="{appearance.css.label}">
+                    <ui:text from="{appearance.infoTypeLabel}"/>
+                </td>
+                <td class="{appearance.css.value}">
+                    <g:InlineHyperlink ui:field="infoType"
+                                       styleName="{appearance.css.hyperlink}"/>
+                    <g:Image ui:field="resetInfoTypeIcon"
+                             resource="{appearance.deselectInfoTypeIcon}"
+                             styleName="{appearance.css.deselectIcon}"
+                             visible="false"/>
+                </td>
+            </tr>
+                        
+             <tr class="{appearance.css.row}"
+                ui:field="md5Row">
+                <td class="{appearance.css.label}">
+                    <ui:text from="{appearance.md5CheckSum}" />
+                </td>
+                <td class="{appearance.css.value}">
+                    <g:InlineHyperlink ui:field="md5link"
+                                       styleName="{appearance.css.hyperlink}"/>
+                </td>
+            </tr>
+            <!-- If not in trash -->
+            <tr class="{appearance.css.row}"
+                ui:field="sendToRow">
+                <td class="{appearance.css.label}">
+                    <ui:text from="{appearance.sendToLabel}"/>
+                </td>
+                <td class="{appearance.css.value}">
+                    <g:InlineHyperlink ui:field="sendTo"
+                                       styleName="{appearance.css.hyperlink}"/>
+                </td>
+            </tr>
+
+            <!-- If it is a Folder -->
+            <tr class="{appearance.css.row}"
+                ui:field="fileFolderNumRow">
+                <td class="{appearance.css.label}">
+                    <ui:text from="{appearance.filesFoldersLabel}"/>
+                </td>
+                <td class="{appearance.css.value}">
+                    <g:InlineLabel ui:field="fileFolderNum"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="{appearance.css.label}">
+                    <ui:text from="{appearance.tagsLabel}"/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <tags:TagsView ui:field="tagListView"/>
+                </td>
+            </tr>
+        </table>
+
+    </g:HTMLPanel>
+</ui:UiBinder>

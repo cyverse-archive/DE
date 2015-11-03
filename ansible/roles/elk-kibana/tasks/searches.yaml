@@ -1,0 +1,14 @@
+---
+# kibana search tasks
+- name: search - all logged job submissions
+  uri: url="{{ s1_url }}" method=PUT
+      body={{ lookup('file', 's1-all-logged-job-submissions.json')|replace('\n', '')|to_nice_json }}
+  register: all_logged_job_submission
+  changed_when: all_logged_job_submission.status != 200 or
+               all_logged_job_submission.status != 201
+  failed_when: all_logged_job_submission.status != 200 and 
+               all_logged_job_submission.status != 201
+  tags:
+      - config
+      - config_kibana
+

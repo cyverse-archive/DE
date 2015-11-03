@@ -1,0 +1,11 @@
+---
+fmode: "{{facepalm_mode|default('update')}}"
+tgz_name: database.tar.gz
+tgz_flag: "-f {{tgz_name}}"
+curr_db_host: "{{db_host}}"
+curr_db_port: "{{db_port|default(5432)}}"
+curr_db_user: "{{db_user}}"
+curr_db_password: "{{db_password}}"
+curr_db_name: "{{db_name}}"
+curr_db_admin: "{{db_admin}}"
+curr_db_admin_password: "{{db_admin_password}}"

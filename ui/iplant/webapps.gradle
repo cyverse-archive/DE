@@ -1,0 +1,143 @@
+    def getDate() {
+        def date = new Date()
+        def formattedDate = date.format('yyyyMMddHHmmss')
+        return formattedDate
+    }
+
+project(':de-webapp') {
+    apply plugin: 'war'
+    apply plugin: 'gwt'
+    apply plugin: 'spring-boot'
+
+    configurations {
+        providedCompile
+        providedRuntime
+    }
+
+    ext.timeStampVersion = "$version" + "-" + getDate()
+
+
+    springBoot {
+        mainClass = 'org.iplantc.de.Application'
+        layout = 'WAR'
+    }
+
+    dependencies {
+        compile project(':de-lib')
+
+        gwt project(':de-lib')
+        gwt "com.sencha.gxt:gxt:$gxtVersion"
+        gwt "com.google.gwt.inject:gin:$gwtGinVer"
+        gwt "com.google.guava:guava-gwt:$guavaGwtVer"
+
+        compile 'org.ow2.asm:asm:5.0.3'
+        compile("org.springframework:spring-webmvc:4.1.6.RELEASE")
+        compile("org.springframework:spring-web:4.1.6.RELEASE")
+        compile("com.fasterxml.jackson.core:jackson-databind:2.4.5")
+
+        providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
+        providedRuntime("org.apache.tomcat.embed:tomcat-embed-jasper")
+
+        compile("org.springframework.boot:spring-boot-starter-security")
+        compile("org.springframework.security:spring-security-cas")
+        providedCompile("javax.servlet:javax.servlet-api:3.1.0")
+        compile("javax.servlet:jstl:1.2")
+
+        compile("org.hibernate:hibernate-validator:4.2.0.Final")
+
+        compile("org.yaml:snakeyaml:1.15")
+
+        testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
+    }
+
+    gwt {
+        logLevel = 'INFO'
+        gwtVersion = "$gwtVer"
+        modules = ['org.iplantc.de.discoveryenvironment',
+                   'org.iplantc.de.admin.belphegor']
+        devModules = ['org.iplantc.de.discoveryenvironmentDev',
+                      'org.iplantc.de.admin.belphegorDev']
+
+        src += files(project(':de-lib').sourceSets.main.allJava.srcDirs) + files(project(':de-lib').sourceSets.main.output.resourcesDir)
+
+        superDev { noPrecompile = true }
+        maxHeapSize = '1024M'
+        compiler {
+//            enableClosureCompiler = true;
+            disableClassMetadata = true;
+            disableCastChecking = true;
+            compileReport = true;
+            // Enable fragment merging
+            fragmentCount = 1;
+            strict = true
+        }
+
+    }
+
+    // Convenience task for launching sdm
+    task sdm(dependsOn: 'gwtSuperDev') {
+        group 'GWT'
+        description 'Short hand task for launching GWT Super Dev Mode'
+    }
+
+    war {
+        manifest {
+            attributes "Jenkins-Build-Version": "${BUILD_TAG}",
+                    "Jenkins-Build-ID": "${BUILD_ID}",
+                    "Jenkins-Build-Number": "${BUILD_NUMBER}",
+                    "Git-Branch": 'git rev-parse --abbrev-ref HEAD'.execute().text.trim(),
+                    "Git-Ref": 'git rev-parse HEAD'.execute().text.trim(),
+                    "Version": "${timeStampVersion}"
+        }
+    }
+
+    draftWar {
+        manifest {
+            attributes "Jenkins-Build-Version": "${BUILD_TAG}",
+                    "Jenkins-Build-ID": "${BUILD_ID}",
+                    "Jenkins-Build-Number": "${BUILD_NUMBER}",
+                    "Git-Branch": 'git rev-parse --abbrev-ref HEAD'.execute().text.trim(),
+                    "Git-Ref": 'git rev-parse HEAD'.execute().text.trim(),
+                    "Version": "${timeStampVersion}"
+        }
+    }
+
+    task draftBootRepackage(type: BootRepackage, dependsOn: draftWar) {
+        group 'Build'
+        description 'Repackage existing draft WAR archives so that they can be executed from the command line using \'java -jar\''
+        withJarTask = draftWar
+    }
+
+    task createProdWar(type: Copy) {
+        dependsOn bootRepackage
+        into new File( rootProject.projectDir, "target")
+        from('build/libs') {
+            exclude '**/*draft*.war'
+            exclude '**/*draft*.war*'
+            exclude '**/*.jar*'
+            exclude '**/*.original'
+        }
+        rename project.tasks.war.archiveName, 'de.war'
+    }
+
+    task runWar(type:JavaExec, dependsOn:bootRepackage) {
+        group 'Application'
+        description 'Builds and executes the self-executing WAR file.'
+        main="-jar"
+        args war.archivePath
+    }
+
+    task runDraftWar(type:JavaExec, dependsOn:draftBootRepackage) {
+        group 'Application'
+        description 'Builds and executes the self-executing draft WAR file.'
+        main="-jar"
+        args draftWar.archivePath
+    }
+
+    clean {
+        delete "./war"
+        delete "./bin"
+    }
+}
+
+

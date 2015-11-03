@@ -1,0 +1,35 @@
+@sprite .favorite {
+    gwt-image: "favIcon";
+    cursor: pointer;
+    float: left;
+}
+
+@sprite .favorite:hover {
+    gwt-image: "favIconDelete";
+    cursor: pointer;
+    float: left;
+}
+
+@sprite .favoriteDisabled {
+    gwt-image: "disabledFavIcon";
+    cursor: default;
+    float: left;
+}
+
+@sprite .favoriteDisabled:hover {
+    gwt-image: "disabledFavIcon";
+    cursor: default;
+    float: left;
+}
+
+@sprite .favoriteAdd {
+	gwt-image: "disabledFavIcon";
+	cursor: pointer;
+    float: left;
+}
+
+@sprite .favoriteAdd:hover {
+    gwt-image: "favIconAdd";
+    cursor: pointer;
+    float: left;
+}

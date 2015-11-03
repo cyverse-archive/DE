@@ -1,0 +1,153 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:con="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:form="urn:import:org.iplantc.de.commons.client.widgets"
+             xmlns:gxtForm="urn:import:com.sencha.gxt.widget.core.client.form"
+             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+             xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client">
+
+    <ui:with field="appearance"
+             type="org.iplantc.de.diskResource.client.views.dialogs.SimpleFileUploadDialog.SimpleFileUploadDialogAppearance"/>
+
+    <ui:with field="sideMargins"
+             type="com.sencha.gxt.core.client.util.Margins">
+        <ui:attributes top="4"
+                       right="4"
+                       bottom="4"
+                       left="4"/>
+    </ui:with>
+
+    <ui:with field="centerMargins"
+             type="com.sencha.gxt.core.client.util.Margins">
+        <ui:attributes top="4"
+                       right="0"
+                       bottom="4"
+                       left="0"/>
+    </ui:with>
+
+    <ui:with field="centerLayoutData"
+             type="com.sencha.gxt.widget.core.client.container.HorizontalLayoutContainer.HorizontalLayoutData">
+        <ui:attributes width="1"
+                       height="1"
+                       margins="{centerMargins}"/>
+    </ui:with>
+
+    <ui:with field="sideLayoutData"
+             type="com.sencha.gxt.widget.core.client.container.HorizontalLayoutContainer.HorizontalLayoutData">
+        <ui:attributes width="-1"
+                       height="1"
+                       margins="{sideMargins}"/>
+    </ui:with>
+
+    <con:VerticalLayoutContainer>
+        <g:HTML text="{appearance.fileUploadMaxSizeWarning}"/>
+        <g:HTML ui:field="htmlDestText"/>
+
+        <!-- One -->
+        <gxtForm:FormPanel ui:field="form0"
+        borders="false">
+            <con:HorizontalLayoutContainer>
+                <con:child layoutData="{sideLayoutData}">
+                    <button:TextButton ui:field="btn0"
+                                       toolTip="{appearance.reset}"
+                                       icon="{appearance.arrowUndoIcon}"
+                                       debugId="idBtnReset0"/>
+                </con:child>
+                <con:child layoutData="{centerLayoutData}">
+                    <form:IPCFileUploadField ui:field="fuf0"
+                                             debugId="idFileUpld0"
+                                             name="file"/>
+                </con:child>
+                <con:child layoutData="{sideLayoutData}">
+                    <gxt:Status ui:field="status0"/>
+                </con:child>
+            </con:HorizontalLayoutContainer>
+        </gxtForm:FormPanel>
+
+        <!-- Two -->
+        <gxtForm:FormPanel ui:field="form1"
+        borders="false">
+            <con:HorizontalLayoutContainer>
+                <con:child layoutData="{sideLayoutData}">
+                    <button:TextButton ui:field="btn1"
+                                       toolTip="{appearance.reset}"
+                                       icon="{appearance.arrowUndoIcon}"
+                                       debugId="idBtnReset1"/>
+                </con:child>
+                <con:child layoutData="{centerLayoutData}">
+                    <form:IPCFileUploadField ui:field="fuf1"
+                                             debugId="idFileUpld1"
+                                             name="file"/>
+                </con:child>
+                <con:child layoutData="{sideLayoutData}">
+                    <gxt:Status ui:field="status1"/>
+                </con:child>
+            </con:HorizontalLayoutContainer>
+        </gxtForm:FormPanel>
+
+        <!-- Three -->
+        <gxtForm:FormPanel ui:field="form2"
+        borders="false">
+            <con:HorizontalLayoutContainer>
+                <con:child layoutData="{sideLayoutData}">
+                    <button:TextButton ui:field="btn2"
+                                       toolTip="{appearance.reset}"
+                                       icon="{appearance.arrowUndoIcon}"
+                                       debugId="idBtnReset2"/>
+                </con:child>
+                <con:child layoutData="{centerLayoutData}">
+                    <form:IPCFileUploadField ui:field="fuf2"
+                                             debugId="idFileUpld2"
+                                             name="file"/>
+                </con:child>
+                <con:child layoutData="{sideLayoutData}">
+                    <gxt:Status ui:field="status2"/>
+                </con:child>
+            </con:HorizontalLayoutContainer>
+        </gxtForm:FormPanel>
+
+        <!-- Four -->
+        <gxtForm:FormPanel ui:field="form3"
+        borders="false">
+            <con:HorizontalLayoutContainer>
+                <con:child layoutData="{sideLayoutData}">
+                    <button:TextButton ui:field="btn3"
+                                       toolTip="{appearance.reset}"
+                                       icon="{appearance.arrowUndoIcon}"
+                                       debugId="idBtnReset3"/>
+                </con:child>
+                <con:child layoutData="{centerLayoutData}">
+                    <form:IPCFileUploadField ui:field="fuf3"
+                                             debugId="idFileUpld3"
+                                             name="file"/>
+                </con:child>
+                <con:child layoutData="{sideLayoutData}">
+                    <gxt:Status ui:field="status3"/>
+                </con:child>
+            </con:HorizontalLayoutContainer>
+        </gxtForm:FormPanel>
+
+        <!-- Five -->
+        <gxtForm:FormPanel ui:field="form4"
+        borders="false">
+            <con:HorizontalLayoutContainer>
+                <con:child layoutData="{sideLayoutData}">
+                    <button:TextButton ui:field="btn4"
+                                       toolTip="{appearance.reset}"
+                                       icon="{appearance.arrowUndoIcon}"
+                                       debugId="idBtnReset4"/>
+                </con:child>
+                <con:child layoutData="{centerLayoutData}">
+                    <form:IPCFileUploadField ui:field="fuf4"
+                                             debugId="idFileUpld4"
+                                             name="file"/>
+                </con:child>
+                <con:child layoutData="{sideLayoutData}">
+                    <gxt:Status ui:field="status4"/>
+                </con:child>
+            </con:HorizontalLayoutContainer>
+        </gxtForm:FormPanel>
+    </con:VerticalLayoutContainer>
+</ui:UiBinder>
+

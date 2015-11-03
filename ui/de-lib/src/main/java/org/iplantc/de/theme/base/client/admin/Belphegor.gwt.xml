@@ -1,0 +1,55 @@
+<module>
+    <inherits name="org.iplantc.de.admin.desktop.AdminDesktop" />
+    <inherits name="org.iplantc.de.theme.base.client.admin.apps.AdminApps" />
+
+    <!-- Desktop -->
+    <replace-with class="org.iplantc.de.theme.base.client.admin.desktop.BelphegorViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.desktop.client.views.BelphegorView.BelphegorViewAppearance" />
+    </replace-with>
+
+    <!-- RefGenome -->
+    <replace-with class="org.iplantc.de.theme.base.client.admin.refGenome.RefGenomeDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.desktop.client.refGenome.RefGenomeView.RefGenomeAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.admin.refGenome.ReferenceGenomeNameCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.desktop.client.refGenome.view.cells.ReferenceGenomeNameCell.ReferenceGenomeNameCellAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.admin.refGenome.RefGenomePresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.desktop.client.refGenome.RefGenomeView.Presenter.RefGenomePresenterAppearance" />
+    </replace-with>
+
+    <!-- System Messages -->
+    <replace-with class="org.iplantc.de.theme.base.client.admin.systemMessage.SystemMessageViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.desktop.client.systemMessage.SystemMessageView.SystemMessageViewAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.admin.systemMessage.cells.SystemMessageNameCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.desktop.client.systemMessage.view.cells.SystemMessageNameCell.SystemMessageNameCellAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.admin.systemMessage.presenter.SystemMessagePresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.desktop.client.systemMessage.SystemMessageView.Presenter.SystemMessagePresenterAppearance" />
+    </replace-with>
+
+    <!-- Tool Requests -->
+    <replace-with class="org.iplantc.de.theme.base.client.admin.toolRequest.ToolRequestViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.desktop.client.toolRequest.ToolRequestView.ToolRequestViewAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.admin.toolRequest.presenter.ToolRequestPresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.desktop.client.toolRequest.ToolRequestView.Presenter.ToolRequestPresenterAppearance" />
+    </replace-with>
+    
+    <!--  Metadata -->
+     <replace-with class="org.iplantc.de.theme.base.client.admin.metadata.DefaultTemplateListingAppearance">
+        <when-type-is class="org.iplantc.de.admin.desktop.client.metadata.view.TemplateListingView.TemplateListingAppearance" />
+    </replace-with>
+     <replace-with class="org.iplantc.de.theme.base.client.admin.metadata.DefaultMetadataPresenterAppearance">
+        <when-type-is class="org.iplantc.de.admin.desktop.client.metadata.view.TemplateListingView.Presenter.MetadataPresenterAppearance" />
+    </replace-with>
+     <replace-with class="org.iplantc.de.theme.base.client.admin.metadata.DefaultEditMetadataTemplateViewAppearance">
+        <when-type-is class="org.iplantc.de.admin.desktop.client.metadata.view.EditMetadataTemplateView.EditMetadataTemplateViewAppearance" />
+    </replace-with>
+</module>

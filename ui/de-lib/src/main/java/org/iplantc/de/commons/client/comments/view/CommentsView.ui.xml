@@ -1,0 +1,74 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui="urn:ui:com.google.gwt.uibinder"
+        xmlns:g="urn:import:com.google.gwt.user.client.ui"
+        xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+        xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+        xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+        xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+        xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid">
+
+    <ui:with field="appearance"
+             type="org.iplantc.de.commons.client.comments.CommentsView.CommentsViewAppearance" />
+
+    <ui:with field="toolBarLayoutData"
+             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+        <ui:attributes width="1" height="-1"/>
+    </ui:with>
+
+    <ui:with field="gridLayoutData"
+             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+        <ui:attributes width="1" height="1"/>
+    </ui:with>
+
+    <ui:with field="commentLayoutData"
+             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+        <ui:attributes width="1" height="-1"/>
+    </ui:with>
+
+    <ui:with field="store"
+             type="com.sencha.gxt.data.shared.ListStore" />
+
+    <ui:with field="cm"
+             type="com.sencha.gxt.widget.core.client.grid.ColumnModel" />
+
+    <ui:with field="view"
+             type="com.sencha.gxt.widget.core.client.grid.GridView">
+        <ui:attributes stripeRows="true"/>
+    </ui:with>
+
+    <ui:with field="labelProvider"
+             type="com.sencha.gxt.data.shared.StringLabelProvider" />
+
+    <container:VerticalLayoutContainer ui:field="container">
+        <container:child layoutData="{toolBarLayoutData}">
+            <toolbar:ToolBar>
+                <button:TextButton ui:field="deleteBtn"
+                                   debugId="idDeleteBtn"
+                                   text="{appearance.retractComment}"
+                                   icon="{appearance.retractIcon}"
+                                   enabled="false"/>
+            </toolbar:ToolBar>
+        </container:child>
+        <container:child layoutData="{gridLayoutData}">
+            <grid:Grid ui:field="grid"
+                       store="{store}"
+                       cm="{cm}"
+                       view="{view}"/>
+        </container:child>
+        <container:child layoutData="{commentLayoutData}">
+            <g:HorizontalPanel spacing="10">
+                <form:TextArea ui:field="commentBox"
+                               allowBlank="true"
+                               width="{appearance.commentBoxWidth}"
+                               height="{appearance.commentBoxHeight}"
+                               emptyText="{appearance.commentBoxEmptyText}"/>
+                <button:TextButton ui:field="addBtn"
+                                   debugId="idAddBtn"
+                                   text="{appearance.addComment}"
+                                   icon="{appearance.addCommentIcon}"
+                                   enabled="false"/>
+            </g:HorizontalPanel>
+        </container:child>
+    </container:VerticalLayoutContainer>
+</ui:UiBinder>

@@ -1,0 +1,39 @@
+---
+- name: install httplib2
+  pip: name=httplib2
+  tags:
+      - config
+      - config_elasticsearch
+
+- name: upload de-* index template
+  uri: url="{{es_de_index_template_url}}" method=PUT
+       body={{ lookup('file', 'de-template.json')|replace('\n', '')|to_nice_json }}
+  register: upload_de_index_template
+  tags:
+      - config
+      - config_elasticsearch
+
+- name: upload de-metrics-* index template
+  uri: url="{{es_de_metrics_index_template_url}}" method=PUT
+       body={{ lookup('file', 'de-metrics-template.json')|replace('\n', '')|to_nice_json }}
+  register: upload_de_metrics_index_template
+  tags:
+      - config
+      - config_elasticsearch
+
+- name: upload de-logs-* index template
+  uri: url="{{es_de_logs_index_template_url}}" method=PUT
+       body={{ lookup('file', 'de-logs-template.json')|replace('\n', '')|to_nice_json }}
+  register: upload_de_logs_index_template
+  tags:
+      - config
+      - config_elasticsearch
+
+- name: upload de-error-logs-* index template
+  uri: url="{{es_de_error_logs_index_template_url}}" method=PUT
+       body={{ lookup('file', 'de-error-template.json')|replace('\n', '')|to_nice_json }}
+  register: upload_de_logs_index_template
+  tags:
+      - config
+      - config_elasticsearch
+

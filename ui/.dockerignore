@@ -1,0 +1,14 @@
+.git
+.gradle
+gradle
+build.gradle
+gradle.properties
+settings.gradle
+versions.gradle
+gradlew
+gradle.bat
+iplant
+build
+de-lib/build
+de-webapp/build
+de-webapp/war

@@ -1,0 +1,108 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:con="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+             xmlns:appTemplate="urn:import:org.iplantc.de.apps.widgets.client.view"
+             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+             xmlns:appsInt="urn:import:org.iplantc.de.apps.integration.client.view"
+             xmlns:appTemplatePropertyEditor="urn:import:org.iplantc.de.apps.integration.client.view.widgets">
+             
+             
+   <ui:with field="appIntStrings"
+            type="org.iplantc.de.resources.client.uiapps.integration.AppIntegrationMessages"/>
+
+    <!-- Border Layout Data -->
+   <ui:with field="westMargins"
+            type="com.sencha.gxt.core.client.util.Margins">
+      <ui:attributes top="0"
+                     right="0"
+                     bottom="0"
+                     left="0" />
+   </ui:with>
+   <ui:with field="centerMargins"
+            type="com.sencha.gxt.core.client.util.Margins">
+      <ui:attributes top="0"
+                     right="0"
+                     bottom="0"
+                     left="0" />
+   </ui:with>
+   
+   <ui:with field="northData"
+            type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
+      <ui:attributes size="30"
+                     maxSize="30"/>
+   </ui:with>
+   <ui:with field="westData"
+            type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
+      <ui:attributes margins="{westMargins}"
+                     size="225"
+                     collapsible="true"/>
+   </ui:with>
+   <ui:with field="centerData"
+            type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
+      <ui:attributes margins="{centerMargins}" 
+                     size=".45"
+                     hidden="false"/>
+   </ui:with>
+   <ui:with field="centerLayoutData"
+   			type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData" >
+      <ui:attributes width="1" height="-1" margins="{centerMargins}" />
+   </ui:with>
+   <ui:with field="eastData"
+            type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
+      <ui:attributes size=".35"
+                     minSize="300"
+                     split="true"
+                     hidden="false"/>
+   </ui:with>
+   <ui:with field="southData"
+            type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
+      <ui:attributes size="100"
+                     split="true"/>
+   </ui:with>
+                
+    <con:BorderLayoutContainer ui:field="borderLayoutContainer">
+        <!-- Toolbar -->
+        <con:north layoutData="{northData}">
+            <appsInt:AppEditorToolbar ui:field="toolbar"/>
+        </con:north>
+        
+        <!-- Palette -->
+        <con:west layoutData="{westData}">
+            <gxt:ContentPanel headingText="{appIntStrings.paletteHeader}">
+                <gxt:tool>
+                    <button:ToolButton ui:field="paletteContextualHelpBtn"/>
+                </gxt:tool>
+                <appsInt:AppIntegrationPalette ui:field="palette"/>
+            </gxt:ContentPanel>
+        </con:west>
+        
+        <!-- App Builder -->
+        <con:center layoutData="{centerData}">
+        	<con:VerticalLayoutContainer scrollMode="AUTOY"
+        								 adjustForScroll="true">
+        		<con:child layoutData="{centerLayoutData}">
+	        	    <appTemplatePropertyEditor:AppTemplatePropertyEditor ui:field="appTemplatePropertyEditor"/>
+        		</con:child>
+        		<con:child layoutData="{centerLayoutData}">
+    	            <appTemplate:AppTemplateForm ui:field="wizard"/>
+        		</con:child>
+        	</con:VerticalLayoutContainer>
+        </con:center>
+        
+        <!-- Selected Widget Properties -->
+        <con:east layoutData="{eastData}">
+            <con:CardLayoutContainer ui:field="eastPanel" />
+        </con:east>
+        
+        <!-- Command Line Preview -->
+        <con:south layoutData="{southData}">
+            <gxt:ContentPanel headingText="{appIntStrings.cmdLinePreviewHeader}">
+            	<form:TextArea ui:field="cmdLinePreview"
+            				   readOnly="true"/>
+            </gxt:ContentPanel>
+        </con:south>
+    </con:BorderLayoutContainer>             
+             
+</ui:UiBinder> 

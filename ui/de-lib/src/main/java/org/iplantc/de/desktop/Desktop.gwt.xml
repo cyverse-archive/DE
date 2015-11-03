@@ -1,0 +1,40 @@
+<module>
+    <!-- Inherit the core Web Toolkit stuff.                        -->
+    <inherits name='com.google.gwt.user.User'/>
+    <inherits name="com.google.gwt.json.JSON"/>
+    <inherits name="com.google.gwt.http.HTTP"/>
+    <inherits name="com.google.gwt.logging.Logging"/>
+    <inherits name="com.google.common.collect.Collect"/>
+
+    <!-- UIBinder -->
+    <inherits name="com.google.web.bindery.autobean.AutoBean"/>
+    <inherits name="com.google.gwt.uibinder.UiBinder"/>
+
+    <!-- I18N -->
+    <inherits name="com.google.gwt.i18n.I18N"/>
+    <inherits name="com.google.gwt.resources.Resources"/>
+
+    <!-- GXT -->
+    <inherits name='com.sencha.gxt.ui.GXT'/>
+    <inherits name='com.sencha.gxt.theme.gray.Gray'/>
+    <stylesheet src="reset.css"/>
+
+    <extend-property name="user.agent.os" values="unknown"/>
+
+    <!-- Common Service Interfaces -->
+    <inherits name='org.iplantc.de.DiscoveryEnvironmentCommon'/>
+    <inherits name="org.iplantc.de.apps.Apps"/>
+    <inherits name="org.iplantc.de.apps.widgets.Widgets"/>
+    <inherits name="org.iplantc.de.apps.integration.AppsIntegration"/>
+    <inherits name="org.iplantc.de.diskResource.diskresource"/>
+    <inherits name="org.iplantc.de.pipelines.pipelines"/>
+    <inherits name="org.iplantc.de.analysis.Analysis"/>
+    <inherits name="org.iplantc.de.fileViewers.FileViewers"/>
+    <inherits name="org.iplantc.de.notifications.Notifications"/>
+    <inherits name="org.iplantc.de.systemMessages.SystemMessages"/>
+    <inherits name="org.iplantc.de.collaborators.Collaborators" />
+
+    <source path="client"/>
+    <source path="shared"/>
+
+</module>

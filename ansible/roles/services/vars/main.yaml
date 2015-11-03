@@ -1,0 +1,27 @@
+service_names:
+  - anon-files
+  - clockwork
+  - condor-log-monitor
+  - data-info
+  - donkey
+  - iplant-email
+  - jex-events
+  - kifshare
+  - metadactyl
+  - metadata
+  - notificationagent
+  - saved-searches
+  - tree-urls
+  - user-preferences
+  - user-sessions
+               
+parasitics:
+  - dewey
+  - infosquito
+  - info-typer
+  - monkey
+
+extras:
+  - logstash-forwarder
+
+enable_services: yes

@@ -1,0 +1,66 @@
+##  What machine is your central manager?
+
+CONDOR_HOST = {{ condor.host }}
+
+## Pool's short description
+
+COLLECTOR_NAME = {{environment_name}} Condor Pool at $(FULL_HOSTNAME)
+
+##  When is this machine willing to start a job?
+
+START = TRUE
+START = $(START) && (IpcExe =!= "imicrobe_adapter")
+START = $(START) && (IpcExe =!= "merra_adapter.py")
+START = $(START) && (IpcExe =?= "foundational_api_adapter.pl")
+
+#IS_OWNER = FALSE
+##  When to suspend a job?
+
+SUSPEND = FALSE
+
+
+##  When to nicely stop a job?
+##  (as opposed to killing it instantaneously)
+
+PREEMPT = FALSE
+
+
+##  When to instantaneously kill a preempting job
+##  (e.g. if a job is in the pre-empting stage for too long)
+
+KILL = FALSE
+
+##  This macro determines what daemons the condor_master will start and keep its watchful eyes on.
+##  The list is a comma or space separated list of subsystem names
+
+# DAEMON_LIST = MASTER, SCHEDD, STARTD
+DAEMON_LIST = MASTER, STARTD
+
+##  Sets how often the condor_negotiator starts a negotiation cycle.
+##  It is defined in seconds and defaults to 60 (1 minute).
+
+NEGOTIATOR_INTERVAL = 20
+
+##  Disable UID_DOMAIN check when submit a job
+
+TRUST_UID_DOMAIN = TRUE
+#################################
+## Added for iPlant Collaborative
+#################################
+CONDOR_ADMIN    = {{ condor.admin }}
+UID_DOMAIN      = {{ condor.uid_domain }}
+FILESYSTEM_DOMAIN = {{ condor.filesystem_domain }}
+COLLECTOR_NAME  = {{ condor.collector_name }}
+# FLOCK_TO        = {{ condor.flock_to }}
+ALLOW_READ      = {{ condor.allow_read }}
+ALLOW_WRITE     = {{ condor.allow_write }}
+HIGHPORT        = 65535
+LOWPORT         = 61440
+JAVA            = /usr/bin/java
+ASSIGN_CPU_AFFINITY = True
+
+NUM_SLOTS = 4
+SLOT_WEIGHT = 1
+
+IplantSpeedIndex = 10
+STARTD_ATTRS = $(STARTD_ATTRS) IplantSpeedIndex

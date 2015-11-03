@@ -1,0 +1,55 @@
+<module>
+
+    <inherits name="org.iplantc.de.commons.ui-commons" />
+
+    <replace-with class="org.iplantc.de.theme.base.client.commons.widgets.InternalAnchorDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.widgets.InternalAnchor.Appearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.commons.widgets.IPlantAnchorDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.widgets.IPlantAnchor.IPlantAnchorAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.commons.widgets.PushButtonDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.widgets.PushButton.PushButtonAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.commons.widgets.ContextualHelpPopupDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.widgets.ContextualHelpPopup.ContextualHelpPopupAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.commons.widgets.ContextualHelpToolButtonDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.widgets.ContextualHelpToolButton.ContextualHelpToolButtonAppearance" />
+    </replace-with>
+
+    <!-- Dialogs -->
+    <replace-with class="org.iplantc.de.theme.base.client.commons.error.IplantErrorDialogDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.views.dialogs.IplantErrorDialog.IplantErrorDialogAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.commons.error.ErrorDialogDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.views.dialogs.ErrorDialog.ErrorDialogAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.commons.error.ErrorHandlerDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.ErrorHandler.ErrorHandlerAppearance" />
+    </replace-with>
+
+    <!-- Announcer -->
+    <replace-with class="org.iplantc.de.theme.base.client.commons.announcer.IplantAnnouncementConfigDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.info.IplantAnnouncementConfig.IplantAnnouncementConfigAppearance" />
+    </replace-with>
+
+    <!-- Comments -->
+    <replace-with class="org.iplantc.de.theme.base.client.commons.comments.CommentsViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.comments.CommentsView.CommentsViewAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.commons.comments.cells.CommentsCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.comments.view.cells.CommentsCell.CommentsCellAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.commons.comments.presenter.CommentsPresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.comments.CommentsView.Presenter.CommentsPresenterAppearance" />
+    </replace-with>
+</module>

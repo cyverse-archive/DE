@@ -1,0 +1,66 @@
+---
+# tasks file for elk-kibana
+
+- name: pull elk kibana image
+  shell: docker pull {{ elk.kibana.image_name }}
+  register: docker_pull_v
+  changed_when: docker_pull_v.stdout.find('Image is up to date') == -1
+  tags:
+      - docker_pull
+      - docker_pull_kibana
+
+- name: place Systemd service files
+  template: src={{ elk.kibana.service_name }} dest=/usr/lib/systemd/system group=root owner=root mode=0664
+  register: service_file_v
+  tags:
+      - update_service_files
+      - update_service_files_kibana
+
+- name: Reload systemd
+  shell: systemctl daemon-reload  
+  when: service_file_v.changed 
+  tags:
+      - update_service_files
+      - update_service_files_kibana
+
+- name: enable kibana service
+  service: name={{elk.kibana.service_name}} enabled={{enable_services}}
+  when: service_file_v.changed 
+  tags:
+      - enable_services
+      - enable_kibana
+
+- name: services are running
+  shell: systemctl is-active {{elk.kibana.service_name}}
+  register: verify_service_running
+  ignore_errors: true
+  tags:
+      - start_services
+      - start_kibana
+
+- name: start kibana service
+  service: name={{elk.kibana.service_name}} state=started
+  when: verify_service_running.rc != 0
+  tags:
+      - start_services
+      - start_kibana
+
+- name: restart kibana service
+  service: name={{elk.kibana.service_name}} state=restarted
+  when: service_file_v.changed or 
+        docker_pull_v.changed
+  tags:
+      - restart_services
+      - restart_kibana
+
+# If kibana is back, then ES is up
+- name: Wait for Kibana to come back
+  wait_for: host="{{elk_host}}" port="{{elk.kibana.port}}" state=started
+  tags:
+      - config
+      - config_kibana
+
+- include: visualizations.yaml 
+- include: searches.yaml
+- include: index-patterns.yaml
+- include: dashboards.yaml

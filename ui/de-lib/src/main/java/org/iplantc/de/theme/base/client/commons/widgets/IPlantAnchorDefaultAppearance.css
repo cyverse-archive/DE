@@ -1,0 +1,38 @@
+.anchor {
+	font-size: 11px;
+	padding: 4px;
+}
+
+/* Describes the style of an anchor rendered in-line with surrounding text. */
+.inlineAnchor {
+}
+
+.anchor, .inlineAnchor {
+	color:#0098AA;
+	cursor: pointer;
+	text-align: left;
+	text-decoration: none;
+	overflow: visible;
+}
+
+.anchor:hover, .inlineAnchor:hover {
+	text-decoration: underline;	
+	background-color: #ededed;
+}
+
+/* DEPRECATED - This is redundant */
+.anchor .anchorText {
+	color:#0098AA;
+	cursor: pointer;
+}
+
+/* DEPRECATED - This is redundant */
+.anchor .anchorMouseOver {
+	text-decoration: underline;
+	background-color: #ededed;
+}
+
+/* DEPRECATED - This is redundant */
+.anchor .anchorMouseOut {
+	text-decoration: none;
+}

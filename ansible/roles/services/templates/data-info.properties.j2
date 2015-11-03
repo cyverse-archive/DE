@@ -1,0 +1,38 @@
+data-info.anon-files-base-url        = {{ anon_files_proxy_url }}
+data-info.anon-user                  = {{ anon_files_anon_user }}
+data-info.bad-chars                  = {{ irods_bad_chars }}
+data-info.community-data             = {{ irods_home }}/shared
+data-info.copy-key                   = ipc-de-copy-from
+data-info.data-threshold             = 8000
+data-info.kifshare-download-template = {{ kifshare_de_url }}
+data-info.kifshare-external-url      = {{ kifshare_external_url }}
+data-info.max-paths-in-request       = {{ fs_max_paths_in_request }}
+data-info.metadata.base-url          = http://{{ metadata_host }}:{{ metadata.port }}
+data-info.perms-filter               = {{ nibblonian_perms_filter }}
+data-info.port                       = {{ default_service_port }}
+data-info.preview-size               = 8000
+
+# ICAT configuration
+data-info.icat.host           = {{ icat_host }}
+data-info.icat.port           = {{ icat_port }}
+data-info.icat.user           = {{ icat_user }}
+data-info.icat.password       = {{ icat_password }}
+data-info.icat.db             = {{ icat_db }}
+
+# iRODS configuration
+data-info.irods.host          = {{ irods_host }}
+data-info.irods.port          = {{ irods_port }}
+data-info.irods.user          = {{ irods_user }}
+data-info.irods.password      = {{ irods_password }}
+data-info.irods.home          = {{ irods_home }}
+data-info.irods.zone          = {{ irods_zone }}
+data-info.irods.resc          =
+data-info.irods.max-retries   = 10
+data-info.irods.retry-sleep   = 1000
+data-info.irods.use-trash     = true
+data-info.irods.admin-users   = {{ irods_admin_users }}
+
+# file typing configuration
+data-info.type-detect.type-attribute       = ipc-filetype
+data-info.type-detect.filetype-script      = /usr/local/bin/guess-2.pl
+data-info.type-detect.filetype-read-amount = 1024

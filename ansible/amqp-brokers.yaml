@@ -1,0 +1,29 @@
+---
+# TODO: Convert to role
+- hosts: amqp-brokers
+  sudo: true
+
+  vars:
+    rabbitmq_conf_tcp_listeners_port: "{{ amqp_broker_port }}"
+
+    rabbitmq_users_definitions:
+      - vhost: /
+        user: "{{ amqp_user }}"
+        password: "{{ amqp_password }}"
+        tags:
+          - administrator
+
+    rabbitmq_plugins:
+      - rabbitmq_management
+
+    rabbitmq_plugins_conf:
+      - rabbitmq_management: '[{listener, [{port, 31366}]}]'
+
+  roles:
+    - role: notify-chat
+      msg: "Updating AMQP broker on {{ ansible_hostname }}"
+
+    - Rackspace_Automation.rabbitmq
+
+    - role: notify-chat
+      msg: "Done updating AMQP broker on {{ ansible_hostname }}."

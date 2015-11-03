@@ -1,0 +1,102 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+             xmlns:con="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client">
+
+    <ui:with field="appearance"
+             type="org.iplantc.de.diskResource.client.views.dialogs.FileUploadByUrlDialog.FileUploadByUrlDialogAppearance"/>
+
+    <ui:with field="sideMargins"
+             type="com.sencha.gxt.core.client.util.Margins">
+        <ui:attributes top="4"
+                       right="4"
+                       bottom="4"
+                       left="4"/>
+    </ui:with>
+
+    <ui:with field="centerMargins"
+             type="com.sencha.gxt.core.client.util.Margins">
+        <ui:attributes top="4"
+                       right="0"
+                       bottom="4"
+                       left="0"/>
+    </ui:with>
+
+    <ui:with field="centerLayoutData"
+             type="com.sencha.gxt.widget.core.client.container.HorizontalLayoutContainer.HorizontalLayoutData">
+        <ui:attributes width="1"
+                       height="1"
+                       margins="{centerMargins}"/>
+    </ui:with>
+
+    <ui:with field="sideLayoutData"
+             type="com.sencha.gxt.widget.core.client.container.HorizontalLayoutContainer.HorizontalLayoutData">
+        <ui:attributes width="-1"
+                       height="1"
+                       margins="{sideMargins}"/>
+    </ui:with>
+
+    <con:VerticalLayoutContainer>
+        <g:HTML ui:field="htmlDestText"/>
+        <g:HTML HTML="{appearance.urlPrompt}"/>
+        <con:SimpleContainer>
+            <con:HorizontalLayoutContainer>
+                <con:child layoutData="{centerLayoutData}">
+                    <form:TextArea ui:field="url0"
+                                   debugId="idUrlImport0"/>
+                </con:child>
+                <con:child layoutData="{sideLayoutData}">
+                    <gxt:Status ui:field="formStatus0"/>
+                </con:child>
+            </con:HorizontalLayoutContainer>
+        </con:SimpleContainer>
+        <con:SimpleContainer>
+            <con:HorizontalLayoutContainer>
+                <con:child layoutData="{centerLayoutData}">
+                    <form:TextArea ui:field="url1"
+                                   debugId="idUrlImport1"/>
+                </con:child>
+                <con:child layoutData="{sideLayoutData}">
+                    <gxt:Status ui:field="formStatus1"/>
+                </con:child>
+            </con:HorizontalLayoutContainer>
+        </con:SimpleContainer>
+        <con:SimpleContainer>
+            <con:HorizontalLayoutContainer>
+                <con:child layoutData="{centerLayoutData}">
+                    <form:TextArea ui:field="url2"
+                                   debugId="idUrlImport2"/>
+                </con:child>
+                <con:child layoutData="{sideLayoutData}">
+                    <gxt:Status ui:field="formStatus2"/>
+                </con:child>
+            </con:HorizontalLayoutContainer>
+        </con:SimpleContainer>
+        <con:SimpleContainer>
+            <con:HorizontalLayoutContainer>
+                <con:child layoutData="{centerLayoutData}">
+                    <form:TextArea ui:field="url3"
+                                   debugId="idUrlImport3"/>
+                </con:child>
+                <con:child layoutData="{sideLayoutData}">
+                    <gxt:Status ui:field="formStatus3"/>
+                </con:child>
+            </con:HorizontalLayoutContainer>
+        </con:SimpleContainer>
+        <con:SimpleContainer>
+            <con:HorizontalLayoutContainer>
+                <con:child layoutData="{centerLayoutData}">
+                    <form:TextArea ui:field="url4"
+                                   debugId="idUrlImport4"/>
+                </con:child>
+                <con:child layoutData="{sideLayoutData}">
+                    <gxt:Status ui:field="formStatus4"/>
+                </con:child>
+            </con:HorizontalLayoutContainer>
+        </con:SimpleContainer>
+    </con:VerticalLayoutContainer>
+
+
+</ui:UiBinder>

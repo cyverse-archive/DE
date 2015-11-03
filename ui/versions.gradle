@@ -1,0 +1,14 @@
+// Contains a list of versions used in dependencies
+
+ext {
+   gwtVer = "2.7.0"
+   gxtVersion = "3.1.4"
+   jUnitVersion = "4.11"
+   gwtMockitoVer = "1.1.3"
+   guavaVer = "17.0"
+   guavaGwtVer = "17.0"
+   gwtGinVer = "2.1.2"
+   log4jVersion = "1.2.16"
+   slf4jVersion = "1.7.6"
+   logbackVersion = "1.1.2"
+}

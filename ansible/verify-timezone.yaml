@@ -1,0 +1,53 @@
+---
+
+- name: Verify that timezone packages and data are installed
+  hosts: docker-ready
+  tasks:
+      - name: Verify tzdata package is installed
+        shell: yum list installed tzdata
+        register: verify_tzdata_installed
+        when: ansible_distribution == "CentOS"
+
+      - name: Verify tzdata-java package is installed
+        shell: yum list installed tzdata-java
+        register: verify_tzdata_java_installed
+        when: ansible_distribution == "CentOS"
+
+      - fail: msg="tzdata must be installed"
+        when: verify_tzdata_installed.rc != 0
+
+      - fail: msg="tzdata-java must be installed"
+        when: verify_tzdata_java_installed.rc != 0
+
+      - name: Verify tzdata is up to date
+        shell: yum check-update tzdata
+        register: verify_tzdata_uptodate
+        when: ansible_distribution == "CentOS"
+
+      - name: Verify tzdata-java is up to date
+        shell: yum check-update tzdata-java
+        register: verify_tzdata_java_uptodate
+        when: ansible_distribution == "CentOS"
+
+      - fail: msg="tzdata must be up to date"
+        when: verify_tzdata_uptodate.rc != 0
+
+      - fail: msg="tzdata-java must be up to date"
+        when: verify_tzdata_java_uptodate.rc != 0
+
+
+      - name: Verify /etc/localtime exists
+        stat: path=/etc/localtime
+        register: verify_etc_localtime
+
+      - name: Verify /etc/timezone exists
+        stat: path=/etc/timezone
+        register: verify_etc_timezone
+
+      - fail: msg="/etc/localtime must exist"
+        when: not verify_etc_localtime.stat.exists or
+                  verify_etc_localtime.stat.isdir
+
+      - fail: msg="/etc/timezone must exist"
+        when: not verify_etc_timezone.stat.exists or
+                  verify_etc_timezone.stat.isdir

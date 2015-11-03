@@ -1,0 +1,157 @@
+---
+###################
+# Stop all services
+###################
+- name: stop anon-files service
+  sudo: yes
+  service: name={{anon_files.service_name}} state=stopped
+  tags:
+      - stop_services
+      - stop_anon-files
+
+- name: stop exim service
+  sudo: yes
+  service: name={{exim.service_name}} state=stopped
+  tags:
+      - stop_services
+      - stop_exim
+
+- name: stop saved-searches service
+  sudo: yes
+  service: name={{saved_searches.service_name}} state=stopped
+  tags:
+      - stop_services
+      - stop_saved-searches
+
+- name: stop user-preferences service
+  sudo: yes
+  service: name={{user_preferences.service_name}} state=stopped
+  tags:
+      - stop_services
+      - stop_user-preferences
+
+- name: stop user-sessions service
+  sudo: yes
+  service: name={{user_sessions.service_name}} state=stopped
+  tags:
+      - stop_services
+      - stop_user-sessions
+
+- name: stop tree-urls service
+  sudo: yes
+  service: name={{tree_urls.service_name}} state=stopped
+  tags:
+      - stop_services
+      - stop_tree-urls
+
+- name: stop notificationagent service
+  sudo: yes
+  service: name={{notificationagent.service_name}} state=stopped
+  tags:
+      - stop_services
+      - stop_notification-agent
+
+- name: stop metadactyl service
+  sudo: yes
+  service: name={{metadactyl.service_name}} state=stopped
+  tags:
+      - stop_services
+      - stop_metadactyl
+
+- name: stop kifshare service
+  sudo: yes
+  service: name={{kifshare.service_name}} state=stopped
+  tags:
+      - stop_services
+      - stop_kifshare
+
+- name: stop jex-events service
+  sudo: yes
+  service: name={{jexevents.service_name}} state=stopped
+  tags:
+      - stop_services
+      - stop_jex-events
+
+- name: stop iplant-email service
+  sudo: yes
+  service: name={{iplant_email.service_name}} state=stopped
+  tags:
+      - stop_services
+      - stop_iplant-email
+
+- name: stop iplant-groups service
+  sudo: yes
+  service: name={{iplant_groups.service_name}} state=stopped
+  tags:
+      - stop_services
+      - stop_iplant-groups
+
+- name: stop donkey service
+  sudo: yes
+  service: name={{donkey.service_name}} state=stopped
+  tags:
+      - stop_services
+      - stop_donkey
+
+- name: stop data-info service
+  sudo: yes
+  service: name={{data_info.service_name}} state=stopped
+  tags:
+      - stop_services
+      - stop_data-info
+
+- name: stop metadata service
+  sudo: yes
+  service: name={{metadata.service_name}} state=stopped
+  tags:
+      - stop_services
+      - stop_metadata
+
+- name: stop condor-log-monitor service
+  sudo: yes
+  service: name={{condor_log_monitor.service_name}} state=stopped
+  tags:
+      - stop_services
+      - stop_condor-log-monitor
+
+- name: stop clockwork service
+  sudo: yes
+  service: name={{clockwork.service_name}} state=stopped
+  tags:
+      - stop_services
+      - stop_clockwork
+
+#########################
+# Stop parasitic services
+#########################
+- name: stop monkey service
+  sudo: yes
+  service: name={{monkey.service_name}} state=stopped
+  when: (not parasitic)
+  tags:
+      - stop_services
+      - stop_monkey
+
+- name: stop infosquito service
+  sudo: yes
+  service: name={{infosquito.service_name}} state=stopped
+  when: (not parasitic)
+  tags:
+      - stop_services
+      - stop_infosquito
+
+- name: stop info-typer service
+  sudo: yes
+  service: name={{info_typer.service_name}} state=stopped
+  when: (not parasitic)
+  tags:
+      - stop_services
+      - stop_info-typer
+
+- name: stop dewey service
+  sudo: yes
+  service: name={{dewey.service_name}} state=stopped
+  when: (not parasitic)
+  tags:
+      - stop_services
+      - stop_dewey

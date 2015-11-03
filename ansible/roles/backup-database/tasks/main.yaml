@@ -1,0 +1,9 @@
+---
+- name: create a unique file name for the database backup
+  sudo: yes
+  shell: mktemp /tmp/{{curr_db_name}}.dump.XXXXXX
+  register: mktemp
+
+- name: back up database
+  sudo: yes
+  shell: pg_dump -xc -h {{curr_db_host}} -p {{curr_db_port}} -U {{curr_db_user}} -f {{mktemp.stdout}} {{curr_db_name}}

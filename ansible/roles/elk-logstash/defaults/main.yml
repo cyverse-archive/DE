@@ -1,0 +1,3 @@
+---
+# defaults file for elk-logstash
+enable_services: yes

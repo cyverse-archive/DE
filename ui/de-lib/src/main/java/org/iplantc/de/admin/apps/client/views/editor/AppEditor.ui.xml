@@ -1,0 +1,120 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+             xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
+             xmlns:gxtButton="urn:import:com.sencha.gxt.widget.core.client.button"
+             xmlns:link="urn:import:org.iplantc.de.commons.client.widgets">
+
+    <ui:with field="appearance"
+             type="org.iplantc.de.admin.apps.client.views.editor.AppEditor.AppEditorAppearance"/>
+
+    <ui:with field="verticalLayoutData"
+             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+        <ui:attributes width="1" height="-1"/>
+    </ui:with>
+    <ui:with field="margins0"
+             type="com.sencha.gxt.core.client.util.Margins">
+        <ui:attributes top="0" right="0" bottom="0" left="0"/>
+    </ui:with>
+    <ui:with field="boxLayoutData"
+             type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
+        <ui:attributes margins="{margins0}" flex="1"/>
+    </ui:with>
+
+    <gxt:Window ui:field="window"
+                width="{appearance.appEditorWidth}">
+        <g:VerticalPanel spacing="2">
+            <container:VerticalLayoutContainer>
+                <container:child layoutData="{verticalLayoutData}">
+                    <form:FieldLabel ui:field="appNameFieldLabel"
+                                     labelAlign="TOP"
+                                     text="{appearance.appName}">
+                        <form:widget>
+                            <form:TextField ui:field="name"
+                                            allowBlank="false"/>
+                        </form:widget>
+                    </form:FieldLabel>
+                </container:child>
+
+                <container:child layoutData="{verticalLayoutData}">
+                    <form:FieldLabel ui:field="integratorNameFieldLabel"
+                                     labelAlign="TOP"
+                                     text="{appearance.integratorName}">
+                        <form:widget>
+                            <form:TextField ui:field="integratorName"
+                                            allowBlank="false"/>
+                        </form:widget>
+                    </form:FieldLabel>
+                </container:child>
+
+                <container:child layoutData="{verticalLayoutData}">
+                    <form:FieldLabel ui:field="integratorEmailFieldLabel"
+                                     labelAlign="TOP"
+                                     text="{appearance.integratorEmail}">
+                        <form:widget>
+                            <form:TextField ui:field="integratorEmail"
+                                            allowBlank="false"/>
+                        </form:widget>
+                    </form:FieldLabel>
+                </container:child>
+
+                <container:child layoutData="{verticalLayoutData}">
+                    <form:FieldLabel ui:field="appDisabledCheckBoxLabel"
+                                     labelAlign="TOP"
+                                     text="{appearance.tempDisable}">
+                        <form:widget>
+                            <form:CheckBox ui:field="disabled"
+                                           boxLabel="{appearance.appDisabled}"/>
+                        </form:widget>
+                    </form:FieldLabel>
+                </container:child>
+
+                <container:child layoutData="{verticalLayoutData}">
+                    <form:FieldLabel ui:field="appDescFieldLabel"
+                                     labelAlign="TOP"
+                                     text="{appearance.appDescription}">
+                        <form:widget>
+                            <form:TextArea ui:field="description"/>
+                        </form:widget>
+                    </form:FieldLabel>
+                </container:child>
+
+                <container:child layoutData="{verticalLayoutData}">
+                    <form:FieldLabel ui:field="wikiUrlFieldLabel"
+                                     labelAlign="TOP">
+                        <form:widget>
+                            <form:TextField ui:field="wikiUrl"
+                                            allowBlank="true"/>
+                        </form:widget>
+                    </form:FieldLabel>
+                </container:child>
+                
+                <container:child layoutData="{verticalLayoutData}">
+                    <g:HTML ui:field="docHelp"/>
+                </container:child>
+                <container:child layoutData="{verticalLayoutData}">
+                    <link:IPlantAnchor ui:field="templateLink"/>
+                </container:child>
+                 <container:child layoutData="{verticalLayoutData}">
+                    <form:FieldLabel ui:field="appDocLbl"
+                                     labelAlign="TOP">
+                        <form:widget>
+                            <form:TextArea ui:field="appDoc"
+                                            allowBlank="true" height="200px"/>
+                        </form:widget>
+                    </form:FieldLabel>
+                </container:child>
+
+                <container:HBoxLayoutContainer hBoxLayoutAlign="MIDDLE"
+                                               pack="END">
+                    <gxtButton:TextButton ui:field="saveButton"
+                                          text="Save"/>
+                    <gxtButton:TextButton ui:field="cancelButton"
+                                          text="Cancel"/>
+                </container:HBoxLayoutContainer>
+            </container:VerticalLayoutContainer>
+        </g:VerticalPanel>
+    </gxt:Window>
+</ui:UiBinder> 
