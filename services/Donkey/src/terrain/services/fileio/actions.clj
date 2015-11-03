@@ -1,8 +1,8 @@
-(ns donkey.services.fileio.actions
+(ns terrain.services.fileio.actions
   (:use [clj-jargon.init :only [with-jargon]]
         [clj-jargon.metadata]
         [clojure-commons.error-codes]
-        [donkey.util.service :only [success-response]]
+        [terrain.util.service :only [success-response]]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [cemerick.url :as url]
             [clojure-commons.file-utils :as ft]
@@ -12,9 +12,9 @@
             [clj-jargon.item-info :as info]
             [clj-jargon.item-ops :as ops]
             [clj-jargon.permissions :as perm]
-            [donkey.services.fileio.config :as jargon]
-            [donkey.services.filesystem.validators :as validators]
-            [donkey.services.metadata.internal-jobs :as internal-jobs])
+            [terrain.services.fileio.config :as jargon]
+            [terrain.services.filesystem.validators :as validators]
+            [terrain.services.metadata.internal-jobs :as internal-jobs])
   (:import [java.io InputStream]
            [clojure.lang IPersistentMap]))
 

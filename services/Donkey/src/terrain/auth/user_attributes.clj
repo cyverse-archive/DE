@@ -1,12 +1,12 @@
-(ns donkey.auth.user-attributes
+(ns terrain.auth.user-attributes
   (:require [cheshire.core :as cheshire]
             [clojure.string :as string]
             [clojure.tools.logging :as log]
             [clojure-commons.response :as resp]
             [clj-cas.cas-proxy-auth :as cas]
             [clojure-commons.exception :as cx]
-            [donkey.util.config :as cfg]
-            [donkey.util.jwt :as jwt]))
+            [terrain.util.config :as cfg]
+            [terrain.util.jwt :as jwt]))
 
 
 (def
@@ -34,12 +34,12 @@
 (defn user-from-de-jwt-claims
   "Creates a map of values from JWT claims stored in the request by the DE."
   [{:keys [jwt-claims]}]
-  (jwt/donkey-user-from-jwt-claims jwt-claims))
+  (jwt/terrain-user-from-jwt-claims jwt-claims))
 
 (defn user-from-wso2-jwt-claims
   "Creates a map of values from JWT claims stored int he request by WSO2."
   [{:keys [jwt-claims]}]
-  (jwt/donkey-user-from-jwt-claims jwt-claims jwt/user-from-wso2-assertion))
+  (jwt/terrain-user-from-jwt-claims jwt-claims jwt/user-from-wso2-assertion))
 
 (defn fake-user-from-attributes
   "Creates a real map of fake values for a user base on environment variables."
@@ -78,7 +78,7 @@
   "Generates a ring handler function that selects the authentication method based on predicates."
   [phs]
   (fn [request]
-    (log/log 'AccessLogger :trace nil "entering donkey.auth.user-attributes/wrap-auth-selection")
+    (log/log 'AccessLogger :trace nil "entering terrain.auth.user-attributes/wrap-auth-selection")
     (if-let [auth-handler (find-auth-handler request phs)]
       (auth-handler request)
       (resp/unauthorized "No authentication information found in request."))))

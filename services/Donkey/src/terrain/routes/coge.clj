@@ -1,9 +1,9 @@
-(ns donkey.routes.coge
+(ns terrain.routes.coge
   (:use [compojure.core]
-        [donkey.services.coge]
-        [donkey.util.service]
-        [donkey.util])
-  (:require [donkey.util.config :as config]))
+        [terrain.services.coge]
+        [terrain.util.service]
+        [terrain.util])
+  (:require [terrain.util.config :as config]))
 
 (defn coge-routes
   []

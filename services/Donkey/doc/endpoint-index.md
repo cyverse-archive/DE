@@ -1,6 +1,6 @@
 # Endpoint Index
 
-* [GET /](endpoints/misc.md#verifying-that-donkey-is-running)
+* [GET /](endpoints/misc.md#verifying-that-terrain-is-running)
 * [POST /admin/apps](endpoints/app-metadata.md#categorizing-apps)
 * [GET /admin/apps/categories](endpoints/app-metadata.md#listing-app-categories)
 * [POST /admin/apps/categories](endpoints/app-metadata.md#adding-categories)
@@ -14,7 +14,7 @@
 * [PATCH /admin/apps/{app-id}/comments/{comment-id}](endpoints/comments.md#retractingreadmitting-a-comment)
 * [PATCH /admin/apps/{app-id}/documentation](endpoints/app-metadata.md#app-documentation)
 * [POST /admin/apps/{app-id}/documentation](endpoints/app-metadata.md#app-documentation)
-* [GET /admin/config](endpoints/admin.md#listing-the-config-for-donkey)
+* [GET /admin/config](endpoints/admin.md#listing-the-config-for-terrain)
 * [DELETE /admin/filesystem/entry/{entry-id}/comments/{comment-id}](endpoints/comments.md#administratively-deleting-a-comment)
 * [PATCH /admin/filesystem/entry/{entry-id}/comments/{comment-id}](endpoints/comments.md#retractingreadmitting-a-comment)
 * [GET /admin/filesystem/index](endpoints/filesystem/search.md#endpoints:)

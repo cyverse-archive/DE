@@ -1,9 +1,9 @@
-(ns donkey.util.email
-  (:use [donkey.auth.user-attributes :only [current-user]])
+(ns terrain.util.email
+  (:use [terrain.auth.user-attributes :only [current-user]])
   (:require [cheshire.core :as cheshire]
             [clj-http.client :as client]
             [clojure.string :as string]
-            [donkey.util.config :as config]))
+            [terrain.util.config :as config]))
 
 (defn send-email
   "Sends an e-mail message via the iPlant e-mail service."

@@ -1,17 +1,17 @@
-(ns donkey.services.filesystem.uuids
+(ns terrain.services.filesystem.uuids
   (:use [clj-jargon.metadata]
         [clj-jargon.permissions]
         [clojure-commons.validators]
         [slingshot.slingshot :only [throw+]]
-        [donkey.services.filesystem.validators])
+        [terrain.services.filesystem.validators])
   (:require [clojure.tools.logging :as log]
             [clj-icat-direct.icat :as icat]
-            [donkey.services.filesystem.stat :as stat]
+            [terrain.services.filesystem.stat :as stat]
             [cheshire.core :as json]
             [clj-jargon.init :as init]
             [clojure-commons.error-codes :as error]
-            [donkey.util.config :as cfg]
-            [donkey.services.filesystem.icat :as jargon])
+            [terrain.util.config :as cfg]
+            [terrain.services.filesystem.icat :as jargon])
   (:import [java.util UUID]
            [clojure.lang IPersistentMap ISeq]))
 

@@ -1,7 +1,7 @@
-(ns donkey.clients.metadactyl
+(ns terrain.clients.metadactyl
   (:require [cheshire.core :as cheshire]
-            [donkey.clients.metadactyl.raw :as raw]
-            [donkey.util.service :as service]))
+            [terrain.clients.metadactyl.raw :as raw]
+            [terrain.util.service :as service]))
 
 (defn get-app
   [app-id]

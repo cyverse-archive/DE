@@ -1,4 +1,4 @@
-# Donkey Endpoints
+# Terrain Endpoints
 
 All URLs referenced in endpoint documentation are listed as relative URLs with
 value names enclosed in braces. For example, the service to get a list of

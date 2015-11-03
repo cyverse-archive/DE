@@ -1,7 +1,7 @@
 <configuration scan="true" debug="false">
  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-        <customFields>{"service":"donkey"}</customFields>
+        <customFields>{"service":"terrain"}</customFields>
         <fieldNames>
             <logger>loggerName</logger>
             <thread>thread</thread>

@@ -1,8 +1,8 @@
-(ns donkey.services.filesystem.metadata
+(ns terrain.services.filesystem.metadata
   (:use [clojure-commons.error-codes]
         [clojure-commons.validators]
-        [donkey.services.filesystem.common-paths]
-        [donkey.services.filesystem.validators]
+        [terrain.services.filesystem.common-paths]
+        [terrain.services.filesystem.validators]
         [kameleon.uuids :only [uuidify]]
         [clj-jargon.init :only [with-jargon]]
         [clj-jargon.item-ops :only [input-stream]]
@@ -16,12 +16,12 @@
             [cheshire.core :as json]
             [clj-http.client :as http]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
-            [donkey.clients.metadata.raw :as metadata-client]
-            [donkey.services.filesystem.icat :as icat]
-            [donkey.services.filesystem.uuids :as uuids]
-            [donkey.services.filesystem.validators :as validators]
-            [donkey.util.config :as cfg]
-            [donkey.util.service :as service]
+            [terrain.clients.metadata.raw :as metadata-client]
+            [terrain.services.filesystem.icat :as icat]
+            [terrain.services.filesystem.uuids :as uuids]
+            [terrain.services.filesystem.validators :as validators]
+            [terrain.util.config :as cfg]
+            [terrain.util.service :as service]
             [ring.middleware.multipart-params :as multipart])
   (:import [au.com.bytecode.opencsv CSVReader]
            [java.io InputStream]))

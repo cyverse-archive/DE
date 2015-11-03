@@ -1,6 +1,6 @@
-(ns donkey.clients.saved-searches
-  (:use [donkey.util.config]
-        [donkey.util.service :only [success-response]]
+(ns terrain.clients.saved-searches
+  (:use [terrain.util.config]
+        [terrain.util.service :only [success-response]]
         [clojure-commons.error-codes]
         [slingshot.slingshot :only [throw+]])
   (:require [clj-http.client :as http]

@@ -1,11 +1,11 @@
-(ns donkey.services.metadata.favorites
+(ns terrain.services.metadata.favorites
   (:require [clojure.set :as set]
             [cheshire.core :as json]
-            [donkey.auth.user-attributes :as user]
-            [donkey.clients.data-info :as data]
-            [donkey.clients.metadata.raw :as metadata]
-            [donkey.util.service :as svc]
-            [donkey.util.validators :as valid])
+            [terrain.auth.user-attributes :as user]
+            [terrain.clients.data-info :as data]
+            [terrain.clients.metadata.raw :as metadata]
+            [terrain.util.service :as svc]
+            [terrain.util.validators :as valid])
   (:import [java.util UUID]))
 
 

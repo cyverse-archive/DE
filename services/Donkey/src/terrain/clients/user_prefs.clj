@@ -1,5 +1,5 @@
-(ns donkey.clients.user-prefs
-  (:use [donkey.util.config]
+(ns terrain.clients.user-prefs
+  (:use [terrain.util.config]
         [clojure-commons.error-codes]
         [slingshot.slingshot :only [throw+]])
   (:require [clj-http.client :as http]

@@ -1,13 +1,13 @@
-(ns donkey.services.user-info
+(ns terrain.services.user-info
   (:use [clojure.string :only [split blank?]]
         [clojure-commons.validators]
-        [donkey.util.config]
-        [donkey.util.service :only [success-response]]
+        [terrain.util.config]
+        [terrain.util.service :only [success-response]]
         [byte-streams]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [cheshire.core :as cheshire]
-            [donkey.clients.iplant-groups :as ipg]
-            [donkey.auth.user-attributes :as user]
+            [terrain.clients.iplant-groups :as ipg]
+            [terrain.auth.user-attributes :as user]
             [clojure.tools.logging :as log]))
 
 (defn user-search

@@ -1,16 +1,16 @@
-(ns donkey.services.metadata.comments
+(ns terrain.services.metadata.comments
   (:use [korma.db :only [with-db]]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [cheshire.core :as json]
             [clojure-commons.error-codes :as err]
             [clojure-commons.validators :as validators]
-            [donkey.auth.user-attributes :as user]
-            [donkey.clients.data-info :as data]
-            [donkey.clients.metadactyl :as metadactyl]
-            [donkey.clients.metadata.raw :as metadata]
-            [donkey.services.filesystem.uuids :as data-uuids]
-            [donkey.util.service :as svc]
-            [donkey.util.validators :as valid]))
+            [terrain.auth.user-attributes :as user]
+            [terrain.clients.data-info :as data]
+            [terrain.clients.metadactyl :as metadactyl]
+            [terrain.clients.metadata.raw :as metadata]
+            [terrain.services.filesystem.uuids :as data-uuids]
+            [terrain.util.service :as svc]
+            [terrain.util.validators :as valid]))
 
 (defn- extract-accessible-entry-id
   [user entry-id-txt]

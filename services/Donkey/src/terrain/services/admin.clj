@@ -1,17 +1,17 @@
-(ns donkey.services.admin
-  (:use [donkey.util.service :only [success-response]])
+(ns terrain.services.admin
+  (:use [terrain.util.service :only [success-response]])
   (:require [clojure.tools.logging :as log]
             [cemerick.url :as url]
             [cheshire.core :as json]
             [clojure-commons.config :as cc]
             [clojure-commons.error-codes :as ce]
-            [donkey.util.config :as config]
+            [terrain.util.config :as config]
             [clj-http.client :as client]
-            [donkey.clients.data-info :as data]))
+            [terrain.clients.data-info :as data]))
 
 
 (defn config
-  "Returns JSON containing Donkey's configuration, passwords filtered out."
+  "Returns JSON containing Terrain's configuration, passwords filtered out."
   []
   (success-response (config/masked-config)))
 
@@ -104,7 +104,7 @@
     status))
 
 (defn status
-  "Returns JSON containing the Donkey's status."
+  "Returns JSON containing the Terrain's status."
   [request]
   (-> {}
     (status-irods)

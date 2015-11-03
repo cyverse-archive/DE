@@ -1,7 +1,7 @@
 # Table of Contents
 
-* [Miscellaneous Donkey Endpoints](#miscellaneous-donkey-endpoints)
-    * [Verifying that Donkey is Running](#verifying-that-donkey-is-running)
+* [Miscellaneous Terrain Endpoints](#miscellaneous-terrain-endpoints)
+    * [Verifying that Terrain is Running](#verifying-that-terrain-is-running)
     * [Initializing a User's Workspace](#initializing-a-users-workspace)
     * [Saving User Session Data](#saving-user-session-data)
     * [Retrieving User Session Data](#retrieving-user-session-data)
@@ -17,23 +17,23 @@
     * [Setting a user's saved searches](#setting-saved-searches)
     * [Deleting a user's saved searches](#deleting-saved-searches)
 
-# Miscellaneous Donkey Endpoints
+# Miscellaneous Terrain Endpoints
 
-Note that secured endpoints in Donkey and metadactyl are a little different from
-each other. Please see [Donkey Vs. Metadactyl](donkey-v-metadactyl.md) for more
+Note that secured endpoints in Terrain and metadactyl are a little different from
+each other. Please see [Terrain Vs. Metadactyl](terrain-v-metadactyl.md) for more
 information.
 
-## Verifying that Donkey is Running
+## Verifying that Terrain is Running
 
 Unsecured Endpoint: GET /
 
-The root path in Donkey can be used to verify that Donkey is actually running
+The root path in Terrain can be used to verify that Terrain is actually running
 and is responding. Currently, the response to this URL contains only a welcome
 message. Here's an example:
 
 ```
 $ curl -s http://by-tor:8888/
-Welcome to Donkey!  I've mastered the stairs!
+The infinite is attainable with Terrain!
 ```
 
 ## Initializing a User's Workspace and Preferences
@@ -242,7 +242,7 @@ Secured Endpoint: GET /secured/default-output-dir
 This endoint determines the default output directory in iRODS for the currently
 authenticated user. Aside from the `proxyToken` parameter, this endpoint
 requires no query-string parameters. The default default output directory name
-is passed to Donkey in the `donkey.job-exec.default-output-folder` configuration
+is passed to Terrain in the `terrain.job-exec.default-output-folder` configuration
 parameter.
 
 This service works in conjunction with user preferences. If a default output
@@ -255,7 +255,7 @@ will create the directory and return the path.
 
 If the default output directory has not been selected yet then this service will
 automatically generate the path to the directory based on the name that was
-given to Donkey in the `donkey.job-exec.default-output-folder` configuration
+given to Terrain in the `terrain.job-exec.default-output-folder` configuration
 setting. The value of this configuration setting is treated as being relative to
 the user's home directory in iRODS. If the path exists and is a directory then
 the path is saved in the user's preferences and returned. If the path does not
@@ -325,7 +325,7 @@ Secured Endpoint: PUT /secured/feedback
 
 This endpoint submits feedback from the user to a configurable iPlant email
 address. The destination email address is stored in the configuration settting,
-`donkey.email.feedback-dest`. The request body is a simple JSON object with the
+`terrain.email.feedback-dest`. The request body is a simple JSON object with the
 question text in the keys and the answer or answers in the values. The answers
 can either be strings or lists of strings:
 

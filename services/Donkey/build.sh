@@ -5,11 +5,11 @@ set -e
 ITERATION=$1
 USER=iplant
 GROUP=iplant
-BINNAME=donkey
-BUILDDIR=donkey-build
-BINDIR=/usr/local/lib/donkey
-LOGDIR=/var/log/donkey
-CONFDIR=/etc/donkey
+BINNAME=terrain
+BUILDDIR=terrain-build
+BINDIR=/usr/local/lib/terrain
+LOGDIR=/var/log/terrain
+CONFDIR=/etc/terrain
 REPOCONF=conf/main
 
 VERSION=$(cat version | sed -e 's/^ *//' -e 's/ *$//')

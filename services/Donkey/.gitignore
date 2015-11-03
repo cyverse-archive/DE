@@ -16,10 +16,10 @@
 /.dir-locals.el
 /*.eld
 /target
-/donkey
-/donkey.spec
-/donkey*.tar.gz
-donkey.iml
+/terrain
+/terrain.spec
+/terrain*.tar.gz
+terrain.iml
 *~
 \#*
 .DS_Store

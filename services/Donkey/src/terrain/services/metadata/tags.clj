@@ -1,16 +1,16 @@
-(ns donkey.services.metadata.tags
+(ns terrain.services.metadata.tags
   (:use [kameleon.uuids :only [uuidify]]
         [slingshot.slingshot :only [throw+]])
   (:require [clojure.set :as set]
             [cheshire.core :as json]
             [clojure-commons.error-codes :as error]
-            [donkey.auth.user-attributes :as user]
-            [donkey.clients.data-info :as data]
-            [donkey.clients.metadata.raw :as meta]
-            [donkey.persistence.search :as search]
-            [donkey.util.config :as config]
-            [donkey.util.service :as svc]
-            [donkey.util.validators :as valid])
+            [terrain.auth.user-attributes :as user]
+            [terrain.clients.data-info :as data]
+            [terrain.clients.metadata.raw :as meta]
+            [terrain.persistence.search :as search]
+            [terrain.util.config :as config]
+            [terrain.util.service :as svc]
+            [terrain.util.validators :as valid])
   (:import [java.io Reader]
            [java.util UUID]
            [clojure.lang IPersistentMap]))

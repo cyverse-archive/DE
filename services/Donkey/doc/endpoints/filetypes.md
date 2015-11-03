@@ -37,7 +37,7 @@ __Response Body__:
 
 __Curl Command__:
 
-    curl http://donkey.example.org:31325/secured/filetypes/type-list?proxyToken=notARealOne
+    curl http://terrain.example.org:31325/secured/filetypes/type-list?proxyToken=notARealOne
 
 
 Add/update/unset a file type of a file
@@ -76,4 +76,4 @@ __Response Body__:
 
 __Curl Command__:
 
-    curl -d '{"path" : "/path/to/irods/file","type":"csv"}' 'http://donkey.example.org:31325/secured/filetypes/type?proxyToken=notARealOne'
+    curl -d '{"path" : "/path/to/irods/file","type":"csv"}' 'http://terrain.example.org:31325/secured/filetypes/type?proxyToken=notARealOne'

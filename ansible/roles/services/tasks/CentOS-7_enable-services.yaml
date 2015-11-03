@@ -86,12 +86,12 @@
       - enable_services
       - enable_iplant-groups
 
-- name: enable donkey service
+- name: enable terrain service
   sudo: yes
-  service: name={{donkey.service_name}} enabled={{enable_services}}
+  service: name={{terrain.service_name}} enabled={{enable_services}}
   tags:
       - enable_services
-      - enable_donkey
+      - enable_terrain
 
 - name: enable data-info service
   sudo: yes

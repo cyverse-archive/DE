@@ -1,8 +1,8 @@
-(ns donkey.routes.callbacks
+(ns terrain.routes.callbacks
   (:use [compojure.core]
-        [donkey.util :only [optional-routes flagged-routes]])
-  (:require [donkey.services.callbacks :as svc]
-            [donkey.util.config :as config]))
+        [terrain.util :only [optional-routes flagged-routes]])
+  (:require [terrain.services.callbacks :as svc]
+            [terrain.util.config :as config]))
 
 (defn- de-callback-routes
   "Callback routes used by the DE."

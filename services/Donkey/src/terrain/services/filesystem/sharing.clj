@@ -1,4 +1,4 @@
-(ns donkey.services.filesystem.sharing
+(ns terrain.services.filesystem.sharing
   (:use [clojure-commons.error-codes]
         [clojure-commons.validators]
         [clj-jargon.init :only [with-jargon]]
@@ -11,10 +11,10 @@
             [clojure-commons.file-utils :as ft]
             [cemerick.url :as url]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
-            [donkey.services.filesystem.common-paths :as paths]
-            [donkey.util.config :as cfg]
-            [donkey.services.filesystem.icat :as icat]
-            [donkey.services.filesystem.validators :as validators]))
+            [terrain.services.filesystem.common-paths :as paths]
+            [terrain.util.config :as cfg]
+            [terrain.services.filesystem.icat :as icat]
+            [terrain.services.filesystem.validators :as validators]))
 
 (def shared-with-attr "ipc-contains-obj-shared-with")
 

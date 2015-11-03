@@ -226,7 +226,7 @@ systemd:
           - "{{de.http_server}}"
           - "{{de}}"
           - "{{dewey}}"
-          - "{{donkey}}"
+          - "{{terrain}}"
           - "{{elk.elasticsearch}}"
           - "{{elk.kibana}}"
           - "{{elk.logstash}}"
@@ -247,17 +247,17 @@ systemd:
           - "{{user_preferences}}"
           - "{{user_sessions}}"
 
-donkey:
-  host: "{{ groups['donkey'][0] }}"
+terrain:
+  host: "{{ groups['terrain'][0] }}"
   port:
-  base: http://{{ groups['donkey'][0] }}
-  service_name: donkey.service
-  service_name_short: donkey
-  service_description: donkey service
-  image_name: donkey
-  container_name: donkey
-  properties_file: donkey.properties
-  log_file: donkey-docker.log
+  base: http://{{ groups['terrain'][0] }}
+  service_name: terrain.service
+  service_name_short: terrain
+  service_description: terrain service
+  image_name: terrain
+  container_name: terrain
+  properties_file: terrain.properties
+  log_file: terrain-docker.log
 
 email_smtp_host: 127.0.0.1
 email_smtp_from_address:

@@ -1,4 +1,4 @@
-(ns donkey.util.service
+(ns terrain.util.service
   (:use [cemerick.url :only [url]]
         [ring.util.codec :only [url-encode]]
         [clojure.java.io :only [reader]]
@@ -35,13 +35,13 @@
   (or (contains? e :content-type)
       (contains? (:headers e) "Content-Type")))
 
-(defn- donkey-response-from-response-map
+(defn- terrain-response-from-response-map
   [e status-code]
   (if-not (content-type-specified? e)
     (update-in e [:headers] assoc "Content-Type" default-content-type)
     e))
 
-(defn- donkey-response-from-map
+(defn- terrain-response-from-map
   [e status-code]
   {:status  status-code
    :body    (cheshire/encode e)
@@ -52,19 +52,19 @@
   (and (instance? Exception e)
        (not (success? status-code))))
 
-(defn- donkey-response-from-exception
+(defn- terrain-response-from-exception
   [e status-code]
   {:status  status-code
    :body    (error-body e)
    :headers {"Content-Type" default-content-type}})
 
-(defn- default-donkey-response
+(defn- default-terrain-response
   [e status-code]
   {:status status-code
    :body   e})
 
-(defn donkey-response
-  "Generates a Donkey HTTP response map based on a value and a status code.
+(defn terrain-response
+  "Generates a Terrain HTTP response map based on a value and a status code.
 
    If a response map is passed in, it is preserved.
 
@@ -76,16 +76,16 @@
    Otherwise, the value is preserved and is wrapped in a response map."
   [e status-code]
   (cond
-   (response-map? e)           (donkey-response-from-response-map e status-code)
-   (map? e)                    (donkey-response-from-map e status-code)
-   (error-resp? e status-code) (donkey-response-from-exception e status-code)
-   :else                       (default-donkey-response e status-code)))
+   (response-map? e)           (terrain-response-from-response-map e status-code)
+   (map? e)                    (terrain-response-from-map e status-code)
+   (error-resp? e status-code) (terrain-response-from-exception e status-code)
+   :else                       (default-terrain-response e status-code)))
 
 (defn success-response
   ([]
      (success-response nil))
   ([retval]
-    (donkey-response retval 200)))
+    (terrain-response retval 200)))
 
 (defn create-response
   "Generates a 201 response indicating that a new resource has been created. Optionally, a JSON
@@ -93,22 +93,22 @@
   ([]
     (create-response {}))
   ([retval]
-    (donkey-response retval 201)))
+    (terrain-response retval 201)))
 
 (defn successful-delete-response
   []
-  (donkey-response nil 204))
+  (terrain-response nil 204))
 
 (defn failure-response [e]
   (log/error e "bad request")
-  (donkey-response e 400))
+  (terrain-response e 400))
 
 (defn error-response
   ([e]
     (error-response e 500))
   ([e status]
     (when (>= status 500) (log/error e "internal error"))
-    (donkey-response e status)))
+    (terrain-response e status)))
 
 (defn temp-dir-failure-response [{:keys [parent prefix base]}]
   (log/error "unable to create a temporary directory in" parent

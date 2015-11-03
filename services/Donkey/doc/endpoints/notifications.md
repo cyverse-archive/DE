@@ -446,13 +446,13 @@ endpoint. Please see the notification agent documentation for more details.
 ## Endpoints for System Messages (a.k.a. System Notifications)
 
 The endpoints for the system messages are straight pass throughs to the corresponding calls in the
-Notification Agent. The only difference is that the endpoints in Donkey are prefixed with
+Notification Agent. The only difference is that the endpoints in Terrain are prefixed with
 __/secured/notifications__ or __/admin/notifications__ and that endpoints that require the __user__
 query string parameter instead take the __proxyToken__ parameter and its corresponding ticket string.
 
 <table>
     <thead>
-        <tr><th>Donkey Endpoint</th><th>Notification Agent Endpoint</th></tr>
+        <tr><th>Terrain Endpoint</th><th>Notification Agent Endpoint</th></tr>
     </thead>
     <tbody>
         <tr>

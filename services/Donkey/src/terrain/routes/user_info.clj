@@ -1,8 +1,8 @@
-(ns donkey.routes.user-info
+(ns terrain.routes.user-info
   (:use [compojure.core]
-        [donkey.services.user-info]
-        [donkey.util])
-  (:require [donkey.util.config :as config]))
+        [terrain.services.user-info]
+        [terrain.util])
+  (:require [terrain.util.config :as config]))
 
 (defn secured-user-info-routes
   []

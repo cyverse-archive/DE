@@ -1,12 +1,12 @@
-(ns donkey.services.user-prefs
+(ns terrain.services.user-prefs
   (:use [slingshot.slingshot :only [throw+]]
-        [donkey.util.service :only [success-response]]
-        [donkey.auth.user-attributes :only [current-user]])
+        [terrain.util.service :only [success-response]]
+        [terrain.auth.user-attributes :only [current-user]])
   (:require [cheshire.core :as cheshire]
             [clojure.tools.logging :as log]
             [clojure-commons.error-codes :as ce]
-            [donkey.clients.user-prefs :as cup]
-            [donkey.services.user-prefs.output-dir :as output-dir]))
+            [terrain.clients.user-prefs :as cup]
+            [terrain.services.user-prefs.output-dir :as output-dir]))
 
 (defn- process-outgoing-prefs
   [user prefs]

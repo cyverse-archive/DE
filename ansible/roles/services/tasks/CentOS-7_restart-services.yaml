@@ -86,12 +86,12 @@
       - restart_services
       - restart_iplant-groups
 
-- name: start donkey service
+- name: start terrain service
   sudo: yes
-  service: name={{donkey.service_name}} state=restarted
+  service: name={{terrain.service_name}} state=restarted
   tags:
       - restart_services
-      - restart_donkey
+      - restart_terrain
 
 - name: start data-info service
   sudo: yes

@@ -38,7 +38,7 @@ for project in $(find . -name project.clj -exec dirname '{}' \;); do
 
   cljproj=$(basename $project)
 
-  if [ "$cljproj" == "Donkey" ]; then
+  if [ "$cljproj" == "Terrain" ]; then
     echo ">>> $cljproj: Setting version to $1-SNAPSHOT"
 	perl -pi -e "$(project_substitution $1-SNAPSHOT)" project.clj
   else

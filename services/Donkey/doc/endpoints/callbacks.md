@@ -169,7 +169,7 @@ the request:
     </tbody>
 </table>
 
-In this case, a request is sent to Donkey so that an access token can be
+In this case, a request is sent to Terrain so that an access token can be
 obtained.
 
 If the user denied authorization or an error occurred, then the response will

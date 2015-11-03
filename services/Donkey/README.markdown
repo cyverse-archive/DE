@@ -1,11 +1,11 @@
-# Donkey
+# Terrain
 
-Donkey is a platform for hosting Services written in Clojure; it's intended to
+Terrain is a platform for hosting Services written in Clojure; it's intended to
 be the replacement for the Mule instance that used to run inside the Discovery
 Environment web application.
 
 *Important Note:* All of the services that used to run inside Mule now run
-inside Donkey instead.  The Mule services no longer exist.
+inside Terrain instead.  The Mule services no longer exist.
 
 ## Documentation Links
 

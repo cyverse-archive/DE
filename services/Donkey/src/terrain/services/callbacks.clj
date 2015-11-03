@@ -1,7 +1,7 @@
-(ns donkey.services.callbacks
+(ns terrain.services.callbacks
   "Service implementations for receiving callbacks from external services."
   (:require [clojure.tools.logging :as log]
-            [donkey.util.service :as service]))
+            [terrain.util.service :as service]))
 
 (def ^:private notification-actions
   "Maps notification action codes to notifications."

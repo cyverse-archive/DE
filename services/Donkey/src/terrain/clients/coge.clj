@@ -1,14 +1,14 @@
-(ns donkey.clients.coge
+(ns terrain.clients.coge
   (:use [clojure-commons.core :only [remove-nil-values]]
-        [donkey.auth.user-attributes :only [current-user]]
+        [terrain.auth.user-attributes :only [current-user]]
         [slingshot.slingshot :only [throw+ try+]])
   (:require [cemerick.url :as curl]
             [cheshire.core :as cheshire]
             [clj-http.client :as http]
             [clojure.tools.logging :as log]
             [clojure-commons.error-codes :as ce]
-            [donkey.util.config :as config]
-            [donkey.util.jwt :as jwt]))
+            [terrain.util.config :as config]
+            [terrain.util.jwt :as jwt]))
 
 (defn- coge-url
   [& components]

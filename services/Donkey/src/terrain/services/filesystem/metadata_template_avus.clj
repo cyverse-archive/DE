@@ -1,13 +1,13 @@
-(ns donkey.services.filesystem.metadata-template-avus
+(ns terrain.services.filesystem.metadata-template-avus
   (:use [clj-jargon.init :only [with-jargon]]
-        [donkey.services.filesystem.common-paths]
+        [terrain.services.filesystem.common-paths]
         [kameleon.uuids :only [uuidify]])
   (:require [clojure-commons.validators :as common-validators]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
-            [donkey.clients.metadata.raw :as metadata]
-            [donkey.services.filesystem.icat :as icat]
-            [donkey.services.filesystem.uuids :as uuids]
-            [donkey.services.filesystem.validators :as validators]))
+            [terrain.clients.metadata.raw :as metadata]
+            [terrain.services.filesystem.icat :as icat]
+            [terrain.services.filesystem.uuids :as uuids]
+            [terrain.services.filesystem.validators :as validators]))
 
 (defn do-set-metadata-template-avus
   "Adds or Updates AVUs associated with a Metadata Template for the given user's data item."

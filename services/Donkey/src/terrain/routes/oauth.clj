@@ -1,7 +1,7 @@
-(ns donkey.routes.oauth
+(ns terrain.routes.oauth
   (:use [compojure.core])
-  (:require [donkey.clients.metadactyl.raw :as metadactyl]
-            [donkey.util.service :as service]))
+  (:require [terrain.clients.metadactyl.raw :as metadactyl]
+            [terrain.util.service :as service]))
 
 (defn secured-oauth-routes
   "These routes are callback routes for OAuth authorization codes. They need to be secured because

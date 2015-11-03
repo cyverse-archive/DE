@@ -11,9 +11,9 @@ RUN mkdir -p /etc/iplant/de/crypto && \
 VOLUME ["/etc/iplant/de"]
 
 COPY conf/main/logback.xml /home/iplant/
-COPY target/donkey-standalone.jar /home/iplant/
+COPY target/terrain-standalone.jar /home/iplant/
 RUN chown -R iplant:iplant /home/iplant/
 
 USER iplant
-ENTRYPOINT ["java", "-Dlogback.configurationFile=/etc/iplant/de/logging/donkey-logging.xml", "-cp", ".:donkey-standalone.jar", "donkey.core"]
+ENTRYPOINT ["java", "-Dlogback.configurationFile=/etc/iplant/de/logging/terrain-logging.xml", "-cp", ".:terrain-standalone.jar", "terrain.core"]
 CMD ["--help"]

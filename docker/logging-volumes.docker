@@ -1,6 +1,6 @@
 FROM ubuntu:14.04
 
-RUN mkdir -p /var/log/donkey/ && \
+RUN mkdir -p /var/log/terrain/ && \
     mkdir -p /var/log/infosquito/ && \
     mkdir -p /var/log/jex/ && \
     mkdir -p /var/log/notificationagent/ && \

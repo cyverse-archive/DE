@@ -1,4 +1,4 @@
-(ns donkey.services.filesystem.directory
+(ns terrain.services.filesystem.directory
   (:use [clojure-commons.validators]
         [kameleon.uuids :only [uuidify]]
         [slingshot.slingshot :only [try+ throw+]])
@@ -12,12 +12,12 @@
             [me.raynes.fs :as fs]
             [clojure-commons.error-codes :as error]
             [clj-icat-direct.icat :as icat]
-            [donkey.clients.data-info :as data]
-            [donkey.clients.data-info.raw :as data-raw]
-            [donkey.services.metadata.favorites :as favorites]
-            [donkey.util.config :as cfg]
-            [donkey.util.validators :as duv]
-            [donkey.services.filesystem.common-paths :as paths]))
+            [terrain.clients.data-info :as data]
+            [terrain.clients.data-info.raw :as data-raw]
+            [terrain.services.metadata.favorites :as favorites]
+            [terrain.util.config :as cfg]
+            [terrain.util.validators :as duv]
+            [terrain.services.filesystem.common-paths :as paths]))
 
 (defn- is-favorite?
   [favorite-ids id]

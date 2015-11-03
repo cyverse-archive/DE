@@ -1,19 +1,19 @@
-(ns donkey.routes.filesystem
+(ns terrain.routes.filesystem
   (:use [compojure.core]
-        [donkey.util])
-  (:require [donkey.util.config :as config]
+        [terrain.util])
+  (:require [terrain.util.config :as config]
             [clojure.tools.logging :as log]
-            [donkey.clients.data-info :as data]
-            [donkey.services.filesystem.directory :as dir]
-            [donkey.services.filesystem.manifest :as manifest]
-            [donkey.services.filesystem.metadata :as meta]
-            [donkey.services.filesystem.metadata-template-avus :as mta]
-            [donkey.services.filesystem.metadata-templates :as mt]
-            [donkey.services.filesystem.root :as root]
-            [donkey.services.filesystem.sharing :as sharing]
-            [donkey.services.filesystem.stat :as stat]
-            [donkey.services.filesystem.tickets :as ticket]
-            [donkey.services.filesystem.updown :as ud]))
+            [terrain.clients.data-info :as data]
+            [terrain.services.filesystem.directory :as dir]
+            [terrain.services.filesystem.manifest :as manifest]
+            [terrain.services.filesystem.metadata :as meta]
+            [terrain.services.filesystem.metadata-template-avus :as mta]
+            [terrain.services.filesystem.metadata-templates :as mt]
+            [terrain.services.filesystem.root :as root]
+            [terrain.services.filesystem.sharing :as sharing]
+            [terrain.services.filesystem.stat :as stat]
+            [terrain.services.filesystem.tickets :as ticket]
+            [terrain.services.filesystem.updown :as ud]))
 
 (defn secured-filesystem-routes
   "The routes for file IO endpoints."

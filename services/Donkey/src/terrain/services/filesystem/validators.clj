@@ -1,4 +1,4 @@
-(ns donkey.services.filesystem.validators
+(ns terrain.services.filesystem.validators
   (:use [clj-jargon.item-info]
         [clj-jargon.permissions]
         [clj-jargon.tickets]
@@ -6,7 +6,7 @@
         [clj-icat-direct.icat :as icat]
         [clojure-commons.error-codes]
         [slingshot.slingshot :only [try+ throw+]])
-  (:require [donkey.util.config :as cfg]))
+  (:require [terrain.util.config :as cfg]))
 
 (defn num-paths-okay?
   [path-count]

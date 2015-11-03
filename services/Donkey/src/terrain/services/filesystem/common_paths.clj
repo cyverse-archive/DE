@@ -1,9 +1,9 @@
-(ns donkey.services.filesystem.common-paths
+(ns terrain.services.filesystem.common-paths
   (:require [clojure-commons.file-utils :as ft]
             [clojure.tools.logging :as log]
             [clj-jargon.item-info :as item]
-            [donkey.util.config :as cfg]
-            [donkey.util.validators :as valid]))
+            [terrain.util.config :as cfg]
+            [terrain.util.validators :as valid]))
 
 
 (def IPCRESERVED "ipc-reserved-unit")

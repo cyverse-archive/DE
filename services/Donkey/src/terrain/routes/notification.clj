@@ -1,11 +1,11 @@
-(ns donkey.routes.notification
+(ns terrain.routes.notification
   (:use [compojure.core]
-        [donkey.util])
+        [terrain.util])
   (:require [clojure.tools.logging :as log]
-            [donkey.clients.notifications.raw :as rn]
-            [donkey.clients.notifications :as cn]
-            [donkey.util.config :as config]
-            [donkey.util.service :as service]))
+            [terrain.clients.notifications.raw :as rn]
+            [terrain.clients.notifications :as cn]
+            [terrain.util.config :as config]
+            [terrain.util.service :as service]))
 
 (defn secured-notification-routes
   []

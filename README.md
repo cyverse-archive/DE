@@ -15,7 +15,7 @@ repositories under the iPlantArchive organization, should you need them.
 The top-level directories __lein-plugins__, __libs__, __services__, __tools__,
 __databases__, __ui__, and __ansible__ are the categories that the code falls
 into. Each direct subdirectory contains a separate project. For instance,
-__services/Donkey/__ contains the service that the Discovery Environment UI
+__services/Terrain/__ contains the service that the Discovery Environment UI
 interacts with directly. Clojure project subfolders are Leiningen subprojects
 in and of themselves, and the UI subdirectory is a Gradle project.
 
@@ -140,7 +140,7 @@ libraries.
 If you want to just build a specific project, go into the project's directory
 and call the appropriate build tool. For example:
 
-    cd services/Donkey
+    cd services/Terrain
     lein clean
     lein uberjar
 

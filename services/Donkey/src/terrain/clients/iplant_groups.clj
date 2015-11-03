@@ -1,8 +1,8 @@
-(ns donkey.clients.iplant-groups
+(ns terrain.clients.iplant-groups
   (:require [cemerick.url :as curl]
             [clj-http.client :as http]
             [clojure.tools.logging :as log]
-            [donkey.util.config :as config]))
+            [terrain.util.config :as config]))
 
 (defn format-like-trellis
   "Reformat an iplant-groups response to look like a trellis response."

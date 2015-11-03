@@ -1,12 +1,12 @@
-(ns donkey.routes.metadata
+(ns terrain.routes.metadata
   (:use [compojure.core]
-        [donkey.services.file-listing]
-        [donkey.services.metadata.metadactyl]
-        [donkey.util])
+        [terrain.services.file-listing]
+        [terrain.services.metadata.metadactyl]
+        [terrain.util])
   (:require [clojure.tools.logging :as log]
-            [donkey.clients.metadactyl.raw :as metadactyl]
-            [donkey.util.config :as config]
-            [donkey.util.service :as service]))
+            [terrain.clients.metadactyl.raw :as metadactyl]
+            [terrain.util.config :as config]
+            [terrain.util.service :as service]))
 
 (defn app-category-routes
   []

@@ -1,11 +1,11 @@
-(ns donkey.services.coge
-  (:use [donkey.auth.user-attributes]
-        [donkey.util.service :only [decode-json prepare-forwarded-request success-response]])
+(ns terrain.services.coge
+  (:use [terrain.auth.user-attributes]
+        [terrain.util.service :only [decode-json prepare-forwarded-request success-response]])
   (:require [clojure.tools.logging :as log]
             [clojure-commons.file-utils :as ft]
-            [donkey.clients.coge :as coge]
-            [donkey.clients.data-info :as data]
-            [donkey.util.config :as config]))
+            [terrain.clients.coge :as coge]
+            [terrain.clients.data-info :as data]
+            [terrain.util.config :as config]))
 
 (defn- share-paths
   "Shares the given paths with the CoGe user so the genome viewer service can access them."

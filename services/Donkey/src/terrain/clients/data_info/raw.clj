@@ -1,10 +1,10 @@
-(ns donkey.clients.data-info.raw
+(ns terrain.clients.data-info.raw
   (:require [clojure.tools.logging :as log]
             [cemerick.url :as url]
             [me.raynes.fs :as fs]
             [cheshire.core :as json]
             [clj-http.client :as http]
-            [donkey.util.config :as cfg])
+            [terrain.util.config :as cfg])
   (:import [clojure.lang IPersistentMap ISeq Keyword]))
 
 ;; HELPER FUNCTIONS

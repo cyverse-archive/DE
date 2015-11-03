@@ -1,8 +1,8 @@
-(ns donkey.clients.notifications.raw
-  (:use [donkey.util.transformers :only [secured-params]])
+(ns terrain.clients.notifications.raw
+  (:use [terrain.util.transformers :only [secured-params]])
   (:require [cemerick.url :as curl]
             [clj-http.client :as client]
-            [donkey.util.config :as config]))
+            [terrain.util.config :as config]))
 
 (def na-sort-params [:limit :offset :sortfield :sortdir])
 (def na-filter-params [:seen :filter])

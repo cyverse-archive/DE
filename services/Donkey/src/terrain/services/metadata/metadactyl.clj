@@ -1,21 +1,21 @@
-(ns donkey.services.metadata.metadactyl
+(ns terrain.services.metadata.metadactyl
   (:use [clojure.java.io :only [reader]]
         [clojure-commons.client :only [build-url-with-query]]
-        [donkey.util.config]
-        [donkey.util.transformers :only [secured-params add-current-user-to-map]]
-        [donkey.auth.user-attributes]
-        [donkey.services.user-prefs :only [user-prefs]]
-        [donkey.util.email]
-        [donkey.util.service])
+        [terrain.util.config]
+        [terrain.util.transformers :only [secured-params add-current-user-to-map]]
+        [terrain.auth.user-attributes]
+        [terrain.services.user-prefs :only [user-prefs]]
+        [terrain.util.email]
+        [terrain.util.service])
   (:require [cheshire.core :as cheshire]
             [clj-http.client :as client]
             [clojure.string :as string]
             [clojure.tools.logging :as log]
-            [donkey.clients.iplant-groups :as ipg]
-            [donkey.clients.data-info :as di]
-            [donkey.clients.metadactyl :as dm]
-            [donkey.clients.notifications :as dn]
-            [donkey.services.fileio.actions :as io]))
+            [terrain.clients.iplant-groups :as ipg]
+            [terrain.clients.data-info :as di]
+            [terrain.clients.metadactyl :as dm]
+            [terrain.clients.notifications :as dn]
+            [terrain.services.fileio.actions :as io]))
 
 (defn- metadactyl-request
   "Prepares a metadactyl request by extracting only the body of the client request and sets the

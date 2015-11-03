@@ -15,14 +15,6 @@ import java.util.List;
 /**
  * This service provides the ability to store, retrieve, and execute search queries.
  * 
- * <h2>Endpoints Used</h2>
- * <ul>
- * <li><a href=
- * "https://github.com/iPlantCollaborativeOpenSource/Donkey/blob/dev/doc/endpoints/filesystem/search.md#endpoints"
- * >/secured/filesystem/index</a></li>
- * <li><a href="">/secured/user-data</a></li>
- * </ul>
- * 
  * @author jstroot
  * 
  */

@@ -1,11 +1,11 @@
-(ns donkey.clients.notifications
+(ns terrain.clients.notifications
   (:use [clojure-commons.client :only [build-url-with-query]]
-        [donkey.util.config :only [notificationagent-base]]
-        [donkey.util.transformers :only [add-current-user-to-map]])
+        [terrain.util.config :only [notificationagent-base]]
+        [terrain.util.transformers :only [add-current-user-to-map]])
   (:require [cheshire.core :as cheshire]
             [clj-http.client :as client]
             [clojure.tools.logging :as log]
-            [donkey.clients.notifications.raw :as raw]))
+            [terrain.clients.notifications.raw :as raw]))
 
 (defn notificationagent-url
   "Builds a URL that can be used to connect to the notification agent."

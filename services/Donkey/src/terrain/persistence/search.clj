@@ -1,11 +1,11 @@
-(ns donkey.persistence.search
+(ns terrain.persistence.search
   "provides the functions that interact directly with elasticsearch"
   (:require [clojurewerkz.elastisch.query :as query]
             [clojurewerkz.elastisch.rest :as es]
             [clojurewerkz.elastisch.rest.document :as doc]
             [clojurewerkz.elastisch.rest.response :as resp]
             [slingshot.slingshot :refer [try+ throw+]]
-            [donkey.util.config :as cfg]
+            [terrain.util.config :as cfg]
             [clojure-commons.exception :as cx])
   (:import [java.net ConnectException]
            [java.util UUID]

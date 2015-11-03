@@ -1,23 +1,23 @@
-(ns donkey.services.fileio.controllers
+(ns terrain.services.fileio.controllers
   (:use [clj-jargon.init :only [with-jargon]]
         [clojure-commons.error-codes]
-        [donkey.util.service :only [success-response]]
-        [donkey.util.transformers :only [add-current-user-to-map]]
+        [terrain.util.service :only [success-response]]
+        [terrain.util.transformers :only [add-current-user-to-map]]
         [slingshot.slingshot :only [try+ throw+]])
-  (:require [donkey.services.fileio.actions :as actions]
+  (:require [terrain.services.fileio.actions :as actions]
             [clojure-commons.file-utils :as ft]
             [clojure.string :as string]
-            [donkey.util.ssl :as ssl]
+            [terrain.util.ssl :as ssl]
             [clojure.tools.logging :as log]
             [cemerick.url :as url-parser]
             [ring.middleware.multipart-params :as multipart]
             [clj-jargon.item-info :as info]
             [clj-jargon.permissions :as perm]
             [clojure-commons.validators :as ccv]
-            [donkey.clients.data-info :as data]
-            [donkey.util.config :as cfg]
-            [donkey.util.validators :as valid]
-            [donkey.services.fileio.config :as jargon])
+            [terrain.clients.data-info :as data]
+            [terrain.util.config :as cfg]
+            [terrain.util.validators :as valid]
+            [terrain.services.fileio.config :as jargon])
   (:import [clojure.lang IPersistentMap]
            [java.io IOException]))
 

@@ -1,4 +1,4 @@
-(ns donkey.util.ssl
+(ns terrain.util.ssl
   [:import [java.net URL]]
   [:import [java.io
             InputStream

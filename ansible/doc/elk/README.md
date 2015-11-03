@@ -17,7 +17,7 @@ TODO
 The DE generates logs for each request and subsequent response made or received.
 The only exclusion at this point is the UI servlet container (requests from browser
 client to the servlet). These requests are restructured and forwarded to the
-DE API (which is ```donkey``` at the moment).
+DE API (which is ```terrain``` at the moment).
 
 The points where HTTP transactions (request/response pairs) are logged 
 are shown in the list below:
@@ -30,7 +30,7 @@ are shown in the list below:
 
 ### HTTP Request IDs
 All HTTP transactions in the DE have a unique ID of the format, ```[SOURCE]-[UUID]```, where 
-```SOURCE``` is the name of the component (e.g. _UI_, _Donkey_, etc). This ID is kept in the 
+```SOURCE``` is the name of the component (e.g. _UI_, _Terrain_, etc). This ID is kept in the 
 following HTTP header: 
 
     X-DE-request-id

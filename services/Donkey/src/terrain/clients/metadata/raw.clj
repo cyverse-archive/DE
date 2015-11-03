@@ -1,10 +1,10 @@
-(ns donkey.clients.metadata.raw
+(ns terrain.clients.metadata.raw
   (:use [clojure-commons.core :only [remove-nil-values]]
-        [donkey.util.transformers :only [user-params]])
+        [terrain.util.transformers :only [user-params]])
   (:require [cemerick.url :as curl]
             [cheshire.core :as json]
             [clj-http.client :as http]
-            [donkey.util.config :as config]))
+            [terrain.util.config :as config]))
 
 (defn- metadata-url
   [& components]

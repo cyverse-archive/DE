@@ -1,11 +1,11 @@
-(ns donkey.routes.tree-viewer
+(ns terrain.routes.tree-viewer
   (:use [compojure.core]
-        [donkey.services.buggalo]
-        [donkey.util.service]
-        [donkey.auth.user-attributes]
-        [donkey.util])
+        [terrain.services.buggalo]
+        [terrain.util.service]
+        [terrain.auth.user-attributes]
+        [terrain.util])
   (:require [clojure.tools.logging :as log]
-            [donkey.util.config :as config]))
+            [terrain.util.config :as config]))
 
 (defn secured-tree-viewer-routes
   []

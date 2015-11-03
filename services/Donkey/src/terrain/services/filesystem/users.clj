@@ -1,11 +1,11 @@
-(ns donkey.services.filesystem.users
+(ns terrain.services.filesystem.users
   (:use [clojure-commons.error-codes]
         [clojure-commons.validators]
         [clj-jargon.init :only [with-jargon]]
         [clj-jargon.users])
   (:require [clj-jargon.permissions :as perm]
-            [donkey.services.filesystem.icat :as icat]
-            [donkey.services.filesystem.validators :as validators]))
+            [terrain.services.filesystem.icat :as icat]
+            [terrain.services.filesystem.validators :as validators]))
 
 (defn list-user-groups
   [user]

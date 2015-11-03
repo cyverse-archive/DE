@@ -1,9 +1,9 @@
-(ns donkey.routes.session
+(ns terrain.routes.session
   (:use [compojure.core]
-        [donkey.services.user-sessions]
-        [donkey.util])
+        [terrain.services.user-sessions]
+        [terrain.util])
   (:require [clojure-commons.error-codes :as ce]
-            [donkey.util.config :as config]))
+            [terrain.util.config :as config]))
 
 (defn secured-session-routes
   []

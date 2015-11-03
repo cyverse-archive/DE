@@ -1,11 +1,11 @@
-(ns donkey.services.buggalo
+(ns terrain.services.buggalo
   (:use [clojure.java.io :only [copy file]]
         [clojure-commons.file-utils :only [with-temp-dir-in]]
-        [donkey.util.config :only [tree-parser-url]]
-        [donkey.services.buggalo.nexml :only [is-nexml? extract-trees-from-nexml]]
-        [donkey.util.service :only [success-response temp-dir-failure-response]]
-        [donkey.auth.user-attributes :only [current-user]]
-        [donkey.clients.tree-urls]
+        [terrain.util.config :only [tree-parser-url]]
+        [terrain.services.buggalo.nexml :only [is-nexml? extract-trees-from-nexml]]
+        [terrain.util.service :only [success-response temp-dir-failure-response]]
+        [terrain.auth.user-attributes :only [current-user]]
+        [terrain.clients.tree-urls]
         [slingshot.slingshot :only [throw+ try+]])
   (:require [cemerick.url :as curl]
             [cheshire.core :as cheshire]
@@ -14,9 +14,9 @@
             [clojure.tools.logging :as log]
             [clojure-commons.error-codes :as ce]
             [clojure-commons.file-utils :as ft]
-            [donkey.clients.data-info :as di]
-            [donkey.services.fileio.actions :as fileio]
-            [donkey.util.tree-url :as tu])
+            [terrain.clients.data-info :as di]
+            [terrain.services.fileio.actions :as fileio]
+            [terrain.util.tree-url :as tu])
   (:import [java.security MessageDigest DigestInputStream]
            [org.forester.io.parsers.util ParserUtils PhylogenyParserException]
            [org.forester.io.writers PhylogenyWriter]

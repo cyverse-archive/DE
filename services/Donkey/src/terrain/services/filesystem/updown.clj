@@ -1,12 +1,12 @@
-(ns donkey.services.filesystem.updown
+(ns terrain.services.filesystem.updown
   (:use [clojure-commons.validators]
-        [donkey.services.filesystem.common-paths]
+        [terrain.services.filesystem.common-paths]
         [slingshot.slingshot :only [throw+]])
   (:require [clojure.tools.logging :as log]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
             [clojure-commons.error-codes :as error]
             [clojure-commons.file-utils :as ft]
-            [donkey.clients.data-info :as data]))
+            [terrain.clients.data-info :as data]))
 
 
 (defn- download-file

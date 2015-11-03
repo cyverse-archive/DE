@@ -1,6 +1,6 @@
 # Security
 
-Several services in Donkey require user authentication, which is managed by CAS
+Several services in Terrain require user authentication, which is managed by CAS
 service tickets that are passed to the service in the `proxyToken` query
 parameter. For example, the first service that the Discovery Environment hits
 when a user logs in is the bootstrap service, which does require user
@@ -18,6 +18,6 @@ If authentication or authorization fails for a secured service then an HTTP 401
 (unauthorized) status will result, and there will be no response body, even if
 the service normally has a response body.
 
-Note that secured endpoints in Donkey and metadactyl are a little different from
-each other. Please see [Donkey Vs. Metadactyl](endpoints/donkey-v-metadactyl.md)
+Note that secured endpoints in Terrain and metadactyl are a little different from
+each other. Please see [Terrain Vs. Metadactyl](endpoints/terrain-v-metadactyl.md)
 for more information.

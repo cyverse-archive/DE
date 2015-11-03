@@ -1,10 +1,10 @@
-(ns donkey.util
-  "Utility functions for defining services in Donkey. This namespace is used by donkey.core and
+(ns terrain.util
+  "Utility functions for defining services in Terrain. This namespace is used by terrain.core and
    several other top-level service definition namespaces."
   (:use [compojure.core]
-        [donkey.util.service]
-        [donkey.util.transformers]
-        [donkey.util.validators :only [parse-body]]
+        [terrain.util.service]
+        [terrain.util.transformers]
+        [terrain.util.validators :only [parse-body]]
         [slingshot.slingshot :only [try+ throw+]]))
 
 (defn as-vector

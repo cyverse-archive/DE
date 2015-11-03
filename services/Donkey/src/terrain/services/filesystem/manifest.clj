@@ -1,9 +1,9 @@
-(ns donkey.services.filesystem.manifest
+(ns terrain.services.filesystem.manifest
   (:use [clojure-commons.error-codes]
         [clojure-commons.validators]
-        [donkey.services.filesystem.common-paths]
-        [donkey.services.filesystem.validators]
-        [donkey.services.filesystem.sharing :only [anon-file-url anon-readable?]]
+        [terrain.services.filesystem.common-paths]
+        [terrain.services.filesystem.validators]
+        [terrain.services.filesystem.sharing :only [anon-file-url anon-readable?]]
         [clj-jargon.init :only [with-jargon]]
         [clj-jargon.item-ops :only [input-stream]]
         [clj-jargon.metadata :only [get-attribute attribute?]]
@@ -13,13 +13,13 @@
             [clojure-commons.file-utils :as ft]
             [cheshire.core :as json]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
-            [donkey.services.filesystem.validators :as validators]
-            [donkey.services.filesystem.stat :refer [detect-content-type]]
-            [donkey.services.filesystem.garnish.irods :as filetypes]
+            [terrain.services.filesystem.validators :as validators]
+            [terrain.services.filesystem.stat :refer [detect-content-type]]
+            [terrain.services.filesystem.garnish.irods :as filetypes]
             [ring.util.codec :as cdc]
-            [donkey.clients.tree-urls :as tree]
-            [donkey.util.config :as cfg]
-            [donkey.services.filesystem.icat :as icat])
+            [terrain.clients.tree-urls :as tree]
+            [terrain.util.config :as cfg]
+            [terrain.services.filesystem.icat :as icat])
   (:import [org.apache.tika Tika]))
 
 (def ^:private coge-attr "ipc-coge-link")

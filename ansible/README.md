@@ -18,7 +18,7 @@ group_vars files containing private and overriding values in a top-level `group_
 * [Database Instructions](doc/work_instructions/Database.md)
 
 ## Builds
-* [Generating GPG keys for Donkey](doc/builds/gpg-key.md)
+* [Generating GPG keys for Terrain](doc/builds/gpg-key.md)
 
 ## Deployment Processes
 * [Deployment Process](doc/deployments/Deployments.md)

@@ -1,7 +1,7 @@
-(ns donkey.util.transformers
+(ns terrain.util.transformers
   (:use [cemerick.url :only [url]]
-        [donkey.util.service :only [decode-stream]]
-        [donkey.auth.user-attributes]
+        [terrain.util.service :only [decode-stream]]
+        [terrain.auth.user-attributes]
         [medley.core :only [remove-vals]])
   (:require [cheshire.core :as cheshire]
             [clojure.string :as string]))

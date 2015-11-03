@@ -1,4 +1,4 @@
-(ns donkey.core
+(ns terrain.core
   (:gen-class)
   (:use [clojure.java.io :only [file]]
         [clojure-commons.lcase-params :only [wrap-lcase-params]]
@@ -7,39 +7,39 @@
         [compojure.core]
         [compojure.api.middleware :only [wrap-exceptions]]
         [ring.middleware.keyword-params]
-        [donkey.routes.admin]
-        [donkey.routes.callbacks]
-        [donkey.routes.data]
-        [donkey.routes.fileio]
-        [donkey.routes.metadata]
-        [donkey.routes.misc]
-        [donkey.routes.notification]
-        [donkey.routes.pref]
-        [donkey.routes.session]
-        [donkey.routes.tree-viewer]
-        [donkey.routes.user-info]
-        [donkey.routes.collaborator]
-        [donkey.routes.filesystem]
-        [donkey.routes.search]
-        [donkey.routes.coge]
-        [donkey.routes.oauth]
-        [donkey.routes.favorites]
-        [donkey.routes.tags]
-        [donkey.routes.comments]
-        [donkey.auth.user-attributes]
-        [donkey.util.service]
+        [terrain.routes.admin]
+        [terrain.routes.callbacks]
+        [terrain.routes.data]
+        [terrain.routes.fileio]
+        [terrain.routes.metadata]
+        [terrain.routes.misc]
+        [terrain.routes.notification]
+        [terrain.routes.pref]
+        [terrain.routes.session]
+        [terrain.routes.tree-viewer]
+        [terrain.routes.user-info]
+        [terrain.routes.collaborator]
+        [terrain.routes.filesystem]
+        [terrain.routes.search]
+        [terrain.routes.coge]
+        [terrain.routes.oauth]
+        [terrain.routes.favorites]
+        [terrain.routes.tags]
+        [terrain.routes.comments]
+        [terrain.auth.user-attributes]
+        [terrain.util.service]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [compojure.route :as route]
             [cheshire.core :as cheshire]
             [clojure-commons.exception :as cx]
             [ring.adapter.jetty :as jetty]
-            [donkey.util.config :as config]
+            [terrain.util.config :as config]
             [clojure.tools.nrepl.server :as nrepl]
             [me.raynes.fs :as fs]
             [common-cli.core :as ccli]
-            [donkey.services.filesystem.icat :as icat]
-            [donkey.util :as util]
-            [donkey.util.transformers :as transform]
+            [terrain.services.filesystem.icat :as icat]
+            [terrain.util :as util]
+            [terrain.util.transformers :as transform]
             [clojure.tools.logging :as log]
             [service-logging.thread-context :as tc]))
 
@@ -88,7 +88,7 @@
 
 (defn- find-configuration-file
   []
-  (let [conf-file "donkey.properties"]
+  (let [conf-file "terrain.properties"]
     (or (iplant-conf-dir-file conf-file)
         (cwd-file conf-file)
         (classpath-file conf-file)
@@ -102,14 +102,14 @@
      (config/load-config-from-file path)))
 
 (defn lein-ring-init
-  "This function is used by leiningen ring plugin to initialize donkey."
+  "This function is used by leiningen ring plugin to initialize terrain."
   []
   (load-configuration-from-file)
   (icat/configure-icat)
   (start-nrepl))
 
 (defn repl-init
-  "This function is used to manually initialize donkey from the leiningen REPL."
+  "This function is used to manually initialize terrain from the leiningen REPL."
   []
   (load-configuration-from-file)
   (icat/configure-icat))
@@ -117,16 +117,16 @@
 (defn cli-options
   []
   [["-c" "--config PATH" "Path to the config file"
-    :default "/etc/iplant/de/donkey.properties"]
+    :default "/etc/iplant/de/terrain.properties"]
    ["-v" "--version" "Print out the version number."]
    ["-h" "--help"]])
 
 (def svc-info
   {:desc "DE service for business logic"
-   :app-name "donkey"
+   :app-name "terrain"
    :group-id "org.iplantc"
-   :art-id "donkey"
-   :service "donkey"})
+   :art-id "terrain"
+   :service "terrain"})
 
 (defn secured-routes-no-context
   []
@@ -210,7 +210,7 @@
       (wrap-routes wrap-exceptions cx/exception-handlers)
       (wrap-routes wrap-logging)))
 
-(defn donkey-routes
+(defn terrain-routes
   []
   (util/flagged-routes
     unsecured-routes-handler
@@ -227,7 +227,7 @@
       clean-context))
 
 (def app
-  (site-handler donkey-routes))
+  (site-handler terrain-routes))
 
 (defn -main
   [& args]

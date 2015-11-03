@@ -1,9 +1,9 @@
-(ns donkey.routes.pref
+(ns terrain.routes.pref
   (:use [compojure.core]
-        [donkey.services.user-prefs]
-        [donkey.util])
+        [terrain.services.user-prefs]
+        [terrain.util])
   (:require [clojure-commons.error-codes :as ce]
-            [donkey.util.config :as config]))
+            [terrain.util.config :as config]))
 
 (defn secured-pref-routes
   []

@@ -1,11 +1,11 @@
-(ns donkey.util.jwt
+(ns terrain.util.jwt
   (:use [slingshot.slingshot :only [try+ throw+]])
   (:require [clj-time.core :as time]
             [clojure.string :as string]
             [clojure-commons.error-codes :as ce]
             [clojure-commons.jwt :as jwt]
             [clojure-commons.response :as resp]
-            [donkey.util.config :as config]))
+            [terrain.util.config :as config]))
 
 (def ^:private jwt-generator
   (memoize
@@ -17,15 +17,15 @@
    (fn []
      (jwt/validator (config/jwt-opts)))))
 
-(defn jwt-user-from-donkey-user
-  [donkey-user]
-  {:user        (:shortUsername donkey-user)
-   :email       (:email donkey-user)
-   :given-name  (:firstName donkey-user)
-   :family-name (:lastName donkey-user)
-   :common-name (:commonName donkey-user)})
+(defn jwt-user-from-terrain-user
+  [terrain-user]
+  {:user        (:shortUsername terrain-user)
+   :email       (:email terrain-user)
+   :given-name  (:firstName terrain-user)
+   :family-name (:lastName terrain-user)
+   :common-name (:commonName terrain-user)})
 
-(defn donkey-user-from-jwt-user
+(defn terrain-user-from-jwt-user
   [jwt-user]
   {:shortUsername (:user jwt-user)
    :username      (str (:user jwt-user) "@" (config/uid-domain))
@@ -42,15 +42,15 @@
    :family-name (:http://wso2.org/claims/lastname jwt)
    :common-name (:http://wso2.org/claims/fullname jwt)})
 
-(defn donkey-user-from-jwt-claims
+(defn terrain-user-from-jwt-claims
   ([jwt-claims]
-     (donkey-user-from-jwt-claims jwt-claims jwt/user-from-default-assertion))
+     (terrain-user-from-jwt-claims jwt-claims jwt/user-from-default-assertion))
   ([jwt-claims user-extraction-fn]
-     (donkey-user-from-jwt-user (user-extraction-fn jwt-claims))))
+     (terrain-user-from-jwt-user (user-extraction-fn jwt-claims))))
 
 (defn generate-jwt
   [user]
-  ((jwt-generator) (jwt-user-from-donkey-user user)))
+  ((jwt-generator) (jwt-user-from-terrain-user user)))
 
 (defn add-auth-header
   ([user]

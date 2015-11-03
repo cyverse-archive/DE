@@ -1,7 +1,7 @@
-(ns donkey.clients.metadata
+(ns terrain.clients.metadata
   (:require [cheshire.core :as cheshire]
-            [donkey.clients.metadata.raw :as raw]
-            [donkey.util.service :as service]))
+            [terrain.clients.metadata.raw :as raw]
+            [terrain.util.service :as service]))
 
 (defn- parse-body
   [response]

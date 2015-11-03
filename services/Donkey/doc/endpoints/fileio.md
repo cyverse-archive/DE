@@ -175,7 +175,7 @@ __Error Codes__:
 + ERR_NOT_A_USER (Invalid user specified)
 + ERR_DOES_NOT_EXIST (The destination directory does not exist)
 + ERR_NOT_WRITEABLE (The destination directory is not writable by the user)
-+ ERR_FILE_SIZE_TOO_LARGE (The size of the "content" field is larger than the donkey.fileio.max-edit-file-size config setting)
++ ERR_FILE_SIZE_TOO_LARGE (The size of the "content" field is larger than the terrain.fileio.max-edit-file-size config setting)
 
 __Request Body__:
 

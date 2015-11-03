@@ -1,9 +1,9 @@
-(ns donkey.routes.collaborator
+(ns terrain.routes.collaborator
   (:use [compojure.core]
-        [donkey.util :only [optional-routes]])
-  (:require [donkey.clients.metadactyl.raw :as metadactyl]
-            [donkey.util.config :as config]
-            [donkey.util.service :as service]))
+        [terrain.util :only [optional-routes]])
+  (:require [terrain.clients.metadactyl.raw :as metadactyl]
+            [terrain.util.config :as config]
+            [terrain.util.service :as service]))
 
 (defn secured-collaborator-routes
   []

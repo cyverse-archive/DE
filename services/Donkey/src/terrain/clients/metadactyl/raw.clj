@@ -1,8 +1,8 @@
-(ns donkey.clients.metadactyl.raw
-  (:use [donkey.util.transformers :only [secured-params]])
+(ns terrain.clients.metadactyl.raw
+  (:use [terrain.util.transformers :only [secured-params]])
   (:require [cemerick.url :as curl]
             [clj-http.client :as client]
-            [donkey.util.config :as config]))
+            [terrain.util.config :as config]))
 
 (def metadactyl-sort-params [:limit :offset :sort-field :sort-dir])
 (def metadactyl-analysis-listing-params (conj metadactyl-sort-params :include-hidden :filter))

@@ -1,8 +1,8 @@
-(ns donkey.routes.comments
+(ns terrain.routes.comments
   (:use [compojure.core :only [DELETE GET PATCH POST]])
-  (:require [donkey.services.metadata.comments :as comments]
-            [donkey.util :as util]
-            [donkey.util.config :as config]))
+  (:require [terrain.services.metadata.comments :as comments]
+            [terrain.util :as util]
+            [terrain.util.config :as config]))
 
 (defn data-comment-routes
   []

@@ -1,9 +1,9 @@
-(ns donkey.services.filesystem.root
+(ns terrain.services.filesystem.root
   (:use [clojure-commons.validators])
   (:require [clojure-commons.json :as json]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
-            [donkey.clients.data-info.raw :as data-raw]
-            [donkey.services.filesystem.common-paths :as paths]))
+            [terrain.clients.data-info.raw :as data-raw]
+            [terrain.services.filesystem.common-paths :as paths]))
 
 (defn- format-roots
   [roots user]

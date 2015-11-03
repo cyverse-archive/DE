@@ -1,4 +1,4 @@
-(ns donkey.util.time
+(ns terrain.util.time
   (:require [clj-time.coerce :as tc]
             [clj-time.format :as tf]
             [clojure.string :as string]))

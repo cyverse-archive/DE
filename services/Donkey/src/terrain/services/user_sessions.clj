@@ -1,10 +1,10 @@
-(ns donkey.services.user-sessions
+(ns terrain.services.user-sessions
   (:use [slingshot.slingshot :only [try+ throw+]]
         [clojure-commons.error-codes]
-        [donkey.util.config]
-        [donkey.util.service]
-        [donkey.clients.user-sessions]
-        [donkey.auth.user-attributes])
+        [terrain.util.config]
+        [terrain.util.service]
+        [terrain.clients.user-sessions]
+        [terrain.auth.user-attributes])
   (:require [clojure.string :as string]
             [clojure.tools.logging :as log]
             [clojure-commons.file-utils :as ft]))

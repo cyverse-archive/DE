@@ -18,12 +18,12 @@ indexed, and for folders, [folder records](../../schema.md#folder-record) are in
 
 # Basic Usage
 
-For the client without administrative privileges, Donkey provides endpoints for performing searches
+For the client without administrative privileges, Terrain provides endpoints for performing searches
 and for checking the status of the indexer.
 
 ## Search Requests
 
-Donkey provides search endpoints that allow callers to search the data by name and various pieces of
+Terrain provides search endpoints that allow callers to search the data by name and various pieces of
 system and user metadata. It supports the all the queries in the [ElasticSearch query DSL]
 (http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-queries.html) for
 searching.
@@ -206,7 +206,7 @@ $ curl http://localhost:8888/secured/filesystem/index/status?proxyToken=$(cas-ti
 
 __NOT IMPLEMENTED YET__
 
-For clients with administrative privileges, Donkey provides additional endpoints for performing
+For clients with administrative privileges, Terrain provides additional endpoints for performing
 search requests as a specific user and controlling the indexer.
 
 ## Search Requests by Proxy
@@ -307,7 +307,7 @@ $ curl \
 
 ## Update Index Request
 
-Donkey provides an endpoint for updating the index used by search.
+Terrain provides an endpoint for updating the index used by search.
 
 ### Endpoint
 

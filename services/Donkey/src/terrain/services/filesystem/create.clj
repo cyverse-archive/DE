@@ -1,11 +1,11 @@
-(ns donkey.services.filesystem.create
+(ns terrain.services.filesystem.create
   (:use [clj-jargon.init :only [with-jargon]]
         [clj-jargon.permissions :only [set-owner]])
   (:require [clojure.tools.logging :as log]
             [clj-jargon.item-info :as item]
             [clj-jargon.item-ops :as ops]
-            [donkey.services.filesystem.validators :as validators]
-            [donkey.services.filesystem.icat :as cfg]))
+            [terrain.services.filesystem.validators :as validators]
+            [terrain.services.filesystem.icat :as cfg]))
 
 (defn ensure-created
   "If a folder doesn't exist, it creates the folder and makes the given user an owner of it.

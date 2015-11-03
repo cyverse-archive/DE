@@ -1,10 +1,10 @@
-(ns donkey.services.user-prefs.output-dir
-  (:use [donkey.auth.user-attributes :only [current-user]])
+(ns terrain.services.user-prefs.output-dir
+  (:use [terrain.auth.user-attributes :only [current-user]])
   (:require [clojure.string :as string]
             [clojure.tools.logging :as log]
             [clojure-commons.file-utils :as ft]
-            [donkey.clients.data-info :as di]
-            [donkey.util.config :as cfg]))
+            [terrain.clients.data-info :as di]
+            [terrain.util.config :as cfg]))
 
 (def default-output-dir-key :defaultOutputFolder)
 

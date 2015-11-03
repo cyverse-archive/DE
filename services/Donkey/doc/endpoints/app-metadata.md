@@ -47,8 +47,8 @@
 
 # Application Metadata Endpoints
 
-Note that secured endpoints in Donkey and metadactyl are a little different from
-each other. Please see [Donkey Vs. Metadactyl](donkey-v-metadactyl.md) for more
+Note that secured endpoints in Terrain and metadactyl are a little different from
+each other. Please see [Terrain Vs. Metadactyl](terrain-v-metadactyl.md) for more
 information.
 
 ## Listing App Elements

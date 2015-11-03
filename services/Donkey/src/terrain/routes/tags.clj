@@ -1,8 +1,8 @@
-(ns donkey.routes.tags
+(ns terrain.routes.tags
   (:use [compojure.core :only [DELETE GET PATCH POST]])
-  (:require [donkey.services.metadata.tags :as tags]
-            [donkey.util :as util]
-            [donkey.util.config :as config]))
+  (:require [terrain.services.metadata.tags :as tags]
+            [terrain.util :as util]
+            [terrain.util.config :as config]))
 
 
 (defn secured-tag-routes

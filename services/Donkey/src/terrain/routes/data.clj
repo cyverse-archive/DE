@@ -1,12 +1,12 @@
-(ns donkey.routes.data
+(ns terrain.routes.data
   (:use [compojure.core]
-        [donkey.services.file-listing]
-        [donkey.services.sharing :only [share unshare]]
-        [donkey.auth.user-attributes]
-        [donkey.util])
-  (:require [donkey.util.config :as config]
-            [donkey.clients.data-info :as data]
-            [donkey.clients.saved-searches :as saved]))
+        [terrain.services.file-listing]
+        [terrain.services.sharing :only [share unshare]]
+        [terrain.auth.user-attributes]
+        [terrain.util])
+  (:require [terrain.util.config :as config]
+            [terrain.clients.data-info :as data]
+            [terrain.clients.saved-searches :as saved]))
 
 (defn secured-data-routes
   "The routes for data sharing endpoints."

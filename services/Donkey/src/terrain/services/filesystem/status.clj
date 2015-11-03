@@ -1,9 +1,9 @@
-(ns donkey.services.filesystem.status
+(ns terrain.services.filesystem.status
   (:require [clojure.tools.logging :as log]
             [clj-jargon.init :as init]
             [clj-jargon.item-info :as item]
             [clojure-commons.error-codes :as ce]
-            [donkey.services.filesystem.icat :as icat]))
+            [terrain.services.filesystem.icat :as icat]))
 
 
 (defn ^Boolean irods-running?

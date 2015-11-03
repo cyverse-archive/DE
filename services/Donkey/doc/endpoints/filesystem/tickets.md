@@ -9,7 +9,7 @@ __Error Codes__: ERR_NOT_A_USER, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE
 __Request Parameters__:
 * proxyToken - A valid CAS ticket.
 
-* public - Tells donkey whether to make the ticket accessible to the public group.
+* public - Tells terrain whether to make the ticket accessible to the public group.
            Setting it to 1 means that the ticket will be made publicly accessible. Any other value
            means that the ticket will not be accessible publicly. This parameter is optional and
            defaults to not making tickets public.

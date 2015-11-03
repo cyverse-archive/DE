@@ -1,8 +1,8 @@
-(ns donkey.routes.favorites
+(ns terrain.routes.favorites
   (:use [compojure.core :only [DELETE GET POST PUT]])
-  (:require [donkey.services.metadata.favorites :as fave]
-            [donkey.util :as util]
-            [donkey.util.config :as config]))
+  (:require [terrain.services.metadata.favorites :as fave]
+            [terrain.util :as util]
+            [terrain.util.config :as config]))
 
 
 (defn secured-favorites-routes

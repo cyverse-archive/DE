@@ -7,13 +7,13 @@
       (string/trim (:out (sh "git" "rev-parse" "HEAD")))
       ""))
 
-(defproject org.iplantc/donkey "5.0.0-SNAPSHOT"
+(defproject org.iplantc/terrain "5.0.0-SNAPSHOT"
   :description "Framework for hosting DiscoveryEnvironment metadata services."
-  :url "https://github.com/iPlantCollaborativeOpenSource/Donkey"
+  :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD Standard License"
             :url "http://www.iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :manifest {"Git-Ref" ~(git-ref)}
-  :uberjar-name "donkey-standalone.jar"
+  :uberjar-name "terrain-standalone.jar"
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/core.memoize "0.5.7"]
                  [org.clojure/data.codec "0.1.0"]
@@ -52,9 +52,9 @@
             [swank-clojure "1.4.2" :exclusions [org.clojure/clojure]]]
   :profiles {:dev     {:resource-paths ["conf/test"]}
              :uberjar {:aot :all}}
-  :main ^:skip-aot donkey.core
-  :ring {:handler donkey.core/app
-         :init donkey.core/lein-ring-init
+  :main ^:skip-aot terrain.core
+  :ring {:handler terrain.core/app
+         :init terrain.core/lein-ring-init
          :port 31325
          :auto-reload? false}
   :uberjar-exclusions [#".*[.]SF" #"LICENSE" #"NOTICE"]
@@ -64,4 +64,4 @@
                   {:url "http://nexml-dev.nescent.org/.m2/repository"
                    :checksum :ignore
                    :update :never}]]
-  :jvm-opts ["-Dlogback.configurationFile=/etc/iplant/de/logging/donkey-logging.xml"])
+  :jvm-opts ["-Dlogback.configurationFile=/etc/iplant/de/logging/terrain-logging.xml"])

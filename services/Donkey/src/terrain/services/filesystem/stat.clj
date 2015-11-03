@@ -1,4 +1,4 @@
-(ns donkey.services.filesystem.stat
+(ns terrain.services.filesystem.stat
   (:use [clojure-commons.validators]
         [clj-jargon.init :only [with-jargon]]
         [clj-jargon.item-info :only [exists? is-dir? stat]]
@@ -10,13 +10,13 @@
             [clojure-commons.file-utils :as ft]
             [cheshire.core :as json]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
-            [donkey.services.filesystem.validators :as validators]
-            [donkey.services.filesystem.garnish.irods :as filetypes]
+            [terrain.services.filesystem.validators :as validators]
+            [terrain.services.filesystem.garnish.irods :as filetypes]
             [clj-icat-direct.icat :as icat]
-            [donkey.clients.data-info.raw :as data-raw]
-            [donkey.util.config :as cfg]
-            [donkey.services.filesystem.common-paths :as paths]
-            [donkey.services.filesystem.icat :as jargon])
+            [terrain.clients.data-info.raw :as data-raw]
+            [terrain.util.config :as cfg]
+            [terrain.services.filesystem.common-paths :as paths]
+            [terrain.services.filesystem.icat :as jargon])
   (:import [org.apache.tika Tika]))
 
 (defn- count-shares

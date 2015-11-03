@@ -1,7 +1,7 @@
-(ns donkey.services.filesystem.metadata-templates
-  (:use [donkey.services.filesystem.common-paths])
+(ns terrain.services.filesystem.metadata-templates
+  (:use [terrain.services.filesystem.common-paths])
   (:require [dire.core :refer [with-pre-hook! with-post-hook!]]
-            [donkey.clients.metadata :as metadata]))
+            [terrain.clients.metadata :as metadata]))
 
 (def user-id-ks [:created_by :modified_by])
 

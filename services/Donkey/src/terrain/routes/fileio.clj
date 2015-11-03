@@ -1,9 +1,9 @@
-(ns donkey.routes.fileio
+(ns terrain.routes.fileio
   (:use [compojure.core]
-        [donkey.auth.user-attributes])
-  (:require [donkey.util.config :as config]
-            [donkey.services.fileio.controllers :as fio]
-            [donkey.util :as util]))
+        [terrain.auth.user-attributes])
+  (:require [terrain.util.config :as config]
+            [terrain.services.fileio.controllers :as fio]
+            [terrain.util :as util]))
 
 
 (defn secured-fileio-routes

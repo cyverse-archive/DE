@@ -1,7 +1,7 @@
-(ns donkey.services.filesystem.tickets
+(ns terrain.services.filesystem.tickets
   (:use [clojure-commons.error-codes]
         [clojure-commons.validators]
-        [donkey.services.filesystem.common-paths]
+        [terrain.services.filesystem.common-paths]
         [clj-jargon.init :only [with-jargon]]
         [clj-jargon.tickets]
         [slingshot.slingshot :only [try+ throw+]])
@@ -11,9 +11,9 @@
             [clostache.parser :as stache]
             [cheshire.core :as json]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
-            [donkey.util.config :as cfg]
-            [donkey.services.filesystem.icat :as icat]
-            [donkey.services.filesystem.validators :as validators])
+            [terrain.util.config :as cfg]
+            [terrain.services.filesystem.icat :as icat]
+            [terrain.services.filesystem.validators :as validators])
   (:import [java.util UUID]))
 
 (defn- ticket-uuids?

@@ -1,4 +1,4 @@
-(ns donkey.services.search
+(ns terrain.services.search
   "provides the functions that forward search requests to Elastic Search"
   (:use [clojure-commons.error-codes :only [invalid-arg-response]]
         [slingshot.slingshot :only [try+ throw+]])
@@ -7,11 +7,11 @@
             [cheshire.core :as json]
             [clj-time.core :as t]
             [clj-time.local :as l]
-            [donkey.persistence.search :as search]
-            [donkey.clients.data-info :as data]
-            [donkey.util.config :as cfg]
-            [donkey.util.service :as svc]
-            [donkey.util.validators :as valid])
+            [terrain.persistence.search :as search]
+            [terrain.clients.data-info :as data]
+            [terrain.util.config :as cfg]
+            [terrain.util.service :as svc]
+            [terrain.util.validators :as valid])
   (:import [java.net ConnectException]
            [java.util UUID]
            [clojure.lang IPersistentMap]))
@@ -50,7 +50,7 @@
 
 
 (defn- extract-result
-  "Extracts the result of the Donkey search services from the results returned to us by
+  "Extracts the result of the Terrain search services from the results returned to us by
    ElasticSearch."
   [resp offset memberships]
   (letfn [(format-match [match] {:score  (:score match)

@@ -1,11 +1,11 @@
-(ns donkey.util.validators
+(ns terrain.util.validators
   (:use [slingshot.slingshot :only [try+ throw+]]
         [clojure-commons.error-codes])
   (:require [clojure.set :as set]
             [clojure.string :as string]
             [cheshire.core :as json]
             [cemerick.url :as url-parser]
-            [donkey.util.config :as cfg])
+            [terrain.util.config :as cfg])
   (:import [clojure.lang Keyword]
            [java.util UUID]))
 

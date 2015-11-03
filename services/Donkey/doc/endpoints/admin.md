@@ -1,4 +1,4 @@
-Listing the config for Donkey
+Listing the config for Terrain
 -----------------------------
 
 __URL Path__: /admin/config
@@ -13,8 +13,8 @@ __Response Body__:
 
 ```json
 {
-    "donkey.app.environment-name": "de-2",
-    "donkey.app.listen-port": "31325",
+    "terrain.app.environment-name": "de-2",
+    "terrain.app.listen-port": "31325",
     <...>
 }
 ```

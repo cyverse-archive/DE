@@ -1,14 +1,14 @@
-(ns donkey.services.file-listing
+(ns terrain.services.file-listing
   (:use [clojure-commons.error-codes]
-        [donkey.util.config]
-        [donkey.util.service :only [decode-stream required-param success-response]]
+        [terrain.util.config]
+        [terrain.util.service :only [decode-stream required-param success-response]]
         [slingshot.slingshot :only [throw+]]
-        [donkey.auth.user-attributes])
+        [terrain.auth.user-attributes])
   (:require [cheshire.core :as cheshire]
             [clojure.string :as string]
             [clojure.tools.logging :as log]
-            [donkey.clients.data-info :as di]
-            [donkey.services.user-prefs :as prefs]))
+            [terrain.clients.data-info :as di]
+            [terrain.services.user-prefs :as prefs]))
 
 (defn- generate-output-dir
   "Automatically generates the default output directory based on a default name."

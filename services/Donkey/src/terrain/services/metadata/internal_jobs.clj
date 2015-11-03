@@ -1,8 +1,8 @@
-(ns donkey.services.metadata.internal-jobs
+(ns terrain.services.metadata.internal-jobs
   (:use [slingshot.slingshot :only [throw+]])
   (:require [clojure-commons.error-codes :as ce]
-            [donkey.clients.metadactyl :as metadactyl]
-            [donkey.util.config :as config]))
+            [terrain.clients.metadactyl :as metadactyl]
+            [terrain.util.config :as config]))
 
 (defn- load-param-map
   [app-id]

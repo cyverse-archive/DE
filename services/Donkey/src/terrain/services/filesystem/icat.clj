@@ -1,7 +1,7 @@
-(ns donkey.services.filesystem.icat
+(ns terrain.services.filesystem.icat
   (:use [clj-icat-direct.icat :only [icat-db-spec setup-icat]])
   (:require [clojure.core.memoize :as memo]
-            [donkey.util.config :as cfg]
+            [terrain.util.config :as cfg]
             [clojure.tools.logging :as log]
             [clj-jargon.init :as init]
             [clj-jargon.metadata :as meta])

@@ -1,9 +1,9 @@
-(ns donkey.routes.admin
+(ns terrain.routes.admin
   (:use [compojure.core]
-        [donkey.auth.user-attributes]
-        [donkey.util])
-  (:require [donkey.util.config :as config]
-            [donkey.services.admin :as admin]
+        [terrain.auth.user-attributes]
+        [terrain.util])
+  (:require [terrain.util.config :as config]
+            [terrain.services.admin :as admin]
             [clojure.tools.logging :as log]))
 
 (defn secured-admin-routes

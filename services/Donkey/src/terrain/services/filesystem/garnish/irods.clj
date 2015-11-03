@@ -1,4 +1,4 @@
-(ns donkey.services.filesystem.garnish.irods
+(ns terrain.services.filesystem.garnish.irods
   (:use [clj-jargon.init :only [with-jargon]]
         [clj-jargon.item-info :only [exists?]]
         [clj-jargon.metadata]
@@ -8,8 +8,8 @@
         [slingshot.slingshot :only [try+ throw+]])
   (:require [clojure.tools.logging :as log]
             [clojure-commons.file-utils :as ft]
-            [donkey.util.config :as cfg]
-            [donkey.services.filesystem.icat :as icat])
+            [terrain.util.config :as cfg]
+            [terrain.services.filesystem.icat :as icat])
   (:import [org.apache.tika Tika]))
 
 (defn get-types

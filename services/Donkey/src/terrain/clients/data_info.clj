@@ -1,5 +1,5 @@
-(ns donkey.clients.data-info
-  (:use [donkey.auth.user-attributes :only [current-user]]
+(ns terrain.clients.data-info
+  (:use [terrain.auth.user-attributes :only [current-user]]
         [slingshot.slingshot :only [throw+ try+]])
   (:require [clojure.string :as string]
             [clojure.tools.logging :as log]
@@ -10,18 +10,18 @@
             [clojure-commons.error-codes :as error]
             [clojure-commons.file-utils :as ft]
             [clojure-commons.assertions :as assertions]
-            [donkey.clients.data-info.raw :as raw]
-            [donkey.services.filesystem.common-paths :as cp]
-            [donkey.services.filesystem.create :as cr]
-            [donkey.services.filesystem.icat :as icat]
-            [donkey.services.filesystem.metadata :as mt]
-            [donkey.services.filesystem.sharing :as sharing]
-            [donkey.services.filesystem.stat :as st]
-            [donkey.services.filesystem.status :as status]
-            [donkey.services.filesystem.users :as users]
-            [donkey.services.filesystem.uuids :as uuids]
-            [donkey.util.config :as cfg]
-            [donkey.util.service :as svc])
+            [terrain.clients.data-info.raw :as raw]
+            [terrain.services.filesystem.common-paths :as cp]
+            [terrain.services.filesystem.create :as cr]
+            [terrain.services.filesystem.icat :as icat]
+            [terrain.services.filesystem.metadata :as mt]
+            [terrain.services.filesystem.sharing :as sharing]
+            [terrain.services.filesystem.stat :as st]
+            [terrain.services.filesystem.status :as status]
+            [terrain.services.filesystem.users :as users]
+            [terrain.services.filesystem.uuids :as uuids]
+            [terrain.util.config :as cfg]
+            [terrain.util.service :as svc])
   (:import [clojure.lang IPersistentMap ISeq Keyword]
            [java.util UUID]))
 

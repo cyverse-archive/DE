@@ -1,6 +1,6 @@
-(ns donkey.routes.misc
+(ns terrain.routes.misc
   (:use [compojure.core]
-        [donkey.util])
+        [terrain.util])
   (:require [clojure.string :as string])
   (:import [java.util UUID]))
 
@@ -8,7 +8,7 @@
   []
   (routes
     (GET "/" [request]
-      "Welcome to Donkey!  I've mastered the stairs!\n")
+      "The infinite is attainable with Terrain!\n")
 
     (GET "/uuid" []
       (string/upper-case (str (UUID/randomUUID))))))

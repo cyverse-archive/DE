@@ -1,13 +1,13 @@
-(ns donkey.services.sharing
+(ns terrain.services.sharing
   (:use [clojure.walk]
         [clojure.string :only [join]]
         [slingshot.slingshot :only [try+]]
         [clojure-commons.file-utils :only [basename]]
-        [donkey.util.service :only [decode-stream success-response]]
-        [donkey.auth.user-attributes])
+        [terrain.util.service :only [decode-stream success-response]]
+        [terrain.auth.user-attributes])
   (:require [clojure.tools.logging :as log]
-            [donkey.clients.data-info :as data]
-            [donkey.clients.notifications :as dn]))
+            [terrain.clients.data-info :as data]
+            [terrain.clients.notifications :as dn]))
 
 (def file-list-threshold 10)
 
