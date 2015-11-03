@@ -1,0 +1,37 @@
+---
+---
+<!DOCTYPE html>
+<html>
+  <head>
+      <title>DE: {{ page.title }}</title>
+    {% include header.html %}
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+            <h1>{{ page.title }}</h1>
+            {% if page.description %}
+            <h2>{{ page.description }}</h2>
+            {% endif %}
+        </header>
+
+        <section id="downloads" class="clearfix">
+            <a href="{{ site.github.repository_url }}" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        {{ content }}
+
+        <footer>
+          {% include footer.html %}
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
