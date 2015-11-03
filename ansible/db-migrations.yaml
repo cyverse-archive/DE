@@ -1,0 +1,20 @@
+---
+- name: Database migrations
+  hosts: services
+  sudo: False
+
+  roles:
+    - role: notify-chat
+      username: "DB Updater"
+      icon: ":facepalm:"
+      msg: ":warning: Updating databases"
+
+    - { role: update-database-de, tags: ["de-db"] }
+    - { role: update-database-notifications, tags: ["notification-db"] }
+    - { role: update-database-metadata, tags: ["metadata-db"] }
+    - { role: update-database-jex, tags: ["jex-db"] }
+
+    - role: notify-chat
+      username: "DB Updater"
+      icon: ":facepalm:"
+      msg: ":white_check_mark: Done updating databases"

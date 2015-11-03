@@ -1,0 +1,19 @@
+---
+- debug: msg="{{fmode}} mode for {{curr_db_user}}@{{curr_db_host}}:{{curr_db_port}}/{{curr_db_name}} from {{tgz_flag|default('-q latest')}}"
+
+- name: pull latest facepalm docker container
+  sudo: true
+  shell: docker pull {{docker.user}}/facepalm:{{docker.tag}}
+  when: (ansible_distribution == "CentOS" and
+        (ansible_distribution_major_version == "6" or ansible_distribution_major_version == "7"))
+
+- name: init/update the database with facepalm docker container
+  sudo: true
+  shell: docker run --rm -v ~/.pgpass:/root/.pgpass {{docker.user}}/facepalm:{{docker.tag}} -m {{fmode}} {{db_version_flag|default('')}} -h {{curr_db_host}} -p {{curr_db_port}} -d {{curr_db_name}} -U {{curr_db_user}} -A {{curr_db_admin}} {{tgz_flag}}
+  register: facepalm_output
+  when: (ansible_distribution == "CentOS" and
+        (ansible_distribution_major_version == "6" or ansible_distribution_major_version == "7"))
+
+- debug: var=facepalm_output.stdout_lines
+- debug: var=facepalm_output.warnings
+- debug: var=facepalm_output.stderr

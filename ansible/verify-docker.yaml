@@ -1,0 +1,46 @@
+---
+# Verifies that docker is installed and up to date
+#
+
+- name: Verify docker installed and up to date
+  hosts: docker-ready
+  sudo: yes
+  tasks: 
+       - debug: msg="Supported docker version= {{docker.version}}"
+
+       - name: docker repo exists (CentOS 7)
+         shell: yum repolist -v
+         register: docker_repo_exists_centos
+         when: ansible_distribution == "CentOS" and
+               ansible_distribution_major_version == "7" and
+               docker.version == "1.7.0"
+
+       - fail: msg="Docker repo must be installed (CentOS 7)" 
+         when: ansible_distribution == "CentOS" and
+               ansible_distribution_major_version == "7" and
+               docker.version == "1.7.1" and
+               docker_repo_exists_centos is defined and
+               docker_repo_exists_centos.stdout.find('docker-main-repo') == -1
+
+         # TODO: Check for docker group
+         # TODO: Verify that iplant user belongs to docker group
+
+       - name: docker version
+         shell: docker version --format=\{\{\.Client\.Version\}\}
+         register: docker_version
+
+       - debug: var=docker_version
+         when: "docker_version.stdout.find('{{docker.version}}') == -1"
+
+       - fail: msg="docker version is not {{docker.version}}"
+         when: "docker_version.stdout.find('{{docker.version}}') == -1"
+
+       - name: docker service exists 
+         shell:  systemctl status docker.service
+         register: verify_docker_service
+         when: ansible_distribution == "CentOS" and
+               ansible_distribution_major_version == "7"
+
+       - fail: msg="docker.service does not exist"
+         when: verify_docker_service.rc != 0
+

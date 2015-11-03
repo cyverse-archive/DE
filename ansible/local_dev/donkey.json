@@ -1,0 +1,3 @@
+{
+  "donkey_base": "http://localhost:{{donkey.port}}"
+}

@@ -1,0 +1,49 @@
+---
+# Verifies that the docker service is setup correctly.
+
+- name: Verify systemd docker.service setup
+  hosts: docker-ready
+  sudo: yes
+  gather_facts: false
+  tasks:
+      - name: docker.service BindsTo
+        shell: systemctl show -p BindsTo docker.service
+        register: docker_bindsto
+
+      - name: docker.service PartOf 
+        shell: systemctl show -p PartOf docker.service
+        register: docker_partof
+
+      - name: docker.service After 
+        shell: systemctl show -p After docker.service
+        register: docker_after
+
+      - name: docker.service Wants
+        shell: systemctl show -p Wants docker.service
+        register: docker_wants
+
+      - fail: msg="docker.service must be BindsTo network.service"
+        when: docker_bindsto.stdout.find('network.service') == -1
+
+      - fail: msg="docker.service must be BindsTo iptables.service"
+        when: docker_bindsto.stdout.find('iptables.service') == -1
+
+      - fail: msg="docker.service must be PartOf network.service"
+        when: docker_partof.stdout.find('network.service') == -1
+
+      - fail: msg="docker.service must be PartOf iptables.service"
+        when: docker_partof.stdout.find('iptables.service') == -1
+
+      - fail: msg="docker.service must start after network.service"
+        when: docker_after.stdout.find('network.service') == -1
+
+      - fail: msg="docker.service must start after iptables.service"
+        when: docker_after.stdout.find('iptables.service') == -1
+
+      - fail: msg="docker.service must start after network-online.target"
+        when: docker_after.stdout.find('network-online.target') == -1
+
+      - fail: msg="docker.service must want network-online.target"
+        when: docker_wants.stdout.find('network-online.target') == -1
+
+

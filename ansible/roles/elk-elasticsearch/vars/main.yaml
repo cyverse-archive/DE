@@ -1,0 +1,11 @@
+---
+# vars file for elk-elasticsearch
+elk_host: "{{ groups['elk'][0]}}"
+elk_url: "http://{{elk_host}}:{{elk.elasticsearch.port}}"
+registry_host: "{{ groups['docker-registry'][0]}}"
+remote_registry: "{{ registry_host }}:{{ docker.registry.port }}"
+es_de_index_template_url:  "{{elk_url}}/_template/de" 
+es_de_metrics_index_template_url:  "{{elk_url}}/_template/de-metrics" 
+es_de_logs_index_template_url:  "{{elk_url}}/_template/de-logs" 
+es_de_error_logs_index_template_url:  "{{elk_url}}/_template/de-error-logs" 
+app_index_tool_image:  "{{remote_registry}}/de-elk-apps-index-tool:latest" 

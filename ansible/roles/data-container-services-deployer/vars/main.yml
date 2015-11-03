@@ -1,0 +1,3 @@
+registry_host: "{{ groups['docker-registry'][0]}}"
+remote_registry: "{{ registry_host }}:{{ docker.registry.port }}"
+replace_container: True

@@ -1,0 +1,9 @@
+# Uploads a configuration settings to elasticsearch
+# 
+# vars:
+#   path - The URL path relative to the index to receive the settings
+#   file - The file containing the JSON encoded settings 
+---
+- name: upload configuration {{ file }}
+  uri: url={{ data_resource_url }}/{{ path }} method=PUT 
+       body={{ lookup('file', file)|replace('\n', '')|to_nice_json }}

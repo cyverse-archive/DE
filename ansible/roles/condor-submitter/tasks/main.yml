@@ -1,0 +1,47 @@
+---
+
+## This role should only install condor if it is not already installed.
+
+- name: Verify condor is installed
+  shell: yum list installed condor
+  register: verify_condor_installed
+  tags:
+      - verify
+
+- fail: msg="Condor not installed"
+  when: verify_condor_installed.rc != 0
+
+# - name: set the /etc/condor/condor_config.local file
+#   sudo: yes
+#   template: src=condor_config.local.j2 dest=/etc/condor/condor_config.local owner=root group=root mode=0644
+
+# - name: restart condor
+#   sudo: yes
+#   service: name=condor state=restarted enabled=yes
+
+- name: Copy event_log file to /etc/condor/config.d/
+  copy: src=event_log dest=/etc/condor/config.d/ owner=root group=root mode=0644
+  tags: 
+      - config
+
+- name: Copy group_config file to /etc/condor/config.d/
+  template: src=group_config.js dest=/etc/condor/config.d/group_config owner=root group=root mode=0644
+  tags: 
+      - config
+
+- name: start condor
+  sudo: yes
+  service: name=condor state=restarted
+  tags:
+      - restart_services
+      - restart_condor
+
+- name: enable condor
+  sudo: yes
+  service: name=condor enabled=true
+  tags:
+      - enable_services
+      - enable_condor
+
+- name: Running condor_reconfig
+  command: /usr/sbin/condor_reconfig

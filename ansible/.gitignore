@@ -1,0 +1,9 @@
+*.*un~
+.DS_Store
+cfg_files/
+.idea
+de-ansible.iml
+de-ansible.ipr
+de-ansible.iws
+*.swp
+ssh-configs.tar.gz

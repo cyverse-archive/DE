@@ -1,0 +1,50 @@
+---
+- name: postgresql-server is installed via yum
+  sudo: yes
+  yum: name=postgresql92-server state=present
+  when: ansible_distribution == "CentOS"
+  register: centos_server_install
+
+- name: postgresl-contrib is installed via yum
+  sudo: yes
+  yum: name=postgresql92-contrib state=present
+  when: ansible_distribution == "CentOS"
+
+- name: post install -- init postgres
+  sudo: yes
+  when: centos_server_install|changed
+  command: service postgresql-9.2 initdb
+  register: postgresql_init
+
+- name: place postgresql.conf
+  sudo: yes
+  when: ansible_distribution == "CentOS"
+  copy: src=postgresql.conf dest=/var/lib/pgsql/9.2/data/postgresql.conf owner=postgres group=postgres mode=0600 backup=yes
+  register: conf
+
+- name: restart postgres after init or config change
+  sudo: yes
+  when: (postgresql_init|changed or conf|changed) and ansible_distribution == "CentOS"
+  service: name=postgresql-9.2 state=restarted
+
+- name: post install -- set admin user's password
+  sudo: yes
+  sudo_user: postgres
+  when: postgresql_init|changed and ansible_distribution == "CentOS"
+  postgresql_user: name={{db_admin}} password={{db_admin_password}} state=present login_user=postgres role_attr_flags=SUPERUSER
+
+- name: place pg_hba.conf
+  sudo: yes
+  when: ansible_distribution == "CentOS"
+  template: src=pg_hba.conf.j2 dest=/var/lib/pgsql/9.2/data/pg_hba.conf owner=postgres group=postgres mode=0600 backup=yes
+  register: pg_hba
+
+- name: restart postgres after pg_hba changed
+  sudo: yes
+  when: pg_hba|changed and ansible_distribution == "CentOS"
+  service: name=postgresql-9.2 state=restarted
+
+- name: post install -- ensure postgresql starts on reboot
+  sudo: yes
+  when: centos_server_install|changed
+  command: chkconfig postgresql-9.2 on

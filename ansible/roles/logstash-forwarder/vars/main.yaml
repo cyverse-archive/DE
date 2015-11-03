@@ -1,0 +1,6 @@
+---
+inventory_name: "{{ inventory_file.split('/')[-1].split('.')[0] }}"
+elk_host: "{{ groups['elk'][0]}}"
+logstash_server_ip: "{{ hostvars[groups['elk'][0]]['ansible_default_ipv4']['address'] }}"
+registry_host: "{{ groups['docker-registry'][0]}}"
+remote_registry: "{{ registry_host }}:{{ docker.registry.port }}"

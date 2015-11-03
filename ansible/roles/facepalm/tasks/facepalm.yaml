@@ -1,0 +1,11 @@
+- name: facepalm is installed via yum
+  sudo: yes
+  shell: yum install -y facepalm
+  when: ansible_distribution == "CentOS" and
+        ansible_distribution_major_version == "5"
+
+- name: facepalm is pulled via docker
+  sudo: yes
+  shell: docker pull {{docker.user}}/facepalm:{{docker.tag}}
+  when: (ansible_distribution == "CentOS" and
+        (ansible_distribution_major_version == "6" or ansible_distribution_major_version == "7"))

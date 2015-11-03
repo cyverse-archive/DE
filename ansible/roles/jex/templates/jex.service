@@ -1,0 +1,14 @@
+[Unit]
+Description=The JEX submits jobs to Condor for the DE.
+Wants=condor.service
+
+[Service]
+User=condor
+ExecStart=/usr/bin/java -cp /usr/local/lib/jex/jex-standalone.jar:/usr/local/lib/jex/ jex.core --config {{ de_config_dir }}/jex.properties
+Restart=on-failure
+
+SyslogIdentifier=jex
+SyslogFacility={{systemd.syslogFacility}}
+
+[Install]
+WantedBy=multi-user.target

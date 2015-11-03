@@ -1,0 +1,167 @@
+---
+
+- name: ensure that /etc/iplant/de exists
+  sudo: yes
+  file: path={{ de_config_dir }} state=directory mode=0755
+  tags:
+      - config
+
+- include: service-properties.yaml
+
+#######################
+### Update Services ###
+#######################
+- name: docker pull anon-files
+  sudo: yes
+  shell: docker pull {{docker.user}}/{{anon_files.image_name}}:{{docker.tag}}
+  tags:
+      - docker_pull
+      - docker_pull_anon-files
+
+- name: docker pull clockwork
+  sudo: yes
+  shell: docker pull {{docker.user}}/{{clockwork.image_name}}:{{docker.tag}}
+  tags:
+      - docker_pull
+      - docker_pull_clockwork
+
+- name: docker pull condor-log-monitor
+  sudo: yes
+  shell: docker pull {{docker.user}}/{{condor_log_monitor.image_name}}:{{docker.tag}}
+  tags:
+      - docker_pull
+      - docker_pull_condor-log-monitor
+
+- name: docker pull data-info
+  sudo: yes
+  shell: docker pull {{docker.user}}/{{data_info.image_name}}:{{docker.tag}}
+  tags:
+      - docker_pull
+      - docker_pull_data-info
+
+- name: docker pull donkey
+  sudo: yes
+  shell: docker pull {{docker.user}}/{{donkey.image_name}}:{{docker.tag}}
+  tags:
+      - docker_pull
+      - docker_pull_donkey
+
+- name: pull the exim image
+  sudo: yes
+  shell: docker pull elsdoerfer/exim-sender
+  tags:
+      - docker_pull
+      - docker_pull_iplant-email
+
+- name: docker pull iplant-email
+  sudo: yes
+  shell: docker pull {{docker.user}}/{{iplant_email.image_name}}:{{docker.tag}}
+  tags:
+      - docker_pull
+      - docker_pull_iplant-email
+
+- name: docker pull iplant-groups
+  sudo: yes
+  shell: docker pull {{docker.user}}/{{iplant_groups.image_name}}:{{docker.tag}}
+  tags:
+      - docker_pull
+      - docker_pull_iplant-groups
+
+- name: docker pull jex-events
+  sudo: yes
+  shell: docker pull {{docker.user}}/{{jexevents.image_name}}:{{docker.tag}}
+  tags:
+      - docker_pull
+      - docker_pull_jex-events
+
+- name: docker pull kifshare
+  sudo: yes
+  shell: docker pull {{docker.user}}/{{kifshare.image_name}}:{{docker.tag}}
+  tags:
+      - docker_pull
+      - docker_pull_kifshare
+
+- name: docker pull metadactyl
+  sudo: yes
+  shell: docker pull {{docker.user}}/{{metadactyl.image_name}}:{{docker.tag}}
+  tags:
+      - docker_pull
+      - docker_pull_metadactyl
+
+- name: docker pull metadata
+  sudo: yes
+  shell: docker pull {{docker.user}}/{{metadata.image_name}}:{{docker.tag}}
+  tags:
+      - docker_pull
+      - docker_pull_metadata
+
+- name: docker pull notificationagent
+  sudo: yes
+  shell: docker pull {{docker.user}}/{{notificationagent.image_name}}:{{docker.tag}}
+  tags:
+      - docker_pull
+      - docker_pull_notification-agent
+
+- name: docker pull saved-searches
+  sudo: yes
+  shell: docker pull {{docker.user}}/{{saved_searches.image_name}}:{{docker.tag}}
+  tags:
+      - docker_pull
+      - docker_pull_saved-searches
+
+- name: docker pull tree-urls
+  sudo: yes
+  shell: docker pull {{docker.user}}/{{tree_urls.image_name}}:{{docker.tag}}
+  tags:
+      - docker_pull
+      - docker_pull_tree-urls
+
+- name: docker pull user-preferences
+  sudo: yes
+  shell: docker pull {{docker.user}}/{{user_preferences.image_name}}:{{docker.tag}}
+  tags:
+      - docker_pull
+      - docker_pull_user-preferences
+
+- name: docker pull user-sessions
+  sudo: yes
+  shell: docker pull {{docker.user}}/{{user_sessions.image_name}}:{{docker.tag}}
+  tags:
+      - docker_pull
+      - docker_pull_user-sessions
+
+- name: pull the non-parasitic the dewey service
+  sudo: yes
+  shell: docker pull {{docker.user}}/{{dewey.image_name}}:{{docker.tag}}
+  when: (not parasitic)
+  tags:
+      - docker_pull
+      - docker_pull_dewey
+
+- name: pull the non-parasitic the infosquito service
+  sudo: yes
+  shell: docker pull {{docker.user}}/{{infosquito.image_name}}:{{docker.tag}}
+  when: (not parasitic)
+  tags:
+      - docker_pull
+      - docker_pull_infosquito
+
+- name: pull the non-parasitic the info-typer service
+  sudo: yes
+  shell: docker pull {{docker.user}}/{{info_typer.image_name}}:{{docker.tag}}
+  when: (not parasitic)
+  tags:
+      - docker_pull
+      - docker_pull_info-typer
+
+- name: pull the non-parasitic the monkey service
+  sudo: yes
+  shell: docker pull {{docker.user}}/{{monkey.image_name}}:{{docker.tag}}
+  when: (not parasitic)
+  tags:
+      - docker_pull
+      - docker_pull_monkey
+
+- include: CentOS-7.yaml
+  when: ansible_distribution == "CentOS" and
+        ansible_distribution_major_version == "7"

@@ -1,0 +1,15 @@
+---
+
+- name: Pull apps index creation tool
+  shell: docker pull {{app_index_tool_image}}
+  register: docker_pull_v
+  changed_when: docker_pull_v.stdout.find('Image is up to date') == -1
+  tags:
+      - docker_pull
+      - docker_pull_app_index_tool
+
+- name: Run app index creation tool
+  shell: "docker run --rm {{app_index_tool_image}} '{{elk_url}}'"  
+  register: app_index_creation_result
+
+#- debug: var=app_index_creation_result

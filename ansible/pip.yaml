@@ -1,0 +1,7 @@
+---
+# ansible-playbook -K pip.yaml
+
+- name: Install and configure pip
+  hosts: docker-ready
+  roles:
+      - pip

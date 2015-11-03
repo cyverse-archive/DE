@@ -1,0 +1,16 @@
+---
+# Verifies that the logrotate files are in place.
+
+- name: Verify that logrotate file is in place
+  hosts: docker-ready
+  sudo: yes
+  gather_facts: false
+  tasks:
+
+      - name: /etc/logrotate.d/de-logs exists
+        stat: path=/etc/logrotate.d/de-logs
+        register: verify_rotate_file
+
+      - fail: msg="Logrotate file does not exist. Run a play with the 'logrotate.d' role"
+        when: not verify_rotate_file.stat.exists
+

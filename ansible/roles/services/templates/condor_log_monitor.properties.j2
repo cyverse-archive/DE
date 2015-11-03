@@ -1,0 +1,15 @@
+{
+  "AMQPHost" : "{{ amqp_broker_host }}:{{ amqp_broker_port }}",
+  "AMQPUserPass" : "{{ amqp_user }}:{{ amqp_password }}",
+  "ExchangeName" : "{{ amqp_condor_events_exchange }}",
+  "ExchangeType" : "{{ amqp_condor_events_exchange_type }}",
+  "RoutingKey" : "{{ amqp_condor_events_exchange_routing_key }}",
+  "Durable" : {{ amqp_condor_events_exchange_durable | to_nice_json }},
+  "Autodelete" : {{ amqp_condor_events_exchange_auto_delete | to_nice_json }},
+  "Internal" : false,
+  "NoWait" : false,
+  "EventLog" : "{{ condor_log_monitor_event_log }}",
+  "LogPath" : "/home/iplant/logs/condor-log-monitor.log",
+  "LogMaxSize" : 500,
+  "LogMaxBackeups" : 3
+}

@@ -1,0 +1,17 @@
+- name: update apt cache
+  apt: update_cache=yes
+
+- name: update kernel
+  apt: pkg=linux-image-generic-lts-raring state=latest
+
+- name: update kernel headers
+  apt: pkg=linux-headers-generic-lts-raring state=latest
+
+- name: add the docker repo key to the local keychain
+  apt_key: keyserver=keyserver.ubuntu.com id= 36A1D7869245C8950F966E92D8576A8BA88D21E9
+
+- name: add the docker repo to the apt sources list
+  apt_repository: repo="deb http://get.docker.io/ubuntu docker main" update_cache=yes state=present
+
+- name: install docker
+  apt: pkg=lxc-docker state=latest update_cache=yes

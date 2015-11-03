@@ -1,0 +1,87 @@
+---
+# kibana visualization tasks
+
+- name: visualization - upload Top 25 Launched Apps visualization
+  uri: url="{{ v1_url }}" method=PUT
+       body={{ lookup('file', 'v1-top-25-launched-apps.json')|replace('\n', '')|to_nice_json }}
+  register: upload_top_25_launched_apps
+  changed_when: upload_top_25_launched_apps.status != 200 or
+               upload_top_25_launched_apps.status != 201
+  failed_when: upload_top_25_launched_apps.status != 200 and 
+               upload_top_25_launched_apps.status != 201
+  tags:
+      - config
+      - config_kibana
+
+- name: visualization - upload Top 25 Users by App Submission
+  uri: url="{{ v2_url }}" method=PUT
+       body={{ lookup('file', 'v2-top-25-users-by-app-submission.json')|replace('\n', '')|to_nice_json }}
+  register: upload_top_25_users_app_submission
+  changed_when: upload_top_25_users_app_submission.status != 200 or
+               upload_top_25_users_app_submission.status != 201
+  failed_when: upload_top_25_users_app_submission.status != 200 and
+               upload_top_25_users_app_submission.status != 201
+  tags:
+      - config
+      - config_kibana
+
+- name: visualization - upload Top 25 Users by Login
+  uri: url="{{ v3_url }}" method=PUT
+       body={{ lookup('file', 'v3-top-25-users-by-login.json')|replace('\n', '')|to_nice_json }}
+  register: upload_top_25_users_login
+  changed_when: upload_top_25_users_login.status != 200 or
+               upload_top_25_users_login.status != 201
+  failed_when: upload_top_25_users_login.status != 200 and
+               upload_top_25_users_login.status != 201
+  tags:
+      - config
+      - config_kibana
+
+- name: visualization - upload Top 25 Users by Sharing
+  uri: url="{{ v4_url }}" method=PUT
+       body={{ lookup('file', 'v4-top-25-users-by-sharing-activity.json')|replace('\n', '')|to_nice_json }}
+  register: upload_top_25_users_sharing
+  changed_when: upload_top_25_users_sharing.status != 200 or
+               upload_top_25_users_sharing.status != 201
+  failed_when: upload_top_25_users_sharing.status != 200 and
+               upload_top_25_users_sharing.status != 201
+  tags:
+      - config
+      - config_kibana
+
+- name: visualization - upload errors by service
+  uri: url="{{ v5_url }}" method=PUT
+       body={{ lookup('file', 'v5-errors-by-service.json')|replace('\n', '')|to_nice_json }}
+  register: upload_errors_by_service
+  changed_when: upload_errors_by_service.status != 200 or
+               upload_errors_by_service.status != 201
+  failed_when: upload_errors_by_service.status != 200 and 
+               upload_errors_by_service.status != 201
+  tags:
+      - config
+      - config_kibana
+
+- name: visualization - total public app submission
+  uri: url="{{ v6_url }}" method=PUT
+       body={{ lookup('file', 'v6-total-public-app-submissions.json')|replace('\n', '')|to_nice_json }}
+  register: total_public_submission
+  changed_when: total_public_submission.status != 200 or
+                total_public_submission.status != 201
+  failed_when: total_public_submission.status != 200 and
+               total_public_submission.status != 201
+  tags:
+      - config
+      - config_kibana
+
+- name: visualization - total public and private app submission
+  uri: url="{{ v7_url }}" method=PUT
+       body={{ lookup('file', 'v7-total-public-and-private-app-submissions.json')|replace('\n', '')|to_nice_json }}
+  register: total_public_private_submission
+  changed_when: total_public_private_submission.status != 200 or
+                total_public_private_submission.status != 201
+  failed_when: total_public_private_submission.status != 200 and
+               total_public_private_submission.status != 201
+  tags:
+      - config
+      - config_kibana
+

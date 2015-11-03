@@ -1,0 +1,8 @@
+---
+# tasks file for cron_stats
+- include: install.yaml
+  when: install
+
+- include: remove.yaml
+  when: not install
+

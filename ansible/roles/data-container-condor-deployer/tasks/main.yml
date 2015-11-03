@@ -1,0 +1,27 @@
+---
+- debug: msg="Preparing docker create --name {{ data_container_name }} {{ remote_registry }}/{{ data_image_name }}:{{ data_image_tag }}"
+
+- name:  pull data container
+  sudo: yes
+  shell: docker pull "{{ remote_registry }}/{{ data_image_name }}:{{ data_image_tag }}"
+  tags:
+      - docker_pull
+
+- name: determine if the data container already exists
+  sudo: yes
+  shell: docker ps -a | grep --color=never "{{ data_container_name }} *$"
+  register: container_search_output
+  ignore_errors: True
+
+- debug: msg="{{ data_container_name }} already exists ({{ container_search_output.stdout.strip() }})"
+  when: container_search_output.rc == 0
+
+- name: remove data container
+  sudo: yes
+  shell: "docker rm -v {{ data_container_name }}"
+  when: replace_container and container_search_output.rc == 0
+
+- name: create data container
+  sudo: yes
+  shell: "docker create --name {{ data_container_name }} {{ remote_registry }}/{{ data_image_name }}:{{ data_image_tag }}"
+  when: replace_container or container_search_output.rc != 0

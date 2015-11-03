@@ -1,0 +1,12 @@
+---
+- hosts: services
+  sudo: True
+  roles:
+    - role: notify-chat
+      msg: "Updating services."
+
+    - jex
+    - services
+
+    - role: notify-chat
+      msg: "Done updating services."

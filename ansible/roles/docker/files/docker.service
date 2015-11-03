@@ -1,0 +1,18 @@
+[Unit]
+Description=Docker Application Container Engine
+Documentation=https://docs.docker.com
+BindsTo=network.service iptables.service
+PartOf=network.service iptables.service
+After=network.service docker.socket network-online.target iptables.service
+Requires=docker.socket network.service 
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/bin/docker -d -H fd://
+MountFlags=slave
+LimitNOFILE=1048576
+LimitNPROC=1048576
+LimitCORE=infinity
+
+[Install]
+WantedBy=multi-user.target

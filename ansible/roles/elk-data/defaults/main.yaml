@@ -1,0 +1,3 @@
+---
+# defaults file for elk-data
+enable_services: yes
