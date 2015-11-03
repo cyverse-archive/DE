@@ -5,7 +5,7 @@ It can be used to remove data containers and their images that are no longer in 
 
 * data_image_name (required)
 * data_image_tag (optional, 'latest' by default)
-* registry_host (optional, parsed from the first host listed in the 'docker-registry' inventory section by default)
+* docker.registry.host (optional, parsed from the first host listed in the 'docker-registry' inventory section by default)
 * docker.registry.port (optional, '5000' by default)
 * remove_image (optional, 'True' by default, to also remove the data container's image from the host)
 

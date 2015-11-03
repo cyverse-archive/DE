@@ -53,7 +53,7 @@ http {
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded_Proto $scheme;
 
-            proxy_pass {{ anon_files_base_url }};
+            proxy_pass {{ anon_files.base }}/;
         }
 
         location /dl/ {
@@ -62,7 +62,7 @@ http {
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded_Proto $scheme;
 
-            proxy_pass http://{{ donkey_host }}:{{ kifshare.port }}/;
+            proxy_pass http://{{ donkey.host }}:{{ kifshare.port }}/;
         }
 
         location /de/agave-cb {
@@ -71,7 +71,7 @@ http {
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded_Proto $scheme;
 
-            proxy_pass {{ metadactyl_base }}/callbacks/agave-job;
+            proxy_pass {{ metadactyl.base }}/callbacks/agave-job;
         }
 
         location / {

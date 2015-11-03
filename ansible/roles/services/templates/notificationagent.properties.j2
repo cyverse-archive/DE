@@ -8,11 +8,11 @@ notificationagent.db.user        = {{ notification_db_user }}
 notificationagent.db.password    = {{ notification_db_password }}
 
 # E-mail configuration settings.
-notificationagent.email-url      = {{ email_base }}
+notificationagent.email-url      = {{ iplant_email.base }}
 notificationagent.enable-email   = true
 
 # Notification recipients.
-notificationagent.recipients = {{ donkey_base }}/callbacks/notification
+notificationagent.recipients = {{ donkey.base }}/callbacks/notification
 
 # Listen port.
 notificationagent.listen-port = {{ default_service_port }}

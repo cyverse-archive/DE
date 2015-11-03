@@ -1,15 +1,15 @@
-kifshare.irods.host = {{ irods_host }}
-kifshare.irods.port = {{ irods_port }}
-kifshare.irods.user = {{ irods_user }}
-kifshare.irods.password = {{ irods_password }}
-kifshare.irods.home = {{ irods_home }}
-kifshare.irods.zone = {{ irods_zone }}
-kifshare.irods.defaultResource = {{ irods_default_resource }}
+kifshare.irods.host = {{ irods.host }}
+kifshare.irods.port = {{ irods.port }}
+kifshare.irods.user = {{ irods.user }}
+kifshare.irods.password = {{ irods.password }}
+kifshare.irods.home = {{ irods.home }}
+kifshare.irods.zone = {{ irods.zone }}
+kifshare.irods.defaultResource = {{ irods.default_resource }}
 
 kifshare.app.port = {{ default_service_port }}
-kifshare.app.mode = {{ kifshare_mode }}
+kifshare.app.mode = {{ kifshare.mode }}
 
-kifshare.app.download-buffer-size = {{ kifshare_download_buffer_size }}
+kifshare.app.download-buffer-size = {{ kifshare.download_buffer_size }}
 
 kifshare.app.footer-text = The iPlant Collaborative is funded by a grant from the National Science Foundation Plant Science Cyberinfrastructure Collaborative (#DBI-0735191, #DBI-1265383).
 kifshare.app.resources-root = /home/iplant/resources
@@ -24,7 +24,7 @@ kifshare.app.favicon-path = resources/img/iplant_logo.ico
 kifshare.app.client-cache-scope = public
 kifshare.app.client-cache-max-age = 604800
 
-kifshare.app.de-url = {{ de_base }}
+kifshare.app.de-url = {{ de.base }}
 kifshare.app.irods-url = https://pods.iplantcollaborative.org/wiki/display/start/Using+icommands
 
 kifshare.app.de-import-flags = \{\{url\}\}/d/\{\{ticket-id\}\}/\{\{filename\}\}

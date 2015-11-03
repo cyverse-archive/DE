@@ -9,7 +9,7 @@ need to be manually updated for now.
 
 ## Deploying to Production
 
-    ansible-playbook -i inventories/... -K deploy-prod.yaml
+    ansible-playbook -i inventories/... -K deploy-all.yaml
 
-This playbook just encapsulates and calls other playbooks in the correct order for a production
-deployment. It will deploy the UI and services, update the databases, and perform system updates.
+This playbook just encapsulates and calls other playbooks in the correct order for a deployment.
+It will deploy the UI and services, update the databases, and perform system updates.

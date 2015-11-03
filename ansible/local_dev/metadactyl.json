@@ -1,3 +1,5 @@
 {
-  "metadactyl_host": "localhost"
+  "metadactyl": {
+    "host": "localhost"
+  }
 }

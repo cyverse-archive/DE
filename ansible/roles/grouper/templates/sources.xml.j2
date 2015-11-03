@@ -155,7 +155,7 @@ Grouper's subject resolver configuration
          <param>
             <param-name>filter</param-name>
             <param-value>
-                (&amp; (|(|(uid:caseExactmatch:=%TERM%)(cn=*%TERM%*))(mail=*%TERM%*))(objectclass=person))
+                (&amp; (|(|(uid=*%TERM%*)(cn=*%TERM%*))(mail=*%TERM%*))(objectclass=person))
             </param-value>
         </param>
         <param>
