@@ -1,0 +1,15 @@
+@CHARSET "UTF-8";
+.help {
+    background-color: white;
+    border: 1px solid;
+    border-color: #0098AA;
+    padding: 2px;
+    font-size: 11px;
+}
+
+@sprite .contextualHelp {
+    gwt-image: "help";
+    height: 15px;
+    width: 15px;
+    padding-right: 3px;
+}

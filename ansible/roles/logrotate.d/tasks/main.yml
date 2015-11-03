@@ -1,0 +1,16 @@
+---
+# tasks file for logrotate.d
+- name: Place logrotate file
+  sudo: yes
+  template: src={{logrotate_file}} dest=/etc/logrotate.d/ group=root owner=root mode=0644
+  tags:
+      - config
+      - config_logrotate
+
+- debug: msg="TODO; RESEARCH FORCE ROTATE ERRORS. The following step should not need an \"ignore_errors\" declaration."        
+  
+- name: Force rotate logfiles
+  sudo: yes
+  shell: logrotate -f /etc/logrotate.d/{{logrotate_file}}
+  when: force_rotate
+  ignore_errors: yes

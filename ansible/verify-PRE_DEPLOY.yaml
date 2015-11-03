@@ -1,0 +1,12 @@
+---
+# Runs all verification plays needed before deployments begin
+
+
+- include: verify-java.yaml
+- include: verify-condor-installed.yaml
+- include: verify-python-pip.yaml
+- include: verify-docker.yaml
+- include: verify-docker-service.yaml
+- include: verify-iptables.yaml
+- include: verify-timezone.yaml
+# TODO: Do we need a verify-users-and-groups.yaml for ensuring that we have all the users we need?

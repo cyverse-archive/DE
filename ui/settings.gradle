@@ -1,0 +1,4 @@
+// Include sub-projects
+include 'de-webapp'
+include 'de-lib'
+

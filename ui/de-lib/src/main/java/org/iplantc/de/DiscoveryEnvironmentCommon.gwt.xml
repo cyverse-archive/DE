@@ -1,0 +1,17 @@
+<module>
+    <inherits name="com.google.gwt.user.User"/>
+    <inherits name="com.google.gwt.json.JSON"/>
+    <inherits name="com.google.gwt.http.HTTP"/>
+    <inherits name="com.google.gwt.resources.Resources"/>
+    <inherits name="com.google.web.bindery.autobean.AutoBean"/>
+    <inherits name="com.sencha.gxt.data.Data"/>
+    <inherits name="com.google.gwt.inject.Inject"/>
+    <inherits name="org.iplantc.de.resources.ui-resources"/>
+
+    <replace-with class="org.iplantc.de.shared.services.DefaultTimeSource">
+        <when-type-is class="org.iplantc.de.shared.services.ProvidesTime"/>
+    </replace-with>
+
+    <source path="client"/>
+    <source path="shared"/>
+</module>

@@ -1,0 +1,17 @@
+---
+# ansible-playbook -i inventories/... -K --tags "update_service_files" services.yaml
+# ansible-playbook -i inventories/... -K --tags "restart_services" services.yaml
+# ansible-playbook -i inventories/... -K --tags "restart_[SERVICE NAME]" services.yaml
+# ansible-playbook -i inventories/... -K --tags "enable_services" services.yaml
+# ansible-playbook -i inventories/... -K --tags "enable_[SERVICE NAME]" services.yaml
+
+### Disable all services (systemd)
+# ansible-playbook -i inventories/... -K --tags "enable_services" --extra-vars "enable_services=no" services.yaml
+
+### Pull all containers and restart services
+# ansible-playbook -i inventories/... -K --tags "docker_pull,restart_services" services.yaml
+
+- hosts: services
+  sudo: yes
+  roles:
+      - services

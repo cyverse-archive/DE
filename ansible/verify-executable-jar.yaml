@@ -1,0 +1,14 @@
+---
+- name: Verify that executable jars will work
+  hosts: condor
+  sudo: yes
+  gather_facts: false
+  sudo_user: root
+  tasks:
+      - name: Verify executable jars are configures
+        stat: path=/proc/sys/fs/binfmt_misc/ExecutableJAR
+        register: verify_jars_exec
+            
+      - fail: msg="Jars are not executable, but need to be"
+        when: not verify_jars_exec.stat.exists
+

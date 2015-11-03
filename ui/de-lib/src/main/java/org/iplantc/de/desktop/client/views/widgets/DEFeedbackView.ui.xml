@@ -1,0 +1,120 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:con="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
+
+    <ui:with field="appearance"
+             type="org.iplantc.de.desktop.client.views.widgets.DEFeedbackDialog.FeedbackAppearance"/>
+
+    <ui:with field="centerMargins"
+             type="com.sencha.gxt.core.client.util.Margins">
+        <ui:attributes top="4" right="4" bottom="0" left="4"/>
+    </ui:with>
+
+    <ui:with field="layoutData"
+             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+        <ui:attributes height="-1" width=".90" margins="{centerMargins}"/>
+    </ui:with>
+
+    <con:VerticalLayoutContainer scrollMode="AUTOY">
+        <con:child layoutData="{layoutData}">
+            <form:FieldLabel ui:field="reasonField"
+                             labelAlign="TOP"
+                             labelSeparator=""
+                             HTML="{appearance.displayStrings.reason.asString}">
+                <form:widget>
+                    <g:VerticalPanel>
+                        <form:CheckBox ui:field="expField"
+                                       boxLabel="{appearance.displayStrings.justExploring}"/>
+                        <form:CheckBox ui:field="mngField"
+                                       boxLabel="{appearance.displayStrings.manageData}"/>
+                        <form:CheckBox ui:field="runField"
+                                       boxLabel="{appearance.displayStrings.runAnalysis}"/>
+                        <form:CheckBox ui:field="chkField"
+                                       boxLabel="{appearance.displayStrings.checkStatus}"/>
+                        <form:CheckBox ui:field="appField"
+                                       boxLabel="{appearance.displayStrings.createApp}"/>
+                        <g:HorizontalPanel>
+                            <form:CheckBox ui:field="otrField"
+                                           boxLabel="{appearance.displayStrings.other}"/>
+                            <form:TextField ui:field="otherField"/>
+                        </g:HorizontalPanel>
+                    </g:VerticalPanel>
+                </form:widget>
+            </form:FieldLabel>
+        </con:child>
+        <con:child layoutData="{layoutData}">
+            <form:FieldLabel ui:field="completeField"
+                             labelAlign="TOP"
+                             labelSeparator=""
+                             HTML="{appearance.displayStrings.complete.asString}">
+                <form:widget>
+                    <g:VerticalPanel>
+                        <form:CheckBox ui:field="yesField"
+                                       boxLabel="{appearance.displayStrings.yes}"/>
+                        <form:CheckBox ui:field="swField"
+                                       boxLabel="{appearance.displayStrings.somewhat}"/>
+                        <form:CheckBox ui:field="noField"
+                                       boxLabel="{appearance.displayStrings.noSpecificTask}"/>
+                        <form:CheckBox ui:field="notField"
+                                       boxLabel="{appearance.displayStrings.notAtAll}"/>
+                        <g:HorizontalPanel>
+                            <form:CheckBox ui:field="tskOtrField"
+                                           boxLabel="{appearance.displayStrings.other}"/>
+                            <form:TextField ui:field="otherCompField"/>
+                        </g:HorizontalPanel>
+                    </g:VerticalPanel>
+                </form:widget>
+            </form:FieldLabel>
+        </con:child>
+        <con:child layoutData="{layoutData}">
+            <form:FieldLabel ui:field="satisfyField"
+                             labelAlign="TOP"
+                             labelSeparator=""
+                             HTML="{appearance.displayStrings.satisfy.asString}">
+                <form:widget>
+                    <g:VerticalPanel>
+                        <form:Radio ui:field="vastField"
+                                    boxLabel="{appearance.displayStrings.verySatisfied}"/>
+                        <form:Radio ui:field="swsatField"
+                                    boxLabel="{appearance.displayStrings.somewhatSatisfied}"/>
+                        <form:Radio ui:field="okField"
+                                    boxLabel="{appearance.displayStrings.okay}"/>
+                        <form:Radio ui:field="swdField"
+                                    boxLabel="{appearance.displayStrings.somewhatDissatisfied}"/>
+                        <form:Radio ui:field="nsField"
+                                    boxLabel="{appearance.displayStrings.notSatisfied}"/>
+                        <g:HorizontalPanel>
+                            <form:Radio ui:field="otsatField"
+                                        boxLabel="{appearance.displayStrings.other}"/>
+                            <form:TextField ui:field="otherSatisfiedField"/>
+                        </g:HorizontalPanel>
+                    </g:VerticalPanel>
+                </form:widget>
+            </form:FieldLabel>
+        </con:child>
+        <con:child layoutData="{layoutData}">
+            <form:FieldLabel ui:field="featureField"
+                             labelAlign="TOP"
+                             labelSeparator=""
+                             text="{appearance.displayStrings.featuresAndImprovements}">
+                <form:widget>
+                    <form:TextArea ui:field="featureTextArea"
+                                   height="100"/>
+                </form:widget>
+            </form:FieldLabel>
+        </con:child>
+        <con:child layoutData="{layoutData}">
+            <form:FieldLabel ui:field="anythingField"
+                             labelAlign="TOP"
+                             labelSeparator=""
+                             text="{appearance.displayStrings.anythingElse}">
+                <form:widget>
+                    <form:TextArea ui:field="otherTextArea"
+                                   height="100"/>
+                </form:widget>
+            </form:FieldLabel>
+        </con:child>
+    </con:VerticalLayoutContainer>
+</ui:UiBinder>

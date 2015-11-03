@@ -1,0 +1,2 @@
+remote_registry: "{{ docker.registry.host }}:{{ docker.registry.port }}"
+replace_container: True

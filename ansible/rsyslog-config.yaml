@@ -1,0 +1,16 @@
+---
+- name: Deploy rsyslog config
+  hosts: docker-ready
+  sudo: yes
+  roles:
+      - role: notify-chat
+        username: Rsyslog-config
+        icon: ":clipboard:"
+        msg: ":warning: Deploying rsyslog config"
+
+      - rsyslog-config
+
+      - role: notify-chat
+        username: Rsyslog-config
+        icon: ":clipboard:"
+        msg: ":white_check_mark: Done deploying rsyslog config"

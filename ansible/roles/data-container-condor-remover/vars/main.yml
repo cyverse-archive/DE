@@ -1,0 +1,4 @@
+remote_registry: "{{ docker.registry.host }}:{{ docker.registry.port }}"
+data_image_tag: "latest"
+data_container_name: "{{ data_image_name }}"
+remove_image: True

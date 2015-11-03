@@ -1,0 +1,17 @@
+.panel {
+  border-color: #d0d0d0;
+}
+
+.header {
+	cursor: pointer;
+}
+
+.body {
+  border-color: #d0d0d0;
+  border-right: none;
+}
+
+.bodyWrap {
+  background-color: #FFFFFF;
+  border-color: #d0d0d0;	
+}

@@ -1,0 +1,19 @@
+---
+
+- include: services-common.yml
+
+- include: rsyslog-config.yaml
+
+- include: deploy-backend.yaml
+
+- include: ui.yaml
+
+- include: amqp-brokers.yaml
+
+- include: elasticsearch.yaml
+
+- include: systems.yaml
+  vars:
+    reboot: true
+
+- include: verify-POST_DEPLOY.yaml

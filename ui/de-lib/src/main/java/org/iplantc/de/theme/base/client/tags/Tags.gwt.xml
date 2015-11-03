@@ -1,0 +1,7 @@
+<module>
+    <inherits name="org.iplantc.de.tags.Tags" />
+
+    <replace-with class="org.iplantc.de.theme.base.client.tags.presenter.TagsViewPresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.tags.client.TagsView.Presenter.Appearance" />
+    </replace-with>
+</module>

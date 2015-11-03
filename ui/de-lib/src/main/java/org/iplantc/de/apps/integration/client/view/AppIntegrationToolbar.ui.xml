@@ -1,0 +1,47 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	         xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	         xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+             xmlns:menu="urn:import:com.sencha.gxt.widget.core.client.menu">
+   
+   <ui:with field="res"
+            type="org.iplantc.de.resources.client.IplantResources"/>
+   <ui:with field="display"
+            type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>
+   <ui:with field="appIntStrings"
+            type="org.iplantc.de.resources.client.uiapps.integration.AppIntegrationMessages"/>
+
+   <toolbar:ToolBar>
+      <!-- Save button -->
+      <toolbar:child>
+         <button:TextButton ui:field="saveButton"
+                            text="{display.save}"
+                            icon="{res.save}"/>
+      </toolbar:child>
+      
+      <!-- Preview Menu -->
+      <toolbar:child>
+         <button:TextButton ui:field="previewBtn"
+                            text="{display.preview}"
+                            icon="{res.search}">
+            <button:menu>
+               <menu:Menu>
+                  <menu:MenuItem ui:field="previewUiMenuItem"
+                                 text="{appIntStrings.previewUI}"/>
+                  <menu:MenuItem ui:field="previewJsonMenuItem"
+                                 text="{appIntStrings.previewJSON}"/>
+               </menu:Menu>
+            </button:menu>
+         </button:TextButton>
+      </toolbar:child>
+
+      <!-- Argument Order button -->
+      <toolbar:child>
+         <button:TextButton ui:field="argumentOrderButton"
+                            text="{display.argumentOrder}"
+                            icon="{res.listItems}"/>
+      </toolbar:child>
+
+   </toolbar:ToolBar>
+</ui:UiBinder> 

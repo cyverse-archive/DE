@@ -1,0 +1,17 @@
+<module rename-to='belphegor'>
+    <inherits name="org.iplantc.de.admin.belphegor" />
+
+    <!-- Super Dev Mode -->
+    <add-linker name="xsiframe" />
+    <set-configuration-property name="devModeRedirectEnabled" value="true"/>
+    <set-property name="compiler.useSourceMaps" value="true"/>
+
+    <!-- Configure Dev Mode Logging -->
+    <inherits name="com.google.gwt.logging.Logging"/>
+    <set-property name="gwt.logging.logLevel" value="INFO"/>          # To change the default logLevel
+    <set-property name="gwt.logging.enabled" value="TRUE"/>
+    <set-property name="gwt.logging.consoleHandler" value="ENABLED"/>
+
+    <!-- Turn on CssResource pretty printing -->
+    <set-configuration-property name="CssResource.style" value="pretty"/>
+</module>

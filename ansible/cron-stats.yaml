@@ -1,0 +1,17 @@
+---
+- name: Deploy docker cron stats
+  hosts: docker-ready
+  sudo: yes
+  roles:
+      - role: notify-chat
+        username: Cron-stats
+        icon: ":clock10:"
+        msg: "Deploying cron-stats"
+
+      - role: cron-stats
+        install: false
+
+      - role: notify-chat
+        username: Cron-stats
+        icon: ":clock10:"
+        msg: ":heavy_check_mark: Done deploying cron-stats"

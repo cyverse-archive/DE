@@ -1,0 +1,9 @@
+.pathCell {
+    cursor: default;
+    text-decoration: none;
+}
+
+.pathCell:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}

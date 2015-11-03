@@ -1,0 +1,27 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+             xmlns:g='urn:import:com.google.gwt.user.client.ui'
+             xmlns:tabs="urn:import:com.sencha.gxt.widget.core.client">
+
+    <ui:with field="userManualTabConfig"
+             type="com.sencha.gxt.widget.core.client.TabItemConfig">
+        <ui:attributes text="User Manual" />
+    </ui:with>
+    <ui:with field="editTabConfig"
+             type="com.sencha.gxt.widget.core.client.TabItemConfig">
+        <ui:attributes text="Edit" />
+    </ui:with>
+
+    <tabs:TabPanel ui:field="tabPanel">
+        <tabs:child config="{userManualTabConfig}">
+
+            <g:HTMLPanel>
+                <link href="./markdown.css"
+                      rel="stylesheet"/>
+                <div style='background-color:white;overflow:scroll;height:450px;'
+                     class="markdown">
+                    <g:InlineHTML ui:field="documentation"/>
+                </div>
+            </g:HTMLPanel>
+        </tabs:child>
+    </tabs:TabPanel>
+</ui:UiBinder>

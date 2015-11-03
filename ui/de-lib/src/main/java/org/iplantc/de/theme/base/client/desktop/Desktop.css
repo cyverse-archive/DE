@@ -1,0 +1,211 @@
+@def headerHeight 39px;
+@def footerHeight 30px;
+@def footerHeight10 40px;
+
+.deBody {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+@sprite .iplantHeader {
+    gwt-image: 'headerBg';
+    background-color: #009bad;
+    position: absolute;
+    height: headerHeight;
+    z-index: 1;
+    width: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    box-shadow: -1px 0px 4px 0px #777;
+}
+
+.logoContainer {
+    display: inline-block;
+}
+.logoContainer a {
+    overflow: auto;
+    color: transparent;
+    background: transparent;
+}
+
+.logoContainer span {
+    color: #eee;
+    font-size: 1.3em;
+    text-align: right;
+    font-style: normal;
+    display: inline-block;
+    margin-top: 12px;
+    vertical-align: top;
+}
+
+@sprite .logo {
+    gwt-image: 'iplantLogo';
+    display: inline-block;
+    height: 28px;
+    margin-top: 5px;
+    margin-left: 5px;
+    margin-right: 3px;
+}
+
+.logoText {
+    cursor: default;
+}
+
+@sprite .desktopBackground {
+    gwt-image: 'desktopBackground';
+    position: absolute;
+    width: 100% !important;
+    /*height: 100% !important;*/
+    z-index: 0;
+    top: headerHeight;
+    background-position: top center;
+    bottom: footerHeight;
+}
+
+@sprite .desktopBackgroundRepeat {
+    gwt-image: 'desktopBackgroundRepeat';
+    position: absolute;
+    width: 100%;
+    /*height: 100%;*/
+    z-index: 0;
+    top: headerHeight;
+    bottom: footerHeight;
+}
+
+.userMenuContainer {
+    position: absolute;
+    right: 30px;
+    bottom: 0;
+}
+
+@def userMenuIconHeight 28px;
+@def userMenuIconWidth 28px;
+@def userMenuIconPaddingRight 5px;
+@def userMenuIconOpacity 0.8;
+@def userMenuIconOpacityHover 1;
+
+@sprite .forums {
+    gwt-image: 'forumsImg';
+    height: userMenuIconHeight !important;
+    width: userMenuIconWidth !important;
+    display: inline-block;
+    padding-right: userMenuIconPaddingRight;
+    opacity: userMenuIconOpacity;
+    position: relative;
+}
+@sprite .userPrefs {
+    gwt-image: 'userPrefImg';
+    height: userMenuIconHeight !important;
+    width: userMenuIconWidth !important;
+    display: inline-block;
+    padding-right: userMenuIconPaddingRight;
+    opacity: userMenuIconOpacity;
+    position: relative;
+}
+@sprite .notification {
+    gwt-image: 'notificationsImg';
+    height: userMenuIconHeight !important;
+    width: userMenuIconWidth !important;
+    display: inline-block;
+    padding-right: userMenuIconPaddingRight;
+    opacity: userMenuIconOpacity;
+    position: relative;
+}
+
+.forums:hover {
+    opacity: userMenuIconOpacityHover;
+}
+.userPrefs:hover {
+    opacity: userMenuIconOpacityHover;
+}
+.notification:hover {
+    opacity: userMenuIconOpacityHover;
+}
+
+.windowBtnNav {
+    position: fixed;
+    left: 30px;
+    top: 40px;
+}
+
+@def winBtnHeight 68px;
+@def winBtnWidth 68px;
+@def winBtnMarginTop 5px;
+
+@sprite .analyses {
+    gwt-image: 'analysisBtn';
+    height: winBtnHeight !important;
+    width: winBtnWidth !important;
+    margin-top: winBtnMarginTop;
+}
+@sprite .apps {
+    gwt-image: 'appBtn';
+    height: winBtnHeight !important;
+    width: winBtnWidth !important;
+    margin-top: winBtnMarginTop;
+}
+@sprite .data {
+    gwt-image: 'dataBtn';
+    height: winBtnHeight !important;
+    width: winBtnWidth !important;
+    margin-top: winBtnMarginTop;
+}
+
+@sprite .analyses:hover {
+    gwt-image: 'analysisBtnHover';
+}
+@sprite .apps:hover {
+    gwt-image: 'appBtnHover';
+}
+@sprite .data:hover {
+    gwt-image: 'dataBtnHover';
+}
+
+@sprite .feedback {
+    gwt-image: 'feedbackImg';
+    position: fixed;
+    bottom: footerHeight10;
+    right: 100px;
+    height: 37px !important;
+    width: 115px !important;
+}
+
+.taskBarLayout {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.userContextMenu {
+    background-color: white;
+    outline: none;
+    border: solid #0098AA;
+    padding: 1px;
+    margin-top: 5px;
+}
+
+.notificationCount {
+    background-color: #DB6619;
+    font-size: 10px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: white;
+    padding: 2px;
+    height: 10px;
+}
+
+html,body {
+    font-family: Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro",
+    Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L",
+    Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial,
+    sans-serif !important;
+    border: 0 none;
+    overflow: hidden;
+    height: 100%;
+}
+

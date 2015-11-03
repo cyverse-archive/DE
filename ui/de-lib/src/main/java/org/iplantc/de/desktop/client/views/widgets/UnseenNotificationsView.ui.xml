@@ -1,0 +1,31 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+             xmlns:g='urn:import:com.google.gwt.user.client.ui'
+             xmlns:container='urn:import:com.sencha.gxt.widget.core.client.container'
+             xmlns:widget='urn:import:com.sencha.gxt.widget.core.client'
+             xmlns:anchor='urn:import:org.iplantc.de.commons.client.widgets'>
+
+    <ui:with field="appearance"
+             type="org.iplantc.de.desktop.client.views.widgets.UnseenNotificationsView.UnseenNotificationsAppearance"/>
+
+    <container:VerticalLayoutContainer borders="false">
+        <container:child>
+            <g:HTML ui:field="emptyNotificationsText"
+                    text="{appearance.noNewNotifications}"/>
+        </container:child>
+        <container:child>
+            <widget:ListView ui:field="listView"
+                             borders="false"
+                             height="{appearance.unseenNotificationsViewHeight}"
+                             width="{appearance.unseenNotificationsViewWidth}"/>
+        </container:child>
+        <container:child>
+            <g:HorizontalPanel spacing="2">
+                <anchor:IPlantAnchor ui:field="notificationsLink"
+                                     text="{appearance.allNotifications}" />
+                <anchor:IPlantAnchor ui:field="markAllSeenLink"
+                                     text="{appearance.markAllAsSeen}" />
+            </g:HorizontalPanel>
+        </container:child>
+
+    </container:VerticalLayoutContainer>
+</ui:UiBinder>

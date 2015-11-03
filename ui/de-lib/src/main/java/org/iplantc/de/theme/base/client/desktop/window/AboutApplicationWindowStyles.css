@@ -1,0 +1,10 @@
+.iplantAboutPadText {
+    font-size: 12px;
+    padding: 5px 2px 5px 2px;
+    background: #fff;
+}
+
+div.iplantAboutPadText p {
+    padding: 0px;
+    margin: 0px;
+}

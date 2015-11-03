@@ -1,0 +1,51 @@
+<module rename-to="discoveryenvironment">
+    <!-- Inherit GWT stuff -->
+    <inherits name='com.google.gwt.user.User'/>
+    <inherits name="com.google.gwt.json.JSON"/>
+    <inherits name="com.google.gwt.http.HTTP"/>
+    <inherits name="com.google.common.collect.Collect"/>
+    <inherits name="com.google.web.bindery.autobean.AutoBean"/>
+    <inherits name="com.google.gwt.uibinder.UiBinder"/>
+    <inherits name="com.google.gwt.i18n.I18N"/>
+    <inherits name="com.google.gwt.resources.Resources"/>
+    <inherits name="com.google.gwt.user.Debug"/><!-- Turn on GWT debug IDs -->
+
+    <!-- GXT -->
+    <inherits name='com.sencha.gxt.ui.GXT'/>
+    <inherits name='com.sencha.gxt.theme.gray.Gray'/>
+    <stylesheet src="reset.css" />
+
+    <!-- iPlant Dependencies-->
+    <inherits name="org.iplantc.de.desktop.Desktop"/>
+    <inherits name="org.iplantc.de.tools.requests.ToolRequests"/>
+
+    <!-- iPlant Theme -->
+    <inherits name="org.iplantc.de.theme.base.Base" />
+
+    <extend-property name="user.agent.os" values="unknown"/> <!-- Fix for displaying in Chrome Book -->
+
+    <!-- Configure logging. -->
+    <inherits name="com.google.gwt.logging.Logging"/>
+    <set-property name="gwt.logging.logLevel" value="WARNING"/>
+    <set-property name="gwt.logging.enabled" value="TRUE"/>
+    <set-property name="gwt.logging.simpleRemoteHandler" value="ENABLED"/>
+    <set-property name="gwt.logging.consoleHandler" value="DISABLED"/>
+
+    <replace-with class="org.iplantc.de.client.desktop.theme.shortcut.ShortcutCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.client.desktop.widget.ShortcutCell.ShortcutCellAppearance"/>
+    </replace-with>
+
+    <!--  system messages deferred binding rules -->
+    <replace-with class="org.iplantc.de.client.sysmsgs.services.RemoteServices">
+        <when-type-is class="org.iplantc.de.client.sysmsgs.services.Services"/>
+    </replace-with>
+    <replace-with class="org.iplantc.de.systemMessages.client.view.DefaultFactory">
+        <when-type-is class="org.iplantc.de.systemMessages.client.view.Factory"/>
+    </replace-with>
+
+    <!-- Specify the app entry point class.                         -->
+    <entry-point class='org.iplantc.de.client.DiscoveryEnvironment'/>
+
+    <source path="client"/>
+    <source path="shared"/>
+</module>

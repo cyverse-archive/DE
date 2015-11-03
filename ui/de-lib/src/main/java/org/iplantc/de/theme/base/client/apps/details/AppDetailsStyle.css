@@ -1,0 +1,35 @@
+.label {
+    font-weight: bold;
+    font-size: 10px;
+    width: 90px;
+}
+
+.value {
+    font-size: 10px;
+    padding-left: 2px;
+}
+
+.hyperlink {
+    font-size: 11px;
+    cursor: pointer;
+    color: #0098aa;
+}
+
+.hyperlink:hover {
+    text-decoration: underline;
+    background-color: #ededed;
+}
+
+.detailsTable {
+
+}
+
+.detailsRow > td {
+    font-style: italic;
+    padding-top: 1em;
+}
+
+.tabPanel {
+    height: 100%;
+    background-color: #ffffff;
+}

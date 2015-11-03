@@ -1,0 +1,27 @@
+---
+
+- name: Verify python and pip are installed
+  hosts: docker-ready
+  tasks: 
+       - name: Verify python is installed
+         shell: yum list installed python
+         register: verify_python_installed_centos
+         when: ansible_distribution == "CentOS" and
+               ansible_distribution_major_version == "7"
+
+       - name: Verify pip is installed
+         shell: pip --version
+         register: verify_python_pip_installed_centos
+         when: ansible_distribution == "CentOS" and
+               ansible_distribution_major_version == "7"
+
+       - fail: msg="Python must be installed"
+         when: ansible_distribution == "CentOS" and
+               ansible_distribution_major_version == "7" and
+               verify_python_installed_centos.rc != 0
+
+       - fail: msg="Python-pip must be installed"
+         when: ansible_distribution == "CentOS" and
+               ansible_distribution_major_version == "7" and
+               verify_python_pip_installed_centos.rc != 0
+

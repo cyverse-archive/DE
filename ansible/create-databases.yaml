@@ -1,0 +1,32 @@
+---
+- hosts: db
+  roles:
+    - db-creator
+  pre_tasks:
+      - pause: prompt="Is postgress installed? And did you set the admin password?"
+
+- hosts: services
+  roles:
+    - services-common
+
+    - role: notify-chat
+      msg: "Initializing databases"
+
+    - role: update-database-de
+      sudo: False
+      fmode: "init"
+
+    - role: update-database-jex
+      sudo: False
+      fmode: "init"
+
+    - role: update-database-metadata
+      sudo: False
+      fmode: "init"
+
+    - role: update-database-notifications
+      sudo: False
+      fmode: "init"
+
+    - role: notify-chat
+      msg: "Done initializing databases"

@@ -1,0 +1,157 @@
+---
+###################
+# restart all services
+###################
+- name: start anon-files service
+  sudo: yes
+  service: name={{anon_files.service_name}} state=restarted
+  tags:
+      - restart_services
+      - restart_anon-files
+
+- name: start exim service
+  sudo: yes
+  service: name={{exim.service_name}} state=restarted
+  tags:
+      - restart_services
+      - restart_exim
+
+- name: start saved-searches service
+  sudo: yes
+  service: name={{saved_searches.service_name}} state=restarted
+  tags:
+      - restart_services
+      - restart_saved-searches
+
+- name: start user-preferences service
+  sudo: yes
+  service: name={{user_preferences.service_name}} state=restarted
+  tags:
+      - restart_services
+      - restart_user-preferences
+
+- name: start user-sessions service
+  sudo: yes
+  service: name={{user_sessions.service_name}} state=restarted
+  tags:
+      - restart_services
+      - restart_user-sessions
+
+- name: start tree-urls service
+  sudo: yes
+  service: name={{tree_urls.service_name}} state=restarted
+  tags:
+      - restart_services
+      - restart_tree-urls
+
+- name: start notificationagent service
+  sudo: yes
+  service: name={{notificationagent.service_name}} state=restarted
+  tags:
+      - restart_services
+      - restart_notification-agent
+
+- name: start metadactyl service
+  sudo: yes
+  service: name={{metadactyl.service_name}} state=restarted
+  tags:
+      - restart_services
+      - restart_metadactyl
+
+- name: start kifshare service
+  sudo: yes
+  service: name={{kifshare.service_name}} state=restarted
+  tags:
+      - restart_services
+      - restart_kifshare
+
+- name: start jex-events service
+  sudo: yes
+  service: name={{jexevents.service_name}} state=restarted
+  tags:
+      - restart_services
+      - restart_jex-events
+
+- name: start iplant-email service
+  sudo: yes
+  service: name={{iplant_email.service_name}} state=restarted
+  tags:
+      - restart_services
+      - restart_iplant-email
+
+- name: start iplant-groups service
+  sudo: yes
+  service: name={{iplant_groups.service_name}} state=restarted
+  tags:
+      - restart_services
+      - restart_iplant-groups
+
+- name: start donkey service
+  sudo: yes
+  service: name={{donkey.service_name}} state=restarted
+  tags:
+      - restart_services
+      - restart_donkey
+
+- name: start data-info service
+  sudo: yes
+  service: name={{data_info.service_name}} state=restarted
+  tags:
+      - restart_services
+      - restart_data-info
+
+- name: start metadata service
+  sudo: yes
+  service: name={{metadata.service_name}} state=restarted
+  tags:
+      - restart_services
+      - restart_metadata
+
+- name: start condor-log-monitor service
+  sudo: yes
+  service: name={{condor_log_monitor.service_name}} state=restarted
+  tags:
+      - restart_services
+      - restart_condor-log-monitor
+
+- name: start clockwork service
+  sudo: yes
+  service: name={{clockwork.service_name}} state=restarted
+  tags:
+      - restart_services
+      - restart_clockwork
+
+#########################
+# Stop parasitic services
+#########################
+- name: start monkey service
+  sudo: yes
+  service: name={{monkey.service_name}} state=restarted
+  when: (not parasitic)
+  tags:
+      - restart_services
+      - restart_monkey
+
+- name: start infosquito service
+  sudo: yes
+  service: name={{infosquito.service_name}} state=restarted
+  when: (not parasitic)
+  tags:
+      - restart_services
+      - restart_infosquito
+
+- name: start info-typer service
+  sudo: yes
+  service: name={{info_typer.service_name}} state=restarted
+  when: (not parasitic)
+  tags:
+      - restart_services
+      - restart_info-typer
+
+- name: start dewey service
+  sudo: yes
+  service: name={{dewey.service_name}} state=restarted
+  when: (not parasitic)
+  tags:
+      - restart_services
+      - restart_dewey

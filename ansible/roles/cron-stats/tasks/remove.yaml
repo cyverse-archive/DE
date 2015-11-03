@@ -1,0 +1,8 @@
+---
+# cron-stats: remove cron job
+- name: remove previous cron scripts/apps
+  file: path="{{ de_config_dir }}/cron" state=absent
+
+- name: remove the system_stats_syslog file
+  file: path=/etc/cron.d/system_stats_syslog state=absent
+

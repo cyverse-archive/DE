@@ -1,0 +1,168 @@
+---
+# Verifies that iptables are setup correctly per each group
+#
+# TODO: Need to verify connection to iCat from services host
+# TODO: Need to verify connection to db's from services host
+# TODO: Need to verify that services host can talk to elasticsearch host (maise).
+# TODO: Need to verify Trellis connections/keys
+#
+
+- name: Verify iptable rules for DE UI
+  hosts: ui
+  sudo: yes
+  gather_facts: false
+  vars: 
+      ui_port: "-C INPUT -m state --state NEW -m tcp -p tcp --dport 80 -j ACCEPT"
+      ui_ssl_port: "-C INPUT -m state --state NEW -m tcp -p tcp --dport 443 -j ACCEPT"
+  tasks: 
+       - name: UI port 
+         shell: "iptables {{ui_port}}"
+         register: verify_ui_port
+
+       - fail: msg="UI port is not open"
+         when: verify_ui_port.rc != 0
+
+       - name: UI ssl port 
+         shell: "iptables {{ui_ssl_port}}"
+         register: verify_ui_ssl_port
+
+       - fail: msg="UI ssl port is not open"
+         when: verify_ui_ssl_port.rc != 0
+
+
+- name: Verify iptable rules for ELK
+  hosts: elk
+  sudo: yes
+  gather_facts: false
+  vars: 
+      elk_ls_port: "-C INPUT -m state --state NEW -m tcp -p tcp --dport {{elk.logstash.port}} -j ACCEPT"
+      elk_kibana_port: "-C INPUT -m state --state NEW -m tcp -p tcp --dport {{elk.kibana.port}} -j ACCEPT"
+      elk_es_port: "-C INPUT -m state --state NEW -m tcp -p tcp --dport {{elk.elasticsearch.port}} -j ACCEPT"
+  tasks: 
+       - name: Elk Logstash port
+         shell: "iptables {{elk_ls_port}}"
+         register: verify_elk_ls_port
+
+       - fail: msg="Elk logstash port is not open"
+         when: verify_elk_ls_port.rc != 0
+
+       - name: Elk kibana port
+         shell: "iptables {{elk_kibana_port}}"
+         register: verify_elk_kibana_port
+
+       - fail: msg="Elk kibana port is not open"
+         when: verify_elk_kibana_port.rc != 0
+
+       - name: Elk elasticsearch port
+         shell: "iptables {{elk_es_port}}"
+         register: verify_elk_es_port
+
+       - fail: msg="Elk elasticsearch port is not open"
+         when: verify_elk_es_port.rc != 0
+
+- name: Verify iptable rules for DE SERVICES
+  hosts: services
+  sudo: yes
+  gather_facts: false
+  vars:
+      svc_ports: "-C INPUT -m state --state NEW -m tcp -p tcp --dport 31300:31399 -j ACCEPT"
+  tasks:
+      - name: Service ports
+        shell: "iptables {{svc_ports}}"
+        register: verify_svc_ports
+
+      - fail: msg="Service ports not open"
+        when: verify_svc_ports.rc !=0
+            
+- name: Verify iptable rules for CONDOR SUBMISSION
+  hosts: condor-submission
+  sudo: yes
+  gather_facts: false
+  vars: 
+      submission_ports_tcp:  "-C INPUT -m state --state NEW -m tcp -p tcp -s {{ condor_submission_ip_range }} -j ACCEPT"
+      submission_ports_udp:  "-C INPUT -m state --state NEW -m udp -p udp -s {{ condor_submission_ip_range }} -j ACCEPT"
+  tasks:
+      - name: Condor submission tcp ports
+        shell: "iptables {{submission_ports_tcp}}"
+        register: verify_submission_tcp_ports
+
+      - fail: msg="Condor Submission TCP ports not open"
+        when: verify_submission_tcp_ports.rc !=0
+
+      - name: Condor submission udp ports
+        shell: "iptables {{submission_ports_udp}}"
+        register: verify_submission_udp_ports
+
+      - fail: msg="Condor Submission UDP ports not open"
+        when: verify_submission_udp_ports.rc !=0
+
+- name: Verify iptable rules for CONDOR
+  hosts: condor
+  sudo: yes
+  gather_facts: false
+  vars:
+      condor_ports_tcp: "-C INPUT -m state --state NEW -m tcp -p tcp --dport 61440:65535 -j ACCEPT"
+      condor_ports_udp: "-C INPUT -m state --state NEW -m udp -p udp --dport 61440:65535 -j ACCEPT"
+      condor_ports_other: "-C INPUT -m state --state NEW -m tcp -p tcp --dport 9618 -j ACCEPT"
+  tasks:
+      - name: Condor tcp ports
+        shell: "iptables {{condor_ports_tcp}}"
+        register: verify_condor_tcp_ports
+
+      - fail: msg="Condor tcp ports not open"
+        when: verify_condor_tcp_ports.rc != 0
+
+      - name: Condor udp ports
+        shell: "iptables {{condor_ports_udp}}"
+        register: verify_condor_udp_ports
+
+      - fail: msg="Condor udp ports not open"
+        when: verify_condor_udp_ports.rc != 0
+
+      - name: Condor other ports
+        shell: "iptables {{condor_ports_other}}"
+        register: verify_condor_other_ports
+
+      - fail: msg="Condor other ports not open"
+        when: verify_condor_other_ports.rc != 0
+
+- name: Verify iptables rules for docker registry
+  hosts: docker-registry
+  sudo: yes
+  gather_facts: false
+  vars:
+      docker_registry_tcp: "-C INPUT -m state --state NEW -m tcp -p tcp --dport {{docker.registry.port}} -j ACCEPT" 
+      docker_registry_udp: "-C INPUT -m state --state NEW -m udp -p udp --dport {{docker.registry.port}} -j ACCEPT" 
+  tasks:
+      - name: Docker registry tcp ports
+        shell: "iptables {{docker_registry_tcp}}"
+        register: verify_docker_registry_tcp_ports
+
+      - fail: msg="Docker registry tcp ports are not open"
+        when: verify_docker_registry_tcp_ports.rc != 0
+
+      - name: Docker registry udp ports
+        shell: "iptables {{docker_registry_udp}}"
+        register: verify_docker_registry_udp_ports
+
+      - fail: msg="Docker registry udp ports are not open"
+        when: verify_docker_registry_udp_ports.rc != 0
+
+
+- name: Verify iptables rules for db
+  hosts: db  
+  sudo: yes
+  gather_facts: false
+  vars:
+      db_tcp_port: "-C INPUT -m state --state NEW -m tcp -p tcp --dport {{db_port}} -j ACCEPT" 
+  tasks:
+      - name: DB ports
+        shell: "iptables {{db_tcp_port}}"
+        register: verify_db_tcp_port
+
+      - fail: msg="DB ports are not open"
+        when: verify_db_tcp_port.rc != 0
+
+
+      
+

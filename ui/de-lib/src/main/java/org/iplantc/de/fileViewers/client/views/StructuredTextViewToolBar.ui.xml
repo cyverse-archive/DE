@@ -1,0 +1,44 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+             xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button">
+
+    <ui:with field="appearance"
+             type="org.iplantc.de.fileViewers.client.views.StructuredTextViewToolBar.StructureTextViewerToolbarAppearance"/>
+
+    <toolbar:ToolBar>
+
+        <button:TextButton ui:field="saveBtn"
+                           icon="{appearance.saveButtonIcon}"
+                           text="{appearance.saveButtonText}"/>
+        <button:TextButton ui:field="refreshBtn"
+                           icon="{appearance.refreshButtonIcon}"
+                           text="{appearance.refreshButtonText}"/>
+
+        <toolbar:SeparatorToolItem />
+        <button:TextButton ui:field="addRowBtn"
+                           icon="{appearance.addRowButtonIcon}"
+                           toolTip="{appearance.addRowButtonTooltip}"/>
+        <button:TextButton ui:field="deleteRowBtn"
+                           icon="{appearance.deleteRowButtonIcon}"
+                           toolTip="{appearance.deleteRowButtonTooltip}"/>
+        <toolbar:SeparatorToolItem />
+        <form:CheckBox ui:field="lineNumberCheckbox"
+                       boxLabel="{appearance.lineNumberCheckboxLabel}"/>
+        <toolbar:LabelToolItem ui:field="skipRowsLabel"
+                               label="{appearance.skipRowsLabelText}"/>
+        <form:IntegerField ui:field="skipRowsCount"
+                           width="{appearance.skipRowsCountWidth}"
+                           allowNegative="false"
+                           allowDecimals="false"/>
+        <form:CheckBox ui:field="cbxHeaderRows"
+                       boxLabel="{appearance.cbxHeaderRowsLabel}"/>
+        <toolbar:FillToolItem />
+
+        <gxt:Status ui:field="editStatus"
+                    width="{appearance.editStatusWidth}"/>
+
+    </toolbar:ToolBar>
+</ui:UiBinder>

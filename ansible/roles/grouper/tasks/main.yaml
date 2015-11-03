@@ -1,0 +1,182 @@
+---
+- name: ensure that /etc/grouper exists
+  sudo: yes
+  file: path=/etc/grouper state=directory mode=0755
+  tags:
+    - config
+
+- name: ensure that /etc/tomcat exists
+  sudo: yes
+  file: path=/etc/tomcat state=directory mode=0755
+  tags:
+    - config
+
+- name: ensure that /var/log/grouper exists
+  sudo: yes
+  file: path=/var/log/grouper state=directory mode=0755
+  tags:
+    - config
+
+- name: ensure that /etc/nginx exists
+  sudo: yes
+  file: path=/etc/nginx state=directory mode=0755
+  tags:
+    - config
+
+- name: generate grouper.properties
+  sudo: yes
+  template: src=grouper.properties.j2 dest=/etc/grouper/grouper.properties owner=root group=root mode=0644
+  register: grouper_properties_v
+  tags:
+    - config
+    - config_grouper
+
+- name: generate grouper-ws.properties
+  sudo: yes
+  template: src=grouper-ws.properties.j2 dest=/etc/grouper/grouper-ws.properties owner=root group=root mode=0644
+  register: grouper_ws_properties_v
+  tags:
+    - config
+    - config_grouper
+
+- name: generate hibernate.properties
+  sudo: yes
+  template: src=grouper.hibernate.properties.j2 dest=/etc/grouper/hibernate.properties owner=root group=root mode=0644
+  register: grouper_hibernate_properties_v
+  tags:
+    - config
+    - config_grouper
+
+- name: generate loader.properties
+  sudo: yes
+  template: src=grouper-loader.properties.j2 dest=/etc/grouper/loader.properties owner=root group=root mode=0644
+  register: grouper_loader_properties_v
+  tags:
+    - config
+    - config_grouper
+
+- name: generate sources.xml
+  sudo: yes
+  template: src=sources.xml.j2 dest=/etc/grouper/sources.xml owner=root group=root mode=0644
+  register: grouper_sources_xml_v
+  tags:
+    - config
+    - config_grouper
+
+- name: generate subject.properties
+  sudo: yes
+  template: src=subject.properties.j2 dest=/etc/grouper/subject.properties owner=root group=root mode=0644
+  register: grouper_subject_properties_v
+  tags:
+    - config
+    - config_grouper
+
+- name: generate server.xml
+  sudo: yes
+  template: src=server.xml.j2 dest=/etc/tomcat/server.xml owner=root group=root mode=0644
+  register: tomcat_server_xml_v
+  tags:
+    - config
+    - config_tomcat
+
+- name: generate setenv.sh
+  sudo: yes
+  template: src=setenv.sh.j2 dest=/etc/tomcat/setenv.sh owner=root group=root mode=0644
+  register: tomcat_setenv_sh_v
+  tags:
+    - config
+    - config_tomcat
+
+- name: generate tomcat-users.xml
+  sudo: yes
+  template: src=tomcat-users.xml.j2 dest=/etc/tomcat/tomcat-users.xml owner=root group=root mode=0644
+  register: tomcat_users_xml_v
+  tags:
+    - config
+    - config_tomcat
+
+- name: configure nginx
+  sudo: yes
+  template: src=nginx.conf.j2 dest=/etc/nginx/nginx.conf mode=0644
+  register: nginx_conf_v
+  tags:
+    - config- config_nginx
+
+- name: docker pull iplant-grouper
+  sudo: yes
+  shell: docker pull {{remote_registry}}/{{grouper.image_name}}:{{docker.tag}}
+  register: docker_pull_iplant_grouper_v
+  tags:
+    - docker_pull
+    - docker_pull_iplant-grouper
+
+- name: docker pull nginx-ssl
+  sudo: yes
+  shell: docker pull {{docker.user}}/{{grouper.http_server.image_name}}:{{docker.tag}}
+  register: docker_pul_nginx_ssl_v
+  tags:
+    - docker_pull
+    - docker-pull_iplant-grouper
+
+- name: place grouper Systemd service file
+  sudo: yes
+  template: src={{grouper.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  register: service_file_grouper_v
+  tags:
+    - update_service_files
+    - update_service_file_grouper
+
+- name: place grouper-nginx Systemd service file
+  template: src={{grouper.http_server.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  register: service_file_grouper_nginx_v
+  tags:
+    - update_service_files
+    - update_service_file_grouper
+    - update_service_file_grouper-nginx
+
+- name: reload systemd
+  shell: systemctl daemon-reload
+  when: service_file_grouper_v.changed or
+        service_file_grouper_nginx_v.changed
+  tags:
+    - update_service_files
+    - update_service_file_grouper
+    - update_service_file_grouper-nginx
+
+- name: enable grouper services
+  service: name={{item}} enabled={{enable_services}}
+  when: service_file_grouper_v.changed or
+        service_file_grouper_nginx_v.changed
+  with_items:
+    - "{{grouper.service_name}}"
+    - "{{grouper.http_server.service_name}}"
+  tags:
+    - restart_services
+    - restart_grouper
+    - restart_grouper-nginx
+
+- name: restart grouper service
+  service: name={{grouper.service_name}} state=restarted
+  when: grouper_properties_v.changed or
+        grouper_ws_properties_v.changed or
+        grouper_hibernate_properties_v.changed or
+        grouper_loader_properties_v.changed or
+        grouper_sources_xml_v.changed or
+        grouper_subject_properties_v.changed or
+        tomcat_server_xml_v.changed or
+        tomcat_setenv_sh_v.changed or
+        tomcat_users_xml_v.changed or
+        docker_pull_iplant_grouper_v.changed or
+        service_file_grouper_v.changed
+  tags:
+    - restart_services
+    - restart_grouper
+
+- name: restart grouper-nginx service
+  service: name={{grouper.http_server.service_name}} state=restarted
+  when: nginx_conf_v.changed or
+        docker_pul_nginx_ssl_v.changed or
+        service_file_grouper_nginx_v.changed
+  tags:
+    - restart_services
+    - restart_grouper-nginx

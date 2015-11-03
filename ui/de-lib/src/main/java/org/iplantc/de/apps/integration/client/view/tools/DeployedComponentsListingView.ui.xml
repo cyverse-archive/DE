@@ -1,0 +1,64 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
+             xmlns:tb="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+             xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
+             xmlns:row="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+             xmlns:srh="urn:import:org.iplantc.de.commons.client.widgets">
+
+
+    <ui:with field="icons"
+             type="org.iplantc.de.resources.client.IplantResources"/>
+    <ui:with field="strings"
+             type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>
+
+    <ui:with field="cm"
+             type="com.sencha.gxt.widget.core.client.grid.ColumnModel">
+    </ui:with>
+
+    <ui:with field="store" type="com.sencha.gxt.data.shared.ListStore">
+    </ui:with>
+
+    <ui:with field="middleData"
+             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+
+        <ui:attributes height="1" width="1"/>
+    </ui:with>
+
+    <ui:with field="topData"
+             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+
+        <ui:attributes height="-1" width="1"/>
+    </ui:with>
+
+    <ui:with field="view"
+             type="com.sencha.gxt.widget.core.client.grid.GridView">
+
+        <ui:attributes forceFit="true" stripeRows="true">
+        </ui:attributes>
+    </ui:with>
+
+    <gxt:FramedPanel pixelSize="600, 300" ui:field="panel"
+                     headerVisible="false">
+
+        <row:VerticalLayoutContainer borders="true"
+                                     ui:field="container">
+            <row:child layoutData="{topData}">
+                <tb:ToolBar ui:field="toolBar" height="30" spacing="3">
+                    <srh:SearchField ui:field="searchField"/>
+                    <button:TextButton ui:field="newToolBtn"
+                                       text="{strings.newToolReq}"
+                                       icon="{icons.add}"/>
+                </tb:ToolBar>
+            </row:child>
+
+            <row:child layoutData="{middleData}">
+                <grid:Grid borders="false" cm="{cm}" columnReordering="true"
+                           loadMask="true" store="{store}" view="{view}" ui:field="grid">
+                </grid:Grid>
+            </row:child>
+        </row:VerticalLayoutContainer>
+    </gxt:FramedPanel>
+
+</ui:UiBinder>

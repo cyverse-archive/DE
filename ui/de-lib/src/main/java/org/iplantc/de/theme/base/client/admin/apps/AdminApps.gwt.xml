@@ -1,0 +1,46 @@
+<module>
+
+    <!-- Apps -->
+    <replace-with class="org.iplantc.de.theme.base.client.admin.apps.AdminAppsViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.apps.client.AdminAppsView.AdminAppsViewAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.admin.apps.AdminPresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.apps.client.AdminAppsView.AdminPresenter.AdminPresenterAppearance" />
+    </replace-with>
+
+    <!-- Grid -->
+    <replace-with class="org.iplantc.de.theme.base.client.admin.apps.grid.AdminAppsGridViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.apps.client.AdminAppsGridView.Appearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.admin.apps.grid.AdminAppsGridPresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.apps.client.AdminAppsGridView.Presenter.Appearance" />
+    </replace-with>
+
+    <!-- Categories -->
+    <replace-with class="org.iplantc.de.theme.base.client.admin.apps.categories.AdminCategoriesPresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.apps.client.AdminCategoriesView.Presenter.Appearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.admin.apps.AppCategorizeViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.apps.client.AppCategorizeView.AppCategorizeViewAppearance" />
+    </replace-with>
+
+    <!-- Toolbar -->
+    <replace-with class="org.iplantc.de.theme.base.client.admin.apps.AdminAppsToolbarDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.apps.client.AdminAppsToolbarView.ToolbarAppearance" />
+    </replace-with>
+
+    <!-- App Editor -->
+    <replace-with class="org.iplantc.de.theme.base.client.admin.apps.AppEditorDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.apps.client.views.editor.AppEditor.AppEditorAppearance" />
+    </replace-with>
+
+    <!-- Cells -->
+    <replace-with class="org.iplantc.de.theme.base.client.admin.apps.AppNameCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.apps.client.views.grid.cells.AppNameCell.AppNameCellAppearance" />
+    </replace-with>
+
+
+</module>

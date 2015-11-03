@@ -1,0 +1,11 @@
+<module>
+    <inherits name='org.iplantc.de.DiscoveryEnvironmentCommon' />
+    <!--<inherits name="org.iplantc.de.apps.Apps"/>-->
+    <inherits name="org.iplantc.de.resources.ui-resources"/>
+    <inherits name="org.iplantc.de.tools.requests.ToolRequests"/>
+    <inherits name="org.iplantc.de.admin.apps.AdminApps" />
+
+    <!-- Specify the paths for translatable code -->
+    <source path='client' />
+    <source path='shared' />
+</module>

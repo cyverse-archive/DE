@@ -1,0 +1,11 @@
+[Unit]
+Description={{data_container.service_description}}
+BindsTo=docker.service
+After=network.target docker.socket
+Requires=docker.service 
+
+[Service]
+Type=oneshot
+# Ignore errors with "-" since the container may already exist
+ExecStart=-/usr/bin/docker run --name {{data_container.container_name}} {{remote_registry}}/{{data_container.image_name}}:latest
+

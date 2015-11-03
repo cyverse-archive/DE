@@ -1,0 +1,3 @@
+---
+# defaults file for elk-kibana
+enable_services: yes

@@ -1,0 +1,16 @@
+---
+# Verify java is installed and correct version
+#
+
+- name: Verify java installed and correct version
+  hosts: services
+  gather_facts: false
+  tasks:
+      - name: Java version
+        shell: java -version
+        register: verify_java_version
+
+      - debug: var=verify_java_version
+        when: "verify_java_version.stderr.find('{{java.version}}') == -1"
+      - fail: msg="Java version is not {{java.version}}"
+        when: "verify_java_version.stderr.find('{{java.version}}') == -1"

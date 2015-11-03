@@ -1,0 +1,19 @@
+@sprite .pasteIcon {
+    gwt-image: "paste";
+    display: block;
+    float: left;
+}
+
+.dataLinkInfoImg {
+    float: left;
+    vertical-align: text-bottom;
+}
+
+.background {
+    background-color: #ffffff;
+}
+
+.dataLinkWarning {
+    color: #E34234;
+    font-weight: bold;
+}

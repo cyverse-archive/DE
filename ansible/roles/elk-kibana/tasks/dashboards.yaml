@@ -1,0 +1,14 @@
+---
+# dashboards for elk-kibana role
+
+- name: dashboard - Top 25 User Activity
+  uri: url="{{ d1_url }}" method=PUT
+      body={{ lookup('file', 'd1-top-25-user-activity.json')|replace('\n', '')|to_nice_json }}
+  register: top_25_user_activity
+  changed_when: top_25_user_activity.status != 200 or
+                top_25_user_activity.status != 201
+  failed_when: top_25_user_activity.status != 200 and
+               top_25_user_activity.status != 201
+  tags:
+      - config
+      - config_kibana
