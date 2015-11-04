@@ -17,3 +17,4 @@ USER iplant
 RUN mkdir -p /home/iplant/logs/
 WORKDIR /home/iplant
 EXPOSE 60000
+LABEL org.iplantc.de.javabase.git-ref="%%GIT_COMMIT%%"
