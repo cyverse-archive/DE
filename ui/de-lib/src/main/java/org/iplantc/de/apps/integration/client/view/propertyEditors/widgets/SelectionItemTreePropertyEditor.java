@@ -178,7 +178,8 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
     private int uniqueIdNum = 0;
     private final AppTemplateUtils appTemplateUtils;
 
-    public SelectionItemTreePropertyEditor(final List<SelectionItem> selectionItems) {
+    public SelectionItemTreePropertyEditor(final List<SelectionItem> selectionItems, int uniqueIdNum) {
+        this.uniqueIdNum = uniqueIdNum;
         this.appTemplateUtils = AppTemplateUtils.getInstance();
         buildTreeGrid();
         initWidget(BINDER.createAndBindUi(this));
@@ -624,6 +625,10 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
                 }
             }
         }
+    }
+
+    public int getUniqueIdNum() {
+        return uniqueIdNum;
     }
 
 }
