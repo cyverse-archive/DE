@@ -1,4 +1,8 @@
 FROM irods/icommands:4.0.3
+ARG git_commit=unknown
+ARG buildenv_git_commit=unknown
+LABEL org.iplantc.de.porklock.git-ref="$git_commit" \
+      org.iplantc.de.buildenv.git-ref="$buildenv_git_commit"
 
 ADD target/porklock-standalone.jar /porklock-standalone.jar
 
