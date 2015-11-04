@@ -2,10 +2,8 @@
 set -x
 set -e
 
-VERSION=$(cat version | sed -e 's/^ *//' -e 's/ *$//')
 GIT_COMMIT=$(git rev-parse HEAD)
 
-docker pull $DOCKER_USER/buildenv:latest
 docker run --rm -e "GIT_COMMIT=$GIT_COMMIT" -v $(pwd):/build -w /build $DOCKER_USER/buildenv lein uberjar
 if [ -f Dockerfile.template ]
 then
@@ -16,4 +14,3 @@ else
   docker build --pull --rm -t "$DOCKER_USER/$DOCKER_REPO:dev" .
 fi
 docker push $DOCKER_USER/$DOCKER_REPO:dev
-docker rmi $DOCKER_USER/$DOCKER_REPO:dev
