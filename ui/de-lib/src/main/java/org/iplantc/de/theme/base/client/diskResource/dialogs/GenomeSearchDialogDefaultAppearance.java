@@ -49,4 +49,9 @@ public class GenomeSearchDialogDefaultAppearance implements GenomeSearchDialog.A
         return diskResourceMessages.sequenceType();
     }
 
+    @Override
+    public String norecords() {
+        return diskResourceMessages.norecords();
+    }
+
 }

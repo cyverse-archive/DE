@@ -197,4 +197,6 @@ public interface DiskResourceMessages extends Messages {
 
     String overWiteMetadata();
 
+    String norecords();
+
 }

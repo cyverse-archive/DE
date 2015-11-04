@@ -1,3 +1,6 @@
+/**
+ * @author sriram
+ */
 package org.iplantc.de.client.models.genomes;
 
 import org.iplantc.de.client.models.HasDescription;
