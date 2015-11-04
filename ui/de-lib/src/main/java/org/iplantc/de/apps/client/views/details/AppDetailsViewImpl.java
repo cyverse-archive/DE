@@ -36,6 +36,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.DateLabel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineHyperlink;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.inject.Inject;
@@ -159,6 +160,9 @@ public class AppDetailsViewImpl extends Composite implements
     @UiField
     @Ignore
     Anchor url;
+    @UiField
+    @Ignore
+    HTMLPanel panel;
 
     final ListEditor<Tool, ToolDetailsView> tools;
     private final App app;

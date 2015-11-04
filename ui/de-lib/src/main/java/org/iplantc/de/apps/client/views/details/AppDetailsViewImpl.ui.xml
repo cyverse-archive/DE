@@ -19,7 +19,7 @@
 	<tabs:TabPanel ui:field="tabPanel" bodyBorder="false"
 		borders="false" styleName="{appearance.css.tabPanel}">
 		<tabs:child config="{informationTabConfig}">
-			<g:HTMLPanel>
+			<g:HTMLPanel ui:field="panel" >
 				<!-- Favorite Icon -->
 				<appWidgets:AppFavoriteCellWidget
 					ui:field="favIcon" />
