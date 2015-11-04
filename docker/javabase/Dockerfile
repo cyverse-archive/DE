@@ -1,5 +1,7 @@
 FROM jeanblanchard/java:8
 MAINTAINER Ian McEwen <mian@iplantcollaborative.org>
+ARG git_commit=unknown
+LABEL org.iplantc.de.javabase.git-ref="$git_commit"
 
 RUN apk add --update curl \
     && mkdir -p /tmp/jce \
@@ -17,4 +19,3 @@ USER iplant
 RUN mkdir -p /home/iplant/logs/
 WORKDIR /home/iplant
 EXPOSE 60000
-LABEL org.iplantc.de.javabase.git-ref="%%GIT_COMMIT%%"

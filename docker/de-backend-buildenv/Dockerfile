@@ -1,5 +1,7 @@
 FROM centos:centos7
 MAINTAINER John Wregglesworth <wregglej@gmail.com>
+ARG git_commit
+LABEL org.iplantc.de.buildenv.git-ref="$git_commit"
 
 ENV GOOS=linux GOARCH=amd64 GOVERSION=1.5
 ENV MVNVERSION=3.3.3
@@ -50,6 +52,5 @@ RUN npm install -g grunt-cli
 RUN lein help
 RUN git clone https://github.com/iPlantCollaborativeOpenSource/DE.git backend && \
     cd backend && \
-    git checkout %%GIT_COMMIT%% && \
+    git checkout $git_commit && \
     lein exec build-all.clj lein-plugins libs
-LABEL org.iplantc.de.buildenv.git-ref="%%GIT_COMMIT%%"
