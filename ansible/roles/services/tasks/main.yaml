@@ -81,12 +81,12 @@
       - docker_pull
       - docker_pull_kifshare
 
-- name: docker pull metadactyl
+- name: docker pull apps
   sudo: yes
-  shell: docker pull {{docker.user}}/{{metadactyl.image_name}}:{{docker.tag}}
+  shell: docker pull {{docker.user}}/{{apps.image_name}}:{{docker.tag}}
   tags:
       - docker_pull
-      - docker_pull_metadactyl
+      - docker_pull_apps
 
 - name: docker pull metadata
   sudo: yes

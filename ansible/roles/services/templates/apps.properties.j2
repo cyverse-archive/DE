@@ -1,71 +1,71 @@
 # Connection details.
-metadactyl.app.listen-port = {{ default_service_port }}
+apps.app.listen-port = {{ default_service_port }}
 
 # Route-independent feature flags.
-metadactyl.features.agave      = true
-metadactyl.features.agave.jobs = true
+apps.features.agave      = true
+apps.features.agave.jobs = true
 
 # Database settings.
-metadactyl.db.driver      = {{ db_driver }}
-metadactyl.db.subprotocol = {{ db_vendor }}
-metadactyl.db.host        = {{ db_host }}
-metadactyl.db.port        = {{ db_port }}
-metadactyl.db.name        = {{ db_name }}
-metadactyl.db.user        = {{ db_user }}
-metadactyl.db.password    = {{ db_password }}
+apps.db.driver      = {{ db_driver }}
+apps.db.subprotocol = {{ db_vendor }}
+apps.db.host        = {{ db_host }}
+apps.db.port        = {{ db_port }}
+apps.db.name        = {{ db_name }}
+apps.db.user        = {{ db_user }}
+apps.db.password    = {{ db_password }}
 
 # JEX connection settings.
-metadactyl.jex.base-url = {{ jex.base }}
+apps.jex.base-url = {{ jex.base }}
 
 # Data Info connection settings.
-metadactyl.data-info.base-url = http://{{ data_info.host }}:{{ data_info.port }}
+apps.data-info.base-url = http://{{ data_info.host }}:{{ data_info.port }}
 
 # Workspace app category names.
-metadactyl.workspace.root-app-category            = {{ metadactyl.user_root }}
-metadactyl.workspace.default-app-categories       = {{ metadactyl.user_subs }}
-metadactyl.workspace.dev-app-category-index       = 0
-metadactyl.workspace.favorites-app-category-index = 1
-metadactyl.workspace.beta-app-category-id         = 5401bd14-6c14-4470-aedd-57b47ea1b979
-metadactyl.workspace.public-id                    = 00000000-0000-0000-0000-000000000000
+apps.workspace.root-app-category            = {{ apps.user_root }}
+apps.workspace.default-app-categories       = {{ apps.user_subs }}
+apps.workspace.dev-app-category-index       = 0
+apps.workspace.favorites-app-category-index = 1
+apps.workspace.beta-app-category-id         = 5401bd14-6c14-4470-aedd-57b47ea1b979
+apps.workspace.public-id                    = 00000000-0000-0000-0000-000000000000
 
 # The domain name to append to the user id to get the fully qualified user id.
-metadactyl.uid.domain = {{ cas_uid_domain }}
+apps.uid.domain = {{ cas_uid_domain }}
 
 # The path to the home directory in iRODS.
-metadactyl.irods.home = {{ irods.home }}
+apps.irods.home = {{ irods.home }}
 
 # Batch job settings.
-metadactyl.batch.group               = {{ jex.batch_group }}
-metadactyl.batch.path-list.info-type = {{ path_list_info_type }}
-metadactyl.batch.path-list.max-paths = {{ metadactyl.path_list_max_paths }}
-metadactyl.batch.path-list.max-size  = {{ metadactyl.path_list_max_size }}
+apps.batch.group               = {{ jex.batch_group }}
+apps.batch.path-list.info-type = {{ path_list_info_type }}
+apps.batch.path-list.max-paths = {{ apps.path_list_max_paths }}
+apps.batch.path-list.max-size  = {{ apps.path_list_max_size }}
 
 # Agave connection settings.
-metadactyl.agave.base-url             = {{ agave.base_url }}
-metadactyl.agave.key                  = {{ agave.client_key }}
-metadactyl.agave.secret               = {{ agave.client_secret }}
-metadactyl.agave.oauth-base           = {{ agave.base_url }}/oauth2
-metadactyl.agave.oauth-refresh-window = {{ agave.oauth_refresh_window }}
-metadactyl.agave.redirect-uri         = {{ de.base }}/oauth/callback/agave
-metadactyl.agave.storage-system       = {{ irods.host }}
-metadactyl.agave.read-timeout         = {{ agave.read_timeout }}
-metadactyl.agave.page-length          = {{ agave.page_length }}
+apps.agave.base-url             = {{ agave.base_url }}
+apps.agave.key                  = {{ agave.client_key }}
+apps.agave.secret               = {{ agave.client_secret }}
+apps.agave.oauth-base           = {{ agave.base_url }}/oauth2
+apps.agave.oauth-refresh-window = {{ agave.oauth_refresh_window }}
+apps.agave.redirect-uri         = {{ de.base }}/oauth/callback/agave
+apps.agave.storage-system       = {{ irods.host }}
+apps.agave.read-timeout         = {{ agave.read_timeout }}
+apps.agave.page-length          = {{ agave.page_length }}
 
 # Agave callback settings.
-metadactyl.agave.callback-base = {{ de.base }}/agave-cb
+apps.agave.callback-base = {{ de.base }}/agave-cb
 
 # PGP Settings
-metadactyl.pgp.keyring-path = {{ pgp_keyring_path }}
-metadactyl.pgp.key-password = {{ pgp_key_password }}
+apps.pgp.keyring-path = {{ pgp_keyring_path }}
+apps.pgp.key-password = {{ pgp_key_password }}
 
 # Notification agent connection settings.
-metadactyl.notificationagent.base-url = {{ notificationagent.base }}
+apps.notificationagent.base-url = {{ notificationagent.base }}
 
 # JEX Events connection settings.
-metadactyl.jex-events.base-url = {{ jexevents.base }}
+apps.jex-events.base-url = {{ jexevents.base }}
 
 # The job status polling interval.
-metadactyl.jobs.poll-interval = {{ job_status_poll_interval }}
+apps.jobs.poll-interval = {{ job_status_poll_interval }}
 
 # The base URL for iplant-groups.
-metadactyl.iplant-groups.base-url = {{ iplant_groups.base_url }}
+apps.iplant-groups.base-url = {{ iplant_groups.base_url }}

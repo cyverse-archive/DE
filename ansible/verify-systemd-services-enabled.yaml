@@ -28,7 +28,7 @@
                   - "{{exim}}"
                   - "{{jexevents}}"
                   - "{{kifshare}}"
-                  - "{{metadactyl}}"
+                  - "{{apps}}"
                   - "{{metadata}}"
                   - "{{notificationagent}}"
                   - "{{saved_searches}}"

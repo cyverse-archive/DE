@@ -1,5 +1,5 @@
 [Unit]
-Description={{metadactyl.service_description}}
+Description={{apps.service_description}}
 BindsTo=docker.service 
 PartOf=docker.service {{data_container.service_name}}
 After=docker.service 
@@ -7,15 +7,15 @@ Requisite=docker.service
 
 [Service]
 User=iplant
-ExecStartPre=-/usr/bin/docker rm -v {{metadactyl.container_name}}
-ExecStart=/usr/bin/docker run --name {{metadactyl.container_name}} \
+ExecStartPre=-/usr/bin/docker rm -v {{apps.container_name}}
+ExecStart=/usr/bin/docker run --name {{apps.container_name}} \
         -v {{ de_config_dir }}:/etc/iplant/de \
         -v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
         --volumes-from {{data_container.container_name}} \
-        -p {{metadactyl.port}}:60000 \
-        --log-driver={{docker.log_driver}} --log-opt syslog-tag={{metadactyl.service_name_short}} \
-        {{docker.user}}/{{metadactyl.image_name}}:{{docker.tag}} --config /etc/iplant/de/{{metadactyl.properties_file}}
-ExecStop=-/usr/bin/docker stop {{metadactyl.container_name}}
+        -p {{apps.port}}:60000 \
+        --log-driver={{docker.log_driver}} --log-opt syslog-tag={{apps.service_name_short}} \
+        {{docker.user}}/{{apps.image_name}}:{{docker.tag}} --config /etc/iplant/de/{{apps.properties_file}}
+ExecStop=-/usr/bin/docker stop {{apps.container_name}}
 Restart=on-failure
 StartLimitInterval=60s
 StartLimitBurst=3

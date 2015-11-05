@@ -28,7 +28,7 @@ config_user-preferences:
 config_user-sessions:
 config_tree-urls:
 config_notificationagent:
-config_metadactyl:
+config_apps:
 config_kifshare:
 config_jex-events:
 config_iplant-email:

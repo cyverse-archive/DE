@@ -51,12 +51,12 @@
       - enable_services
       - enable_notification-agent
 
-- name: enable metadactyl service
+- name: enable apps service
   sudo: yes
-  service: name={{metadactyl.service_name}} enabled={{enable_services}}
+  service: name={{apps.service_name}} enabled={{enable_services}}
   tags:
       - enable_services
-      - enable_metadactyl
+      - enable_apps
 
 - name: enable kifshare service
   sudo: yes

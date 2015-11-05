@@ -51,12 +51,12 @@
       - stop_services
       - stop_notification-agent
 
-- name: stop metadactyl service
+- name: stop apps service
   sudo: yes
-  service: name={{metadactyl.service_name}} state=stopped
+  service: name={{apps.service_name}} state=stopped
   tags:
       - stop_services
-      - stop_metadactyl
+      - stop_apps
 
 - name: stop kifshare service
   sudo: yes
