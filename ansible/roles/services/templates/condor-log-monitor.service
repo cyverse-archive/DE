@@ -20,6 +20,8 @@ ExecStart=/usr/bin/docker run --name {{condor_log_monitor.container_name}} \
         --config /etc/iplant/de/{{condor_log_monitor.properties_file}}
 ExecStop=-/usr/bin/docker stop {{condor_log_monitor.container_name}}
 Restart=on-failure
+StartLimitInterval=60s
+StartLimitBurst=3
 
 [Install]
 WantedBy=multi-user.target
