@@ -2,6 +2,18 @@
 
 - name: Uninstall previous docker
   sudo: yes
+  yum: name=docker state=absent
+  tags:
+      - install
+
+- name: Uninstall previous docker-selinux
+  sudo: yes
+  yum: name=docker-selinux state=absent
+  tags:
+      - install
+
+- name: Uninstall previous docker-engine
+  sudo: yes
   yum: name=docker-engine state=absent
   tags: 
       - install
