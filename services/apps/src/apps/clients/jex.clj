@@ -1,8 +1,8 @@
-(ns metadactyl.clients.jex
+(ns apps.clients.jex
   (:require [cemerick.url :as curl]
             [cheshire.core :as cheshire]
             [clj-http.client :as http]
-            [metadactyl.util.config :as cfg]))
+            [apps.util.config :as cfg]))
 
 (defn- jex-url
   [& components]

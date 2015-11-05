@@ -1,4 +1,4 @@
-(ns metadactyl.routes.params
+(ns apps.routes.params
   (:use [common-swagger-api.schema :only [->optional-param
                                           describe
                                           NonBlankString

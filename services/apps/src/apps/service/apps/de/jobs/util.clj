@@ -1,4 +1,4 @@
-(ns metadactyl.service.apps.de.jobs.util
+(ns apps.service.apps.de.jobs.util
   (:require [clojure.string :as string]))
 
 (def not-blank? (comp (complement string/blank?) str))

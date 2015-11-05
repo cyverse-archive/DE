@@ -1,6 +1,6 @@
-(ns metadactyl.routes.domain.user
+(ns apps.routes.domain.user
   (:use [common-swagger-api.schema :only [describe]]
-        [metadactyl.routes.params :only [SecuredQueryParams]]
+        [apps.routes.params :only [SecuredQueryParams]]
         [schema.core :only [defschema]])
   (:import [java.util UUID]))
 

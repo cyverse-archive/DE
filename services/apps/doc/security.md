@@ -1,13 +1,13 @@
 # Security
 
-None of the services in metadactyl are literally secured. Instead, services in
-Terrain provide the security and forward requests to metadactyl, which should not
+None of the services in apps are literally secured. Instead, services in
+Terrain provide the security and forward requests to apps, which should not
 be accessible from outside the local network. In general, when a secured service
-in Terrain forwards requests to metadactyl, the metadactyl services are marked as
-secured so that the relationship between the Terrain and metadactyl services is
+in Terrain forwards requests to apps, the apps services are marked as
+secured so that the relationship between the Terrain and apps services is
 clear.
 
-Generally speaking, the metadactyl services that correspond to secured services
+Generally speaking, the apps services that correspond to secured services
 in Terrain require user credentials, which are passed to the service in query
 parameters. The available query string parameters are:
 

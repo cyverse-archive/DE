@@ -7,9 +7,6 @@ import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
  * 
  * Either the source URL or source file needs to be set for this to be a valid tool request.
  * 
- * <a href=
- * "https://github.com/iPlantCollaborativeOpenSource/metadactyl-clj/blob/master/doc/endpoints/app-metadata/tool-requests.md#requesting-tool-installation"
- * />
  */
 public interface NewToolRequest {
 

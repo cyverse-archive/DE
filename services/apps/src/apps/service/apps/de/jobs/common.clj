@@ -1,16 +1,16 @@
-(ns metadactyl.service.apps.de.jobs.common
+(ns apps.service.apps.de.jobs.common
   (:use [kameleon.core]
         [kameleon.entities]
         [kameleon.queries :only [get-user-id]]
         [kameleon.uuids :only [uuid]]
         [korma.core :exclude [update]]
         [medley.core :only [remove-vals]]
-        [metadactyl.util.assertions :only [assert-not-nil]]
-        [metadactyl.util.conversions :only [remove-nil-vals]])
+        [apps.util.assertions :only [assert-not-nil]]
+        [apps.util.conversions :only [remove-nil-vals]])
   (:require [clojure.string :as string]
-            [metadactyl.containers :as c]
-            [metadactyl.service.apps.de.jobs.params :as params]
-            [metadactyl.service.apps.de.jobs.util :as util]))
+            [apps.containers :as c]
+            [apps.service.apps.de.jobs.params :as params]
+            [apps.service.apps.de.jobs.util :as util]))
 
 (defn- format-io-map
   [mapping]

@@ -19,8 +19,8 @@
 
 # Miscellaneous Terrain Endpoints
 
-Note that secured endpoints in Terrain and metadactyl are a little different from
-each other. Please see [Terrain Vs. Metadactyl](terrain-v-metadactyl.md) for more
+Note that secured endpoints in Terrain and apps are a little different from
+each other. Please see [Terrain Vs. Apps](terrain-v-apps.md) for more
 information.
 
 ## Verifying that Terrain is Running

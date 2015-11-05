@@ -1,6 +1,6 @@
-(ns metadactyl.translations.app-metadata.internal-to-external-test
+(ns apps.translations.app-metadata.internal-to-external-test
   (:use [clojure.test]
-        [metadactyl.translations.app-metadata.internal-to-external]))
+        [apps.translations.app-metadata.internal-to-external]))
 
 (defn- remove-ids
   [v]

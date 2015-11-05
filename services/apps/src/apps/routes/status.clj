@@ -1,8 +1,8 @@
-(ns metadactyl.routes.status
+(ns apps.routes.status
   (:use [common-swagger-api.schema]
         [ring.util.http-response :only [ok]])
   (:require [clojure-commons.service :as commons-service]
-            [metadactyl.util.config :as config]))
+            [apps.util.config :as config]))
 
 (defroutes* status
   (GET* "/" [:as {:keys [server-name server-port]}]

@@ -1,20 +1,20 @@
-(ns metadactyl.routes.admin
+(ns apps.routes.admin
   (:use [common-swagger-api.schema]
-        [metadactyl.metadata.reference-genomes :only [add-reference-genome
+        [apps.metadata.reference-genomes :only [add-reference-genome
                                                       delete-reference-genome
                                                       replace-reference-genomes
                                                       update-reference-genome]]
-        [metadactyl.metadata.tool-requests]
-        [metadactyl.routes.domain.app]
-        [metadactyl.routes.domain.app.category]
-        [metadactyl.routes.domain.reference-genome]
-        [metadactyl.routes.domain.tool]
-        [metadactyl.routes.params]
-        [metadactyl.user :only [current-user]]
-        [metadactyl.util.coercions :only [coerce!]]
+        [apps.metadata.tool-requests]
+        [apps.routes.domain.app]
+        [apps.routes.domain.app.category]
+        [apps.routes.domain.reference-genome]
+        [apps.routes.domain.tool]
+        [apps.routes.params]
+        [apps.user :only [current-user]]
+        [apps.util.coercions :only [coerce!]]
         [ring.util.http-response :only [ok]])
-  (:require [metadactyl.service.apps :as apps]
-            [metadactyl.util.config :as config]))
+  (:require [apps.service.apps :as apps]
+            [apps.util.config :as config]))
 
 (defroutes* admin-tool-requests
   (GET* "/" []

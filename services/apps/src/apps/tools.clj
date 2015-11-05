@@ -1,16 +1,16 @@
-(ns metadactyl.tools
+(ns apps.tools
   (:use [kameleon.core]
         [kameleon.entities]
         [kameleon.queries]
         [kameleon.util.search]
-        [metadactyl.containers :only [add-tool-container]]
-        [metadactyl.util.assertions :only [assert-not-nil]]
-        [metadactyl.util.conversions :only [remove-nil-vals]]
-        [metadactyl.validation :only [verify-tool-name-location]]
+        [apps.containers :only [add-tool-container]]
+        [apps.util.assertions :only [assert-not-nil]]
+        [apps.util.conversions :only [remove-nil-vals]]
+        [apps.validation :only [verify-tool-name-location]]
         [clojure.string :only [upper-case]]
         [korma.core :exclude [update]]
         [korma.db :only [transaction]])
-  (:require [metadactyl.persistence.app-metadata :as persistence]))
+  (:require [apps.persistence.app-metadata :as persistence]))
 
 (defn- add-search-where-clauses
   "Adds where clauses to a base tool search query to restrict results to tools that contain the

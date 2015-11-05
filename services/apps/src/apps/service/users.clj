@@ -1,7 +1,7 @@
-(ns metadactyl.service.users
-  (:use [metadactyl.util.conversions :only [remove-nil-vals]])
+(ns apps.service.users
+  (:use [apps.util.conversions :only [remove-nil-vals]])
   (:require [kameleon.queries :as kq]
-            [metadactyl.persistence.users :as up]))
+            [apps.persistence.users :as up]))
 
 (defn by-id
   [{:keys [ids]}]

@@ -1,10 +1,10 @@
-(ns metadactyl.routes.collaborators
+(ns apps.routes.collaborators
   (:use [common-swagger-api.schema]
-        [metadactyl.routes.domain.collaborator]
-        [metadactyl.routes.params]
-        [metadactyl.user :only [current-user]]
+        [apps.routes.domain.collaborator]
+        [apps.routes.params]
+        [apps.user :only [current-user]]
         [ring.util.http-response :only [ok]])
-  (:require [metadactyl.service.collaborators :as collaborators]))
+  (:require [apps.service.collaborators :as collaborators]))
 
 (defroutes* collaborators
   (GET* "/" []

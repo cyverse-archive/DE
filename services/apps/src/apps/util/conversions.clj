@@ -1,4 +1,4 @@
-(ns metadactyl.util.conversions
+(ns apps.util.conversions
   (:use [clojure.string :only [blank?]]
         [medley.core :only [remove-vals]])
   (:require [clojure.string :as string])

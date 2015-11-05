@@ -1,10 +1,10 @@
-(ns metadactyl.routes.users
+(ns apps.routes.users
   (:use [common-swagger-api.schema]
-        [metadactyl.routes.domain.user]
-        [metadactyl.routes.params]
-        [metadactyl.user :only [current-user]]
+        [apps.routes.domain.user]
+        [apps.routes.params]
+        [apps.user :only [current-user]]
         [ring.util.http-response :only [ok]])
-  (:require [metadactyl.service.users :as users]))
+  (:require [apps.service.users :as users]))
 
 (defroutes* users
   (POST* "/by-id" []

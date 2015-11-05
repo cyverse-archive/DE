@@ -1,4 +1,4 @@
-(ns metadactyl.util.json
+(ns apps.util.json
   (:require [cheshire.core :as json]
             [clojure.tools.logging :as log]))
 

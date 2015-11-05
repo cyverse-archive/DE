@@ -1,14 +1,14 @@
-(ns metadactyl.service.apps.combined.jobs
+(ns apps.service.apps.combined.jobs
   (:use [slingshot.slingshot :only [try+ throw+]])
   (:require [cheshire.core :as cheshire]
             [clojure.tools.logging :as log]
             [clojure-commons.file-utils :as ft]
             [kameleon.db :as db]
             [kameleon.uuids :as uuids]
-            [metadactyl.persistence.app-metadata :as ap]
-            [metadactyl.persistence.jobs :as jp]
-            [metadactyl.service.apps.combined.util :as cu]
-            [metadactyl.util.service :as service]))
+            [apps.persistence.app-metadata :as ap]
+            [apps.persistence.jobs :as jp]
+            [apps.service.apps.combined.util :as cu]
+            [apps.util.service :as service]))
 
 (defn- app-step-partitioner
   "Partitions app steps into units of execution. Each external app step has to run by itself.

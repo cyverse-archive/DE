@@ -1,4 +1,4 @@
-(ns metadactyl.service.apps.de.jobs.protocol)
+(ns apps.service.apps.de.jobs.protocol)
 
 (defprotocol JobRequestFormatter
   "A protocol for formatting JEX job requests."

@@ -1,9 +1,9 @@
-(ns metadactyl.translations.app-metadata
+(ns apps.translations.app-metadata
   (:require [clojure.tools.logging :as log]
             [cheshire.core :as cheshire]
-            [metadactyl.translations.app-metadata.external-to-internal :as e2i]
-            [metadactyl.translations.app-metadata.external-to-preview :as e2p]
-            [metadactyl.translations.app-metadata.internal-to-external :as i2e]))
+            [apps.translations.app-metadata.external-to-internal :as e2i]
+            [apps.translations.app-metadata.external-to-preview :as e2p]
+            [apps.translations.app-metadata.internal-to-external :as i2e]))
 
 (defn- log-as-json
   [msg obj]

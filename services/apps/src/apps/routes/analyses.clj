@@ -1,15 +1,15 @@
-(ns metadactyl.routes.analyses
+(ns apps.routes.analyses
   (:use [common-swagger-api.schema]
-        [metadactyl.routes.domain.analysis]
-        [metadactyl.routes.domain.analysis.listing]
-        [metadactyl.routes.domain.app]
-        [metadactyl.routes.params]
-        [metadactyl.user :only [current-user]]
-        [metadactyl.util.coercions :only [coerce!]]
+        [apps.routes.domain.analysis]
+        [apps.routes.domain.analysis.listing]
+        [apps.routes.domain.app]
+        [apps.routes.params]
+        [apps.user :only [current-user]]
+        [apps.util.coercions :only [coerce!]]
         [ring.util.http-response :only [ok]])
-  (:require [metadactyl.json :as json]
-            [metadactyl.service.apps :as apps]
-            [metadactyl.util.coercions :as coercions]))
+  (:require [apps.json :as json]
+            [apps.service.apps :as apps]
+            [apps.util.coercions :as coercions]))
 
 (defroutes* analyses
   (GET* "/" []

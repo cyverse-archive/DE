@@ -1,4 +1,4 @@
-(ns metadactyl.persistence.jobs
+(ns apps.persistence.jobs
   "Functions for storing and retrieving information about jobs that the DE has
    submitted to any excecution service."
   (:use [clojure-commons.core :only [remove-nil-values]]

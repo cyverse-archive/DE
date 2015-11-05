@@ -1,9 +1,9 @@
-(ns metadactyl.service.apps.de.jobs.fapi
-  (:require [metadactyl.service.apps.de.jobs.common :as ca]
-            [metadactyl.service.apps.de.jobs.params :as params]))
+(ns apps.service.apps.de.jobs.fapi
+  (:require [apps.service.apps.de.jobs.common :as ca]
+            [apps.service.apps.de.jobs.params :as params]))
 
 (deftype JobRequestFormatter [user email submission app io-maps defaults params]
-  metadactyl.service.apps.de.jobs.protocol.JobRequestFormatter
+  apps.service.apps.de.jobs.protocol.JobRequestFormatter
 
   (buildTreeSelectionArgs [_ param param-value]
     (params/tree-selection-args param param-value))

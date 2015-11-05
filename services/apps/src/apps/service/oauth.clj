@@ -1,10 +1,10 @@
-(ns metadactyl.service.oauth
+(ns apps.service.oauth
   "Service implementations dealing with OAuth 2.0 authentication."
-  (:use [metadactyl.user :only [current-user]]
+  (:use [apps.user :only [current-user]]
         [slingshot.slingshot :only [throw+]])
   (:require [authy.core :as authy]
-            [metadactyl.persistence.oauth :as op]
-            [metadactyl.util.config :as config]))
+            [apps.persistence.oauth :as op]
+            [apps.util.config :as config]))
 
 (defn- build-authy-server-info
   "Builds the server info to pass to authy."

@@ -1,4 +1,4 @@
-(ns metadactyl.util.service
+(ns apps.util.service
   (:use [clojure.java.io :only [reader]]
         [ring.util.response :only [charset]]
         [ring.util.http-response :only [ok]]

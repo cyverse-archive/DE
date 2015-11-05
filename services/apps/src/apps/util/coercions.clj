@@ -1,4 +1,4 @@
-(ns metadactyl.util.coercions
+(ns apps.util.coercions
   (:require [ring.swagger.coerce :as rc]
             [ring.swagger.common :refer [value-of]]
             [schema.coerce :as sc]

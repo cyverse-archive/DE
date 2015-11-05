@@ -150,17 +150,17 @@
   [props config-valid configs app-routes-enabled]
   "terrain.email.feedback-dest")
 
-(cc/defprop-str metadactyl-base-url
-  "The base URL to use when connecting to secured Metadactyl services."
+(cc/defprop-str apps-base-url
+  "The base URL to use when connecting to secured Apps services."
   [props config-valid configs app-routes-enabled]
-  "terrain.metadactyl.base-url")
+  "terrain.apps.base-url")
 
-(def metadactyl-base
+(def apps-base
   (memoize
    (fn []
-     (if (System/getenv "METADACTYL_PORT")
-       (cfg/env-setting "METADACTYL_PORT")
-       (metadactyl-base-url)))))
+     (if (System/getenv "APPS_PORT")
+       (cfg/env-setting "APPS_PORT")
+       (apps-base-url)))))
 
 (cc/defprop-str metadata-base-url
   "The base URL to use when connecting to the metadata services."
@@ -535,7 +535,7 @@
 (defn log-environment
   []
   (log/warn "ENV? terrain.data-info.base-url -" (data-info-base))
-  (log/warn "ENV? terrain.metadactyl.base-url =" (metadactyl-base))
+  (log/warn "ENV? terrain.apps.base-url =" (apps-base))
   (log/warn "ENV? terrain.notificationagent.base-url =" (notificationagent-base))
   (log/warn "ENV? terrain.anon-files.base-url =" (anon-files-base))
   (log/warn "ENV? terrain.sessions.host =" (sessions-base))

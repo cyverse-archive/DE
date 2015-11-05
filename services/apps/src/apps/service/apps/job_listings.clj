@@ -1,9 +1,9 @@
-(ns metadactyl.service.apps.job-listings
+(ns apps.service.apps.job-listings
   (:use [kameleon.uuids :only [uuidify]]
-        [metadactyl.util.conversions :only [remove-nil-vals]])
+        [apps.util.conversions :only [remove-nil-vals]])
   (:require [kameleon.db :as db]
-            [metadactyl.persistence.jobs :as jp]
-            [metadactyl.service.util :as util]))
+            [apps.persistence.jobs :as jp]
+            [apps.service.util :as util]))
 
 (defn is-completed?
   [job-status]

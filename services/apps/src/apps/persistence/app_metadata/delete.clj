@@ -1,6 +1,6 @@
-(ns metadactyl.persistence.app-metadata.delete
+(ns apps.persistence.app-metadata.delete
   "Functions used to remove apps from the database."
-  (:use [metadactyl.user :only [current-user]]
+  (:use [apps.user :only [current-user]]
         [kameleon.entities]
         [korma.core :exclude [update]]
         [korma.db :only [transaction]])

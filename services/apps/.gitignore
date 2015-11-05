@@ -11,13 +11,13 @@ pom.xml
 /checkouts
 /.classpath
 /.project
-/metadactyl
-/metadactyl.spec
-/metadactyl*.tar.gz
+/apps
+/apps.spec
+/apps*.tar.gz
 /target
 *~
 \#*
 .dir-locals.el
 .*.eld
 .nrepl-port
-metadactyl.properties
+apps.properties

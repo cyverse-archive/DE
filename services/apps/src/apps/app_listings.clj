@@ -1,4 +1,4 @@
-(ns metadactyl.app-listings
+(ns apps.app-listings
   (:use [slingshot.slingshot :only [try+ throw+]]
         [korma.core :exclude [update]]
         [kameleon.core]
@@ -6,14 +6,14 @@
         [kameleon.app-groups]
         [kameleon.app-listing]
         [kameleon.uuids :only [uuidify]]
-        [metadactyl.persistence.app-documentation :only [get-documentation]]
-        [metadactyl.persistence.app-metadata :only [get-app get-app-tools]]
-        [metadactyl.tools :only [get-tools-by-id]]
-        [metadactyl.user :only [current-user]]
-        [metadactyl.util.assertions :only [assert-not-nil]]
-        [metadactyl.util.config]
-        [metadactyl.util.conversions :only [to-long remove-nil-vals]]
-        [metadactyl.workspace]))
+        [apps.persistence.app-documentation :only [get-documentation]]
+        [apps.persistence.app-metadata :only [get-app get-app-tools]]
+        [apps.tools :only [get-tools-by-id]]
+        [apps.user :only [current-user]]
+        [apps.util.assertions :only [assert-not-nil]]
+        [apps.util.config]
+        [apps.util.conversions :only [to-long remove-nil-vals]]
+        [apps.workspace]))
 
 (def my-public-apps-id (uuidify "00000000-0000-0000-0000-000000000000"))
 (def trash-category-id (uuidify "FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"))

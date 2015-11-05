@@ -5,11 +5,11 @@ set -e
 ITERATION=$1
 USER=iplant
 GROUP=iplant
-BINNAME=metadactyl
+BINNAME=apps
 BUILDDIR=$BINNAME-build
 BINDIR=/usr/local/lib/$BINNAME
 LOGDIR=/var/log/$BINNAME
-CONFDIR=/etc/metadactyl
+CONFDIR=/etc/apps
 REPODIR=conf/main
 
 VERSION=$(cat version | sed -e 's/^ *//' -e 's/ *$//')

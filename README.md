@@ -151,7 +151,7 @@ and call the appropriate build tool. For example:
 
 We've hacked together a bash script that will iterate over all of the Clojure
 projects and will set their versions to the same version, including the
-versions of the iPlant developed dependencies (aside from metadactyl).
+versions of the iPlant developed dependencies (aside from the apps service).
 
     ./set-version 2.0.10
 

@@ -1,6 +1,6 @@
-(ns metadactyl.kormadb
+(ns apps.kormadb
   (:use [korma.db]
-        [metadactyl.util.config]))
+        [apps.util.config]))
 
 (defn- create-db-spec
   "Creates the database connection spec to use when accessing the database

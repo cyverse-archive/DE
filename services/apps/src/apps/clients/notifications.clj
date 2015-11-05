@@ -1,4 +1,4 @@
-(ns metadactyl.clients.notifications
+(ns apps.clients.notifications
   (:require [cemerick.url :as curl]
             [cheshire.core :as cheshire]
             [clj-http.client :as http]
@@ -6,8 +6,8 @@
             [clj-time.format :as tf]
             [clojure.string :as string]
             [clojure.tools.logging :as log]
-            [metadactyl.persistence.tool-requests :as tp]
-            [metadactyl.util.config :as config]))
+            [apps.persistence.tool-requests :as tp]
+            [apps.util.config :as config]))
 
 (defn notificationagent-url
   [& components]

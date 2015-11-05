@@ -1,4 +1,4 @@
-(ns metadactyl.service.apps.de.metadata
+(ns apps.service.apps.de.metadata
   "DE app metadata services."
   (:use [clojure.java.io :only [reader]]
         [clojure-commons.client :only [build-url]]
@@ -7,19 +7,19 @@
                                     get-app-subcategory-id
                                     remove-app-from-category]]
         [kameleon.uuids :only [uuidify]]
-        [metadactyl.service.apps.de.validation :only [app-publishable?]]
-        [metadactyl.util.config :only [workspace-beta-app-category-id
+        [apps.service.apps.de.validation :only [app-publishable?]]
+        [apps.util.config :only [workspace-beta-app-category-id
                                        workspace-favorites-app-category-index]]
-        [metadactyl.validation :only [get-valid-user-id verify-app-ownership]]
-        [metadactyl.workspace :only [get-workspace]]
+        [apps.validation :only [get-valid-user-id verify-app-ownership]]
+        [apps.workspace :only [get-workspace]]
         [korma.db :only [transaction]]
         [slingshot.slingshot :only [throw+]])
   (:require [cheshire.core :as cheshire]
             [clj-http.client :as client]
-            [metadactyl.persistence.app-metadata :as amp]
-            [metadactyl.service.apps.de.docs :as app-docs]
-            [metadactyl.translations.app-metadata :as atx]
-            [metadactyl.util.config :as config]))
+            [apps.persistence.app-metadata :as amp]
+            [apps.service.apps.de.docs :as app-docs]
+            [apps.translations.app-metadata :as atx]
+            [apps.util.config :as config]))
 
 (defn- validate-app-existence
   "Verifies that apps exist."

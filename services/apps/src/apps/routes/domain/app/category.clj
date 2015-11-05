@@ -1,12 +1,12 @@
-(ns metadactyl.routes.domain.app.category
+(ns apps.routes.domain.app.category
   (:use [common-swagger-api.schema :only [->optional-param
                                           ->required-key
                                           describe
                                           PagingParams
                                           SortFieldDocs
                                           SortFieldOptionalKey]]
-        [metadactyl.routes.domain.app]
-        [metadactyl.routes.params]
+        [apps.routes.domain.app]
+        [apps.routes.params]
         [schema.core :only [defschema optional-key recursive enum]])
   (:require [clojure.set :as sets])
   (:import [java.util UUID]))

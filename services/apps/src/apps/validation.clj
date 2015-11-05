@@ -1,12 +1,12 @@
-(ns metadactyl.validation
+(ns apps.validation
   (:use [kameleon.entities]
         [kameleon.queries :only [get-existing-user-id]]
-        [metadactyl.user :only [current-user]]
+        [apps.user :only [current-user]]
         [clojure.string :only [blank?]]
         [korma.core :exclude [update]]
         [slingshot.slingshot :only [throw+]])
   (:require [clojure-commons.validators :as validators]
-            [metadactyl.persistence.app-metadata :as persistence]))
+            [apps.persistence.app-metadata :as persistence]))
 
 (defn missing-json-field-exception
   "Thrown when a required field is missing from a JSON request body."

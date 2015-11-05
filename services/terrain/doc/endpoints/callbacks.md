@@ -56,7 +56,7 @@ updated information about the job status in the database.
 
 Secured Endpoint: GET /secured/oauth/access-code/{api-name}
 
-Delegates to metadactyl: GET /secured/oauth/access-code/{api-name}
+Delegates to apps: GET /secured/oauth/access-code/{api-name}
 
 The only API name that is currently supported is `agave`.
 

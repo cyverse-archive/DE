@@ -1,4 +1,4 @@
-(ns metadactyl.persistence.tool-requests
+(ns apps.persistence.tool-requests
   "Functions for storing and retrieving information about tool requests."
   (:use [korma.core :exclude [update]]
         [korma.db :only [with-db]]))

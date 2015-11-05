@@ -1,6 +1,6 @@
-(ns metadactyl.service.util
-  (:use [metadactyl.transformers :only [string->long]]
-        [metadactyl.util.conversions :only [remove-nil-vals]])
+(ns apps.service.util
+  (:use [apps.transformers :only [string->long]]
+        [apps.util.conversions :only [remove-nil-vals]])
   (:require [clojure.string :as string])
   (:import [java.util UUID]))
 

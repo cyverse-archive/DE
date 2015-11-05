@@ -1,4 +1,4 @@
-(ns terrain.services.metadata.metadactyl
+(ns terrain.services.metadata.apps
   (:use [clojure.java.io :only [reader]]
         [clojure-commons.client :only [build-url-with-query]]
         [terrain.util.config]
@@ -13,21 +13,21 @@
             [clojure.tools.logging :as log]
             [terrain.clients.iplant-groups :as ipg]
             [terrain.clients.data-info :as di]
-            [terrain.clients.metadactyl :as dm]
+            [terrain.clients.apps :as dm]
             [terrain.clients.notifications :as dn]
             [terrain.services.fileio.actions :as io]))
 
-(defn- metadactyl-request
-  "Prepares a metadactyl request by extracting only the body of the client request and sets the
+(defn- apps-request
+  "Prepares a apps request by extracting only the body of the client request and sets the
    forwarded request's content-type to json."
   [req]
   (assoc (select-keys req [:body]) :content-type :json))
 
-(defn- metadactyl-url
-  "Adds the name and email of the currently authenticated user to the metadactyl URL with the given
+(defn- apps-url
+  "Adds the name and email of the currently authenticated user to the apps URL with the given
    relative URL path."
   [query & components]
-  (apply build-url-with-query (metadactyl-base)
+  (apply build-url-with-query (apps-base)
                               (secured-params query)
                               components))
 
@@ -75,30 +75,30 @@
   (success-response))
 
 (defn add-reference-genome
-  "Adds a reference genome via metadactyl."
+  "Adds a reference genome via apps."
   [req]
-  (let [url (metadactyl-url {} "admin" "reference-genomes")
-        req (metadactyl-request req)]
+  (let [url (apps-url {} "admin" "reference-genomes")
+        req (apps-request req)]
     (forward-post url req)))
 
 (defn replace-reference-genomes
   "Replaces the reference genomes in the database with a new set of reference genomes."
   [req]
-  (let [url (metadactyl-url {} "admin" "reference-genomes")
-        req (metadactyl-request req)]
+  (let [url (apps-url {} "admin" "reference-genomes")
+        req (apps-request req)]
     (forward-put url req)))
 
 (defn delete-reference-genomes
   "Logically deletes a reference genome in the database."
   [reference-genome-id]
-  (client/delete (metadactyl-url {} "admin" "reference-genomes" reference-genome-id)
+  (client/delete (apps-url {} "admin" "reference-genomes" reference-genome-id)
                  {:as :stream}))
 
 (defn update-reference-genome
-  "Updates a reference genome via metadactyl."
+  "Updates a reference genome via apps."
   [req reference-genome-id]
-  (let [url (metadactyl-url {} "admin" "reference-genomes" reference-genome-id)
-        req (metadactyl-request req)]
+  (let [url (apps-url {} "admin" "reference-genomes" reference-genome-id)
+        req (apps-request req)]
     (forward-patch url req)))
 
 (defn- postprocess-tool-request
@@ -115,8 +115,8 @@
 (defn submit-tool-request
   "Submits a tool request on behalf of the user found in the request params."
   [req]
-  (let [tool-request-url (metadactyl-url {} "tool-requests")
-        req (metadactyl-request req)]
+  (let [tool-request-url (apps-url {} "tool-requests")
+        req (apps-request req)]
     (postprocess-tool-request
       (forward-post tool-request-url req)
       (fn [tool-req user-details]
@@ -126,7 +126,7 @@
 (defn list-tool-requests
   "Lists the tool requests that were submitted by the authenticated user."
   []
-  (client/get (metadactyl-url {} "tool-requests")
+  (client/get (apps-url {} "tool-requests")
               {:as :stream}))
 
 (defn admin-list-tool-requests
@@ -142,8 +142,8 @@
 (defn update-tool-request
   "Updates a tool request with comments and possibly a new status."
   [req request-id]
-  (let [url (metadactyl-url {} "admin" "tool-requests" request-id "status")
-        req (metadactyl-request req)]
+  (let [url (apps-url {} "admin" "tool-requests" request-id "status")
+        req (apps-request req)]
     (postprocess-tool-request
       (forward-post url req)
       (fn [tool-req user-details]
@@ -152,7 +152,7 @@
 (defn get-tool-request
   "Lists details about a specific tool request."
   [request-id]
-  (client/get (metadactyl-url {} "admin" "tool-requests" request-id)
+  (client/get (apps-url {} "admin" "tool-requests" request-id)
               {:as :stream}))
 
 (defn provide-user-feedback

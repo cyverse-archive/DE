@@ -1,4 +1,4 @@
-(ns metadactyl.translations.app-metadata.util
+(ns apps.translations.app-metadata.util
   (:use [slingshot.slingshot :only [throw+]])
   (:require [clojure.set :as set]))
 

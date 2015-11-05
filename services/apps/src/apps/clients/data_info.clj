@@ -1,10 +1,10 @@
-(ns metadactyl.clients.data-info
+(ns apps.clients.data-info
   (:require [cemerick.url :as curl]
             [cheshire.core :as cheshire]
             [clj-http.client :as http]
             [clojure.string :as string]
-            [metadactyl.util.config :as config]
-            [metadactyl.util.service :as service]))
+            [apps.util.config :as config]
+            [apps.util.service :as service]))
 
 (defn- secured-params
   [user]

@@ -1,9 +1,9 @@
-(ns metadactyl.persistence.oauth
+(ns apps.persistence.oauth
   "Functions to use for storing and retrieving OAuth access tokens."
   (:use [korma.core :exclude [update]]
         [slingshot.slingshot :only [throw+]])
   (:require [korma.core :as sql]
-            [metadactyl.util.pgp :as pgp])
+            [apps.util.pgp :as pgp])
   (:import [java.sql Timestamp]
            [java.util UUID]))
 

@@ -16,7 +16,7 @@ iplant-groups
 jex
 jex-events
 kifshare
-metadactyl
+apps
 metadata
 monkey
 nginx-ssl

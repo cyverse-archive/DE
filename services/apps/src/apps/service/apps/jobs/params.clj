@@ -1,10 +1,10 @@
-(ns metadactyl.service.apps.jobs.params
-  (:use [metadactyl.util.conversions :only [remove-nil-vals]]
+(ns apps.service.apps.jobs.params
+  (:use [apps.util.conversions :only [remove-nil-vals]]
         [slingshot.slingshot :only [throw+]])
   (:require [cheshire.core :as cheshire]
             [clojure.string :as string]
-            [metadactyl.persistence.app-metadata :as ap]
-            [metadactyl.service.util :as util]))
+            [apps.persistence.app-metadata :as ap]
+            [apps.service.util :as util]))
 
 (defn- get-job-submission-config
   [job]

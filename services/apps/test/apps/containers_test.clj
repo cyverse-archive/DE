@@ -1,6 +1,6 @@
-(ns metadactyl.containers-test
+(ns apps.containers-test
   (:use [clojure.test]
-        [metadactyl.containers]
+        [apps.containers]
         [korma.core]
         [korma.db]
         [kameleon.entities])

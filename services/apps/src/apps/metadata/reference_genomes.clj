@@ -1,13 +1,13 @@
-(ns metadactyl.metadata.reference-genomes
+(ns apps.metadata.reference-genomes
   (:use [clojure.string :only [blank?]]
         [kameleon.core]
         [kameleon.entities]
         [kameleon.queries :only [get-user-id]]
         [korma.core :exclude [update]]
         [korma.db]
-        [metadactyl.user :only [current-user]]
-        [metadactyl.util.assertions :only [assert-not-nil]]
-        [metadactyl.util.conversions :only [date->timestamp]]
+        [apps.user :only [current-user]]
+        [apps.util.assertions :only [assert-not-nil]]
+        [apps.util.conversions :only [date->timestamp]]
         [slingshot.slingshot :only [throw+]])
   (:require [clojure.tools.logging :as log]
             [korma.core :as sql]))

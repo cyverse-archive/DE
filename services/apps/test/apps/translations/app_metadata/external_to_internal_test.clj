@@ -1,6 +1,6 @@
-(ns metadactyl.translations.app-metadata.external-to-internal-test
+(ns apps.translations.app-metadata.external-to-internal-test
   (:use [clojure.test]
-        [metadactyl.translations.app-metadata.external-to-internal]))
+        [apps.translations.app-metadata.external-to-internal]))
 
 (defn mark-default-arg
   [default n]

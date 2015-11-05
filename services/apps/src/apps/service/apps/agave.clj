@@ -1,21 +1,21 @@
-(ns metadactyl.service.apps.agave
+(ns apps.service.apps.agave
   (:use [kameleon.uuids :only [uuidify]])
   (:require [clojure.string :as string]
-            [metadactyl.persistence.jobs :as jp]
-            [metadactyl.service.apps.agave.listings :as listings]
-            [metadactyl.service.apps.agave.pipelines :as pipelines]
-            [metadactyl.service.apps.agave.jobs :as agave-jobs]
-            [metadactyl.service.apps.job-listings :as job-listings]
-            [metadactyl.service.apps.util :as apps-util]
-            [metadactyl.service.util :as util]
-            [metadactyl.util.service :as service]))
+            [apps.persistence.jobs :as jp]
+            [apps.service.apps.agave.listings :as listings]
+            [apps.service.apps.agave.pipelines :as pipelines]
+            [apps.service.apps.agave.jobs :as agave-jobs]
+            [apps.service.apps.job-listings :as job-listings]
+            [apps.service.apps.util :as apps-util]
+            [apps.service.util :as util]
+            [apps.util.service :as service]))
 
 (defn- reject-app-documentation-edit-request
   []
   (service/bad-request "Cannot edit documentation for HPC apps with this service"))
 
 (deftype AgaveApps [agave user-has-access-token? user]
-  metadactyl.protocols.Apps
+  apps.protocols.Apps
 
   (getUser [_]
     user)

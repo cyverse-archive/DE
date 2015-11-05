@@ -1,9 +1,9 @@
-(ns metadactyl.clients.jex-events
+(ns apps.clients.jex-events
   (:use [slingshot.slingshot :only [try+]])
   (:require [clj-http.client :as http]
             [clojure.tools.logging :as log]
             [cemerick.url :as curl]
-            [metadactyl.util.config :as config]))
+            [apps.util.config :as config]))
 
 (defn- jex-events-url
   [& components]

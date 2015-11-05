@@ -1,25 +1,25 @@
-(ns metadactyl.service.apps.de
+(ns apps.service.apps.de
   (:use [kameleon.uuids :only [uuidify]])
   (:require [clojure.string :as string]
-            [metadactyl.clients.jex :as jex]
-            [metadactyl.persistence.app-metadata :as ap]
-            [metadactyl.persistence.jobs :as jp]
-            [metadactyl.service.apps.de.admin :as app-admin]
-            [metadactyl.service.apps.de.categorization :as app-categorization]
-            [metadactyl.service.apps.de.docs :as docs]
-            [metadactyl.service.apps.de.edit :as edit]
-            [metadactyl.service.apps.de.jobs :as de-jobs]
-            [metadactyl.service.apps.de.job-view :as job-view]
-            [metadactyl.service.apps.de.listings :as listings]
-            [metadactyl.service.apps.de.metadata :as app-metadata]
-            [metadactyl.service.apps.de.pipeline-edit :as pipeline-edit]
-            [metadactyl.service.apps.de.validation :as app-validation]
-            [metadactyl.service.apps.job-listings :as job-listings]
-            [metadactyl.service.apps.util :as apps-util]
-            [metadactyl.service.util :as util]))
+            [apps.clients.jex :as jex]
+            [apps.persistence.app-metadata :as ap]
+            [apps.persistence.jobs :as jp]
+            [apps.service.apps.de.admin :as app-admin]
+            [apps.service.apps.de.categorization :as app-categorization]
+            [apps.service.apps.de.docs :as docs]
+            [apps.service.apps.de.edit :as edit]
+            [apps.service.apps.de.jobs :as de-jobs]
+            [apps.service.apps.de.job-view :as job-view]
+            [apps.service.apps.de.listings :as listings]
+            [apps.service.apps.de.metadata :as app-metadata]
+            [apps.service.apps.de.pipeline-edit :as pipeline-edit]
+            [apps.service.apps.de.validation :as app-validation]
+            [apps.service.apps.job-listings :as job-listings]
+            [apps.service.apps.util :as apps-util]
+            [apps.service.util :as util]))
 
 (deftype DeApps [user]
-  metadactyl.protocols.Apps
+  apps.protocols.Apps
 
   (getUser [_]
     user)

@@ -1,4 +1,4 @@
-(ns metadactyl.transformers
+(ns apps.transformers
   (:use [clojure.java.io :only [reader]])
   (:require [cheshire.core :as cheshire]))
 

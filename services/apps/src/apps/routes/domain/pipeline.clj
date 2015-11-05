@@ -1,7 +1,7 @@
-(ns metadactyl.routes.domain.pipeline
+(ns apps.routes.domain.pipeline
   (:use [common-swagger-api.schema :only [->optional-param describe]]
-        [metadactyl.routes.params]
-        [metadactyl.routes.domain.app :only [AppTaskListing]]
+        [apps.routes.params]
+        [apps.routes.domain.app :only [AppTaskListing]]
         [schema.core :only [defschema optional-key Keyword]])
   (:import [java.util UUID]))
 

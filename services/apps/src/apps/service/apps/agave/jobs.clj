@@ -1,5 +1,5 @@
-(ns metadactyl.service.apps.agave.jobs
-  (:use [metadactyl.util.conversions :only [remove-nil-vals]]
+(ns apps.service.apps.agave.jobs
+  (:use [apps.util.conversions :only [remove-nil-vals]]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [cemerick.url :as curl]
             [cheshire.core :as cheshire]
@@ -8,10 +8,10 @@
             [clojure-commons.file-utils :as ft]
             [kameleon.db :as db]
             [kameleon.uuids :as uuids]
-            [metadactyl.persistence.jobs :as jp]
-            [metadactyl.util.config :as config]
-            [metadactyl.util.json :as json-util]
-            [metadactyl.util.service :as service]
+            [apps.persistence.jobs :as jp]
+            [apps.util.config :as config]
+            [apps.util.json :as json-util]
+            [apps.util.service :as service]
             [schema.core :as s]))
 
 (defn- build-callback-url

@@ -1,13 +1,13 @@
-(ns metadactyl.persistence.app-metadata.relabel
+(ns apps.persistence.app-metadata.relabel
   "Persistence layer for app metadata."
   (:use [kameleon.entities]
         [kameleon.queries :only [get-tasks-for-app]]
         [korma.core :exclude [update]]
         [medley.core :only [remove-vals]]
-        [metadactyl.routes.domain.app :only [AppParameterListGroup]]
-        [metadactyl.util.conversions :only [long->timestamp
+        [apps.routes.domain.app :only [AppParameterListGroup]]
+        [apps.util.conversions :only [long->timestamp
                                             remove-nil-vals]]
-        [metadactyl.util.assertions]
+        [apps.util.assertions]
         [slingshot.slingshot :only [throw+]])
   (:require [korma.core :as sql]))
 

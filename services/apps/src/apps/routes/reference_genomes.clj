@@ -1,8 +1,8 @@
-(ns metadactyl.routes.reference-genomes
+(ns apps.routes.reference-genomes
   (:use [common-swagger-api.schema]
-        [metadactyl.metadata.reference-genomes :only [get-reference-genome list-reference-genomes]]
-        [metadactyl.routes.domain.reference-genome]
-        [metadactyl.routes.params]
+        [apps.metadata.reference-genomes :only [get-reference-genome list-reference-genomes]]
+        [apps.routes.domain.reference-genome]
+        [apps.routes.params]
         [ring.util.http-response :only [ok]]))
 
 (defroutes* reference-genomes

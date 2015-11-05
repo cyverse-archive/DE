@@ -1,15 +1,15 @@
-(ns metadactyl.service.apps.jobs
+(ns apps.service.apps.jobs
   (:use [korma.db :only [transaction]]
         [slingshot.slingshot :only [try+]])
   (:require [clojure.tools.logging :as log]
             [clojure.string :as string]
             [kameleon.db :as db]
-            [metadactyl.clients.notifications :as cn]
-            [metadactyl.persistence.jobs :as jp]
-            [metadactyl.service.apps.job-listings :as listings]
-            [metadactyl.service.apps.jobs.params :as job-params]
-            [metadactyl.service.apps.jobs.submissions :as submissions]
-            [metadactyl.util.service :as service]))
+            [apps.clients.notifications :as cn]
+            [apps.persistence.jobs :as jp]
+            [apps.service.apps.job-listings :as listings]
+            [apps.service.apps.jobs.params :as job-params]
+            [apps.service.apps.jobs.submissions :as submissions]
+            [apps.util.service :as service]))
 
 (defn supports-job-type
   [apps-client job-type]

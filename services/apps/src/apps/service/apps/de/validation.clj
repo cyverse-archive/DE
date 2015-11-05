@@ -1,10 +1,10 @@
-(ns metadactyl.service.apps.de.validation
+(ns apps.service.apps.de.validation
   (:use [slingshot.slingshot :only [try+ throw+]]
         [korma.core :exclude [update]]
         [kameleon.core]
         [kameleon.entities]
         [kameleon.queries :only [parameter-types-for-tool-type]]
-        [metadactyl.persistence.app-metadata :only [get-app]])
+        [apps.persistence.app-metadata :only [get-app]])
   (:require [clojure.string :as string]))
 
 (defn- get-tool-type-from-database

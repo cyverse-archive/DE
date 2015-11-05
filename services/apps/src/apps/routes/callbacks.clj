@@ -1,9 +1,9 @@
-(ns metadactyl.routes.callbacks
+(ns apps.routes.callbacks
   (:use [common-swagger-api.schema]
-        [metadactyl.routes.domain.callback]
-        [metadactyl.routes.params]
+        [apps.routes.domain.callback]
+        [apps.routes.params]
         [ring.util.http-response :only [ok]])
-  (:require [metadactyl.service.callbacks :as callbacks]))
+  (:require [apps.service.callbacks :as callbacks]))
 
 (defroutes* callbacks
   (POST* "/de-job" []

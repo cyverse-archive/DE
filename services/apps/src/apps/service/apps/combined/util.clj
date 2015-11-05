@@ -1,8 +1,8 @@
-(ns metadactyl.service.apps.combined.util
-  (:use [metadactyl.service.util :only [sort-apps apply-offset apply-limit uuid?]]
+(ns apps.service.apps.combined.util
+  (:use [apps.service.util :only [sort-apps apply-offset apply-limit uuid?]]
         [slingshot.slingshot :only [throw+]])
-  (:require [metadactyl.persistence.app-metadata :as ap]
-            [metadactyl.persistence.jobs :as jp]))
+  (:require [apps.persistence.app-metadata :as ap]
+            [apps.persistence.jobs :as jp]))
 
 (defn apply-default-search-params
   [params]

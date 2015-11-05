@@ -1,17 +1,17 @@
-(ns metadactyl.service.apps.combined
-  "This namespace contains an implementation of metadactyl.protocols.Apps that interacts with one
+(ns apps.service.apps.combined
+  "This namespace contains an implementation of apps.protocols.Apps that interacts with one
   or more other implementations. This implementation expects at most one the implementations that
   it interacts with to allow users to add new apps and edit existing ones. If this is not the case
   then the first app in the list that is capable of adding or editing apps wins."
-  (:use [metadactyl.util.assertions :only [assert-not-nil]])
-  (:require [metadactyl.persistence.jobs :as jp]
-            [metadactyl.service.apps.job-listings :as job-listings]
-            [metadactyl.service.apps.combined.job-view :as job-view]
-            [metadactyl.service.apps.combined.jobs :as combined-jobs]
-            [metadactyl.service.apps.combined.util :as util]))
+  (:use [apps.util.assertions :only [assert-not-nil]])
+  (:require [apps.persistence.jobs :as jp]
+            [apps.service.apps.job-listings :as job-listings]
+            [apps.service.apps.combined.job-view :as job-view]
+            [apps.service.apps.combined.jobs :as combined-jobs]
+            [apps.service.apps.combined.util :as util]))
 
 (deftype CombinedApps [clients user]
-  metadactyl.protocols.Apps
+  apps.protocols.Apps
 
   (getUser [_]
     user)

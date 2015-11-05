@@ -84,7 +84,7 @@ Apps, represent groups of one or more templates that can be run by a user from
 within the Discovery Environment. A template cannot be used directly by a user
 without being included in an app. And a single app may contain multple templates
 strung together into a pipeline. Note that the `/import-template` service in
-metadactyl automatically generates a single-step app containing that template.
+apps automatically generates a single-step app containing that template.
 This is done as a convenience because single-step apps are common.
 
 A fourth type of component, _notification sets_, was supported at one time, but

@@ -1,4 +1,4 @@
-(ns metadactyl.routes.domain.oauth
+(ns apps.routes.domain.oauth
   (:use [common-swagger-api.schema :only [describe]])
   (:require [schema.core :as s]))
 

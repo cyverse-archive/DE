@@ -1,9 +1,9 @@
-(ns metadactyl.user
-  (:use [metadactyl.util.config :only [uid-domain]]
+(ns apps.user
+  (:use [apps.util.config :only [uid-domain]]
         [slingshot.slingshot :only [throw+]])
   (:require [clojure.string :as string]
             [clojure.tools.logging :as log]
-            [metadactyl.clients.iplant-groups :as ipg]))
+            [apps.clients.iplant-groups :as ipg]))
 
 (def
   ^{:doc "The authenticated user or nil if the service is unsecured."

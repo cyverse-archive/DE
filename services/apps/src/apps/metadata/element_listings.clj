@@ -1,10 +1,10 @@
-(ns metadactyl.metadata.element-listings
+(ns apps.metadata.element-listings
   (:use [kameleon.core]
         [kameleon.entities]
         [kameleon.queries]
         [korma.core :exclude [update]]
-        [metadactyl.tools :only [tool-listing-base-query]]
-        [metadactyl.util.conversions :only [remove-nil-vals]]
+        [apps.tools :only [tool-listing-base-query]]
+        [apps.util.conversions :only [remove-nil-vals]]
         [slingshot.slingshot :only [throw+]]))
 
 (defn- base-parameter-type-query

@@ -1,11 +1,11 @@
-(ns metadactyl.routes.apps.elements
+(ns apps.routes.apps.elements
   (:use [common-swagger-api.schema]
-        [metadactyl.metadata.element-listings :only [list-elements]]
-        [metadactyl.routes.domain.app.element]
-        [metadactyl.routes.domain.tool :only [ToolListing]]
-        [metadactyl.routes.params]
+        [apps.metadata.element-listings :only [list-elements]]
+        [apps.routes.domain.app.element]
+        [apps.routes.domain.tool :only [ToolListing]]
+        [apps.routes.params]
         [ring.util.http-response :only [ok]])
-  (:require [metadactyl.util.service :as service]
+  (:require [apps.util.service :as service]
             [compojure.route :as route]))
 
 (defroutes* app-elements

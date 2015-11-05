@@ -7,13 +7,13 @@
       (string/trim (:out (sh "git" "rev-parse" "HEAD")))
       ""))
 
-(defproject org.iplantc/metadactyl "5.0.0"
+(defproject org.iplantc/apps "5.0.0"
   :description "Framework for hosting DiscoveryEnvironment metadata services."
   :url "http://www.iplantcollaborative.org"
   :license {:name "BSD"
             :url "http://iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :manifest {"Git-Ref" ~(git-ref)}
-  :uberjar-name "metadactyl-standalone.jar"
+  :uberjar-name "apps-standalone.jar"
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [com.cemerick/url "0.1.1"]
                  [com.google.guava/guava "18.0"]
@@ -35,10 +35,10 @@
   ;; compojure-api route macros should not be AOT compiled:
   ;; https://github.com/metosin/compojure-api/issues/135#issuecomment-121388539
   ;; https://github.com/metosin/compojure-api/issues/102
-  :aot [#"metadactyl.(?!routes).*"]
-  :main metadactyl.core
-  :ring {:handler metadactyl.routes.api/app
-         :init metadactyl.core/load-config-from-file
+  :aot [#"apps.(?!routes).*"]
+  :main apps.core
+  :ring {:handler apps.routes.api/app
+         :init apps.core/load-config-from-file
          :port 31323}
   :uberjar-exclusions [#"(?i)META-INF/[^/]*[.](SF|DSA|RSA)"]
-  :jvm-opts ["-Dlogback.configurationFile=/etc/iplant/de/logging/metadactyl-logging.xml"])
+  :jvm-opts ["-Dlogback.configurationFile=/etc/iplant/de/logging/apps-logging.xml"])

@@ -1,4 +1,4 @@
-(ns metadactyl.containers
+(ns apps.containers
   (:use [kameleon.core]
         [kameleon.entities :only [tools
                                   container-images
@@ -10,12 +10,12 @@
         [kameleon.uuids :only [uuidify]]
         [korma.core :exclude [update]]
         [korma.db :only [transaction]]
-        [metadactyl.persistence.app-metadata :only [get-public-tools-by-image-id
+        [apps.persistence.app-metadata :only [get-public-tools-by-image-id
                                                     get-tools-by-image-id
                                                     update-tool]]
-        [metadactyl.util.assertions :only [assert-not-nil]]
-        [metadactyl.util.conversions :only [remove-nil-vals remove-empty-vals]]
-        [metadactyl.validation :only [validate-image-not-public validate-image-not-used]])
+        [apps.util.assertions :only [assert-not-nil]]
+        [apps.util.conversions :only [remove-nil-vals remove-empty-vals]]
+        [apps.validation :only [validate-image-not-public validate-image-not-used]])
   (:require [clojure.tools.logging :as log]
             [korma.core :as sql]))
 

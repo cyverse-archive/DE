@@ -1,10 +1,10 @@
-(ns metadactyl.routes.workspaces
+(ns apps.routes.workspaces
   (:use [common-swagger-api.schema]
-        [metadactyl.routes.domain.workspace]
-        [metadactyl.routes.params]
-        [metadactyl.user :only [current-user]]
+        [apps.routes.domain.workspace]
+        [apps.routes.params]
+        [apps.user :only [current-user]]
         [ring.util.http-response :only [ok]])
-  (:require [metadactyl.service.workspace :as workspace]))
+  (:require [apps.service.workspace :as workspace]))
 
 (defroutes* workspaces
   (GET* "/" []

@@ -1,7 +1,7 @@
-(ns metadactyl.routes.domain.analysis
+(ns apps.routes.domain.analysis
   (:use [common-swagger-api.schema :only [describe]]
         [schema.core :only [defschema optional-key Any Bool]]
-        [metadactyl.schema.containers :only [ToolContainer]])
+        [apps.schema.containers :only [ToolContainer]])
   (:import [java.util UUID]))
 
 (defschema ParameterValue

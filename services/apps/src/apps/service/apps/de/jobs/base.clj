@@ -1,11 +1,11 @@
-(ns metadactyl.service.apps.de.jobs.base
-  (:require [metadactyl.metadata.params :as mp]
-            [metadactyl.persistence.app-metadata :as ap]
-            [metadactyl.service.apps.de.jobs.common :as ca]
-            [metadactyl.service.apps.de.jobs.condor]
-            [metadactyl.service.apps.de.jobs.fapi]
-            [metadactyl.service.apps.de.jobs.protocol]
-            [metadactyl.service.apps.de.jobs.util :as util]))
+(ns apps.service.apps.de.jobs.base
+  (:require [apps.metadata.params :as mp]
+            [apps.persistence.app-metadata :as ap]
+            [apps.service.apps.de.jobs.common :as ca]
+            [apps.service.apps.de.jobs.condor]
+            [apps.service.apps.de.jobs.fapi]
+            [apps.service.apps.de.jobs.protocol]
+            [apps.service.apps.de.jobs.util :as util]))
 
 (defn- build-job-request-formatter
   [user submission]
@@ -17,9 +17,9 @@
         defaults (ca/build-default-values-map params)
         params   (group-by :step_id params)]
     (if (util/fapi-app? app)
-      (metadactyl.service.apps.de.jobs.fapi.JobRequestFormatter.
+      (apps.service.apps.de.jobs.fapi.JobRequestFormatter.
        user email submission app io-maps defaults params)
-      (metadactyl.service.apps.de.jobs.condor.JobRequestFormatter.
+      (apps.service.apps.de.jobs.condor.JobRequestFormatter.
        user email submission app io-maps defaults params))))
 
 (defn build-submission

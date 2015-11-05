@@ -1,6 +1,6 @@
-(ns metadactyl.translations.app-metadata.external-to-preview-test
+(ns apps.translations.app-metadata.external-to-preview-test
   (:use [clojure.test]
-        [metadactyl.translations.app-metadata.external-to-preview]))
+        [apps.translations.app-metadata.external-to-preview]))
 
 (deftest no-parameter-groups
   (is (= {:params []}

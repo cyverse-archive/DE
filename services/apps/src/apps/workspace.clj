@@ -1,7 +1,7 @@
-(ns metadactyl.workspace
+(ns apps.workspace
   (:use [kameleon.queries]
         [korma.core :exclude [update]]
-        [metadactyl.user :only [current-user]]
+        [apps.user :only [current-user]]
         [slingshot.slingshot :only [throw+]]))
 
 (defn get-workspace

@@ -1,4 +1,4 @@
-(ns metadactyl.routes.domain.collaborator
+(ns apps.routes.domain.collaborator
   (:use [common-swagger-api.schema :only [describe]]
         [schema.core :only [defschema optional-key]]))
 

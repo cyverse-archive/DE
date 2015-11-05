@@ -1,5 +1,5 @@
-(ns metadactyl.util.assertions
-  "Assertions for metadactyl services."
+(ns apps.util.assertions
+  "Assertions for apps services."
   (:use [slingshot.slingshot :only [throw+]]))
 
 (defmacro assert-not-nil

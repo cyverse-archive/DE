@@ -1,4 +1,4 @@
-(ns metadactyl.service.apps.de.listings
+(ns apps.service.apps.de.listings
   (:use [slingshot.slingshot :only [try+ throw+]]
         [korma.core :exclude [update]]
         [kameleon.core]
@@ -6,13 +6,13 @@
         [kameleon.app-groups]
         [kameleon.app-listing]
         [kameleon.uuids :only [uuidify]]
-        [metadactyl.persistence.app-documentation :only [get-documentation]]
-        [metadactyl.persistence.app-metadata :only [get-app get-app-tools]]
-        [metadactyl.tools :only [get-tools-by-id]]
-        [metadactyl.util.assertions :only [assert-not-nil]]
-        [metadactyl.util.config]
-        [metadactyl.util.conversions :only [to-long remove-nil-vals]]
-        [metadactyl.workspace])
+        [apps.persistence.app-documentation :only [get-documentation]]
+        [apps.persistence.app-metadata :only [get-app get-app-tools]]
+        [apps.tools :only [get-tools-by-id]]
+        [apps.util.assertions :only [assert-not-nil]]
+        [apps.util.config]
+        [apps.util.conversions :only [to-long remove-nil-vals]]
+        [apps.workspace])
   (:require [cemerick.url :as curl]))
 
 (def my-public-apps-id (uuidify "00000000-0000-0000-0000-000000000000"))

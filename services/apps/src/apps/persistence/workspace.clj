@@ -1,9 +1,9 @@
-(ns metadactyl.persistence.workspace
+(ns apps.persistence.workspace
   (:use [korma.core :exclude [update]]
         [korma.db :only [transaction]])
   (:require [kameleon.app-groups :as app-groups]
             [kameleon.queries :as queries]
-            [metadactyl.util.config :as config]))
+            [apps.util.config :as config]))
 
 (defn get-workspace
   [username]

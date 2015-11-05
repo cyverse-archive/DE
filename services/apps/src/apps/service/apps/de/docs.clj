@@ -1,8 +1,8 @@
-(ns metadactyl.service.apps.de.docs
+(ns apps.service.apps.de.docs
   (:use [slingshot.slingshot :only [throw+]])
-  (:require [metadactyl.persistence.app-documentation :as dp]
-            [metadactyl.persistence.app-metadata :as ap]
-            [metadactyl.validation :as v]))
+  (:require [apps.persistence.app-documentation :as dp]
+            [apps.persistence.app-metadata :as ap]
+            [apps.validation :as v]))
 
 (defn- get-references
   "Returns a list of references from the database for the given app ID."

@@ -1,12 +1,12 @@
-(ns metadactyl.service.apps.de.jobs.condor
+(ns apps.service.apps.de.jobs.condor
   (:require [clojure.string :as string]
             [me.raynes.fs :as fs]
-            [metadactyl.service.apps.de.jobs.common :as ca]
-            [metadactyl.service.apps.de.jobs.params :as params]
-            [metadactyl.service.apps.de.jobs.protocol]))
+            [apps.service.apps.de.jobs.common :as ca]
+            [apps.service.apps.de.jobs.params :as params]
+            [apps.service.apps.de.jobs.protocol]))
 
 (deftype JobRequestFormatter [user email submission app io-maps defaults params]
-  metadactyl.service.apps.de.jobs.protocol.JobRequestFormatter
+  apps.service.apps.de.jobs.protocol.JobRequestFormatter
 
   (buildTreeSelectionArgs [_ param param-value]
     (params/tree-selection-args param param-value))

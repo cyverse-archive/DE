@@ -1,15 +1,15 @@
-(ns metadactyl.metadata.tool-requests
+(ns apps.metadata.tool-requests
   (:use [clojure.java.io :only [reader]]
         [kameleon.entities]
         [korma.core :exclude [update]]
         [korma.db]
-        [metadactyl.user :only [load-user]]
-        [metadactyl.util.conversions :only [remove-nil-vals]]
+        [apps.user :only [load-user]]
+        [apps.util.conversions :only [remove-nil-vals]]
         [slingshot.slingshot :only [throw+]])
   (:require [clojure.string :as string]
             [kameleon.queries :as queries]
-            [metadactyl.clients.notifications :as cn]
-            [metadactyl.util.params :as params])
+            [apps.clients.notifications :as cn]
+            [apps.util.params :as params])
   (:import [java.util UUID]))
 
 ;; Status codes.

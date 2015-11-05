@@ -1,9 +1,9 @@
-(ns metadactyl.service.apps.de.categorization
+(ns apps.service.apps.de.categorization
   (:use [korma.core :exclude [update]]
         [korma.db :only [transaction]]
         [kameleon.app-groups]
         [kameleon.entities]
-        [metadactyl.validation]
+        [apps.validation]
         [slingshot.slingshot :only [throw+]]))
 
 (defn- categorize-app

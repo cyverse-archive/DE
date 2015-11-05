@@ -19,38 +19,12 @@ public interface ToolRequestServiceFacade {
     
     String ADMIN_TOOL_REQUESTS = "org.iplantc.services.admin.toolRequests";
 
-    /**
-     * <a href=
-     * "https://github.com/iPlantCollaborativeOpenSource/Terrain/blob/master/doc/endpoints/app-metadata.md#listing-tool-installation-request-details"
-     * >Terrain Doc</a><br/>
-     * <a href=
-     * "https://github.com/iPlantCollaborativeOpenSource/metadactyl-clj/blob/master/doc/endpoints/app-metadata/tool-requests.md#obtaining-tool-request-details"
-     * >Metadactyl-clj Doc</a>
-     */
     void getToolRequestDetails(HasId toolRequest, AsyncCallback<ToolRequestDetails> callback);
 
-    /**
-     * <a href=
-     * "https://github.com/iPlantCollaborativeOpenSource/Terrain/blob/master/doc/endpoints/app-metadata.md#updating-a-tool-installation-request-administrator"
-     * >Terrain Doc</a><br/>
-     * <a href=
-     * "https://github.com/iPlantCollaborativeOpenSource/metadactyl-clj/blob/master/doc/endpoints/app-metadata/tool-requests.md#updating-the-status-of-a-tool-request"
-     * >Metadactyl-clj Doc</a>
-     */
     void updateToolRequest(String id,
                            ToolRequestUpdate trUpdate,
                            AsyncCallback<ToolRequestDetails> callback);
 
-    /**
-     * <a href=
-     * "https://github.com/iPlantCollaborativeOpenSource/Terrain/blob/master/doc/endpoints/app-metadata.md#listing-tool-installation-requests"
-     * >Terrain
-     * Doc</a>
-     * <a href=
-     * "https://github.com/iPlantCollaborativeOpenSource/metadactyl-clj/blob/master/doc/endpoints/app-metadata/tool-requests.md#listing-tool-requests"
-     * >Metadactyl-clj
-     * Doc</a>
-     */
     void getToolRequests(SortInfo sortInfo, String userName, AsyncCallback<List<ToolRequest>> callback);
 
 }

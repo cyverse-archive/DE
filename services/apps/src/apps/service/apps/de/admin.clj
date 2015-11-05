@@ -1,13 +1,13 @@
-(ns metadactyl.service.apps.de.admin
+(ns apps.service.apps.de.admin
   (:use [kameleon.uuids :only [uuidify]]
         [korma.db :only [transaction]]
-        [metadactyl.persistence.app-metadata.relabel :only [update-app-labels]]
-        [metadactyl.util.assertions :only [assert-not-nil]]
-        [metadactyl.util.config :only [workspace-public-id]]
+        [apps.persistence.app-metadata.relabel :only [update-app-labels]]
+        [apps.util.assertions :only [assert-not-nil]]
+        [apps.util.config :only [workspace-public-id]]
         [slingshot.slingshot :only [throw+]])
   (:require [clojure.tools.logging :as log]
             [kameleon.app-groups :as app-groups]
-            [metadactyl.persistence.app-metadata :as persistence]))
+            [apps.persistence.app-metadata :as persistence]))
 
 (def ^:private max-app-category-name-len 255)
 

@@ -1,6 +1,6 @@
-(ns metadactyl.util.params
+(ns apps.util.params
   (:use [clojure.string :only [lower-case]]
-        [metadactyl.util.conversions]
+        [apps.util.conversions]
         [slingshot.slingshot :only [throw+]]))
 
 (defn- blank?

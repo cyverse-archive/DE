@@ -1,9 +1,9 @@
-(ns metadactyl.service.apps.agave.listings
-  (:use [metadactyl.service.util :only [sort-apps apply-offset apply-limit uuid?]]
+(ns apps.service.apps.agave.listings
+  (:use [apps.service.util :only [sort-apps apply-offset apply-limit uuid?]]
         [slingshot.slingshot :only [try+]])
   (:require [clojure.tools.logging :as log]
             [clojure-commons.error-codes :as ce]
-            [metadactyl.persistence.app-metadata :as ap]))
+            [apps.persistence.app-metadata :as ap]))
 
 (defn list-apps
   [agave category-id params]

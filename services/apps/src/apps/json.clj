@@ -1,4 +1,4 @@
-(ns metadactyl.json
+(ns apps.json
   (:use [slingshot.slingshot :only [throw+ try+]])
   (:require [cheshire.core :as cheshire]))
 

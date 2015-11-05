@@ -1,5 +1,5 @@
-(ns metadactyl.translations.app-metadata.external-to-preview
-  (:use [metadactyl.translations.app-metadata.util])
+(ns apps.translations.app-metadata.external-to-preview
+  (:use [apps.translations.app-metadata.util])
   (:require [clojure.string :as string]
             [me.raynes.fs :as fs]))
 

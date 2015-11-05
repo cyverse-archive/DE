@@ -1,11 +1,11 @@
-(ns metadactyl.routes.apps.pipelines
+(ns apps.routes.apps.pipelines
   (:use [common-swagger-api.schema]
-        [metadactyl.routes.domain.pipeline]
-        [metadactyl.routes.params]
-        [metadactyl.util.coercions :only [coerce!]]
+        [apps.routes.domain.pipeline]
+        [apps.routes.params]
+        [apps.util.coercions :only [coerce!]]
         [ring.util.http-response :only [ok]]
-        [metadactyl.user :only [current-user]])
-  (:require [metadactyl.service.apps :as apps]))
+        [apps.user :only [current-user]])
+  (:require [apps.service.apps :as apps]))
 
 (defroutes* pipelines
   (POST* "/" []

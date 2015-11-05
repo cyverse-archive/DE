@@ -1,9 +1,9 @@
-(ns metadactyl.routes.oauth
+(ns apps.routes.oauth
   (:use [common-swagger-api.schema]
-        [metadactyl.routes.domain.oauth]
-        [metadactyl.routes.params]
+        [apps.routes.domain.oauth]
+        [apps.routes.params]
         [ring.util.http-response :only [ok]])
-  (require [metadactyl.service.oauth :as oauth]))
+  (require [apps.service.oauth :as oauth]))
 
 (defroutes* oauth
   (GET* "/access-code/:api-name" []

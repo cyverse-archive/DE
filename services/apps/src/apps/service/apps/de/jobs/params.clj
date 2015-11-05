@@ -1,10 +1,10 @@
-(ns metadactyl.service.apps.de.jobs.params
+(ns apps.service.apps.de.jobs.params
   (:use [kameleon.uuids :only [uuidify]]
         [slingshot.slingshot :only [throw+]])
   (:require [clojure.string :as string]
             [me.raynes.fs :as fs]
-            [metadactyl.service.apps.de.jobs.util :as util]
-            [metadactyl.util.config :as config]))
+            [apps.service.apps.de.jobs.util :as util]
+            [apps.util.config :as config]))
 
 (def ^:private irods-home-pattern
   (memoize #(re-pattern (str "\\A\\Q" (string/replace (config/irods-home) #"/+\z" "")))))
@@ -191,7 +191,7 @@
 
 (def reference-genome-args
   ;; FIXME: this is functionally a reimplementation of the code that resolves reference
-  ;; genomes in the old metadactyl code, which is probably broken. When time permits,
+  ;; genomes in the old apps code, which is probably broken. When time permits,
   ;; look for uses of the 'ReferenceGenome' property type to see if and how it's being
   ;; used and whether or not this implementation of the command-line formatting code will
   ;; work.

@@ -1,7 +1,7 @@
-(ns metadactyl.clients.iplant-groups
+(ns apps.clients.iplant-groups
   (:require [cemerick.url :as curl]
             [clj-http.client :as http]
-            [metadactyl.util.config :as config]))
+            [apps.util.config :as config]))
 
 (defn- lookup-subject-url
   [short-username]

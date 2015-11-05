@@ -1,6 +1,6 @@
-(ns metadactyl.service.workspace
+(ns apps.service.workspace
   (:use [korma.db :only [transaction]])
-  (:require [metadactyl.persistence.workspace :as wp]))
+  (:require [apps.persistence.workspace :as wp]))
 
 (defn get-workspace
   [{:keys [username]}]

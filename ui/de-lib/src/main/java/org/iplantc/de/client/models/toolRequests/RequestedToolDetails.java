@@ -6,9 +6,6 @@ import java.util.List;
 
 /**
  * The details of a tool request once it has been submitted.
- * 
- * @link https://github.com/iPlantCollaborativeOpenSource/metadactyl-clj/blob/master/doc/endpoints/app-
- *       metadata/tool-requests.md#obtaining-tool-request-details
  */
 public interface RequestedToolDetails {
 

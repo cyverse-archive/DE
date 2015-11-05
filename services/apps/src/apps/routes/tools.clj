@@ -1,13 +1,13 @@
-(ns metadactyl.routes.tools
+(ns apps.routes.tools
   (:use [common-swagger-api.schema]
-        [metadactyl.metadata.tool-requests]
-        [metadactyl.containers]
-        [metadactyl.schema.containers]
-        [metadactyl.routes.domain.tool]
-        [metadactyl.routes.params]
-        [metadactyl.tools :only [add-tools get-tool search-tools update-tool]]
-        [metadactyl.user :only [current-user]]
-        [metadactyl.util.service]
+        [apps.metadata.tool-requests]
+        [apps.containers]
+        [apps.schema.containers]
+        [apps.routes.domain.tool]
+        [apps.routes.params]
+        [apps.tools :only [add-tools get-tool search-tools update-tool]]
+        [apps.user :only [current-user]]
+        [apps.util.service]
         [slingshot.slingshot :only [throw+]]
         [ring.util.http-response :only [ok]]))
 

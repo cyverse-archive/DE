@@ -1,12 +1,12 @@
-(ns metadactyl.routes.apps.categories
+(ns apps.routes.apps.categories
   (:use [common-swagger-api.schema]
-        [metadactyl.routes.domain.app.category]
-        [metadactyl.routes.params]
-        [metadactyl.user :only [current-user]]
-        [metadactyl.util.coercions :only [coerce!]]
+        [apps.routes.domain.app.category]
+        [apps.routes.params]
+        [apps.user :only [current-user]]
+        [apps.util.coercions :only [coerce!]]
         [ring.util.http-response :only [ok]])
-  (:require [metadactyl.service.apps :as apps]
-            [metadactyl.util.service :as service]
+  (:require [apps.service.apps :as apps]
+            [apps.util.service :as service]
             [compojure.route :as route]))
 
 (defroutes* app-categories

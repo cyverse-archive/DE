@@ -1,4 +1,4 @@
-(ns metadactyl.service.apps
+(ns apps.service.apps
   (:use [kameleon.uuids :only [uuidify]]
         [korma.db :only [transaction]]
         [slingshot.slingshot :only [try+ throw+]]
@@ -6,17 +6,17 @@
   (:require [cemerick.url :as curl]
             [clojure.tools.logging :as log]
             [mescal.de :as agave]
-            [metadactyl.clients.notifications :as cn]
-            [metadactyl.persistence.jobs :as jp]
-            [metadactyl.persistence.oauth :as op]
-            [metadactyl.protocols]
-            [metadactyl.service.apps.agave]
-            [metadactyl.service.apps.combined]
-            [metadactyl.service.apps.de]
-            [metadactyl.service.apps.jobs :as jobs]
-            [metadactyl.user :as user]
-            [metadactyl.util.config :as config]
-            [metadactyl.util.json :as json-util]
+            [apps.clients.notifications :as cn]
+            [apps.persistence.jobs :as jp]
+            [apps.persistence.oauth :as op]
+            [apps.protocols]
+            [apps.service.apps.agave]
+            [apps.service.apps.combined]
+            [apps.service.apps.de]
+            [apps.service.apps.jobs :as jobs]
+            [apps.user :as user]
+            [apps.util.config :as config]
+            [apps.util.json :as json-util]
             [service-logging.thread-context :as tc]))
 
 (defn- authorization-uri
@@ -57,14 +57,14 @@
 
 (defn- get-agave-apps-client
   [state-info {:keys [username] :as user}]
-  (metadactyl.service.apps.agave.AgaveApps.
+  (apps.service.apps.agave.AgaveApps.
    (get-agave-client state-info username)
    (partial has-access-token (config/agave-oauth-settings) username)
    user))
 
 (defn- get-apps-client-list
   [user state-info]
-  (vector (metadactyl.service.apps.de.DeApps. user)
+  (vector (apps.service.apps.de.DeApps. user)
           (when (and user (config/agave-enabled))
             (get-agave-apps-client state-info user))))
 
@@ -72,7 +72,7 @@
   ([user]
      (get-apps-client user ""))
   ([user state-info]
-     (metadactyl.service.apps.combined.CombinedApps.
+     (apps.service.apps.combined.CombinedApps.
       (remove nil? (get-apps-client-list user state-info))
       user)))
 

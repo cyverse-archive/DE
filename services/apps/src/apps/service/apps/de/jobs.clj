@@ -1,21 +1,21 @@
-(ns metadactyl.service.apps.de.jobs
+(ns apps.service.apps.de.jobs
   (:use [clojure-commons.file-utils :only [build-result-folder-path]]
         [kameleon.jobs :only [get-job-type-id save-job save-job-step]]
         [kameleon.queries :only [get-user-id]]
         [korma.core :only [sqlfn]]
         [korma.db :only [transaction]]
         [medley.core :only [dissoc-in]]
-        [metadactyl.util.conversions :only [remove-nil-vals]]
+        [apps.util.conversions :only [remove-nil-vals]]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [cheshire.core :as cheshire]
             [clojure.tools.logging :as log]
             [kameleon.db :as db]
-            [metadactyl.clients.jex :as jex]
-            [metadactyl.clients.jex-events :as jex-events]
-            [metadactyl.persistence.app-metadata :as ap]
-            [metadactyl.persistence.jobs :as jp]
-            [metadactyl.service.apps.de.jobs.base :as jb]
-            [metadactyl.util.json :as json-util]))
+            [apps.clients.jex :as jex]
+            [apps.clients.jex-events :as jex-events]
+            [apps.persistence.app-metadata :as ap]
+            [apps.persistence.jobs :as jp]
+            [apps.service.apps.de.jobs.base :as jb]
+            [apps.util.json :as json-util]))
 
 (defn- secured-params
   [user]

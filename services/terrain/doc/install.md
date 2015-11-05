@@ -24,9 +24,9 @@ terrain.email.base-url          = http://localhost:65003
 terrain.email.tool-request-dest = somebody@iplantcollaborative.org
 terrain.email.tool-request-src  = nobody@iplantcollaborative.org
 
-# Metadactyl connection settings
-terrain.metadactyl.base-url             = http://localhost:65007/secured
-terrain.metadactyl.unprotected-base-url = http://localhost:65007
+# Apps connection settings
+terrain.apps.base-url             = http://localhost:65007/secured
+terrain.apps.unprotected-base-url = http://localhost:65007
 
 # Notification agent connection settings.
 terrain.notificationagent.base-url = http://localhost:65011

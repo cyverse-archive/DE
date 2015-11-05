@@ -1,6 +1,6 @@
-(ns terrain.clients.metadactyl
+(ns terrain.clients.apps
   (:require [cheshire.core :as cheshire]
-            [terrain.clients.metadactyl.raw :as raw]
+            [terrain.clients.apps.raw :as raw]
             [terrain.util.service :as service]))
 
 (defn get-app

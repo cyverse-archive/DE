@@ -1,4 +1,4 @@
-(ns metadactyl.persistence.users
+(ns apps.persistence.users
   (:use [kameleon.uuids :only [uuidify]]
         [korma.core :exclude [update]]))
 

@@ -1,12 +1,12 @@
-(ns metadactyl.core
+(ns apps.core
   (:gen-class)
   (:use [clojure.java.io :only [file]]
-        [metadactyl.kormadb])
+        [apps.kormadb])
   (:require [clojure.tools.logging :as log]
             [common-cli.core :as ccli]
             [me.raynes.fs :as fs]
-            [metadactyl.tasks :as tasks]
-            [metadactyl.util.config :as config]
+            [apps.tasks :as tasks]
+            [apps.util.config :as config]
             [ring.adapter.jetty :as jetty]
             [service-logging.thread-context :as tc]))
 
@@ -40,7 +40,7 @@
 
 (defn- find-config-file
   []
-  (let [conf-file "metadactyl.properties"]
+  (let [conf-file "apps.properties"]
     (or (iplant-conf-dir-file conf-file)
         (cwd-file conf-file)
         (classpath-file conf-file)
@@ -57,15 +57,15 @@
 (defn cli-options
   []
   [["-c" "--config PATH" "Path to the config file"
-    :default "/etc/iplant/de/metadactyl.properties"]
+    :default "/etc/iplant/de/apps.properties"]
    ["-v" "--version" "Print out the version number."]
    ["-h" "--help"]])
 
 (defn -main
   [& args]
   (tc/with-logging-context config/svc-info
-    (require 'metadactyl.routes.api)
-    (let [app (eval 'metadactyl.routes.api/app)
+    (require 'apps.routes.api)
+    (let [app (eval 'apps.routes.api/app)
           {:keys [options arguments errors summary]} (ccli/handle-args config/svc-info args cli-options)]
       (when-not (fs/exists? (:config options))
         (ccli/exit 1 (str "The config file does not exist.")))

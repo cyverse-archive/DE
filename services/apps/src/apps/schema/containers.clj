@@ -1,6 +1,6 @@
-(ns metadactyl.schema.containers
+(ns apps.schema.containers
   (:use [common-swagger-api.schema :only [->optional-param describe]]
-        [metadactyl.routes.params :only [ToolIdParam SecuredQueryParams]])
+        [apps.routes.params :only [ToolIdParam SecuredQueryParams]])
   (:require [schema.core :as s]))
 
 (s/defschema Image

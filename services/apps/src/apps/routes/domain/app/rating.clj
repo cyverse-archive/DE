@@ -1,4 +1,4 @@
-(ns metadactyl.routes.domain.app.rating
+(ns apps.routes.domain.app.rating
   (:use [common-swagger-api.schema :only [describe]]
         [schema.core :only [defschema optional-key]]))
 

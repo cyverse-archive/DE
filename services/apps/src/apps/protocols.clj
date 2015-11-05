@@ -1,4 +1,4 @@
-(ns metadactyl.protocols)
+(ns apps.protocols)
 
 (defprotocol Apps
   "A protocol used to provide an abstraction layer for dealing with app metadata."

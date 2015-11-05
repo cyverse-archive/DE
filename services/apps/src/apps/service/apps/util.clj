@@ -1,4 +1,4 @@
-(ns metadactyl.service.apps.util)
+(ns apps.service.apps.util)
 
 (defn supports-job-type?
   [apps-client job-type]

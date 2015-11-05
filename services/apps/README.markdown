@@ -1,6 +1,6 @@
-# metadactyl-clj
+# apps
 
-metadactyl-clj is a platform for hosting App Services for the Discovery Environment web application.
+apps is a platform for hosting App Services for the Discovery Environment web application.
 
 Once running, endpoint documentation may be viewed by navigating a web browser to the server and
 port this service is configured to run on. For example, if the service were configured as described
@@ -25,7 +25,7 @@ You'll need to have Docker installed for this stuff to work.
 
 The test.sh script uses the discoenv/de-db and discoenv/de-db-loader images to
 get a PostgreSQL container running locally (listening on local port 5432) and
-then runs the Metadactyl's unit tests from within a Clojure container created
+then runs the Apps service's unit tests from within a Clojure container created
 with the official Docker image.
 
 test.sh will kill and remove any containers named 'de-db' when it first starts
@@ -43,8 +43,8 @@ The psql.sh script will use the official PostgreSQL Docker image to create a
 container that links to the de-db container and fires up psql. The password
 is 'notprod' (without the quotes).
 
-The file test.properties is a config file for Metadactyl that is set up to
-assume that everything will be running  locally. To get Metadactyl up and
+The file test.properties is a config file for Apps that is set up to
+assume that everything will be running  locally. To get Apps up and
 running with de-db as the database, fire off test.sh and then run the following:
 
     lein run -- --config test.properties

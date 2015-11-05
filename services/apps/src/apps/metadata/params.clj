@@ -1,11 +1,11 @@
-(ns metadactyl.metadata.params
+(ns apps.metadata.params
   (:use [kameleon.core]
         [kameleon.entities]
         [kameleon.uuids :only [uuidify]]
         [korma.core :exclude [update]]
-        [metadactyl.metadata.reference-genomes :only [get-reference-genomes-by-id]])
-  (:require [metadactyl.persistence.app-metadata :as persistence]
-            [metadactyl.util.conversions :as conv]))
+        [apps.metadata.reference-genomes :only [get-reference-genomes-by-id]])
+  (:require [apps.persistence.app-metadata :as persistence]
+            [apps.util.conversions :as conv]))
 
 (defn- reference-param?
   [param-type]

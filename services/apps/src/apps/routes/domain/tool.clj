@@ -1,8 +1,8 @@
-(ns metadactyl.routes.domain.tool
+(ns apps.routes.domain.tool
   (:use [common-swagger-api.schema :only [->optional-param describe]]
-        [metadactyl.routes.params]
+        [apps.routes.params]
         [schema.core :only [defschema enum optional-key]])
-  (:require [metadactyl.schema.containers :as containers])
+  (:require [apps.schema.containers :as containers])
   (:import [java.util UUID]))
 
 (def ToolRequestIdParam (describe UUID "The Tool Requests's UUID"))

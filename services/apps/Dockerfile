@@ -11,9 +11,9 @@ RUN mkdir -p /etc/iplant/de/crypto && \
 VOLUME ["/etc/iplant/de"]
 
 COPY conf/main/logback.xml /home/iplant/
-COPY target/metadactyl-standalone.jar /home/iplant/
+COPY target/apps-standalone.jar /home/iplant/
 RUN chown -R iplant:iplant /home/iplant/
 
 USER iplant
-ENTRYPOINT ["java", "-Dlogback.configurationFile=/etc/iplant/de/logging/metadactyl-logging.xml", "-cp", ".:metadactyl-standalone.jar:/home/iplant/", "metadactyl.core"]
+ENTRYPOINT ["java", "-Dlogback.configurationFile=/etc/iplant/de/logging/apps-logging.xml", "-cp", ".:apps-standalone.jar:/home/iplant/", "apps.core"]
 CMD ["--help"]

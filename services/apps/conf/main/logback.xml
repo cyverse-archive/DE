@@ -1,7 +1,7 @@
 <configuration scan="true" debug="false">
  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-        <customFields>{"service":"metadactyl"}</customFields>
+        <customFields>{"service":"apps"}</customFields>
         <fieldNames>
             <logger>loggerName</logger>
             <thread>thread</thread>
@@ -19,8 +19,8 @@
   <!-- Jargon Logging -->
   <logger name="org.irods.jargon" level="ERROR" />
 
-  <logger name="metadactyl.service.callbacks" level="INFO" />
-  <logger name="metadactyl.util.json" level="DEBUG" />
+  <logger name="apps.service.callbacks" level="INFO" />
+  <logger name="apps.util.json" level="DEBUG" />
 
   <!-- Service Call Trace Message Logging -->
   <logger name="trace" level="TRACE" />

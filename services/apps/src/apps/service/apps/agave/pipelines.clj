@@ -1,5 +1,5 @@
-(ns metadactyl.service.apps.agave.pipelines
-  (:require [metadactyl.util.service :as service]))
+(ns apps.service.apps.agave.pipelines
+  (:require [apps.util.service :as service]))
 
 (defn- get-agave-task
   [agave external-app-id]

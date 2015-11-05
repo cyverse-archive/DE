@@ -1,4 +1,4 @@
-(ns metadactyl.service.apps.jobs.submissions
+(ns apps.service.apps.jobs.submissions
   (:use [clojure-commons.core :only [remove-nil-values]]
         [slingshot.slingshot :only [try+ throw+]]
         [kameleon.uuids :only [uuid]])
@@ -7,12 +7,12 @@
             [clojure-commons.error-codes :as ce]
             [clojure-commons.file-utils :as ft]
             [kameleon.db :as db]
-            [metadactyl.clients.data-info :as data-info]
-            [metadactyl.persistence.app-metadata :as ap]
-            [metadactyl.persistence.jobs :as jp]
-            [metadactyl.service.apps.job-listings :as job-listings]
-            [metadactyl.util.config :as config]
-            [metadactyl.util.service :as service]))
+            [apps.clients.data-info :as data-info]
+            [apps.persistence.app-metadata :as ap]
+            [apps.persistence.jobs :as jp]
+            [apps.service.apps.job-listings :as job-listings]
+            [apps.util.config :as config]
+            [apps.util.service :as service]))
 
 (defn- get-app-params
   [app type-set]

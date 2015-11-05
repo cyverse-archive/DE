@@ -1,4 +1,4 @@
-(ns metadactyl.service.apps.de.edit
+(ns apps.service.apps.de.edit
   (:use [clojure.string :only [blank?]]
         [korma.core :exclude [update]]
         [korma.db :only [transaction]]
@@ -6,14 +6,14 @@
         [kameleon.core]
         [kameleon.entities]
         [kameleon.uuids :only [uuidify]]
-        [metadactyl.metadata.params :only [format-reference-genome-value]]
-        [metadactyl.util.config :only [workspace-dev-app-category-index]]
-        [metadactyl.util.conversions :only [remove-nil-vals convert-rule-argument]]
-        [metadactyl.validation :only [validate-parameter verify-app-editable verify-app-ownership]]
-        [metadactyl.workspace :only [get-workspace]]
+        [apps.metadata.params :only [format-reference-genome-value]]
+        [apps.util.config :only [workspace-dev-app-category-index]]
+        [apps.util.conversions :only [remove-nil-vals convert-rule-argument]]
+        [apps.validation :only [validate-parameter verify-app-editable verify-app-ownership]]
+        [apps.workspace :only [get-workspace]]
         [slingshot.slingshot :only [throw+]])
   (:require [clojure.set :as set]
-            [metadactyl.persistence.app-metadata :as persistence]))
+            [apps.persistence.app-metadata :as persistence]))
 
 (def ^:private copy-prefix "Copy of ")
 (def ^:private max-app-name-len 255)

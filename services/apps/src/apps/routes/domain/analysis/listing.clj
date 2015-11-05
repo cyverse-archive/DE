@@ -1,6 +1,6 @@
-(ns metadactyl.routes.domain.analysis.listing
+(ns apps.routes.domain.analysis.listing
   (:use [common-swagger-api.schema :only [describe]]
-        [metadactyl.routes.params :only [ResultsTotalParam]]
+        [apps.routes.params :only [ResultsTotalParam]]
         [schema.core :only [defschema optional-key Any Int Bool]])
   (:import [java.util UUID]))
 

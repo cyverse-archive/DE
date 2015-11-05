@@ -1,10 +1,10 @@
-(ns metadactyl.service.apps.de.job-view
+(ns apps.service.apps.de.job-view
   (:use [korma.core :exclude [update]]
         [kameleon.core]
         [kameleon.entities]
-        [metadactyl.util.conversions :only [remove-nil-vals]])
-  (:require [metadactyl.metadata.params :as mp]
-            [metadactyl.persistence.app-metadata :as amp]))
+        [apps.util.conversions :only [remove-nil-vals]])
+  (:require [apps.metadata.params :as mp]
+            [apps.persistence.app-metadata :as amp]))
 
 (defn- mapped-input-subselect
   [step-id]

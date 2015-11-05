@@ -1,6 +1,6 @@
-(ns metadactyl.service.apps.combined.job-view
-  (:use [metadactyl.util.assertions :only [assert-not-nil]])
-  (:require [metadactyl.persistence.app-metadata :as ap]))
+(ns apps.service.apps.combined.job-view
+  (:use [apps.util.assertions :only [assert-not-nil]])
+  (:require [apps.persistence.app-metadata :as ap]))
 
 (defn- remove-mapped-inputs
   [mapped-props group]

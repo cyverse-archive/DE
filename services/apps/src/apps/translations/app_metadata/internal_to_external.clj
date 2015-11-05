@@ -1,6 +1,6 @@
-(ns metadactyl.translations.app-metadata.internal-to-external
-  (:use [metadactyl.translations.app-metadata.util]
-        [metadactyl.metadata.reference-genomes :only [get-reference-genomes-by-id]]
+(ns apps.translations.app-metadata.internal-to-external
+  (:use [apps.translations.app-metadata.util]
+        [apps.metadata.reference-genomes :only [get-reference-genomes-by-id]]
         [slingshot.slingshot :only [throw+]])
   (:require [clojure.string :as string]))
 

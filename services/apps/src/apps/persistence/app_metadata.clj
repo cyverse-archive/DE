@@ -1,17 +1,17 @@
-(ns metadactyl.persistence.app-metadata
+(ns apps.persistence.app-metadata
   "Persistence layer for app metadata."
   (:use [kameleon.entities]
         [kameleon.uuids :only [uuidify]]
         [korma.core :exclude [update]]
         [korma.db :only [transaction]]
-        [metadactyl.user :only [current-user]]
-        [metadactyl.util.assertions]
-        [metadactyl.util.conversions :only [remove-nil-vals]])
+        [apps.user :only [current-user]]
+        [apps.util.assertions]
+        [apps.util.conversions :only [remove-nil-vals]])
   (:require [clojure.set :as set]
             [kameleon.app-listing :as app-listing]
             [korma.core :as sql]
-            [metadactyl.persistence.app-metadata.delete :as delete]
-            [metadactyl.persistence.app-metadata.relabel :as relabel]))
+            [apps.persistence.app-metadata.delete :as delete]
+            [apps.persistence.app-metadata.relabel :as relabel]))
 
 (def param-multi-input-type "MultiFileSelector")
 (def param-flex-input-type "FileFolderInput")

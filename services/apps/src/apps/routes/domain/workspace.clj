@@ -1,4 +1,4 @@
-(ns metadactyl.routes.domain.workspace
+(ns apps.routes.domain.workspace
   (:use [common-swagger-api.schema :only [describe]]
         [schema.core :only [defschema]])
   (:import [java.util UUID]))

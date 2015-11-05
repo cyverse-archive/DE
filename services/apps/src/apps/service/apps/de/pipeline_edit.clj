@@ -1,23 +1,23 @@
-(ns metadactyl.service.apps.de.pipeline-edit
+(ns apps.service.apps.de.pipeline-edit
   (:use [korma.core :exclude [update]]
         [korma.db :only [transaction]]
         [kameleon.core]
         [kameleon.entities]
         [kameleon.uuids :only [uuidify]]
         [medley.core :only [find-first]]
-        [metadactyl.persistence.app-metadata :only [add-app
+        [apps.persistence.app-metadata :only [add-app
                                                     add-mapping
                                                     add-step
                                                     add-task
                                                     get-app
                                                     remove-app-steps
                                                     update-app]]
-        [metadactyl.util.conversions :only [remove-nil-vals]]
-        [metadactyl.validation :only [validate-external-app-step
+        [apps.util.conversions :only [remove-nil-vals]]
+        [apps.validation :only [validate-external-app-step
                                       validate-pipeline
                                       verify-app-editable]]
-        [metadactyl.service.apps.de.edit :only [add-app-to-user-dev-category app-copy-name]])
-  (:require [metadactyl.service.apps.de.listings :as listings]))
+        [apps.service.apps.de.edit :only [add-app-to-user-dev-category app-copy-name]])
+  (:require [apps.service.apps.de.listings :as listings]))
 
 (defn- add-app-type
   [step]
@@ -199,7 +199,7 @@
       app-id)))
 
 (defn- prepare-pipeline-step
-  "Prepares a single step in a pipeline for submission to metadactyl. DE steps can be left as-is.
+  "Prepares a single step in a pipeline for submission to apps. DE steps can be left as-is.
    External steps need to have the task_id field moved to the external_app_id field."
   [{app-type :app_type :as step}]
   (if (= app-type "External")

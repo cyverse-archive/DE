@@ -1,9 +1,9 @@
-(ns metadactyl.service.collaborators
-  (:use [metadactyl.util.conversions :only [remove-nil-vals]])
+(ns apps.service.collaborators
+  (:use [apps.util.conversions :only [remove-nil-vals]])
   (:require [clojure.string :as string]
             [kameleon.queries :as queries]
-            [metadactyl.clients.iplant-groups :as ipg]
-            [metadactyl.util.config :as config]))
+            [apps.clients.iplant-groups :as ipg]
+            [apps.util.config :as config]))
 
 (defn- remove-domain
   "Removes the username domain from a username."

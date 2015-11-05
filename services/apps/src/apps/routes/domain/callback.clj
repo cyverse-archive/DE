@@ -1,4 +1,4 @@
-(ns metadactyl.routes.domain.callback
+(ns apps.routes.domain.callback
   (:use [common-swagger-api.schema :only [describe]]
         [schema.core :only [defschema optional-key]]))
 

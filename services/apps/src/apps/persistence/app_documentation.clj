@@ -1,4 +1,4 @@
-(ns metadactyl.persistence.app-documentation
+(ns apps.persistence.app-documentation
   (:use [kameleon.entities]
         [korma.core :exclude [update]])
   (:require [korma.core :as sql]))

@@ -1,6 +1,6 @@
-(ns metadactyl.tasks
-  (:require [metadactyl.service.apps :as apps]
-            [metadactyl.util.config :as config])
+(ns apps.tasks
+  (:require [apps.service.apps :as apps]
+            [apps.util.config :as config])
   (:import [java.util.concurrent ScheduledThreadPoolExecutor TimeUnit]))
 
 (def ^:private thread-pool-size 10)

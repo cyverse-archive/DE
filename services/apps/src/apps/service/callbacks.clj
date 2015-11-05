@@ -1,8 +1,8 @@
-(ns metadactyl.service.callbacks
+(ns apps.service.callbacks
   (:require [clojure.tools.logging :as log]
-            [metadactyl.persistence.jobs :as jp]
-            [metadactyl.service.apps :as apps]
-            [metadactyl.util.service :as service]))
+            [apps.persistence.jobs :as jp]
+            [apps.service.apps :as apps]
+            [apps.util.service :as service]))
 
 (defn update-de-job-status
   [{{end-date :completion_date :keys [status uuid]} :state}]
