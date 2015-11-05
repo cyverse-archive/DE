@@ -1,5 +1,7 @@
 {
   "de": {
     "app_base": "http://{{ ansible_default_ipv4.address }}:8080"
-  }
+  },
+  "config_template": "roles/ui/templates/de.properties.j2",
+  "config_name": "de.properties"
 }

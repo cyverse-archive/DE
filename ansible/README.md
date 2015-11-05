@@ -12,6 +12,7 @@ group_vars files containing private and overriding values in a top-level `group_
 * [Docker](doc/setup/Docker.md)
 
 ## Work Instructions
+* [Generating Configs Locally, for Local Development](doc/work_instructions/Local_Configs.md)
 * [Backend Deploy/Update Instructions](doc/work_instructions/Backend.md)
 * [UI Deploy/Update Instructions](doc/work_instructions/UI.md)
 * [Database Instructions](doc/work_instructions/Database.md)
