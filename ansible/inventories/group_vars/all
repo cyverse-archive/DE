@@ -7,7 +7,7 @@ docker:
   log_driver: syslog
   tag: latest
   user: discoenv
-  version: 1.8.2
+  version: 1.9.0
   registry:
     host: "{{ groups['docker-registry'][0] }}"
     port: 5000
