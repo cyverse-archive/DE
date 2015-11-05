@@ -1,4 +1,4 @@
-# Generating GPG Keys for Donkey
+# Generating GPG Keys for Terrain
 
 The instructions for this were adapted (and shortened) from a
 [blog post](http://andys.org.uk/bits/2010/02/02/gnupg-rsa-key-pair-mini-howto/).

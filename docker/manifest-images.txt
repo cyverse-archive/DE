@@ -4,7 +4,7 @@ condor-log-monitor
 data-info
 de
 dewey
-donkey
+terrain
 info-typer
 infosquito
 iplant-email

@@ -32,7 +32,7 @@
   "metadata.app.listen-port")
 
 (cc/defprop-str environment-name
-  "The name of the environment that this instance of Donkey belongs to."
+  "The name of the environment that this instance of Terrain belongs to."
   [props config-valid configs]
   "metadata.app.environment-name")
 

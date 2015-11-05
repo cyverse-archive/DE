@@ -32,7 +32,7 @@ config_metadactyl:
 config_kifshare:
 config_jex-events:
 config_iplant-email:
-config_donkey:
+config_terrain:
 config_data-info:
 config_metadata:
 config_condor-log-monitor:

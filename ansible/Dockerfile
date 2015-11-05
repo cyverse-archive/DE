@@ -6,4 +6,6 @@ COPY requirements.yaml /
 RUN cd root && tar xzf ssh-configs.tar.gz && chown -R root:root /root/.ssh
 RUN ansible-galaxy install --force -r requirements.yaml
 
+ENV ANSIBLE_HASH_BEHAVIOUR="merge"
+
 CMD [ "/bin/bash" ]

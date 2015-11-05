@@ -149,15 +149,15 @@
       - config_logging
       - config_info-typer
 
-- name: Place donkey logging config file
+- name: Place terrain logging config file
   sudo: yes
   template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}-logging.xml owner=root group=root mode=0644
   with_items:
-      - {name: "{{donkey.service_name_short}}"}
+      - {name: "{{terrain.service_name_short}}"}
   tags:
       - config
       - config_logging
-      - config_donkey
+      - config_terrain
 
 - name: Place dewey logging config file
   sudo: yes

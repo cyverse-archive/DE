@@ -69,6 +69,8 @@ public class TreeSelectionPropertyEditor extends AbstractArgumentPropertyEditor 
     @UiField
     TextButton editTreeListBtn;
 
+    private int uniqueIdNum = 0;
+
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
     @Inject
@@ -107,7 +109,8 @@ public class TreeSelectionPropertyEditor extends AbstractArgumentPropertyEditor 
         dlg.setModal(true);
         dlg.setOkButtonText(I18N.DISPLAY.done());
         dlg.setAutoHide(false);
-        final SelectionItemTreePropertyEditor selectionItemTreeEditor = new SelectionItemTreePropertyEditor(model.getSelectionItems());
+        final SelectionItemTreePropertyEditor selectionItemTreeEditor = new SelectionItemTreePropertyEditor(model.getSelectionItems(),
+                                                                                                            uniqueIdNum);
         dlg.setSize("640", "480");
         VerticalLayoutContainer vlc = new VerticalLayoutContainer();
         vlc.setScrollMode(ScrollMode.AUTOY);
@@ -133,6 +136,7 @@ public class TreeSelectionPropertyEditor extends AbstractArgumentPropertyEditor 
                  * InitializeTwoWayBinding visitor
                  */
                 ValueChangeEvent.fire(toolTipEditor, model.getDescription());
+                uniqueIdNum = selectionItemTreeEditor.getUniqueIdNum();
             }
         });
 

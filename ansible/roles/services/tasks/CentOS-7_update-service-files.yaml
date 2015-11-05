@@ -87,12 +87,12 @@
       - update_service_files
       - update_service_file_iplant-groups
 
-- name: place donkey service file
+- name: place terrain service file
   sudo: yes
-  template: src={{donkey.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  template: src={{terrain.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
   tags:
       - update_service_files
-      - update_service_file_donkey
+      - update_service_file_terrain
 
 - name: place data-info service file
   sudo: yes
@@ -173,7 +173,7 @@
       - update_service_file_kifshare
       - update_service_file_jex-events
       - update_service_file_iplant-groups
-      - update_service_file_donkey
+      - update_service_file_terrain
       - update_service_file_data-info
       - update_service_file_metadata
       - update_service_file_condor-log-monitor

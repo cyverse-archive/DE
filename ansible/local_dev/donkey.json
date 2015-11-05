@@ -1,5 +1,0 @@
-{
-  "donkey": {
-    "base": "http://localhost:{{donkey.port}}"
-  }
-}

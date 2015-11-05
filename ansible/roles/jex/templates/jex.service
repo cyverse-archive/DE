@@ -6,6 +6,8 @@ Wants=condor.service
 User=condor
 ExecStart=/usr/bin/java -cp /usr/local/lib/jex/jex-standalone.jar:/usr/local/lib/jex/ jex.core --config {{ de_config_dir }}/jex.properties
 Restart=on-failure
+StartLimitInterval=60s
+StartLimitBurst=3
 
 SyslogIdentifier=jex
 SyslogFacility={{systemd.syslogFacility}}

@@ -7,7 +7,7 @@ de
 de-db
 de-db-loader
 dewey
-donkey
+terrain
 facepalm
 info-typer
 infosquito

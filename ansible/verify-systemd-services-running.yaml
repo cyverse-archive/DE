@@ -22,7 +22,7 @@
                   - "{{anon_files}}"
                   - "{{condor_log_monitor}}"
                   - "{{clockwork}}"
-                  - "{{donkey}}"
+                  - "{{terrain}}"
                   - "{{iplant_email}}"
                   - "{{iplant_groups}}"
                   - "{{exim}}"

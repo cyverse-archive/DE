@@ -12,12 +12,13 @@ group_vars files containing private and overriding values in a top-level `group_
 * [Docker](doc/setup/Docker.md)
 
 ## Work Instructions
+* [Generating Configs Locally, for Local Development](doc/work_instructions/Local_Configs.md)
 * [Backend Deploy/Update Instructions](doc/work_instructions/Backend.md)
 * [UI Deploy/Update Instructions](doc/work_instructions/UI.md)
 * [Database Instructions](doc/work_instructions/Database.md)
 
 ## Builds
-* [Generating GPG keys for Donkey](doc/builds/gpg-key.md)
+* [Generating GPG keys for Terrain](doc/builds/gpg-key.md)
 
 ## Deployment Processes
 * [Deployment Process](doc/deployments/Deployments.md)

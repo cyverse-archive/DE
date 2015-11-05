@@ -21,7 +21,7 @@
 }
 
 .detailsTable {
-
+   
 }
 
 .detailsRow > td {
@@ -32,4 +32,5 @@
 .tabPanel {
     height: 100%;
     background-color: #ffffff;
+    overflow:auto;
 }

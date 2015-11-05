@@ -13,9 +13,9 @@
 /.dir-locals.el
 /*.eld
 /target
-/donkey
-/donkey.spec
-/donkey*.tar.gz
+/terrain
+/terrain.spec
+/terrain*.tar.gz
 /.lein-repl-history
 /.nrepl-port
 *~

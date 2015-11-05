@@ -1,7 +1,6 @@
-FROM ansible/ubuntu14.04-ansible:stable
+FROM williamyeh/ansible:alpine3
 MAINTAINER Jonathan Strootman <jstroot@iplantcollaborative.org>
-
-RUN useradd -m -U -s /bin/bash -u 1337 iplant
+ENV ANSIBLE_HASH_BEHAVIOUR="merge"
 ADD ansible.cfg /etc/ansible/ansible.cfg
-
-
+RUN apk --update add git openssh
+CMD ["/bin/sh"]

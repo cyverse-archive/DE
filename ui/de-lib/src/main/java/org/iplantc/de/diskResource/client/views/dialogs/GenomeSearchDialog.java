@@ -1,3 +1,7 @@
+/**
+ * 
+ * @author sriram
+ */
 package org.iplantc.de.diskResource.client.views.dialogs;
 
 import org.iplantc.de.client.models.genomes.Genome;
@@ -5,11 +9,11 @@ import org.iplantc.de.diskResource.client.ToolbarView;
 import org.iplantc.de.diskResource.client.ToolbarView.Presenter;
 import org.iplantc.de.diskResource.client.model.GenomeProperties;
 
-import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.event.dom.client.KeyCodeEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -17,7 +21,7 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
-import com.sencha.gxt.core.client.IdentityValueProvider;
+import com.sencha.gxt.core.client.util.DelayedTask;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.widget.core.client.Window;
@@ -51,6 +55,8 @@ public class GenomeSearchDialog extends Window {
         String chromosomeCount();
 
         String sequenceType();
+
+        String norecords();
     }
 
     @UiTemplate("GenomeSearchView.ui.xml")
@@ -78,6 +84,10 @@ public class GenomeSearchDialog extends Window {
 
     final Appearance apperance;
 
+    private final DelayedTask dqTask;
+
+    private final int queryDelay = 500;
+
     @Inject
     public GenomeSearchDialog() {
         apperance = GWT.<Appearance> create(Appearance.class);
@@ -96,9 +106,9 @@ public class GenomeSearchDialog extends Window {
             @Override
             public void onKeyUp(KeyUpEvent event) {
                 String term = searchtxt.getCurrentValue();
-                if (term != null && term.length() > 2) {
+                if (term != null && term.length() > 2 && !isModifierKey(event.getNativeKeyCode())) {
                     grid.mask(apperance.loading());
-                    GenomeSearchDialog.this.presenter.searchGenomeInCoge(term);
+                    dqTask.delay(queryDelay);
                 }
             }
         });
@@ -113,8 +123,36 @@ public class GenomeSearchDialog extends Window {
                 }
             }
         });
+
+        grid.getView().setEmptyText(apperance.norecords());
+
+        dqTask = new DelayedTask() {
+
+            @Override
+            public void onExecute() {
+                serchGenome();
+            }
+        };
     }
     
+    private boolean isModifierKey(int keyCode) {
+        switch (keyCode) {
+            case KeyCodes.KEY_ENTER:
+                // Enter is special cased by TextInputCells, so it's handled by SearchFieldCell.
+            case KeyCodes.KEY_ALT:
+            case KeyCodes.KEY_CTRL:
+            case KeyCodes.KEY_END:
+            case KeyCodes.KEY_ESCAPE:
+            case KeyCodes.KEY_HOME:
+            case KeyCodes.KEY_PAGEDOWN:
+            case KeyCodes.KEY_PAGEUP:
+            case KeyCodes.KEY_SHIFT:
+            case KeyCodes.KEY_TAB:
+                return true;
+            default:
+                return KeyCodeEvent.isArrow(keyCode);
+        }
+    }
     
     @UiHandler("importBtn")
     void onImportedClicked(SelectEvent event) {
@@ -129,57 +167,27 @@ public class GenomeSearchDialog extends Window {
                                                                   50,
                                                                   apperance.version());
 
-        ColumnConfig<Genome, Genome> seqType = new ColumnConfig<>(new IdentityValueProvider<Genome>(),
+        ColumnConfig<Genome, String> seqType = new ColumnConfig<>(props.sequenceName(),
                                                                   150,
                                                                   apperance.sequenceType());
         
-        ColumnConfig<Genome, Genome> organism = new ColumnConfig<>(new IdentityValueProvider<Genome>(),
+        ColumnConfig<Genome, String> organism = new ColumnConfig<>(props.organismName(),
                                                                    250,
                                                                    apperance.organismName());
-        ColumnConfig<Genome, Genome> chromeCount = new ColumnConfig<>(new IdentityValueProvider<Genome>(),
+        ColumnConfig<Genome, Integer> chromeCount = new ColumnConfig<>(props.chromosomeCount(),
                                                                        100,
                                                                       apperance.chromosomeCount());
-        
-        seqType.setCell(new AbstractCell<Genome>() {
-
-            @Override
-            public void render(com.google.gwt.cell.client.Cell.Context context,
-                               Genome value,
-                               SafeHtmlBuilder sb) {
-                sb.appendEscaped(value.getSequenceType().getName());
-                
-            }
-        });
-        
-        organism.setCell(new AbstractCell<Genome>() {
-
-            @Override
-            public void render(com.google.gwt.cell.client.Cell.Context context,
-                               Genome value,
-                               SafeHtmlBuilder sb) {
-                sb.appendEscaped(value.getOrganism().getName());
-            }
-        });
-
-        chromeCount.setCell(new AbstractCell<Genome>() {
-
-            @Override
-            public void render(com.google.gwt.cell.client.Cell.Context context,
-                               Genome value,
-                               SafeHtmlBuilder sb) {
-                sb.appendEscaped(value.getChromosomeCount() + "");
-            }
-
-        });
-
         ArrayList<ColumnConfig<Genome, ?>> cols = new ArrayList<>();
-
         cols.add(organism);
         cols.add(version);
         cols.add(chromeCount);
         cols.add(seqType);
 
         cm = new ColumnModel<>(cols);
+    }
+
+    private void serchGenome() {
+        GenomeSearchDialog.this.presenter.searchGenomeInCoge(searchtxt.getCurrentValue());
     }
 
     public void loadResults(List<Genome> genomes) {
