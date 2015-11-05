@@ -12,8 +12,8 @@
 # This playbook will write local terrain configs by default.
 #
 # For example:
-# Write local configs for terrain to /etc/iplant/de/terrain.properties, using de-2 services but using a local data-info service.
-# ansible-playbook local-service-config.yaml --extra-vars="@local_dev/terrain.json" --extra-vars="@local_dev/data-info.json"
+# Write local configs for terrain to /etc/iplant/de/terrain.properties.
+# ansible-playbook local-service-config.yaml -i inventories/localhost.cfg
 #
 # Write local configs for data-info to /etc/iplant/de/data-info.properties.
 # ansible-playbook local-service-config.yaml -i inventories/localhost.cfg --extra-vars="service=data-info"
