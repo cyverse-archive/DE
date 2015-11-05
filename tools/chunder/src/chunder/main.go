@@ -223,10 +223,6 @@ func main() {
 	if err != nil {
 		log.Fatal("git couldn't be found in your $PATH")
 	}
-	docker, err = exec.LookPath("docker")
-	if err != nil {
-		log.Fatal("docker couldn't be found in your $PATH")
-	}
 	home, err = homedir.Dir()
 	if err != nil {
 		log.Fatal(err)
