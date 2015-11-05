@@ -19,6 +19,8 @@ ExecStart=/usr/bin/docker run --name {{iplant_email.container_name}} \
         --config /etc/iplant/de/{{iplant_email.properties_file}}
 ExecStop=-/usr/bin/docker stop {{iplant_email.container_name}}
 Restart=on-failure
+StartLimitInterval=60s
+StartLimitBurst=3
 
 [Install]
 WantedBy=multi-user.target
