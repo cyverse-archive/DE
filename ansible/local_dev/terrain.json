@@ -1,0 +1,5 @@
+{
+  "terrain": {
+    "base": "http://localhost:{{terrain.port}}"
+  }
+}

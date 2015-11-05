@@ -242,7 +242,7 @@ func EventHandler(deliveries <-chan amqp.Delivery, d *Databaser, postURL string,
 				continue
 			}
 
-			// send event updates upstream to Donkey
+			// send event updates upstream to Terrain
 			err = eventHandler.Route(&event)
 			if err != nil {
 				logger.Printf("Error sending event upstream: %s", err)

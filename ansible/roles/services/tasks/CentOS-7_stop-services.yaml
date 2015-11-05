@@ -86,12 +86,12 @@
       - stop_services
       - stop_iplant-groups
 
-- name: stop donkey service
+- name: stop terrain service
   sudo: yes
-  service: name={{donkey.service_name}} state=stopped
+  service: name={{terrain.service_name}} state=stopped
   tags:
       - stop_services
-      - stop_donkey
+      - stop_terrain
 
 - name: stop data-info service
   sudo: yes

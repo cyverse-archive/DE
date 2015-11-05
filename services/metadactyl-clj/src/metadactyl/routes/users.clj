@@ -26,11 +26,11 @@
          :query [params LoginParams]
          :return LoginResponse
          :summary "Record a User Login"
-         :description "Donkey calls this service to record when a user logs in."
+         :description "Terrain calls this service to record when a user logs in."
          (ok (users/login current-user params)))
 
   (POST* "/logout" []
          :query [params LogoutParams]
          :summary "Record a User Logout"
-         :description "Donkey calls this service to record when a user logs out."
+         :description "Terrain calls this service to record when a user logs out."
          (ok (users/logout current-user params))))

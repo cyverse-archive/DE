@@ -11,7 +11,7 @@
   </appender>
 
 
-  <logger name="donkey" level="debug" />
+  <logger name="terrain" level="debug" />
   <!-- Configuration Logging -->
   <logger name="clojure-commons.config" level="INFO"/>
   <!-- Request Logging -->

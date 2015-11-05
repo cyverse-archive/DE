@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * This object is used to collect the information required to build a search request for the endpoints
  * described <a href=
- * "https://github.com/iPlantCollaborativeOpenSource/Donkey/blob/dev/doc/endpoints/filesystem/search.md"
+ * "https://github.com/iPlantCollaborativeOpenSource/Terrain/blob/dev/doc/endpoints/filesystem/search.md"
  * >here</a>
  * 
  * @author jstroot

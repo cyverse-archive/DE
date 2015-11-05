@@ -39,12 +39,12 @@
       - docker_pull
       - docker_pull_data-info
 
-- name: docker pull donkey
+- name: docker pull terrain
   sudo: yes
-  shell: docker pull {{docker.user}}/{{donkey.image_name}}:{{docker.tag}}
+  shell: docker pull {{docker.user}}/{{terrain.image_name}}:{{docker.tag}}
   tags:
       - docker_pull
-      - docker_pull_donkey
+      - docker_pull_terrain
 
 - name: pull the exim image
   sudo: yes

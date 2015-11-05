@@ -1,14 +1,14 @@
 # Security
 
 None of the services in metadactyl are literally secured. Instead, services in
-Donkey provide the security and forward requests to metadactyl, which should not
+Terrain provide the security and forward requests to metadactyl, which should not
 be accessible from outside the local network. In general, when a secured service
-in Donkey forwards requests to metadactyl, the metadactyl services are marked as
-secured so that the relationship between the Donkey and metadactyl services is
+in Terrain forwards requests to metadactyl, the metadactyl services are marked as
+secured so that the relationship between the Terrain and metadactyl services is
 clear.
 
 Generally speaking, the metadactyl services that correspond to secured services
-in Donkey require user credentials, which are passed to the service in query
+in Terrain require user credentials, which are passed to the service in query
 parameters. The available query string parameters are:
 
 <table>

@@ -223,7 +223,7 @@ func (p *PostEventHandler) Completed(event *Event) error {
 // Held handles event number 012, which means that a job was put into the held
 // state. Our system can't recover from a job going into this state, so the job
 // has to be killed. This is accomplished by sending a DELETE to a URL in the
-// JEX. We don't have to send a status notification to Donkey here, since the
+// JEX. We don't have to send a status notification to Terrain here, since the
 // job will come through as failed.
 func (p *PostEventHandler) Held(event *Event) error {
 	logger.Printf("Job %s is in the held state", event.ID)

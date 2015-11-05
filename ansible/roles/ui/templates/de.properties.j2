@@ -47,69 +47,69 @@ prefix=org.iplantc.services
 rpc.prefix=discoveryenvironment/deservice
 
 # The URL prefix to use when accessing the DE Mule services.
-org.iplantc.discoveryenvironment.muleServiceBaseUrl            = {{ donkey.base }}/secured/
-org.iplantc.discoveryenvironment.unprotectedMuleServiceBaseUrl = {{ donkey.base }}/
+org.iplantc.discoveryenvironment.muleServiceBaseUrl            = {{ terrain.base }}/secured/
+org.iplantc.discoveryenvironment.unprotectedMuleServiceBaseUrl = {{ terrain.base }}/
 
 
 # Bootstrap
-org.iplantc.services.bootstrap                                 = {{ donkey.base }}/secured/bootstrap
-org.iplantc.services.logout                                    = {{ donkey.base }}/secured/logout
+org.iplantc.services.bootstrap                                 = {{ terrain.base }}/secured/bootstrap
+org.iplantc.services.logout                                    = {{ terrain.base }}/secured/logout
 
 # DE Data Management Endpoints
-org.iplantc.services.de-data-mgmt.base                         = {{ donkey.base }}/secured/filesystem/
-org.iplantc.services.admin.de-data-mgmt.base                   = {{ donkey.base }}/admin/filesystem/
+org.iplantc.services.de-data-mgmt.base                         = {{ terrain.base }}/secured/filesystem/
+org.iplantc.services.admin.de-data-mgmt.base                   = {{ terrain.base }}/admin/filesystem/
 
 # DE File I/O endpoints
-org.iplantc.services.file-io.base.secured                      = {{ donkey.base }}/secured/fileio/
-org.iplantc.services.file-io.file-upload                       = {{ donkey.base }}/fileio/upload
-org.iplantc.services.file-io.secured.file-upload               = {{ donkey.base }}/secured/fileio/upload
+org.iplantc.services.file-io.base.secured                      = {{ terrain.base }}/secured/fileio/
+org.iplantc.services.file-io.file-upload                       = {{ terrain.base }}/fileio/upload
+org.iplantc.services.file-io.secured.file-upload               = {{ terrain.base }}/secured/fileio/upload
 
 # Buggalo Endpoint
 #FIXME change 'buggalo' name
-org.iplantc.services.buggalo.baseUrl                           = {{ donkey.base }}/secured/tree-viewer-urls
+org.iplantc.services.buggalo.baseUrl                           = {{ terrain.base }}/secured/tree-viewer-urls
 
 # Tool Request Endpoint
-org.iplantc.services.toolRequests                              = {{ donkey.base }}/tool-requests
-org.iplantc.services.toolRequests.statusCodes                  = {{ donkey.base }}/tool-requests/status-codes
-org.iplantc.services.admin.toolRequests                        = {{ donkey.base }}/admin/tool-requests
+org.iplantc.services.toolRequests                              = {{ terrain.base }}/tool-requests
+org.iplantc.services.toolRequests.statusCodes                  = {{ terrain.base }}/tool-requests/status-codes
+org.iplantc.services.admin.toolRequests                        = {{ terrain.base }}/admin/tool-requests
 
 # Apps endponts
-org.iplantc.services.apps                                      = {{ donkey.base }}/apps
-org.iplantc.services.apps.ids                                  = {{ donkey.base }}/apps/ids
-org.iplantc.services.apps.categories                           = {{ donkey.base }}/apps/categories
-org.iplantc.services.apps.elements                             = {{ donkey.base }}/apps/elements
-org.iplantc.services.apps.elements.tools                       = {{ donkey.base }}/apps/elements/tools
-org.iplantc.services.apps.elements.infoTypes                   = {{ donkey.base }}/apps/elements/info-types
-org.iplantc.services.apps.elements.dataSources                 = {{ donkey.base }}/apps/elements/data-sources
-org.iplantc.services.apps.argPreview                           = {{ donkey.base }}/apps/arg-preview
-org.iplantc.services.admin.apps                                = {{ donkey.base }}/admin/apps
-org.iplantc.services.admin.apps.categories                     = {{ donkey.base }}/admin/apps/categories
+org.iplantc.services.apps                                      = {{ terrain.base }}/apps
+org.iplantc.services.apps.ids                                  = {{ terrain.base }}/apps/ids
+org.iplantc.services.apps.categories                           = {{ terrain.base }}/apps/categories
+org.iplantc.services.apps.elements                             = {{ terrain.base }}/apps/elements
+org.iplantc.services.apps.elements.tools                       = {{ terrain.base }}/apps/elements/tools
+org.iplantc.services.apps.elements.infoTypes                   = {{ terrain.base }}/apps/elements/info-types
+org.iplantc.services.apps.elements.dataSources                 = {{ terrain.base }}/apps/elements/data-sources
+org.iplantc.services.apps.argPreview                           = {{ terrain.base }}/apps/arg-preview
+org.iplantc.services.admin.apps                                = {{ terrain.base }}/admin/apps
+org.iplantc.services.admin.apps.categories                     = {{ terrain.base }}/admin/apps/categories
 
 # Pipelines endpoints
-org.iplantc.services.apps.pipelines                            = {{ donkey.base }}/apps/pipelines
+org.iplantc.services.apps.pipelines                            = {{ terrain.base }}/apps/pipelines
 
 # Reference Genomes
-org.iplantc.services.admin.referenceGenomes                    = {{ donkey.base }}/admin/reference-genomes
-org.iplantc.services.referenceGenomes                          = {{ donkey.base }}/reference-genomes
+org.iplantc.services.admin.referenceGenomes                    = {{ terrain.base }}/admin/reference-genomes
+org.iplantc.services.referenceGenomes                          = {{ terrain.base }}/reference-genomes
 
 # Analysis Endpoints
-org.iplantc.services.analyses                                  = {{ donkey.base }}/analyses
+org.iplantc.services.analyses                                  = {{ terrain.base }}/analyses
 
 # Tools Endpoints
-org.iplantc.services.tools                                     = {{ donkey.base }}/tools
+org.iplantc.services.tools                                     = {{ terrain.base }}/tools
 
 # Path List File Identifier
 org.iplantc.pathList.fileIdentifier                            = {{ path_list_file_identifier }}
 
-org.iplantc.services.filesystem.index                          = {{ donkey.base }}/secured/filesystem/index
-org.iplantc.services.filesystem.index-status                   = {{ donkey.base }}/secured/filesystem/index-status
+org.iplantc.services.filesystem.index                          = {{ terrain.base }}/secured/filesystem/index
+org.iplantc.services.filesystem.index-status                   = {{ terrain.base }}/secured/filesystem/index-status
 
 # The base URL used to contact the iPlant e-mail service
 org.iplantc.services.email-base                                = {{ iplant_email.base }}/
 
 # System-Message Services
-org.iplantc.services.admin.notifications.system                = {{ donkey.base }}/admin/notifications/system
-org.iplantc.services.admin.notifications.system.types          = {{ donkey.base }}/admin/notifications/system-types
+org.iplantc.services.admin.notifications.system                = {{ terrain.base }}/admin/notifications/system
+org.iplantc.services.admin.notifications.system.types          = {{ terrain.base }}/admin/notifications/system-types
 
 ###############################################################################
 # Default workspace App Categories.
