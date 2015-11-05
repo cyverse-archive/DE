@@ -11,7 +11,7 @@ iplant-email
 jex
 jex-events
 kifshare
-metadactyl
+apps
 metadata
 monkey
 notificationagent

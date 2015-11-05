@@ -39,7 +39,7 @@ __Response Body__:
 {
     "iRODS": true,
     "jex": true,
-    "metadactyl": true,
+    "apps": true,
     "notificationagent": true
 }
 ```

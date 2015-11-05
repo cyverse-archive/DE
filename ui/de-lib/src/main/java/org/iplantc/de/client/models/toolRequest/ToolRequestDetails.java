@@ -9,12 +9,6 @@ import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 import java.util.List;
 
 /**
- * https://github.com/iPlantCollaborativeOpenSource/metadactyl-clj/blob/
- * dfc0b110e73a40229762033ffeb267a9b10373bc
- * /doc/endpoints/app-metadata/tool-requests.md#obtaining-tool-request-details
- * 
- * 
- * 
  * @author jstroot
  * 
  */

@@ -13,7 +13,7 @@ RUN mkdir -p /var/log/terrain/ && \
     mkdir -p /var/log/iplant-email/ && \
     mkdir -p /var/log/jex-events/ && \
     mkdir -p /var/log/kifshare/ && \
-    mkdir -p /var/log/metadactyl/ && \
+    mkdir -p /var/log/apps/ && \
     mkdir -p /var/log/monkey/ && \
     mkdir -p /var/log/saved-searches/ && \
     mkdir -p /var/log/tree-urls/ && \

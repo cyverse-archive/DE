@@ -28,8 +28,8 @@
   []
   (config/app-routes-enabled))
 
-(defn check-metadactyl?
-  "Returns true if the metadactyl settings should be checked."
+(defn check-apps?
+  "Returns true if the apps settings should be checked."
   []
   (config/app-routes-enabled))
 
@@ -54,15 +54,15 @@
       (log/error (ce/format-exception e))
       false)))
 
-(defn perform-metadactyl-check
+(defn perform-apps-check
   []
   (try
-    (let [base-url (scrub-url (config/metadactyl-base))
+    (let [base-url (scrub-url (config/apps-base))
           s        (:status (client/get base-url))]
-      (log/info "HTTP Status from Metadactyl: " s)
+      (log/info "HTTP Status from Apps: " s)
       (<= 200 s 299))
     (catch Exception e
-      (log/error "Error performing Metadactyl status check:")
+      (log/error "Error performing Apps status check:")
       (log/error (ce/format-exception e))
       false)))
 
@@ -91,10 +91,10 @@
     (merge status {:jex (perform-jex-check)})
     status))
 
-(defn status-metadactyl
+(defn status-apps
   [status]
-  (if (check-metadactyl?)
-    (merge status {:metadactyl (perform-metadactyl-check)})
+  (if (check-apps?)
+    (merge status {:apps (perform-apps-check)})
     status))
 
 (defn status-notificationagent
@@ -109,7 +109,7 @@
   (-> {}
     (status-irods)
     (status-jex)
-    (status-metadactyl)
+    (status-apps)
     (status-notificationagent)
     success-response))
 

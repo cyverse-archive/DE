@@ -7,7 +7,7 @@ service_names:
   - iplant-email
   - jex-events
   - kifshare
-  - metadactyl
+  - apps
   - metadata
   - notificationagent
   - saved-searches

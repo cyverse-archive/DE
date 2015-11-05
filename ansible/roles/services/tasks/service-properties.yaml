@@ -71,14 +71,14 @@
       - config_monkey
 
 #####
-# metadactyl
+# apps
 #####
-- name: configure metadactyl
+- name: configure apps
   sudo: yes
-  template: src=metadactyl.properties.j2 dest={{ de_config_dir }}/metadactyl.properties owner=root group=root mode=0644
+  template: src=apps.properties.j2 dest={{ de_config_dir }}/apps.properties owner=root group=root mode=0644
   tags:
       - config
-      - config_metadactyl
+      - config_apps
 
 #####
 # kifshare

@@ -77,15 +77,15 @@
       - config_logging
       - config_monkey
 
-- name: Place metadactyl logging config file
+- name: Place apps logging config file
   sudo: yes
   template: src=logback_template.xml.j2 dest={{ logging.conf_dir }}/{{item.name}}-logging.xml owner=root group=root mode=0644
   with_items:
-      - {name: "{{metadactyl.service_name_short}}"}
+      - {name: "{{apps.service_name_short}}"}
   tags:
       - config
       - config_logging
-      - config_metadactyl
+      - config_apps
 
 - name: Place kifshare logging config file
   sudo: yes

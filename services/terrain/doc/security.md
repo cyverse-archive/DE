@@ -18,6 +18,6 @@ If authentication or authorization fails for a secured service then an HTTP 401
 (unauthorized) status will result, and there will be no response body, even if
 the service normally has a response body.
 
-Note that secured endpoints in Terrain and metadactyl are a little different from
-each other. Please see [Terrain Vs. Metadactyl](endpoints/terrain-v-metadactyl.md)
+Note that secured endpoints in Terrain and apps are a little different from
+each other. Please see [Terrain Vs. Apps](endpoints/terrain-v-apps.md)
 for more information.

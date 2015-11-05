@@ -26,8 +26,8 @@ terrain.email.tool-request-dest = {{ de_mail_to_addr }}
 terrain.email.tool-request-src  = {{ de_mail_from_addr }}
 terrain.email.feedback-dest     = {{ de_feedback_to_addr }}
 
-# Metadactyl connection settings
-terrain.metadactyl.base-url = {{ metadactyl.base }}
+# Apps connection settings
+terrain.apps.base-url = {{ apps.base }}
 
 # Metadata connection settings
 terrain.metadata.base-url = http://{{ metadata.host }}:{{ metadata.port }}
@@ -60,7 +60,7 @@ terrain.tree-viewer.base-url = {{ tree_parser_base }}
 terrain.infosquito.es-url = {{ elasticsearch.base }}
 
 # App execution settings
-terrain.job-exec.default-output-folder = {{ metadactyl.out_dir }}
+terrain.job-exec.default-output-folder = {{ apps.out_dir }}
 
 # iRODS configuration
 terrain.irods.host          = {{ irods.host }}

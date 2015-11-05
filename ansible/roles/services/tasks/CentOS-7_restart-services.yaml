@@ -51,12 +51,12 @@
       - restart_services
       - restart_notification-agent
 
-- name: start metadactyl service
+- name: start apps service
   sudo: yes
-  service: name={{metadactyl.service_name}} state=restarted
+  service: name={{apps.service_name}} state=restarted
   tags:
       - restart_services
-      - restart_metadactyl
+      - restart_apps
 
 - name: start kifshare service
   sudo: yes

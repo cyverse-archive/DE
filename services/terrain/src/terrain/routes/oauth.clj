@@ -1,6 +1,6 @@
 (ns terrain.routes.oauth
   (:use [compojure.core])
-  (:require [terrain.clients.metadactyl.raw :as metadactyl]
+  (:require [terrain.clients.apps.raw :as apps]
             [terrain.util.service :as service]))
 
 (defn secured-oauth-routes
@@ -11,4 +11,4 @@
   []
   (routes
    (GET "/oauth/access-code/:api-name" [api-name :as {params :params}]
-        (service/success-response (metadactyl/get-oauth-access-token api-name params)))))
+        (service/success-response (apps/get-oauth-access-token api-name params)))))

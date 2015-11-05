@@ -11,7 +11,7 @@
             [mescal.util :as util])
   (:import [java.io IOException]))
 
-; FIXME Update metadactyl exception handling when this exception handling is updated
+; FIXME Update apps service exception handling when this exception handling is updated
 (defn- agave-unavailable
   [e]
   (let [msg "Agave appears to be unavailable at this time"]

@@ -52,12 +52,12 @@
       - update_service_files
       - update_service_file_notification-agent
 
-- name: place metadactyl service file
+- name: place apps service file
   sudo: yes
-  template: src={{metadactyl.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
+  template: src={{apps.service_name}} dest=/usr/lib/systemd/system/ group=root owner=root mode=0664
   tags:
       - update_service_files
-      - update_service_file_metadactyl
+      - update_service_file_apps
 
 - name: place kifshare service file
   sudo: yes
@@ -169,7 +169,7 @@
       - update_service_file_user-sessions
       - update_service_file_tree-urls
       - update_service_file_notification-agent
-      - update_service_file_metadactyl
+      - update_service_file_apps
       - update_service_file_kifshare
       - update_service_file_jex-events
       - update_service_file_iplant-groups

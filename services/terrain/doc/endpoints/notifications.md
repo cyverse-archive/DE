@@ -19,7 +19,7 @@
 Secured Endpoint: GET /secured/notifications/messages
 
 This endpoint is primarily a passthrough endpoint to the notification agent's
-`/messages` endpoint, but it does make calls into metadactyl in order to add the
+`/messages` endpoint, but it does make calls into the apps service in order to add the
 app description to job status update notifications.
 
 Notifications in the DE are used to inform users when some event (for example a
@@ -281,7 +281,7 @@ are counted.
 Secured Endpoint: GET /secured/notifications/unseen-messages
 
 This endpoint is primarily a passthrough endpoint to the notification agent's
-`/unseen-messages` endpoint, but it does make calls into metadactyl in order to
+`/unseen-messages` endpoint, but it does make calls into the apps service in order to
 add the app description to job status update notifications.
 
 This service is used to obtain notifications that the user hasn't seen yet.
@@ -300,7 +300,7 @@ $ curl -s "http://by-tor:8888/secured/notifications/unseen-messages?proxyToken=$
 Secured Endpoint: GET /secured/notifications/last-ten-messages
 
 This endpoint is primarily a passthrough endpoint to the notification agent's
-`/last-ten-messages` endpoint, but it does make calls into metadactyl in order
+`/last-ten-messages` endpoint, but it does make calls into the apps service in order
 to add the app description to job status update notifications.
 
 This endpoint returns the ten most recent messages for the authenticated user in

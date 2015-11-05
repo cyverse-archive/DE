@@ -9,30 +9,30 @@
 
 # Collaborator List Management Endpoints
 
-Note that secured endpoints in Terrain and metadactyl are a little different from
-each other. Please see [Terrain Vs. Metadactyl](terrain-v-metadactyl.md) for more
+Note that secured endpoints in Terrain and apps are a little different from
+each other. Please see [Terrain Vs. Apps](terrain-v-apps.md) for more
 information.
 
 ## Listing Collaborators
 
 Secured Endpoint: GET /secured/collaborators
 
-This service delegates all of its calls to metadactyl's GET /collaborators
-endpoint. Please refer to metadactyl's documentation for more information.
+This service delegates all of its calls to apps's GET /collaborators
+endpoint. Please refer to apps's documentation for more information.
 
 ## Adding Collaborators
 
 Secured Endpoint: POST /secured/collaborators
 
-This service delegates all of its calls to metadactyl's POST /collaborators
-endpoint. Please refer to metadactyl's documentation for more information.
+This service delegates all of its calls to apps's POST /collaborators
+endpoint. Please refer to apps's documentation for more information.
 
 ## Removing Collaborators
 
 Secured Endpoint: POST /secured/remove-collaborators
 
-This service delegates all of its calls to metadactyl's POST
-/collaborators/shredder endpoint. Please refer to metadactyl's documentation
+This service delegates all of its calls to apps's POST
+/collaborators/shredder endpoint. Please refer to apps's documentation
 for more information.
 
 ## Searching for Users

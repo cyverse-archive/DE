@@ -244,9 +244,9 @@
   :language :clojure
   :archive? true}
 
- "metadactyl-clj"
+ "apps"
  {:type     :service
-  :path     "services/metadactyl-clj"
+  :path     "services/apps"
   :build    :lein
   :tarball? false
   :uberjar? true
