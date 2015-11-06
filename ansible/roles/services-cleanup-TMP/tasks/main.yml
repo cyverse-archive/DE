@@ -21,9 +21,11 @@
 
 - name: Remove donkey container
   shell: docker rm -v donkey
+  ignore_errors: true
 
 - name: Remove metadactyl container
   shell: docker rm -v metadactyl
+  ignore_errors: true
 
 - name: Reload systemd
   shell: systemctl daemon-reload  
