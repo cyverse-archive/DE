@@ -1,5 +1,7 @@
 ---
 
+- include: TMP-services-cleanup.yaml
+
 - include: services-common.yml
 
 - include: rsyslog-config.yaml
