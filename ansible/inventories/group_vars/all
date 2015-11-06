@@ -298,6 +298,7 @@ elk:
     service_name_short: elk-elasticsearch
     service_description: ELK elasticsearch
     image_name: elasticsearch
+    image_version: 1.7.3
     heap_size: "12g"
     cluster_name: "de-elk-dev"
     log_file: elk-elasticsearch-docker.log
