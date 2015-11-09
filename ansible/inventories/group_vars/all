@@ -32,6 +32,10 @@ denyhosts_allowed:
 #  - 172.16.0.*
 #  - 10.0.0.*
 
+max_heap:
+  low: "512M"
+  high: "1G"
+
 ################################################################################
 #                         Configuration Settings
 ################################################################################
@@ -85,6 +89,7 @@ anon_files:
   container_name: anon-files
   properties_file: anon-files.properties
   log_file: anon-files-docker.log
+  max_heap: "{{ max_heap.low }}"
 
 ## App Settings
 de_base:
@@ -180,6 +185,7 @@ clockwork:
   container_name: clockwork
   properties_file: clockwork.properties
   log_file: clockwork-docker.log
+  max_heap: "{{ max_heap.low }}"
 
 data_info:
   host: "{{ groups['data-info'][0] }}"
@@ -191,6 +197,7 @@ data_info:
   container_name: data-info
   properties_file: data-info.properties
   log_file: data-info-docker.log
+  max_heap: "{{ max_heap.high }}"
 
 dewey_listen_port:
 
@@ -215,6 +222,7 @@ dewey:
   container_name: dewey
   properties_file: dewey.properties
   log_file: dewey-docker.log
+  max_heap: "{{ max_heap.low }}"
 
 systemd:
   syslogFacility: local6
@@ -258,6 +266,7 @@ terrain:
   container_name: terrain
   properties_file: terrain.properties
   log_file: terrain-docker.log
+  max_heap: "{{ max_heap.high }}"
 
 email_smtp_host: 127.0.0.1
 email_smtp_from_address:
@@ -272,6 +281,7 @@ iplant_email:
   container_name: iplant-email
   properties_file: iplant-email.properties
   log_file: iplant-email-docker.log
+  max_heap: "{{ max_heap.low }}"
 
 environment_name:
 
@@ -401,6 +411,7 @@ infosquito:
   notify_enabled: true
   notify_count: 10000
   retry_interval: 900
+  max_heap: "{{ max_heap.low }}"
 
 info_typer:
   host: "{{ groups['info-typer'][0] }}"
@@ -411,6 +422,7 @@ info_typer:
   container_name: info-typer
   properties_file: info-typer.properties
   log_file: info-typer-docker.log
+  max_heap: "{{ max_heap.low }}"
 
 iplant_groups:
   host: "{{ groups['iplant-groups'][0] }}"
@@ -428,6 +440,7 @@ iplant_groups:
     password: "{{ grouper.admin.pass }}"
     api_version: "v2_2_000"
     base_url: "{{ grouper.ws.base_url }}"
+  max_heap: "{{ max_heap.low }}"
 
 irods_admin_users: "{{ irods.user }},{{ irods.admins }}"
 irods:
@@ -507,6 +520,7 @@ kifshare:
   de_url: \{\{url\}\}/d/\{\{ticket-id\}\}/\{\{filename\}\}
   mode: prod
   download_buffer_size: 100
+  max_heap: "{{ max_heap.low }}"
 
 max_edit_file_size: 2147483647
 
@@ -528,6 +542,7 @@ apps:
   user_root: Workspace
   user_subs: "[\"Apps under development\",\"Favorite Apps\"]"
   trash_category: Trash
+  max_heap: "{{ max_heap.high }}"
 
 metadata_db_driver: "{{ db_driver }}"
 metadata_db_vendor: "{{ db_vendor }}"
@@ -549,6 +564,7 @@ metadata:
   container_name: metadata
   properties_file: metadata.properties
   log_file: metadata-docker.log
+  max_heap: "{{ max_heap.high }}"
 
 
 monkey:
@@ -560,6 +576,7 @@ monkey:
   container_name: monkey
   properties_file: monkey.properties
   log_file: monkey-docker.log
+  max_heap: "{{ max_heap.low }}"
 
 nginx_ssl:
   server_name:
@@ -584,6 +601,7 @@ notificationagent:
   clean_start: "1:45:00"
   clean_age: 90
   clean_enable: "true"
+  max_heap: "{{ max_heap.low }}"
 
 notification_db_driver: "{{ db_driver }}"
 notification_db_vendor: "{{ db_vendor }}"
@@ -614,6 +632,7 @@ saved_searches:
   container_name: saved-searches
   properties_file: saved-searches.properties
   log_file: saved-searches-docker.log
+  max_heap: "{{ max_heap.low }}"
 
 search_default_limit: 200
 
@@ -634,6 +653,7 @@ tree_urls:
   cleanup_start: "1:30:00"
   cleanup_enable: "true"
   avu: tree-urls
+  max_heap: "{{ max_heap.low }}"
 
 timezone: America/Phoenix
 
@@ -653,6 +673,7 @@ user_preferences:
   container_name: user-preferences
   properties_file: user-preferences.properties
   log_file: user-preferences-docker.log
+  max_heap: "{{ max_heap.low }}"
 
 user_sessions_log_file: /home/iplant/logs/user-sessions.log
 user_sessions:
@@ -665,6 +686,7 @@ user_sessions:
   container_name: user-sessions
   properties_file: user-sessions.properties
   log_file: user-sessions-docker.log
+  max_heap: "{{ max_heap.low }}"
 
 ## iPlant data container
 data_container:
