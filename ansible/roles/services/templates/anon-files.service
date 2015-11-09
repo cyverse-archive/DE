@@ -10,6 +10,9 @@ ExecStartPre=-/usr/bin/docker rm -v {{anon_files.container_name}}
 ExecStart=/usr/bin/docker run --name {{anon_files.container_name}} \
         -v {{ de_config_dir }}:/etc/iplant/de \
         -v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
+{% if anon_files.max_heap is defined %}
+        -e JAVA_TOOL_OPTIONS="-Xmx{{anon_files.max_heap}}" \
+{% endif %}
         -p {{anon_files.port}}:60000 \
         --log-driver={{docker.log_driver}} \
         --log-driver={{docker.log_driver}} --log-opt syslog-tag={{anon_files.service_name_short}} \

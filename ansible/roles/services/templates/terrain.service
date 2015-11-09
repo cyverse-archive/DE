@@ -11,6 +11,9 @@ ExecStartPre=-/usr/bin/docker rm -v {{terrain.container_name}}
 ExecStart=/usr/bin/docker run --name {{terrain.container_name}} \
         -v {{ de_config_dir }}:/etc/iplant/de \
         -v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
+{% if terrain.max_heap is defined %}
+        -e JAVA_TOOL_OPTIONS="-Xmx{{terrain.max_heap}}" \
+{% endif %}
         --volumes-from {{data_container.container_name}} \
         -p {{terrain.port}}:60000 \
         --log-driver={{docker.log_driver}} --log-opt syslog-tag={{terrain.service_name_short}} \

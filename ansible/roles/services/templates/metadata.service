@@ -11,6 +11,9 @@ ExecStartPre=-/usr/bin/docker rm -v {{metadata.container_name}}
 ExecStart=/usr/bin/docker run --name {{metadata.container_name}} \
         -v {{ de_config_dir }}:/etc/iplant/de \
         -v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
+{% if metadata.max_heap is defined %}
+        -e JAVA_TOOL_OPTIONS="-Xmx{{metadata.max_heap}}" \
+{% endif %}
         -p {{metadata.port}}:60000 \
         --log-driver={{docker.log_driver}} --log-opt syslog-tag={{metadata.service_name_short}} \
         {{docker.user}}/{{metadata.image_name}}:{{docker.tag}} --config /etc/iplant/de/{{metadata.properties_file}}
