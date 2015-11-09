@@ -154,7 +154,7 @@ public class DiskResourceUtilTest {
 
     private Splittable createInfoTypeSplittable(String infoType) {
         Splittable s = StringQuoter.createSplittable();
-        StringQuoter.create(infoType).assign(s, "info-type");
+        StringQuoter.create(infoType).assign(s, "infoType");
         return s;
     }
 

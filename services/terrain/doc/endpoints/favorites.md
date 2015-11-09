@@ -52,7 +52,7 @@ A favorite file object has the following fields.
 | date-modified | number  | the time when the file was last modified in ms since the POSIX epoch |
 | file-size     | number  | the size in bytes of the file |
 | id            | string  | the absolute path to the file |
-| info-type     | string  | the semantic type of the content of the file |
+| infoType      | string  | the semantic type of the content of the file |
 | isFavorite    | boolean | `true` |
 | label         | string  | the name of file relative to its containing folder |
 | mime-type     | string  | the media type of the file |
@@ -181,7 +181,7 @@ A request to this endpoint requires the parameters in the following table.
 | limit       | yes       |              | the maximum number of filesystem entries to return |
 | offset      | yes       |              | the number entries in the sorted total result set to skip before including entries in the response document. |
 | entity-type | no        | ANY          | the type of entities to return. It can be `ANY|FILE|FOLDER`. All values are case-insensitive. |
-| info-type   | no        | no filtering | filter the files portion of the result set so that only files with this info type are returned. To return multiple info types, and this parameter more than once. |
+| infoType    | no        | no filtering | filter the files portion of the result set so that only files with this info type are returned. To return multiple info types, and this parameter more than once. |
 
 Any additional parameters will be ignored.
 
