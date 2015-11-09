@@ -9,7 +9,7 @@
 
 (defproject org.iplantc/anon-files "5.0.0"
   :description "Serves up files and directories that are shared with the anonymous user in iRODS."
-  :url "http://github.com/iPlantCollaborativeOpenSource/DiscoveryEnvironmentBackend/"
+  :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"}
   :manifest {"Git-Ref" ~(git-ref)}
   :uberjar-name "anon-files-standalone.jar"

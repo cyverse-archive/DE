@@ -1,6 +1,6 @@
 (defproject org.iplantc/common-swagger-api "5.0.0"
   :description "Common library for Swagger documented RESTful APIs"
-  :url "http://www.iplantcollaborative.org"
+  :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"
             :url "http://iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :dependencies [[org.clojure/clojure "1.7.0"]

@@ -10,7 +10,7 @@
 (defproject org.iplantc/dewey "5.0.0"
   :description "This is a RabbitMQ client responsible for keeping an elasticsearch index
                 synchronized with an iRODS repository using messages produced by iRODS."
-  :url "http://www.iplantcollaborative.org"
+  :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"
             :url "http://iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :manifest {"Git-Ref" ~(git-ref)}

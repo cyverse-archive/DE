@@ -1,7 +1,7 @@
 (defproject org.iplantc/monkey "5.0.0"
   :description "A metadata database crawler. It synchronizes the tag documents in the search data
                 index with the tag information inthe metadata database.  🐒"
-  :url "http://www.iplantcollaborative.org"
+  :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"
             :url "http://iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :aot [monkey.index monkey.tags monkey.core]

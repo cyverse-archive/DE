@@ -1,6 +1,6 @@
 (defproject org.iplantc/common-cfg "5.0.0"
   :description "DE services code for managing configurations."
-  :url "http://github.com/iPlantCollaborativeOpenSource/DiscoveryEnvironmentBackend/"
+  :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"}
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/tools.logging "0.3.1"]

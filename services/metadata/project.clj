@@ -9,7 +9,7 @@
 
 (defproject org.iplantc/metadata "5.0.0"
   :description "The REST API for the Discovery Environment Metadata services."
-  :url "https://github.com/iPlantCollaborativeOpenSource/DiscoveryEnvironmentBackend"
+  :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD Standard License"
             :url "http://www.iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :manifest {"Git-Ref" ~(git-ref)}

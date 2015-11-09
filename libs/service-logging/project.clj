@@ -1,6 +1,6 @@
 (defproject org.iplantc/service-logging "5.0.0"
   :description "Common Logging Utilities for Clojure Projects"
-  :url "http://www.iplantcollaborative.org"
+  :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"
             :url "http://iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :dependencies [[org.clojure/clojure "1.6.0"]

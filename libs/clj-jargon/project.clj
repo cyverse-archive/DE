@@ -1,6 +1,6 @@
 (defproject org.iplantc/clj-jargon "5.0.0"
   :description "Clojure API on top of iRODS's jargon-core."
-  :url "http://www.iplantcollaborative.org"
+  :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"
             :url "http://iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :dependencies [[org.clojure/clojure "1.6.0"]

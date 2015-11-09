@@ -9,7 +9,7 @@
 
 (defproject org.iplantc/tree-urls "5.0.0"
   :description "DE API for managing tree urls."
-  :url "https://github.com/iPlantCollaborativeOpenSource/DiscoveryEnvironmentBackend"
+  :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"}
   :manifest {"Git-Ref" ~(git-ref)}
   :aot [tree-urls.core]
