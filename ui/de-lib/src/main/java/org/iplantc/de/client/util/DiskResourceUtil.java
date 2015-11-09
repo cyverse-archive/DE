@@ -371,18 +371,6 @@ public class DiskResourceUtil {
         return dr.getPermission().equals(PermissionValue.own) || dr.getPermission().equals(PermissionValue.write);
     }
 
-    public boolean checkManifest(Splittable obj) {
-        if (obj == null) {
-            return false;
-        }
-        String info_type = obj.get("infoType").asString();
-        if (info_type == null || info_type.isEmpty()) {
-            return false;
-        }
-
-        return true;
-    }
-
     public boolean isTreeInfoType(InfoType infoType){
        return InfoType.NEXUS.equals(infoType)
            || InfoType.NEXML.equals(infoType)
@@ -400,32 +388,30 @@ public class DiskResourceUtil {
             || InfoType.GFF.equals(infoType);
     }
 
+    private String getInfoType(Splittable obj) {
+        if (obj == null) return null;
+
+        return obj.get(DiskResource.INFO_TYPE_KEY).asString();
+    }
+
     public boolean isTreeTab(Splittable obj) {
-        if (checkManifest(obj)) {
-            String infoType = obj.get("infoType").asString();
-            return (infoType.equals(InfoType.NEXUS.toString()) || infoType.equals(InfoType.NEXML.toString()) || infoType.equals(InfoType.NEWICK.toString()) || infoType.equals(InfoType.PHYLOXML
-                    .toString()));
-        }
-
-        return false;
-
+        String infoType = getInfoType(obj);
+        return (InfoType.NEXUS.toString().equals(infoType)
+                || InfoType.NEXML.toString().equals(infoType)
+                || InfoType.NEWICK.toString().equals(infoType)
+                || InfoType.PHYLOXML.toString().equals(infoType));
     }
 
     public boolean isGenomeVizTab(Splittable obj) {
-        if (checkManifest(obj)) {
-            String infoType = obj.get("infoType").asString();
-            return (infoType.equals(InfoType.FASTA.toString()));
-        }
-
-        return false;
+        String infoType = getInfoType(obj);
+        return InfoType.FASTA.toString().equals(infoType);
     }
 
     public boolean isEnsemblVizTab(Splittable obj) {
-        if (checkManifest(obj)) {
-            String infoType = obj.get("infoType").asString();
-            return (infoType.equals(InfoType.BAM.toString()) || infoType.equals(InfoType.VCF.toString()) || infoType.equals(InfoType.GFF.toString()));
-        }
-        return false;
+        String infoType = getInfoType(obj);
+        return InfoType.BAM.toString().equals(infoType)
+               || InfoType.VCF.toString().equals(infoType)
+               || InfoType.GFF.toString().equals(infoType);
     }
 
     public Splittable createStringPathListSplittable(List<HasPath> hasPathList) {
@@ -436,7 +422,7 @@ public class DiskResourceUtil {
 
     public Splittable createInfoTypeSplittable(String infoType) {
         Splittable s = StringQuoter.createSplittable();
-        StringQuoter.create(infoType).assign(s, "infoType");
+        StringQuoter.create(infoType).assign(s, DiskResource.INFO_TYPE_KEY);
         return s;
     }
 }

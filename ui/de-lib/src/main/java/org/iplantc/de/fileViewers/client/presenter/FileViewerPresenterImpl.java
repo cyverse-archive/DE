@@ -1,10 +1,15 @@
 package org.iplantc.de.fileViewers.client.presenter;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static org.iplantc.de.client.services.FileEditorServiceFacade.COMMA_DELIMITER;
 import static org.iplantc.de.client.services.FileEditorServiceFacade.TAB_DELIMITER;
+
 import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.models.CommonModelAutoBeanFactory;
 import org.iplantc.de.client.models.IsMaskable;
+import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.errors.diskResources.DiskResourceErrorAutoBeanFactory;
@@ -32,7 +37,6 @@ import org.iplantc.de.fileViewers.client.views.SaveAsDialogCancelSelectHandler;
 import org.iplantc.de.fileViewers.client.views.SaveAsDialogOkSelectHandler;
 import org.iplantc.de.fileViewers.client.views.TextViewerImpl;
 
-import static com.google.common.base.Preconditions.*;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -115,11 +119,10 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
             asyncCallback.onSuccess(null);
 
             JSONObject manifest = jsonUtil.getObject(result);
-            String infoType = jsonUtil.getString(manifest, FileViewer.INFO_TYPE_KEY);
+            String infoType = jsonUtil.getString(manifest, DiskResource.INFO_TYPE_KEY);
             MimeType contentType = MimeType.fromTypeString(jsonUtil.getString(manifest, "content-type"));
             checkNotNull(contentType);
             presenter.setTitle(file.getName());
-            presenter.setManifest(manifest);
             presenter.setContentType(contentType);
             presenter.composeView(file, parentFolder, manifest, contentType, infoType, editing, isVizTabFirst);
             LOG.info("Manifest retrieved: " + file.getName());
@@ -145,7 +148,6 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
      */
     private File file;
     private boolean isDirty;
-    private JSONObject manifest;
     private Folder parentFolder;
     private final PlainTabPanel tabPanel;
     private String title;
@@ -307,18 +309,17 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
             } else if (TAB_DELIMITER.equals(delimiter)) {
                 infoType = new JSONString(InfoType.TSV.toString());
             }
-            manifest.put(FileViewer.INFO_TYPE_KEY, infoType);
+            manifest.put(DiskResource.INFO_TYPE_KEY, infoType);
 
             manifest.put(FileViewer.COLUMNS_KEY, new JSONNumber(columns));
         }
         if(isPathListFile){
-            manifest.put(FileViewer.INFO_TYPE_KEY, new JSONString(InfoType.HT_ANALYSIS_PATH_LIST.toString()));
+            manifest.put(DiskResource.INFO_TYPE_KEY, new JSONString(InfoType.HT_ANALYSIS_PATH_LIST.toString()));
             manifest.put(FileViewer.PATH_LIST_KEY, new JSONString("true"));
         }
         setTitle(title);
-        setManifest(manifest);
         setContentType(contentType);
-        String infoType = jsonUtil.getString(manifest, FileViewer.INFO_TYPE_KEY);
+        String infoType = jsonUtil.getString(manifest, DiskResource.INFO_TYPE_KEY);
         composeView(null, parentFolder, manifest, contentType, infoType, editing, vizTabFirst);
     }
 
@@ -525,10 +526,6 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
 
     void setContentType(MimeType contentType) {
         this.contentType = contentType;
-    }
-
-    void setManifest(JSONObject manifest) {
-        this.manifest = manifest;
     }
 
     /**

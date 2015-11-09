@@ -95,8 +95,8 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
 
         void reMapInfoType(Splittable entity) {
             // If infotype is already defined, return
-            if(!entity.isUndefined("infoType")){
-                LOG.info("Search results are returning entities with 'infoType' keys.");
+            if(!entity.isUndefined(DiskResource.INFO_TYPE_KEY)){
+                LOG.info("Search results are returning entities with '"+DiskResource.INFO_TYPE_KEY+"' keys.");
                 // If this code is hit consistenly, this code is probably no longer necessary.
                 return;
             }
@@ -107,7 +107,7 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
                 Splittable metadataItem = metadata.get(i);
                 if(metadataItem.get("attribute").asString().equals("ipc-filetype")){
                     // Then forward value to infoType
-                    metadataItem.get("value").assign(entity, "infoType");
+                    metadataItem.get("value").assign(entity, DiskResource.INFO_TYPE_KEY);
                 }
             }
         }
