@@ -1,106 +1,88 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-             xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
-             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
-             xmlns:menu="urn:import:com.sencha.gxt.widget.core.client.menu"
-             xmlns:MyWidgets="urn:import:org.iplantc.de.apps.client.views.toolBar">
+	xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+	xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+	xmlns:menu="urn:import:com.sencha.gxt.widget.core.client.menu"
+	xmlns:MyWidgets="urn:import:org.iplantc.de.apps.client.views.toolBar">
 
-    <ui:with field="appearance"
-             type="org.iplantc.de.apps.client.AppsToolbarView.AppsToolbarAppearance"/>
+	<ui:with field="appearance"
+		type="org.iplantc.de.apps.client.AppsToolbarView.AppsToolbarAppearance" />
 
-    <ui:with field="margins0"
-             type="com.sencha.gxt.core.client.util.Margins">
-        <ui:attributes top="0" right="0" bottom="0" left="0"/>
-    </ui:with>
-    <ui:with field="boxData"
-             type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
-        <ui:attributes margins="{margins0}" flex="3"/>
-    </ui:with>
-    <ui:with field="boxDataNoFlex"
-             type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
-        <ui:attributes margins="{margins0}"/>
-    </ui:with>
+	<ui:with field="margins0" type="com.sencha.gxt.core.client.util.Margins">
+		<ui:attributes top="0" right="0" bottom="0" left="0" />
+	</ui:with>
+	<ui:with field="boxData"
+		type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
+		<ui:attributes margins="{margins0}" flex="3" />
+	</ui:with>
+	<ui:with field="boxDataNoFlex"
+		type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
+		<ui:attributes margins="{margins0}" />
+	</ui:with>
 
-    <ui:with field="submitToolTip"
-             type="com.sencha.gxt.widget.core.client.tips.ToolTipConfig">
-        <ui:attributes titleText="{appearance.submitForPublicUse}"
-                       trackMouse="true"/>
-    </ui:with>
+	<ui:with field="submitToolTip"
+		type="com.sencha.gxt.widget.core.client.tips.ToolTipConfig">
+		<ui:attributes titleText="{appearance.submitForPublicUse}"
+			trackMouse="true" />
+	</ui:with>
 
-    <toolbar:ToolBar ui:field="toolBar">
-        <toolbar:child layoutData="{boxDataNoFlex}">
-            <button:TextButton ui:field="app_menu"
-                               text="{appearance.applications}">
-                <button:menu>
-                    <menu:Menu>
-                        <menu:MenuItem ui:field="appRun"
-                                       enabled="false"
-                                       text="{appearance.run}"
-                                       icon="{appearance.runIcon}"/>
-                        <menu:MenuItem ui:field="createNewApp"
-                                       text="{appearance.newApp}"
-                                       icon="{appearance.addIcon}"/>
-                        <menu:MenuItem ui:field="requestTool"
-                                       text="{appearance.requestTool}"
-                                       icon="{appearance.addIcon}"/>
-                        <menu:MenuItem ui:field="copyApp"
-                                       enabled="false"
-                                       text="{appearance.copy}"
-                                       icon="{appearance.copyIcon}"/>
-                        <menu:MenuItem ui:field="editApp"
-                                       enabled="false"
-                                       text="{appearance.editMenuItem}"
-                                       icon="{appearance.editIcon}"/>
-                        <menu:MenuItem ui:field="deleteApp"
-                                       enabled="false"
-                                       text="{appearance.delete}"
-                                       icon="{appearance.deleteIcon}"/>
-                        <menu:MenuItem ui:field="submitApp"
-                                       enabled="false"
-                                       text="{appearance.shareMenuItem}"
-                                       icon="{appearance.submitForPublicIcon}"
-                                       toolTipConfig="{submitToolTip}"/>
-                    </menu:Menu>
-                </button:menu>
-            </button:TextButton>
-        </toolbar:child>
-        <toolbar:child layoutData="{boxDataNoFlex}">
-            <button:TextButton ui:field="wf_menu"
-                               text="{appearance.workflow}">
-                <button:menu>
-                    <menu:Menu>
-                        <menu:MenuItem ui:field="wfRun"
-                                       enabled="false"
-                                       text="{appearance.useWf}"
-                                       icon="{appearance.runIcon}"/>
-                        <menu:MenuItem ui:field="createWorkflow"
-                                       text="{appearance.newApp}"
-                                       icon="{appearance.addIcon}"/>
-                        <menu:MenuItem ui:field="copyWf"
-                                       enabled="false"
-                                       text="{appearance.copy}"
-                                       icon="{appearance.copyIcon}"/>
-                        <menu:MenuItem ui:field="editWf"
-                                       enabled="false"
-                                       text="{appearance.editMenuItem}"
-                                       icon="{appearance.editIcon}"/>
-                        <menu:MenuItem ui:field="deleteWf"
-                                       enabled="false"
-                                       text="{appearance.delete}"
-                                       icon="{appearance.deleteIcon}"/>
-                        <menu:MenuItem ui:field="submitWf"
-                                       enabled="false"
-                                       text="{appearance.shareMenuItem}"
-                                       icon="{appearance.submitForPublicIcon}"
-                                       toolTipConfig="{submitToolTip}"/>
-                    </menu:Menu>
-                </button:menu>
-            </button:TextButton>
-        </toolbar:child>
-
-        <toolbar:child layoutData="{boxData}">
-            <MyWidgets:AppSearchField ui:field="appSearch"
-                                      emptyText="{appearance.searchApps}"/>
-        </toolbar:child>
-    </toolbar:ToolBar>
+	<toolbar:ToolBar ui:field="toolBar">
+		<toolbar:child layoutData="{boxDataNoFlex}">
+			<button:TextButton ui:field="app_menu"
+				text="{appearance.applications}">
+				<button:menu>
+					<menu:Menu>
+						<menu:MenuItem ui:field="appRun" enabled="false"
+							text="{appearance.run}" icon="{appearance.runIcon}" />
+						<menu:MenuItem ui:field="createNewApp" text="{appearance.newApp}"
+							icon="{appearance.addIcon}" />
+						<menu:MenuItem ui:field="requestTool" text="{appearance.requestTool}"
+							icon="{appearance.addIcon}" />
+						<menu:MenuItem ui:field="copyApp" enabled="false"
+							text="{appearance.copy}" icon="{appearance.copyIcon}" />
+						<menu:MenuItem ui:field="editApp" enabled="false"
+							text="{appearance.editMenuItem}" icon="{appearance.editIcon}" />
+						<menu:MenuItem ui:field="deleteApp" enabled="false"
+							text="{appearance.delete}" icon="{appearance.deleteIcon}" />
+					</menu:Menu>
+				</button:menu>
+			</button:TextButton>
+		</toolbar:child>
+		<toolbar:child layoutData="{boxDataNoFlex}">
+			<button:TextButton ui:field="wf_menu" text="{appearance.workflow}">
+				<button:menu>
+					<menu:Menu>
+						<menu:MenuItem ui:field="wfRun" enabled="false"
+							text="{appearance.useWf}" icon="{appearance.runIcon}" />
+						<menu:MenuItem ui:field="createWorkflow" text="{appearance.newApp}"
+							icon="{appearance.addIcon}" />
+						<menu:MenuItem ui:field="copyWf" enabled="false"
+							text="{appearance.copy}" icon="{appearance.copyIcon}" />
+						<menu:MenuItem ui:field="editWf" enabled="false"
+							text="{appearance.editMenuItem}" icon="{appearance.editIcon}" />
+						<menu:MenuItem ui:field="deleteWf" enabled="false"
+							text="{appearance.delete}" icon="{appearance.deleteIcon}" />
+					</menu:Menu>
+				</button:menu>
+			</button:TextButton>
+		</toolbar:child>
+          <toolbar:child>
+          <button:TextButton ui:field="share_menu" text="Share">
+          <button:menu>
+                   <menu:Menu ui:field="sharingMenu">
+                                <menu:MenuItem ui:field="shareCollab" enabled="true"
+                                    text="Share with Collaborator..." icon="{appearance.submitForPublicIcon}"
+                                    toolTipConfig="{submitToolTip}" />
+                                <menu:MenuItem ui:field="sharePublic" enabled="true"
+                                    text="Share with Public..." icon="{appearance.submitForPublicIcon}"
+                                    toolTipConfig="{submitToolTip}" />
+                            </menu:Menu>
+                    </button:menu>
+              </button:TextButton>
+          </toolbar:child>
+		<toolbar:child layoutData="{boxData}">
+			<MyWidgets:AppSearchField ui:field="appSearch"
+				emptyText="{appearance.searchApps}" />
+		</toolbar:child>
+	</toolbar:ToolBar>
 </ui:UiBinder>

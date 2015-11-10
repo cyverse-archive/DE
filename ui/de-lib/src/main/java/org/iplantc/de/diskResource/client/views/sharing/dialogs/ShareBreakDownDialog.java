@@ -1,9 +1,8 @@
 package org.iplantc.de.diskResource.client.views.sharing.dialogs;
 
 import org.iplantc.de.client.models.diskResources.PermissionValue;
-import org.iplantc.de.client.models.sharing.DataSharing;
-import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.diskResource.client.DataSharingView;
+import org.iplantc.de.client.models.sharing.Sharing;
+import org.iplantc.de.client.sharing.SharingAppearance;
 import org.iplantc.de.diskResource.client.model.DataSharingKeyProvider;
 import org.iplantc.de.diskResource.client.model.DataSharingProperties;
 
@@ -28,25 +27,22 @@ import java.util.List;
 
 /**
  * FIXME Implement appearance separate from DataSharingView.Appearance
+ * 
  * @author sriram, jstroot
  * 
  */
 public class ShareBreakDownDialog extends Dialog {
 
-    private final DataSharingView.Appearance appearance;
-    private Grid<DataSharing> grid;
-    private final DiskResourceUtil diskResourceUtil;
+    private final SharingAppearance appearance;
+    private Grid<Sharing> grid;
 
-    public ShareBreakDownDialog(final List<DataSharing> shares) {
-        this(shares,
-             GWT.<DataSharingView.Appearance> create(DataSharingView.Appearance.class));
+    public ShareBreakDownDialog(final List<Sharing> shares) {
+        this(shares, GWT.<SharingAppearance> create(SharingAppearance.class));
     }
 
-    ShareBreakDownDialog(final List<DataSharing> shares,
-                         final DataSharingView.Appearance appearance) {
+    ShareBreakDownDialog(final List<Sharing> shares, final SharingAppearance appearance) {
         this.appearance = appearance;
         init();
-        diskResourceUtil = DiskResourceUtil.getInstance();
 
         ToolBar toolbar = new ToolBar();
         toolbar.setHeight(appearance.shareBreakDownDlgToolbarHeight());
@@ -61,18 +57,17 @@ public class ShareBreakDownDialog extends Dialog {
     }
 
     private void init() {
-        setPixelSize(appearance.shareBreakDownDlgWidth(),
-                     appearance.shareBreakDownDlgHeight());
+        setPixelSize(appearance.shareBreakDownDlgWidth(), appearance.shareBreakDownDlgHeight());
         setHideOnButtonClick(true);
         setModal(true);
         setHeadingText(appearance.whoHasAccess());
         buildGrid();
     }
 
-    private Grid<DataSharing> buildGrid() {
-        ListStore<DataSharing> store = new ListStore<>(new DataSharingKeyProvider());
-        ColumnModel<DataSharing> cm = buildColumnModel();
-        GroupingView<DataSharing> view = new GroupingView<>();
+    private Grid<Sharing> buildGrid() {
+        ListStore<Sharing> store = new ListStore<>(new DataSharingKeyProvider());
+        ColumnModel<Sharing> cm = buildColumnModel();
+        GroupingView<Sharing> view = new GroupingView<>();
         view.groupBy(cm.getColumn(0));
         view.setAutoExpandColumn(cm.getColumn(0));
         view.setShowGroupedColumn(false);
@@ -81,7 +76,7 @@ public class ShareBreakDownDialog extends Dialog {
         return grid;
     }
 
-    private void loadGrid(List<DataSharing> shares) {
+    private void loadGrid(List<Sharing> shares) {
         grid.getStore().clear();
         grid.getStore().addAll(shares);
     }
@@ -92,7 +87,7 @@ public class ShareBreakDownDialog extends Dialog {
 
             @Override
             public void onSelect(SelectEvent event) {
-                GroupingView<DataSharing> view = (GroupingView<DataSharing>)grid.getView();
+                GroupingView<Sharing> view = (GroupingView<Sharing>)grid.getView();
                 view.groupBy(grid.getColumnModel().getColumn(0));
 
             }
@@ -107,7 +102,7 @@ public class ShareBreakDownDialog extends Dialog {
 
             @Override
             public void onSelect(SelectEvent event) {
-                GroupingView<DataSharing> view = (GroupingView<DataSharing>)grid.getView();
+                GroupingView<Sharing> view = (GroupingView<Sharing>)grid.getView();
                 view.groupBy(grid.getColumnModel().getColumn(1));
 
             }
@@ -116,44 +111,44 @@ public class ShareBreakDownDialog extends Dialog {
         return button;
     }
 
-    private ColumnModel<DataSharing> buildColumnModel() {
-        List<ColumnConfig<DataSharing, ?>> configs = new ArrayList<>();
+    private ColumnModel<Sharing> buildColumnModel() {
+        List<ColumnConfig<Sharing, ?>> configs = new ArrayList<>();
         DataSharingProperties props = GWT.create(DataSharingProperties.class);
-        ColumnConfig<DataSharing, String> name = new ColumnConfig<>(props.name());
+        ColumnConfig<Sharing, String> name = new ColumnConfig<>(props.name());
 
         name.setHeader(appearance.nameColumnLabel());
         name.setWidth(appearance.shareBreakDownDlgNameColumnWidth());
 
-        ColumnConfig<DataSharing, String> diskRsc = new ColumnConfig<>(new ValueProvider<DataSharing, String>() {
+        ColumnConfig<Sharing, String> diskRsc = new ColumnConfig<>(new ValueProvider<Sharing, String>() {
 
             @Override
-            public String getValue(DataSharing object) {
-                return diskResourceUtil.parseNameFromPath((object.getPath()));
+            public String getValue(Sharing object) {
+                return object.getName();
             }
 
             @Override
-            public void setValue(DataSharing object, String value) {
+            public void setValue(Sharing object, String value) {
                 // do nothing intentionally
 
             }
 
             @Override
             public String getPath() {
-                return "path";
+                return "";
             }
         });
 
         diskRsc.setHeader(appearance.nameColumnLabel());
         diskRsc.setWidth(appearance.shareBreakDownDlgNameColumnWidth());
-        ColumnConfig<DataSharing, PermissionValue> permission = new ColumnConfig<>(new ValueProvider<DataSharing, PermissionValue>() {
+        ColumnConfig<Sharing, PermissionValue> permission = new ColumnConfig<>(new ValueProvider<Sharing, PermissionValue>() {
 
             @Override
-            public PermissionValue getValue(DataSharing object) {
+            public PermissionValue getValue(Sharing object) {
                 return object.getDisplayPermission();
             }
 
             @Override
-            public void setValue(DataSharing object, PermissionValue value) {
+            public void setValue(Sharing object, PermissionValue value) {
                 object.setDisplayPermission(value);
 
             }

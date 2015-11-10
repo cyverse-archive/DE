@@ -1,6 +1,6 @@
 package org.iplantc.de.theme.base.client.diskResource.sharing;
 
-import org.iplantc.de.diskResource.client.DataSharingView;
+import org.iplantc.de.client.sharing.SharingAppearance;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.theme.base.client.diskResource.DiskResourceMessages;
@@ -17,7 +17,7 @@ import com.sencha.gxt.core.client.resources.CommonStyles;
 /**
  * @author jstroot
  */
-public class DataSharingViewDefaultAppearance implements DataSharingView.Appearance {
+public class DataSharingViewDefaultAppearance implements SharingAppearance {
     private final IplantDisplayStrings iplantDisplayStrings;
     private final IplantResources iplantResources;
     private final SharingMessages sharingMessages;

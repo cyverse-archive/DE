@@ -1,6 +1,7 @@
 package org.iplantc.de.apps.client.views.toolBar;
 
 import static org.iplantc.de.apps.client.events.AppSearchResultLoadEvent.TYPE;
+
 import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent.AppSearchResultLoadEventHandler;
 import org.iplantc.de.apps.client.events.BeforeAppSearchEvent;
@@ -37,6 +38,7 @@ import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.menu.Item;
+import com.sencha.gxt.widget.core.client.menu.Menu;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
 import java.util.List;
@@ -50,6 +52,8 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
     interface AppsViewToolbarUiBinder extends UiBinder<Widget, AppsViewToolbarImpl> {
     }
 
+    @UiField
+    Menu sharingMenu;
     @UiField MenuItem appRun;
     @UiField AppSearchField appSearch;
     @UiField TextButton app_menu;
@@ -63,9 +67,9 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
     @UiField MenuItem editApp;
     @UiField MenuItem editWf;
     @UiField MenuItem requestTool;
-    @UiField MenuItem submitApp;
+    @UiField
+    MenuItem shareCollab, sharePublic;
     @Inject AsyncProvider<SubmitAppForPublicDialog> submitAppDialogAsyncProvider;
-    @UiField MenuItem submitWf;
     @UiField MenuItem wfRun;
     @UiField TextButton wf_menu;
     @UiField(provided = true) final AppsToolbarAppearance appearance;
@@ -170,7 +174,7 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         currentSelection.addAll(event.getAppSelection());
 
         boolean deleteAppEnabled, editAppEnabled, submitAppEnabled, copyAppEnabled, appRunEnabled;
-        boolean deleteWfEnabled, editWfEnabled, submitWfEnabled, copyWfEnabled, wfRunEnabled;
+        boolean deleteWfEnabled, editWfEnabled, copyWfEnabled, wfRunEnabled;
 
         switch (currentSelection.size()) {
             case 0:
@@ -182,7 +186,6 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
 
                 deleteWfEnabled = false;
                 editWfEnabled = false;
-                submitWfEnabled = false;
                 copyWfEnabled = false;
                 wfRunEnabled = false;
 
@@ -206,7 +209,6 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
 
                 deleteWfEnabled = isMultiStep && !isAppPublic;
                 editWfEnabled = isMultiStep && !isAppPublic && isOwner;
-                submitWfEnabled = isMultiStep && isRunnable &&!isAppPublic;
                 copyWfEnabled = isMultiStep;
                 // Wf run menu item is left enabled so user can get error announcement
                 wfRunEnabled = isMultiStep && !isAppDisabled;
@@ -224,20 +226,18 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
 
                 deleteWfEnabled = containsMultiStepApp && allSelectedAppsPrivate;
                 editWfEnabled = false;
-                submitWfEnabled = false;
                 copyWfEnabled = false;
                 wfRunEnabled = false;
         }
 
         deleteApp.setEnabled(deleteAppEnabled);
         editApp.setEnabled(editAppEnabled);
-        submitApp.setEnabled(submitAppEnabled);
+        sharingMenu.setEnabled(submitAppEnabled);
         copyApp.setEnabled(copyAppEnabled);
         appRun.setEnabled(appRunEnabled);
 
         deleteWf.setEnabled(deleteWfEnabled);
         editWf.setEnabled(editWfEnabled);
-        submitWf.setEnabled(submitWfEnabled);
         copyWf.setEnabled(copyWfEnabled);
         wfRun.setEnabled(wfRunEnabled);
     }
@@ -253,7 +253,7 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         copyApp.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_COPY_APP);
         editApp.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_EDIT_APP);
         deleteApp.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_DELETE_APP);
-        submitApp.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_SHARE_APP);
+        sharingMenu.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_SHARE_APP);
 
         wf_menu.ensureDebugId(baseID + Ids.MENU_ITEM_WF);
         wfRun.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_USE_WF);
@@ -261,7 +261,6 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         copyWf.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_COPY_WF);
         editWf.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_EDIT_WF);
         deleteWf.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_DELETE_WF);
-        submitWf.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_SHARE_WF);
 
         appSearch.ensureDebugId(baseID + Ids.MENU_ITEM_SEARCH);
     }
@@ -357,7 +356,7 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         fireEvent(new RequestToolSelected());
     }
 
-    @UiHandler({"submitApp", "submitWf"})
+    @UiHandler({"sharePublic"})
     void submitClicked(SelectionEvent<Item> event) {
         Preconditions.checkState(currentSelection.size() == 1);
 
