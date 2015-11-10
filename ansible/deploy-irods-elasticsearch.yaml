@@ -1,6 +1,7 @@
 # This playbook prepares the elasticsearch servers for a given inventory.
 ---
-- hosts: elasticsearch
+- name: Deploy irods elasticsearch
+  hosts: elasticsearch
   sudo:  true
 
   vars:
@@ -37,8 +38,12 @@
 
   roles:
     - role: notify-chat
-      msg: "Updating elasticsearch"
-    - gpstathis.elasticsearch
-    - { role: elasticsearch-master, when: elasticsearch_node_master }
+      msg: "Deploying irods dependent applications and services"
+    - role: gpstathis.elasticsearch
+      when: "'elasticsearch' in group_names"
+    - role: elasticsearch-master
+      when: "elasticsearch_node_master and 'elasticsearch' in group_names"
+            
     - role: notify-chat
-      msg: "Done updating elasticsearch"
+      msg: "Done deploying irods dependent applications and services"
+
