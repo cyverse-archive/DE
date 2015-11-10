@@ -8,4 +8,4 @@ title: Discovery Environment Docs
 * [Services](services)
 * [User Interface](ui)
 * [Ansible](ansible)
-
+* [Tools](tools)
