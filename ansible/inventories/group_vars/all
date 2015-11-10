@@ -226,6 +226,7 @@ dewey:
 
 systemd:
   syslogFacility: local6
+  unit_file_dir: /usr/lib/systemd/system
   services:
           - "{{anon_files}}"
           - "{{clockwork}}"
@@ -483,7 +484,7 @@ jexevents:
   base: "http://{{ groups['jexevents'][0] }}/"
   event_url: "{{ apps.base }}/callbacks/de-job"
   service_name: jex-events.service
-  service_name_short: jex-events
+  service_name_short: jexevents
   service_description: jex events service
   image_name: jex-events
   container_name: jex-events

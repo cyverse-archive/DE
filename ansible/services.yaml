@@ -1,17 +1,49 @@
 ---
-# ansible-playbook -i inventories/... -K --tags "update_service_files" services.yaml
-# ansible-playbook -i inventories/... -K --tags "restart_services" services.yaml
-# ansible-playbook -i inventories/... -K --tags "restart_[SERVICE NAME]" services.yaml
-# ansible-playbook -i inventories/... -K --tags "enable_services" services.yaml
-# ansible-playbook -i inventories/... -K --tags "enable_[SERVICE NAME]" services.yaml
-
-### Disable all services (systemd)
-# ansible-playbook -i inventories/... -K --tags "enable_services" --extra-vars "enable_services=no" services.yaml
-
-### Pull all containers and restart services
-# ansible-playbook -i inventories/... -K --tags "docker_pull,restart_services" services.yaml
+# Updates all service configs, systemd configs, and pulls service docker images.
+# Obeys the `parasitic` inventory flags, and will not deploy parasitic services 
+# when the `parasitic` flag is set.
+#
+# See documentation for `deploy-service-cfg` and `deploy-service-systemd` for 
+# more info.
+#
 
 - hosts: services
   sudo: yes
+  vars:
+      clean_services:
+         - "{{anon_files}}"
+         - "{{apps}}"
+         - "{{clockwork}}"
+         - "{{condor_log_monitor}}"
+         - "{{data_info}}"
+         - "{{exim}}"
+         - "{{iplant_email}}"
+         - "{{iplant_groups}}"
+         - "{{jexevents}}"
+         - "{{kifshare}}"
+         - "{{metadata}}"
+         - "{{notificationagent}}"
+         - "{{saved_searches}}"
+         - "{{terrain}}"
+         - "{{tree_urls}}"
+         - "{{user_preferences}}"
+         - "{{user_sessions}}"
+      parasitic_services:
+         - "{{dewey}}"
+         - "{{info_typer}}"
+         - "{{infosquito}}"
+         - "{{monkey}}"
+
   roles:
-      - services
+    - role: deploy-service-cfg
+      services: "{{clean_services}}"
+    - role: deploy-service-systemd
+      services: "{{clean_services}}"
+
+    - role: deploy-service-cfg
+      services: "{{parasitic_services}}"
+      when: not parasitic
+    - role: deploy-service-systemd
+      services: "{{parasitic_services}}"
+      when: not parasitic
+
