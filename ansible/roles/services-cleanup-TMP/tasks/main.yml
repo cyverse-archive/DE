@@ -1,34 +1,9 @@
 ---
 # tasks file for services-cleanup-TMP
 
-- name: Stop donkey
-  service: name=donkey.service state=stopped
-
-- name: Stop metadactyl
-  service: name=metadactyl.service state=stopped
-
-- name: Disable donkey
-  service: name=donkey.service enabled=false
-
-- name: Disable metadactyl
-  service: name=metadactyl.service enabled=false
-
-- name: Remove donkey service
-  file: path=/usr/lib/systemd/system/donkey.service state=absent
-
-- name: Remove metadactyl service
-  file: path=/usr/lib/systemd/system/metadactyl.service state=absent
-
-- name: Remove donkey container
-  shell: docker rm -v donkey
-  ignore_errors: true
-
-- name: Remove metadactyl container
-  shell: docker rm -v metadactyl
-  ignore_errors: true
+- include: CORE-7259.yml
+- include: CORE-7274.yml
 
 - name: Reload systemd
   shell: systemctl daemon-reload  
-
-
 
