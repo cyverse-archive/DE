@@ -226,6 +226,9 @@
     (POST "/tools" [:as {:keys [body]}]
           (import-tools body))
 
+    (DELETE "/tools/:tool-id" [tool-id]
+            (apps/delete-tool tool-id))
+
     (PATCH "/tools/:tool-id" [tool-id :as {:keys [body]}]
            (apps/update-tool tool-id body))
 

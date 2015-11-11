@@ -155,6 +155,12 @@
           (where {:container_images_id img-id
                   :is_public true})))
 
+(defn get-apps-by-tool-id
+  "Loads information about the apps using the tool with the given ID."
+  [tool-id]
+  (let [tool-app-ids (select tool_listing (fields :app_id) (where {:tool_id tool-id}))]
+    (map (comp get-app :app_id) tool-app-ids)))
+
 (defn get-tool-type-id
   "Gets the ID of the given tool type name."
   [tool-type]

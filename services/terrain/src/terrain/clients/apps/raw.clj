@@ -444,6 +444,13 @@
                 :content-type     :json
                 :follow-redirects false}))
 
+(defn delete-tool
+  [tool-id]
+  (client/delete (apps-url "admin" "tools" tool-id)
+                 {:query-params     (secured-params)
+                  :as               :stream
+                  :follow-redirects false}))
+
 (defn update-tool
   [tool-id tool]
   (client/patch (apps-url "admin" "tools" tool-id)

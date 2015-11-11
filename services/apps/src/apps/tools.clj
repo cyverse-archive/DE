@@ -6,11 +6,12 @@
         [apps.containers :only [add-tool-container]]
         [apps.util.assertions :only [assert-not-nil]]
         [apps.util.conversions :only [remove-nil-vals]]
-        [apps.validation :only [verify-tool-name-location]]
+        [apps.validation :only [verify-tool-name-location validate-tool-not-used]]
         [clojure.string :only [upper-case]]
         [korma.core :exclude [update]]
         [korma.db :only [transaction]])
-  (:require [apps.persistence.app-metadata :as persistence]))
+  (:require [apps.persistence.app-metadata :as persistence]
+            [clojure.tools.logging :as log]))
 
 (defn- add-search-where-clauses
   "Adds where clauses to a base tool search query to restrict results to tools that contain the
@@ -95,3 +96,11 @@
   [{:keys [id] :as tool}]
   (persistence/update-tool tool)
   (get-tool id))
+
+(defn delete-tool
+  [user tool-id]
+  (let [{:keys [name location version]} (get-tool tool-id)]
+    (validate-tool-not-used tool-id)
+    (log/warn user "deleting tool" tool-id name version "@" location))
+  (delete tools (where {:id tool-id}))
+  nil)

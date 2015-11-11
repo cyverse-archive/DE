@@ -5,7 +5,7 @@
         [apps.schema.containers]
         [apps.routes.domain.tool]
         [apps.routes.params]
-        [apps.tools :only [add-tools get-tool search-tools update-tool]]
+        [apps.tools :only [add-tools delete-tool get-tool search-tools update-tool]]
         [apps.user :only [current-user]]
         [apps.util.service]
         [slingshot.slingshot :only [throw+]]
@@ -312,6 +312,13 @@
                         entrypoint-warning
                         volumes-warning)
          (ok (add-tools body)))
+
+  (DELETE* "/:tool-id" []
+           :path-params [tool-id :- ToolIdParam]
+           :query [{:keys [user]} SecuredQueryParams]
+           :summary "Delete a Tool"
+           :description "Deletes a tool, as long as it is not in use by any apps."
+           (ok (delete-tool user tool-id)))
 
   (PATCH* "/:tool-id" []
           :path-params [tool-id :- ToolIdParam]

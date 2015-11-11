@@ -24,6 +24,7 @@
     * [Updating a Pipeline](#updating-a-pipeline)
     * [Updating App Labels](#updating-app-labels)
     * [Importing Tools](#importing-tools)
+    * [Deleting Tools](#deleting-tools)
     * [Updating Tools](#updating-tools)
     * [Rating Apps](#rating-apps)
     * [Deleting App Ratings](#deleting-app-ratings)
@@ -284,6 +285,15 @@ Please see the apps service documentation for more information.
 Secured Endpoint: POST /admin/tools
 
 Delegates to apps: POST /admin/tools
+
+This endpoint is a passthrough to the apps endpoint using the same path.
+Please see the apps service documentation for more information.
+
+## Deleting Tools
+
+Secured Endpoint: DELETE /admin/tools/{tool-id}
+
+Delegates to apps: DELETE /admin/tools/{tool-id}
 
 This endpoint is a passthrough to the apps endpoint using the same path.
 Please see the apps service documentation for more information.
