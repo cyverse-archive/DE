@@ -25,5 +25,5 @@ StartLimitBurst=3
 SyslogIdentifier={{grouper.http_server.container_name}}
 
 [Install]
-WantedBy=multi-user.target
+WantedBy={{systemd.target}}
 
