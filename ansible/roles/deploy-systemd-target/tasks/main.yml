@@ -1,0 +1,9 @@
+---
+# tasks file for deploy-systemd-target
+
+- name: Place the DE systemd target file
+  template: src=de.target dest={{systemd_unit_file_dir}}/{{systemd_target}} group=root owner=root mode=0644
+
+- name: Reload systemd
+  shell: systemctl daemon-reload
+  

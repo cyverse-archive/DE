@@ -1,0 +1,3 @@
+---
+# defaults file for deploy-systemd-target
+systemd_unit_file_dir: "{{systemd.unit_file_dir}}"
