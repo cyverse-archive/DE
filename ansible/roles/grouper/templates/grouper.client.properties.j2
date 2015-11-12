@@ -1,0 +1,23 @@
+# url of directory, including the base DN (distinguished name)
+grouperClient.ldap.url = {{ grouper.subject_source.url }}
+
+# kerberos principal used to connect to ldap
+grouperClient.ldap.login = {{ grouper.subject_source.principal or '' }}
+
+# password for shared secret authentication to ldap
+# or you can put a filename with an encrypted password
+grouperClient.ldap.password = {{ grouper.subject_source.credentials or '' }}
+
+########################################
+## Web service Connection settings
+########################################
+
+# url of web service, should include everything up to the first resource to access
+grouperClient.webService.url = {{ grouper.ws.base_url }}
+
+# kerberos principal used to connect to web service
+grouperClient.webService.login = {{ grouper.admin.user }}
+
+# password for shared secret authentication to web service
+# or you can put a filename with an encrypted password
+grouperClient.webService.password = {{ grouper.admin.pass }}
