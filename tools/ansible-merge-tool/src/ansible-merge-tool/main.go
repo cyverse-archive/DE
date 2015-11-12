@@ -200,6 +200,44 @@ func CopySecret(internalPath, externalPath string) error {
 	return nil
 }
 
+// CopyCompose copies the files needed to launch docker-compose from the merged
+// directory.
+func CopyCompose(internalPath, externalPath string) error {
+	origPath, err := filepath.Abs(path.Join(internalPath, "docker-compose-configs.yml"))
+	if err != nil {
+		return err
+	}
+	destPath, err := filepath.Abs(path.Join(externalPath, "docker-compose-configs.yml"))
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Copying %s to %s\n", origPath, destPath)
+	contents, err := ioutil.ReadFile(origPath)
+	if err != nil {
+		return err
+	}
+	if err = ioutil.WriteFile(destPath, contents, 0644); err != nil {
+		return err
+	}
+	origPath, err = filepath.Abs(path.Join(internalPath, "docker-compose.yml"))
+	if err != nil {
+		return err
+	}
+	destPath, err = filepath.Abs(path.Join(externalPath, "docker-compose.yml"))
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Copying %s to %s\n", origPath, destPath)
+	contents, err = ioutil.ReadFile(origPath)
+	if err != nil {
+		return err
+	}
+	if err = ioutil.WriteFile(destPath, contents, 0644); err != nil {
+		return err
+	}
+	return nil
+}
+
 // LaunchDocker launches the provided image
 func LaunchDocker(imageName, cwd string) error {
 	mountArg := fmt.Sprintf("%s:/de-ansible", cwd)
@@ -323,6 +361,11 @@ func main() {
 	if err = CopySecret(internalPath, externalPath); err != nil {
 		log.Fatal(err)
 	}
+
+	if err = CopyCompose(internalPath, externalPath); err != nil {
+		log.Fatal(err)
+	}
+
 	reminder := `Don't forget to run:
   cd %s
   export ANSIBLE_ROLES_PATH=%s:%s
