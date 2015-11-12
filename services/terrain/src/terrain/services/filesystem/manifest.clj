@@ -58,7 +58,7 @@
   {:action       "manifest"
    :content-type (detect-content-type cm path)
    :urls         (extract-urls cm path)
-   :info-type    (filetypes/get-types cm user path)})
+   :infoType     (filetypes/get-types cm user path)})
 
 (defn- manifest
   [user path data-threshold]

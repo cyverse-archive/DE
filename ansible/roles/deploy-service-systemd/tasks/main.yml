@@ -1,0 +1,16 @@
+---
+# tasks file for deploy-service-systemd
+
+- name: Place {{ item.service_name }} systemd file
+  template: src={{item.service_name}} dest={{systemd_unit_file_dir}} group=root owner=root mode=0664
+  with_items: "{{services}}"
+  when: "'{{item.service_name_short}}' in group_names"
+
+- name: Reload systemd
+  shell: systemctl daemon-reload
+
+- name: Enable {{ item.service_name }} service
+  service: name={{ item.service_name }} enabled={{ systemd_enable }}
+  with_items: "{{services}}"
+  when: "'{{item.service_name_short}}' in group_names"
+

@@ -1,10 +1,10 @@
 (ns terrain.routes.metadata
   (:use [compojure.core]
         [terrain.services.file-listing]
-        [terrain.services.metadata.metadactyl]
+        [terrain.services.metadata.apps]
         [terrain.util])
   (:require [clojure.tools.logging :as log]
-            [terrain.clients.metadactyl.raw :as metadactyl]
+            [terrain.clients.apps.raw :as apps]
             [terrain.util.config :as config]
             [terrain.util.service :as service]))
 
@@ -14,10 +14,10 @@
     [config/app-routes-enabled]
 
     (GET "/apps/categories" [:as {params :params}]
-         (service/success-response (metadactyl/get-app-categories params)))
+         (service/success-response (apps/get-app-categories params)))
 
     (GET "/apps/categories/:category-id" [category-id :as {params :params}]
-         (service/success-response (metadactyl/apps-in-category category-id params)))))
+         (service/success-response (apps/apps-in-category category-id params)))))
 
 (defn admin-category-routes
   []
@@ -26,19 +26,19 @@
            (config/app-routes-enabled))]
 
     (GET "/apps/categories" [:as {params :params}]
-         (service/success-response (metadactyl/get-admin-app-categories params)))
+         (service/success-response (apps/get-admin-app-categories params)))
 
     (POST "/apps/categories" [:as {:keys [body]}]
-          (service/success-response (metadactyl/add-category body)))
+          (service/success-response (apps/add-category body)))
 
     (POST "/apps/categories/shredder" [:as {:keys [body]}]
-          (service/success-response (metadactyl/delete-categories body)))
+          (service/success-response (apps/delete-categories body)))
 
     (DELETE "/apps/categories/:category-id" [category-id]
-            (service/success-response (metadactyl/delete-category category-id)))
+            (service/success-response (apps/delete-category category-id)))
 
     (PATCH "/apps/categories/:category-id" [category-id :as {:keys [body]}]
-           (service/success-response (metadactyl/update-category category-id body)))))
+           (service/success-response (apps/update-category category-id body)))))
 
 (defn admin-apps-routes
   []
@@ -47,22 +47,22 @@
            (config/app-routes-enabled))]
 
     (POST "/apps" [:as {:keys [body]}]
-          (service/success-response (metadactyl/categorize-apps body)))
+          (service/success-response (apps/categorize-apps body)))
 
     (POST "/apps/shredder" [:as {:keys [body]}]
-          (service/success-response (metadactyl/permanently-delete-apps body)))
+          (service/success-response (apps/permanently-delete-apps body)))
 
     (DELETE "/apps/:app-id" [app-id]
-            (service/success-response (metadactyl/admin-delete-app app-id)))
+            (service/success-response (apps/admin-delete-app app-id)))
 
     (PATCH "/apps/:app-id" [app-id :as {:keys [body]}]
-           (service/success-response (metadactyl/admin-update-app app-id body)))
+           (service/success-response (apps/admin-update-app app-id body)))
 
     (POST "/apps/:app-id/documentation" [app-id :as {:keys [body]}]
-          (service/success-response (metadactyl/admin-add-app-docs app-id body)))
+          (service/success-response (apps/admin-add-app-docs app-id body)))
 
     (PATCH "/apps/:app-id/documentation" [app-id :as {:keys [body]}]
-           (service/success-response (metadactyl/admin-edit-app-docs app-id body)))))
+           (service/success-response (apps/admin-edit-app-docs app-id body)))))
 
 (defn apps-routes
   []
@@ -70,91 +70,91 @@
     [config/app-routes-enabled]
 
     (GET "/apps" [:as {params :params}]
-         (service/success-response (metadactyl/search-apps params)))
+         (service/success-response (apps/search-apps params)))
 
     (POST "/apps" [:as {:keys [body]}]
-          (service/success-response (metadactyl/create-app body)))
+          (service/success-response (apps/create-app body)))
 
     (POST "/apps/arg-preview" [:as {:keys [body]}]
-          (service/success-response (metadactyl/preview-args body)))
+          (service/success-response (apps/preview-args body)))
 
     (GET "/apps/ids" []
-         (service/success-response (metadactyl/list-app-ids)))
+         (service/success-response (apps/list-app-ids)))
 
     (GET "/apps/elements" [:as {:keys [params]}]
-         (service/success-response (metadactyl/get-all-workflow-elements params)))
+         (service/success-response (apps/get-all-workflow-elements params)))
 
     (GET "/apps/elements/:element-type" [element-type :as {:keys [params]}]
-         (service/success-response (metadactyl/get-workflow-elements element-type params)))
+         (service/success-response (apps/get-workflow-elements element-type params)))
 
     (POST "/apps/pipelines" [:as {:keys [body]}]
-          (service/success-response (metadactyl/add-pipeline body)))
+          (service/success-response (apps/add-pipeline body)))
 
     (PUT "/apps/pipelines/:app-id" [app-id :as {:keys [body]}]
-         (service/success-response (metadactyl/update-pipeline app-id body)))
+         (service/success-response (apps/update-pipeline app-id body)))
 
     (POST "/apps/pipelines/:app-id/copy" [app-id]
-          (service/success-response (metadactyl/copy-pipeline app-id)))
+          (service/success-response (apps/copy-pipeline app-id)))
 
     (GET "/apps/pipelines/:app-id/ui" [app-id]
-         (service/success-response (metadactyl/edit-pipeline app-id)))
+         (service/success-response (apps/edit-pipeline app-id)))
 
     (POST "/apps/shredder" [:as {:keys [body]}]
-          (service/success-response (metadactyl/delete-apps body)))
+          (service/success-response (apps/delete-apps body)))
 
     (GET "/apps/:app-id" [app-id]
-         (service/success-response (metadactyl/get-app app-id)))
+         (service/success-response (apps/get-app app-id)))
 
     (DELETE "/apps/:app-id" [app-id]
-            (service/success-response (metadactyl/delete-app app-id)))
+            (service/success-response (apps/delete-app app-id)))
 
     (PATCH "/apps/:app-id" [app-id :as {:keys [body]}]
-           (service/success-response (metadactyl/relabel-app app-id body)))
+           (service/success-response (apps/relabel-app app-id body)))
 
     (PUT "/apps/:app-id" [app-id :as {:keys [body]}]
-         (service/success-response (metadactyl/update-app app-id body)))
+         (service/success-response (apps/update-app app-id body)))
 
     (POST "/apps/:app-id/copy" [app-id]
-          (service/success-response (metadactyl/copy-app app-id)))
+          (service/success-response (apps/copy-app app-id)))
 
     (GET "/apps/:app-id/details" [app-id]
-         (service/success-response (metadactyl/get-app-details app-id)))
+         (service/success-response (apps/get-app-details app-id)))
 
     (GET "/apps/:app-id/documentation" [app-id]
-         (service/success-response (metadactyl/get-app-docs app-id)))
+         (service/success-response (apps/get-app-docs app-id)))
 
     (POST "/apps/:app-id/documentation" [app-id :as {:keys [body]}]
-          (service/success-response (metadactyl/add-app-docs app-id body)))
+          (service/success-response (apps/add-app-docs app-id body)))
 
     (PATCH "/apps/:app-id/documentation" [app-id :as {:keys [body]}]
-           (service/success-response (metadactyl/edit-app-docs app-id body)))
+           (service/success-response (apps/edit-app-docs app-id body)))
 
     (DELETE "/apps/:app-id/favorite" [app-id]
-            (service/success-response (metadactyl/remove-favorite-app app-id)))
+            (service/success-response (apps/remove-favorite-app app-id)))
 
     (PUT "/apps/:app-id/favorite" [app-id]
-         (service/success-response (metadactyl/add-favorite-app app-id)))
+         (service/success-response (apps/add-favorite-app app-id)))
 
     (GET "/apps/:app-id/is-publishable" [app-id]
-         (service/success-response (metadactyl/app-publishable? app-id)))
+         (service/success-response (apps/app-publishable? app-id)))
 
     (POST "/apps/:app-id/publish" [app-id :as {:keys [body]}]
-          (service/success-response (metadactyl/make-app-public app-id body)))
+          (service/success-response (apps/make-app-public app-id body)))
 
     (DELETE "/apps/:app-id/rating" [app-id]
-            (service/success-response (metadactyl/delete-rating app-id)))
+            (service/success-response (apps/delete-rating app-id)))
 
     (POST "/apps/:app-id/rating" [app-id :as {body :body}]
-          (service/success-response (metadactyl/rate-app app-id body)))
+          (service/success-response (apps/rate-app app-id body)))
 
     (GET "/apps/:app-id/tasks" [app-id]
-         (service/success-response (metadactyl/list-app-tasks app-id)))
+         (service/success-response (apps/list-app-tasks app-id)))
 
     (GET "/apps/:app-id/tools" [app-id]
-         (service/success-response (metadactyl/get-tools-in-app app-id)))
+         (service/success-response (apps/get-tools-in-app app-id)))
 
     (GET "/apps/:app-id/ui" [app-id]
-         (service/success-response (metadactyl/get-app-ui app-id)))))
+         (service/success-response (apps/get-app-ui app-id)))))
 
 (defn analysis-routes
   []
@@ -162,31 +162,31 @@
    [config/app-routes-enabled]
 
    (GET "/analyses" [:as {:keys [params]}]
-        (service/success-response (metadactyl/list-jobs params)))
+        (service/success-response (apps/list-jobs params)))
 
    (POST "/analyses" [:as {:keys [body]}]
-         (service/success-response (metadactyl/submit-job body)))
+         (service/success-response (apps/submit-job body)))
 
    (PATCH "/analyses/:analysis-id" [analysis-id :as {body :body}]
-          (service/success-response (metadactyl/update-job analysis-id body)))
+          (service/success-response (apps/update-job analysis-id body)))
 
    (DELETE "/analyses/:analysis-id" [analysis-id]
-           (service/success-response (metadactyl/delete-job analysis-id)))
+           (service/success-response (apps/delete-job analysis-id)))
 
    (POST "/analyses/shredder" [:as {:keys [body]}]
-         (service/success-response (metadactyl/delete-jobs body)))
+         (service/success-response (apps/delete-jobs body)))
 
    (GET "/analyses/:analysis-id/parameters" [analysis-id]
-        (service/success-response (metadactyl/get-job-params analysis-id)))
+        (service/success-response (apps/get-job-params analysis-id)))
 
    (GET "/analyses/:analysis-id/relaunch-info" [analysis-id]
-        (service/success-response (metadactyl/get-job-relaunch-info analysis-id)))
+        (service/success-response (apps/get-job-relaunch-info analysis-id)))
 
    (GET "/analyses/:analysis-id/steps" [analysis-id]
-        (service/success-response (metadactyl/list-job-steps analysis-id)))
+        (service/success-response (apps/list-job-steps analysis-id)))
 
    (POST "/analyses/:analysis-id/stop" [analysis-id]
-         (service/success-response (metadactyl/stop-job analysis-id)))))
+         (service/success-response (apps/stop-job analysis-id)))))
 
 (defn admin-reference-genomes-routes
   []
@@ -212,10 +212,10 @@
     [config/app-routes-enabled]
 
     (GET "/reference-genomes" [:as {params :params}]
-         (service/success-response (metadactyl/list-reference-genomes params)))
+         (service/success-response (apps/list-reference-genomes params)))
 
     (GET "/reference-genomes/:reference-genome-id" [reference-genome-id]
-         (service/success-response (metadactyl/get-reference-genome reference-genome-id)))))
+         (service/success-response (apps/get-reference-genome reference-genome-id)))))
 
 (defn admin-tool-routes
   []
@@ -226,8 +226,11 @@
     (POST "/tools" [:as {:keys [body]}]
           (import-tools body))
 
+    (DELETE "/tools/:tool-id" [tool-id]
+            (apps/delete-tool tool-id))
+
     (PATCH "/tools/:tool-id" [tool-id :as {:keys [body]}]
-           (metadactyl/update-tool tool-id body))
+           (apps/update-tool tool-id body))
 
     (GET "/tool-requests" [:as {params :params}]
          (admin-list-tool-requests params))
@@ -244,10 +247,10 @@
     [config/app-routes-enabled]
 
     (GET "/tools" [:as {:keys [params]}]
-         (service/success-response (metadactyl/search-tools params)))
+         (service/success-response (apps/search-tools params)))
 
     (GET "/tools/:tool-id" [tool-id]
-         (service/success-response (metadactyl/get-tool tool-id)))
+         (service/success-response (apps/get-tool tool-id)))
 
     (GET "/tool-requests" []
          (list-tool-requests))

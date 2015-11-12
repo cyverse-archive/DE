@@ -14,4 +14,4 @@ ALTER TABLE ONLY container_devices
 ALTER TABLE ONLY container_devices
     ADD CONSTRAINT container_devices_container_settings_id_fkey
     FOREIGN KEY(container_settings_id)
-    REFERENCES container_settings(id);
+    REFERENCES container_settings(id) ON DELETE CASCADE;

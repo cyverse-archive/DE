@@ -1,5 +1,7 @@
 ---
 
+- include: TMP-services-cleanup.yaml
+
 - include: services-common.yml
 
 - include: rsyslog-config.yaml
@@ -10,7 +12,8 @@
 
 - include: amqp-brokers.yaml
 
-- include: elasticsearch.yaml
+- include: deploy-irods-elasticsearch.yaml
+  when: not parasitic
 
 - include: systems.yaml
   vars:

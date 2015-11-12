@@ -1,6 +1,6 @@
 (defproject org.iplantc/clj-cas "5.0.0"
   :description "A CAS Client library written in Clojure."
-  :url "http://www.iplantcollaborative.org"
+  :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"
             :url "http://iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :dependencies [[org.clojure/clojure "1.5.1"]

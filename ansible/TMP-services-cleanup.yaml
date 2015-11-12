@@ -1,0 +1,15 @@
+---
+
+- name: Remove donkey and metadactyl services, REMOVE THIS WHEN NO LONGER NEEDED
+  hosts: services
+  sudo: yes
+  roles:
+      - role: services-cleanup-TMP
+
+  tasks:
+      - debug: msg="!!!! TEMPORARY !!!!!"
+      - debug: msg="!!!! TEMPORARY !!!!!"
+      - debug: msg="!!!! REMOVE WHEN NO LONGER NEEDED !!!!!"
+
+
+

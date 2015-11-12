@@ -9,7 +9,7 @@
 
 (defproject org.iplantc/porklock "5.0.0"
   :description "A command-line tool for interacting with iRODS."
-  :url "http://www.iplantcollaborative.org"
+  :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"
             :url "http://iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :manifest {"Git-Ref" ~(git-ref)}

@@ -1,0 +1,9 @@
+---
+# defaults file for deploy-service-cfg
+docker_user: "{{docker.user}}"
+docker_tag: "{{docker.tag}}"
+service_conf_dir: "{{de_config_dir}}"
+logging_conf_dir: "{{logging.conf_dir}}"
+config: true
+logging_config: true
+docker_pull: true

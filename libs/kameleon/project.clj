@@ -1,6 +1,6 @@
 (defproject org.iplantc/kameleon "5.0.0"
   :description "Library for interacting with backend relational databases."
-  :url "http://www.iplantcollaborative.org"
+  :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"
             :url "http://iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :dependencies [[org.clojure/clojure "1.7.0"]
@@ -11,4 +11,4 @@
                  [postgresql "9.3-1102.jdbc41"]
                  [slingshot "0.12.2"]]
   :plugins [[lein-marginalia "0.7.1"]]
-  :manifest {"db-version" "2.3.0:20151030.01"})
+  :manifest {"db-version" "2.3.0:20151110.01"})

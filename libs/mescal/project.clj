@@ -1,6 +1,6 @@
 (defproject org.iplantc/mescal "5.0.0"
   :description "A Clojure client library for the Agave API."
-  :url "https://github.com/iPlantCollaborativeOpenSource/mescal"
+  :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD Standard License"
             :url "http://www.iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :dependencies [[org.clojure/clojure "1.5.1"]

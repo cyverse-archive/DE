@@ -1,4 +1,6 @@
 {
+  "make-jwt": "make-jwt",
+  "make-jwt-darwin-amd64": "make-jwt",
   "metadata-db.tar.gz" : "databases-dev",
   "notification-db.tar.gz" : "databases-dev",
   "database.tar.gz" : "databases-dev",

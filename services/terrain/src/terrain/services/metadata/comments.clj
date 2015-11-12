@@ -6,7 +6,7 @@
             [clojure-commons.validators :as validators]
             [terrain.auth.user-attributes :as user]
             [terrain.clients.data-info :as data]
-            [terrain.clients.metadactyl :as metadactyl]
+            [terrain.clients.apps :as apps]
             [terrain.clients.metadata.raw :as metadata]
             [terrain.services.filesystem.uuids :as data-uuids]
             [terrain.util.service :as svc]
@@ -30,7 +30,7 @@
 (defn- extract-app-id
   [app-id]
   (let [app-uuid (valid/extract-uri-uuid app-id)]
-    (metadactyl/get-app-details app-uuid)
+    (apps/get-app-details app-uuid)
     app-uuid))
 
 (defn- read-body
@@ -112,7 +112,7 @@
   [app-id comment-id retracted]
   (let [app-id     (valid/extract-uri-uuid app-id)
         comment-id (valid/extract-uri-uuid comment-id)
-        app        (metadactyl/get-app-details app-id)
+        app        (apps/get-app-details app-id)
         owns-app?  (validators/user-owns-app? user/current-user app)]
     (if owns-app?
       (metadata/admin-update-app-retract-status app-id comment-id retracted)

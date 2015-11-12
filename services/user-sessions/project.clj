@@ -9,7 +9,7 @@
 
 (defproject org.iplantc/user-sessions "5.0.0"
   :description "DE API for managing user sessions."
-  :url "https://github.com/iPlantCollaborativeOpenSource/DiscoveryEnvironmentBackend"
+  :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"}
   :manifest {"Git-Ref" ~(git-ref)}
   :uberjar-name "user-sessions-standalone.jar"

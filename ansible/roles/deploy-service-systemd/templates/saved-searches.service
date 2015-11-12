@@ -1,0 +1,27 @@
+[Unit]
+Description={{saved_searches.service_description}}
+BindsTo=docker.service
+PartOf=docker.service
+After=docker.service
+Requisite=docker.service
+
+[Service]
+User=iplant
+ExecStartPre=-/usr/bin/docker rm -v {{saved_searches.container_name}}
+ExecStart=/usr/bin/docker run --name {{saved_searches.container_name}} \
+        -v {{ de_config_dir }}:/etc/iplant/de \
+        -v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone \
+{% if saved_searches.max_heap is defined %}
+        -e JAVA_TOOL_OPTIONS="-Xmx{{saved_searches.max_heap}}" \
+{% endif %}
+        -p {{saved_searches.port}}:60000 \
+        --log-driver={{docker.log_driver}} --log-opt syslog-tag={{saved_searches.service_name_short}} \
+        {{docker.user}}/{{saved_searches.image_name}}:{{docker.tag}} --config /etc/iplant/de/{{saved_searches.properties_file}}
+ExecStop=-/usr/bin/docker stop {{saved_searches.container_name}}
+Restart=on-failure
+StartLimitInterval=60s
+StartLimitBurst=3
+
+[Install]
+WantedBy=multi-user.target
+

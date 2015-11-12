@@ -1,0 +1,9 @@
+---
+# tasks file for services-cleanup-TMP
+
+- include: CORE-7259.yml
+- include: CORE-7274.yml
+
+- name: Reload systemd
+  shell: systemctl daemon-reload  
+

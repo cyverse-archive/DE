@@ -103,7 +103,6 @@ public interface FileViewer extends IsWidget, IsMaskable, HasHandlers, FileSaved
 
     String COLUMNS_KEY = "columns";
 
-    String INFO_TYPE_KEY = "info-type";
     String PATH_LIST_KEY = "is-path-list";
 
     String getEditorContent();

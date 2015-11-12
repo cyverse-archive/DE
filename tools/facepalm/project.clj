@@ -13,7 +13,7 @@
 
 (defproject org.iplantc/facepalm "5.0.0"
   :description "Command-line utility for DE database managment."
-  :url "http://www.iplantcollaborative.org"
+  :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"
             :url "http://iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :manifest {"Git-Ref" ~(git-ref)}

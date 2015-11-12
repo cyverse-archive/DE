@@ -14,6 +14,13 @@ COPY conf/main/logback.xml /home/iplant/
 COPY target/terrain-standalone.jar /home/iplant/
 RUN chown -R iplant:iplant /home/iplant/
 
+ARG git_commit=unknown
+ARG buildenv_git_commit=unknown
+ARG version=unknown
+LABEL org.iplantc.de.terrain.git-ref="$git_commit" \
+      org.iplantc.de.terrain.version="$version" \
+      org.iplantc.de.buildenv.git-ref="$buildenv_git_commit"
+
 USER iplant
 ENTRYPOINT ["java", "-Dlogback.configurationFile=/etc/iplant/de/logging/terrain-logging.xml", "-cp", ".:terrain-standalone.jar", "terrain.core"]
 CMD ["--help"]

@@ -10,7 +10,7 @@ infosquito
 iplant-email
 jex
 kifshare
-metadactyl
+apps
 metadata
 monkey
 notificationagent

@@ -17,7 +17,7 @@ __Response Body__:
     {
         "content-type" : "text/plain",
         "urls" : [],
-        "info-type" : "<an info type or empty string>"
+        "infoType" : "<an info type or empty string>"
     }
 
 The urls field will contain some or none of the following:

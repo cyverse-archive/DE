@@ -41,8 +41,13 @@ public class Application extends AbstractAnnotationConfigDispatcherServletInitia
                 instance.printVersion();
                 System.exit(0);
                 return;
+            } else if (arg.startsWith("--spring")) {
             } else {
-                System.out.println("Unrecognized argument. Try \"--version\"");
+                StringBuilder sb = new StringBuilder();
+                sb.append("Unrecognized argument \"")
+                  .append(arg)
+                  .append("\". Try \"--version\"");
+                System.out.println(sb.toString());
             }
         }
         SpringApplication.run(Application.class, args);

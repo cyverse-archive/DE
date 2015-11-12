@@ -9,7 +9,7 @@
 
 (defproject org.iplantc/saved-searches "5.0.0"
   :description "DE API for managing saved searches."
-  :url "https://github.com/iPlantCollaborativeOpenSource/DiscoveryEnvironmentBackend"
+  :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"}
   :manifest {"Git-Ref" ~(git-ref)}
   :aot [saved-searches.core]

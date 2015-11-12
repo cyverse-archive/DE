@@ -4,7 +4,7 @@
   sudo: true
 
   vars:
-    rabbitmq_conf_tcp_listeners_port: "{{ amqp_broker_port }}"
+    rabbitmq_conf_tcp_listeners_port: "{{ amqp_broker.port }}"
 
     rabbitmq_users_definitions:
       - vhost: /

@@ -1,0 +1,71 @@
+# Connection details.
+apps.app.listen-port = {{ default_service_port }}
+
+# Route-independent feature flags.
+apps.features.agave      = true
+apps.features.agave.jobs = true
+
+# Database settings.
+apps.db.driver      = {{ db_driver }}
+apps.db.subprotocol = {{ db_vendor }}
+apps.db.host        = {{ db_host }}
+apps.db.port        = {{ db_port }}
+apps.db.name        = {{ db_name }}
+apps.db.user        = {{ db_user }}
+apps.db.password    = {{ db_password }}
+
+# JEX connection settings.
+apps.jex.base-url = {{ jex.base }}
+
+# Data Info connection settings.
+apps.data-info.base-url = http://{{ data_info.host }}:{{ data_info.port }}
+
+# Workspace app category names.
+apps.workspace.root-app-category            = {{ apps.user_root }}
+apps.workspace.default-app-categories       = {{ apps.user_subs }}
+apps.workspace.dev-app-category-index       = 0
+apps.workspace.favorites-app-category-index = 1
+apps.workspace.beta-app-category-id         = 5401bd14-6c14-4470-aedd-57b47ea1b979
+apps.workspace.public-id                    = 00000000-0000-0000-0000-000000000000
+
+# The domain name to append to the user id to get the fully qualified user id.
+apps.uid.domain = {{ cas_uid_domain }}
+
+# The path to the home directory in iRODS.
+apps.irods.home = {{ irods.home }}
+
+# Batch job settings.
+apps.batch.group               = {{ jex.batch_group }}
+apps.batch.path-list.info-type = {{ path_list_info_type }}
+apps.batch.path-list.max-paths = {{ apps.path_list_max_paths }}
+apps.batch.path-list.max-size  = {{ apps.path_list_max_size }}
+
+# Agave connection settings.
+apps.agave.base-url             = {{ agave.base_url }}
+apps.agave.key                  = {{ agave.client_key }}
+apps.agave.secret               = {{ agave.client_secret }}
+apps.agave.oauth-base           = {{ agave.base_url }}/oauth2
+apps.agave.oauth-refresh-window = {{ agave.oauth_refresh_window }}
+apps.agave.redirect-uri         = {{ de.base }}/oauth/callback/agave
+apps.agave.storage-system       = {{ irods.host }}
+apps.agave.read-timeout         = {{ agave.read_timeout }}
+apps.agave.page-length          = {{ agave.page_length }}
+
+# Agave callback settings.
+apps.agave.callback-base = {{ de.base }}/agave-cb
+
+# PGP Settings
+apps.pgp.keyring-path = {{ pgp_keyring_path }}
+apps.pgp.key-password = {{ pgp_key_password }}
+
+# Notification agent connection settings.
+apps.notificationagent.base-url = {{ notificationagent.base }}
+
+# JEX Events connection settings.
+apps.jex-events.base-url = {{ jexevents.base }}
+
+# The job status polling interval.
+apps.jobs.poll-interval = {{ job_status_poll_interval }}
+
+# The base URL for iplant-groups.
+apps.iplant-groups.base-url = {{ iplant_groups.base_url }}

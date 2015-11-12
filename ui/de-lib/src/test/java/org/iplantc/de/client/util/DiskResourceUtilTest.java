@@ -1,5 +1,11 @@
 package org.iplantc.de.client.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
@@ -8,13 +14,6 @@ import org.iplantc.de.client.models.viewer.InfoType;
 import com.google.common.collect.Lists;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import com.google.web.bindery.autobean.shared.Splittable;
-import com.google.web.bindery.autobean.shared.impl.StringQuoter;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -69,56 +68,56 @@ public class DiskResourceUtilTest {
     }
 
     @Test public void testTreeTab() {
-        Splittable s = createInfoTypeSplittable(InfoType.ACE.toString());
+        Splittable s = diskResourceUtil.createInfoTypeSplittable(InfoType.ACE.toString());
         boolean expected = diskResourceUtil.isTreeTab(s);
         assertFalse(expected);
 
-        s = createInfoTypeSplittable(InfoType.NEXUS.toString());
+        s = diskResourceUtil.createInfoTypeSplittable(InfoType.NEXUS.toString());
         expected = diskResourceUtil.isTreeTab(s);
         assertTrue(expected);
 
-        s = createInfoTypeSplittable(InfoType.PHYLIP.toString());
+        s = diskResourceUtil.createInfoTypeSplittable(InfoType.PHYLIP.toString());
         expected = diskResourceUtil.isTreeTab(s);
         assertFalse(expected);
 
-        s = createInfoTypeSplittable(InfoType.PHYLOXML.toString());
+        s = diskResourceUtil.createInfoTypeSplittable(InfoType.PHYLOXML.toString());
         expected = diskResourceUtil.isTreeTab(s);
         assertTrue(expected);
 
-        s = createInfoTypeSplittable(InfoType.NEWICK.toString());
+        s = diskResourceUtil.createInfoTypeSplittable(InfoType.NEWICK.toString());
         expected = diskResourceUtil.isTreeTab(s);
         assertTrue(expected);
 
-        s = createInfoTypeSplittable("");
+        s = diskResourceUtil.createInfoTypeSplittable("");
         expected = diskResourceUtil.isTreeTab(s);
         assertFalse(expected);
     }
 
     @Test public void testGenomeTab() {
-        Splittable s = createInfoTypeSplittable(InfoType.ACE.toString());
+        Splittable s = diskResourceUtil.createInfoTypeSplittable(InfoType.ACE.toString());
         boolean expected = diskResourceUtil.isGenomeVizTab(s);
         assertFalse(expected);
 
-        s = createInfoTypeSplittable(InfoType.FASTA.toString());
+        s = diskResourceUtil.createInfoTypeSplittable(InfoType.FASTA.toString());
         expected = diskResourceUtil.isGenomeVizTab(s);
         assertTrue(expected);
 
     }
 
     @Test public void testEnsemblTab() {
-        Splittable s = createInfoTypeSplittable(InfoType.ACE.toString());
+        Splittable s = diskResourceUtil.createInfoTypeSplittable(InfoType.ACE.toString());
         boolean expected = diskResourceUtil.isEnsemblVizTab(s);
         assertFalse(expected);
 
-        s = createInfoTypeSplittable(InfoType.BAM.toString());
+        s = diskResourceUtil.createInfoTypeSplittable(InfoType.BAM.toString());
         expected = diskResourceUtil.isEnsemblVizTab(s);
         assertTrue(expected);
 
-        s = createInfoTypeSplittable(InfoType.VCF.toString());
+        s = diskResourceUtil.createInfoTypeSplittable(InfoType.VCF.toString());
         expected = diskResourceUtil.isEnsemblVizTab(s);
         assertTrue(expected);
 
-        s = createInfoTypeSplittable(InfoType.GFF.toString());
+        s = diskResourceUtil.createInfoTypeSplittable(InfoType.GFF.toString());
         expected = diskResourceUtil.isEnsemblVizTab(s);
         assertTrue(expected);
     }
@@ -151,11 +150,4 @@ public class DiskResourceUtilTest {
         fail("Cannot parse this string into Double");
 
     }
-
-    private Splittable createInfoTypeSplittable(String infoType) {
-        Splittable s = StringQuoter.createSplittable();
-        StringQuoter.create(infoType).assign(s, "info-type");
-        return s;
-    }
-
 }

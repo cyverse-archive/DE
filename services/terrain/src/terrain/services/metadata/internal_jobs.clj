@@ -1,12 +1,12 @@
 (ns terrain.services.metadata.internal-jobs
   (:use [slingshot.slingshot :only [throw+]])
   (:require [clojure-commons.error-codes :as ce]
-            [terrain.clients.metadactyl :as metadactyl]
+            [terrain.clients.apps :as apps]
             [terrain.util.config :as config]))
 
 (defn- load-param-map
   [app-id]
-  (->> (metadactyl/get-app app-id)
+  (->> (apps/get-app app-id)
        (:groups)
        (mapcat :parameters)
        (map (juxt :label :id))
@@ -56,7 +56,7 @@
 (defn- launch-url-import-job
   [address filename dest-path]
   (->> (build-url-import-job-submission address filename dest-path)
-       (metadactyl/submit-job)))
+       (apps/submit-job)))
 
 (defn- unknown-job-type
   [job-type]
