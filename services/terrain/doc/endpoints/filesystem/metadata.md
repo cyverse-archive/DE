@@ -572,14 +572,12 @@ __Curl Command__:
 
 Adding Batch Metadata to Multiple Paths from a CSV File
 -------------------------------------------------------
-These endpoints will parse a CSV/TSV file where the first column is absolute or relative paths to
+This endpoint will parse a CSV/TSV file, where the first column is absolute or relative paths to
 files in the data store, the remaining columns are metadata, attributes are listed in the first row,
 and filenames and attribute values are listed in the remaining rows.
 If a `template-id` parameter is provided, then any parsed AVUs with attributes that match the given
 template's attributes will be added as template AVUs, otherwise all other AVUs will be added as
 IRODS metadata AVUs.
-
-__URL Path__: /secured/filesystem/metadata/csv-form-parser
 
 __URL Path__: /secured/filesystem/metadata/csv-parser
 
@@ -593,7 +591,7 @@ Parameter | Required | Description
 ----------|----------|------------
 proxyToken | Yes | A valid CAS ticket.
 dest | Yes | The folder path to look under for files listed in the CSV file.
-src | Yes/No | Required only for the `/secured/filesystem/metadata/csv-parser` endpoint. Path to the CSV source file in IRODS.
+src | Yes | Path to the CSV source file in IRODS.
 force | No | If omitted or set to `false`, then existing IRODS AVUs will be checked for attributes matching those parsed from the CSV file. If a match is found, then an `ERR_NOT_UNIQUE` is returned and metadata is not saved.
 template-id | No | The UUID of the Metadata Template with which to associate the parsed metadata.
 separator | No | URL encoded separator character to use for parsing the CSV/TSV file. Comma (%2C) by default.
@@ -744,8 +742,6 @@ __Response__:
 __Curl Command__:
 
     curl -s -X POST "http://localhost:3000/secured/filesystem/metadata/csv-parser?proxyToken=ipcuser&template-id=e7e19316-dc88-11e4-a49a-77c52ae8901a&dest=/iplant/home/ipcuser/folder_1&src=/iplant/home/ipcuser/metadata.csv"
-
-    curl -s -F file=@metadata.tsv "http://localhost:3000/secured/filesystem/metadata/csv-form-parser?proxyToken=ipcuser&template-id=e7e19316-dc88-11e4-a49a-77c52ae8901a&dest=/iplant/home/ipcuser/folder_1&separator=%09"
 
 Adding and Updating Metadata Template AVUs on a File/Folder
 -----------------------------------------------------------------

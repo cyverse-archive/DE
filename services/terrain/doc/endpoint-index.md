@@ -128,7 +128,6 @@
 * [POST /secured/filesystem/metadata](endpoints/filesystem/metadata.md#setting-metadata)
 * [POST /secured/filesystem/metadata-batch](endpoints/filesystem/metadata.md#setting-metadata-as-a-batch-operation)
 * [POST /secured/filesystem/metadata-batch-add](endpoints/filesystem/metadata.md#adding-batch-metadata-to-multiple-paths)
-* [POST /secured/filesystem/metadata/csv-form-parser](endpoints/filesystem/metadata.md#adding-batch-metadata-to-multiple-paths-from-a-csv-file)
 * [POST /secured/filesystem/metadata/csv-parser](endpoints/filesystem/metadata.md#adding-batch-metadata-to-multiple-paths-from-a-csv-file)
 * [GET /secured/filesystem/metadata/template/attr/{attribute_id}](endpoints/filesystem/metadata.md#viewing-a-metadata-attribute)
 * [GET /secured/filesystem/metadata/template/{template_id}](endpoints/filesystem/metadata.md#viewing-a-metadata-template)

@@ -127,9 +127,6 @@
    [#(and (config/filesystem-routes-enabled)
           (config/metadata-routes-enabled))]
 
-    (POST "/filesystem/metadata/csv-form-parser" [dest :as req]
-      (meta/parse-csv-metadata req))
-
     (POST "/filesystem/metadata/csv-parser" [:as {:keys [user-info params] :as req}]
       (meta/parse-src-file-csv-metadata user-info params))
 
