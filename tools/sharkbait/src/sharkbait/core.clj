@@ -1,4 +1,5 @@
 (ns sharkbait.core
+  (:gen-class)
   (:require [clojure.string :as string])
   (:import [edu.internet2.middleware.grouper GrouperSession Stem StemFinder SubjectFinder]
            [edu.internet2.middleware.grouper.attr AttributeDefSave AttributeDefType]

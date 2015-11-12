@@ -13,10 +13,11 @@
   :license {:name "BSD"
             :url "http://iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :manifest {"Git-Ref" ~(git-ref)}
-  :uberjar-name "facepalm-standalone.jar"
+  :uberjar-name "sharkbait-standalone.jar"
   :dependencies [[edu.internet2.middleware.grouper/grouper "2.2.1"]
                  [net.sf.ehcache/ehcache "2.10.1"]
                  [org.clojure/clojure "1.7.0"]
                  [org.hibernate/hibernate-core "3.6.10.Final"]
                  [org.hibernate/hibernate-ehcache "3.6.10.Final"]]
-  :main sharkbait.core)
+  :main sharkbait.core
+  :profiles {:uberjar {:aot :all}})
