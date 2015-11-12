@@ -9,22 +9,18 @@
 (defn- add-tool-delete-cascade
   []
   (println "\t* Adding container_settings DELETE CASCADE constraints...")
-  (exec-sql-statement "ALTER TABLE ONLY container_settings DROP CONSTRAINT container_settings_pkey")
   (exec-sql-statement "ALTER TABLE ONLY container_settings DROP CONSTRAINT container_settings_tools_id_fkey")
   (load-sql-file "constraints/71_container_settings.sql")
 
   (println "\t* Adding container_devices DELETE CASCADE constraints...")
-  (exec-sql-statement "ALTER TABLE ONLY container_devices DROP CONSTRAINT container_devices_pkey")
   (exec-sql-statement "ALTER TABLE ONLY container_devices DROP CONSTRAINT container_devices_container_settings_id_fkey")
   (load-sql-file "constraints/72_container_devices.sql")
 
   (println "\t* Adding container_volumes DELETE CASCADE constraints...")
-  (exec-sql-statement "ALTER TABLE ONLY container_volumes DROP CONSTRAINT container_volumes_pkey")
   (exec-sql-statement "ALTER TABLE ONLY container_volumes DROP CONSTRAINT container_volumes_container_settings_id_fkey")
   (load-sql-file "constraints/73_container_volumes.sql")
 
   (println "\t* Adding container_volumes_from DELETE CASCADE constraints...")
-  (exec-sql-statement "ALTER TABLE ONLY container_volumes_from DROP CONSTRAINT container_volumes_from_pkey")
   (exec-sql-statement "ALTER TABLE ONLY container_volumes_from DROP CONSTRAINT container_volumes_from_container_settings_id_fkey")
   (exec-sql-statement "ALTER TABLE ONLY container_volumes_from DROP CONSTRAINT container_volumes_from_data_containers_id_fkey")
   (load-sql-file "constraints/74_container_volumes_from.sql"))

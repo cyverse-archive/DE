@@ -34,14 +34,6 @@ ALTER TABLE ONLY tool_test_data_files
     PRIMARY KEY (id);
 
 --
--- Name: tools_pkey; Type: CONSTRAINT; Schema: public; Owner:
--- de; Tablespace:
---
-ALTER TABLE ONLY tools
-    ADD CONSTRAINT tools_pkey
-    PRIMARY KEY (id);
-
---
 -- Name: info_type_pkey; Type: CONSTRAINT; Schema: public; Owner: de;
 -- Tablespace:
 --
@@ -347,15 +339,6 @@ ALTER TABLE ONLY file_parameters
     ADD CONSTRAINT file_parameters_info_type_fkey
     FOREIGN KEY (info_type)
     REFERENCES info_type(id);
-
---
--- Name: deployed_comp_integration_data_id_fk; Type: FK CONSTRAINT; Schema:
--- public; Owner: de
---
-ALTER TABLE ONLY tools
-    ADD CONSTRAINT deployed_comp_integration_data_id_fk
-    FOREIGN KEY (integration_data_id)
-    REFERENCES integration_data(id);
 
 --
 -- Name: tool_test_data_files_tool_id_fkey; Type: FK
@@ -728,15 +711,6 @@ ALTER TABLE ONLY tasks
     ADD CONSTRAINT tasks_tool_id_fk
     FOREIGN KEY (tool_id)
     REFERENCES tools(id);
-
---
--- Foreign key constraint for the tool_type_id field of the tools
--- table.
---
-ALTER TABLE ONLY tools
-    ADD CONSTRAINT tools_tool_type_id_fkey
-    FOREIGN KEY (tool_type_id)
-    REFERENCES tool_types(id);
 
 --
 -- Foreign key constraint for the tool_type_id field of the
