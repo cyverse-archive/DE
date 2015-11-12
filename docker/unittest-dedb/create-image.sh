@@ -3,11 +3,11 @@
 set -e
 set -x
 
-if [ $(docker ps | grep dedb | wc -l) -gt 0 ]; then
+if [ $(docker ps | grep '\sdedb$' | wc -l) -gt 0 ]; then
     docker kill dedb
 fi
 
-if [ $(docker ps -a | grep dedb | wc -l) -gt 0 ]; then
+if [ $(docker ps -a | grep '\sdedb$' | wc -l) -gt 0 ]; then
     docker rm dedb
 fi
 
