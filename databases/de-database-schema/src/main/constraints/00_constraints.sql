@@ -144,14 +144,6 @@ ALTER TABLE ONLY app_category_group
     PRIMARY KEY (parent_category_id, child_category_id);
 
 --
--- Name: app_categories_pkey; Type: CONSTRAINT; Schema: public; Owner: de;
--- Tablespace:
---
-ALTER TABLE ONLY app_categories
-    ADD CONSTRAINT app_categories_pkey
-    PRIMARY KEY (id);
-
---
 -- Name: app_category_app_pkey; Type: CONSTRAINT; Schema: public;
 -- Owner: de; Tablespace:
 --
@@ -192,21 +184,6 @@ ALTER TABLE ONLY app_steps
     PRIMARY KEY (id);
 
 --
--- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: de; Tablespace:
---
-ALTER TABLE ONLY users
-    ADD CONSTRAINT users_pkey
-    PRIMARY KEY (id);
-
---
--- Name: username_unique; Type: CONSTRAINT; Schema: public; Owner de;
--- Tablespace:
---
-ALTER TABLE ONLY users
-    ADD CONSTRAINT username_unique
-    UNIQUE (username);
-
---
 -- Name: value_type_pkey; Type: CONSTRAINT; Schema: public; Owner: de;
 -- Tablespace:
 --
@@ -221,14 +198,6 @@ ALTER TABLE ONLY value_type
 ALTER TABLE ONLY ratings
     ADD CONSTRAINT votes_unique
     UNIQUE (user_id, app_id);
-
---
--- Name: workspace_pkey; Type: CONSTRAINT; Schema: public; Owner: de;
--- Tablespace:
---
-ALTER TABLE ONLY workspace
-    ADD CONSTRAINT workspace_pkey
-    PRIMARY KEY (id);
 
 --
 -- Primary Key for the version table.
@@ -312,15 +281,6 @@ ALTER TABLE ONLY input_output_mapping
     ADD CONSTRAINT input_output_mapping_output_fkey
     FOREIGN KEY (output)
     REFERENCES parameters(id) ON DELETE CASCADE;
-
---
--- Name: app_categories_workspace_id_fk; Type: FK CONSTRAINT; Schema:
--- public; Owner: de
---
-ALTER TABLE ONLY app_categories
-    ADD CONSTRAINT app_categories_workspace_id_fk
-    FOREIGN KEY (workspace_id)
-    REFERENCES workspace(id);
 
 --
 -- Name: file_parameters_data_format_fkey; Type: FK CONSTRAINT; Schema: public;
@@ -609,23 +569,6 @@ ALTER TABLE ONLY validation_rules
     FOREIGN KEY (parameter_id)
     REFERENCES parameters(id) ON DELETE CASCADE;
 CREATE INDEX validation_rules_parameters_id_idx ON validation_rules(parameter_id);
-
---
--- Name: workspace_root_category_id_fkey; Type: FK CONSTRAINT; Schema:
--- public; Owner: de
---
-ALTER TABLE ONLY workspace
-    ADD CONSTRAINT workspace_root_category_id_fkey
-    FOREIGN KEY (root_category_id)
-    REFERENCES app_categories(id);
-
---
--- Name: workspace_users_fk; Type: FK CONSTRAINT; Schema: public; Owner: de
---
-ALTER TABLE ONLY workspace
-    ADD CONSTRAINT workspace_users_fk
-    FOREIGN KEY (user_id)
-    REFERENCES users(id);
 
 --
 -- Name: genome_reference_pkey; Type: CONSTRAINT; Schema: public; Owner: de;
