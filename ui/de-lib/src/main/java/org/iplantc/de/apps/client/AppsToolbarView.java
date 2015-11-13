@@ -28,7 +28,8 @@ public interface AppsToolbarView extends IsWidget,
                                          DeleteAppsSelected.HasDeleteAppsSelectedHandlers,
                                          EditAppSelected.HasEditAppSelectedHandlers,
                                          EditWorkflowSelected.HasEditWorkflowSelectedHandlers,
-                                         RequestToolSelected.HasRequestToolSelectedHandlers {
+                                RequestToolSelected.HasRequestToolSelectedHandlers,
+                                ShareAppsSelected.HasShareAppSelectedHandlers {
 
     interface AppsToolbarAppearance {
 

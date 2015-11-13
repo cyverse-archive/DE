@@ -5,7 +5,18 @@ import static org.iplantc.de.apps.client.events.AppSearchResultLoadEvent.TYPE;
 import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent.AppSearchResultLoadEventHandler;
 import org.iplantc.de.apps.client.events.BeforeAppSearchEvent;
-import org.iplantc.de.apps.client.events.selection.*;
+import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
+import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
+import org.iplantc.de.apps.client.events.selection.CopyAppSelected;
+import org.iplantc.de.apps.client.events.selection.CopyWorkflowSelected;
+import org.iplantc.de.apps.client.events.selection.CreateNewAppSelected;
+import org.iplantc.de.apps.client.events.selection.CreateNewWorkflowSelected;
+import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
+import org.iplantc.de.apps.client.events.selection.EditAppSelected;
+import org.iplantc.de.apps.client.events.selection.EditWorkflowSelected;
+import org.iplantc.de.apps.client.events.selection.RequestToolSelected;
+import org.iplantc.de.apps.client.events.selection.RunAppSelected;
+import org.iplantc.de.apps.client.events.selection.ShareAppsSelected;
 import org.iplantc.de.apps.client.views.submit.dialog.SubmitAppForPublicDialog;
 import org.iplantc.de.apps.shared.AppsModule.Ids;
 import org.iplantc.de.client.models.UserInfo;
@@ -141,6 +152,13 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
     public HandlerRegistration addRunAppSelectedHandler(RunAppSelected.RunAppSelectedHandler handler) {
         return addHandler(handler, RunAppSelected.TYPE);
     }
+
+    @Override
+    public HandlerRegistration
+            addShareAppSelectedHandler(ShareAppsSelected.ShareAppsSelectedHandler handler) {
+        return addHandler(handler, ShareAppsSelected.TYPE);
+    }
+
     //</editor-fold>
 
     @Override
@@ -374,5 +392,9 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
     }
     //</editor-fold>
 
+    @UiHandler("shareCollab")
+    void shareWithCollaborator(SelectionEvent<Item> event) {
+        fireEvent(new ShareAppsSelected(currentSelection));
+    }
 
 }

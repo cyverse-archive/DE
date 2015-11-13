@@ -18,7 +18,7 @@ import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 
-import com.sencha.gxt.core.client.IdentityValueProvider;
+import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
@@ -34,8 +34,10 @@ public class AppSharingDialog extends IPlantDialog implements SelectHandler {
     private final AppUserServiceFacade appService;
     private SharingPresenter sharingPresenter;
 
-    @Inject CollaboratorsUtil collaboratorsUtil;
-    @Inject JsonUtil jsonUtil;
+    @Inject
+    CollaboratorsUtil collaboratorsUtil;
+    @Inject
+    JsonUtil jsonUtil;
 
     @Inject
     AppSharingDialog(final AppUserServiceFacade appService) {
@@ -67,6 +69,7 @@ public class AppSharingDialog extends IPlantDialog implements SelectHandler {
             }
         });
         AppSharingView view = new AppSharingViewImpl(buildAppColumnModel(), appStore);
+        view.setSelectedApps(resourcesToShare);
         sharingPresenter = new AppSharingPresenter(appService,
                                                    resourcesToShare,
                                                    view,
@@ -84,13 +87,25 @@ public class AppSharingDialog extends IPlantDialog implements SelectHandler {
     private ColumnModel<App> buildAppColumnModel() {
         List<ColumnConfig<App, ?>> list = new ArrayList<>();
 
-        ColumnConfig<App, App> name = new ColumnConfig<>(new IdentityValueProvider<App>("name"),
-                                                         200,
-                                                         "Selected App");
+        ColumnConfig<App, String> name = new ColumnConfig<>(new ValueProvider<App, String>() {
+
+            @Override
+            public String getValue(App object) {
+                return object.getName();
+            }
+
+            @Override
+            public void setValue(App object, String value) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public String getPath() {
+                return "name";
+            }
+        }, 180, "Name");
         list.add(name);
         return new ColumnModel<>(list);
     }
 
 }
-
-

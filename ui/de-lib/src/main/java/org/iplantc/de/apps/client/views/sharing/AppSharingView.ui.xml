@@ -21,7 +21,7 @@
             <gxt:FramedPanel ui:field="appListPnl"
                              collapsible="false"
                              headerVisible="true"
-                             headingText="Select Apps"
+                             headingText="Selected Apps"
                              height="200px">
                 <grid:Grid ui:field="appGrid"
                            cm="{appColumnModel}"

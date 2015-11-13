@@ -11,8 +11,10 @@ import org.iplantc.de.apps.client.events.selection.CreateNewWorkflowSelected;
 import org.iplantc.de.apps.client.events.selection.EditAppSelected;
 import org.iplantc.de.apps.client.events.selection.EditWorkflowSelected;
 import org.iplantc.de.apps.client.events.selection.RequestToolSelected;
+import org.iplantc.de.apps.client.events.selection.ShareAppsSelected;
 import org.iplantc.de.apps.client.gin.factory.AppsToolbarViewFactory;
 import org.iplantc.de.apps.client.presenter.toolBar.proxy.AppSearchRpcProxy;
+import org.iplantc.de.apps.client.views.sharing.dialog.AppSharingDialog;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
@@ -44,13 +46,16 @@ public class AppsToolbarPresenterImpl implements AppsToolbarView.Presenter,
                                                  CreateNewWorkflowSelected.CreateNewWorkflowSelectedHandler,
                                                  EditAppSelected.EditAppSelectedHandler,
                                                  RequestToolSelected.RequestToolSelectedHandler,
-                                                 EditWorkflowSelected.EditWorkflowSelectedHandler {
+                                     EditWorkflowSelected.EditWorkflowSelectedHandler,
+                                     ShareAppsSelected.ShareAppsSelectedHandler {
 
     protected PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
     @Inject IplantAnnouncer announcer;
     @Inject AppsToolbarView.AppsToolbarAppearance appearance;
     @Inject EventBus eventBus;
     @Inject Provider<NewToolRequestDialog> newToolRequestDialogProvider;
+    @Inject
+    Provider<AppSharingDialog> appSharingDialgoProvider;
     @Inject UserInfo userInfo;
     private final AppUserServiceFacade appService;
     private final AppSearchRpcProxy proxy;
@@ -67,6 +72,7 @@ public class AppsToolbarPresenterImpl implements AppsToolbarView.Presenter,
 
         view.addCreateNewAppSelectedHandler(this);
         view.addCreateNewWorkflowSelectedHandler(this);
+        view.addShareAppSelectedHandler(this);
         view.addEditAppSelectedHandler(this);
         view.addRequestToolSelectedHandler(this);
         view.addEditWorkflowSelectedHandler(this);
@@ -129,5 +135,10 @@ public class AppsToolbarPresenterImpl implements AppsToolbarView.Presenter,
     @Override
     public void onRequestToolSelected(RequestToolSelected event) {
         newToolRequestDialogProvider.get().show();
+    }
+
+    @Override
+    public void onShareAppSelected(ShareAppsSelected event) {
+        appSharingDialgoProvider.get().show(event.getSelectedApps());
     }
 }

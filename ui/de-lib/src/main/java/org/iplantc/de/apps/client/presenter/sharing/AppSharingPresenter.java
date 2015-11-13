@@ -46,6 +46,7 @@ public class AppSharingPresenter implements SharingPresenter {
         this.selectedApps = selectedApps;
         this.permissionsPanel = new SharingPermissionsPanel(this,
                                                             getSelectedResourcesAsMap(selectedApps));
+        view.addShareWidget(permissionsPanel.asWidget());
 
     }
 
