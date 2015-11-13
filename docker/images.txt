@@ -22,6 +22,7 @@ nginx-ssl
 notificationagent
 porklock
 saved-searches
+sharkbait
 tree-urls
 user-preferences
 user-sessions

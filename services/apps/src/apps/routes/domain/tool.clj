@@ -11,6 +11,7 @@
 (def VersionParam (describe String "The Tool's version"))
 (def AttributionParam (describe String "The Tool's author or publisher"))
 (def SubmittedByParam (describe String "The username of the user that submitted the Tool Request"))
+(def ToolImplementationDocs "Information about the user who integrated the Tool into the DE")
 
 (defschema ToolTestData
   {(optional-key :params) (describe [String] "The list of command-line parameters")
@@ -31,12 +32,16 @@
    (optional-key :version)     VersionParam
    :type                       (describe String "The Tool Type name")})
 
+(defschema ToolDetails
+  (merge Tool
+    {:implementation (describe ToolImplementation ToolImplementationDocs)
+     :container      containers/ToolContainer}))
+
 (defschema ToolImportRequest
   (-> Tool
       (->optional-param :id)
       (merge
-        {:implementation (describe ToolImplementation
-                           "Information about the user who integrated the Tool into the DE")
+        {:implementation (describe ToolImplementation ToolImplementationDocs)
          :container      containers/NewToolContainer})))
 
 (defschema ToolsImportRequest

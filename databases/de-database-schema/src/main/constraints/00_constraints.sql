@@ -34,14 +34,6 @@ ALTER TABLE ONLY tool_test_data_files
     PRIMARY KEY (id);
 
 --
--- Name: tools_pkey; Type: CONSTRAINT; Schema: public; Owner:
--- de; Tablespace:
---
-ALTER TABLE ONLY tools
-    ADD CONSTRAINT tools_pkey
-    PRIMARY KEY (id);
-
---
 -- Name: info_type_pkey; Type: CONSTRAINT; Schema: public; Owner: de;
 -- Tablespace:
 --
@@ -152,14 +144,6 @@ ALTER TABLE ONLY app_category_group
     PRIMARY KEY (parent_category_id, child_category_id);
 
 --
--- Name: app_categories_pkey; Type: CONSTRAINT; Schema: public; Owner: de;
--- Tablespace:
---
-ALTER TABLE ONLY app_categories
-    ADD CONSTRAINT app_categories_pkey
-    PRIMARY KEY (id);
-
---
 -- Name: app_category_app_pkey; Type: CONSTRAINT; Schema: public;
 -- Owner: de; Tablespace:
 --
@@ -200,21 +184,6 @@ ALTER TABLE ONLY app_steps
     PRIMARY KEY (id);
 
 --
--- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: de; Tablespace:
---
-ALTER TABLE ONLY users
-    ADD CONSTRAINT users_pkey
-    PRIMARY KEY (id);
-
---
--- Name: username_unique; Type: CONSTRAINT; Schema: public; Owner de;
--- Tablespace:
---
-ALTER TABLE ONLY users
-    ADD CONSTRAINT username_unique
-    UNIQUE (username);
-
---
 -- Name: value_type_pkey; Type: CONSTRAINT; Schema: public; Owner: de;
 -- Tablespace:
 --
@@ -229,14 +198,6 @@ ALTER TABLE ONLY value_type
 ALTER TABLE ONLY ratings
     ADD CONSTRAINT votes_unique
     UNIQUE (user_id, app_id);
-
---
--- Name: workspace_pkey; Type: CONSTRAINT; Schema: public; Owner: de;
--- Tablespace:
---
-ALTER TABLE ONLY workspace
-    ADD CONSTRAINT workspace_pkey
-    PRIMARY KEY (id);
 
 --
 -- Primary Key for the version table.
@@ -322,15 +283,6 @@ ALTER TABLE ONLY input_output_mapping
     REFERENCES parameters(id) ON DELETE CASCADE;
 
 --
--- Name: app_categories_workspace_id_fk; Type: FK CONSTRAINT; Schema:
--- public; Owner: de
---
-ALTER TABLE ONLY app_categories
-    ADD CONSTRAINT app_categories_workspace_id_fk
-    FOREIGN KEY (workspace_id)
-    REFERENCES workspace(id);
-
---
 -- Name: file_parameters_data_format_fkey; Type: FK CONSTRAINT; Schema: public;
 -- Owner: de
 --
@@ -347,15 +299,6 @@ ALTER TABLE ONLY file_parameters
     ADD CONSTRAINT file_parameters_info_type_fkey
     FOREIGN KEY (info_type)
     REFERENCES info_type(id);
-
---
--- Name: deployed_comp_integration_data_id_fk; Type: FK CONSTRAINT; Schema:
--- public; Owner: de
---
-ALTER TABLE ONLY tools
-    ADD CONSTRAINT deployed_comp_integration_data_id_fk
-    FOREIGN KEY (integration_data_id)
-    REFERENCES integration_data(id);
 
 --
 -- Name: tool_test_data_files_tool_id_fkey; Type: FK
@@ -628,23 +571,6 @@ ALTER TABLE ONLY validation_rules
 CREATE INDEX validation_rules_parameters_id_idx ON validation_rules(parameter_id);
 
 --
--- Name: workspace_root_category_id_fkey; Type: FK CONSTRAINT; Schema:
--- public; Owner: de
---
-ALTER TABLE ONLY workspace
-    ADD CONSTRAINT workspace_root_category_id_fkey
-    FOREIGN KEY (root_category_id)
-    REFERENCES app_categories(id);
-
---
--- Name: workspace_users_fk; Type: FK CONSTRAINT; Schema: public; Owner: de
---
-ALTER TABLE ONLY workspace
-    ADD CONSTRAINT workspace_users_fk
-    FOREIGN KEY (user_id)
-    REFERENCES users(id);
-
---
 -- Name: genome_reference_pkey; Type: CONSTRAINT; Schema: public; Owner: de;
 --
 ALTER TABLE ONLY genome_reference
@@ -728,15 +654,6 @@ ALTER TABLE ONLY tasks
     ADD CONSTRAINT tasks_tool_id_fk
     FOREIGN KEY (tool_id)
     REFERENCES tools(id);
-
---
--- Foreign key constraint for the tool_type_id field of the tools
--- table.
---
-ALTER TABLE ONLY tools
-    ADD CONSTRAINT tools_tool_type_id_fkey
-    FOREIGN KEY (tool_type_id)
-    REFERENCES tool_types(id);
 
 --
 -- Foreign key constraint for the tool_type_id field of the

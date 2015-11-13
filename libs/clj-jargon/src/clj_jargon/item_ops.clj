@@ -138,7 +138,7 @@
   (validate-path-lengths dest)
 
   (let [dto (data-transfer-obj cm)
-        res (or (:defaultResource cm) "demoResc")]
+        res (or (:defaultResource cm) "")]
     (.copy dto source res dest nil nil)))
 
 (defn copy-stream
