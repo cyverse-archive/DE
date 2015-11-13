@@ -589,12 +589,12 @@ __Request Query Parameters__:
 
 Parameter | Required | Description
 ----------|----------|------------
-proxyToken | Yes | A valid CAS ticket.
+proxyToken | No | A valid CAS ticket (required if a valid JWT request header is not included).
 dest | Yes | The folder path to look under for files listed in the CSV file.
 src | Yes | Path to the CSV source file in IRODS.
 force | No | If omitted or set to `false`, then existing IRODS AVUs will be checked for attributes matching those parsed from the CSV file. If a match is found, then an `ERR_NOT_UNIQUE` is returned and metadata is not saved.
 template-id | No | The UUID of the Metadata Template with which to associate the parsed metadata.
-separator | No | URL encoded separator character to use for parsing the CSV/TSV file. Comma (%2C) by default.
+separator | No | URL encoded separator character to use for parsing the CSV/TSV file. Comma (`%2C`) by default.
 
 __Request File Format__:
 

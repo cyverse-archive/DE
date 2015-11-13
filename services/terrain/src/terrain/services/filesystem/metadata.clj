@@ -451,7 +451,7 @@
     {:metadata
      (bulk-add-avus cm user dest-dir force? template-id template-attrs attrs csv-filename-values)}))
 
-(defn parse-src-file-csv-metadata
+(defn parse-metadata-csv-file
   "Parses filenames and metadata to apply from a source CSV file in the data store"
   [{:keys [user]} {:keys [src dest force template-id separator] :or {separator "%2C"}}]
   (with-jargon (icat/jargon-cfg) [cm]
@@ -465,11 +465,11 @@
         (url/url-decode separator)
         (input-stream cm src)))))
 
-(with-pre-hook! #'parse-src-file-csv-metadata
+(with-pre-hook! #'parse-metadata-csv-file
   (fn [user-info params]
-    (log-call "parse-src-file-csv-metadata" user-info params)
+    (log-call "parse-metadata-csv-file" user-info params)
     (validate-map user-info {:user string?})
     (validate-map params {:src string?
                           :dest string?})))
 
-(with-post-hook! #'parse-src-file-csv-metadata (log-func "parse-src-file-csv-metadata"))
+(with-post-hook! #'parse-metadata-csv-file (log-func "parse-metadata-csv-file"))
