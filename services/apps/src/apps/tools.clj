@@ -3,7 +3,7 @@
         [kameleon.entities]
         [kameleon.queries]
         [kameleon.util.search]
-        [apps.containers :only [add-tool-container]]
+        [apps.containers :only [add-tool-container tool-container-info]]
         [apps.util.assertions :only [assert-not-nil]]
         [apps.util.conversions :only [remove-nil-vals]]
         [apps.validation :only [verify-tool-name-location validate-tool-not-used]]
@@ -67,9 +67,14 @@
 (defn get-tool
   "Obtains a tool by ID."
   [tool-id]
-  (->> (first (select (tool-listing-base-query) (where {:tools.id tool-id})))
-       (assert-not-nil [:tool-id tool-id])
-       remove-nil-vals))
+  (let [tool           (->> (first (select (tool-listing-base-query) (where {:tools.id tool-id})))
+                            (assert-not-nil [:tool-id tool-id])
+                            remove-nil-vals)
+        container      (tool-container-info tool-id)
+        implementation (persistence/get-tool-implementation-details tool-id)]
+    (assoc tool
+      :container container
+      :implementation implementation)))
 
 (defn get-tools-by-id
   "Obtains a listing of tools for the given list of IDs."

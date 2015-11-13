@@ -128,7 +128,7 @@
   (GET* "/:tool-id" []
         :path-params [tool-id :- ToolIdParam]
         :query [params SecuredQueryParams]
-        :return Tool
+        :return ToolDetails
         :summary "Get a Tool"
         :description "This endpoint returns the details for one tool."
         (ok (get-tool tool-id)))
@@ -324,7 +324,7 @@
           :path-params [tool-id :- ToolIdParam]
           :query [params SecuredQueryParams]
           :body [body (describe ToolUpdateRequest "The Tool to update.")]
-          :return Tool
+          :return ToolDetails
           :summary "Update a Tool"
           :description "This service updates a Tool definition in the DE."
           (ok (update-tool (assoc body :id tool-id))))
