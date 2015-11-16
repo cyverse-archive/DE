@@ -1,9 +1,19 @@
+(use '[clojure.java.shell :only (sh)])
+(require '[clojure.string :as string])
+
+(defn git-ref
+  []
+  (or (System/getenv "GIT_COMMIT")
+      (string/trim (:out (sh "git" "rev-parse" "HEAD")))
+      ""))
+
 (defproject org.iplantc/monkey "5.0.0"
   :description "A metadata database crawler. It synchronizes the tag documents in the search data
                 index with the tag information inthe metadata database.  🐒"
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"
             :url "http://iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
+  :manifest {"Git-Ref" ~(git-ref)}
   :aot [monkey.index monkey.tags monkey.core]
   :main monkey.core
   :uberjar-name "monkey-standalone.jar"
