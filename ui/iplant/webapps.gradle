@@ -87,7 +87,7 @@ project(':de-webapp') {
                     "Jenkins-Build-Number": "${BUILD_NUMBER}",
                     "Git-Branch": "${GIT_BRANCH}",
                     "Git-Ref": "${GIT_COMMIT}",
-                    "App-Version": "${timeStampVersion}"
+                    "App-Version": "${timeStampVersion}",
                     "Version": "${timeStampVersion}"
         }
     }
