@@ -43,17 +43,4 @@
   register: verify_service_running
   ignore_errors: true
 
-- name: restart logstash-forwarder service
-  service: name=logstash-forwarder.service state=restarted
-  when: service_file_v.changed or
-        config_file_v.changed or
-        docker_pull_v.changed or
-        verify_service_running.rc != 0
-  tags:
-      - docker_pull
-      - update_service_files
-      - config
-      - restart_services
-      - restart_logstash
-
 

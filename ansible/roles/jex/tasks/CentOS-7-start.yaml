@@ -13,14 +13,6 @@
       - update_service_files
       - update_service_file_jex
 
-- name: start jex
-  sudo: yes
-  service: name={{jex.service_name}} state=restarted
-  tags:
-    - jex
-    - restart_services
-    - restart_jex
-
 - name: enable jex
   sudo: yes
   service: name={{jex.service_name}} enabled={{enable_services}}
