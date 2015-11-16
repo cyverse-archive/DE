@@ -12,15 +12,13 @@ fi
 
 VERSION=$(cat version | sed -e 's/^ *//' -e 's/ *$//')
 GIT_COMMIT=$(git rev-parse HEAD)
+BUILD_USER=$(whoami)
 
 docker pull $DOCKER_USER/buildenv:latest
 
 BUILDENV_GIT_COMMIT=$(docker inspect -f '{{ (index .Config.Labels "org.iplantc.de.buildenv.git-ref")}}' $DOCKER_USER/buildenv:latest)
 
 docker run --rm \
-	-e "VERSION=$VERSION" \
-	-e "GIT_COMMIT=$GIT_COMMIT)" \
-	-e "BUILD_USER=$BUILD_USER" \
 	-v $(pwd):/jex-events \
 	-w /jex-events \
 	$DOCKER_USER/buildenv:latest \
