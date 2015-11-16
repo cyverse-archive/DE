@@ -7,6 +7,7 @@ terrain
 info-typer
 infosquito
 iplant-email
+iplant-groups
 jex
 jex-events
 kifshare
