@@ -9,8 +9,12 @@
    :id
    (describe String "The attribute-definition ID.")})
 
-(s/defschema AttributeDefinitionLookup
+(s/defschema AttributeDefinitionLookupSchema
   (into {} (map (fn [[k v]] [(s/optional-key k) v]) AttributeDefinition)))
+
+(def AttributeDefinitionLookup
+  (s/both AttributeDefinitionLookupSchema
+          (s/pred (some-fn :id :name) 'id-or-name-specified)))
 
 (s/defschema BaseAttributeName
   {:name
