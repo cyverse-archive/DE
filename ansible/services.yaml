@@ -1,49 +1,13 @@
 ---
-# Updates all service configs, systemd configs, and pulls service docker images.
-# Obeys the `parasitic` inventory flags, and will not deploy parasitic services 
-# when the `parasitic` flag is set.
-#
+# Updates specified service configs, systemd configs, and pulls service docker images.
 # See documentation for `deploy-service-cfg` and `deploy-service-systemd` for 
 # more info.
 #
 
 - hosts: services
   sudo: yes
-  vars:
-      clean_services:
-         - "{{anon_files}}"
-         - "{{apps}}"
-         - "{{clockwork}}"
-         - "{{condor_log_monitor}}"
-         - "{{data_info}}"
-         - "{{exim}}"
-         - "{{iplant_email}}"
-         - "{{iplant_groups}}"
-         - "{{jexevents}}"
-         - "{{kifshare}}"
-         - "{{metadata}}"
-         - "{{notificationagent}}"
-         - "{{saved_searches}}"
-         - "{{terrain}}"
-         - "{{tree_urls}}"
-         - "{{user_preferences}}"
-         - "{{user_sessions}}"
-      parasitic_services:
-         - "{{dewey}}"
-         - "{{info_typer}}"
-         - "{{infosquito}}"
-         - "{{monkey}}"
 
   roles:
     - role: deploy-service-cfg
-      services: "{{clean_services}}"
     - role: deploy-service-systemd
-      services: "{{clean_services}}"
-
-    - role: deploy-service-cfg
-      services: "{{parasitic_services}}"
-      when: not parasitic
-    - role: deploy-service-systemd
-      services: "{{parasitic_services}}"
-      when: not parasitic
 
