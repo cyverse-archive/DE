@@ -4,8 +4,7 @@ condor-log-monitor
 curl-wrapper
 data-info
 de
-de-db
-de-db-loader
+unittest-dedb
 dewey
 terrain
 facepalm
@@ -22,6 +21,7 @@ nginx-ssl
 notificationagent
 porklock
 saved-searches
+sharkbait
 tree-urls
 user-preferences
 user-sessions

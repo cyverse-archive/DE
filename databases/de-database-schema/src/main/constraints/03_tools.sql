@@ -1,10 +1,18 @@
 SET search_path = public, pg_catalog;
 
 --
--- Other constraints for this table are located in the 99_constraints.sql file.
+-- tools table foreign keys.
 --
+ALTER TABLE ONLY tools
+    ADD CONSTRAINT deployed_comp_integration_data_id_fk
+    FOREIGN KEY (integration_data_id)
+    REFERENCES integration_data(id);
 
--- Foreign key into the container_images table from the tools table.
+ALTER TABLE ONLY tools
+    ADD CONSTRAINT tools_tool_type_id_fkey
+    FOREIGN KEY (tool_type_id)
+    REFERENCES tool_types(id);
+
 ALTER TABLE ONLY tools
     ADD CONSTRAINT tools_container_image_fkey
     FOREIGN KEY(container_images_id)

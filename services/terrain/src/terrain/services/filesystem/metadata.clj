@@ -451,34 +451,7 @@
     {:metadata
      (bulk-add-avus cm user dest-dir force? template-id template-attrs attrs csv-filename-values)}))
 
-(defn- parse-form-csv-metadata
-  [user dest-dir force? template-id separator {:keys [stream filename content-type]}]
-  (with-jargon (icat/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (parse-metadata-csv cm user dest-dir force? template-id separator stream)))
-
-(defn parse-csv-metadata
-  "Parses filenames and metadata to apply from a CSV file posted in a multipart form request"
-  [{{:keys [user]} :user-info
-    {:keys [dest force template-id separator] :or {separator "%2C"}} :params
-    :as req}]
-  (let [parser (partial parse-form-csv-metadata
-                 user dest
-                 (Boolean/parseBoolean force)
-                 (uuidify template-id)
-                 (url/url-decode separator))
-        {{results "file"} :params} (multipart/multipart-params-request req {:store parser})]
-    (service/success-response results)))
-
-(with-pre-hook! #'parse-csv-metadata
-  (fn [{:keys [user-info params] :as req}]
-    (log-call "parse-csv-metadata" req)
-    (validate-map user-info {:user string?})
-    (validate-map params {:dest string?})))
-
-(with-post-hook! #'parse-csv-metadata (log-func "parse-csv-metadata"))
-
-(defn parse-src-file-csv-metadata
+(defn parse-metadata-csv-file
   "Parses filenames and metadata to apply from a source CSV file in the data store"
   [{:keys [user]} {:keys [src dest force template-id separator] :or {separator "%2C"}}]
   (with-jargon (icat/jargon-cfg) [cm]
@@ -492,11 +465,11 @@
         (url/url-decode separator)
         (input-stream cm src)))))
 
-(with-pre-hook! #'parse-src-file-csv-metadata
+(with-pre-hook! #'parse-metadata-csv-file
   (fn [user-info params]
-    (log-call "parse-src-file-csv-metadata" user-info params)
+    (log-call "parse-metadata-csv-file" user-info params)
     (validate-map user-info {:user string?})
     (validate-map params {:src string?
                           :dest string?})))
 
-(with-post-hook! #'parse-src-file-csv-metadata (log-func "parse-src-file-csv-metadata"))
+(with-post-hook! #'parse-metadata-csv-file (log-func "parse-metadata-csv-file"))

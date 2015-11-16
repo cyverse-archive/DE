@@ -71,6 +71,14 @@
     - config
     - config_grouper
 
+- name: generate client.properties
+  sudo: yes
+  template: src=grouper.client.properties.j2 dest=/etc/grouper/client.properties owner=root group=root mode=0644
+  register: grouper_client_properties_v
+  tags:
+    - config
+    - config_grouper
+
 - name: generate server.xml
   sudo: yes
   template: src=server.xml.j2 dest=/etc/tomcat/server.xml owner=root group=root mode=0644
@@ -163,6 +171,7 @@
         grouper_loader_properties_v.changed or
         grouper_sources_xml_v.changed or
         grouper_subject_properties_v.changed or
+        grouper_client_properties_v.changed or
         tomcat_server_xml_v.changed or
         tomcat_setenv_sh_v.changed or
         tomcat_users_xml_v.changed or
@@ -180,3 +189,10 @@
   tags:
     - restart_services
     - restart_grouper-nginx
+
+- name: wait for the Grouper port
+  wait_for: port=8080 delay=10
+
+- name: initialize Grouper
+  shell: docker run --rm -it -v /etc/grouper:/etc/grouper {{ docker.user }}/{{ grouper.init_image }}:{{ docker.tag }}
+  register: grouper_init_v

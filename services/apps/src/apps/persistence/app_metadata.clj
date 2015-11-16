@@ -166,6 +166,33 @@
   [tool-type]
   (:id (first (select tool_types (fields :id) (where {:name tool-type})))))
 
+(defn- get-tool-data-files
+  "Fetches a tool's test data files."
+  [tool-id]
+  (let [data-files (select tool_test_data_files
+                           (fields :input_file :filename)
+                           (where {:tool_id tool-id}))
+        [input-files output-files] ((juxt filter remove) :input_file data-files)]
+    {:input_files  (map :filename input-files)
+     :output_files (map :filename output-files)}))
+
+(defn- get-integration-data-by-tool-id
+  [tool-id]
+  (first
+    (select integration_data
+            (fields :integrator_name :integrator_email)
+            (join tools)
+            (where {:tools.id tool-id}))))
+
+(defn get-tool-implementation-details
+  "Fetches a tool's implementation details."
+  [tool-id]
+  (let [{:keys [integrator_name integrator_email]} (get-integration-data-by-tool-id tool-id)
+        tool-data-files (get-tool-data-files tool-id)]
+    {:implementor_email integrator_email
+     :implementor       integrator_name
+     :test              tool-data-files}))
+
 (defn add-tool-data-file
   "Adds a tool's test data files to the database"
   [tool-id input-file filename]
