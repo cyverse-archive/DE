@@ -1,6 +1,5 @@
 (ns iplant_groups.util.service
-  (:use [ring.util.response :only [charset]]
-        [slingshot.slingshot :only [throw+]])
+  (:use [slingshot.slingshot :only [throw+]])
   (:require [cheshire.core :as cheshire]
             [clojure-commons.error-codes :as ce]))
 
