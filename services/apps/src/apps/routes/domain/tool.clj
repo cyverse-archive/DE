@@ -53,7 +53,7 @@
       (->optional-param :location)
       (->optional-param :type)
       (->optional-param :implementation)
-      (dissoc :container)))
+      (->optional-param :container)))
 
 (defschema ToolListing
   {:tools (describe [Tool] "Listing of App Tools")})

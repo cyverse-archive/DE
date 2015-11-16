@@ -326,7 +326,12 @@
           :body [body (describe ToolUpdateRequest "The Tool to update.")]
           :return ToolDetails
           :summary "Update a Tool"
-          :description "This service updates a Tool definition in the DE."
+          :description
+"This service updates a Tool definition in the DE.
+
+**Note**: If the `container` object is omitted in the request, then existing container settings will not
+be modified, but if the `container` object is present in the request, then all container settings must be
+included in it. Any existing settings not included in the request's `container` object will be removed."
           (ok (update-tool (assoc body :id tool-id))))
 
   (POST* "/:tool-id/container/devices" []
