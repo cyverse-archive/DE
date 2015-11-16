@@ -488,20 +488,21 @@
 ;; Attribute Definition Name add/update
 
 (defn- format-attribute-name-add-update-request ;; functionally add-only to start. need to add a wsAttributeDefNameLookup for update
-  [update? username attribute-def-id name display-extension description]
+  [update? username attribute-def name display-extension description]
   {:WsRestAttributeDefNameSaveRequest
    {:actAsSubjectLookup (act-as-subject-lookup username)
     :wsAttributeDefNameToSaves [
      {:wsAttributeDefName
-      (remove-vals nil? {:attributeDefId attribute-def-id
+      (remove-vals nil? {:attributeDefId (:id attribute-def)
+                         :attributeDefName (:name attribute-def)
                          :name name
                          :description description
                          :displayExtension display-extension})
       :saveMode (if update? "UPDATE" "INSERT")}]}})
 
 (defn- format-attribute-name-add-request
-  [username attribute-def-id name display-extension description]
-  (format-attribute-name-add-update-request false username attribute-def-id name display-extension description))
+  [username attribute-def name display-extension description]
+  (format-attribute-name-add-update-request false username attribute-def name display-extension description))
 
 (defn- add-update-attribute-name
   [request-body]
@@ -513,9 +514,9 @@
         :wsAttributeDefName)))
 
 (defn add-attribute-name
-  [username attribute-def-id name display-extension description]
+  [username attribute-def name display-extension description]
   (add-update-attribute-name
-    (format-attribute-name-add-request username attribute-def-id name display-extension description)))
+   (format-attribute-name-add-request username attribute-def name display-extension description)))
 
 ;; Permission assignment
 ;; search/lookup

@@ -9,6 +9,9 @@
    :id
    (describe String "The attribute-definition ID.")})
 
+(s/defschema AttributeDefinitionLookup
+  (into {} (map (fn [[k v]] [(s/optional-key k) v]) AttributeDefinition)))
+
 (s/defschema BaseAttributeName
   {:name
    (describe String "The internal attribute-name name.")
@@ -19,8 +22,8 @@
    (s/optional-key :display_extension)
    (describe String "The displayable attribute-name name extension.")
 
-   :attribute_definition ;; Stub value for adds/updates only.
-   {:id (describe String "The attribute-definition ID.")}})
+   :attribute_definition
+   (describe AttributeDefinitionLookup "Information used to look up the attribute definition.")})
 
 (s/defschema AttributeName
   (assoc BaseAttributeName
