@@ -10,6 +10,14 @@ if [ -z "$DOCKER_REPO" ]; then
 	DOCKER_REPO=jex-events
 fi
 
+if [ -d "pkg/" ]; then
+	rm -r pkg/
+fi
+
+if [ -d "bin/" ]; then
+	rm -r bin/
+fi
+
 VERSION=$(cat version | sed -e 's/^ *//' -e 's/ *$//')
 GIT_COMMIT=$(git rev-parse HEAD)
 BUILD_USER=$(whoami)
