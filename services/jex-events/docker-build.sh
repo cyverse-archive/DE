@@ -17,10 +17,10 @@ docker pull $DOCKER_USER/buildenv:latest
 
 BUILDENV_GIT_COMMIT=$(docker inspect -f '{{ (index .Config.Labels "org.iplantc.de.buildenv.git-ref")}}' $DOCKER_USER/buildenv:latest)
 
-docker run --rm  \
+docker run --rm \
 	-e "VERSION=$VERSION" \
 	-e "GIT_COMMIT=$GIT_COMMIT)" \
-	-e "BUILD_USER=$(whoami)" \
+	-e "BUILD_USER=$BUILD_USER" \
 	-v $(pwd):/jex-events \
 	-w /jex-events \
 	$DOCKER_USER/buildenv:latest \
