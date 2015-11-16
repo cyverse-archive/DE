@@ -85,8 +85,9 @@ project(':de-webapp') {
             attributes "Jenkins-Build-Version": "${BUILD_TAG}",
                     "Jenkins-Build-ID": "${BUILD_ID}",
                     "Jenkins-Build-Number": "${BUILD_NUMBER}",
-                    "Git-Branch": 'git rev-parse --abbrev-ref HEAD'.execute().text.trim(),
-                    "Git-Ref": 'git rev-parse HEAD'.execute().text.trim(),
+                    "Git-Branch": "${GIT_BRANCH}",
+                    "Git-Ref": "${GIT_COMMIT}",
+                    "App-Version": "${timeStampVersion}"
                     "Version": "${timeStampVersion}"
         }
     }
