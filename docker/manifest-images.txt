@@ -1,6 +1,5 @@
 anon-files
 clockwork
-condor-log-monitor
 data-info
 de
 dewey
