@@ -40,9 +40,9 @@
     - role: notify-chat
       msg: "Deploying irods dependent applications and services"
     - role: gpstathis.elasticsearch
-      when: "'elasticsearch' in group_names"
+      when: "not parasitic and 'elasticsearch' in group_names"
     - role: elasticsearch-master
-      when: "elasticsearch_node_master and 'elasticsearch' in group_names"
+      when: "not parasitic and elasticsearch_node_master and 'elasticsearch' in group_names"
             
     - role: notify-chat
       msg: "Done deploying irods dependent applications and services"
