@@ -168,7 +168,7 @@ condor_log_monitor:
   service_description: CLM; Condor log monitor
   image_name: jex-events
   container_name: clm
-  properties_file: jex-events.properties
+  properties_file: jexevents.properties
   log_file: condor-log-monitor-docker.log
 
 coge:
@@ -489,7 +489,7 @@ jexevents:
   service_description: jex events service
   image_name: jex-events
   container_name: jex-events
-  properties_file: jex-events.properties
+  properties_file: jexevents.properties
   log_file: jex-events-docker.log
 
 job_status_poll_interval: 15
