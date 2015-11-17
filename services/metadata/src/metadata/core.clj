@@ -7,6 +7,12 @@
             [metadata.util.config :as config]
             [service-logging.thread-context :as tc]))
 
+(defn dev-handler
+  [req]
+  (tc/with-logging-context config/svc-info
+    (require 'metadata.routes)
+    ((eval 'metadata.routes/app) req)))
+
 (defn init-service
   ([]
     (init-service config/default-config-file))

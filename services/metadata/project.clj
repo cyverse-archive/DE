@@ -23,7 +23,7 @@
                  [org.iplantc/service-logging "5.2.3.0"]
                  [slingshot "0.12.2"]]
   :main metadata.core
-  :ring {:handler metadata.routes/app
+  :ring {:handler metadata.core/dev-handler
          :init    metadata.core/init-service
          :port    60000}
   :uberjar-name "metadata-standalone.jar"
