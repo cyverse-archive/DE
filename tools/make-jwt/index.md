@@ -1,6 +1,7 @@
 ---
 layout: page
 title: Test JWT Generator
+root: ../../
 ---
 
 The Test JWT generator, `make-jwt`, is a utility that can be used to test calls to authenticated Discovery Environment
