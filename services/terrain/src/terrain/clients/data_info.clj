@@ -17,7 +17,6 @@
             [terrain.services.filesystem.metadata :as mt]
             [terrain.services.filesystem.sharing :as sharing]
             [terrain.services.filesystem.stat :as st]
-            [terrain.services.filesystem.status :as status]
             [terrain.services.filesystem.users :as users]
             [terrain.services.filesystem.uuids :as uuids]
             [terrain.util.config :as cfg]
@@ -29,7 +28,10 @@
 (defn ^Boolean irods-running?
   "Determines whether or not iRODS is running."
   []
-  (status/irods-running?))
+  (-> (raw/request :get [] {:content-type :json})
+      :body
+      json/decode
+      (get "iRODS")))
 
 
 (defn ^String user-home-folder
