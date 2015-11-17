@@ -33,4 +33,5 @@
                  [ring "1.4.0"]
                  [ring/ring-json "0.3.1"]]
   :plugins [[lein-ring "0.8.10"]
-            [lein-midje "3.1.1"]])
+            [lein-midje "3.1.1"]]
+  :jvm-opts ["-Dlogback.configurationFile=/etc/iplant/de/logging/tree-urls-logging.xml"])
