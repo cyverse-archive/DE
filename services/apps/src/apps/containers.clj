@@ -15,7 +15,9 @@
                                                     update-tool]]
         [apps.util.assertions :only [assert-not-nil]]
         [apps.util.conversions :only [remove-nil-vals remove-empty-vals]]
-        [apps.validation :only [validate-image-not-public validate-image-not-used]])
+        [apps.validation :only [validate-image-not-public
+                                validate-image-not-used
+                                validate-tool-not-public]])
   (:require [clojure.tools.logging :as log]
             [korma.core :as sql]))
 
@@ -584,7 +586,11 @@
 
 (defn set-tool-container
   "Removes all existing container settings for the given tool-id, replacing them with the given settings."
-  [tool-id {:keys [id container_devices container_volumes container_volumes_from] :as settings}]
+  [tool-id
+   overwrite-public
+   {:keys [id container_devices container_volumes container_volumes_from] :as settings}]
+  (when-not overwrite-public
+    (validate-tool-not-public tool-id))
   (transaction
     (let [img-id   (find-or-add-image-id (:image settings))
           settings (assoc settings :tools_id tool-id)]

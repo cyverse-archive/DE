@@ -98,10 +98,10 @@
       {:tool_ids tool-ids})))
 
 (defn update-tool
-  [{:keys [id container] :as tool}]
+  [overwrite-public {:keys [id container] :as tool}]
   (persistence/update-tool tool)
   (when container
-    (set-tool-container id container))
+    (set-tool-container id overwrite-public container))
   (get-tool id))
 
 (defn delete-tool

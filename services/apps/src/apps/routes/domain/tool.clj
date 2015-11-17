@@ -13,6 +13,11 @@
 (def SubmittedByParam (describe String "The username of the user that submitted the Tool Request"))
 (def ToolImplementationDocs "Information about the user who integrated the Tool into the DE")
 
+(defschema ToolUpdateParams
+  (merge SecuredQueryParams
+    {(optional-key :overwrite-public)
+     (describe Boolean "Flag to force container settings updates of public tools.")}))
+
 (defschema ToolTestData
   {(optional-key :params) (describe [String] "The list of command-line parameters")
    :input_files           (describe [String] "The list of paths to test input files in iRODS")
