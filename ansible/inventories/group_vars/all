@@ -133,7 +133,7 @@ de:
 #          ssl_certificate_key: "/etc/ssl/example.com.key"
 
 app_version_name: Phthalo
-app_version: 2.2.0
+app_version: 2.3.0
 
 de_feedback_to_addr: ""
 de_mail_from_addr: "{{ de_feedback_to_addr }}"

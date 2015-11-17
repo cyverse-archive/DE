@@ -1,4 +1,4 @@
-(defproject org.iplantc/clojure-commons "5.0.0"
+(defproject org.iplantc/clojure-commons "5.2.3.0"
   :description "Common Utilities for Clojure Projects"
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"
@@ -20,5 +20,5 @@
                  [ring "1.4.0"]
                  [slingshot "0.12.2"]
                  [trptcolin/versioneer "0.2.0"]
-                 [org.iplantc/service-logging "5.0.0"]]
+                 [org.iplantc/service-logging "5.2.3.0"]]
   :profiles {:test {:resource-paths ["resources" "test-resources"]}})

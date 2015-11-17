@@ -7,7 +7,7 @@
       (string/trim (:out (sh "git" "rev-parse" "HEAD")))
       ""))
 
-(defproject org.iplantc/sharkbait "5.0.0"
+(defproject org.iplantc/sharkbait "5.2.3.0"
   :description "Utility for initializing Grouper."
   :url "https://github.com/iPlantCollaborativeOpenSource/DE/"
   :license {:name "BSD"
