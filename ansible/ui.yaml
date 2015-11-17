@@ -6,6 +6,7 @@
 - name: Deploy UI
   hosts: ui
   sudo: yes
+  gather_facts: false
   roles:
       - role: notify-chat
         username: UI

@@ -5,7 +5,6 @@
 - name: Bring down DE target
   hosts: docker-ready
   sudo: True
-  sudo: True
   gather_facts: false
   tasks:
       - name: Stop all {{systemd.target}} services
@@ -32,8 +31,10 @@
 - name: Restart DE target
   hosts: docker-ready
   sudo: True
+  gather_facts: false
   tasks:
       - name: Restart all {{systemd.target}} services
         shell: systemctl isolate {{systemd.target}}
 
 - include: verify-POST_DEPLOY.yaml
+
