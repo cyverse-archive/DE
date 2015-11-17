@@ -1,6 +1,7 @@
 package org.iplantc.de.client.services.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
+
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
@@ -353,6 +354,27 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         StringQuoter.create(doc).assign(payload, "documentation");
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address, payload.getPayload());
         deServiceFacade.getServiceData(wrapper, new AppDocCallbackConverter(callback));
+
+    }
+
+    @Override
+    public void getPermissions(List<App> apps, AsyncCallback<String> callback) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void shareApp(List<App> apps,
+                         List<String> users,
+                         String permission,
+                         AsyncCallback<String> callback) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void unshareApp(List<App> apps, List<String> users, AsyncCallback<String> callback) {
+        // TODO Auto-generated method stub
 
     }
 }

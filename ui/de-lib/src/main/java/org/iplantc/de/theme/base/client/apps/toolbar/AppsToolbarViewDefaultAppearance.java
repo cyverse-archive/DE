@@ -134,4 +134,19 @@ public class AppsToolbarViewDefaultAppearance implements AppsToolbarView.AppsToo
     public String searchApps() {
         return appsMessages.searchApps();
     }
+
+    @Override
+    public String share() {
+        return appsMessages.share();
+    }
+
+    @Override
+    public String shareCollab() {
+        return appsMessages.shareCollab();
+    }
+
+    @Override
+    public String sharePublic() {
+        return appsMessages.sharePublic();
+    }
 }

@@ -67,14 +67,14 @@
 			</button:TextButton>
 		</toolbar:child>
           <toolbar:child>
-          <button:TextButton ui:field="share_menu" text="Share">
+          <button:TextButton ui:field="share_menu" text="{appearance.share}">
           <button:menu>
                    <menu:Menu ui:field="sharingMenu">
                                 <menu:MenuItem ui:field="shareCollab" enabled="true"
-                                    text="Share with Collaborator..." icon="{appearance.submitForPublicIcon}"
+                                    text="{appearance.shareCollab}" icon="{appearance.submitForPublicIcon}"
                                     toolTipConfig="{submitToolTip}" />
                                 <menu:MenuItem ui:field="sharePublic" enabled="true"
-                                    text="Share with Public..." icon="{appearance.submitForPublicIcon}"
+                                    text="{appearance.sharePublic}" icon="{appearance.submitForPublicIcon}"
                                     toolTipConfig="{submitToolTip}" />
                             </menu:Menu>
                     </button:menu>

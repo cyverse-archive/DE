@@ -74,6 +74,12 @@ public interface AppsToolbarView extends IsWidget,
         String useWf();
 
         String searchApps();
+
+        String sharePublic();
+
+        String shareCollab();
+
+        String share();
     }
 
     interface Presenter extends BeforeLoadEvent.HasBeforeLoadHandlers<FilterPagingLoadConfig>,
