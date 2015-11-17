@@ -2,6 +2,15 @@
 
 - include: TMP-services-cleanup.yaml
 
+- name: Bring down DE target
+  hosts: docker-ready
+  sudo: True
+  sudo: True
+  gather_facts: false
+  tasks:
+      - name: Stop all {{systemd.target}} services
+        shell: systemctl isolate multi-user.target
+
 - include: services-common.yml
 
 - include: rsyslog-config.yaml
@@ -11,6 +20,7 @@
 - include: ui.yaml
 
 - include: amqp-brokers.yaml
+  when: not parasitic
 
 - include: deploy-irods-elasticsearch.yaml
   when: not parasitic
@@ -18,5 +28,12 @@
 - include: systems.yaml
   vars:
     reboot: true
+
+- name: Restart DE target
+  hosts: docker-ready
+  sudo: True
+  tasks:
+      - name: Restart all {{systemd.target}} services
+        shell: systemctl isolate {{systemd.target}}
 
 - include: verify-POST_DEPLOY.yaml
