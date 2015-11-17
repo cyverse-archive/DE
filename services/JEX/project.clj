@@ -24,7 +24,6 @@
                                 [com.fasterxml.jackson.core/jackson-core]]]
                  [com.cemerick/url "0.1.1"]
                  [compojure "1.3.2"]
-                 [ring/ring-jetty-adapter "1.3.2"]
                  [org.iplantc/clojure-commons "5.0.0"]
                  [slingshot "0.12.2"]
                  [org.iplantc/common-cli "5.0.0"]

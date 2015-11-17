@@ -1,7 +1,7 @@
 (ns data-info.core
   (:gen-class)
   (:require [clojure.java.io :as io]
-            [ring.adapter.jetty :as jetty]
+            [clojure.tools.logging :as log]
             [data-info.util.config :as config]
             [clojure.tools.nrepl.server :as nrepl]
             [me.raynes.fs :as fs]
@@ -80,6 +80,13 @@
    ["-v" "--version" "Print out the version number."]
    ["-h" "--help"]])
 
+(defn run-jetty
+  []
+  (require 'data-info.routes
+           'ring.adapter.jetty)
+  (log/warn "Started listening on" (config/listen-port))
+  ((eval 'ring.adapter.jetty/run-jetty) (eval 'data-info.routes/app) {:port (config/listen-port)}))
+
 (defn -main
   [& args]
   (tc/with-logging-context config/svc-info
@@ -92,5 +99,4 @@
         (ccli/exit 1 "The config file is not readable."))
       (load-configuration-from-file (:config options))
       (icat/configure-icat)
-      (require 'data-info.routes) ;; This late so configuration is loaded
-      (jetty/run-jetty (eval 'data-info.routes/app) {:port (config/listen-port)}))))
+      (run-jetty))))

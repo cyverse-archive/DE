@@ -9,7 +9,6 @@
   (:require [compojure.route :as route]
             [clojure.string :as string]
             [common-cli.core :as ccli]
-            [ring.adapter.jetty :as jetty]
             [common-cfg.cfg :as cfg]
             [clojure.tools.logging :as log]
             [me.raynes.fs :as fs]
@@ -84,4 +83,5 @@
       (cfg/load-config options)
       (connect-db)
       (log/info "Started listening on" (:port @cfg/cfg))
-      (jetty/run-jetty app {:port (Integer/parseInt (:port @cfg/cfg))}))))
+      (require 'ring.adapter.jetty)
+      ((eval 'ring.adapter.jetty/run-jetty) app {:port (Integer/parseInt (:port @cfg/cfg))}))))

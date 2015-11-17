@@ -20,7 +20,6 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/tools.logging "0.3.1"]
                  [medley "0.5.5"]
-                 [ring/ring-core "1.3.2"]
                  [org.iplantc/clj-jargon "5.0.0"
                    :exclusions [[org.slf4j/slf4j-log4j12]
                                 [log4j]]]
@@ -36,8 +35,6 @@
                                 [com.fasterxml.jackson.core/jackson-core]]]
                  [slingshot "0.12.2"]
                  [compojure "1.3.4"]
-                 [ring/ring-jetty-adapter "1.3.2"]
-                 [ring/ring-devel "1.3.2"]
                  [de.ubercode.clostache/clostache "1.4.0"]
                  [com.cemerick/url "0.1.1"]]
 

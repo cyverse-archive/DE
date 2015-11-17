@@ -26,7 +26,6 @@
                  [javax.mail/mail "1.4"]
                  [org.bituf/clj-stringtemplate "0.2"]
                  [compojure "1.0.1"]
-                 [ring/ring-jetty-adapter "1.0.1"]
                  [org.iplantc/common-cli "5.0.0"]
                  [me.raynes/fs "1.4.6"]]
   :aot [iplant-email.core]

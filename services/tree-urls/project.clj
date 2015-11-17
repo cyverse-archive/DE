@@ -30,7 +30,7 @@
                                 [com.fasterxml.jackson.core/jackson-core]]]
                  [compojure "1.1.6"]
                  [midje "1.6.3"]
-                 [ring "1.2.1"]
+                 [ring "1.4.0"]
                  [ring/ring-json "0.3.1"]]
   :plugins [[lein-ring "0.8.10"]
             [lein-midje "3.1.1"]])

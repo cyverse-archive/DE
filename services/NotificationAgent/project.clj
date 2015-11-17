@@ -29,7 +29,6 @@
                  [me.raynes/fs "1.4.6"]
                  [clj-http "1.0.1"]
                  [clj-time "0.8.0"]
-                 [ring/ring-jetty-adapter "1.3.2"]
                  [slingshot "0.12.1"]
                  [korma "0.3.2"]]
   :plugins [[lein-ring "0.8.13"]
