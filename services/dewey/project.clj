@@ -28,8 +28,7 @@
                  [com.novemberain/langohr "2.11.0"]
                  [liberator "0.11.1"]
                  [compojure "1.1.8"]
-                 [ring/ring-core "1.3.0"]
-                 [ring/ring-jetty-adapter "1.3.0"]
+                 [ring "1.4.0"]
                  [slingshot "0.10.3"]
                  [org.iplantc/clj-jargon "5.0.0"
                    :exclusions [[org.slf4j/slf4j-log4j12]

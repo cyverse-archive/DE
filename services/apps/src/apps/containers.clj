@@ -15,7 +15,9 @@
                                                     update-tool]]
         [apps.util.assertions :only [assert-not-nil]]
         [apps.util.conversions :only [remove-nil-vals remove-empty-vals]]
-        [apps.validation :only [validate-image-not-public validate-image-not-used]])
+        [apps.validation :only [validate-image-not-public
+                                validate-image-not-used
+                                validate-tool-not-public]])
   (:require [clojure.tools.logging :as log]
             [korma.core :as sql]))
 
@@ -372,7 +374,8 @@
      :working_directory
      :name
      :entrypoint
-     :tools_id]))
+     :tools_id
+     :id]))
 
 (defn add-settings
   "Adds a new settings record to the database based on the parameter map."
@@ -580,6 +583,29 @@
        (doseq [vf vfs]
          (add-settings-volumes-from settings-uuid vf))
        (tool-container-info tool-uuid)))))
+
+(defn set-tool-container
+  "Removes all existing container settings for the given tool-id, replacing them with the given settings."
+  [tool-id
+   overwrite-public
+   {:keys [id container_devices container_volumes container_volumes_from] :as settings}]
+  (when-not overwrite-public
+    (validate-tool-not-public tool-id))
+  (transaction
+    (let [img-id   (find-or-add-image-id (:image settings))
+          settings (assoc settings :tools_id tool-id)]
+      (delete container-settings (where {:id id}))
+      (add-settings settings)
+      (update-tool {:id tool-id :container_images_id img-id})
+
+      (doseq [device container_devices]
+        (add-device id device))
+      (doseq [volume container_volumes]
+        (add-volume id volume))
+      (doseq [volume container_volumes_from]
+        (add-settings-volumes-from id volume))
+
+      (tool-container-info tool-id))))
 
 (defn delete-tool-device
   [tool-uuid device-uuid]

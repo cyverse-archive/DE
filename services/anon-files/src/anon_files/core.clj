@@ -6,7 +6,6 @@
   (:require [compojure.route :as route]
             [clojure.string :as string]
             [common-cli.core :as ccli]
-            [ring.adapter.jetty :as jetty]
             [common-cfg.cfg :as cfg]
             [clojure.tools.logging :as log]
             [me.raynes.fs :as fs]
@@ -47,4 +46,5 @@
         (ccli/exit 1 (str "The default --config file " (:config options) " does not exist.")))
       (cfg/load-config options)
       (log/info "Started listening on" (:port @cfg/cfg))
-      (jetty/run-jetty app {:port (Integer/parseInt (:port @cfg/cfg))}))))
+      (require 'ring.adapter.jetty)
+      ((eval 'ring.adapter.jetty/run-jetty) app {:port (Integer/parseInt (:port @cfg/cfg))}))))

@@ -37,7 +37,6 @@
                  [org.apache.tika/tika-core "1.10"]      ; provides org.apache.tika
                  [org.nexml.model/nexml "1.5-SNAPSHOT"]  ; provides org.nexml.model
                  [org/forester "1.005" ]
-                 [ring "1.4.0"]
                  [slingshot "0.12.2"]
                  [org.iplantc/clj-cas "5.0.0"]
                  [org.iplantc/clj-icat-direct "5.0.0"]

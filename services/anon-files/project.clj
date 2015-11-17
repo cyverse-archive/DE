@@ -24,5 +24,5 @@
                  [org.iplantc/common-cfg "5.0.0"]
                  [medley "0.6.0"]
                  [compojure "1.3.4"]
-                 [ring "1.3.2"]]
+                 [ring "1.4.0"]]
   :plugins [[lein-ring "0.9.3"]])

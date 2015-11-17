@@ -32,7 +32,6 @@
   (:require [compojure.route :as route]
             [cheshire.core :as cheshire]
             [clojure-commons.exception :as cx]
-            [ring.adapter.jetty :as jetty]
             [terrain.util.config :as config]
             [clojure.tools.nrepl.server :as nrepl]
             [me.raynes.fs :as fs]
@@ -229,6 +228,12 @@
 (def app
   (site-handler terrain-routes))
 
+(defn run-jetty
+  []
+  (require 'ring.adapter.jetty)
+  (log/warn "Started listening on" (config/listen-port))
+  ((eval 'ring.adapter.jetty/run-jetty) app {:port (config/listen-port)}))
+
 (defn -main
   [& args]
   (tc/with-logging-context svc-info
@@ -239,4 +244,4 @@
         (ccli/exit 1 "The config file is not readable."))
       (config/load-config-from-file (:config options))
       (icat/configure-icat)
-      (jetty/run-jetty app {:port (config/listen-port)}))))
+      (run-jetty))))

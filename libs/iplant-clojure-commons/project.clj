@@ -17,6 +17,7 @@
                  [me.raynes/fs "1.4.6"]
                  [medley "0.7.0"]
                  [metosin/compojure-api "0.23.1"]
+                 [ring "1.4.0"]
                  [slingshot "0.12.2"]
                  [trptcolin/versioneer "0.2.0"]
                  [org.iplantc/service-logging "5.0.0"]]

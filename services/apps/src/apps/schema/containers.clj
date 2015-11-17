@@ -52,7 +52,7 @@
 
 (s/defschema NewSettings
   (describe
-   (dissoc Settings :id)
+   (->optional-param Settings :id)
    "The values needed to add a new container to a tool."))
 
 (s/defschema CPUShares

@@ -5,7 +5,6 @@
             [me.raynes.fs :as fs]
             [metadata.util.db :as db]
             [metadata.util.config :as config]
-            [ring.adapter.jetty :as jetty]
             [service-logging.thread-context :as tc]))
 
 (defn init-service
@@ -24,11 +23,16 @@
    ["-v" "--version" "Print out the version number."]
    ["-h" "--help"]])
 
+(defn run-jetty
+  []
+  (require 'metadata.routes
+           'ring.adapter.jetty)
+  (log/warn "Started listening on" (config/listen-port))
+  ((eval 'ring.adapter.jetty/run-jetty) (eval 'metadata.routes/app) {:port (config/listen-port)}))
+
 (defn -main
   [& args]
   (tc/with-logging-context config/svc-info
     (let [{:keys [options arguments errors summary]} (ccli/handle-args config/svc-info args cli-options)]
       (init-service (:config options))
-      (log/warn "Started listening on" (config/listen-port))
-      (require 'metadata.routes) ; After init-service so the database is initialized
-      (jetty/run-jetty (eval 'metadata.routes/app) {:port (config/listen-port)}))))
+      (run-jetty))))

@@ -161,6 +161,12 @@
   (let [tool-app-ids (select tool_listing (fields :app_id) (where {:tool_id tool-id}))]
     (map (comp get-app :app_id) tool-app-ids)))
 
+(defn get-public-apps-by-tool-id
+  "Loads information about the public apps using the tool with the given ID."
+  [tool-id]
+  (let [tool-app-ids (select tool_listing (fields :app_id) (where {:tool_id tool-id :is_public true}))]
+    (map (comp get-app :app_id) tool-app-ids)))
+
 (defn get-tool-type-id
   "Gets the ID of the given tool type name."
   [tool-type]

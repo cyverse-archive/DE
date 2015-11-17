@@ -7,7 +7,6 @@
             [me.raynes.fs :as fs]
             [apps.tasks :as tasks]
             [apps.util.config :as config]
-            [ring.adapter.jetty :as jetty]
             [service-logging.thread-context :as tc]))
 
 (defn- init-service
@@ -61,12 +60,17 @@
    ["-v" "--version" "Print out the version number."]
    ["-h" "--help"]])
 
+(defn run-jetty
+  []
+  (require 'apps.routes.api
+           'ring.adapter.jetty)
+  (log/warn "Started listening on" (config/listen-port))
+  ((eval 'ring.adapter.jetty/run-jetty) (eval 'apps.routes.api/app) {:port (config/listen-port)}))
+
 (defn -main
   [& args]
   (tc/with-logging-context config/svc-info
-    (require 'apps.routes.api)
-    (let [app (eval 'apps.routes.api/app)
-          {:keys [options arguments errors summary]} (ccli/handle-args config/svc-info args cli-options)]
+    (let [{:keys [options arguments errors summary]} (ccli/handle-args config/svc-info args cli-options)]
       (when-not (fs/exists? (:config options))
         (ccli/exit 1 (str "The config file does not exist.")))
       (when-not (fs/readable? (:config options))
@@ -74,5 +78,4 @@
       (load-config-from-file (:config options))
       (tasks/set-logging-context! config/svc-info)
       (tasks/schedule-tasks)
-      (log/warn "Listening on" (config/listen-port))
-      (jetty/run-jetty app {:port (config/listen-port)}))))
+      (run-jetty))))

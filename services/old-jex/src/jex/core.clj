@@ -15,7 +15,6 @@
   (:require [compojure.route :as route]
             [compojure.handler :as handler]
             [ring.util.response :as rsp-utils]
-            [ring.adapter.jetty :as jetty]
             [jex.process :as jp]
             [jex.json-body :as jb]
             [clojure.java.io :as ds]
@@ -95,4 +94,5 @@
         (ccli/exit 1 "The config file is not readable."))
       (log/warn (:config options))
       (cfg/load-config options)
-      (jetty/run-jetty (site-handler jex-routes) {:port (listen-port)}))))
+      (require 'ring.adapter.jetty)
+      ((eval 'ring.adapter.jetty/run-jetty) (site-handler jex-routes) {:port (listen-port)}))))

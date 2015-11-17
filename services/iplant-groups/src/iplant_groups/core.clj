@@ -4,7 +4,6 @@
             [me.raynes.fs :as fs]
             [clojure.tools.logging :as log]
             [common-cli.core :as ccli]
-            [ring.adapter.jetty :as jetty]
             [service-logging.thread-context :as tc]))
 
 (defn init-service
@@ -22,11 +21,16 @@
    ["-v" "--version" "Print out the version number."]
    ["-h" "--help"]])
 
+(defn run-jetty
+  []
+  (require 'iplant_groups.routes
+           'ring.adapter.jetty)
+  (log/warn "Started listening on" (config/listen-port))
+  ((eval 'ring.adapter.jetty/run-jetty) (eval 'iplant_groups.routes/app) {:port (config/listen-port)}))
+
 (defn -main
   [& args]
   (tc/with-logging-context config/svc-info
-    (require 'iplant_groups.routes)
     (let [{:keys [options arguments errors summary]} (ccli/handle-args config/svc-info args cli-options)]
       (init-service (:config options))
-      (log/warn "Started listening on" (config/listen-port))
-      (jetty/run-jetty (eval 'iplant_groups.routes/app) {:port (config/listen-port)}))))
+      (run-jetty))))

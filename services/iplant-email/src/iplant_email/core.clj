@@ -8,7 +8,6 @@
             [iplant-email.config :as cfg]
             [iplant-email.send-mail :as sm]
             [iplant-email.json-body :as jb]
-            [ring.adapter.jetty :as jetty]
             [iplant-email.json-validator :as jv]
             [iplant-email.templatize :as tmpl]
             [common-cli.core :as ccli]
@@ -61,4 +60,5 @@
       (when-not (fs/readable? (:config options))
         (ccli/exit 1 "The config file is not readable."))
       (cfg/load-config-from-file (:config options))
-      (jetty/run-jetty (site-handler email-routes) {:port (cfg/listen-port)}))))
+      (require 'ring.adapter.jetty)
+      ((eval 'ring.adapter.jetty/run-jetty) (site-handler email-routes) {:port (cfg/listen-port)}))))

@@ -1,6 +1,5 @@
 anon-files
 clockwork
-condor-log-monitor
 data-info
 de
 dewey
@@ -8,6 +7,7 @@ terrain
 info-typer
 infosquito
 iplant-email
+iplant-groups
 jex
 kifshare
 apps

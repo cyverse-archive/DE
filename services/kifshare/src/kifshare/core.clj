@@ -10,7 +10,6 @@
   (:require [clojure-commons.file-utils :as ft]
             [clojure.tools.logging :as log]
             [compojure.route :as route]
-            [ring.adapter.jetty :as jetty]
             [ring.util.response :as resp]
             [kifshare.config :as cfg]
             [kifshare.controllers :as controllers]
@@ -135,4 +134,5 @@
       (with-redefs [clojure.java.io/buffer-size override-buffer-size]
         (let [port (Integer/parseInt (string/trim (get @cfg/props "kifshare.app.port")))]
           (log/warn "Configured listen port is: " port)
-          (jetty/run-jetty app {:port port}))))))
+          (require 'ring.adapter.jetty)
+          ((eval 'ring.adapter.jetty/run-jetty) app {:port port}))))))

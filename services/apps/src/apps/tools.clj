@@ -3,7 +3,7 @@
         [kameleon.entities]
         [kameleon.queries]
         [kameleon.util.search]
-        [apps.containers :only [add-tool-container tool-container-info]]
+        [apps.containers :only [add-tool-container set-tool-container tool-container-info]]
         [apps.util.assertions :only [assert-not-nil]]
         [apps.util.conversions :only [remove-nil-vals]]
         [apps.validation :only [verify-tool-name-location validate-tool-not-used]]
@@ -98,8 +98,10 @@
       {:tool_ids tool-ids})))
 
 (defn update-tool
-  [{:keys [id] :as tool}]
+  [overwrite-public {:keys [id container] :as tool}]
   (persistence/update-tool tool)
+  (when container
+    (set-tool-container id overwrite-public container))
   (get-tool id))
 
 (defn delete-tool

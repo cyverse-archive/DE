@@ -181,7 +181,7 @@ A request to this endpoint requires the parameters in the following table.
 | limit       | yes       |              | the maximum number of filesystem entries to return |
 | offset      | yes       |              | the number entries in the sorted total result set to skip before including entries in the response document. |
 | entity-type | no        | ANY          | the type of entities to return. It can be `ANY|FILE|FOLDER`. All values are case-insensitive. |
-| infoType    | no        | no filtering | filter the files portion of the result set so that only files with this info type are returned. To return multiple info types, and this parameter more than once. |
+| info-type    | no        | no filtering | filter the files portion of the result set so that only files with this info type are returned. To return multiple info types, and this parameter more than once. |
 
 Any additional parameters will be ignored.
 

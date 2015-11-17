@@ -20,7 +20,6 @@
             [clojure-commons.exception :as cx]
             [notification-agent.config :as config]
             [notification-agent.db :as db]
-            [ring.adapter.jetty :as jetty]
             [common-cli.core :as ccli]
             [me.raynes.fs :as fs]
             [service-logging.thread-context :as tc]
@@ -194,4 +193,5 @@
         (ccli/exit 1 "The config file is not readable."))
       (load-config-from-file (:config options))
       (log/warn "Listening on" (config/listen-port))
-      (jetty/run-jetty (site-handler notificationagent-routes) {:port (config/listen-port)}))))
+      (require 'ring.adapter.jetty)
+      ((eval 'ring.adapter.jetty/run-jetty) (site-handler notificationagent-routes) {:port (config/listen-port)}))))

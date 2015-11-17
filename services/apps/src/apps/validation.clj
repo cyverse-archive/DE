@@ -207,6 +207,14 @@
                :error "Image already used by tools."
                :tools tools}))))
 
+(defn validate-tool-not-public
+  [tool-id]
+  (let [apps (persistence/get-public-apps-by-tool-id tool-id)]
+    (when-not (empty? apps)
+      (throw+ {:type  :clojure-commons.exception/not-writeable
+               :error "This tool is already in use by public apps."
+               :apps  apps}))))
+
 (defn validate-tool-not-used
   [tool-id]
   (let [apps (persistence/get-apps-by-tool-id tool-id)]
