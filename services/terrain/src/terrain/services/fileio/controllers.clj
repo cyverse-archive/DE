@@ -17,7 +17,7 @@
             [terrain.clients.data-info :as data]
             [terrain.util.config :as cfg]
             [terrain.util.validators :as valid]
-            [terrain.services.fileio.config :as jargon])
+            [terrain.services.filesystem.icat :as icat])
   (:import [clojure.lang IPersistentMap]
            [java.io IOException]))
 
@@ -44,7 +44,7 @@
   (when-not (valid/good-string? filename)
     (throw+ {:error_code ERR_BAD_OR_MISSING_FIELD :path filename}))
   (let [dest-path (ft/path-join dest-dir filename)]
-    (actions/upload (jargon/jargon-cfg) user dest-path istream)
+    (actions/upload (icat/jargon-cfg) user dest-path istream)
     dest-path))
 
 
@@ -106,7 +106,7 @@
           dest      (string/trim (:dest body))
           content   (:content body)
           file-size (count (.getBytes content "UTF-8"))]
-      (with-jargon (jargon/jargon-cfg) :client-user user [cm]
+      (with-jargon (icat/jargon-cfg) :client-user user [cm]
         (when-not (info/exists? cm dest)
           (throw+ {:error_code ERR_DOES_NOT_EXIST :path dest}))
         (when-not (perm/is-writeable? cm user dest)
@@ -133,7 +133,7 @@
     (let [user (:user params)
           dest (string/trim (:dest body))
           cont (:content body)]
-      (with-jargon (jargon/jargon-cfg) :client-user user [cm]
+      (with-jargon (icat/jargon-cfg) :client-user user [cm]
         (when-not (info/exists? cm (ft/dirname dest))
           (throw+ {:error_code ERR_DOES_NOT_EXIST :path (ft/dirname dest)}))
         (when (info/exists? cm dest)

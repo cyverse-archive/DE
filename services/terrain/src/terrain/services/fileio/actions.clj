@@ -12,7 +12,7 @@
             [clj-jargon.item-info :as info]
             [clj-jargon.item-ops :as ops]
             [clj-jargon.permissions :as perm]
-            [terrain.services.fileio.config :as jargon]
+            [terrain.services.filesystem.icat :as icat]
             [terrain.services.filesystem.validators :as validators]
             [terrain.services.metadata.internal-jobs :as internal-jobs])
   (:import [java.io InputStream]
@@ -71,7 +71,7 @@
 
 (defn- get-istream
   [user file-path]
-  (with-jargon (jargon/jargon-cfg) :client-user user [cm]
+  (with-jargon (icat/jargon-cfg) :client-user user [cm]
     (when-not (info/exists? cm file-path)
       (throw+ {:error_code ERR_DOES_NOT_EXIST :path file-path}))
     (when-not (perm/is-readable? cm user file-path)
@@ -112,7 +112,7 @@
   [user address filename dest-path]
   (let [filename  (if (url-encoded? filename) (url/url-decode filename) filename)
         dest-path (ft/rm-last-slash dest-path)]
-    (with-jargon (jargon/jargon-cfg) [cm]
+    (with-jargon (icat/jargon-cfg) [cm]
       (validators/user-exists cm user)
       (validators/path-writeable cm user dest-path)
       (validators/path-not-exists cm (ft/path-join dest-path filename)))
