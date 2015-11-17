@@ -24,7 +24,9 @@
                  [cheshire "5.3.1"]
                  [com.cemerick/pomegranate "0.3.0"]
                  [fleet "0.10.1"]
-                 [korma "0.4.0"]
+                 [com.mchange/c3p0 "0.9.5.1"]
+                 [korma "0.4.0"
+                  :exclusions [c3p0]]
                  [me.raynes/fs "1.4.6"]
                  [org.iplantc/clj-jargon "5.0.0"]
                  [org.iplantc/clojure-commons "5.0.0"]

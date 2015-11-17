@@ -30,7 +30,9 @@
                  [clj-http "1.0.1"]
                  [clj-time "0.8.0"]
                  [slingshot "0.12.1"]
-                 [korma "0.3.2"]]
+                 [com.mchange/c3p0 "0.9.5.1"]
+                 [korma "0.3.2"
+                  :exclusions [c3p0]]]
   :plugins [[lein-ring "0.8.13"]
             [lein-marginalia "0.7.0"]]
   :ring {:handler notification-agent.core/app

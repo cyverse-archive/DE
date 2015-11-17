@@ -24,9 +24,12 @@
                                 [com.fasterxml.jackson.core/jackson-core]]]
                  [clj-http "0.6.5"]
                  [clj-time "0.4.5"]
-                 [clojurewerkz/quartzite "1.0.1"]
+                 [clojurewerkz/quartzite "1.0.1"
+                   :exclusions [c3p0]]
                  [com.cemerick/url "0.0.7"]
-                 [korma "0.3.0-RC5"]
+                 [com.mchange/c3p0 "0.9.5.1"]
+                 [korma "0.3.0-RC5"
+                  :exclusions [c3p0]]
                  [org.iplantc/clj-jargon "5.0.0"
                    :exclusions [[org.slf4j/slf4j-log4j12]
                                 [log4j]]]
