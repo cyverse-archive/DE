@@ -5,6 +5,7 @@ import (
 	"logcabin"
 	"math/rand"
 	"model"
+	"os"
 	"time"
 
 	"github.com/streadway/amqp"
@@ -167,32 +168,41 @@ type Client struct {
 	errors          chan *amqp.Error
 	consumers       []*consumer
 	publisher       *publisher
+	Reconnect       bool
 }
 
 // NewClient returns a new *Client. It will block until the connection succeeds.
-func NewClient(uri string) *Client {
+func NewClient(uri string, reconnect bool) (*Client, error) {
 	c := &Client{}
 	randomizer := rand.New(rand.NewSource(time.Now().UnixNano()))
 	c.uri = uri
+	c.Reconnect = reconnect
 	logger.Println("Attempting AMQP connection...")
 	var connection *amqp.Connection
 	var err error
-	for {
+	if c.Reconnect {
+		for {
+			connection, err = amqp.Dial(c.uri)
+			if err != nil {
+				logger.Print(err)
+				waitFor := randomizer.Intn(10)
+				logger.Printf("Re-attempting connection in %d seconds", waitFor)
+				time.Sleep(time.Duration(waitFor) * time.Second)
+			} else {
+				logger.Println("Successfully connected to the AMQP broker")
+				break
+			}
+		}
+	} else {
 		connection, err = amqp.Dial(c.uri)
 		if err != nil {
-			logger.Print(err)
-			waitFor := randomizer.Intn(10)
-			logger.Printf("Re-attempting connection in %d seconds", waitFor)
-			time.Sleep(time.Duration(waitFor) * time.Second)
-		} else {
-			logger.Println("Successfully connected to the AMQP broker")
-			break
+			return nil, err
 		}
 	}
 	c.connection = connection
 	c.aggregationChan = make(chan aggregationMessage)
 	c.errors = c.connection.NotifyClose(make(chan *amqp.Error))
-	return c
+	return c, nil
 }
 
 // Listen will wait for messages and pass them off to handlers, which run in
@@ -212,9 +222,13 @@ func (c *Client) Listen() {
 		select {
 		case err := <-c.errors:
 			logger.Printf("An error in the connection to the AMQP broker occurred:\n%s", err)
-			c = NewClient(c.uri)
-			c.consumers = consumers
-			init()
+			if c.Reconnect {
+				c, _ = NewClient(c.uri, c.Reconnect)
+				c.consumers = consumers
+				init()
+			} else {
+				os.Exit(-1)
+			}
 		case msg := <-c.aggregationChan:
 			go func() {
 				msg.handler(*msg.delivery)

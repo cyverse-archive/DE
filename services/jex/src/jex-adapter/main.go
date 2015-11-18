@@ -196,7 +196,10 @@ func main() {
 	if *amqpURI == "" {
 		log.Fatal("--amqp is required")
 	}
-	client = messaging.NewClient(*amqpURI)
+	client, err := messaging.NewClient(*amqpURI, false)
+	if err != nil {
+		logger.Fatal(err)
+	}
 	defer client.Close()
 	client.SetupPublishing(messaging.JobsExchange)
 	router := NewRouter()

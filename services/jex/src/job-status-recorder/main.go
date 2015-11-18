@@ -146,7 +146,10 @@ func main() {
 			}
 		}
 	}
-	amqpClient = messaging.NewClient(*amqpURI)
+	amqpClient, err := messaging.NewClient(*amqpURI, false)
+	if err != nil {
+		logger.Fatal(err)
+	}
 	defer amqpClient.Close()
 	db, err = sql.Open("postgres", *dbURI)
 	if err != nil {

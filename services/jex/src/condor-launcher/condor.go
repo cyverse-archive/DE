@@ -332,7 +332,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	client := messaging.NewClient(uri)
+	client, err := messaging.NewClient(uri, true)
+	if err != nil {
+		logger.Fatal(err)
+	}
 	defer client.Close()
 	client.SetupPublishing(messaging.JobsExchange)
 
