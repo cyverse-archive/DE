@@ -4,7 +4,7 @@
 (def find-subject
   "Finds a subject with the given ID. This function is memoized because it appears that searching
   for a subject more than once can cause null pointer exceptions."
-  (memoize (fn [subject-id] (SubjectFinder/findById subject-id true))))
+  (memoize (fn [subject-id required?] (SubjectFinder/findById subject-id required?))))
 
 (def find-root-subject
   "Returns the root subject. This function is memoized for efficiency, since the root subject won't

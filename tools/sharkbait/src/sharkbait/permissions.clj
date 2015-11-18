@@ -1,5 +1,6 @@
 (ns sharkbait.permissions
-  (:import [edu.internet2.middleware.grouper.attr AttributeDefSave AttributeDefType]
+  (:import [edu.internet2.middleware.grouper.attr AttributeDefNameSave AttributeDefSave AttributeDefType]
+           [edu.internet2.middleware.grouper.attr.finder AttributeDefFinder]
            [edu.internet2.middleware.grouper.misc SaveMode]))
 
 (defn- add-implied-action
@@ -21,12 +22,25 @@
 
 (defn create-permission-def
   "Creates a permission definition."
-  [session permission-name folder]
+  [session folder permission-def-name]
   (-> (AttributeDefSave. session)
       (.assignAttributeDefType AttributeDefType/perm)
-      (.assignName (str folder ":" permission-name))
+      (.assignName (str folder ":" permission-def-name))
       (.assignSaveMode SaveMode/INSERT_OR_UPDATE)
       (.assignToGroup true)
       (.assignToEffMembership true)
       (.save)
       (set-permission-actions)))
+
+(defn find-permission-def
+  "Finds a permission definition."
+  [folder permission-def-name]
+  (AttributeDefFinder/findByName (str folder ":" permission-def-name) true))
+
+(defn create-permission-resource
+  "Creates a permission resource."
+  [session permission-def folder permission-name]
+  (-> (AttributeDefNameSave. session permission-def)
+      (.assignName (str folder ":" permission-name))
+      (.assignSaveMode SaveMode/INSERT_OR_UPDATE)
+      (.save)))
