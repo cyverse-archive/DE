@@ -113,21 +113,10 @@
        (can-create-dir? cm user path))))
 
 
-(defn- fmt-stat-response
-  [user data-resp]
-  (let [data-stat-map (get (json/decode data-resp) "paths")
-        paths         (keys data-stat-map)
-        data-stats    (vals data-stat-map)
-        stats         (map #(assoc % :label (paths/id->label user (get % "path")))
-                           data-stats)]
-    {:paths (zipmap paths stats)}))
-
-
 (defn do-stat
   [{user :user} {paths :paths}]
   (->> (data-raw/collect-stats user paths)
-    :body
-    (fmt-stat-response user)))
+    :body))
 
 (with-pre-hook! #'do-stat
   (fn [params body]
