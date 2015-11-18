@@ -17,6 +17,9 @@ Role Variables
 |-----------------------|----------|--------------------------|----------------|------------------------------------------------------|
 | systemd_unit_file_dir |    no    | {{system.unit_file_dir}} |                | The directory where systemd unit files are installed |
 | systemd_target        |    no    | {{system.target}}        |                | The name of the Discovery Environment systemd target |
+| config                |    no    | false                    | true/false     | Whether to deploy the target's unit file             |
+| up                    |    no    | true                     | true/false     | When true, will isolate the de target (starting all 'wanted' services), false otherwise |
+| fallback_target       |    no    | "multi-user.target"      |                | The systemd target to isolate when `up` is false     |
 
 
 Dependencies
