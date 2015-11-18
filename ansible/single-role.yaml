@@ -1,0 +1,20 @@
+# This playbook is used to execute "one-to-one" playbooks in the `playbooks` dir.
+#
+# "one-to-one" refers to playbooks which only execute one role, and are named
+# to indicate that role. This is suggested in ansible's best practices[1].
+#
+# To use this playbook, ansible's roles path must be configured to include the
+# `roles/` directory. This can be achieved either by the ansible cfg file, 
+# or using the `ANSIBLE_ROLES_PATH` environment variable.
+#
+# EXAMPLE
+# =======
+# To execute the `logstash-forwarder` one-to-one playbook;
+#
+#     ansible-playbook single-role.yaml -K --extra-vars "playbook=playbooks/logstash-forwarder.yml"
+#
+# [1] http://docs.ansible.com/ansible/playbooks_best_practices.html
+---
+
+- include: "{{playbook}}"
+

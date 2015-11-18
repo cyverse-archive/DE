@@ -2,7 +2,7 @@
 
 - include: TMP-services-cleanup.yaml
 
-- include: services-common.yml
+- include: playbooks/services-common.yml
 
 - name: Bring down DE target
   hosts: docker-ready
@@ -15,13 +15,13 @@
       - role: systemd-de-target 
         up: false
 
-  include: systemd-de-target.yaml up=false
+  include: playbooks/systemd-de-target.yaml up=false
 
-- include: rsyslog-config.yaml
+- include: playbooks/rsyslog-config.yaml
 
 - include: deploy-backend.yaml
 
-- include: ui.yaml
+- include: playbooks/ui.yaml
 
 - include: amqp-brokers.yaml
   when: not parasitic

@@ -1,15 +1,15 @@
 ---
 - include: db-migrations.yaml
 
-- include: data-container-services.yaml
+- include: playbooks/data-container-services.yaml
 
-- include: logstash-forwarder.yaml
+- include: playbooks/logstash-forwarder.yaml
 
 - include: update-services.yaml
 
 - include: elk-stack.yaml
 
-- include: porklock.yaml
+- include: playbooks/porklock.yaml
 
 - name: Ensure self-executing jars will run on Condor nodes
   hosts: condor
