@@ -7,10 +7,9 @@
 
 (defn- format-roots
   [roots user]
-  (letfn [(format-label [root] (assoc root :label      (paths/path->label user (:path root))
-                                           :hasSubDirs true))
-          (update-labels [root-list] (map format-label root-list))]
-    (update-in roots [:roots] update-labels)))
+  (letfn [(format-subdir [root] (assoc root :hasSubDirs true))
+          (update-subdirs [root-list] (map format-subdir root-list))]
+    (update-in roots [:roots] update-subdirs)))
 
 (defn do-root-listing
   [{user :user}]
