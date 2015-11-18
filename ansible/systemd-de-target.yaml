@@ -1,0 +1,12 @@
+---
+
+- name: Systemd DE Target
+  hosts: docker-ready
+  sudo: true
+  gather_facts: false
+  tags:
+      - systemd
+      - systemd_target
+  roles:
+      - role: systemd-de-target
+

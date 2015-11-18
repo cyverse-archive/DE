@@ -2,15 +2,20 @@
 
 - include: TMP-services-cleanup.yaml
 
+- include: services-common.yml
+
 - name: Bring down DE target
   hosts: docker-ready
   sudo: True
   gather_facts: false
-  tasks:
-      - name: Stop all {{systemd.target}} services
-        shell: systemctl isolate multi-user.target
+  tags:
+      - systemd
+      - systemd_target
+  roles:
+      - role: systemd-de-target 
+        up: false
 
-- include: services-common.yml
+  include: systemd-de-target.yaml up=false
 
 - include: rsyslog-config.yaml
 
@@ -32,9 +37,12 @@
   hosts: docker-ready
   sudo: True
   gather_facts: false
-  tasks:
-      - name: Restart all {{systemd.target}} services
-        shell: systemctl isolate {{systemd.target}}
+  tags:
+      - systemd
+      - systemd_target
+  roles:
+      - role: systemd-de-target 
+        up: true
 
 - include: verify-POST_DEPLOY.yaml
 

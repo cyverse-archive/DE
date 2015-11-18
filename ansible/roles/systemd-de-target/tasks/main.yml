@@ -1,19 +1,19 @@
 ---
-# tasks file for deploy-systemd-target
+# tasks file for systemd-de-target
 
 - name: Place the DE systemd target file
   template: src=de.target dest={{systemd_unit_file_dir}}/{{systemd_target}} group=root owner=root mode=0644
-  when: config
+  when: config|bool or config_only|bool
 
 - name: Reload systemd
   shell: systemctl daemon-reload
-  when: config
+  when: config|bool or config_only|bool
 
 - name: Bring {{systemd_target}} up (isolate)
   shell: systemctl isolate {{systemd_target}}
-  when: up
+  when: up|bool and not config_only|bool
 
 - name: Stop {{systemd_target}}
   shell: systemctl isolate {{fallback_target}}
-  when: not up
+  when: not (config_only|bool or up|bool)
   
