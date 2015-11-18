@@ -16,6 +16,9 @@
 
     - role: elk-data
     - role: elk-elasticsearch
+      tags:
+          - elk_elasticsearch
+
     - role: elk-logstash
     - role: elk-kibana
 

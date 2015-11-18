@@ -2,6 +2,8 @@
 - name: Verify Condor is installed
   hosts: condor:condor-submission
   gather_facts: false
+  tags:
+      - verify
   tasks:
       - name: Verify condor is installed
         shell: yum list installed condor

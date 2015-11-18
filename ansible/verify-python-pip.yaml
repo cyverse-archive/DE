@@ -2,6 +2,8 @@
 
 - name: Verify python and pip are installed
   hosts: docker-ready
+  tags:
+      - verify
   tasks: 
        - name: Verify python is installed
          shell: yum list installed python

@@ -15,4 +15,6 @@
   shell: docker pull {{docker_user}}/{{item.image_name}}:{{docker_tag}}
   with_items: "{{services}}"
   when: "item.image_name is defined and docker_pull and '{{item.service_name_short}}' in group_names"
+  tags:
+      - docker_pull
 

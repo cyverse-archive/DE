@@ -67,6 +67,8 @@
   tags:
       - restart_services
       - restart_elasticsearch
+      - docker_pull
+      - docker_pull_elasticsearch
 
 - name: Wait for ES to come back
   wait_for: host="{{elk_host}}" port="{{elk.elasticsearch.port}}" state=started
