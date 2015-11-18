@@ -73,7 +73,7 @@
         path (:path data-item)]
     {:id            id
      :path          path
-     :label         (paths/id->label user path)
+     :label         (:label data-item)
      :isFavorite    (is-favorite? favorite-ids id)
      :badName       (or (is-bad? user path)
                         (is-bad? user (fs/base-name path)))
