@@ -15,6 +15,7 @@
             [data-info.util.config :as cfg]
             [data-info.util.logging :as dul]
             [data-info.util.irods :as irods]
+            [data-info.util.paths :as paths]
             [data-info.util.validators :as validators])
   (:import [clojure.lang IPersistentMap]))
 
@@ -53,6 +54,12 @@
     stat-map))
 
 
+(defn- merge-label
+  [stat-map user path]
+  (assoc stat-map
+         :label (paths/path->label user path)))
+
+
 (defn- merge-type-info
   [stat-map cm user path]
   (if-not (info/is-dir? cm path)
@@ -68,6 +75,7 @@
     (-> stat
       (assoc :id         (-> (meta/get-attribute cm path uuid/uuid-attr) first :value)
              :permission (perm/permission-for cm user path))
+      (merge-label user path)
       (merge-type-info cm user path)
       (merge-shares cm user path)
       (merge-counts cm user path))))
