@@ -27,7 +27,7 @@
                  [org.iplantc/clojure-commons "5.2.3.0"]
                  [org.iplantc/common-cli "5.2.3.0"]
                  [me.raynes/fs "1.4.6"]
-                 [cheshire "5.4.0"
+                 [cheshire "5.5.0"
                    :exclusions [[com.fasterxml.jackson.dataformat/jackson-dataformat-cbor]
                                 [com.fasterxml.jackson.dataformat/jackson-dataformat-smile]
                                 [com.fasterxml.jackson.core/jackson-annotations]

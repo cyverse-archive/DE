@@ -21,7 +21,7 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/tools.cli "0.3.1"]
                  [org.clojure/tools.logging "0.3.0"]
-                 [cheshire "5.3.1"]
+                 [cheshire "5.5.0"]
                  [com.cemerick/pomegranate "0.3.0"]
                  [fleet "0.10.1"]
                  [com.mchange/c3p0 "0.9.5.1"]

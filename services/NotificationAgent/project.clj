@@ -15,7 +15,7 @@
   :manifest {"Git-Ref" ~(git-ref)}
   :uberjar-name "notificationagent-standalone.jar"
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [cheshire "5.4.0"
+                 [cheshire "5.5.0"
                   :exclusions [[com.fasterxml.jackson.dataformat/jackson-dataformat-cbor]
                                [com.fasterxml.jackson.dataformat/jackson-dataformat-smile]
                                [com.fasterxml.jackson.core/jackson-annotations]

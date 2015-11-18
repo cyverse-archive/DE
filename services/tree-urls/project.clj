@@ -22,7 +22,7 @@
                  [org.iplantc/service-logging "5.2.3.0"]
                  [io.aviso/pretty "0.1.17"]
                  [me.raynes/fs "1.4.6"]
-                 [cheshire "5.3.1"
+                 [cheshire "5.5.0"
                    :exclusions [[com.fasterxml.jackson.dataformat/jackson-dataformat-cbor]
                                 [com.fasterxml.jackson.dataformat/jackson-dataformat-smile]
                                 [com.fasterxml.jackson.core/jackson-annotations]
