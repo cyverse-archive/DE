@@ -18,9 +18,6 @@
                  [org.clojure/core.memoize "0.5.7"]
                  [org.clojure/data.codec "0.1.0"]
                  [org.clojure/tools.nrepl "0.2.10"]
-                 [byte-streams "0.2.0"
-                  :exclusions [[clj-tuple]
-                               [riddley]]]
                  [cheshire "5.5.0"]
                  [clj-http "2.0.0"]
                  [clj-time "0.11.0"]

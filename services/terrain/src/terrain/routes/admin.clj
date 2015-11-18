@@ -1,6 +1,5 @@
 (ns terrain.routes.admin
   (:use [compojure.core]
-        [terrain.auth.user-attributes]
         [terrain.util])
   (:require [terrain.util.config :as config]
             [terrain.services.admin :as admin]

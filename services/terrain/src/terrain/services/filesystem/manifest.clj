@@ -5,18 +5,15 @@
         [terrain.services.filesystem.validators]
         [terrain.services.filesystem.sharing :only [anon-file-url anon-readable?]]
         [clj-jargon.init :only [with-jargon]]
-        [clj-jargon.item-ops :only [input-stream]]
         [clj-jargon.metadata :only [get-attribute attribute?]]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [clojure.tools.logging :as log]
-            [clojure.string :as string]
             [clojure-commons.file-utils :as ft]
             [cheshire.core :as json]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
             [terrain.services.filesystem.validators :as validators]
             [terrain.services.filesystem.stat :refer [detect-content-type]]
             [terrain.services.filesystem.garnish.irods :as filetypes]
-            [ring.util.codec :as cdc]
             [terrain.clients.tree-urls :as tree]
             [terrain.util.config :as cfg]
             [terrain.services.filesystem.icat :as icat])

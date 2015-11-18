@@ -3,7 +3,6 @@
         [clojure-commons.validators]
         [terrain.util.config]
         [terrain.util.service :only [success-response]]
-        [byte-streams]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [cheshire.core :as cheshire]
             [terrain.clients.iplant-groups :as ipg]

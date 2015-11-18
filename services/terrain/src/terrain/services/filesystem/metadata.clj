@@ -7,7 +7,6 @@
         [clj-jargon.init :only [with-jargon]]
         [clj-jargon.item-ops :only [input-stream]]
         [clj-jargon.metadata]
-        [korma.db :only [transaction]]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [clojure.tools.logging :as log]
             [clojure.string :as string]
