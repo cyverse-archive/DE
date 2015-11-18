@@ -21,6 +21,7 @@ import org.iplantc.de.apps.client.views.submit.dialog.SubmitAppForPublicDialog;
 import org.iplantc.de.apps.shared.AppsModule.Ids;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.commons.client.ErrorHandler;
 
 import com.google.common.base.Preconditions;
@@ -65,28 +66,46 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
 
     @UiField
     Menu sharingMenu;
-    @UiField MenuItem appRun;
-    @UiField AppSearchField appSearch;
-    @UiField TextButton app_menu;
-    @UiField BoxLayoutData boxData;
-    @UiField MenuItem copyApp;
-    @UiField MenuItem copyWf;
-    @UiField MenuItem createNewApp;
-    @UiField MenuItem createWorkflow;
-    @UiField MenuItem deleteApp;
-    @UiField MenuItem deleteWf;
-    @UiField MenuItem editApp;
-    @UiField MenuItem editWf;
-    @UiField MenuItem requestTool;
+    @UiField
+    MenuItem appRun;
+    @UiField
+    AppSearchField appSearch;
+    @UiField
+    TextButton app_menu;
+    @UiField
+    BoxLayoutData boxData;
+    @UiField
+    MenuItem copyApp;
+    @UiField
+    MenuItem copyWf;
+    @UiField
+    MenuItem createNewApp;
+    @UiField
+    MenuItem createWorkflow;
+    @UiField
+    MenuItem deleteApp;
+    @UiField
+    MenuItem deleteWf;
+    @UiField
+    MenuItem editApp;
+    @UiField
+    MenuItem editWf;
+    @UiField
+    MenuItem requestTool;
     @UiField
     MenuItem shareCollab, sharePublic;
-    @Inject AsyncProvider<SubmitAppForPublicDialog> submitAppDialogAsyncProvider;
-    @UiField MenuItem wfRun;
-    @UiField TextButton wf_menu;
-    @UiField(provided = true) final AppsToolbarAppearance appearance;
+    @Inject
+    AsyncProvider<SubmitAppForPublicDialog> submitAppDialogAsyncProvider;
+    @UiField
+    MenuItem wfRun;
+    @UiField
+    TextButton wf_menu;
+    @UiField(provided = true)
+    final AppsToolbarAppearance appearance;
     private static final AppsViewToolbarUiBinder uiBinder = GWT.create(AppsViewToolbarUiBinder.class);
     private final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
-    @Inject UserInfo userInfo;
+    @Inject
+    UserInfo userInfo;
     protected List<App> currentSelection = Lists.newArrayList();
 
     @Inject
@@ -97,14 +116,16 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         initWidget(uiBinder.createAndBindUi(this));
     }
 
-    //<editor-fold desc="Handler Registrations">
+    // <editor-fold desc="Handler Registrations">
     @Override
-    public HandlerRegistration addAppSearchResultLoadEventHandler(AppSearchResultLoadEventHandler handler) {
+    public HandlerRegistration
+            addAppSearchResultLoadEventHandler(AppSearchResultLoadEventHandler handler) {
         return addHandler(handler, TYPE);
     }
 
     @Override
-    public HandlerRegistration addBeforeAppSearchEventHandler(BeforeAppSearchEvent.BeforeAppSearchEventHandler handler) {
+    public HandlerRegistration
+            addBeforeAppSearchEventHandler(BeforeAppSearchEvent.BeforeAppSearchEventHandler handler) {
         return addHandler(handler, BeforeAppSearchEvent.TYPE);
     }
 
@@ -114,22 +135,26 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
     }
 
     @Override
-    public HandlerRegistration addCopyWorkflowSelectedHandler(CopyWorkflowSelected.CopyWorkflowSelectedHandler handler) {
+    public HandlerRegistration
+            addCopyWorkflowSelectedHandler(CopyWorkflowSelected.CopyWorkflowSelectedHandler handler) {
         return addHandler(handler, CopyWorkflowSelected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addCreateNewAppSelectedHandler(CreateNewAppSelected.CreateNewAppSelectedHandler handler) {
+    public HandlerRegistration
+            addCreateNewAppSelectedHandler(CreateNewAppSelected.CreateNewAppSelectedHandler handler) {
         return addHandler(handler, CreateNewAppSelected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addCreateNewWorkflowSelectedHandler(CreateNewWorkflowSelected.CreateNewWorkflowSelectedHandler handler) {
+    public HandlerRegistration
+            addCreateNewWorkflowSelectedHandler(CreateNewWorkflowSelected.CreateNewWorkflowSelectedHandler handler) {
         return addHandler(handler, CreateNewWorkflowSelected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addDeleteAppsSelectedHandler(DeleteAppsSelected.DeleteAppsSelectedHandler handler) {
+    public HandlerRegistration
+            addDeleteAppsSelectedHandler(DeleteAppsSelected.DeleteAppsSelectedHandler handler) {
         return addHandler(handler, DeleteAppsSelected.TYPE);
     }
 
@@ -139,12 +164,14 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
     }
 
     @Override
-    public HandlerRegistration addEditWorkflowSelectedHandler(EditWorkflowSelected.EditWorkflowSelectedHandler handler) {
+    public HandlerRegistration
+            addEditWorkflowSelectedHandler(EditWorkflowSelected.EditWorkflowSelectedHandler handler) {
         return addHandler(handler, EditWorkflowSelected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addRequestToolSelectedHandler(RequestToolSelected.RequestToolSelectedHandler handler) {
+    public HandlerRegistration
+            addRequestToolSelectedHandler(RequestToolSelected.RequestToolSelectedHandler handler) {
         return addHandler(handler, RequestToolSelected.TYPE);
     }
 
@@ -159,7 +186,7 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         return addHandler(handler, ShareAppsSelected.TYPE);
     }
 
-    //</editor-fold>
+    // </editor-fold>
 
     @Override
     public void hideAppMenu() {
@@ -175,10 +202,10 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         boxData.setFlex(0);
     }
 
-    //<editor-fold desc="Selection Handlers">
+    // <editor-fold desc="Selection Handlers">
     @Override
     public void onAppCategorySelectionChanged(AppCategorySelectionChangedEvent event) {
-        if(!event.getAppCategorySelection().isEmpty()) {
+        if (!event.getAppCategorySelection().isEmpty()) {
             appSearch.clear();
         }
     }
@@ -192,7 +219,7 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         currentSelection.addAll(event.getAppSelection());
 
         boolean deleteAppEnabled, editAppEnabled, submitAppEnabled, copyAppEnabled, appRunEnabled;
-        boolean deleteWfEnabled, editWfEnabled, copyWfEnabled, wfRunEnabled;
+        boolean deleteWfEnabled, editWfEnabled, copyWfEnabled, wfRunEnabled, shareWithCollaboratorsMiEnabled;
 
         switch (currentSelection.size()) {
             case 0:
@@ -206,30 +233,42 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
                 editWfEnabled = false;
                 copyWfEnabled = false;
                 wfRunEnabled = false;
+                shareWithCollaboratorsMiEnabled = false;
 
                 break;
             case 1:
                 final App selectedApp = currentSelection.get(0);
+                final boolean isOwner = selectedApp.getPermission() != null
+                        && selectedApp.getPermission().equals(PermissionValue.own);
+                final boolean isEditable = isOwner || selectedApp.getPermission() != null
+                        && selectedApp.getPermission().equals(PermissionValue.write);
+                final boolean isCopyable = isEditable || selectedApp.getPermission() != null
+                        && selectedApp.getPermission().equals(PermissionValue.read);
                 final boolean isSingleStep = selectedApp.getStepCount() == 1;
                 final boolean isMultiStep = selectedApp.getStepCount() > 1;
                 final boolean isAppPublic = selectedApp.isPublic();
                 final boolean isAppDisabled = selectedApp.isDisabled();
                 final boolean isRunnable = selectedApp.isRunnable();
-                final boolean isOwner = selectedApp.getIntegratorEmail().equals(userInfo.getEmail());
+                // final boolean isOwner = selectedApp.getIntegratorEmail().equals(userInfo.getEmail());
+
 
                 deleteAppEnabled = isSingleStep && !isAppPublic;
                 // allow owners to edit their app
-                editAppEnabled = isSingleStep && isOwner;
-                submitAppEnabled = isSingleStep && isRunnable && !isAppPublic;
-                copyAppEnabled = isSingleStep;
+                editAppEnabled = isSingleStep && isEditable;
+                submitAppEnabled = isSingleStep && isRunnable && !isAppPublic && isOwner;
+                copyAppEnabled = isSingleStep && isCopyable;
                 // App run menu item is left enabled so user can get error announcement
                 appRunEnabled = isSingleStep && !isAppDisabled;
 
-                deleteWfEnabled = isMultiStep && !isAppPublic;
-                editWfEnabled = isMultiStep && !isAppPublic && isOwner;
-                copyWfEnabled = isMultiStep;
+                deleteWfEnabled = isMultiStep && !isAppPublic && isOwner;
+                editWfEnabled = isMultiStep && !isAppPublic && isEditable;
+                copyWfEnabled = isMultiStep && isCopyable;
                 // Wf run menu item is left enabled so user can get error announcement
                 wfRunEnabled = isMultiStep && !isAppDisabled;
+                GWT.log(selectedApp.getPermission() + "&&--&&");
+                shareWithCollaboratorsMiEnabled = selectedApp.getPermission() != null
+                        && selectedApp.getPermission().equals(PermissionValue.own)
+                        && !selectedApp.getAppType().equals(App.EXTERNAL_APP);
                 break;
             default:
                 final boolean containsSingleStepApp = containsSingleStepApp(currentSelection);
@@ -246,11 +285,14 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
                 editWfEnabled = false;
                 copyWfEnabled = false;
                 wfRunEnabled = false;
+                shareWithCollaboratorsMiEnabled = containsSharableApps(currentSelection);
         }
 
         deleteApp.setEnabled(deleteAppEnabled);
         editApp.setEnabled(editAppEnabled);
-        sharingMenu.setEnabled(submitAppEnabled);
+        sharePublic.setEnabled(submitAppEnabled);
+        GWT.log("menu enabled->" + shareWithCollaboratorsMiEnabled);
+        shareCollab.setEnabled(shareWithCollaboratorsMiEnabled);
         copyApp.setEnabled(copyAppEnabled);
         appRun.setEnabled(appRunEnabled);
 
@@ -259,7 +301,8 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         copyWf.setEnabled(copyWfEnabled);
         wfRun.setEnabled(wfRunEnabled);
     }
-    //</editor-fold>
+
+    // </editor-fold>
 
     @Override
     protected void onEnsureDebugId(String baseID) {
@@ -272,6 +315,8 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         editApp.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_EDIT_APP);
         deleteApp.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_DELETE_APP);
         sharingMenu.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_SHARE_APP);
+        sharePublic.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_SHARE_APP_PUBLIC);
+        shareCollab.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_SHARE_APP_COLLAB);
 
         wf_menu.ensureDebugId(baseID + Ids.MENU_ITEM_WF);
         wfRun.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_USE_WF);
@@ -281,6 +326,17 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         deleteWf.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_DELETE_WF);
 
         appSearch.ensureDebugId(baseID + Ids.MENU_ITEM_SEARCH);
+    }
+
+    boolean containsSharableApps(List<App> apps) {
+        for (App a : apps) {
+            if (!(a.getPermission() != null && a.getPermission().equals(PermissionValue.own) && !a.getAppType()
+                                                                                                  .equals(App.EXTERNAL_APP))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     boolean containsSingleStepApp(List<App> apps) {
@@ -315,7 +371,7 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         return new AppSearchField(loader);
     }
 
-    //<editor-fold desc="UI Handlers">
+    // <editor-fold desc="UI Handlers">
     @UiHandler({"appRun", "wfRun"})
     void appRunClicked(SelectionEvent<Item> event) {
         fireEvent(new RunAppSelected(currentSelection.iterator().next()));
@@ -343,7 +399,8 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
 
     @UiHandler({"deleteApp", "deleteWf"})
     void deleteClicked(SelectionEvent<Item> event) {
-        ConfirmMessageBox msgBox = new ConfirmMessageBox(appearance.warning(), appearance.appDeleteWarning());
+        ConfirmMessageBox msgBox = new ConfirmMessageBox(appearance.warning(),
+                                                         appearance.appDeleteWarning());
         msgBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override
             public void onDialogHide(DialogHideEvent event) {
@@ -390,7 +447,8 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
             }
         });
     }
-    //</editor-fold>
+
+    // </editor-fold>
 
     @UiHandler("shareCollab")
     void shareWithCollaborator(SelectionEvent<Item> event) {

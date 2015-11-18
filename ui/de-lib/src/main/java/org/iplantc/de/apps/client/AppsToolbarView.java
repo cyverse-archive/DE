@@ -80,6 +80,8 @@ public interface AppsToolbarView extends IsWidget,
         String shareCollab();
 
         String share();
+
+        ImageResource shareAppIcon();
     }
 
     interface Presenter extends BeforeLoadEvent.HasBeforeLoadHandlers<FilterPagingLoadConfig>,

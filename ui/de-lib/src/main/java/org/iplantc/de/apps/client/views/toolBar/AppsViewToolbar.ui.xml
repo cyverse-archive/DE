@@ -70,10 +70,10 @@
           <button:TextButton ui:field="share_menu" text="{appearance.share}">
           <button:menu>
                    <menu:Menu ui:field="sharingMenu">
-                                <menu:MenuItem ui:field="shareCollab" enabled="true"
-                                    text="{appearance.shareCollab}" icon="{appearance.submitForPublicIcon}"
+                                <menu:MenuItem ui:field="shareCollab" enabled="false"
+                                    text="{appearance.shareCollab}" icon="{appearance.shareAppIcon}"
                                     toolTipConfig="{submitToolTip}" />
-                                <menu:MenuItem ui:field="sharePublic" enabled="true"
+                                <menu:MenuItem ui:field="sharePublic" enabled="false"
                                     text="{appearance.sharePublic}" icon="{appearance.submitForPublicIcon}"
                                     toolTipConfig="{submitToolTip}" />
                             </menu:Menu>

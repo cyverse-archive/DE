@@ -116,6 +116,11 @@ public class AppsToolbarViewDefaultAppearance implements AppsToolbarView.AppsToo
     }
 
     @Override
+    public ImageResource shareAppIcon() {
+        return iplantResources.share();
+    }
+
+    @Override
     public String warning() {
         return iplantDisplayStrings.warning();
     }

@@ -2,6 +2,7 @@ package org.iplantc.de.client.models.apps;
 
 import org.iplantc.de.client.models.HasDescription;
 import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.tool.Tool;
 
 import com.google.gwt.user.client.ui.HasName;
@@ -135,4 +136,8 @@ public interface App extends HasId,
 
     @PropertyName(WIKI_URL_KEY)
     void setWikiUrl(String wikiUrl);
+
+    void setPermission(PermissionValue value);
+
+    PermissionValue getPermission();
 }
