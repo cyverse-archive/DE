@@ -20,12 +20,18 @@ var (
 	logger     = logcabin.New()
 	version    = flag.Bool("version", false, "Print the version information")
 	cfgPath    = flag.String("config", "", "The path to the config file")
+	dbURI      = flag.String("db", "", "The URI used to connect to the database")
+	amqpURI    = flag.String("amqp", "", "The URI used to connect to the amqp broker")
 	gitref     string
 	appver     string
 	builtby    string
 	amqpClient *messaging.Client
 	db         *sql.DB
 )
+
+func init() {
+	flag.Parse()
+}
 
 // AppVersion prints version information to stdout
 func AppVersion() {
@@ -112,28 +118,37 @@ func msg(delivery amqp.Delivery) {
 }
 
 func main() {
+	var err error
+
 	if *version {
 		AppVersion()
 		os.Exit(0)
 	}
-	if *cfgPath == "" {
-		logger.Fatal("--config must be set.")
+
+	if *dbURI == "" || *amqpURI == "" {
+		if *cfgPath == "" {
+			logger.Fatal("--config must be set.")
+		}
+		err := configurate.Init(*cfgPath)
+		if err != nil {
+			logger.Fatal(err)
+		}
+		if *dbURI == "" {
+			*dbURI, err = configurate.C.String("db.uri")
+			if err != nil {
+				logger.Fatal(err)
+			}
+		}
+		if *amqpURI == "" {
+			*amqpURI, err = configurate.C.String("amqp.uri")
+			if err != nil {
+				logger.Fatal(err)
+			}
+		}
 	}
-	err := configurate.Init(*cfgPath)
-	if err != nil {
-		logger.Fatal(err)
-	}
-	dbURI, err := configurate.C.String("db.uri")
-	if err != nil {
-		logger.Fatal(err)
-	}
-	amqpURI, err := configurate.C.String("amqp.uri")
-	if err != nil {
-		logger.Fatal(err)
-	}
-	amqpClient = messaging.NewClient(amqpURI)
+	amqpClient = messaging.NewClient(*amqpURI)
 	defer amqpClient.Close()
-	db, err = sql.Open("postgres", dbURI)
+	db, err = sql.Open("postgres", *dbURI)
 	if err != nil {
 		logger.Fatal(err)
 	}

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"configurate"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -196,13 +195,6 @@ func main() {
 	}
 	if *amqpURI == "" {
 		log.Fatal("--amqp is required")
-	}
-	if *configPath == "" {
-		log.Fatal("--config is required")
-	}
-	err := configurate.Init(*configPath)
-	if err != nil {
-		log.Fatal(err)
 	}
 	client = messaging.NewClient(*amqpURI)
 	defer client.Close()
