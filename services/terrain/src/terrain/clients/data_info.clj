@@ -271,10 +271,7 @@
    Returns:
      It returns the stat info formatted for the HTTP response."
   [^String user ^String path]
-
-  (-> (st/do-stat params paths-request)
-       :paths
-       (get path)))
+  (st/path-stat user path))
 
 
 (defn ^IPersistentMap stat-by-uuid
