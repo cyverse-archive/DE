@@ -18,3 +18,6 @@
 
 ;; Common permission resources.
 (def public-apps-resource-name "public-apps")
+
+;; Some full names for convenience
+(def full-de-users-role-name (str de-users-folder ":" de-users-role-name))

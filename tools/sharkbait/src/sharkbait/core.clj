@@ -1,6 +1,7 @@
 (ns sharkbait.core
   (:gen-class)
   (:require [clojure.java.jdbc :as jdbc]
+            [clojure.string :as string]
             [common-cli.core :as cli]
             [sharkbait.apps :as apps]
             [sharkbait.consts :as consts]
@@ -39,16 +40,50 @@
           (folders/grant-privs (subjects/find-subject consts/de-username true) #{:stem}))
       (finally (sessions/stop-grouper-session session)))))
 
+(defn- load-de-subjects
+  "Loads all subjects with entries in the DE database."
+  [db-spec session]
+  (println "Loading DE subjects...")
+  (->> (db/list-de-users db-spec)
+       (mapv #(string/replace (:username %) #"@.*$" ""))
+       (subjects/find-subjects)))
+
+(defn- register-de-users
+  "Adds all DE users to the de-users group."
+  [session subjects]
+  (println "Registering DE users...")
+  (users/register-de-users session subjects))
+
+(defn- create-permission-defs
+  "Creates the permission definitions used by the DE."
+  [session]
+  (println "Creating DE permission definitions...")
+  (perms/create-permission-def session consts/de-apps-folder consts/app-permission-def-name)
+  (perms/create-permission-def session consts/de-analyses-folder consts/analysis-permission-def-name))
+
+(defn- register-de-apps
+  [db-spec session subjects]
+  (println "Registering DE apps...")
+  (->> (db/list-de-apps db-spec)
+       (map #(clojure.pprint/pprint (into [] (.getArray (:users %)))))
+       (dorun))
+  (let [subjects (into {} (map (comp #(.getId %) identity) subjects))]
+      (apps/register-de-apps db-spec session subjects consts/de-apps-folder consts/app-permission-def-name)))
+
+(defn- register-de-entities
+  "Registers DE entities in Grouper."
+  [db-spec session subjects]
+  (time (register-de-users session subjects))
+  (time (create-permission-defs session))
+  (time (register-de-apps db-spec session subjects)))
+
 (defn- perform-de-user-actions
   "Performs the actions that do not require superuser privileges."
   [db-spec]
   (let [session (sessions/create-grouper-session consts/de-username)]
     (try
       (dorun (map (partial folders/find-folder session) default-folder-names))
-      (users/register-de-users db-spec session)
-      (perms/create-permission-def session consts/de-apps-folder consts/app-permission-def-name)
-      (perms/create-permission-def session consts/de-analyses-folder consts/analysis-permission-def-name)
-      (apps/register-de-apps db-spec session consts/de-apps-folder consts/app-permission-def-name)
+      (register-de-entities db-spec session (time (load-de-subjects db-spec session)))
       (finally (sessions/stop-grouper-session session)))))
 
 (defn -main

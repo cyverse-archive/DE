@@ -1,5 +1,5 @@
 (ns sharkbait.roles
-  (:import [edu.internet2.middleware.grouper GroupSave]
+  (:import [edu.internet2.middleware.grouper GroupFinder GroupSave MembershipFinder]
            [edu.internet2.middleware.grouper.group TypeOfGroup]
            [edu.internet2.middleware.grouper.misc SaveMode]))
 
@@ -12,7 +12,20 @@
       (.assignSaveMode SaveMode/INSERT_OR_UPDATE)
       (.save)))
 
-(defn add-member
-  "Adds a subject to a role as a member."
-  [role subject]
-  (.addMember role subject false))
+(defn replace-members
+  "Replaces the members of a role."
+  [role subjects]
+  (.replaceMembers role subjects))
+
+(defn find-role
+  "Finds a Grouper role."
+  [session role-name]
+  (GroupFinder/findByName session role-name true))
+
+(defn find-membership
+  "Finds a membership in a role."
+  [role-name subject]
+  (-> (MembershipFinder.)
+      (.addGroup role-name)
+      (.addSubject subject)
+      (.findMembership false)))
