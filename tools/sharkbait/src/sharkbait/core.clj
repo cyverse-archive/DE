@@ -3,11 +3,9 @@
   (:require [clojure.java.jdbc :as jdbc]
             [clojure.string :as string]
             [common-cli.core :as cli]
-            [sharkbait.apps :as apps]
             [sharkbait.consts :as consts]
             [sharkbait.db :as db]
             [sharkbait.folders :as folders]
-            [sharkbait.permissions :as perms]
             [sharkbait.sessions :as sessions]
             [sharkbait.subjects :as subjects]
             [sharkbait.users :as users]))
@@ -27,9 +25,7 @@
    ["-v" "--version" "Show the sharkbait version." :default false]])
 
 (def ^:private default-folder-names
-  [consts/de-users-folder
-   consts/de-apps-folder
-   consts/de-analyses-folder])
+  [consts/de-users-folder])
 
 (defn- perform-root-actions
   "Performs the actions that require superuser privileges."
@@ -54,25 +50,10 @@
   (println "Registering DE users...")
   (users/register-de-users session subjects))
 
-(defn- create-permission-defs
-  "Creates the permission definitions used by the DE."
-  [session]
-  (println "Creating DE permission definitions...")
-  (perms/create-permission-def session consts/de-apps-folder consts/app-permission-def-name)
-  (perms/create-permission-def session consts/de-analyses-folder consts/analysis-permission-def-name))
-
-(defn- register-de-apps
-  [db-spec session subjects]
-  (println "Registering DE apps...")
-  (let [subjects (into {} (map (juxt #(.getId %) identity) subjects))]
-      (apps/register-de-apps db-spec session subjects consts/de-apps-folder consts/app-permission-def-name)))
-
 (defn- register-de-entities
   "Registers DE entities in Grouper."
   [db-spec session subjects]
-  (time (register-de-users session subjects))
-  (time (create-permission-defs session))
-  (time (register-de-apps db-spec session subjects)))
+  (time (register-de-users session subjects)))
 
 (defn- perform-de-user-actions
   "Performs the actions that do not require superuser privileges."
