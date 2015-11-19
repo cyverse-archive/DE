@@ -64,10 +64,7 @@
 (defn- register-de-apps
   [db-spec session subjects]
   (println "Registering DE apps...")
-  (->> (db/list-de-apps db-spec)
-       (map #(clojure.pprint/pprint (into [] (.getArray (:users %)))))
-       (dorun))
-  (let [subjects (into {} (map (comp #(.getId %) identity) subjects))]
+  (let [subjects (into {} (map (juxt #(.getId %) identity) subjects))]
       (apps/register-de-apps db-spec session subjects consts/de-apps-folder consts/app-permission-def-name)))
 
 (defn- register-de-entities

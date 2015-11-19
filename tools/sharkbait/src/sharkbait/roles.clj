@@ -1,6 +1,7 @@
 (ns sharkbait.roles
   (:import [edu.internet2.middleware.grouper GroupFinder GroupSave MembershipFinder]
            [edu.internet2.middleware.grouper.group TypeOfGroup]
+           [edu.internet2.middleware.grouper.membership MembershipType]
            [edu.internet2.middleware.grouper.misc SaveMode]))
 
 (defn create-role
@@ -22,10 +23,11 @@
   [session role-name]
   (GroupFinder/findByName session role-name true))
 
-(defn find-membership
-  "Finds a membership in a role."
-  [role-name subject]
+(defn find-effective-membership
+  "Finds an effective membership in a role."
+  [session role subject]
   (-> (MembershipFinder.)
-      (.addGroup role-name)
+      (.addGroup role)
       (.addSubject subject)
+      (.assignMembershipType MembershipType/EFFECTIVE)
       (.findMembership false)))

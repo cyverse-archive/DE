@@ -8,8 +8,7 @@
 (defn- create-public-apps-resource
   "Creates the resource that all public apps inherit their permissions from."
   [session permission-def folder-name]
-  (perms/create-permission-resource session permission-def folder-name consts/public-apps-resource-name)
-  (perms/grant-permission (roles/find-role session consts/full-de-users-role-name) perms/read permission-def))
+  (perms/create-permission-resource session permission-def folder-name consts/public-apps-resource-name))
 
 (defn- extract-username
   "Extracts the username of an owner from an app."
@@ -25,27 +24,29 @@
     (subjects (string/replace username #"@iplantcollaborative.org$" ""))))
 
 (defn- find-app-owner-membership
-  [subjects app]
+  [session subjects de-users-role app]
   (when-let [subject (find-app-owner-subject subjects app)]
-    (roles/find-membership consts/full-de-users-role-name subject)))
+    (roles/find-effective-membership session de-users-role subject)))
 
 (defn- grant-owner-permission
   "Grants ownership permission to an app."
-  [subjects app-resource app]
-  (when-let [membership (find-app-owner-membership subjects app)]
+  [session subjects de-users-role app-resource app]
+  (when-let [membership (find-app-owner-membership session subjects de-users-role app)]
     (perms/grant-permission membership perms/own app-resource)))
 
 (defn- register-app
-  [session subjects permission-def public-apps-resource folder-name app]
+  [session subjects de-users-role permission-def public-apps-resource folder-name app]
   (let [app-resource (perms/create-permission-resource session permission-def folder-name (:id app))]
     (if (:is_public app)
       (perms/add-permission-name-implication public-apps-resource app-resource)
-      (grant-owner-permission subjects app-resource app))))
+      (grant-owner-permission session subjects de-users-role app-resource app))))
 
 (defn register-de-apps
   "Registers all DE apps in Grouper."
   [database session subjects folder-name permission-def-name]
   (let [permission-def       (perms/find-permission-def folder-name permission-def-name)
-        public-apps-resource (create-public-apps-resource session permission-def folder-name)]
-    (dorun (map (partial register-app session subjects permission-def public-apps-resource folder-name)
+        public-apps-resource (create-public-apps-resource session permission-def folder-name)
+        de-users-role        (roles/find-role session consts/full-de-users-role-name)]
+    (perms/grant-permission de-users-role perms/read public-apps-resource)
+    (dorun (map (partial register-app session subjects de-users-role permission-def public-apps-resource folder-name)
                 (db/list-de-apps database)))))
