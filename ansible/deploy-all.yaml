@@ -15,8 +15,6 @@
       - role: systemd-de-target 
         up: false
 
-  include: playbooks/systemd-de-target.yaml up=false
-
 - include: playbooks/rsyslog-config.yaml
 
 - include: deploy-backend.yaml
