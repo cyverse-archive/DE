@@ -8,7 +8,7 @@ Requires=docker.socket network.service
 Wants=network-online.target
 
 [Service]
-ExecStart=/usr/bin/docker -d --exec-opt native.cgroupdriver=cgroupfs -H fd://
+ExecStart=/usr/bin/docker daemon --exec-opt native.cgroupdriver=cgroupfs -H fd://
 MountFlags=slave
 LimitNOFILE=1048576
 LimitNPROC=1048576
