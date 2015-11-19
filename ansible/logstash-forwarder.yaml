@@ -3,9 +3,11 @@
 
 
 ---
-- name: Deploy Logstash Forwarder
+- name: Logstash Forwarder
   hosts: docker-ready
   sudo: yes
+  tags:
+      - logstash_forwarder
   roles:
     - role: notify-chat
       username: Logstash-Forwarder

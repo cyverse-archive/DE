@@ -11,6 +11,8 @@
   hosts: ui
   sudo: yes
   gather_facts: false
+  tags:
+      - verify
   vars: 
       ui_port: "-C INPUT -m state --state NEW -m tcp -p tcp --dport 80 -j ACCEPT"
       ui_ssl_port: "-C INPUT -m state --state NEW -m tcp -p tcp --dport 443 -j ACCEPT"

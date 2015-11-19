@@ -1,6 +1,7 @@
 # ansible-playbook -i inventories/... -K --tags "update_service_files" jex.yaml
 ---
-- hosts: services
+- name: JEX
+  hosts: services
   roles:
       - role: notify-chat
         username: JEX

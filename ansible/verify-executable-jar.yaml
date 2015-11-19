@@ -4,6 +4,8 @@
   sudo: yes
   gather_facts: false
   sudo_user: root
+  tags:
+      - verify
   tasks:
       - name: Verify executable jars are configures
         stat: path=/proc/sys/fs/binfmt_misc/ExecutableJAR

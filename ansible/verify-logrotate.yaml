@@ -5,6 +5,8 @@
   hosts: docker-ready
   sudo: yes
   gather_facts: false
+  tags:
+      - verify
   tasks:
 
       - name: /etc/logrotate.d/de-logs exists

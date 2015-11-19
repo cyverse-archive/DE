@@ -4,6 +4,19 @@
 
 - include: services-common.yml
 
+- name: Bring down DE target
+  hosts: docker-ready
+  sudo: True
+  gather_facts: false
+  tags:
+      - systemd
+      - systemd_target
+  roles:
+      - role: systemd-de-target 
+        up: false
+
+  include: systemd-de-target.yaml up=false
+
 - include: rsyslog-config.yaml
 
 - include: deploy-backend.yaml
@@ -11,6 +24,7 @@
 - include: ui.yaml
 
 - include: amqp-brokers.yaml
+  when: not parasitic
 
 - include: deploy-irods-elasticsearch.yaml
   when: not parasitic
@@ -19,4 +33,16 @@
   vars:
     reboot: true
 
+- name: Restart DE target
+  hosts: docker-ready
+  sudo: True
+  gather_facts: false
+  tags:
+      - systemd
+      - systemd_target
+  roles:
+      - role: systemd-de-target 
+        up: true
+
 - include: verify-POST_DEPLOY.yaml
+

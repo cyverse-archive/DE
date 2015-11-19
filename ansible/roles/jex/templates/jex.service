@@ -13,4 +13,4 @@ SyslogIdentifier=jex
 SyslogFacility={{systemd.syslogFacility}}
 
 [Install]
-WantedBy=multi-user.target
+WantedBy={{systemd.target}}

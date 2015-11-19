@@ -227,6 +227,7 @@ dewey:
 systemd:
   syslogFacility: local6
   unit_file_dir: /usr/lib/systemd/system
+  target: de.target
   services:
           - "{{anon_files}}"
           - "{{clockwork}}"

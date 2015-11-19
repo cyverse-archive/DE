@@ -5,6 +5,8 @@
 
 - hosts: systems
   sudo: true
+  tags:
+      - systems
   roles:
     - role: notify-chat
       msg: "Updating {{ inventory_hostname }} system packages"
@@ -19,6 +21,8 @@
 - hosts: CentOS:RedHat
   gather_facts: false
   sudo: true
+  tags:
+      - systems
   tasks:
     - name: upgrade system packages
       yum: name=* state=latest
@@ -26,6 +30,8 @@
 - hosts: CentOS:RedHat:&builders
   gather_facts: false
   sudo: true
+  tags:
+      - systems
   tasks:
     - name: ensure tomcat owns /usr/src/redhat
       file: path=/usr/src/redhat state=directory owner=tomcat recurse=true
@@ -33,6 +39,8 @@
 - hosts: CentOS:RedHat:&db
   gather_facts: false
   sudo: true
+  tags:
+      - systems
   tasks:
     - name: ensure DE DBMS starts on boot
       service: name=postgresql-9.2 enabled=true
@@ -40,12 +48,16 @@
 - hosts: systems:!CentOS_7
   gather_facts: false
   sudo: true
+  tags:
+      - systems
   roles:
     - denyhosts
 
 - hosts: systems
   gather_facts: false
   sudo: true
+  tags:
+      - systems
   pre_tasks:
     - name: reboot server
       when: reboot|default(false)
@@ -64,3 +76,4 @@
   roles:
     - role: notify-chat
       msg: "Done updating {{ inventory_hostname }} system packages"
+

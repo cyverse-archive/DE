@@ -1,6 +1,7 @@
 ---
 - hosts: services
   sudo: True
+  gather_facts: false
   vars:
       clean_services:
          - "{{anon_files}}"

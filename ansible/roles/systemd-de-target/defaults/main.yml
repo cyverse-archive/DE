@@ -1,0 +1,9 @@
+---
+# defaults file for systemd-de-target
+systemd_unit_file_dir: "{{systemd.unit_file_dir}}"
+systemd_target: "{{systemd.target}}"
+
+fallback_target: "multi-user.target"
+config: false
+config_only: false
+up: true

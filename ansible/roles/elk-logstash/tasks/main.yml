@@ -31,11 +31,4 @@
   tags:
       - enable_services
       - enable_logstash
-        
-# Always restart logstash        
-- name: restart logstash service
-  service: name={{elk.logstash.service_name}} state=restarted
-  tags:
-      - restart_services
-      - restart_logstash
 

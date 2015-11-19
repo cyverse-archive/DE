@@ -5,6 +5,8 @@
 - name: Verify java installed and correct version
   hosts: services
   gather_facts: false
+  tags:
+      - verify
   tasks:
       - name: Java version
         shell: java -version

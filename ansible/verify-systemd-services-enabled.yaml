@@ -12,6 +12,8 @@
 - name: Verify services enabled on service hosts
   hosts: services
   sudo: yes
+  tags:
+      - verify
   tasks:
       - name: services are enabled
         shell: systemctl is-enabled {{item.service_name}}

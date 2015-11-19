@@ -3,6 +3,9 @@
 - name: Deploy irods elasticsearch
   hosts: elasticsearch
   sudo:  true
+  gather_facts: false
+  tags:
+      - third_party
 
   vars:
     elasticsearch_version: 1.2.2

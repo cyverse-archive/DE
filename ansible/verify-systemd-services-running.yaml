@@ -12,6 +12,8 @@
 - name: Verify services running on service hosts
   hosts: services
   sudo: yes
+  tags:
+      - verify
   tasks:
       - name: services are running
         shell: systemctl is-active {{item.service_name}}

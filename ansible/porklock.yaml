@@ -4,5 +4,6 @@
 
 - hosts: condor
   sudo: True
+  gather_facts: false
   roles:
     - porklock

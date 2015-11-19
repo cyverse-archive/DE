@@ -1,0 +1,236 @@
+---
+# Stops and disables all services associated with the new systemd target
+
+- name: Stop anon-files.service
+  hosts: anon-files
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=anon-files.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop apps.service
+  hosts: apps
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=apps.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop clockwork.service
+  hosts: clockwork
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=clockwork.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop condor-log-monitor.service
+  hosts: condor-log-monitor
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=condor-log-monitor.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop data-info.service
+  hosts: data-info
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=data-info.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop dewey.service
+  hosts: dewey
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=dewey.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop exim-sender.service
+  hosts: exim-sender
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=exim-sender.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop info-typer.service
+  hosts: info-typer
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=info-typer.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop infosquito.service
+  hosts: infosquito
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=infosquito.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop iplant-email.service
+  hosts: iplant-email
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=iplant-email.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop iplant-groups.service
+  hosts: iplant-groups
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=iplant-groups.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop jex-events.service
+  hosts: jex-events
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=jex-events.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop kifshare.service
+  hosts: kifshare
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=kifshare.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop metadata.service
+  hosts: metadata
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=metadata.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop monkey.service
+  hosts: monkey
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=monkey.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop notification-agent.service
+  hosts: notification-agent
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=notification-agent.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop saved-searches.service
+  hosts: saved-searches
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=saved-searches.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop terrain.service
+  hosts: terrain
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=terrain.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop tree-urls.service
+  hosts: tree-urls
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=tree-urls.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop user-preferences.service
+  hosts: user-preferences
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=user-preferences.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop user-sessions.service
+  hosts: user-sessions
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=user-sessions.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop elk-kibana.service
+  hosts: elk
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=elk-kibana.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop elk-logstash.service
+  hosts: elk
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=elk-logstash.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop grouper-nginx.service
+  hosts: iplant-grouper
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=grouper-nginx.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop iplant-grouper.service
+  hosts: iplant-grouper
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=iplant-grouper.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop jex.service
+  hosts: jex
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=jex.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop logstash-forwarder.service
+  hosts: docker-ready
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=logstash-forwarder.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop de-ui-nginx.service
+  hosts: ui
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=de-ui-nginx.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop de-ui.service
+  hosts: ui
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=de-ui.service state=stopped enabled=false
+        ignore_errors: true
+
+

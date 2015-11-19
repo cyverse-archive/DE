@@ -10,6 +10,8 @@
 
 - fail: msg="Condor not installed"
   when: verify_condor_installed.rc != 0
+  tags:
+      - verify
 
 # - name: set the /etc/condor/condor_config.local file
 #   sudo: yes
