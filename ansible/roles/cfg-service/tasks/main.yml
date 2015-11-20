@@ -6,7 +6,7 @@
       - service_config
 
 - name: Place service config file
-  template: src={{src}} dest={{dest}} owner={{owner}} group={{group}} mode={{mode}}
+  template: src={{src}} dest={{dest}} owner={{owner}} group={{group}} mode=0644
   when: "'{{group_name}}' in group_names"
   tags:
       - service_config
