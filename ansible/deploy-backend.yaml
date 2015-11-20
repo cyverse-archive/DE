@@ -9,6 +9,8 @@
 
 - include: elk-stack.yaml
 
+- include: playbooks/10-jex.yaml
+
 - include: playbooks/porklock.yaml
 
 - name: Ensure self-executing jars will run on Condor nodes
