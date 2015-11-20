@@ -1,0 +1,137 @@
+# Connection details.
+terrain.app.listen-port = {{ default_service_port }}
+
+# Environment information.
+terrain.app.environment-name = {{ environment_name }}
+
+# Route flags.
+terrain.routes.notifications = true
+terrain.routes.apps          = true
+terrain.routes.metadata      = true
+terrain.routes.prefs         = true
+terrain.routes.user-info     = true
+terrain.routes.data          = true
+terrain.routes.tree-viewer   = true
+terrain.routes.session       = true
+terrain.routes.collaborator  = true
+terrain.routes.coge          = true
+terrain.routes.search        = true
+
+# Terrain base URL.
+terrain.base-url = {{ terrain.base }}
+
+# iPlant Email service connection settings.
+terrain.email.base-url          = {{ iplant_email.base }}
+terrain.email.tool-request-dest = {{ de_mail_to_addr }}
+terrain.email.tool-request-src  = {{ de_mail_from_addr }}
+terrain.email.feedback-dest     = {{ de_feedback_to_addr }}
+
+# Apps connection settings
+terrain.apps.base-url = {{ apps.base }}
+
+# Metadata connection settings
+terrain.metadata.base-url = http://{{ metadata.host }}:{{ metadata.port }}
+
+# Notification agent connection settings.
+terrain.notificationagent.base-url = {{ notificationagent.base }}
+
+# CAS Settings
+terrain.cas.cas-server        = {{ cas_base }}/
+terrain.cas.server-name       = {{ terrain.base }}
+
+# The settings to use for authorization.
+terrain.cas.group-attr-name = {{ cas_group_attribute }}
+terrain.cas.allowed-groups  = {{ admin_groups }}
+
+# The domain name to append to the user id to get the fully qualified user id.
+terrain.uid.domain = {{ cas_uid_domain }}
+
+# iplant-groups connection settings
+terrain.iplant-groups.base-url = {{ iplant_groups.base_url }}
+terrain.iplant-groups.default-search-limit = 50
+
+# JEX connection settings
+terrain.jex.base-url = {{ jex.base }}/
+
+# Tree viewer settings
+terrain.tree-viewer.base-url = {{ tree_parser_base }}
+
+# Elastic Search settings
+terrain.infosquito.es-url = {{ elasticsearch.base }}
+
+# App execution settings
+terrain.job-exec.default-output-folder = {{ apps.out_dir }}
+
+# iRODS configuration
+terrain.irods.host          = {{ irods.host }}
+terrain.irods.port          = {{ irods.port }}
+terrain.irods.user          = {{ irods.user }}
+terrain.irods.pass          = {{ irods.password }}
+terrain.irods.home          = {{ irods.home }}
+terrain.irods.zone          = {{ irods.zone }}
+terrain.irods.resc          =
+terrain.irods.max-retries   = 10
+terrain.irods.retry-sleep   = 1000
+terrain.irods.use-trash     = true
+terrain.irods.admin-users   = {{ irods_admin_users }}
+
+# ICAT configuration
+terrain.icat.host           = {{ icat.host }}
+terrain.icat.port           = {{ icat.port }}
+terrain.icat.user           = {{ icat.user }}
+terrain.icat.password       = {{ icat.password }}
+terrain.icat.db             = {{ icat.db }}
+
+# Garnish configuration
+terrain.garnish.type-attribute = ipc-filetype
+terrain.garnish.filetype-read-amount = 1024
+
+# File IO settings
+terrain.fileio.url-import-app = 1E8F719B-0452-4D39-A2F3-8714793EE3E6
+terrain.fileio.max-edit-file-size = {{ max_edit_file_size }}
+
+# Filesystem settings
+terrain.data-info.base-url            = http://{{ data_info.host }}:{{ data_info.port }}
+terrain.fs.preview-size               = 8000
+terrain.fs.data-threshold             = 8000
+terrain.fs.community-data             = {{ irods.home }}/shared
+terrain.fs.bad-names                  = cacheServiceTempDir
+terrain.fs.perms-filter               = {{ irods.admins }}
+terrain.fs.copy-key                   = ipc-de-copy-from
+terrain.fs.bad-chars                  = {{ irods.bad_chars }}
+terrain.fs.max-paths-in-request       = {{ fs_max_paths_in_request }}
+terrain.fs.kifshare-download-template = {{ kifshare.de_url }}
+terrain.fs.kifshare-external-url      = {{ kifshare_external_url }}
+terrain.fs.anon-user                  = {{ anon_files.anon_user }}
+terrain.fs.anon-files-base-url        = {{ anon_files.proxy_url }}
+
+# JWT settings
+terrain.jwt.signing-key.private   = {{ jwt.signing_key.private }}
+terrain.jwt.signing-key.password  = {{ jwt.signing_key.password }}
+terrain.jwt.signing-key.public    = {{ jwt.signing_key.public }}
+terrain.jwt.signing-key.algorithm = {{ jwt.signing_key.algorithm }}
+terrain.jwt.accepted-keys.dir     = {{ jwt.accepted_keys.dir }}
+terrain.jwt.validity-window.end   = {{ jwt.validity_window.end }}
+
+# WSO2 JWT settings
+terrain.wso2.jwt-header = {{ jwt.wso2.header }}
+
+# COGE settings
+terrain.coge.user             = {{ coge.user }}
+terrain.coge.data-folder-name = {{ coge.data_folder_name }}
+terrain.coge.base-url         = {{ coge.base_url }}
+
+# Search settings
+terrain.search.default-limit = {{ search_default_limit }}
+
+# User Preferences Settings
+terrain.preferences.host = http://{{ user_preferences.host }}:{{ user_preferences.port }}
+
+# User Sessions Settings
+terrain.sessions.host = http://{{ user_sessions.host }}:{{ user_sessions.port }}
+
+# Saved Searches Settings
+terrain.saved-searches.host = http://{{ saved_searches.host }}:{{ saved_searches.port }}
+
+# Tree URLs Settings
+terrain.tree-urls.host = http://{{ tree_urls.host }}:{{ tree_urls.port }}
