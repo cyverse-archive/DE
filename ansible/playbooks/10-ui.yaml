@@ -1,0 +1,8 @@
+---
+- name: Configure UI
+  hosts: ui
+  sudo: yes
+  gather_facts: false
+  roles:
+      - role: 10-ui
+

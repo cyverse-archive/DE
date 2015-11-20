@@ -1,5 +1,0 @@
----
-# defaults file for docker-cleanup
-run_cleanup: false
-config: true
-install_timer: false

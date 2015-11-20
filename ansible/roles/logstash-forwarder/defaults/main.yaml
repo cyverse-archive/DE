@@ -1,3 +1,0 @@
----
-# defaults file for logstash forwarder 
-enable_services: yes

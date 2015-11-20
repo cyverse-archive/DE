@@ -1,0 +1,8 @@
+---
+- name: Configure Systemd DE Target
+  hosts: docker-ready
+  sudo: true
+  gather_facts: false
+  roles:
+      - role: 01-systemd-de-target
+

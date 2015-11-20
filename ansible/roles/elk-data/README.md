@@ -11,26 +11,24 @@ this role _should not_ destroy any data that is already in the data container.
 Requirements
 ------------
 
-systemd
+Requires sudo.
 
 Role Variables
 --------------
 
-TBD
+N/A
 
 Dependencies
 ------------
 
-N/A
+cfg-systemd-unit
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
+    - hosts: elk
       roles:
-         - { role: username.rolename, x: 42 }
+         - role: elk-data
 
 License
 -------
@@ -40,4 +38,4 @@ BSD
 Author Information
 ------------------
 
-Jonathan Strootman, jstroot@iplantcollaborative.org
+Jonathan Strootman - jstroot@iplantcollaborative.org

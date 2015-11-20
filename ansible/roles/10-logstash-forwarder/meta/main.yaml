@@ -1,0 +1,19 @@
+---
+dependencies:
+    - role: logrotate.d 
+      force_rotate: false 
+      tags:
+          - logstash-forwarder
+
+    - role: cfg-service
+      service_name_short: "{{logstash_forwarder.service_name_short}}"
+      group_name: docker-ready
+      src: logstash-forwarder/logstash-forwarder-conf.json.j2
+      dest: /etc/logstash-forwarder/config.json
+      tags:
+          - logstash-forwarder
+    - role: cfg-systemd-unit
+      service_name_short: "{{logstash_forwarder.service_name_short}}"
+      group_name: docker-ready
+      tags:
+          - logstash-forwarder

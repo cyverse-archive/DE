@@ -1,11 +1,11 @@
 ---
 - include: db-migrations.yaml
 
-- include: playbooks/data-container-services.yaml
+- include: playbooks/10-iplant-data-cfg.yaml
 
-- include: playbooks/logstash-forwarder.yaml
+- include: playbooks/10-logstash-forwarder.yaml
 
-- include: update-services.yaml
+- include: playbooks/10-services-cfg.yaml
 
 - include: elk-stack.yaml
 

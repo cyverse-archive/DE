@@ -1,0 +1,13 @@
+---
+# tasks file for elk-logstash
+
+- name: pull elk logstash image
+  shell: docker pull {{docker.user}}/{{ elk.logstash.image_name }}
+  register: docker_pull_v
+  changed_when: docker_pull_v.stdout.find('Image is up to date') == -1
+  tags:
+      - docker_pull
+      - elk-logstash
+
+- include: place-logstash-configs.yaml        
+

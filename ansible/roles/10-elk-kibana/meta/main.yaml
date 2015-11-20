@@ -1,0 +1,8 @@
+---
+# dependecies file for 10-elk-kibana
+dependencies:
+    - role: cfg-systemd-unit
+      group_name: elk
+      service_name_short: "{{elk.kibana.service_name_short}}"
+      tags:
+          - elk-kibana
