@@ -58,14 +58,14 @@ __Response__:
 
 ```json
 {
-    "metadata": [
+    "irods-avus": [
         {
              "attr": "avu_name",
              "value": "avu_value",
              "unit": "avu_unit"
         }
     ],
-    "template-avus": [
+    "metadata": [
         {
              "attr": "avu_name",
              "value": "avu_value",
