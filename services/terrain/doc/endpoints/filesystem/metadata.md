@@ -121,8 +121,8 @@ __Request Body__:
 
 This endpoint forwards the `metadata` value of the request to the corresponding metadata service endpoint.
 Please see the metadata documentation for more information on the format of this object.
-If the `metadata` key is omitted or left empty, then all metadata is deleted by the corresponding
-metadata service endpoint.
+If the `metadata` key is omitted or set with an empty value, then an empty JSON body `{}` will be
+submitted to the corresponding metadata service endpoint.
 
 __Response__:
 
