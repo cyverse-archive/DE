@@ -1,0 +1,12 @@
+---
+# defaults file for systemd-service-cfg
+systemd_unit_file_dir: "{{systemd.unit_file_dir}}"
+group_name: "{{service_name_short}}"
+unit_type: service
+systemd_enable: true
+src: "{{service_name}}.j2"
+dest: "{{systemd_unit_file_dir}}/{{service_name}}"
+group: root
+owner: root
+mode: 0644
+

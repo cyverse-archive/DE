@@ -1,0 +1,3 @@
+---
+# meta file for cfg-systemd-unit
+allow_duplicates: yes
