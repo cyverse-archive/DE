@@ -2,15 +2,24 @@
 
 - include: TMP-services-cleanup.yaml
 
-- include: services-common.yml
+- include: playbooks/services-common.yml
 
-- include: rsyslog-config.yaml
+- name: Bring down DE target
+  hosts: docker-ready
+  sudo: True
+  gather_facts: false
+  roles:
+      - role: 01-systemd-de-target 
+        up: false
+
+- include: playbooks/rsyslog-config.yaml
 
 - include: deploy-backend.yaml
 
-- include: ui.yaml
+- include: playbooks/10-ui.yaml
 
 - include: amqp-brokers.yaml
+  when: not parasitic
 
 - include: deploy-irods-elasticsearch.yaml
   when: not parasitic
@@ -19,4 +28,13 @@
   vars:
     reboot: true
 
+- name: Restart DE target
+  hosts: docker-ready
+  sudo: True
+  gather_facts: false
+  roles:
+      - role: 01-systemd-de-target 
+        up: true
+
 - include: verify-POST_DEPLOY.yaml
+

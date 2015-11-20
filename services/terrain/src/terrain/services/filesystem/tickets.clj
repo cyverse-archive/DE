@@ -30,13 +30,13 @@
       new-uuids
       (recur cm user num-uuids)) ))
 
-(defn render-ticket-tmpl
+(defn- render-ticket-tmpl
   [cm ticket-map tmpl]
   (stache/render tmpl {:url       (cfg/kifshare-external-url)
                        :ticket-id (:ticket-id ticket-map)
                        :filename  (ft/basename (:path ticket-map))}))
 
-(defn url-join
+(defn- url-join
   [url path]
   (let [url  (ft/rm-last-slash url)
         path (string/replace-first path "/" "")]

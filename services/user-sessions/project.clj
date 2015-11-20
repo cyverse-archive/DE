@@ -7,7 +7,7 @@
       (string/trim (:out (sh "git" "rev-parse" "HEAD")))
       ""))
 
-(defproject org.iplantc/user-sessions "5.0.0"
+(defproject org.iplantc/user-sessions "5.2.3.0"
   :description "DE API for managing user sessions."
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"}
@@ -16,13 +16,13 @@
   :aot [user-sessions.core]
   :main user-sessions.core
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [org.iplantc/common-cli "5.0.0"]
-                 [org.iplantc/common-cfg "5.0.0"]
-                 [org.iplantc/service-logging "5.0.0"]
-                 [org.iplantc/kameleon "5.0.0"]
+                 [org.iplantc/common-cli "5.2.3.0"]
+                 [org.iplantc/common-cfg "5.2.3.0"]
+                 [org.iplantc/service-logging "5.2.3.0"]
+                 [org.iplantc/kameleon "5.2.3.0"]
                  [io.aviso/pretty "0.1.17"]
                  [me.raynes/fs "1.4.6"]
-                 [cheshire "5.3.1"
+                 [cheshire "5.5.0"
                    :exclusions [[com.fasterxml.jackson.dataformat/jackson-dataformat-cbor]
                                 [com.fasterxml.jackson.dataformat/jackson-dataformat-smile]
                                 [com.fasterxml.jackson.core/jackson-annotations]

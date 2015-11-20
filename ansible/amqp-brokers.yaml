@@ -2,7 +2,8 @@
 # TODO: Convert to role
 - hosts: amqp-brokers
   sudo: true
-
+  tags:
+      - third_party
   vars:
     rabbitmq_conf_tcp_listeners_port: "{{ amqp_broker.port }}"
 

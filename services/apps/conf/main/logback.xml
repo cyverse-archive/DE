@@ -18,6 +18,8 @@
   <logger name="AccessLogger" level="INFO" />
   <!-- Jargon Logging -->
   <logger name="org.irods.jargon" level="ERROR" />
+  <!-- c3p0 logging -->
+  <Logger name="com.mchange.v2.log.MLog" level="ERROR" />
 
   <logger name="apps.service.callbacks" level="INFO" />
   <logger name="apps.util.json" level="DEBUG" />

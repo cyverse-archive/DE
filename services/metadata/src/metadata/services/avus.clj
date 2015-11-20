@@ -20,7 +20,7 @@
       (assoc avu :id (:id existing-avu))
       avu)))
 
-(defn set-metadata-template-avus
+(defn update-metadata-template-avus
   "Adds or Updates AVUs associated with a Metadata Template for the given user's data item."
   [user-id data-id data-type template-id {avus :avus}]
   (templates/validate-template-exists template-id)
@@ -29,11 +29,11 @@
         new-avus (map #(assoc % :id (uuid)) (remove :id avus))
         avus (concat existing-avus new-avus)]
     (transaction
-     (when (seq existing-avus)
-       (dorun (map (partial persistence/update-avu user-id) existing-avus)))
-     (when (seq new-avus)
-       (persistence/add-metadata-template-avus user-id new-avus data-type))
-     (dorun (persistence/set-template-instances data-id template-id (map :id avus))))
+      (doseq [avu existing-avus]
+        (persistence/update-avu user-id avu))
+      (when (not-empty new-avus)
+        (persistence/add-metadata-template-avus user-id new-avus data-type))
+      (persistence/set-template-instances data-id template-id (map :id avus)))
     (persistence/metadata-template-avu-list data-id template-id)))
 
 (defn remove-metadata-template-avu
@@ -99,7 +99,7 @@
   (transaction
     (doseq [{:keys [id type]} dest-items]
       (doseq [{template-id :template_id :as template-avus} templates]
-        (set-metadata-template-avus user id type template-id template-avus)))))
+        (update-metadata-template-avus user id type template-id template-avus)))))
 
 (defn- get-metadata-template-avu-copies
   "Fetches the list of Metadata Template AVUs for the given data-id, returning only the attr, value,
@@ -127,3 +127,13 @@
   ([data-id template-id]
     (templates/validate-template-exists template-id)
     (persistence/metadata-template-avu-list data-id template-id)))
+
+(defn set-metadata-template-avus
+  "Sets AVUs for the given user's data item."
+  [user-id data-id data-type {template-id :template_id avus :avus :as metadata}]
+  (transaction
+    (let [avu-ids (set (map :id (:avus (when template-id
+                                         (update-metadata-template-avus
+                                           user-id data-id data-type template-id metadata)))))]
+      (persistence/remove-orphaned-avus data-id avu-ids))
+    (list-metadata-template-avus data-id)))

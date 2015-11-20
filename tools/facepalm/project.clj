@@ -11,7 +11,7 @@
       (string/trim (:out (sh "git" "rev-parse" "HEAD")))
       ""))
 
-(defproject org.iplantc/facepalm "5.0.0"
+(defproject org.iplantc/facepalm "5.2.3.0"
   :description "Command-line utility for DE database managment."
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"
@@ -21,14 +21,16 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/tools.cli "0.3.1"]
                  [org.clojure/tools.logging "0.3.0"]
-                 [cheshire "5.3.1"]
+                 [cheshire "5.5.0"]
                  [com.cemerick/pomegranate "0.3.0"]
                  [fleet "0.10.1"]
-                 [korma "0.4.0"]
+                 [com.mchange/c3p0 "0.9.5.1"]
+                 [korma "0.4.0"
+                  :exclusions [c3p0]]
                  [me.raynes/fs "1.4.6"]
-                 [org.iplantc/clj-jargon "5.0.0"]
-                 [org.iplantc/clojure-commons "5.0.0"]
-                 [org.iplantc/kameleon "5.0.0"]
+                 [org.iplantc/clj-jargon "5.2.3.0"]
+                 [org.iplantc/clojure-commons "5.2.3.0"]
+                 [org.iplantc/kameleon "5.2.3.0"]
                  [postgresql "9.1-901-1.jdbc4"]
                  [slingshot "0.10.3"]
                  [clj-http "1.0.0"]]

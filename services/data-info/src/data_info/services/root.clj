@@ -16,7 +16,7 @@
 (defn- get-root
   [cm user root-path]
   (-> (stat/path-stat cm user root-path)
-      (select-keys [:id :path :date-created :date-modified :permission])))
+      (select-keys [:id :label :path :date-created :date-modified :permission])))
 
 (defn- get-trash-root
   [cm user]

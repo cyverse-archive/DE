@@ -1,4 +1,0 @@
----
-# defaults file for deploy-service-systemd
-systemd_unit_file_dir: "{{systemd.unit_file_dir}}"
-systemd_enable: true

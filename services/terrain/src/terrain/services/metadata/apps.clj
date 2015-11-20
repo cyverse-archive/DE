@@ -14,8 +14,7 @@
             [terrain.clients.iplant-groups :as ipg]
             [terrain.clients.data-info :as di]
             [terrain.clients.apps :as dm]
-            [terrain.clients.notifications :as dn]
-            [terrain.services.fileio.actions :as io]))
+            [terrain.clients.notifications :as dn]))
 
 (defn- apps-request
   "Prepares a apps request by extracting only the body of the client request and sets the

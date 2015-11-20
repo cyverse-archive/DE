@@ -5,6 +5,8 @@
 - name: Verify docker installed and up to date
   hosts: docker-ready
   sudo: yes
+  tags:
+      - verify
   tasks: 
        - debug: msg="Supported docker version= {{docker.version}}"
 

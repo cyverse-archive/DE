@@ -1,0 +1,11 @@
+---
+# defaults file for cfg-logging
+logging_conf_dir: "{{logging.conf_dir}}"
+src: logback_template.xml.j2
+log_file_name: "{{service_name_short}}-logging.xml"
+group_name: "{{service_name_short}}"
+dest: "{{logging_conf_dir}}/{{log_file_name}}"
+group: root
+owner: root
+mode: 0644
+

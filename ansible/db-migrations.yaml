@@ -1,6 +1,9 @@
 ---
 - name: Database migrations
   hosts: services
+  gather_facts: false
+  tags:
+      - databases
   sudo: False
 
   roles:

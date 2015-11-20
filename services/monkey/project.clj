@@ -7,7 +7,7 @@
       (string/trim (:out (sh "git" "rev-parse" "HEAD")))
       ""))
 
-(defproject org.iplantc/monkey "5.0.0"
+(defproject org.iplantc/monkey "5.2.3.0"
   :description "A metadata database crawler. It synchronizes the tag documents in the search data
                 index with the tag information inthe metadata database.  🐒"
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"
@@ -24,7 +24,7 @@
                  [com.novemberain/langohr "2.11.0"]
                  [me.raynes/fs "1.4.6"]
                  [slingshot "0.10.3"]
-                 [org.iplantc/clojure-commons "5.0.0"]
-                 [org.iplantc/common-cli "5.0.0"]
-                 [org.iplantc/service-logging "5.0.0"]]
+                 [org.iplantc/clojure-commons "5.2.3.0"]
+                 [org.iplantc/common-cli "5.2.3.0"]
+                 [org.iplantc/service-logging "5.2.3.0"]]
   :profiles {:dev {:resource-paths ["conf/test"]}})

@@ -1,41 +1,45 @@
 (ns sharkbait.core
   (:gen-class)
-  (:require [sharkbait.folders :as folders]
-            [sharkbait.permissions :as permissions]
+  (:require [common-cli.core :as cli]
+            [sharkbait.consts :as consts]
+            [sharkbait.folders :as folders]
+            [sharkbait.roles :as roles]
             [sharkbait.sessions :as sessions]
             [sharkbait.subjects :as subjects]))
 
-(def ^:private de-username        "de_grouper")
-(def ^:private de-folder          "iplant:de")
-(def ^:private de-users-folder    "iplant:de:users")
-(def ^:private de-apps-folder     "iplant:de:apps")
-(def ^:private de-analyses-folder "iplant:de:analyses")
+(def tool-info
+  {:desc "Utility for initializing Grouper for use with the DE."
+   :app-name "sharkbait"
+   :group-id "org.iplantc"
+   :art-id "sharkbait"})
+
+(def cli-options
+  [["-h" "--help" "Show help." :default false]
+   ["-v" "--version" "Show the sharkbait version." :default false]])
 
 (def ^:private default-folder-names
-  [de-users-folder
-   de-apps-folder
-   de-analyses-folder])
+  [consts/de-users-folder])
 
 (defn- perform-root-actions
   "Performs the actions that require superuser privileges."
   []
   (let [session (sessions/create-grouper-session)]
     (try
-      (-> (folders/find-folder session de-folder)
-          (folders/grant-privs (subjects/find-subject de-username) #{:stem}))
+      (-> (folders/find-folder session consts/de-folder)
+          (folders/grant-privs (subjects/find-subject consts/de-username true) #{:stem}))
       (finally (sessions/stop-grouper-session session)))))
 
 (defn- perform-de-user-actions
   "Performs the actions that do not require superuser privileges."
   []
-  (let [session (sessions/create-grouper-session de-username)]
+  (let [session (sessions/create-grouper-session consts/de-username)]
     (try
       (dorun (map (partial folders/find-folder session) default-folder-names))
-      (permissions/create-permission-def session "appPermissionDef" de-apps-folder)
-      (permissions/create-permission-def session "analysisPermissionDef" de-analyses-folder)
+      (roles/create-role session consts/de-users-folder consts/de-users-role-name)
       (finally (sessions/stop-grouper-session session)))))
 
 (defn -main
   [& args]
-  (perform-root-actions)
-  (perform-de-user-actions))
+  (let [{:keys [options]} (cli/handle-args tool-info args (constantly cli-options))]
+    (perform-root-actions)
+    (perform-de-user-actions)))

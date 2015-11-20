@@ -1,0 +1,7 @@
+[Unit]
+Description=Discovery Environment Services
+Requires=multi-user.target
+Conflicts=rescue.service rescue.target
+After=multi-user.target network.target rescue.service rescue.target
+AllowIsolate=yes
+

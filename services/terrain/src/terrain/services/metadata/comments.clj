@@ -1,6 +1,5 @@
 (ns terrain.services.metadata.comments
-  (:use [korma.db :only [with-db]]
-        [slingshot.slingshot :only [try+ throw+]])
+  (:use [slingshot.slingshot :only [try+ throw+]])
   (:require [cheshire.core :as json]
             [clojure-commons.error-codes :as err]
             [clojure-commons.validators :as validators]

@@ -1,7 +1,6 @@
 (ns data-info.util.config
   (:use [slingshot.slingshot :only [throw+]])
-  (:require [clojure.core.memoize :as memo]
-            [clj-jargon.init :as init]
+  (:require [clj-jargon.init :as init]
             [clojure-commons.config :as cc]
             [clojure-commons.error-codes :as ce]
             [clojure.tools.logging :as log]
@@ -237,13 +236,13 @@
   (ce/register-filters (exception-filters)))
 
 (def jargon-cfg
-  (memo/memo #(init/init (irods-host)
-                         (irods-port)
-                         (irods-user)
-                         (irods-password)
-                         (irods-home)
-                         (irods-zone)
-                         (irods-resc)
-                :max-retries (irods-max-retries)
-                :retry-sleep (irods-retry-sleep)
-                :use-trash   (irods-use-trash))))
+  (memoize #(init/init (irods-host)
+                       (irods-port)
+                       (irods-user)
+                       (irods-password)
+                       (irods-home)
+                       (irods-zone)
+                       (irods-resc)
+              :max-retries (irods-max-retries)
+              :retry-sleep (irods-retry-sleep)
+              :use-trash   (irods-use-trash))))

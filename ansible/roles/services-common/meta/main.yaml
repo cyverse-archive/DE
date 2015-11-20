@@ -1,0 +1,6 @@
+---
+# meta/main.yaml for services-common
+
+dependencies:
+    - { role: 01-systemd-de-target, when: "'docker-ready' in group_names", config_only: true }
+

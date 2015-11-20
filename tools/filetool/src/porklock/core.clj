@@ -158,19 +158,19 @@
 (defn -main
   [& args]
   (try+
-    (println "[porklock] [arguments] " args)
-
     (let [cmd          (command args)
           version-info (version/version-info "org.iplantc" "porklock")
           cmd-args     (rest args)
           [options remnants banner] (settings cmd cmd-args)]
-      (println (str "[porklock] [command] '" cmd "'"))
-      (println "[porklock] [options] " options)
-      (println "[porklock] [remnants] " remnants)
 
       (when (= cmd "--version")
         (println version-info)
         (System/exit 0))
+
+      (println "[porklock] [arguments] " args)
+      (println (str "[porklock] [command] '" cmd "'"))
+      (println "[porklock] [options] " options)
+      (println "[porklock] [remnants] " remnants)
 
       (when-not (pos? (count cmd-args))
         (println banner)

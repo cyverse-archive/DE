@@ -1,0 +1,13 @@
+---
+# tasks file for cfg-logging
+
+- debug: msg="Placing {{log_file_name}}"
+  tags:
+      - logging_config
+
+- name: Place logging config file
+  template: src={{src}} dest={{dest}} owner={{owner}} group={{group}} mode={{mode}}
+  when: "'{{group_name}}' in group_names"
+  tags:
+      - logging_config
+

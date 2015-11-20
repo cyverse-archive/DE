@@ -1,0 +1,7 @@
+---
+- name: Configure Logstash Forwarder
+  hosts: docker-ready
+  sudo: yes
+  roles:
+      - role: 10-logstash-forwarder
+

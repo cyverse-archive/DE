@@ -1,18 +1,10 @@
 ---
 # tasks file for deploy-service-cfg
 
-- name: Place {{ item.service_name_short }} config file
-  template: src={{item.service_name_short}}.properties.j2 dest={{ service_conf_dir }}/{{item.service_name_short}}.properties owner=root group=root mode=0644
-  with_items: "{{services}}"
-  when: "config and '{{item.service_name_short}}' in group_names"
-
-- name: Place {{ item.service_name_short }} logging config file
-  template: src=logback_template.xml.j2 dest={{ logging_conf_dir }}/{{item.service_name_short}}-logging.xml owner=root group=root mode=0644
-  with_items: "{{services}}"
-  when: "logging_config and '{{item.service_name_short}}' in group_names"
-
 - name: Pull {{ item.service_name_short }} docker image
   shell: docker pull {{docker_user}}/{{item.image_name}}:{{docker_tag}}
   with_items: "{{services}}"
   when: "item.image_name is defined and docker_pull and '{{item.service_name_short}}' in group_names"
+  tags:
+      - docker_pull
 

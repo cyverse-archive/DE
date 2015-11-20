@@ -19,6 +19,9 @@
    :type
    (describe DataTypeEnum "The data item's type")
 
+   :label
+   (describe String "The descriptive label for this item.")
+
    :date-created
    (describe Long "The date this data item was created")
 

@@ -1,0 +1,8 @@
+---
+# ansible-playbook -K services-common.yaml
+
+- hosts: systems
+  sudo: yes
+  gather_facts: false
+  roles:
+      - services-common

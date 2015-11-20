@@ -133,7 +133,7 @@ de:
 #          ssl_certificate_key: "/etc/ssl/example.com.key"
 
 app_version_name: Phthalo
-app_version: 2.2.0
+app_version: 2.3.0
 
 de_feedback_to_addr: ""
 de_mail_from_addr: "{{ de_feedback_to_addr }}"
@@ -227,6 +227,7 @@ dewey:
 systemd:
   syslogFacility: local6
   unit_file_dir: /usr/lib/systemd/system
+  target: de.target
   services:
           - "{{anon_files}}"
           - "{{clockwork}}"
@@ -484,7 +485,7 @@ jexevents:
   port:
   base: "http://{{ groups['jexevents'][0] }}/"
   event_url: "{{ apps.base }}/callbacks/de-job"
-  service_name: jex-events.service
+  service_name: jexevents.service
   service_name_short: jexevents
   service_description: jex events service
   image_name: jex-events
@@ -593,7 +594,7 @@ notificationagent:
   host: "{{ groups['notificationagent'][0] }}"
   port:
   base: "http://{{ groups['notificationagent'][0] }}"
-  service_name: notification-agent.service
+  service_name: notificationagent.service
   service_name_short: notificationagent
   service_description: notification agent service
   image_name: notificationagent

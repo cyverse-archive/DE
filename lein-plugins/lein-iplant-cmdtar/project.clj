@@ -1,4 +1,4 @@
-(defproject org.iplantc/lein-iplant-cmdtar "5.0.0"
+(defproject org.iplantc/lein-iplant-cmdtar "5.2.3.0"
   :eval-in-leiningen true
   :description "Leiningen plugin for generating tarball command distributions."
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"

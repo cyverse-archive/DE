@@ -7,7 +7,7 @@
   ([]
      (GrouperSession/start (subjects/find-root-subject)))
   ([subject-id]
-     (GrouperSession/start (subjects/find-subject subject-id))))
+     (GrouperSession/start (subjects/find-subject subject-id true))))
 
 (defn stop-grouper-session
   "Stops a Grouper session."

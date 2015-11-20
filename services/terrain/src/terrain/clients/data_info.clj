@@ -17,7 +17,6 @@
             [terrain.services.filesystem.metadata :as mt]
             [terrain.services.filesystem.sharing :as sharing]
             [terrain.services.filesystem.stat :as st]
-            [terrain.services.filesystem.status :as status]
             [terrain.services.filesystem.users :as users]
             [terrain.services.filesystem.uuids :as uuids]
             [terrain.util.config :as cfg]
@@ -29,7 +28,10 @@
 (defn ^Boolean irods-running?
   "Determines whether or not iRODS is running."
   []
-  (status/irods-running?))
+  (-> (raw/request :get [] {:content-type :json})
+      :body
+      json/decode
+      (get "iRODS")))
 
 
 (defn ^String user-home-folder
@@ -244,7 +246,7 @@
   "Saves the URL used to get saved tree URLs. The metaurl argument should contain the URL used to
    obtain the tree URLs."
   [path metaurl]
-  (mt/admin-metadata-set path {:attr "tree-urls" :value metaurl :unit ""}))
+  (mt/admin-metadata-add path {:attr "tree-urls" :value metaurl :unit ""}))
 
 
 (defn ^ISeq list-user-groups

@@ -18,7 +18,7 @@
       (when-not (exists? cm user-home)
         (mkdirs cm user-home))
       (-> (stat/path-stat cm user user-home)
-          (select-keys [:id :path :date-created :date-modified :permission])))))
+          (select-keys [:id :label :path :date-created :date-modified :permission])))))
 
 (defn do-homedir
   [{user :user}]

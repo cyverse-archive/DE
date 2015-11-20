@@ -7,6 +7,7 @@
 - name: Deploy ELK Stack
   hosts: elk
   sudo: true
+  gather_facts: false
   roles:
     - role: notify-chat
       username: ELK STACK
@@ -15,8 +16,9 @@
 
     - role: elk-data
     - role: elk-elasticsearch
-    - role: elk-logstash
-    - role: elk-kibana
+
+    - role: 10-elk-logstash
+    - role: 10-elk-kibana
 
     - role: notify-chat
       username: ELK STACK

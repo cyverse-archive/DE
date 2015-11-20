@@ -2,6 +2,8 @@
 
 - name: Verify that timezone packages and data are installed
   hosts: docker-ready
+  tags:
+      - verify
   tasks:
       - name: Verify tzdata package is installed
         shell: yum list installed tzdata

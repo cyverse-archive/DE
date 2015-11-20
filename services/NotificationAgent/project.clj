@@ -7,7 +7,7 @@
       (string/trim (:out (sh "git" "rev-parse" "HEAD")))
       ""))
 
-(defproject org.iplantc/notificationagent "5.0.0"
+(defproject org.iplantc/notificationagent "5.2.3.0"
   :description "A web service for storing and forwarding notifications."
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"
@@ -15,22 +15,24 @@
   :manifest {"Git-Ref" ~(git-ref)}
   :uberjar-name "notificationagent-standalone.jar"
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [cheshire "5.4.0"
+                 [cheshire "5.5.0"
                   :exclusions [[com.fasterxml.jackson.dataformat/jackson-dataformat-cbor]
                                [com.fasterxml.jackson.dataformat/jackson-dataformat-smile]
                                [com.fasterxml.jackson.core/jackson-annotations]
                                [com.fasterxml.jackson.core/jackson-databind]
                                [com.fasterxml.jackson.core/jackson-core]]]
                  [compojure "1.3.1"]
-                 [org.iplantc/clojure-commons "5.0.0"]
-                 [org.iplantc/kameleon "5.0.0"]
-                 [org.iplantc/common-cli "5.0.0"]
-                 [org.iplantc/service-logging "5.0.0"]
+                 [org.iplantc/clojure-commons "5.2.3.0"]
+                 [org.iplantc/kameleon "5.2.3.0"]
+                 [org.iplantc/common-cli "5.2.3.0"]
+                 [org.iplantc/service-logging "5.2.3.0"]
                  [me.raynes/fs "1.4.6"]
                  [clj-http "1.0.1"]
                  [clj-time "0.8.0"]
                  [slingshot "0.12.1"]
-                 [korma "0.3.2"]]
+                 [com.mchange/c3p0 "0.9.5.1"]
+                 [korma "0.3.2"
+                  :exclusions [c3p0]]]
   :plugins [[lein-ring "0.8.13"]
             [lein-marginalia "0.7.0"]]
   :ring {:handler notification-agent.core/app

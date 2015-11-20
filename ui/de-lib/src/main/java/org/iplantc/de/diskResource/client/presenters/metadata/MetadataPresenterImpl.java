@@ -80,7 +80,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
 
             @Override
             public void onSuccess(String result) {
-                saveMetadataTemplateAvus(callback);
+                callback.onSuccess(result);
             }
 
             @Override
@@ -90,63 +90,9 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
         };
 
         drService.setDiskResourceMetaData(resource,
-                                          view.getMetadataToAdd(),
-                                          view.getMetadataToDelete(),
+                                          view.getMetadataTemplate(),
+                                          view.getAvus(),
                                           batchAvuCallback);
-    }
-
-    private void saveMetadataTemplateAvus(final DiskResourceMetadataUpdateCallback callback) {
-        // CORE-5602 Setting a data item's AVUs on one template automatically removes its AVUs from other
-        // templates. So we only need to set or delete here, but not both.
-        if (view.getMetadataTemplateToAdd() != null) {
-            setMetadataTemplateAvus(callback);
-        } else {
-            deleteMetadataTemplateAvus(callback);
-        }
-    }
-
-    private void setMetadataTemplateAvus(final DiskResourceMetadataUpdateCallback callback) {
-        AsyncCallback<String> templateAvuCallback = new AsyncCallback<String>() {
-
-            @Override
-            public void onSuccess(String result) {
-                callback.onSuccess(result);
-            }
-
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
-            }
-        };
-
-        DiskResourceMetadataTemplate metadataTemplateToAdd = view.getMetadataTemplateToAdd();
-        if (metadataTemplateToAdd != null) {
-            drService.setMetadataTemplateAvus(resource, metadataTemplateToAdd, templateAvuCallback);
-        } else {
-            templateAvuCallback.onSuccess(null);
-        }
-    }
-
-    private void deleteMetadataTemplateAvus(final DiskResourceMetadataUpdateCallback callback) {
-        AsyncCallback<String> templateAvuCallback = new AsyncCallback<String>() {
-
-            @Override
-            public void onSuccess(String result) {
-                callback.onSuccess(result);
-            }
-
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
-            }
-        };
-
-        DiskResourceMetadataTemplate avusToDelete = view.getMetadataTemplateToDelete();
-        if (avusToDelete != null) {
-            drService.deleteMetadataTemplateAvus(resource, avusToDelete, templateAvuCallback);
-        } else {
-            templateAvuCallback.onSuccess(null);
-        }
     }
 
     @Override

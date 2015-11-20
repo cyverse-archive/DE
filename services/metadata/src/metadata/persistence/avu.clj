@@ -96,6 +96,18 @@
                                   :target_type [in data-types]}))]
     (delete :template_instances (where {:avu_id [in (subselect avu-id-select)]}))))
 
+(defn remove-orphaned-avus
+  "Removes AVUs for the given data-id that are not in the given set of avu-ids."
+  [data-id avu-ids]
+  (let [query (-> (delete* :avus)
+                  (where {:target_id data-id
+                          :target_type [in data-types]}))]
+    (if (empty? avu-ids)
+      (transaction
+        (remove-data-item-template-instances data-id)
+        (delete query))
+      (delete (where query {:id [not-in avu-ids]})))))
+
 (defn set-template-instances
   "Associates the given AVU IDs with the given Metadata Template ID,
    removing all other Metadata Template ID associations."

@@ -30,3 +30,22 @@
 (defn ^Boolean in-trash?
   [^String user ^String fpath]
   (.startsWith fpath (base-trash-path)))
+
+(defn- dir-equal?
+  [path comparison]
+  (apply = (map ft/rm-last-slash [path comparison])))
+
+(defn- user-trash-dir?
+  [user abs]
+  (dir-equal? abs (user-trash-path user)))
+(defn- sharing? [abs] (dir-equal? abs (cfg/irods-home)))
+(defn- community? [abs] (dir-equal? abs (cfg/community-data)))
+
+(defn path->label
+  "Generates a label given an absolute path in iRODS."
+  [user id]
+  (cond
+    (user-trash-dir? user id)             "Trash"
+    (sharing? id)                         "Shared With Me"
+    (community? id)                       "Community Data"
+    :else                                 (ft/basename id)))

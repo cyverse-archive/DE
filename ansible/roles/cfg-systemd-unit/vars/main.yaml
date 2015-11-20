@@ -1,0 +1,3 @@
+---
+# vars file for systemd-service-cfg
+service_name: "{{service_name_short}}.{{unit_type}}"

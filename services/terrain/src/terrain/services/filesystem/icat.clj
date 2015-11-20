@@ -1,7 +1,6 @@
 (ns terrain.services.filesystem.icat
   (:use [clj-icat-direct.icat :only [icat-db-spec setup-icat]])
-  (:require [clojure.core.memoize :as memo]
-            [terrain.util.config :as cfg]
+  (:require [terrain.util.config :as cfg]
             [clojure.tools.logging :as log]
             [clj-jargon.init :as init]
             [clj-jargon.metadata :as meta])
@@ -10,16 +9,16 @@
 
 
 (def jargon-cfg
-  (memo/memo #(init/init (cfg/irods-host)
-                         (cfg/irods-port)
-                         (cfg/irods-user)
-                         (cfg/irods-pass)
-                         (cfg/irods-home)
-                         (cfg/irods-zone)
-                         (cfg/irods-resc)
-                 :max-retries (cfg/irods-max-retries)
-                 :retry-sleep (cfg/irods-retry-sleep)
-                 :use-trash   (cfg/irods-use-trash))))
+  (memoize #(init/init (cfg/irods-host)
+                       (cfg/irods-port)
+                       (cfg/irods-user)
+                       (cfg/irods-pass)
+                       (cfg/irods-home)
+                       (cfg/irods-zone)
+                       (cfg/irods-resc)
+               :max-retries (cfg/irods-max-retries)
+               :retry-sleep (cfg/irods-retry-sleep)
+               :use-trash   (cfg/irods-use-trash))))
 
 
 (defn- spec

@@ -1,10 +1,14 @@
 ---
 
+- include: TMP-CORE-7288.yml
+
 - name: Remove donkey and metadactyl services, REMOVE THIS WHEN NO LONGER NEEDED
   hosts: services
   sudo: yes
   roles:
       - role: services-cleanup-TMP
+        tags:
+            - tmp
 
   tasks:
       - debug: msg="!!!! TEMPORARY !!!!!"

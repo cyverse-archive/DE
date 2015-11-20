@@ -7,6 +7,7 @@
             [data-info.util.config :as cfg]
             [data-info.util.logging :as dul]
             [data-info.util.irods :as irods]
+            [data-info.util.paths :as paths]
             [data-info.util.validators :as validators])
   (:import [clojure.lang ISeq]))
 
@@ -39,9 +40,10 @@
 
 
 (defn- fmt-folder
-  [{:keys [full_path modify_ts create_ts access_type_id uuid]}]
+  [user {:keys [full_path modify_ts create_ts access_type_id uuid]}]
   {:id           uuid
    :path         full_path
+   :label        (paths/path->label user full_path)
    :permission   (perm/fmt-perm access_type_id)
    :date-created  (* (Integer/parseInt create_ts) 1000)
    :date-modified (* (Integer/parseInt modify_ts) 1000)})
@@ -56,8 +58,8 @@
     (validators/path-readable cm user path)
     (validators/path-is-dir cm path)
     (-> (stat/path-stat cm user path)
-        (select-keys [:id :path :date-created :date-modified :permission])
-        (assoc :folders (map fmt-folder
+        (select-keys [:id :label :path :date-created :date-modified :permission])
+        (assoc :folders (map (partial fmt-folder user)
                              (icat/list-folders-in-folder user (cfg/irods-zone) path))))))
 
 

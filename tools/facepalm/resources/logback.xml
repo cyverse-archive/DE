@@ -7,6 +7,8 @@
 
     <!-- Jargon Logging -->
     <logger name="org.irods.jargon" level="ERROR"/>
+    <!-- c3p0 logging -->
+    <Logger name="com.mchange.v2.log.MLog" level="ERROR" />
 
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>

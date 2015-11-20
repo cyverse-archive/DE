@@ -1,17 +1,21 @@
 package org.iplantc.de.client.services.impl.models;
 
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
 
-import java.util.Set;
+import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
+
+import java.util.List;
 
 public interface DiskResourceMetadataBatchRequest {
 
-    Set<DiskResourceMetadata> getAdd();
+    DiskResourceMetadataTemplate getMetadata();
 
-    void setAdd(Set<DiskResourceMetadata> add);
+    void setMetadata(DiskResourceMetadataTemplate metadata);
 
-    Set<DiskResourceMetadata> getDelete();
+    @PropertyName("irods-avus")
+    List<DiskResourceMetadata> getAvus();
 
-    void setDelete(Set<DiskResourceMetadata> delete);
-
+    @PropertyName("irods-avus")
+    void setAvus(List<DiskResourceMetadata> avus);
 }

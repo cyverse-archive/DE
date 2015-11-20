@@ -1,7 +1,0 @@
----
-# ansible-playbook -i inventories/... -K --tags "restart_services,update_service_files" deploy-data-container-services.yaml
-
-- name: Deploy DE service data container
-  hosts: docker-ready
-  roles:
-    - data-container-services-deployer

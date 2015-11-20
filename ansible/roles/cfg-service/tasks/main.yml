@@ -1,0 +1,13 @@
+---
+# tasks file for cfg-service
+
+- debug: msg="Placing {{service_cfg_file_name}} service config file"
+  tags:
+      - service_config
+
+- name: Place service config file
+  template: src={{src}} dest={{dest}} owner={{owner}} group={{group}} mode={{mode}}
+  when: "'{{group_name}}' in group_names"
+  tags:
+      - service_config
+

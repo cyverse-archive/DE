@@ -7,7 +7,6 @@
         [clj-jargon.init :only [with-jargon]]
         [clj-jargon.item-ops :only [input-stream]]
         [clj-jargon.metadata]
-        [korma.db :only [transaction]]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [clojure.tools.logging :as log]
             [clojure.string :as string]
@@ -45,7 +44,7 @@
    map if the validation fails."
   [avus]
   (when (some ipc-avu? avus)
-    (throw+ {:error_code ERR_NOT_AUTHORIZED
+    (throw+ {:type :clojure-commons.exception/not-authorized
              :avus avus})))
 
 (defn service-response->json
@@ -81,10 +80,10 @@
     (validators/user-exists cm user)
     (let [path (get-readable-path cm user data-id)
           template-avus (service-response->json (metadata-client/list-metadata-avus data-id))]
-      {:metadata (list-path-metadata cm path)
-       :template-avus template-avus})))
+      {:irods-avus (list-path-metadata cm path)
+       :metadata template-avus})))
 
-(defn- common-metadata-set
+(defn- common-metadata-add
   "Adds an AVU to 'path'. The AVU is passed in as a map in the format:
    {
       :attr attr-string
@@ -105,7 +104,7 @@
       (add-metadata cm fixed-path attr value new-unit))
     fixed-path))
 
-(defn metadata-set
+(defn metadata-add
   "Allows user to set metadata on a path. The user must exist in iRODS
    and have write permissions on the path. The path must exist. The
    avu-map parameter must be in this format:
@@ -122,10 +121,10 @@
     (validators/path-exists cm path)
     (validators/path-writeable cm user path)
     (authorized-avus [avu-map])
-    {:path (common-metadata-set cm path avu-map)
+    {:path (common-metadata-add cm path avu-map)
      :user user}))
 
-(defn admin-metadata-set
+(defn admin-metadata-add
   "Adds the AVU to path, bypassing user permission checks. See (metadata-set)
    for the AVU map format."
   [path avu-map]
@@ -134,36 +133,43 @@
       (throw+ {:error_code ERR_INVALID_JSON}))
     (validators/path-exists cm path)
     (validators/path-writeable cm (cfg/irods-user) path)
-    (common-metadata-set cm path avu-map)))
+    (common-metadata-add cm path avu-map)))
 
-(defn- metadata-batch-set
-  "Adds and deletes metadata on path for a user. add-dels should be in the
-   following format:
+(defn metadata-set
+  "Allows user to set metadata on an item with the given data-id. The user must exist in iRODS and have
+   write permissions on the data item. The request parameter is a map with :irods-avus and :metadata keys
+   in the following format:
    {
-      :delete [{:attr :value :unit}]
-      :add [{:attr :value :unit}]
-   }
-   All value in the maps should be strings, just like with (metadata-set)."
-  [user path adds-dels]
+     :irods-avus [{:attr string :value string :unit string}]
+     :metadata {:template_id UUID :avus [{:attr string :value string :unit string}]}
+   }"
+  [data-id user {:keys [irods-avus metadata]}]
   (with-jargon (icat/jargon-cfg) [cm]
     (validators/user-exists cm user)
-    (validators/path-exists cm path)
-    (validators/path-writeable cm user path)
-    (authorized-avus (:delete adds-dels))
-    (authorized-avus (:add adds-dels))
-    (let [new-path (ft/rm-last-slash path)]
-      (doseq [del (:delete adds-dels)]
-        (let [attr  (:attr del)
-              value (:value del)]
-          (if (attr-value? cm new-path attr value)
-            (delete-metadata cm new-path attr value))))
-      (doseq [avu (:add adds-dels)]
+    (let [{:keys [path type] :as data-item} (uuids/path-for-uuid cm user data-id)
+          data-type (metadata-client/resolve-data-type type)
+          irods-avus (set (map #(select-keys % [:attr :value :unit]) irods-avus))
+          current-avus (set (list-path-metadata cm path))
+          delete-irods-avus (clojure.set/difference current-avus irods-avus)]
+      (validators/path-writeable cm user path)
+      (authorized-avus irods-avus)
+
+      (metadata-client/set-metadata-template-avus data-id data-type (or metadata {}))
+
+      (doseq [del-avu delete-irods-avus]
+        (let [attr  (:attr del-avu)
+              value (:value del-avu)]
+          (if (attr-value? cm path attr value)
+            (delete-metadata cm path attr value))))
+      (doseq [avu irods-avus]
         (let [new-unit (reserved-unit avu)
               attr     (:attr avu)
               value    (:value avu)]
-          (if-not (attr-value? cm new-path attr value)
-            (add-metadata cm new-path attr value new-unit))))
-      {:path new-path :user user})))
+          (if-not (attr-value? cm path attr value)
+            (add-metadata cm path attr value new-unit))))
+
+      {:path path
+       :user user})))
 
 (defn- find-attributes
   [cm attrs path]
@@ -180,7 +186,7 @@
     (when-not (empty? duplicates)
       (validators/duplicate-attrs-error duplicates))))
 
-(defn- metadata-batch-add-to-path
+(defn- metadata-batch-add
   "Adds metadata to the given path. If the destination path already has an AVU with the same attr
    and value as one from the given avus list, that AVU is not added."
   [cm path avus]
@@ -192,28 +198,6 @@
         (if-not (attr-value? avus-current attr value)
           (add-metadata cm path attr value new-unit))
         (recur (conj avus-current {:attr attr :value value :unit new-unit}) (rest avus-to-add))))))
-
-(defn- metadata-batch-add
-  "Adds metadata to the given paths for a user. The avu map should be in the
-   following format:
-   {
-      :paths []
-      :avus [{:attr :value :unit}]
-   }
-   All paths and values in the maps should be strings, just like with (metadata-set)."
-  [user force? {:keys [paths avus]}]
-  (with-jargon (icat/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (validators/all-paths-exist cm paths)
-    (validators/all-paths-writeable cm user paths)
-    (authorized-avus avus)
-    (let [paths (set (map ft/rm-last-slash paths))
-          attrs (set (map :attr avus))]
-      (if-not force?
-        (validate-batch-add-attrs cm paths attrs))
-      (doseq [path paths]
-        (metadata-batch-add-to-path cm path avus))
-      {:paths paths :user user})))
 
 (defn- format-copy-dest-item
   [{:keys [id type]}]
@@ -237,7 +221,7 @@
         (validate-batch-add-attrs cm dest-paths attrs))
       (metadata-client/copy-metadata-template-avus src-id force? (map format-copy-dest-item dest-items))
       (doseq [path dest-paths]
-        (metadata-batch-add-to-path cm path irods-avus))
+        (metadata-batch-add cm path irods-avus))
       {:user  user
        :src   src-path
        :paths dest-paths})))
@@ -275,62 +259,34 @@
 
 (with-post-hook! #'do-metadata-get (log-func "do-metadata-get"))
 
-(defn do-metadata-set
-  "Entrypoint for the API. Calls (metadata-set). Parameter should be a map
+(defn do-metadata-add
+  "Entrypoint for the API. Calls (metadata-add). Parameter should be a map
    with :user and :path as keys. Values are strings."
   [{user :user path :path} body]
-  (metadata-set user path body))
+  (metadata-add user path body))
 
-(with-pre-hook! #'do-metadata-set
+(with-pre-hook! #'do-metadata-add
   (fn [params body]
-    (log-call "do-metadata-set" params body)
+    (log-call "do-metadata-add" params body)
     (validate-map params {:user string? :path string?})
     (validate-map body {:attr string? :value string? :unit string?})))
 
-(with-post-hook! #'do-metadata-set (log-func "do-metadata-set"))
+(with-post-hook! #'do-metadata-add (log-func "do-metadata-add"))
 
-(defn do-metadata-batch-set
-  "Entrypoint for the API that calls (metadata-batch-set). Parameter is a map
-   with :user and :path as keys. Values are strings."
-  [{user :user path :path} body]
-  (metadata-batch-set user path body))
+(defn do-metadata-set
+  "Entrypoint for the API that calls (metadata-set).
+   Body is a map with :irods-avus and :metadata keys."
+  [data-id {user :user} body]
+  (metadata-set (uuidify data-id) user body))
 
-(with-pre-hook! #'do-metadata-batch-set
-  (fn [params body]
-    (log-call "do-metadata-batch-set" params body)
-    (validate-map params {:user string? :path string?})
-    (validate-map body {:add sequential? :delete sequential?})
-    (let [user (:user params)
-          path (:path params)
-          adds (:add body)
-          dels (:delete body)]
-      (log/warn (icat/jargon-cfg))
-      (when (pos? (count adds))
-        (if-not (every? true? (check-avus adds))
-          (throw+ {:error_code ERR_BAD_OR_MISSING_FIELD :field "add"})))
-      (when (pos? (count dels))
-        (if-not (every? true? (check-avus dels))
-          (throw+ {:error_code ERR_BAD_OR_MISSING_FIELD :field "delete"}))))))
-
-(with-post-hook! #'do-metadata-batch-set (log-func "do-metadata-batch-set"))
-
-(defn do-metadata-batch-add
-  "Entrypoint for the API that calls (metadata-batch-add). Body is a map with :avus and :paths keys."
-  [{:keys [user force]} body]
-  (metadata-batch-add user (Boolean/parseBoolean force) body))
-
-(with-pre-hook! #'do-metadata-batch-add
-  (fn [params {:keys [paths avus] :as body}]
-    (log-call "do-metadata-batch-add" params body)
+(with-pre-hook! #'do-metadata-set
+  (fn [data-id params {:keys [irods-avus metadata] :as body}]
+    (log-call "do-metadata-set" params body)
     (validate-map params {:user string?})
-    (validate-map body {:paths sequential? :avus sequential?})
-    (validate-field :paths paths (comp pos? count))
-    (validate-num-paths paths)
-    (validate-field :avus avus (comp pos? count))
-    (validate-field :avus avus (comp (partial every? true?) check-avus))
-    (log/info (icat/jargon-cfg))))
+    (when (pos? (count irods-avus))
+      (validate-field :irods-avus irods-avus (comp (partial every? true?) check-avus)))))
 
-(with-post-hook! #'do-metadata-batch-add (log-func "do-metadata-batch-add"))
+(with-post-hook! #'do-metadata-set (log-func "do-metadata-set"))
 
 (defn do-metadata-delete
   "Entrypoint for the API that calls (metadata-delete). Parameter is a map
@@ -400,9 +356,9 @@
       (add-metadata-template-avus cm user path template-id template-avus))
     (when-not (empty? irods-avus)
       (authorized-avus irods-avus)
-      (metadata-batch-add-to-path cm path irods-avus))
+      (metadata-batch-add cm path irods-avus))
     {:path path
-     :template-avus template-avus
+     :metadata template-avus
      :irods-avus irods-avus}))
 
 (defn- parse-template-attrs
@@ -448,7 +404,7 @@
         attrs (-> csv first rest)
         csv-filename-values (rest csv)
         template-attrs (parse-template-attrs template-id)]
-    {:metadata
+    {:path-metadata
      (bulk-add-avus cm user dest-dir force? template-id template-attrs attrs csv-filename-values)}))
 
 (defn parse-metadata-csv-file

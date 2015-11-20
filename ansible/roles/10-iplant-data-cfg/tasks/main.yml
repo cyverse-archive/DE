@@ -1,0 +1,17 @@
+---
+- name: remove old iplant_data container
+  sudo: yes
+  shell: "docker rm {{ data_container.container_name }}"
+  ignore_errors: yes
+  when: replace_container
+  tags:
+      - docker_rm
+      - iplant-data
+
+- name:  pull iplant_data container
+  sudo: yes
+  shell: docker pull "{{ remote_registry }}/{{ data_container.image_name }}:latest"
+  tags:
+      - docker_pull
+      - iplant-data
+
