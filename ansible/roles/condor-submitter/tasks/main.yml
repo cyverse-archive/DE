@@ -6,11 +6,13 @@
   shell: yum list installed condor
   register: verify_condor_installed
   tags:
+      - condor
       - verify
 
 - fail: msg="Condor not installed"
   when: verify_condor_installed.rc != 0
   tags:
+      - condor
       - verify
 
 # - name: set the /etc/condor/condor_config.local file
@@ -24,17 +26,20 @@
 - name: Copy event_log file to /etc/condor/config.d/
   copy: src=event_log dest=/etc/condor/config.d/ owner=root group=root mode=0644
   tags: 
+      - condor
       - config
 
 - name: Copy group_config file to /etc/condor/config.d/
   template: src=group_config.js dest=/etc/condor/config.d/group_config owner=root group=root mode=0644
   tags: 
+      - condor
       - config
 
 - name: start condor
   sudo: yes
   service: name=condor state=restarted
   tags:
+      - condor
       - restart_services
       - restart_condor
 
@@ -42,8 +47,11 @@
   sudo: yes
   service: name=condor enabled=true
   tags:
+      - condor
       - enable_services
       - enable_condor
 
 - name: Running condor_reconfig
   command: /usr/sbin/condor_reconfig
+  tags:
+      - condor

@@ -1,6 +1,0 @@
----
-- name: stop jex
-  sudo: yes
-  service: name={{jex.service_name}} state=stopped
-  tags:
-    - jex

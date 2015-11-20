@@ -1,0 +1,7 @@
+---
+- name: Configure JEX
+  hosts: services
+  sudo: yes
+  roles:
+      - 10-jex
+
