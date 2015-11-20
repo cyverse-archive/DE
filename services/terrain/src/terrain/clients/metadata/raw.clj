@@ -59,18 +59,9 @@
      :follow_redirects false}))
 
 (defn set-metadata-template-avus
-  [target-id data-type template-id avus-req]
-  (http/post (metadata-url "filesystem" "data" target-id "avus" template-id)
+  [target-id data-type avus-req]
+  (http/post (metadata-url "filesystem" "data" target-id "avus")
     (post-options (json/encode avus-req) {:data-type data-type})))
-
-(defn remove-metadata-template-avus
-  [target-id template-id]
-  (http/delete (metadata-url "filesystem" "data" target-id "avus" template-id) (delete-options)))
-
-(defn remove-metadata-template-avu
-  [target-id template-id avu-id]
-  (http/delete (metadata-url "filesystem" "data" target-id "avus" template-id avu-id)
-               (delete-options)))
 
 (defn list-data-comments
   [target-id]

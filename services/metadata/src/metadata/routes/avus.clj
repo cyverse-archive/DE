@@ -16,6 +16,26 @@
       :description "Lists all AVUs associated with the data item, grouped by Metadata Template."
       (ok (avus/list-metadata-template-avus data-id)))
 
+    (POST* "/" []
+      :path-params [data-id :- TargetIdPathParam]
+      :query [{:keys [user data-type]} StandardDataItemQueryParams]
+      :body [body (describe SetMetadataTemplateAvuRequest "The Metadata Template AVU save request")]
+      :return DataItemMetadataTemplateList
+      :summary "Set Metadata AVUs on a File/Folder"
+      :description "
+Sets Metadata AVUs on the given data item.
+
+Any AVUs not included in the request will be deleted. If the template ID or AVUs are omitted, then all
+AVUs for the given data ID will be deleted.
+
+Including an existing AVU’s ID in its JSON in the POST body will update its values and `modified_on`
+timestamp, and also ensure that the AVU is associated with the metadata template. AVUs included
+without an ID will be added to the data item if the AVU does not already exist, otherwise the AVU
+with matching `attr`, `owner`, and `target` is updated as previously described.
+
+AVUs can only be associated with one metadata template per data item, per user."
+      (ok (avus/set-metadata-template-avus user data-id data-type body)))
+
     (POST* "/copy" []
       :path-params [data-id :- TargetIdPathParam]
       :query [{:keys [user force]} AvuCopyQueryParams]
@@ -38,7 +58,7 @@ items sent in the request body."
       :path-params [data-id :- TargetIdPathParam
                     template-id :- TemplateIdPathParam]
       :query [{:keys [user data-type]} StandardDataItemQueryParams]
-      :body [body (describe SetMetadataTemplateAvuRequest "The Metadata Template AVU save request")]
+      :body [body (describe UpdateMetadataTemplateAvuRequest "The Metadata Template AVU save request")]
       :return DataItemMetadataTemplateAvuList
       :summary "Add/Update Metadata AVUs on a File/Folder"
       :description "
@@ -51,7 +71,7 @@ with matching `attr`, `owner`, and `target` is updated as previously described.
 
 AVUs can only be associated with one metadata template per data item, per user. All AVUs on the
 given data item will be disaccociated with all other Metadata Templates."
-      (ok (avus/set-metadata-template-avus user data-id data-type template-id body)))
+      (ok (avus/update-metadata-template-avus user data-id data-type template-id body)))
 
     (DELETE* "/:template-id" []
       :path-params [data-id :- TargetIdPathParam

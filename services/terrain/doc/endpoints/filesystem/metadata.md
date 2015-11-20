@@ -4,7 +4,7 @@ Metadata
 The following commands allow the caller to set and get attributes on files and directories in iRODS. iRODS attributes take the form of Attribute Value Unit triples associated with directories and files. iRODS AVUs are only unique on the full triple, so duplicate AVUs may exist. DE tools do not, in general, use the unit field.
 
 
-Setting Metadata
+Adding Metadata
 ------------------------------------
 Note the single-quotes around the request URL in the curl command.
 
@@ -37,128 +37,6 @@ __Response__:
 __Curl Command__:
 
     curl -d '{"attr" : "avu_name", "value" : "avu_value", "unit" : "avu_unit"}' 'http://127.0.0.1:3000/secured/filesystem/metadata?proxyToken=notReal&path=/iplant/home/johnw/LICENSE.txt'
-
-
-Setting Metadata as a Batch Operation
--------------------------------------
-__URL Path__: /secured/filesystem/metadata-batch
-
-__HTTP Method__: POST
-
-__Error codes__: ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_A_USER
-
-__Request Query Parameters__:
-
-* proxyToken - A valid CAS ticket.
-* path - The path to the file or directory being operated on.
-
-__Request Body__:
-
-    {
-        "add": [
-            {
-                "attr"  : "attr",
-                "value" : "value",
-                "unit"  : "unit"
-            },
-            {
-                "attr"  : "attr1",
-                "value" : "value",
-                "unit"  : "unit"
-            }
-        ],
-        "delete": [
-            {
-                "attr"  : "del1",
-                "value" : "del1value",
-                "unit"  : "del1unit"
-            },
-            {
-                "attr"  : "del2",
-                "value" : "del2value",
-                "unit"  : "del2unit"
-            }
-        ]
-    }
-
-Both "add" and "delete" lists must be present even if they are empty.
-
-__Response__:
-
-    {
-        "path"   : "\/iplant\/home\/wregglej\/LICENSE.txt",
-        "user"   :" wregglej"
-    }
-
-__Curl Command__:
-
-    curl -d '{"add" : [{"attr" : "attr", "value" : "value", "unit" : "unit"}], "delete" : ["del1", "del2"]}' 'http://127.0.0.1:3000/secured/filesystem/metadata-batch?proxyToken=notReal&path=/iplant/home/johnw/LICENSE.txt'
-
-Adding Batch Metadata to Multiple Paths
----------------------------------------
-__URL Path__: /secured/filesystem/metadata-batch-add
-
-__HTTP Method__: POST
-
-__Error codes__: ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_A_USER, ERR_TOO_MANY_PATHS, ERR_NOT_UNIQUE
-
-__Request Query Parameters__:
-
-* proxyToken - A valid CAS ticket.
-* force - Omitting this parameter will cause this endpoint to validate that none of the given paths
-already have metadata set with any of the given attrs before adding the AVUs,
-otherwise an ERR_NOT_UNIQUE error is returned.
-
-__Request Body__:
-
-```json
-{
-    "paths": [
-        "/iplant/home/ipctest/folder-1",
-        "/iplant/home/ipctest/folder-2",
-        "/iplant/home/ipctest/file-1",
-        "/iplant/home/ipctest/file-2"
-    ],
-    "avus": [
-        {
-            "unit": "",
-            "value": "test value",
-            "attr": "new-attr-1"
-        },
-        {
-            "unit": "",
-            "value": "test value",
-            "attr": "new-attr-2"
-        },
-        {
-            "unit": "",
-            "value": "test value",
-            "attr": "new-attr-3"
-        }
-    ]
-}
-```
-
-Both "paths" and "avus" lists must be present and non-empty.
-
-__Response__:
-
-```json
-{
-    "paths": [
-        "/iplant/home/ipctest/folder-1",
-        "/iplant/home/ipctest/folder-2",
-        "/iplant/home/ipctest/file-1",
-        "/iplant/home/ipctest/file-2"
-    ],
-    "user":"ipctest"
-}
-```
-
-__Curl Command__:
-
-    curl -d '{"paths": ["/iplant/home/ipctest/folder-1","/iplant/home/ipctest/folder-2"], "avus": [{"attr": "attr", "value": "value", "unit": "unit"}]}' 'http://127.0.0.1:3000/secured/filesystem/metadata-batch-add?proxyToken=notReal&force=true'
-
 
 
 Getting Metadata
@@ -201,6 +79,62 @@ __Curl Command__:
 
     curl 'http://127.0.0.1:3000/secured/filesystem/metadata?proxyToken=notReal&path=/iplant/home/johnw/LICENSE.txt'
 
+
+Setting Metadata
+-------------------------------------
+__URL Path__: /secured/filesystem/{data-id}/metadata
+
+__HTTP Method__: POST
+
+__Delegates to metadata__: `POST /filesystem/data/{data-id}/avus`
+
+__Error codes__: ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_A_USER
+
+__Request Query Parameters__:
+
+* proxyToken - A valid CAS ticket.
+
+__Request Body__:
+
+```json
+{
+    "irods-avus": [
+        {
+            "attr": "test-attr-1",
+            "value": "test-val-1",
+            "unit": ""
+        },
+        {
+            "attr": "test-attr-2",
+            "value": "test-val-2",
+            "unit": ""
+        },
+        {
+            "attr": "test-attr-3",
+            "value": "test-val-3",
+            "unit": ""
+        }
+    ],
+    "metadata": {...}
+}
+```
+
+This endpoint forwards the `metadata` value of the request to the corresponding metadata service endpoint.
+Please see the metadata documentation for more information on the format of this object.
+If the `metadata` key is omitted or left empty, then all metadata is deleted by the corresponding
+metadata service endpoint.
+
+__Response__:
+
+```json
+{
+    "path": "/iplant/home/ipcuser/file.txt",
+    "user": "ipcuser"
+}
+```
+__Curl Command__:
+
+    curl -d '{"irods-avus" : [{"attr" : "attr", "value" : "value", "unit" : "unit"}], "metadata": {...}' 'http://127.0.0.1:3000/secured/filesystem/$data_id/metadata?proxyToken=$(cas-ticket)'
 
 Deleting File and Directory Metadata
 ------------------------------------
@@ -608,10 +542,10 @@ __Response__:
 
 ```json
 {
-    "metadata": [
+    "path-metadata": [
         {
             "path": "/iplant/home/ipcuser/folder_1/library1/fake.1.fastq.gz",
-            "template-avus": [
+            "metadata": [
                 {
                     "attr": "template_item",
                     "value": "fake-1",
@@ -653,7 +587,7 @@ __Response__:
         },
         {
             "path": "/iplant/home/ipcuser/folder_2/library2/fake.2.fastq.gz",
-            "template-avus": [
+            "metadata": [
                 {
                     "attr": "template_item",
                     "value": "fake-2",
@@ -695,7 +629,7 @@ __Response__:
         },
         {
             "path": "/iplant/home/ipcuser/folder_1/library1",
-            "template-avus": [
+            "metadata": [
                 {
                     "attr": "template_item",
                     "value": "lib-1",
@@ -742,83 +676,6 @@ __Response__:
 __Curl Command__:
 
     curl -s -X POST "http://localhost:3000/secured/filesystem/metadata/csv-parser?proxyToken=ipcuser&template-id=e7e19316-dc88-11e4-a49a-77c52ae8901a&dest=/iplant/home/ipcuser/folder_1&src=/iplant/home/ipcuser/metadata.csv"
-
-Adding and Updating Metadata Template AVUs on a File/Folder
------------------------------------------------------------------
-Saves Metadata AVUs on the given data item, associating them with the given Metadata Template.
-
-__URL Path__: /secured/filesystem/{data-id}/template-avus/{template-id}
-
-__HTTP Method__: POST
-
-__Delegates to metadata__: `POST /filesystem/entry/{data-id}/avus/{template-id}`
-
-__Error Codes__: ERR_NOT_READABLE, ERR_NOT_WRITEABLE, ERR_DOES_NOT_EXIST, ERR_NOT_A_USER, ERR_BAD_OR_MISSING_FIELD
-
-__Request Body__:
-
-This endpoint forwards requests to the corresponding metadata service endpoint.
-Please see the metadata documentation for more information.
-
-__Response__:
-
-This endpoint forwards requests to the corresponding metadata service endpoint.
-Please see the metadata documentation for more information.
-
-__Curl Command__:
-
-```json
-curl -sd '
-{
-    "avus": [
-        {
-            "attr": "submitted to insdc",
-            "unit": "",
-            "value": "true"
-        },
-        {
-            "attr": "project name",
-            "unit": "",
-            "value": "CORE-5602"
-        },
-        {
-            "id": "74719265-0728-4ec7-81aa-7df77ffbc936",
-            "attr": "Metadata complete",
-            "value": "false",
-            "unit": ""
-        }
-    ]
-}
-' "http://127.0.0.1:3000/secured/filesystem/cc20cbf8-df89-11e3-bf8b-6abdce5a08d5/template-avus/40ac191f-bb36-4f4e-85fb-8b50abec8e10?proxyToken=notReal"
-```
-
-Removing all Metadata Template AVUs on a File/Folder
-----------------------------------------------------------
-__URL Path__: /secured/filesystem/{data-id}/template-avus/{template-id}
-
-__HTTP Method__: DELETE
-
-__Delegates to metadata__: `DELETE /filesystem/entry/{data-id}/avus/{template-id}`
-
-__Error Codes__: ERR_NOT_READABLE, ERR_NOT_WRITEABLE, ERR_DOES_NOT_EXIST, ERR_NOT_A_USER
-
-__Curl Command__:
-
-    curl -X DELETE "http://127.0.0.1:3000/secured/filesystem/cc20cbf8-df89-11e3-bf8b-6abdce5a08d5/template-avus/40ac191f-bb36-4f4e-85fb-8b50abec8e10?proxyToken=notReal"
-
-Removing a Metadata Template AVU from a File/Folder
----------------------------------------------------------
-__URL Path__: /secured/filesystem/{data-id}/template-avus/{template-id}/{avu-id}
-
-__HTTP Method__: DELETE
-
-__Delegates to metadata__: `DELETE /filesystem/entry/{data-id}/avus/{template-id}/{avu-id}`
-
-__Error Codes__: ERR_NOT_READABLE, ERR_NOT_WRITEABLE, ERR_DOES_NOT_EXIST, ERR_NOT_A_USER
-
-__Curl Command__:
-
-    curl -X DELETE "http://127.0.0.1:3000/secured/filesystem/cc20cbf8-df89-11e3-bf8b-6abdce5a08d5/template-avus/40ac191f-bb36-4f4e-85fb-8b50abec8e10/b9315be3-5dd4-42bd-9b9f-b3486eee5a9b?proxyToken=notReal"
 
 Copying all Metadata from a File/Folder
 -----------------------------------------------------

@@ -65,7 +65,6 @@ import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Provides access to remote services for folder operations.
@@ -638,26 +637,18 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
 
     @Override
     public void setDiskResourceMetaData(DiskResource resource,
-                                        Set<DiskResourceMetadata> mdToUpdate,
-                                        Set<DiskResourceMetadata> mdToDelete,
+                                        DiskResourceMetadataTemplate metadata,
+                                        List<DiskResourceMetadata> irodsAvus,
                                         AsyncCallback<String> callback) {
-        String fullAddress = deProperties.getDataMgmtBaseUrl() + "metadata-batch" //$NON-NLS-1$
-                + "?path=" + URL.encodeQueryString(resource.getPath()); //$NON-NLS-1$
+        String address = deProperties.getDataMgmtBaseUrl() + resource.getId() + "/metadata"; //$NON-NLS-1$
 
         // Create request consisting of metadata to update and delete.
         DiskResourceMetadataBatchRequest request = factory.metadataBatchRequest().as();
-        request.setAdd(buildMetadataToAddRequest(mdToUpdate));
-        request.setDelete(mdToDelete);
+        request.setMetadata(metadata);
+        request.setAvus(irodsAvus);
 
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, fullAddress, encode(request));
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode(request));
         callService(wrapper, callback);
-    }
-
-    private Set<DiskResourceMetadata> buildMetadataToAddRequest(Set<DiskResourceMetadata> metadata) {
-        for (DiskResourceMetadata md : metadata) {
-            md.setId(null);
-        }
-        return metadata;
     }
 
     @Override
@@ -950,16 +941,6 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         String address = deProperties.getDataMgmtBaseUrl() + "anon-files"; //$NON-NLS-1$
         final String body = encode(diskResourcePaths);
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body);
-        callService(wrapper, callback);
-    }
-
-    @Override
-    public void setMetadataTemplateAvus(DiskResource resource,
-                                        DiskResourceMetadataTemplate templateAvus,
-                                        AsyncCallback<String> callback) {
-        String address = deProperties.getDataMgmtBaseUrl() + resource.getId() + "/template-avus/" //$NON-NLS-1$
-                + templateAvus.getId();
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode(templateAvus));
         callService(wrapper, callback);
     }
 

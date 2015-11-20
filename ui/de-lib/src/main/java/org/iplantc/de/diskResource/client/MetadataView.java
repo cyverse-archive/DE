@@ -13,7 +13,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.IsWidget;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by jstroot on 2/10/15.
@@ -72,13 +71,9 @@ public interface MetadataView extends IsWidget {
 
     }
 
-    DiskResourceMetadataTemplate getMetadataTemplateToAdd();
+    DiskResourceMetadataTemplate getMetadataTemplate();
 
-    DiskResourceMetadataTemplate getMetadataTemplateToDelete();
-
-    Set<DiskResourceMetadata> getMetadataToAdd();
-
-    Set<DiskResourceMetadata> getMetadataToDelete();
+    List<DiskResourceMetadata> getAvus();
 
     boolean isValid();
 

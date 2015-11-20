@@ -52,13 +52,16 @@ with any of the attributes found in any of the Metadata Template AVUs associated
       (->optional-param :created_on)
       (->optional-param :modified_on)))
 
-(s/defschema SetMetadataTemplateAvuRequest
+(s/defschema UpdateMetadataTemplateAvuRequest
   (-> MetadataTemplateAvuList
       (->optional-param :template_id)
       (merge
         {:avus
          (describe [AvuRequest]
            "The AVUs to save for the target data item and to associate with the Metadata Template.")})))
+
+(s/defschema SetMetadataTemplateAvuRequest
+  (->optional-param UpdateMetadataTemplateAvuRequest :avus))
 
 (s/defschema DataItem
   {:id   DataItemIdParam

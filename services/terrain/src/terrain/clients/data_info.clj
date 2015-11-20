@@ -246,7 +246,7 @@
   "Saves the URL used to get saved tree URLs. The metaurl argument should contain the URL used to
    obtain the tree URLs."
   [path metaurl]
-  (mt/admin-metadata-set path {:attr "tree-urls" :value metaurl :unit ""}))
+  (mt/admin-metadata-add path {:attr "tree-urls" :value metaurl :unit ""}))
 
 
 (defn ^ISeq list-user-groups

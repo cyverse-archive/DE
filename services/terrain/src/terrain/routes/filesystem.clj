@@ -7,7 +7,6 @@
             [terrain.services.filesystem.directory :as dir]
             [terrain.services.filesystem.manifest :as manifest]
             [terrain.services.filesystem.metadata :as meta]
-            [terrain.services.filesystem.metadata-template-avus :as mta]
             [terrain.services.filesystem.metadata-templates :as mt]
             [terrain.services.filesystem.root :as root]
             [terrain.services.filesystem.sharing :as sharing]
@@ -63,27 +62,6 @@
     (GET "/filesystem/file/manifest" [:as req]
       (controller req manifest/do-manifest :params))
 
-    (POST "/filesystem/metadata" [:as req]
-      (controller req meta/do-metadata-set :params :body))
-
-    (DELETE "/filesystem/metadata" [:as req]
-      (controller req meta/do-metadata-delete :params))
-
-    (POST "/filesystem/metadata-batch" [:as req]
-      (controller req meta/do-metadata-batch-set :params :body))
-
-    (POST "/filesystem/metadata-batch-add" [:as req]
-      (controller req meta/do-metadata-batch-add :params :body))
-
-    (GET "/filesystem/metadata/templates" [:as req]
-      (controller req mt/do-metadata-template-list))
-
-    (GET "/filesystem/metadata/template/:id" [id :as req]
-      (controller req mt/do-metadata-template-view id))
-
-    (GET "/filesystem/metadata/template/attr/:id" [id :as req]
-      (controller req mt/do-metadata-attribute-view id))
-
     (POST "/filesystem/share" [:as req]
       (controller req sharing/do-share :params :body))
 
@@ -127,27 +105,35 @@
    [#(and (config/filesystem-routes-enabled)
           (config/metadata-routes-enabled))]
 
+    (POST "/filesystem/metadata" [data-id :as req]
+      (controller req meta/do-metadata-add :params :body))
+
+    (DELETE "/filesystem/metadata" [:as req]
+      (controller req meta/do-metadata-delete :params))
+
     (POST "/filesystem/metadata/csv-parser" [:as {:keys [user-info params] :as req}]
       (meta/parse-metadata-csv-file user-info params))
+
+    (GET "/filesystem/metadata/templates" [:as req]
+      (controller req mt/do-metadata-template-list))
+
+    (GET "/filesystem/metadata/template/:template-id" [template-id :as req]
+      (controller req mt/do-metadata-template-view template-id))
+
+    (GET "/filesystem/metadata/template/attr/:attr-id" [attr-id :as req]
+      (controller req mt/do-metadata-attribute-view attr-id))
 
     (GET "/filesystem/:data-id/metadata" [data-id :as req]
       (controller req meta/do-metadata-get :params data-id))
 
-   (POST "/filesystem/:data-id/metadata/copy" [data-id force :as req]
-     (controller req meta/do-metadata-copy :params data-id force :body))
+    (POST "/filesystem/:data-id/metadata" [data-id :as req]
+      (controller req meta/do-metadata-set data-id :params :body))
 
-   (POST "/filesystem/:data-id/metadata/save" [data-id :as req]
-     (controller req meta/do-metadata-save data-id :params :body))
+    (POST "/filesystem/:data-id/metadata/copy" [data-id force :as req]
+      (controller req meta/do-metadata-copy :params data-id force :body))
 
-   (POST "/filesystem/:data-id/template-avus/:template-id" [data-id template-id :as req]
-     (controller req mta/do-set-metadata-template-avus :params data-id template-id :body))
-
-   (DELETE "/filesystem/:data-id/template-avus/:template-id" [data-id template-id :as req]
-     (controller req mta/do-remove-metadata-template-avus :params data-id template-id))
-
-   (DELETE "/filesystem/:data-id/template-avus/:template-id/:avu-id" 
-     [data-id template-id avu-id :as req]
-     (controller req mta/do-remove-metadata-template-avus :params data-id template-id avu-id))))
+    (POST "/filesystem/:data-id/metadata/save" [data-id :as req]
+      (controller req meta/do-metadata-save data-id :params :body))))
 
 (defn admin-filesystem-metadata-routes
   "The admin routes for file metadata endpoints."

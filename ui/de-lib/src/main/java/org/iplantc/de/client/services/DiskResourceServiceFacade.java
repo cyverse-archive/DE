@@ -174,13 +174,13 @@ public interface DiskResourceServiceFacade {
      * Calls service to set disk resource metadata.
      * 
      * @param resource the <code>DiskResource</code> whose metadata will be updated
-     * @param mdToUpdate a list of <code>DiskResourceMetadata</code> objects which will be updated
-     * @param mdToDelete a list of <code>DiskResourceMetadata</code> objects which will be deleted
+     * @param metadata the <code>DiskResourceMetadataTemplate</code> to save
+     * @param irodsAvus the <code>DiskResourceMetadata</code> to save
      * @param callback executed when the service call completes.
      */
     void setDiskResourceMetaData(DiskResource resource,
-                                 Set<DiskResourceMetadata> mdToUpdate,
-                                 Set<DiskResourceMetadata> mdToDelete,
+                                 DiskResourceMetadataTemplate metadata,
+                                 List<DiskResourceMetadata> irodsAvus,
                                  AsyncCallback<String> callback);
 
     /**
@@ -307,10 +307,6 @@ public interface DiskResourceServiceFacade {
      * @param callback callback object
      */
     void shareWithAnonymous(final HasPaths diskResourcePaths, final AsyncCallback<String> callback);
-
-    void setMetadataTemplateAvus(final DiskResource resource,
-                                 final DiskResourceMetadataTemplate templateAvus,
-                                 final AsyncCallback<String> callback);
 
     void deleteMetadataTemplateAvus(final DiskResource resource,
                                     final DiskResourceMetadataTemplate templateAvus,
