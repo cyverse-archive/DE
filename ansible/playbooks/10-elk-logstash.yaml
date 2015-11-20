@@ -1,8 +1,8 @@
 ---
-- name: Deploy ELK Logstash
+- name: Configure ELK Logstash
   hosts: elk
   sudo: true
   gather_facts: false
   roles:
-    - role: elk-logstash
+      - role: 10-elk-logstash
 

@@ -1,5 +1,5 @@
-Elk-Logstash
-============
+10-elk-logstash
+===============
 
 For deploying and configuring the logstash instance for the DE ELK stack.
 
@@ -24,16 +24,14 @@ TBD
 Dependencies
 ------------
 
-N/A
+cfg-systemd-unit
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
+    - hosts: elk
       roles:
-         - { role: username.rolename, x: 42 }
+         - role: 10-elk-logstash
 
 License
 -------
@@ -43,4 +41,4 @@ BSD
 Author Information
 ------------------
 
-Jonathan Strootman, jstroot@iplantcollaborative.org
+Jonathan Strootman - jstroot@iplantcollaborative.org
