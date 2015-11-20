@@ -1,4 +1,4 @@
-systemd-de-target
+10-systemd-de-target
 =====================
 
 This role deploys a common systemd target which is used to group all
@@ -26,16 +26,14 @@ Role Variables
 Dependencies
 ------------
 
-None.
+cfg-systemd-unit
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
     - hosts: all
       roles:
-         - { role: systemd-de-target }
+         - { role: 10-systemd-de-target }
 
 License
 -------
@@ -45,5 +43,5 @@ BSD
 Author Information
 ------------------
 
-jstroot@iplantcollaborative.org
+Jonathan Strootman - jstroot@iplantcollaborative.org
 
