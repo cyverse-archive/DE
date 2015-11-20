@@ -91,17 +91,24 @@
     (binding [*read-eval* false]
       (read r))))
 
+(defn- build-proxy-config
+  [opts]
+  (when (:proxy-host opts)
+    {:host (:proxy-host opts)
+     :port (:proxy-port opts)}))
+
 (defn load-dependencies
-  []
+  [opts]
   (let [f (fs/file "conversions" dependency-filename)]
     (when (.isFile f)
       (let [{:keys [dependencies repositories]} (load-dependency-file f)]
-        (add-dependencies :coordinates dependencies
-                          :repositories (merge default-repositories repositories))))))
+        (add-dependencies :coordinates   dependencies
+                          :repositories (merge default-repositories repositories)
+                          :proxy        (build-proxy-config opts))))))
 
 (defn conversion-map
-  []
-  (load-dependencies)
+  [opts]
+  (load-dependencies opts)
   (let [conversions (list-conversions)]
     (load-conversions conversions)
     (into {} (map #(vector (fname->db-version %) (fname->cv-ref %)) conversions))))
