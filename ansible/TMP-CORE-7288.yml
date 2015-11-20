@@ -89,12 +89,12 @@
       - service: name=iplant-groups.service state=stopped enabled=false
         ignore_errors: true
 
-- name: Stop jex-events.service
-  hosts: jex-events
+- name: Stop jexevents.service
+  hosts: jexevents
   sudo: true
   gather_facts: false
   tasks:
-      - service: name=jex-events.service state=stopped enabled=false
+      - service: name=jexevents.service state=stopped enabled=false
         ignore_errors: true
 
 - name: Stop kifshare.service
@@ -121,12 +121,12 @@
       - service: name=monkey.service state=stopped enabled=false
         ignore_errors: true
 
-- name: Stop notification-agent.service
-  hosts: notification-agent
+- name: Stop notificationagent.service
+  hosts: notificationagent
   sudo: true
   gather_facts: false
   tasks:
-      - service: name=notification-agent.service state=stopped enabled=false
+      - service: name=notificationagent.service state=stopped enabled=false
         ignore_errors: true
 
 - name: Stop saved-searches.service
@@ -186,7 +186,7 @@
         ignore_errors: true
 
 - name: Stop grouper-nginx.service
-  hosts: iplant-grouper
+  hosts: grouper
   sudo: true
   gather_facts: false
   tasks:
@@ -194,7 +194,7 @@
         ignore_errors: true
 
 - name: Stop iplant-grouper.service
-  hosts: iplant-grouper
+  hosts: grouper
   sudo: true
   gather_facts: false
   tasks:
