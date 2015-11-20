@@ -393,7 +393,7 @@
   (with-temp-dir dir "-fp-" temp-directory-creation-failure
     (get-build-artifact opts)
     (unpack-build-artifact dir (:filename opts))
-    (set-conversions)
+    (set-conversions opts)
     (let [versions (get-update-versions (get-current-db-version) (:version opts))]
       (validate-update-versions versions)
       (try+
