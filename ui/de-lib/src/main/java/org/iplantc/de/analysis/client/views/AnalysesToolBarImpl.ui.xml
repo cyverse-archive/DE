@@ -31,6 +31,10 @@
                                        text="{appearance.relaunchAnalysis}"
                                        icon="{appearance.runIcon}"
                                        enabled="false"/>
+                        <menu:MenuItem ui:field="shareMI"
+                                       text="Share with Collaborators..."
+                                       icon="{appearance.shareIcon}"
+                                       enabled="false"/>
                         <menu:MenuItem ui:field="viewJobInfoMI"
                                        text="{appearance.viewAnalysisStepInfo}"
                                        icon="{appearance.fileViewIcon}"

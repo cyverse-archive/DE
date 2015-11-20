@@ -54,11 +54,16 @@ import java.util.List;
  */
 public class SharingPermissionsPanel implements IsWidget {
 
-    @UiField Grid<Sharing> grid;
-    @UiField ToolBar toolbar;
-    @UiField(provided = true) ListStore<Sharing> listStore;
-    @UiField(provided = true) ColumnModel<Sharing> cm;
-    @UiField VerticalLayoutContainer container;
+    @UiField
+    Grid<Sharing> grid;
+    @UiField
+    ToolBar toolbar;
+    @UiField(provided = true)
+    ListStore<Sharing> listStore;
+    @UiField(provided = true)
+    ColumnModel<Sharing> cm;
+    @UiField
+    VerticalLayoutContainer container;
     private final EventBus eventBus;
 
     private FastMap<List<Sharing>> originalList;
@@ -76,16 +81,13 @@ public class SharingPermissionsPanel implements IsWidget {
     interface MyUiBinder extends UiBinder<Widget, SharingPermissionsPanel> {
     }
 
-
     public SharingPermissionsPanel(final SharingPresenter dataSharingPresenter,
-                                       final FastMap<SharedResource> resources) {
-        this(dataSharingPresenter,
-             resources,
- GWT.<SharingAppearance> create(SharingAppearance.class));
+                                   final FastMap<SharedResource> resources) {
+        this(dataSharingPresenter, resources, GWT.<SharingAppearance> create(SharingAppearance.class));
     }
 
     SharingPermissionsPanel(final SharingPresenter dataSharingPresenter,
-                                final FastMap<SharedResource> resources,
+                            final FastMap<SharedResource> resources,
                             final SharingAppearance appearance) {
         this.presenter = dataSharingPresenter;
         this.resources = resources;
@@ -104,16 +106,19 @@ public class SharingPermissionsPanel implements IsWidget {
     private void init() {
         listStore = new ListStore<>(new DataSharingKeyProvider());
         cm = buildColumnModel();
-        eventBus.addHandler(UserSearchResultSelected.TYPE, new UserSearchResultSelected.UserSearchResultSelectedEventHandler() {
+        eventBus.addHandler(UserSearchResultSelected.TYPE,
+                            new UserSearchResultSelected.UserSearchResultSelectedEventHandler() {
 
-            @Override
-            public void onUserSearchResultSelected(UserSearchResultSelected userSearchResultSelected) {
-                if (userSearchResultSelected.getTag().equals(UserSearchResultSelected.USER_SEARCH_EVENT_TAG.SHARING.toString())) {
-                    addCollaborator(userSearchResultSelected.getCollaborator());
-                }
+                                @Override
+                                public void
+                                        onUserSearchResultSelected(UserSearchResultSelected userSearchResultSelected) {
+                                    if (userSearchResultSelected.getTag()
+                                                                .equals(UserSearchResultSelected.USER_SEARCH_EVENT_TAG.SHARING.toString())) {
+                                        addCollaborator(userSearchResultSelected.getCollaborator());
+                                    }
 
-            }
-        });
+                                }
+                            });
     }
 
     private void initToolbar() {
@@ -168,16 +173,17 @@ public class SharingPermissionsPanel implements IsWidget {
         perms.add(PermissionValue.own);
 
         final ComboBoxCell<PermissionValue> permCombo = new ComboBoxCell<>(perms,
-                                                                                    new StringLabelProvider<PermissionValue>() {
-            @Override
-            public String getLabel(PermissionValue value) {
-                return value.toString();
-            }
-        });
+                                                                           new StringLabelProvider<PermissionValue>() {
+                                                                               @Override
+                                                                               public String
+                                                                                       getLabel(PermissionValue value) {
+                                                                                   return value.toString();
+                                                                               }
+                                                                           });
 
         permCombo.setForceSelection(true);
         permCombo.setSelectOnFocus(true);
-        
+
         permCombo.setTriggerAction(TriggerAction.ALL);
         permCombo.addSelectionHandler(new SelectionHandler<PermissionValue>() {
 
@@ -196,7 +202,8 @@ public class SharingPermissionsPanel implements IsWidget {
 
     private void addExplainPanel() {
         explainPanel = new HorizontalPanel();
-        TextButton explainBtn = new TextButton(appearance.variablePermissionsNotice() + ":" + appearance.explain(), new SelectHandler() {
+        TextButton explainBtn = new TextButton(appearance.variablePermissionsNotice() + ":"
+                + appearance.explain(), new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
@@ -218,7 +225,8 @@ public class SharingPermissionsPanel implements IsWidget {
     private void addCollaborator(Collaborator user) {
         String userName = user.getUserName();
         if (userName != null && userName.equalsIgnoreCase(UserInfo.getInstance().getUsername())) {
-            AlertMessageBox amb = new AlertMessageBox(appearance.warning(), appearance.selfShareWarning());
+            AlertMessageBox amb = new AlertMessageBox(appearance.warning(),
+                                                      appearance.selfShareWarning());
             amb.show();
             return;
         }
@@ -230,10 +238,9 @@ public class SharingPermissionsPanel implements IsWidget {
 
             for (String path : resources.keySet()) {
                 Sharing share = new Sharing(user,
-                                                    presenter.getDefaultPermissions(),
-                                                    path,
-                                                    DiskResourceUtil.getInstance()
-                                                                    .parseNameFromPath(path));
+                                            presenter.getDefaultPermissions(),
+                                            path,
+                                            DiskResourceUtil.getInstance().parseNameFromPath(path));
                 shareList.add(share);
 
                 if (displayShare == null) {
@@ -262,7 +269,7 @@ public class SharingPermissionsPanel implements IsWidget {
         originalList = new FastMap<>();
 
         listStore.clear();
-        explainPanel.setVisible(false);
+        setExplainPanelVisibility(false);
 
         for (String userName : sharingMap.keySet()) {
             List<Sharing> dataShares = sharingMap.get(userName);
@@ -294,8 +301,8 @@ public class SharingPermissionsPanel implements IsWidget {
         DataSharingProperties props = GWT.create(DataSharingProperties.class);
 
         ColumnConfig<Sharing, String> name = new ColumnConfig<>(props.name(),
-                                                                    appearance.nameColumnWidth(),
-                                                                    appearance.nameColumnLabel());
+                                                                appearance.nameColumnWidth(),
+                                                                appearance.nameColumnLabel());
         ColumnConfig<Sharing, PermissionValue> permission = buildPermissionColumn(props);
         ColumnConfig<Sharing, String> remove = buildRemoveColumn();
 
@@ -306,10 +313,23 @@ public class SharingPermissionsPanel implements IsWidget {
         return new ColumnModel<>(configs);
     }
 
+    public void setPermissionColumnVisibility(boolean visible) {
+      for(ColumnConfig<Sharing, ?> cc: grid.getColumnModel().getColumns()) {
+          if(cc.getHeader().asString().equals(appearance.permissionsColumnLabel())) {
+                cc.setHidden(visible);
+                return;
+          }
+      }
+    }
+
+    public void setExplainPanelVisibility(boolean visible) {
+        explainPanel.setVisible(visible);
+    }
+
     private ColumnConfig<Sharing, PermissionValue> buildPermissionColumn(DataSharingProperties props) {
         ColumnConfig<Sharing, PermissionValue> permission = new ColumnConfig<>(props.displayPermission(),
-                                                                                   appearance.permissionsColumnWidth(),
-                                                                                   appearance.permissionsColumnLabel());
+                                                                               appearance.permissionsColumnWidth(),
+                                                                               appearance.permissionsColumnLabel());
         permission.setColumnTextStyle(appearance.permissionsColumnStyle());
         permission.setFixed(true);
         permission.setCell(buildPermissionsCombo());
@@ -431,10 +451,9 @@ public class SharingPermissionsPanel implements IsWidget {
 
                     if (!shared) {
                         models.add(new Sharing(user,
-                                                   perm,
-                                                   path,
-                                                   DiskResourceUtil.getInstance()
-                                                                   .parseNameFromPath(path)));
+                                               perm,
+                                               path,
+                                               DiskResourceUtil.getInstance().parseNameFromPath(path)));
                     }
                 }
             }
@@ -460,7 +479,7 @@ public class SharingPermissionsPanel implements IsWidget {
             }
 
             if (!permsVary) {
-                explainPanel.setVisible(false);
+                setExplainPanelVisibility(false);
             }
         }
     }

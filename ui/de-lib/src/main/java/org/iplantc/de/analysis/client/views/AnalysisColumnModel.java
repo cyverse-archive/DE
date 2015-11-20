@@ -1,10 +1,10 @@
 package org.iplantc.de.analysis.client.views;
 
 import org.iplantc.de.analysis.client.AnalysesView;
+import org.iplantc.de.analysis.client.events.HTAnalysisExpandEvent;
 import org.iplantc.de.analysis.client.events.selection.AnalysisAppSelectedEvent;
 import org.iplantc.de.analysis.client.events.selection.AnalysisCommentSelectedEvent;
 import org.iplantc.de.analysis.client.events.selection.AnalysisNameSelectedEvent;
-import org.iplantc.de.analysis.client.events.HTAnalysisExpandEvent;
 import org.iplantc.de.analysis.client.views.cells.AnalysisAppNameCell;
 import org.iplantc.de.analysis.client.views.cells.AnalysisCommentCell;
 import org.iplantc.de.analysis.client.views.cells.AnalysisNameCell;
@@ -27,10 +27,11 @@ import java.util.List;
 /**
  * @author jstroot
  */
-public class AnalysisColumnModel extends ColumnModel<Analysis> implements AnalysisNameSelectedEvent.HasAnalysisNameSelectedEventHandlers,
-                                                                          AnalysisAppSelectedEvent.HasAnalysisAppSelectedEventHandlers,
-                                                                          AnalysisCommentSelectedEvent.HasAnalysisCommentSelectedEventHandlers,
-                                                                          HTAnalysisExpandEvent.HasHTAnalysisExpandEventHandlers {
+public class AnalysisColumnModel extends ColumnModel<Analysis> implements
+                                                              AnalysisNameSelectedEvent.HasAnalysisNameSelectedEventHandlers,
+                                                              AnalysisAppSelectedEvent.HasAnalysisAppSelectedEventHandlers,
+                                                              AnalysisCommentSelectedEvent.HasAnalysisCommentSelectedEventHandlers,
+                                                              HTAnalysisExpandEvent.HasHTAnalysisExpandEventHandlers {
 
     @Inject
     AnalysisColumnModel(final CheckBoxSelectionModel<Analysis> checkBoxSelectionModel,
@@ -49,35 +50,68 @@ public class AnalysisColumnModel extends ColumnModel<Analysis> implements Analys
         }
     }
 
-    public static List<ColumnConfig<Analysis, ?>> createColumnConfigList(final CheckBoxSelectionModel<Analysis> checkBoxSelectionModel,
-                                                                         final AnalysesView.Appearance appearance) {
+    public static List<ColumnConfig<Analysis, ?>>
+            createColumnConfigList(final CheckBoxSelectionModel<Analysis> checkBoxSelectionModel,
+                                   final AnalysesView.Appearance appearance) {
         ColumnConfig<Analysis, Analysis> colCheckBox = checkBoxSelectionModel.getColumn();
         ColumnConfig<Analysis, Analysis> name = new ColumnConfig<>(new IdentityValueProvider<Analysis>("name"),
-                                                                                     150);
-        ColumnConfig<Analysis, Analysis> comment = new ColumnConfig<>(new IdentityValueProvider<Analysis>("description"), 30);
-        ColumnConfig<Analysis, Analysis> app = new ColumnConfig<>(new IdentityValueProvider<Analysis>("app_name"), 100);
-        ColumnConfig<Analysis, Analysis> startDate = new ColumnConfig<>(new IdentityValueProvider<Analysis>("startdate"), 125);
-        ColumnConfig<Analysis, Analysis> endDate = new ColumnConfig<>(new IdentityValueProvider<Analysis>("enddate"), 125);
+                                                                   150);
+        ColumnConfig<Analysis, Analysis> comment = new ColumnConfig<>(new IdentityValueProvider<Analysis>("description"),
+                                                                      30);
+        ColumnConfig<Analysis, Analysis> app = new ColumnConfig<>(new IdentityValueProvider<Analysis>("app_name"),
+                                                                  100);
+        ColumnConfig<Analysis, Analysis> startDate = new ColumnConfig<>(new IdentityValueProvider<Analysis>("startdate"),
+                                                                        125);
+        ColumnConfig<Analysis, Analysis> endDate = new ColumnConfig<>(new IdentityValueProvider<Analysis>("enddate"),
+                                                                      125);
         ColumnConfig<Analysis, String> status = new ColumnConfig<>(new ValueProvider<Analysis, String>() {
 
-            @Override
-            public String getValue(Analysis object) {
-                return object.getStatus();
-            }
+                                                                       @Override
+                                                                       public String
+                                                                               getValue(Analysis object) {
+                                                                           return object.getStatus();
+                                                                       }
 
-            @Override
-            public void setValue(Analysis object, String value) {
-                object.setStatus(value);
-            }
+                                                                       @Override
+                                                                       public void
+                                                                               setValue(Analysis object,
+                                                                                        String value) {
+                                                                           object.setStatus(value);
+                                                                       }
 
-            @Override
-            public String getPath() {
-                return "status";
-            }
-        }, 75);
+                                                                       @Override
+                                                                       public String getPath() {
+                                                                           return "status";
+                                                                       }
+                                                                   },
+                                                                   75);
+
+        ColumnConfig<Analysis, String> username = new ColumnConfig<>(new ValueProvider<Analysis, String>() {
+
+                                                                         @Override
+                                                                         public String
+                                                                                 getValue(Analysis object) {
+                                                                             return object.getUserName();
+                                                                         }
+
+                                                                         @Override
+                                                                         public void
+                                                                                 setValue(Analysis object,
+                                                                                          String value) {
+
+                                                                         }
+
+                                                                         @Override
+                                                                         public String getPath() {
+                                                                             return "username";
+                                                                         }
+                                                                     },
+                                                                     125);
 
         name.setHeader(appearance.name());
         name.setCell(new AnalysisNameCell());
+
+        username.setHeader("Owner");
 
         comment.setMenuDisabled(true);
         comment.setCell(new AnalysisCommentCell());
@@ -99,6 +133,7 @@ public class AnalysisColumnModel extends ColumnModel<Analysis> implements Analys
         List<ColumnConfig<Analysis, ?>> ret = Lists.newArrayList();
         ret.add(colCheckBox);
         ret.add(name);
+        ret.add(username);
         ret.add(comment);
         ret.add(app);
         ret.add(startDate);
@@ -108,22 +143,26 @@ public class AnalysisColumnModel extends ColumnModel<Analysis> implements Analys
     }
 
     @Override
-    public HandlerRegistration addAnalysisAppSelectedEventHandler(AnalysisAppSelectedEvent.AnalysisAppSelectedEventHandler handler) {
+    public HandlerRegistration
+            addAnalysisAppSelectedEventHandler(AnalysisAppSelectedEvent.AnalysisAppSelectedEventHandler handler) {
         return ensureHandlers().addHandler(AnalysisAppSelectedEvent.TYPE, handler);
     }
 
     @Override
-    public HandlerRegistration addAnalysisCommentSelectedEventHandler(AnalysisCommentSelectedEvent.AnalysisCommentSelectedEventHandler handler) {
+    public HandlerRegistration
+            addAnalysisCommentSelectedEventHandler(AnalysisCommentSelectedEvent.AnalysisCommentSelectedEventHandler handler) {
         return ensureHandlers().addHandler(AnalysisCommentSelectedEvent.TYPE, handler);
     }
 
     @Override
-    public HandlerRegistration addAnalysisNameSelectedEventHandler(AnalysisNameSelectedEvent.AnalysisNameSelectedEventHandler handler) {
+    public HandlerRegistration
+            addAnalysisNameSelectedEventHandler(AnalysisNameSelectedEvent.AnalysisNameSelectedEventHandler handler) {
         return ensureHandlers().addHandler(AnalysisNameSelectedEvent.TYPE, handler);
     }
 
     @Override
-    public HandlerRegistration addHTAnalysisExpandEventHandler(HTAnalysisExpandEvent.HTAnalysisExpandEventHandler handler) {
+    public HandlerRegistration
+            addHTAnalysisExpandEventHandler(HTAnalysisExpandEvent.HTAnalysisExpandEventHandler handler) {
         return ensureHandlers().addHandler(HTAnalysisExpandEvent.TYPE, handler);
     }
 }
