@@ -10,7 +10,7 @@
                de_logs_index.status != 201
   tags:
       - config
-      - config_kibana
+      - elk-kibana
 
 - name: index-pattern - de-error-logs
   uri: url="{{ i2_url }}" method=PUT
@@ -22,7 +22,7 @@
                de_error_logs_index.status != 201
   tags:
       - config
-      - config_kibana
+      - elk-kibana
 
 - name: index-pattern - de-metrics
   uri: url="{{ i3_url }}" method=PUT
@@ -34,7 +34,7 @@
                de_metrics_index.status != 201
   tags:
       - config
-      - config_kibana
+      - elk-kibana
 
 - name: set default index-pattern 
   uri: url="{{ i0_url }}" method=PUT
@@ -46,5 +46,5 @@
                default_index.status != 201
   tags:
       - config
-      - config_kibana
+      - elk-kibana
 

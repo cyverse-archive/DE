@@ -11,4 +11,4 @@
                top_25_user_activity.status != 201
   tags:
       - config
-      - config_kibana
+      - elk-kibana

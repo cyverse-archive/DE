@@ -10,5 +10,5 @@
                all_logged_job_submission.status != 201
   tags:
       - config
-      - config_kibana
+      - elk-kibana
 

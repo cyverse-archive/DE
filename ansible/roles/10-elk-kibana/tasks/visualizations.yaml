@@ -11,7 +11,7 @@
                upload_top_25_launched_apps.status != 201
   tags:
       - config
-      - config_kibana
+      - elk-kibana
 
 - name: visualization - upload Top 25 Users by App Submission
   uri: url="{{ v2_url }}" method=PUT
@@ -23,7 +23,7 @@
                upload_top_25_users_app_submission.status != 201
   tags:
       - config
-      - config_kibana
+      - elk-kibana
 
 - name: visualization - upload Top 25 Users by Login
   uri: url="{{ v3_url }}" method=PUT
@@ -35,7 +35,7 @@
                upload_top_25_users_login.status != 201
   tags:
       - config
-      - config_kibana
+      - elk-kibana
 
 - name: visualization - upload Top 25 Users by Sharing
   uri: url="{{ v4_url }}" method=PUT
@@ -47,7 +47,7 @@
                upload_top_25_users_sharing.status != 201
   tags:
       - config
-      - config_kibana
+      - elk-kibana
 
 - name: visualization - upload errors by service
   uri: url="{{ v5_url }}" method=PUT
@@ -59,7 +59,7 @@
                upload_errors_by_service.status != 201
   tags:
       - config
-      - config_kibana
+      - elk-kibana
 
 - name: visualization - total public app submission
   uri: url="{{ v6_url }}" method=PUT
@@ -71,7 +71,7 @@
                total_public_submission.status != 201
   tags:
       - config
-      - config_kibana
+      - elk-kibana
 
 - name: visualization - total public and private app submission
   uri: url="{{ v7_url }}" method=PUT
@@ -83,5 +83,5 @@
                total_public_private_submission.status != 201
   tags:
       - config
-      - config_kibana
+      - elk-kibana
 

@@ -1,0 +1,21 @@
+---
+# tasks file for elk-kibana
+
+- name: pull elk kibana image
+  shell: docker pull {{ elk.kibana.image_name }}
+  register: docker_pull_v
+  changed_when: docker_pull_v.stdout.find('Image is up to date') == -1
+  tags:
+      - docker_pull
+      - elk-kibana
+
+- name: Wait for Elasticsearch to come back
+  wait_for: host="{{elk_host}}" port="{{elk.elasticsearch.port}}" state=started
+  tags:
+      - elk-kibana
+      - config
+
+- include: visualizations.yaml 
+- include: searches.yaml
+- include: index-patterns.yaml
+- include: dashboards.yaml
