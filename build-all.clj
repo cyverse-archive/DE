@@ -62,18 +62,20 @@
 
 
 (defn print-shell-result
-  [result]
-  (when-not (zero? (:exit result))
-    (println "exit:" (:exit result)))
-  (when-not (string/blank? (:out result))
-    (println "stdout:")
-    (println (:out result)))
-  (when-not (string/blank? (:err result))
-    (println "error:")
-    (println (:err result)))
-  (when-not (zero? (:exit result))
-    (println "ERROR ENCOUNTERED, EXITING!!!")
-    (System/exit 1)))
+  [key result]
+  (locking *out*
+    (let [keyprefix (str key ": ")]
+      (when-not (zero? (:exit result))
+        (println keyprefix "exit:" (:exit result)))
+      (when-not (string/blank? (:out result))
+        (println keyprefix "stdout:")
+        (println (:out result)))
+      (when-not (string/blank? (:err result))
+        (println keyprefix "error:")
+        (println (:err result)))
+      (when-not (zero? (:exit result))
+        (println keyprefix "ERROR ENCOUNTERED, EXITING!!!")
+        (System/exit 1)))))
 
 
 ;;; Multi-methods for installations
@@ -87,23 +89,23 @@
   [project-map]
   (let [path-to-project (:path project-map)]
     (sh/with-sh-dir path-to-project
-      (println ">> Installing" path-to-project)
-      (print-shell-result (sh/sh "lein" "clean"))
-      (print-shell-result (sh/sh "lein" "install")))))
+      (locking *out* (println ">> Installing" path-to-project))
+      (print-shell-result path-to-project (sh/sh "lein" "clean"))
+      (print-shell-result path-to-project (sh/sh "lein" "install")))))
 
 
 (defmethod install :mvn
   [project-map]
   (let [path-to-project (:path project-map)]
     (sh/with-sh-dir path-to-project
-      (println ">> Installing" path-to-project)
-      (print-shell-result (sh/sh "mvn" "clean"))
-      (print-shell-result (sh/sh "mvn" "install")))))
+      (locking *out* (println ">> Installing" path-to-project))
+      (print-shell-result path-to-project (sh/sh "mvn" "clean"))
+      (print-shell-result path-to-project (sh/sh "mvn" "install")))))
 
 
 (defmethod install :default
   [project-map]
-  (println ">> Don't know how to install" (:path project-map)))
+  (locking *out* (println ">> Don't know how to install" (:path project-map))))
 
 
 ;;; Multi-methods for builds
@@ -117,9 +119,9 @@
   [project-map]
   (let [path-to-project (:path project-map)]
     (sh/with-sh-dir path-to-project
-      (println ">> Building" path-to-project)
-      (print-shell-result (sh/sh "lein" "clean"))
-      (print-shell-result (sh/sh "lein" "uberjar")))))
+      (locking *out* (println ">> Building" path-to-project))
+      (print-shell-result path-to-project (sh/sh "lein" "clean"))
+      (print-shell-result path-to-project (sh/sh "lein" "uberjar")))))
 
 
 (defmethod build :kifshare
@@ -127,39 +129,39 @@
   (let [path-to-project (:path project-map)]
     (sh/with-sh-dir
      path-to-project
-     (println ">> Building" path-to-project)
-     (print-shell-result (sh/sh "grunt" "--version"))
-     (print-shell-result (sh/sh "npm" "--version"))
-     (print-shell-result (sh/sh "npm" "install"))
-     (print-shell-result (sh/sh "grunt" "clean-all"))
-     (print-shell-result (sh/sh "lein" "uberjar")))))
+     (locking *out* (println ">> Building" path-to-project))
+     (print-shell-result path-to-project (sh/sh "grunt" "--version"))
+     (print-shell-result path-to-project (sh/sh "npm" "--version"))
+     (print-shell-result path-to-project (sh/sh "npm" "install"))
+     (print-shell-result path-to-project (sh/sh "grunt" "clean-all"))
+     (print-shell-result path-to-project (sh/sh "lein" "uberjar")))))
 
 
 (defmethod build :cmdtar
   [project-map]
   (let [path-to-project (:path project-map)]
     (sh/with-sh-dir path-to-project
-      (println ">> Building iplant-cmdtar project" path-to-project)
-      (print-shell-result (sh/sh "lein" "clean"))
-      (print-shell-result (sh/sh "lein" "uberjar"))
-      (print-shell-result (sh/sh "lein" "iplant-cmdtar")))))
+      (locking *out* (println ">> Building iplant-cmdtar project" path-to-project))
+      (print-shell-result path-to-project (sh/sh "lein" "clean"))
+      (print-shell-result path-to-project (sh/sh "lein" "uberjar"))
+      (print-shell-result path-to-project (sh/sh "lein" "iplant-cmdtar")))))
 
 
 (defmethod build :mvn
   [project-map]
   (let [path-to-project (:path project-map)]
     (sh/with-sh-dir path-to-project
-      (println ">> Building Java project" path-to-project)
-      (print-shell-result (sh/sh "mvn" "clean"))
-      (print-shell-result (sh/sh "mvn" "build")))))
+      (locking *out* (println ">> Building Java project" path-to-project))
+      (print-shell-result path-to-project (sh/sh "mvn" "clean"))
+      (print-shell-result path-to-project (sh/sh "mvn" "build")))))
 
 
 (defmethod build :shell
   [project-map]
   (let [path-to-project (:path project-map)]
     (sh/with-sh-dir path-to-project
-      (println ">> Building shell project" path-to-project)
-      (print-shell-result (sh/sh "./build.sh")))))
+      (locking *out* (println ">> Building shell project" path-to-project))
+      (print-shell-result path-to-project (sh/sh "./build.sh")))))
 
 
 (defmethod build :default
@@ -184,28 +186,34 @@
 
 
 (defn- build-projects
-  [projects]
-  (doseq [k (keys projects)]
-    (build (get projects k)))
-  (println ""))
+  ([projects]
+   (build-projects projects false))
+  ([projects parallel?]
+   (if parallel?
+       (doall (pmap
+         #(build (get projects %))
+         (keys projects)))
+       (doseq [k (keys projects)]
+         (build (get projects k))))
+  (println "")))
 
 
 (defn build-databases
-  []
-  (println "> Building the databases")
-  (build-projects dbs))
+  [opts]
+  (println "> Building the databases" (when (:parallel opts) " in parallel"))
+  (build-projects dbs (:parallel opts)))
 
 
 (defn build-services
-  []
-  (println "> Building the services")
-  (build-projects services))
+  [opts]
+  (println "> Building the services" (when (:parallel opts) " in parallel"))
+  (build-projects services (:parallel opts)))
 
 
 (defn build-tools
-  []
-  (println "> Building tools")
-  (build-projects tools))
+  [opts]
+  (println "> Building tools" (when (:parallel opts) " in parallel"))
+  (build-projects tools (:parallel opts)))
 
 
 (defn build-libs
@@ -228,7 +236,7 @@
   [project-map]
   (let [target-path (path-join (:path project-map) "target")]
     (println ">> Copying builds from" target-path "to builds directory.")
-    (print-shell-result (bash-cmd (str "mv " target-path "/*.jar " "builds")))))
+    (print-shell-result (str "copy " target-path) (bash-cmd (str "mv " target-path "/*.jar " "builds")))))
 
 
 (defn move-cmdtar-build
@@ -237,7 +245,7 @@
   (let [path-to-project (:path project-map)
         target-path     (path-join path-to-project "target")]
     (println ">> Copying any cmdtars from" path-to-project "to builds directory.")
-    (print-shell-result (bash-cmd (str "mv " target-path "/*.tar.gz " "builds")))))
+    (print-shell-result path-to-project (bash-cmd (str "mv " target-path "/*.tar.gz " "builds")))))
 
 
 (defn move-database-build
@@ -245,7 +253,7 @@
   [project-map]
   (let [path-to-project (:path project-map)]
     (println ">> Copying builds from" path-to-project "to builds directory.")
-    (print-shell-result (sh/sh "bash" "-c" (str "mv " path-to-project "/*.tar.gz " "builds")))))
+    (print-shell-result path-to-project (sh/sh "bash" "-c" (str "mv " path-to-project "/*.tar.gz " "builds")))))
 
 
 (defn- archive-project
@@ -310,9 +318,9 @@
   []
   (when (fs/exists? "builds")
     (println ">> Cleaning out builds directory")
-    (print-shell-result (sh/sh "rm" "-r" "builds")))
+    (print-shell-result "cleaning builds" (sh/sh "rm" "-r" "builds")))
   (println ">> Creating builds directory")
-  (print-shell-result (sh/sh "mkdir" "builds")))
+  (print-shell-result "creating builds" (sh/sh "mkdir" "builds")))
 
 
 (defn do-libs
@@ -331,21 +339,21 @@
 
 (defn do-services
   [opts]
-  (build-services)
+  (build-services opts)
   (if (:archive opts)
     (archive-services opts)))
 
 
 (defn do-tools
   [opts]
-  (build-tools)
+  (build-tools opts)
   (if (:archive opts)
     (archive-tools opts)))
 
 
 (defn do-databases
   [opts]
-  (build-databases)
+  (build-databases opts)
   (if (:archive opts)
     (archive-databases opts)))
 
@@ -365,6 +373,7 @@
    args
    ["-h" "--help" "Show help." :default false :flag true]
    ["-b" "--build-number" "Assigns a build number" :default nil]
+   ["-p" "--parallel" "Build in parallel?" :default false :flag true]
    ["-a" "--archive" "Archive builds?" :default false :flag true]))
 
 
