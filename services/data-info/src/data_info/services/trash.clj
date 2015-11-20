@@ -134,22 +134,33 @@
           (recur (inc attempts))
           (inc-path attempts))))))
 
+(defn- find-extant-parent
+  [cm path]
+  (let [parent (ft/dirname path)]
+    (if (exists? cm parent)
+      parent
+      (recur cm parent))))
+
 (defn- restore-parent-dirs
   [cm user path]
   (log/warn "restore-parent-dirs" (ft/dirname path))
 
   (when-not (exists? cm (ft/dirname path))
-    (mkdirs cm (ft/dirname path))
-    (log/warn "Created " (ft/dirname path))
+    (let [extant-parent (find-extant-parent cm path)]
+      (log/warn "Already-existing parent dir for " path " is " extant-parent)
+      (mkdirs cm (ft/dirname path))
+      (log/warn "Created " (ft/dirname path))
 
-    (loop [parent (ft/dirname path)]
-      (log/warn "restoring path" parent)
-      (log/warn "user parent path" user)
+      (loop [parent (ft/dirname path)]
+        (log/warn "restoring path" parent)
+        (log/warn "user parent path" user)
 
-      (when (and (not= parent (paths/user-home-dir user)) (not (owns? cm user parent)))
-        (log/warn (str "Restoring ownership of parent dir: " parent))
-        (set-owner cm parent user)
-        (recur (ft/dirname parent))))))
+        (when (and (not= parent extant-parent)
+                   (not= parent (paths/user-home-dir user))
+                   (not (owns? cm user parent)))
+          (log/warn (str "Giving ownership to " user " of parent dir: " parent))
+          (set-owner cm parent user)
+          (recur (ft/dirname parent)))))))
 
 (defn- restore-path
   [{:keys [user paths user-trash]}]
