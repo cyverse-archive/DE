@@ -1,0 +1,16 @@
+---
+# tasks file for cfg-docker-pull
+#
+
+- debug: msg="Pulling the {{docker_user}}/{{image_name}}:{{image_tag}}"
+  tags:
+      - docker_pull
+
+- name: pull the {{image_name}}:{{image_tag}} image
+  shell: "docker pull {{docker_user}}/{{image_name}}:{{image_tag}}"
+  register: docker_pull_v
+  changed_when: docker_pull_v.stdout.find('Image is up to date') == -1
+  when: "'{{group_name}}' in group_names"
+  tags:
+      - docker_pull
+

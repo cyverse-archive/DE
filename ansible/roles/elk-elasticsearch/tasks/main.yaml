@@ -6,31 +6,29 @@
   register: docker_pull_v
   changed_when: docker_pull_v.stdout.find('Image is up to date') == -1
   tags:
-      - docker_pull
       - elk-elasticsearch
+      - docker_pull
 
 - name: create {{elk.conf_dir}}
   file: path={{elk.conf_dir}} owner=iplant group=iplant mode=0644 state=directory
   tags: 
-      - config
       - elk-elasticsearch
+      - config
 
 - name: place elasticsearch config files
   template: src=elasticsearch.yml.j2 dest="{{elk.conf_dir}}/elasticsearch.yml" group=root owner=root mode=0664
   register: config_file_v
   tags:
-      - config
       - elk-elasticsearch
+      - config
 
-  # Only restart if service file or config file changed, or if the image has been updated.
+  # Only restart if service file or config file changed.
 - name: restart elasticsearch service
   service: name={{elk.elasticsearch.service_name}} state=restarted
-  when: config_file_v.changed or 
-        docker_pull_v.changed
+  when: config_file_v.changed 
   tags:
       - elk-elasticsearch
       - service_restart
-      - docker_pull
 
 - name: Wait for ES to come back
   wait_for: host="{{elk_host}}" port="{{elk.elasticsearch.port}}" state=started
