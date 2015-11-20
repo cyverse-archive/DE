@@ -41,7 +41,7 @@
 
 - name: restart docker
   sudo: yes
-  service: name=docker state=started enabled=yes
+  service: name=docker state=restarted enabled=yes
   tags: 
       - restart_docker
 
