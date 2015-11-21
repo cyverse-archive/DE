@@ -5,15 +5,28 @@
   sudo: true
   shell: docker pull {{docker.user}}/facepalm:{{docker.tag}}
   when: (ansible_distribution == "CentOS" and
-        (ansible_distribution_major_version == "6" or ansible_distribution_major_version == "7"))
+         ansible_distribution_major_version == "7")
 
 - name: init/update the database with facepalm docker container
   sudo: true
   shell: docker run --rm -v ~/.pgpass:/root/.pgpass {{docker.user}}/facepalm:{{docker.tag}} -m {{fmode}} {{db_version_flag|default('')}} -h {{curr_db_host}} -p {{curr_db_port}} -d {{curr_db_name}} -U {{curr_db_user}} -A {{curr_db_admin}} {{tgz_flag}}
   register: facepalm_output
   when: (ansible_distribution == "CentOS" and
-        (ansible_distribution_major_version == "6" or ansible_distribution_major_version == "7"))
+         ansible_distribution_major_version == "7" and
+         facepalm_proxy_host == None)
+
+- name: init/update the database with facepalm docker container using an HTTP proxy
+  sudo: true
+  shell: docker run --rm -v ~/.pgpass:/root/.pgpass {{docker.user}}/facepalm:{{docker.tag}} -m {{fmode}} {{db_version_flag|default('')}} -h {{curr_db_host}} -p {{curr_db_port}} -d {{curr_db_name}} -U {{curr_db_user}} -A {{curr_db_admin}} --proxy-host {{facepalm_proxy_host}} --proxy-port {{facepalm_proxy_port}} {{tgz_flag}}
+  register: facepalm_output_with_proxy
+  when: (ansible_distribution == "CentOS" and
+         ansible_distribution_major_version == "7" and
+         facepalm_proxy_host != None)
 
 - debug: var=facepalm_output.stdout_lines
 - debug: var=facepalm_output.warnings
 - debug: var=facepalm_output.stderr
+
+- debug: var=facepalm_output_with_proxy.stdout_lines
+- debug: var=facepalm_output_with_proxy.warnings
+- debug: var=facepalm_output_with_proxy.stderr
