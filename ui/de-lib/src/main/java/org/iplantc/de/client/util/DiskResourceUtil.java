@@ -377,7 +377,8 @@ public class DiskResourceUtil {
         if (obj == null) {
             return false;
         }
-        String info_type = obj.get("info-type").asString();
+
+        String info_type = obj.get(DiskResource.INFO_TYPE_KEY).asString();
         if (info_type == null || info_type.isEmpty()) {
             return false;
         }
@@ -411,10 +412,11 @@ public class DiskResourceUtil {
 
     public boolean isTreeTab(Splittable obj) {
         String infoType = getInfoType(obj);
-        return (infoType != null && (InfoType.NEXUS.toString().equals(infoType)
-                || InfoType.NEXML.toString().equals(infoType)
-                || InfoType.NEWICK.toString().equals(infoType) || InfoType.PHYLOXML.toString()
-                                                                                   .equals(infoType)));
+        return (infoType != null)
+                && (InfoType.NEXUS.toString().equals(infoType)
+                        || InfoType.NEXML.toString().equals(infoType)
+                        || InfoType.NEWICK.toString().equals(infoType) || InfoType.PHYLOXML.toString()
+                                                                                           .equals(infoType));
     }
 
     public boolean isGenomeVizTab(Splittable obj) {
@@ -424,8 +426,9 @@ public class DiskResourceUtil {
 
     public boolean isEnsemblVizTab(Splittable obj) {
         String infoType = getInfoType(obj);
-        return (infoType != null && infoType.equals(InfoType.BAM.toString())
-                || infoType.equals(InfoType.VCF.toString()) || infoType.equals(InfoType.GFF.toString()) || infoType.equals(InfoType.BED.toString()));
+        return (infoType != null) && infoType.equals(InfoType.BAM.toString())
+                || infoType.equals(InfoType.VCF.toString()) || infoType.equals(InfoType.GFF.toString())
+                || infoType.equals(InfoType.BED.toString());
     }
 
     public Splittable createStringPathListSplittable(List<HasPath> hasPathList) {
