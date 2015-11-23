@@ -1,0 +1,8 @@
+# View the README.md in the `01-systemd-tmp-files` role for details
+---
+- hosts: condor:condor-submission
+  sudo: yes
+  gather_facts: false
+  roles:
+      - 01-systemd-tmp-files
+
