@@ -14,4 +14,9 @@ D /tmp/*/ 1777 root root 30d
 # Create DE config dir
 d {{de_config_dir}} 0644 root root -
 
-
+## Copy exclusions from /usr/tmpfiles.d/tmp.conf
+# Exclude namespace mountpoints created with PrivateTmp=yes
+x /tmp/systemd-private-*
+x /var/tmp/systemd-private-*
+X /tmp/systemd-private-*/tmp
+X /var/tmp/systemd-private-*/tmp
