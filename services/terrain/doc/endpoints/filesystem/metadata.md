@@ -65,19 +65,16 @@ __Response__:
              "unit": "avu_unit"
         }
     ],
-    "metadata": [
-        {
-             "attr": "avu_name",
-             "value": "avu_value",
-             "unit": "avu_unit"
-        }
-    ]
+    "metadata": {...}
 }
 ```
 
+This `metadata` value is set with the response from the corresponding metadata service endpoint.
+Please see the metadata documentation for more information on the format of this object.
+
 __Curl Command__:
 
-    curl 'http://127.0.0.1:3000/secured/filesystem/metadata?proxyToken=notReal&path=/iplant/home/johnw/LICENSE.txt'
+    curl 'http://127.0.0.1:3000/secured/filesystem/$data_id/metadata?proxyToken=$(cas-ticket)'
 
 
 Setting Metadata
