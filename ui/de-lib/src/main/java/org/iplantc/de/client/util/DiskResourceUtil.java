@@ -45,8 +45,8 @@ public class DiskResourceUtil {
 
     }
 
-    public static DiskResourceUtil getInstance(){
-        if(INSTANCE == null) {
+    public static DiskResourceUtil getInstance() {
+        if (INSTANCE == null) {
             INSTANCE = new DiskResourceUtil();
         }
         return INSTANCE;
@@ -63,8 +63,10 @@ public class DiskResourceUtil {
             return path;
         }
 
-        LinkedList<String> split = Lists.newLinkedList(Splitter.on("/").trimResults().omitEmptyStrings()
-                .split(path));
+        LinkedList<String> split = Lists.newLinkedList(Splitter.on("/")
+                                                               .trimResults()
+                                                               .omitEmptyStrings()
+                                                               .split(path));
         if (split.size() > 0) {
             split.removeLast();
         }
@@ -82,8 +84,10 @@ public class DiskResourceUtil {
             return path;
         }
 
-        LinkedList<String> split = Lists.newLinkedList(Splitter.on("/").trimResults().omitEmptyStrings()
-                .split(path));
+        LinkedList<String> split = Lists.newLinkedList(Splitter.on("/")
+                                                               .trimResults()
+                                                               .omitEmptyStrings()
+                                                               .split(path));
 
         return split.removeLast();
     }
@@ -122,7 +126,6 @@ public class DiskResourceUtil {
 
         return Joiner.on(", ").join(parseNamesFromIdList(idList));
     }
-
 
     public boolean isOwner(Iterable<DiskResource> resources) {
         if (resources == null) {
@@ -181,11 +184,9 @@ public class DiskResourceUtil {
     }
 
     public boolean canUploadTo(DiskResource resource) {
-        return (resource instanceof Folder)
-                       && !(resource instanceof DiskResourceFavorite)
-                       && !(resource instanceof DiskResourceQueryTemplate)
-                       && (isOwner(resource)|| isWritable(resource))
-                       && !inTrash(resource);
+        return (resource instanceof Folder) && !(resource instanceof DiskResourceFavorite)
+                && !(resource instanceof DiskResourceQueryTemplate)
+                && (isOwner(resource) || isWritable(resource)) && !inTrash(resource);
     }
 
     public boolean inTrash(DiskResource resource) {
@@ -260,8 +261,9 @@ public class DiskResourceUtil {
         return paths;
     }
 
-    public <R extends HasPath> FastMap<TYPE> asStringPathTypeMap(Iterable<R> diskResourceList,
-                                                                        TYPE type) {
+    public <R extends HasPath>
+            FastMap<TYPE>
+            asStringPathTypeMap(Iterable<R> diskResourceList, TYPE type) {
         FastMap<TYPE> pathMap = new FastMap<>();
         for (R dr : diskResourceList) {
             pathMap.put(dr.getPath(), type);
@@ -293,14 +295,11 @@ public class DiskResourceUtil {
             if (size < 1024) {
                 return NumberFormat.getFormat("0").format(size) + " bytes";
             } else if (size < 1048576) {
-                return (NumberFormat
-                        .getFormat("0.0#").format(((size * 10) / 1024) / 10)) + " KB";
+                return (NumberFormat.getFormat("0.0#").format(((size * 10) / 1024) / 10)) + " KB";
             } else if (size < 1073741824) {
-                return (NumberFormat
-                        .getFormat("0.0#").format(((size * 10) / 1048576) / 10)) + " MB";
+                return (NumberFormat.getFormat("0.0#").format(((size * 10) / 1048576) / 10)) + " MB";
             } else {
-                return (NumberFormat
-                        .getFormat("0.0#").format(((size * 10) / 1073741824) / 10)) + " GB";
+                return (NumberFormat.getFormat("0.0#").format(((size * 10) / 1073741824) / 10)) + " GB";
             }
         } else {
             return null;
@@ -360,7 +359,9 @@ public class DiskResourceUtil {
             return false;
         }
 
-        return dr.getPermission().equals(PermissionValue.own) || dr.getPermission().equals(PermissionValue.write) || dr.getPermission().equals(PermissionValue.read);
+        return dr.getPermission().equals(PermissionValue.own)
+                || dr.getPermission().equals(PermissionValue.write)
+                || dr.getPermission().equals(PermissionValue.read);
     }
 
     public boolean isWritable(DiskResource dr) {
@@ -368,50 +369,63 @@ public class DiskResourceUtil {
             return false;
         }
 
-        return dr.getPermission().equals(PermissionValue.own) || dr.getPermission().equals(PermissionValue.write);
+        return dr.getPermission().equals(PermissionValue.own)
+                || dr.getPermission().equals(PermissionValue.write);
     }
 
-    public boolean isTreeInfoType(InfoType infoType){
-       return InfoType.NEXUS.equals(infoType)
-           || InfoType.NEXML.equals(infoType)
-           || InfoType.NEWICK.equals(infoType)
-           || InfoType.PHYLOXML.equals(infoType);
+    public boolean checkManifest(Splittable obj) {
+        if (obj == null) {
+            return false;
+        }
+        String info_type = obj.get("info-type").asString();
+        if (info_type == null || info_type.isEmpty()) {
+            return false;
+        }
+
+        return true;
     }
 
-    public boolean isGenomeVizInfoType(InfoType infoType){
+    public boolean isTreeInfoType(InfoType infoType) {
+        return InfoType.NEXUS.equals(infoType) || InfoType.NEXML.equals(infoType)
+                || InfoType.NEWICK.equals(infoType) || InfoType.PHYLOXML.equals(infoType);
+    }
+
+    public boolean isGenomeVizInfoType(InfoType infoType) {
         return InfoType.FASTA.equals(infoType);
     }
 
-    public boolean isEnsemblInfoType(InfoType infoType){
-        return InfoType.BAM.equals(infoType)
-            || InfoType.VCF.equals(infoType)
-            || InfoType.GFF.equals(infoType);
+    public boolean isEnsemblInfoType(InfoType infoType) {
+        return InfoType.BAM.equals(infoType) || InfoType.VCF.equals(infoType)
+                || InfoType.GFF.equals(infoType) || InfoType.BED.equals(infoType);
     }
 
     private String getInfoType(Splittable obj) {
-        if (obj == null) return null;
-
-        return obj.get(DiskResource.INFO_TYPE_KEY).asString();
+        if (obj == null)
+            return null;
+        if (checkManifest(obj)) {
+            return obj.get(DiskResource.INFO_TYPE_KEY).asString();
+        } else {
+            return null;
+        }
     }
 
     public boolean isTreeTab(Splittable obj) {
         String infoType = getInfoType(obj);
-        return (InfoType.NEXUS.toString().equals(infoType)
+        return (infoType != null && (InfoType.NEXUS.toString().equals(infoType)
                 || InfoType.NEXML.toString().equals(infoType)
-                || InfoType.NEWICK.toString().equals(infoType)
-                || InfoType.PHYLOXML.toString().equals(infoType));
+                || InfoType.NEWICK.toString().equals(infoType) || InfoType.PHYLOXML.toString()
+                                                                                   .equals(infoType)));
     }
 
     public boolean isGenomeVizTab(Splittable obj) {
         String infoType = getInfoType(obj);
-        return InfoType.FASTA.toString().equals(infoType);
+        return infoType != null && InfoType.FASTA.toString().equals(infoType);
     }
 
     public boolean isEnsemblVizTab(Splittable obj) {
         String infoType = getInfoType(obj);
-        return InfoType.BAM.toString().equals(infoType)
-               || InfoType.VCF.toString().equals(infoType)
-               || InfoType.GFF.toString().equals(infoType);
+        return (infoType != null && infoType.equals(InfoType.BAM.toString())
+                || infoType.equals(InfoType.VCF.toString()) || infoType.equals(InfoType.GFF.toString()) || infoType.equals(InfoType.BED.toString()));
     }
 
     public Splittable createStringPathListSplittable(List<HasPath> hasPathList) {
