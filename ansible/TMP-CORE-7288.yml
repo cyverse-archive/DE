@@ -89,6 +89,14 @@
       - service: name=iplant-groups.service state=stopped enabled=false
         ignore_errors: true
 
+- name: Stop jex-events.service
+  hosts: jexevents
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=jex-events.service state=stopped enabled=false
+        ignore_errors: true
+
 - name: Stop jexevents.service
   hosts: jexevents
   sudo: true
@@ -119,6 +127,14 @@
   gather_facts: false
   tasks:
       - service: name=monkey.service state=stopped enabled=false
+        ignore_errors: true
+
+- name: Stop notification-agent.service
+  hosts: notificationagent
+  sudo: true
+  gather_facts: false
+  tasks:
+      - service: name=notification-agent.service state=stopped enabled=false
         ignore_errors: true
 
 - name: Stop notificationagent.service
