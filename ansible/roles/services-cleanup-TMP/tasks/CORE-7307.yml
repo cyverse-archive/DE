@@ -5,3 +5,7 @@
   service: name=notification-agent.service state=stopped enabled=false
   ignore_errors: true
 
+- name: Remove notification-events service
+  file: path=/usr/lib/systemd/system/notification-events.service state=absent
+  ignore_errors: true
+
