@@ -1,9 +1,0 @@
----
-# tasks file for 01-systemd-tmp-files
-
-- name: Place de.conf tmpfiles.d configuration file
-  template: src=de.conf.j2 dest=/etc/tmpfiles.d/de.conf group=root owner=root mode=0644
-  tags:
-      - systemd
-      - systemd-tmpfiles
-

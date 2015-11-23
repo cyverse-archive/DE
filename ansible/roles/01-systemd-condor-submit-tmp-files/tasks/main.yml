@@ -1,0 +1,9 @@
+---
+# tasks file for 01-systemd-tmp-files
+
+- name: Place /etc/tmpfiles.d/de-condor-submit.conf tmpfiles.d configuration file
+  template: src=de-condor-submit.conf.j2 dest=/etc/tmpfiles.d/de-condor-submit.conf group=root owner=root mode=0644
+  tags:
+      - systemd
+      - systemd-tmpfiles
+
