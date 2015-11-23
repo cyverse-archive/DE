@@ -100,8 +100,8 @@
   (let [paths-request {:paths [path]}]
     (create-dirs params paths-request)
     (-> (st/do-stat params paths-request)
-        :paths
-        (get path))))
+        json/decode
+        (get-in ["paths" path]))))
 
 (defn- url-encoded?
   [string-to-check]
