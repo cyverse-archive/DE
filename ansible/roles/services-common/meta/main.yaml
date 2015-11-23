@@ -3,5 +3,5 @@
 
 dependencies:
     - { role: 01-systemd-de-target, when: "'docker-ready' in group_names", config_only: true }
-    - { role: 01-systemd-tmp-files, when: "'condor' in group_names or 'condor-submission' in group_names" }
+    - { role: 01-systemd-tmp-files, when: "'condor-submission' in group_names" }
 
