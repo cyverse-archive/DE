@@ -1,0 +1,7 @@
+---
+# tasks related to CORE-7307
+
+- name: Stop and disable notification-agent service
+  service: name=notification-agent.service state=stopped enabled=false
+  ignore_errors: true
+

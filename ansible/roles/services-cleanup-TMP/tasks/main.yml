@@ -3,6 +3,7 @@
 
 - include: CORE-7257.yml
 - include: CORE-7273.yml
+- include: CORE-7307.yml
 
 - name: Reload systemd
   shell: systemctl daemon-reload  
