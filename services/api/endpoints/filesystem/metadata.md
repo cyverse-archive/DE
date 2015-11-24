@@ -52,7 +52,6 @@ __Delegates to metadata__: `GET /filesystem/data/{data-id}/avus`
 __Request Query Parameters__:
 
 * proxyToken - A valid CAS ticket.
-* path - The path to the file or directory being operated on.
 
 __Response__:
 
