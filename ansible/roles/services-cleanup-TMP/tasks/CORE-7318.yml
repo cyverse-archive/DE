@@ -1,0 +1,23 @@
+---
+# tasks related to CORE-7318
+
+- name: Stop and disable kifshare service
+  service: name=kifshare.service state=stopped enabled=false
+  ignore_errors: true
+
+- name: Remove kifshare service
+  file: path=/usr/lib/systemd/system/kifshare.service state=absent
+  ignore_errors: true
+
+- name: Remove kifshare properties file
+  file: path=/etc/iplant/de/kifshare.properties state=absent
+  ignore_errors: true
+
+- name: Remove kifshare-logging.xml file
+  file: path=/etc/iplant/de/logging/kifshare-logging.xml state=absent
+  ignore_errors: true
+
+- name: Remove kifshare container
+  shell: docker rm -v kifshare
+  ignore_errors: true
+

@@ -106,7 +106,7 @@
         ignore_errors: true
 
 - name: Stop kifshare.service
-  hosts: kifshare
+  hosts: services
   sudo: true
   gather_facts: false
   tasks:
