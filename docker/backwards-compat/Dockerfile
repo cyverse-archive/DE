@@ -1147,6 +1147,7 @@ RUN bash -c "curl -L http://cpanmin.us | perl - --self-upgrade"
 RUN cpanm -n CPAN::Meta \
         Convert::Binary::C \
         readline \
+        Cairo \
         GD \
         GD::Graph \
         GD::Graph::smoothlines \
