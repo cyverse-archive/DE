@@ -1,5 +1,6 @@
 ---
-- hosts: systems
+- hosts: docker-ready
   sudo: true
   roles:
     - timezone
+
