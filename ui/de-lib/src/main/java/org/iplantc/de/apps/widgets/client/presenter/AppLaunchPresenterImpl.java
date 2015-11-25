@@ -11,6 +11,7 @@ import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
 import org.iplantc.de.client.models.apps.integration.JobExecution;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.services.AppTemplateServices;
+import org.iplantc.de.client.services.impl.models.AnalysisSubmissionResponse;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
@@ -21,6 +22,7 @@ import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsDisplayMessages;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsErrorMessages;
 
+import com.google.common.base.Joiner;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -28,6 +30,8 @@ import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
 
 import com.sencha.gxt.core.client.util.Format;
+
+import java.util.List;
 
 /**
  * 
@@ -115,7 +119,7 @@ public class AppLaunchPresenterImpl implements AppLaunchView.Presenter, RequestA
     }
 
     private void launchAnalysis(final AppTemplate at, final JobExecution je) {
-        atServices.launchAnalysis(at, je, new AsyncCallback<String>() {
+        atServices.launchAnalysis(at, je, new AsyncCallback<AnalysisSubmissionResponse>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -125,9 +129,17 @@ public class AppLaunchPresenterImpl implements AppLaunchView.Presenter, RequestA
             }
 
             @Override
-            public void onSuccess(String result) {
+            public void onSuccess(AnalysisSubmissionResponse result) {
                 IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(appsWidgetsDisplayMessages.launchAnalysisSuccess(je.getName())));
                 ensureHandlers().fireEvent(new AnalysisLaunchEvent(at));
+
+                if (result != null) {
+                    final List<String> missingPaths = result.getMissingPaths();
+                    if (missingPaths != null && !missingPaths.isEmpty()) {
+                        ErrorHandler.post(I18N.ERROR.diskResourcesDoNotExist(Joiner.on(", ")
+                                                                                   .join(missingPaths)));
+                    }
+                }
             }
         });
     }
