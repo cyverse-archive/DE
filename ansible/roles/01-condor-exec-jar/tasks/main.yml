@@ -1,5 +1,5 @@
 ---
-# tasks file for condor-exec-jar
+# tasks file for 01-condor-exec-jar
 
 - name: Place the systemd tmpfile
   sudo: yes
