@@ -5,6 +5,6 @@
     - role: docker
     - role: cron-stats
 
-- hosts: systems
+- hosts: services
   roles:
     - role: services-common
