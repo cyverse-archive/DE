@@ -21,7 +21,6 @@
       - elk-elasticsearch
       - config
 
-  # Only restart if service file or config file changed.
 - name: restart elasticsearch service
   service: name={{elk.elasticsearch.service_name}} state=restarted
   tags:
