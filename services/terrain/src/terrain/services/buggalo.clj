@@ -25,7 +25,7 @@
 
 (defn- metaurl-for
   "Builds the meta-URL for to use when saving tree files the database.  The SHA1 hash
-   of the contents of the tree file is used as the key in the database."
+  of the contents of the tree file is used as the key in the database."
   [sha1]
   (->> ["/riak/tree-urls" sha1]
        (map #(string/replace % #"^/|/$" ""))
@@ -67,7 +67,7 @@
 
 (defn- save-file
   "Saves the contents of an input stream to a file and returns the SHA1 hash of
-   the file contents."
+  the file contents."
   [contents infile]
   (let [digest   (MessageDigest/getInstance "SHA1")
         hex-byte #(Integer/toHexString (bit-and 0xff %))]
@@ -87,7 +87,7 @@
 
 (defn- get-existing-tree-urls
   "Obtains existing tree URLs for either a file stored in the iPlant data store
-   or a SHA1 hash obtained from the contents of a file."
+  or a SHA1 hash obtained from the contents of a file."
   ([sha1]
      (log/debug "searching for existing tree URLs for SHA1 hash" sha1)
      (get-tree-urls sha1))
@@ -109,11 +109,11 @@
   "Saves a tree file in the local file system."
   [dir index ^Phylogeny tree]
   (let [^PhylogenyWriter writer    (PhylogenyWriter/createPhylogenyWriter)
-                         tree-name (.getName tree)
-                         file-name (if (string/blank? tree-name)
-                                     (str "tree_" index ".tre")
-                                     (str tree-name ".tre"))
-                         out-file  (file dir file-name)]
+        tree-name (.getName tree)
+        file-name (if (string/blank? tree-name)
+                    (str "tree_" index ".tre")
+                    (str tree-name ".tre"))
+        out-file  (file dir file-name)]
     (.toNewHampshire writer tree false true out-file)
     out-file))
 
@@ -148,7 +148,7 @@
 
 (defn- get-and-save-tree-viewer-urls
   "Gets the tree-viewer URLs for a file and stores them via the tree-urls service.  If the username and path to the
-   file are also provided then a path containing the SHA1 will also be storeed in the AVUs for the file."
+  file are also provided then a path containing the SHA1 will also be storeed in the AVUs for the file."
   ([dir infile sha1]
      (let [urls (get-tree-viewer-urls dir infile)]
        (set-tree-urls sha1 urls)
@@ -186,13 +186,14 @@
   ([path]
      (tree-viewer-urls path (:shortUsername current-user) {}))
   ([path user {:keys [refresh]}]
-     (log/debug "obtaining tree URLs for user" user "and path" path)
-     (tree-urls-response
-      (if-let [existing-urls (and (not refresh) (get-existing-tree-urls user path))]
-        (build-response-map existing-urls)
-        (with-temp-dir-in dir (file "/tmp") "tv" temp-dir-creation-failure
-          (let [infile (file dir "data.txt")
-                body   (:body (fileio/download user path))
-                sha1   (save-file body infile)]
-            (or (and (not refresh) (get-existing-tree-urls sha1 user path))
-                (get-and-save-tree-viewer-urls path user dir infile sha1))))))))
+     (let [refresh (Boolean/parseBoolean refresh)]
+       (log/debug "obtaining tree URLs for user" user "and path" path)
+       (tree-urls-response
+        (if-let [existing-urls (and (not refresh) (get-existing-tree-urls user path))]
+          (build-response-map existing-urls)
+          (with-temp-dir-in dir (file "/tmp") "tv" temp-dir-creation-failure
+            (let [infile (file dir "data.txt")
+                  body   (:body (fileio/download user path))
+                  sha1   (save-file body infile)]
+              (or (and (not refresh) (get-existing-tree-urls sha1 user path))
+                  (get-and-save-tree-viewer-urls path user dir infile sha1)))))))))

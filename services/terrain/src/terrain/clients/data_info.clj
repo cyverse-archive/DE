@@ -235,7 +235,7 @@
 (defn get-tree-metaurl
   "Gets the URL used to get saved tree URLs."
   [user path]
-  (->> (mt/metadata-get user path)
+  (->> (mt/metadata-get user (uuid-for-path user path))
     (:metadata)
     (filter #(= (:attr %) "tree-urls"))
     (first)
