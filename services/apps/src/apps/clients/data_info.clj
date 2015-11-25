@@ -25,6 +25,16 @@
                  :content-type :json
                  :as           :stream}))))
 
+(defn get-paths-exist
+  [user paths]
+  (when (seq paths)
+    ((comp service/parse-json :body)
+      (http/post (data-info-url "existence-marker")
+                 {:query-params (secured-params user)
+                  :body         (cheshire/encode {:paths paths})
+                  :content-type :json
+                  :as           :stream}))))
+
 (defn get-file-contents
   [user path]
   (:body
