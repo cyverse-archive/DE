@@ -8,6 +8,8 @@
   hosts: elk
   sudo: true
   gather_facts: false
+  tags:
+      - elk
   roles:
     - role: notify-chat
       username: ELK STACK

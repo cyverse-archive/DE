@@ -2,6 +2,8 @@
 - name: Configure JEX
   hosts: jex
   sudo: yes
+  tags:
+      - jex
   roles:
       - 10-jex
 

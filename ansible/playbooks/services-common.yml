@@ -1,8 +1,11 @@
 ---
 # ansible-playbook -K services-common.yaml
 
-- hosts: systems
+- name: Perform common systems configuration
+  hosts: systems
   sudo: yes
   gather_facts: false
+  tags:
+      - config
   roles:
       - services-common

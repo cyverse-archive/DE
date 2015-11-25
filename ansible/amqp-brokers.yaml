@@ -1,9 +1,11 @@
 ---
 # TODO: Convert to role
-- hosts: amqp-brokers
+- name: Deploy AMQP Brokers
+  hosts: amqp-brokers
   sudo: true
   tags:
       - third_party
+      - amqp
   vars:
     rabbitmq_conf_tcp_listeners_port: "{{ amqp_broker.port }}"
 

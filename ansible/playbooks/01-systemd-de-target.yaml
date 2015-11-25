@@ -3,6 +3,9 @@
   hosts: docker-ready
   sudo: true
   gather_facts: false
+  tags:
+      - systemd
+      - de-target
   roles:
       - role: 01-systemd-de-target
 

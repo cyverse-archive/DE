@@ -5,6 +5,7 @@
   sudo:  true
   tags:
       - third_party
+      - elasticsearch
 
   vars:
     elasticsearch_version: 1.2.2

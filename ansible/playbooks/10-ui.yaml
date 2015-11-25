@@ -3,6 +3,8 @@
   hosts: ui
   sudo: yes
   gather_facts: false
+  tags: 
+      - ui
   roles:
       - role: 10-ui
 
