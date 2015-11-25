@@ -17,7 +17,6 @@
 
 - name: place elasticsearch config files
   template: src=elasticsearch.yml.j2 dest="{{elk.conf_dir}}/elasticsearch.yml" group=root owner=root mode=0664
-  register: config_file_v
   tags:
       - elk-elasticsearch
       - config
@@ -25,7 +24,6 @@
   # Only restart if service file or config file changed.
 - name: restart elasticsearch service
   service: name={{elk.elasticsearch.service_name}} state=restarted
-  when: config_file_v.changed 
   tags:
       - elk-elasticsearch
       - service_restart
