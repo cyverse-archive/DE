@@ -18,6 +18,7 @@
 ############################################
 - include: playbooks/services-common.yml
 - include: playbooks/01-systemd-de-target_down.yaml
+- include: playbooks/01-docker-cleanup.yaml
 
 ############################################
 # Condor      
