@@ -1,40 +1,64 @@
 ---
 
+- include: verify-PRE_DEPLOY.yaml
+
 - include: TMP-services-cleanup.yaml
 
-- include: playbooks/services-common.yml
-
-- name: Bring down DE target
-  hosts: docker-ready
-  sudo: True
-  gather_facts: false
-  roles:
-      - role: 01-systemd-de-target 
-        up: false
-
-- include: playbooks/rsyslog-config.yaml
-
-- include: deploy-backend.yaml
-
-- include: playbooks/10-ui.yaml
-
+############################################
+# Third-party      
+############################################
 - include: amqp-brokers.yaml
   when: not parasitic
 
 - include: deploy-irods-elasticsearch.yaml
   when: not parasitic
 
+############################################
+# Services Support
+############################################
+- include: playbooks/services-common.yml
+- include: playbooks/01-systemd-de-target_down.yaml
+
+############################################
+# Condor      
+############################################
+- include: playbooks/01-condor-exec-jar.yaml
+- include: playbooks/porklock.yaml
+
+############################################
+# Databases      
+############################################
+- include: db-migrations.yaml
+
+############################################
+# Services
+############################################
+  
+- include: playbooks/10-iplant-data-cfg.yaml
+- include: playbooks/10-jex.yaml
+- include: playbooks/10-services-cfg.yaml
+
+############################################
+# DE UI
+############################################
+- include: playbooks/10-ui.yaml
+
+############################################
+# Logging; ELK Stack
+############################################
+- include: elk-stack.yaml
+
+- include: playbooks/rsyslog-config.yaml
+- include: playbooks/10-logstash-forwarder.yaml
+
+############################################
+# Systems
+############################################
 - include: systems.yaml
   vars:
     reboot: true
 
-- name: Restart DE target
-  hosts: docker-ready
-  sudo: True
-  gather_facts: false
-  roles:
-      - role: 01-systemd-de-target 
-        up: true
+- include: playbooks/01-systemd-de-target_up.yaml
 
 - include: verify-POST_DEPLOY.yaml
 
