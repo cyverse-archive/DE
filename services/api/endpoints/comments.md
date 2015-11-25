@@ -1,3 +1,9 @@
+---
+layout: page
+title: DE API Documentation
+root: ../../../
+---
+
 This document describes the comments resource.
 
 A _comment_ is something that a user records about a given app, file, or folder.

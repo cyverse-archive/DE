@@ -8,6 +8,13 @@ root: ../../
 
 Terrain provides the primary point of communication between the Discovery Environment (DE) UI and backend services. It's charged with two primary tasks: to handle authentication and authorization for endpoints that require it, and to orchestrate calls to other lower-level services.
 
+### Additional Documentation
+
+* [Endpoints](endpoints)
+* [Errors](errors.html)
+* [Schema](schema.html)
+* [Endpoint Index](endpoint-index.html)
+
 ### Authentication
 
 Authentication to the DE services is currently handled by passing signed JSON Web Tokens (JWTs) in the custom HTTP header, `X-Iplant-De-Jwt`, in each call to the service. The JWT payload used by the DE is structured as follows:

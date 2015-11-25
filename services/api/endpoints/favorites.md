@@ -1,3 +1,9 @@
+---
+layout: page
+title: DE API Documentation
+root: ../../../
+---
+
 This document describes the favorites resource.
 
 A _favorite_ is something that a user has decided is important enough that it should be more readily

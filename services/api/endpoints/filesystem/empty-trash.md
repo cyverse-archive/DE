@@ -1,3 +1,9 @@
+---
+layout: page
+title: DE API Documentation
+root: ../../../../
+---
+
 Emptying a User's Trash Directory
 ---------------------------------
 __URL Path__: /secured/filesystem/trash

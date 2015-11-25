@@ -1,3 +1,9 @@
+---
+layout: page
+title: DE API Documentation
+root: ../../
+---
+
 # Errors
 
 If a service call causes an exception that is not caught by the service itself

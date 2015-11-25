@@ -1,3 +1,9 @@
+---
+layout: page
+title: DE API Documentation
+root: ../../../../
+---
+
 File/Directory existence
 ------------------------
 The /exists endpoint allows the caller to check for the existence of a set of files. The following is an example call to the exists endpoint:

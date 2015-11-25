@@ -1,3 +1,9 @@
+---
+layout: page
+title: DE API Documentation
+root: ../../../../
+---
+
 This document describes the endpoints used to performing searches of user data.
 
 # Table of Contents
@@ -332,4 +338,3 @@ A successful response has no additional fields.
 $ curl -X POST http://localhost:8888/admin/filesystem/index?proxyToken=$(cas-ticket) \
 > | python -mjson.tool
 ```
-

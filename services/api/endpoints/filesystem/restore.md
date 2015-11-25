@@ -1,3 +1,9 @@
+---
+layout: page
+title: DE API Documentation
+root: ../../../../
+---
+
 Restoring a file or directory from a user's trash
 -------------------------------------------------
 

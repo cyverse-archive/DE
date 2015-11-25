@@ -1,3 +1,9 @@
+---
+layout: page
+title: DE API Documentation
+root: ../../../
+---
+
 # Table of Contents
 
 * [Collaborator List Management Endpoints](#collaborator-list-management-endpoints)

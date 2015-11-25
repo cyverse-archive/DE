@@ -1,3 +1,9 @@
+---
+layout: page
+title: DE API Documentation
+root: ../../../../
+---
+
 Directory List (Non-Recursive)
 ------------------------------
 
@@ -152,7 +158,7 @@ __Response Body__:
                 "file-size": 0,
                 "hasSubDirs": true,
                 "id": "b4987bf4-e063-11e3-bfa5-6abdce5a08d5",
-                "infoType": null,                
+                "infoType": null,
                 "path": "/iplant/home/wregglej/asdf bar",
                 "label": "asdf bar",
                 "isFavorite" : false,
@@ -165,7 +171,7 @@ __Response Body__:
                 "file-size": 0,
                 "hasSubDirs": true,
                 "id" : "0d622cd8-df8a-11e3-bfa5-6abdce5a08d5",
-                "infoType": null,                
+                "infoType": null,
                 "path": "/iplant/home/wregglej/Find_Unique_Values_analysis1-2013-07-09-12-15-37.024",
                 "label": "Find_Unique_Values_analysis1-2013-07-09-12-15-37.024",
                 "isFavorite" : false,
@@ -178,7 +184,7 @@ __Response Body__:
                 "file-size": 0,
                 "hasSubDirs": true,
                 "id": "0d627292-df8a-11e3-bfa5-6abdce5a08d5",
-                "infoType": null,                
+                "infoType": null,
                 "path": "/iplant/home/wregglej/zaaaaaaaa",
                 "label": "zaaaaaaaa",
                 "isFavorite" : false,
@@ -187,7 +193,7 @@ __Response Body__:
         ],
         "hasSubDirs": true,
         "id": "16426b48-e128-11e3-9076-6abdce5a08d5",
-        "infoType": null,                
+        "infoType": null,
         "path": "/iplant/home/wregglej",
         "label": "wregglej",
         "isFavorite" : false,

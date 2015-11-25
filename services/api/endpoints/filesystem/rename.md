@@ -1,3 +1,9 @@
+---
+layout: page
+title: DE API Documentation
+root: ../../../../
+---
+
 Renaming a File or Directory
 ----------------------------
 __URL Path__: /secured/filesystem/rename
@@ -30,7 +36,3 @@ __Response__:
 __Curl Command__:
 
     curl -H "Content-Type:application/json" -d '{"source" : "/tempZone/home/wregglej/test3", "dest" : "/tempZone/home/wregglej/test2"}' http://127.0.0.1:3000/secured/filesystem/rename?proxyToken=notReal
-
-
-
-

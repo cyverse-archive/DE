@@ -1,3 +1,9 @@
+---
+layout: page
+title: DE API Documentation
+root: ../../../
+---
+
 # Table of Contents
 
 * [Phylogenetic Tree Rendering Endpoints](#phylogenetic-tree-rendering-endpoints)

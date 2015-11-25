@@ -1,3 +1,9 @@
+---
+layout: page
+title: DE API Documentation
+root: ../../../
+---
+
 This document describes the tags resource.
 
 A _tag_ is a user-defined label that can be attached to files and folders to relate them to each

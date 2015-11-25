@@ -1,3 +1,9 @@
+---
+layout: page
+title: DE API Documentation
+root: ../../../
+---
+
 # Table of Contents
 
 * [Miscellaneous Terrain Endpoints](#miscellaneous-terrain-endpoints)

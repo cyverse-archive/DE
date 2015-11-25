@@ -1,3 +1,9 @@
+---
+layout: page
+title: DE API Documentation
+root: ../../../
+---
+
 # File Type Endpoints
 
 NOTES: If a path appears in a query string parameter, URL encode it first.

@@ -1,3 +1,9 @@
+---
+layout: page
+title: DE API Documentation
+root: ../../../../
+---
+
 Viewing a Genome File in CoGe
 -----------------------------
 A genome file may be submitted to CoGe for viewing within their genome viewer.

@@ -1,3 +1,9 @@
+---
+layout: page
+title: DE API Documentation
+root: ../../../
+---
+
 # File IO
 
 Provides a REST-like API for uploading and downloading files to and from iRODS.

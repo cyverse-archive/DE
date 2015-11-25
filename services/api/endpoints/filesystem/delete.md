@@ -1,3 +1,9 @@
+---
+layout: page
+title: DE API Documentation
+root: ../../../../
+---
+
 Deleting Files and/or Directories
 ---------------------------------
 __URL Path__: /secured/filesystem/delete

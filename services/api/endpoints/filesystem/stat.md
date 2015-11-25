@@ -1,3 +1,9 @@
+---
+layout: page
+title: DE API Documentation
+root: ../../../../
+---
+
 File and Directory Status Information
 -------------------------------------
 
@@ -49,6 +55,3 @@ The "share-count" field is provided for both files and directories and lists the
 __Curl Command__:
 
     curl -H "Content-Type:application/json" -sd '{"paths":["/iplant/home/wregglej/BTSync.dmg"]}' http://services-2:31360/secured/filesystem/stat?proxyToken=notReal
-
-
-

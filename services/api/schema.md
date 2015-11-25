@@ -1,3 +1,9 @@
+---
+layout: page
+title: DE API Documentation
+root: ../../
+---
+
 Here are the definitions of the data records used to communicate through the endpoints.
 
 # Table of Contents

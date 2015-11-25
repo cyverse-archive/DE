@@ -1,3 +1,9 @@
+---
+layout: page
+title: DE API Documentation
+root: ../../../../
+---
+
 Moving Files and/or Directories
 --------------
 __URL Path__: /secured/filesystem/move
@@ -90,4 +96,3 @@ __Example ERR_TOO_MANY_PATHS Error Response__:
 __Curl Command__:
 
     curl -H "Content-Type:application/json" -d '{"source": "/tempZone/home/rods/test1","dest": "/tempZone/home/rods/test"}' http://127.0.0.1:3000/secured/filesystem/move-contents?proxyToken=notReal
-

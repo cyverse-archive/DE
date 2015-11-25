@@ -1,3 +1,9 @@
+---
+layout: page
+title: DE API Documentation
+root: ../../../../
+---
+
 Creating Tickets
 ----------------
 __URL Path__: /secured/filesystem/tickets
