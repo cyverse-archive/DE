@@ -5,7 +5,7 @@
   pre_tasks:
       - pause: prompt="Is postgress installed? And did you set the admin password?"
 
-- hosts: services
+- hosts: db-proxy
   roles:
     - services-common
 

@@ -1,6 +1,6 @@
 ---
 - name: Database migrations
-  hosts: services
+  hosts: db-proxy
   gather_facts: false
   tags:
       - databases
