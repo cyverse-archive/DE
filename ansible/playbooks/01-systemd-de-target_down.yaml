@@ -1,5 +1,5 @@
 ---
-- name: Configure Systemd DE Target
+- name: Bring down Systemd DE Target
   hosts: docker-ready
   sudo: true
   gather_facts: false
@@ -8,4 +8,5 @@
       - de-target
   roles:
       - role: 01-systemd-de-target
+        up: false
 
