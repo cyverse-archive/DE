@@ -10,7 +10,9 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/mitchellh/go-homedir"
+	"git"
+
+	"github.com/mitchellh/go-homedir.git"
 )
 
 var (
@@ -21,7 +23,6 @@ var (
 	externalBranch = flag.String("de-repo-branch", "dev", "The branch to checkout in the de repo")
 	imageName      = flag.String("docker-image", "discoenv/de-ansible:dev", "The docker image to run, presumably with ansible installed and ready to go.")
 	workingDir     = flag.String("working-dir", "~/.de-ansible", "The path to create the external and internal paths under")
-	git            string
 	docker         string
 	home           string
 	internalPath   string
@@ -35,54 +36,6 @@ const (
 
 func init() {
 	flag.Parse()
-}
-
-// Clone clones a git repo to a name
-func Clone(repo, name string) error {
-	cmd := exec.Command(git, "clone", repo, name)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
-}
-
-// CheckoutBranch cd's into repoPath and checks out the branch.
-func CheckoutBranch(repoPath, branch string) error {
-	curdir, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-	if err = os.Chdir(repoPath); err != nil {
-		return err
-	}
-	defer func() {
-		if err = os.Chdir(curdir); err != nil {
-			log.Fatal(err)
-		}
-	}()
-	cmd := exec.Command(git, "checkout", branch)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
-}
-
-// Pull cd's into repoPath and pulls the current branch.
-func Pull(repoPath string) error {
-	curdir, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-	if err = os.Chdir(repoPath); err != nil {
-		return err
-	}
-	defer func() {
-		if err = os.Chdir(curdir); err != nil {
-			log.Fatal(err)
-		}
-	}()
-	cmd := exec.Command(git, "pull")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
 }
 
 // MoveAnsible moves the ansible subdirectory to the external directory
@@ -257,7 +210,7 @@ func main() {
 		log.Fatal("--de-repo must be set")
 	}
 	var err error
-	git, err = exec.LookPath("git")
+	git, err := git.New()
 	if err != nil {
 		log.Fatal("git couldn't be found in your $PATH")
 	}
@@ -319,29 +272,29 @@ func main() {
 	}
 
 	// clone repos
-	if err = Clone(*internalRepo, internal); err != nil {
+	if err = git.Clone(*internalRepo, internal); err != nil {
 		log.Fatal(err)
 	}
 
-	if err = Clone(*deRepo, "DE"); err != nil {
+	if err = git.Clone(*deRepo, "DE"); err != nil {
 		log.Fatal(err)
 	}
 
 	// Checkout dev branches
-	if err = CheckoutBranch(internalPath, *internalBranch); err != nil {
+	if err = git.CheckoutBranch(internalPath, *internalBranch); err != nil {
 		log.Fatal(err)
 	}
 
-	if err = CheckoutBranch(dePath, *externalBranch); err != nil {
+	if err = git.CheckoutBranch(dePath, *externalBranch); err != nil {
 		log.Fatal(err)
 	}
 
 	// Pull the branchs
-	if err = Pull(internalPath); err != nil {
+	if err = git.Pull(internalPath); err != nil {
 		log.Fatal(err)
 	}
 
-	if err = Pull(dePath); err != nil {
+	if err = git.Pull(dePath); err != nil {
 		log.Fatal(err)
 	}
 
