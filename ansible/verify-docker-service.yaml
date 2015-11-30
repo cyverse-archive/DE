@@ -24,6 +24,10 @@
         shell: systemctl show -p Wants docker.service
         register: docker_wants
 
+      - name: docker.service ExecStart
+        shell: systemctl show -p ExecStart docker.service
+        register: docker_execstart
+
       - fail: msg="docker.service must be BindsTo network.service"
         when: docker_bindsto.stdout.find('network.service') == -1
 
@@ -48,4 +52,5 @@
       - fail: msg="docker.service must want network-online.target"
         when: docker_wants.stdout.find('network-online.target') == -1
 
-
+      - fail: msg="docker.service command line must include --exec-opt native.cgroupdriver=cgroupfs"
+        when: docker_execstart.stdout.find('--exec-opt native.cgroupdriver=cgroupfs') == -1
