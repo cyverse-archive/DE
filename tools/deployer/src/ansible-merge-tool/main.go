@@ -12,7 +12,7 @@ import (
 
 	"git"
 
-	"github.com/mitchellh/go-homedir.git"
+	"github.com/mitchellh/go-homedir"
 )
 
 var (
