@@ -1,0 +1,14 @@
+# Set de_config_dir to the local directory.
+
+---
+- hosts: localhost
+  sudo: false
+  gather_facts: false
+  pre_tasks:
+    - name: create the output directory
+      file: path={{de_config_dir}} state=directory
+      tags:
+        - service_config
+
+  roles:
+    - 10-services-cfg
