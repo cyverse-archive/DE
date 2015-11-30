@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"git"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
 	"path"
@@ -128,131 +130,67 @@ func main() {
 		os.Exit(-1)
 	}
 
-	git, err := exec.LookPath("git")
+	git, err := git.New()
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
 
 	ansiblePlaybook, err := exec.LookPath("ansible-playbook")
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
 
 	ansible, err := exec.LookPath("ansible")
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
 
 	if _, err := os.Stat(internalDir); err == nil {
 		if err = os.RemoveAll(internalDir); err != nil {
-			fmt.Print(err)
-			os.Exit(-1)
+			log.Fatal(err)
 		}
 	}
 
 	if _, err := os.Stat(externalDir); err == nil {
 		if err = os.RemoveAll(externalDir); err != nil {
-			fmt.Print(err)
-			os.Exit(-1)
+			log.Fatal(err)
 		}
 	}
 
 	if _, err := os.Stat("DE"); err == nil {
 		if err = os.RemoveAll("DE"); err != nil {
-			fmt.Print(err)
-			os.Exit(-1)
+			log.Fatal(err)
 		}
 	}
 
 	fmt.Printf("Cloning the internal repo %s \n", *gitRepo)
-	cmd := exec.Command(git, "clone", *gitRepo, internalDir)
-	output, err := cmd.CombinedOutput()
-	fmt.Println(string(output[:]))
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+	if err = git.Clone(*gitRepo, internalDir); err != nil {
+		log.Fatal(err)
 	}
 
 	fmt.Printf("Cloning the external repo %s\n", *externalRepo)
-	cmd = exec.Command(git, "clone", *externalRepo, "DE")
-	output, err = cmd.CombinedOutput()
-	fmt.Println(string(output[:]))
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
-	}
-
-	origDir, err := os.Getwd()
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
-	}
-
-	fmt.Printf("cd'ing into %s\n", internalDir)
-	err = os.Chdir(internalDir)
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+	if err = git.Clone(*externalRepo, "DE"); err != nil {
+		log.Fatal(err)
 	}
 
 	fmt.Printf("Checking out the %s branch from the internal repo\n", *gitBranch)
-	cmd = exec.Command(git, "checkout", *gitBranch)
-	output, err = cmd.CombinedOutput()
-	fmt.Println(string(output[:]))
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+	if err = git.CheckoutBranch(internalDir, *gitBranch); err != nil {
+		log.Fatal(err)
 	}
 
 	fmt.Printf("Pulling the %s branch from the internal repo\n", *gitBranch)
-	cmd = exec.Command(git, "pull")
-	output, err = cmd.CombinedOutput()
-	fmt.Println(string(output[:]))
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
-	}
-
-	fmt.Printf("cd'ing into %s\n", origDir)
-	err = os.Chdir(origDir)
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
-	}
-
-	fmt.Printf("cd'ing into %s\n", "DE")
-	err = os.Chdir("DE")
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+	if err = git.Pull(internalDir); err != nil {
+		log.Fatal(err)
 	}
 
 	fmt.Printf("Checking out the %s branch from the external repo\n", *externalBranch)
-	cmd = exec.Command(git, "checkout", *externalBranch)
-	output, err = cmd.CombinedOutput()
-	fmt.Println(string(output[:]))
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+	if err = git.CheckoutBranch("DE", *externalBranch); err != nil {
+		log.Fatal(err)
 	}
 
 	fmt.Printf("Pulling the %s branch from the external repo\n", *externalBranch)
-	cmd = exec.Command(git, "pull")
-	output, err = cmd.CombinedOutput()
-	fmt.Println(string(output[:]))
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
-	}
-
-	fmt.Printf("cd'ing into %s\n", origDir)
-	err = os.Chdir(origDir)
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+	if err = git.Pull("DE"); err != nil {
+		log.Fatal(err)
 	}
 
 	fmt.Printf("Moving DE/ansible to %s", externalDir)
@@ -380,7 +318,7 @@ func main() {
 
 	pullVars := NewExtraVars(false, false, true, false, []string{*serviceVar}).String()
 	fmt.Printf("Updating %s/%s:%s with ansible\n", *account, *repo, *tag)
-	cmd = exec.Command(
+	cmd := exec.Command(
 		ansiblePlaybook,
 		"-e",
 		fmt.Sprintf("@%s", *secretFile),
@@ -395,7 +333,7 @@ func main() {
 		*playbook,
 	)
 	fmt.Printf("%s %s\n", cmd.Path, strings.Join(cmd.Args, " "))
-	output, err = cmd.CombinedOutput()
+	output, err := cmd.CombinedOutput()
 	fmt.Println(string(output[:]))
 	if err != nil {
 		fmt.Print(err)
