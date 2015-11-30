@@ -1,4 +1,5 @@
 # Set de_config_dir to the local directory.
+# Example: ansible-playbook -i inventories/docker-compose.cfg  --extra-vars "de_config_dir=$(pwd)/foo playbook=playbooks/local-services-cfg.yml owner=$(whoami) group=staff" --tags="service_config" single-role.yaml
 
 ---
 - hosts: localhost
