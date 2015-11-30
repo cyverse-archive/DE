@@ -75,11 +75,11 @@
 
 (defn- classpath-file
   [filename]
-  (-> (Thread/currentThread)
-      (.getContextClassLoader)
-      (.findResource filename)
-      (.toURI)
-      (file)))
+  (some-> (Thread/currentThread)
+          (.getContextClassLoader)
+          (.findResource filename)
+          (.toURI)
+          (file)))
 
 (defn- no-configuration-found
   [filename]
@@ -87,11 +87,7 @@
 
 (defn- find-configuration-file
   []
-  (let [conf-file "terrain.properties"]
-    (or (iplant-conf-dir-file conf-file)
-        (cwd-file conf-file)
-        (classpath-file conf-file)
-        (no-configuration-found conf-file))))
+  ((some-fn iplant-conf-dir-file cwd-file classpath-file no-configuration-found) "terrain.properties"))
 
 (defn load-configuration-from-file
   "Loads the configuration properties from a file."

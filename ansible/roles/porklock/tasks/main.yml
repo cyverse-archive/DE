@@ -3,13 +3,13 @@
   sudo: yes
   user: name=condor groups=docker
 
-- name: Update porklock
+- name: Pull porklock image
   sudo: yes
   shell: docker pull {{docker.user}}/porklock:{{docker.tag}}
   tags:
       - docker_pull
 
-- name: Update curl-wrapper
+- name: Pull curl-wrapper image
   sudo: yes
   shell: docker pull {{docker.user}}/curl-wrapper:{{docker.tag}}
   tags:

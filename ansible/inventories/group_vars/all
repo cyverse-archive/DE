@@ -3,11 +3,16 @@ global_config_dir: /etc/iplant
 de_config_dir: "{{ global_config_dir }}/de"
 local_cfg_dest: cfg_files
 
+# A proxy host and port to be used by the database initialization utility,
+# facepalm. This does not affect network requests not made by facepalm.
+facepalm_proxy_host: null
+facepalm_proxy_port: 80
+
 docker:
   log_driver: syslog
   tag: latest
   user: discoenv
-  version: 1.9.0
+  version: 1.9.1
   registry:
     host: "{{ groups['docker-registry'][0] }}"
     port: 5000
@@ -329,7 +334,7 @@ elasticsearch:
   port:
   base: "http://{{ groups['elasticsearch'][0] }}"
   scroll_size: 1000
-  cluster_name:
+  cluster_name: elasticsearch
   heap_size:
   network_http_port:
   network_transport_tcp_port:

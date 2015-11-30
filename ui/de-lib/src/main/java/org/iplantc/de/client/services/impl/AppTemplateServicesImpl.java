@@ -1,16 +1,36 @@
 package org.iplantc.de.client.services.impl;
 
-import static org.iplantc.de.shared.ServiceFacadeLoggerConstants.*;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
+import static org.iplantc.de.shared.ServiceFacadeLoggerConstants.ANALYSIS_ID;
+import static org.iplantc.de.shared.ServiceFacadeLoggerConstants.APP_EVENT;
+import static org.iplantc.de.shared.ServiceFacadeLoggerConstants.APP_ID;
+import static org.iplantc.de.shared.ServiceFacadeLoggerConstants.METRIC_TYPE_KEY;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PATCH;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PUT;
+
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
-import org.iplantc.de.client.models.apps.integration.*;
+import org.iplantc.de.client.models.apps.integration.AppTemplate;
+import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
+import org.iplantc.de.client.models.apps.integration.Argument;
+import org.iplantc.de.client.models.apps.integration.ArgumentGroup;
+import org.iplantc.de.client.models.apps.integration.ArgumentType;
+import org.iplantc.de.client.models.apps.integration.DataSource;
+import org.iplantc.de.client.models.apps.integration.DataSourceList;
+import org.iplantc.de.client.models.apps.integration.FileInfoType;
+import org.iplantc.de.client.models.apps.integration.FileInfoTypeList;
+import org.iplantc.de.client.models.apps.integration.JobExecution;
+import org.iplantc.de.client.models.apps.integration.SelectionItem;
+import org.iplantc.de.client.models.apps.integration.SelectionItemGroup;
 import org.iplantc.de.client.models.apps.refGenome.ReferenceGenome;
 import org.iplantc.de.client.models.apps.refGenome.ReferenceGenomeList;
 import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.client.services.AppBuilderMetadataServiceFacade;
 import org.iplantc.de.client.services.AppTemplateServices;
 import org.iplantc.de.client.services.converters.AppTemplateCallbackConverter;
+import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
+import org.iplantc.de.client.services.impl.models.AnalysisSubmissionResponse;
 import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.shared.ServiceFacadeLoggerConstants;
@@ -148,7 +168,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppBuilderM
     }
 
     @Override
-    public void launchAnalysis(AppTemplate at, JobExecution je, AsyncCallback<String> callback) {
+    public void launchAnalysis(AppTemplate at, JobExecution je, AsyncCallback<AnalysisSubmissionResponse> callback) {
         String address = ANALYSES;
         Splittable assembledPayload = doAssembleLaunchAnalysisPayload(at, je);
         HashMap<String, String> mdcMap = Maps.newHashMap();
@@ -158,9 +178,12 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppBuilderM
         mdcMap.put(ServiceFacadeLoggerConstants.ANALYSIS_OUTPUT_DIR, je.getOutputDirectory());
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, assembledPayload.getPayload());
-        deServiceFacade.getServiceData(wrapper,
-                                       mdcMap,
-                                       callback);
+        deServiceFacade.getServiceData(wrapper, mdcMap, new AsyncCallbackConverter<String, AnalysisSubmissionResponse>(callback) {
+            @Override
+            protected AnalysisSubmissionResponse convertFrom(String payload) {
+                return AutoBeanCodex.decode(factory, AnalysisSubmissionResponse.class, payload).as();
+            }
+        });
     }
 
     @Override

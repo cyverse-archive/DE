@@ -104,7 +104,10 @@
   {:id         (describe UUID "The ID of the submitted analysis.")
    :name       (describe String "The name of the submitted analysis.")
    :status     (describe String "The current status of the analysis.")
-   :start-date (describe String "The analysis start date as milliseconds since the epoch.")})
+   :start-date (describe String "The analysis start date as milliseconds since the epoch.")
+
+   (optional-key :missing-paths)
+   (describe [String] "Any paths parsed from an HT Analysis Path List that no longer exist.")})
 
 (defschema JexStepComponent
   {(optional-key :description)

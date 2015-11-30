@@ -67,11 +67,11 @@
 (defn set-conversions
   "Reads in the conversions from the unpacked build artifact. Set the conversions atom
    to the conversion map."
-  []
+  [opts]
   (let [conversion-dir (fs/file "conversions")]
     (when (.exists conversion-dir)
       (println "Loading conversions...")
-      (reset! conversions (cnv/conversion-map))
+      (reset! conversions (cnv/conversion-map opts))
       (println "Done loading conversions.")
       (println "Here are the loaded conversions: ")
       (dorun (map (partial println "   ") (sort (keys @conversions)))))))
@@ -99,6 +99,9 @@
        ["-f" "--filename" "An explicit path to the database tarball."
         :default "database.tar.gz"]
        ["-v" "--version" "The destination database version"]
+       ["--proxy-host" "Specifies an HTTP proxy host to use when resolving dependencies."]
+       ["--proxy-port" "Specifies an HTTP proxy port to use when resolving dependencies."
+        :default 80 :parse-fn to-int]
        ["--jenkins-base" "The base URL used to connect to Jenkins."
         :default default-jenkins-base]
        ["--jenkins-artifact-path" "The relative path to build artifacts in jenkins."
@@ -228,17 +231,26 @@
         (not (string/blank? job))     (jenkins-build-artifact-url opts)
         :else                         (options-missing :job :qa-drop)))
 
+(defn- add-proxy
+  "Adds proxy configuration settings to a request if a proxy was specified on the command line."
+  [cli-opts request-opts]
+  (when (:proxy-host cli-opts)
+    (assoc request-opts
+      :proxy-host (:proxy-host cli-opts)
+      :proxy-port (:proxy-port cli-opts))))
+
 (defn- get-remote-resource
   "Gets a remote resource using a URL."
-  [resource-url]
-  (client/get resource-url {:as               :stream
-                            :throw-exceptions false}))
+  [resource-url opts]
+  (client/get resource-url
+              (add-proxy opts {:as               :stream
+                               :throw-exceptions false})))
 
 (defn- get-build-artifact-from-url
   "Gets the build artifact from a URL."
   [opts]
   (let [artifact-url          (build-artifact-url opts)
-        {:keys [status body]} (get-remote-resource artifact-url)]
+        {:keys [status body]} (get-remote-resource artifact-url opts)]
     (if-not (< 199 status 300)
       (build-artifact-retrieval-failed status artifact-url))
     (with-open [in body]
@@ -290,7 +302,7 @@
 
 (defn- log-next-exception
   "Calls getNextException and logs the resulting exception for any SQL
-   exception in the cause stack."
+  exception in the cause stack."
   [e]
   (when-not (nil? e)
     (if (instance? SQLException e)
@@ -312,19 +324,19 @@
   "Applies the database initialization scripts to the database."
   []
   (try+
-    (dorun (map #(load-sql-files %) ["tables" "constraints" "views" "data" "functions"]))
-    (catch Exception e
-      (log-next-exception e)
-      (throw+))))
+   (dorun (map #(load-sql-files %) ["tables" "constraints" "views" "data" "functions"]))
+   (catch Exception e
+     (log-next-exception e)
+     (throw+))))
 
 (defn- initialize-database
   "Initializes the database using a database archive obtained from a well-known
-   location."
+  location."
   [opts]
   (with-temp-dir dir "-fp-" temp-directory-creation-failure
     (get-build-artifact opts)
     (unpack-build-artifact dir (:filename opts))
-    (set-conversions)
+    (set-conversions opts)
     (init-database opts)
     (transaction (apply-database-init-scripts))))
 
@@ -369,11 +381,11 @@
   (let [convert   (@conversions new-version)
         extra-cfg (:cfg-file (meta convert))]
     (transaction
-      (if extra-cfg
-        (convert @admin-db-spec (load-cfg opts extra-cfg))
-        (convert))
-      (insert version
-              (values {:version new-version})))))
+     (if extra-cfg
+       (convert @admin-db-spec (load-cfg opts extra-cfg))
+       (convert))
+     (insert version
+             (values {:version new-version})))))
 
 (defn- update-database
   "Converts the database schema from one DE version to another."
@@ -381,7 +393,7 @@
   (with-temp-dir dir "-fp-" temp-directory-creation-failure
     (get-build-artifact opts)
     (unpack-build-artifact dir (:filename opts))
-    (set-conversions)
+    (set-conversions opts)
     (let [versions (get-update-versions (get-current-db-version) (:version opts))]
       (validate-update-versions versions)
       (try+

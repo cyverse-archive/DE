@@ -20,6 +20,6 @@
                  [org.clojure/tools.logging "0.3.1"]
                  [org.hibernate/hibernate-core "3.6.10.Final"]
                  [org.hibernate/hibernate-ehcache "3.6.10.Final"]
-                 [org.iplantc/common-cli "5.0.0"]]
+                 [org.iplantc/common-cli "5.2.3.0"]]
   :main sharkbait.core
   :profiles {:uberjar {:aot :all}})

@@ -21,7 +21,7 @@
 - hosts: localhost
   vars:
     svce: "{{ service | default('terrain') }}"
-    config_template: "roles/deploy-service-cfg/templates/{{ svce }}.properties.j2"
+    config_template: "roles/cfg-service/templates/{{ svce }}.properties.j2"
     config_name: "{{ svce }}.properties"
   tasks:
   - debug: msg="writing {{ config_template }} to {{ de_config_dir }}/{{ config_name }}"

@@ -2,8 +2,11 @@
 # ansible-playbook -i inventories/... -K --tags "docker_pull" porklock.yaml
 #
 
-- hosts: condor
+- name: Deploy porklock
+  hosts: condor
   sudo: True
   gather_facts: false
+  tags:
+      - porklock
   roles:
     - porklock

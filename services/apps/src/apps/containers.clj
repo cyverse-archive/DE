@@ -588,22 +588,22 @@
   "Removes all existing container settings for the given tool-id, replacing them with the given settings."
   [tool-id
    overwrite-public
-   {:keys [id container_devices container_volumes container_volumes_from] :as settings}]
+   {:keys [container_devices container_volumes container_volumes_from] :as settings}]
   (when-not overwrite-public
     (validate-tool-not-public tool-id))
   (transaction
-    (let [img-id   (find-or-add-image-id (:image settings))
-          settings (assoc settings :tools_id tool-id)]
-      (delete container-settings (where {:id id}))
-      (add-settings settings)
+    (delete container-settings (where {:tools_id tool-id}))
+    (let [img-id      (find-or-add-image-id (:image settings))
+          settings    (assoc settings :tools_id tool-id)
+          settings-id (:id (add-settings settings))]
       (update-tool {:id tool-id :container_images_id img-id})
 
       (doseq [device container_devices]
-        (add-device id device))
+        (add-device settings-id device))
       (doseq [volume container_volumes]
-        (add-volume id volume))
+        (add-volume settings-id volume))
       (doseq [volume container_volumes_from]
-        (add-settings-volumes-from id volume))
+        (add-settings-volumes-from settings-id volume))
 
       (tool-container-info tool-id))))
 

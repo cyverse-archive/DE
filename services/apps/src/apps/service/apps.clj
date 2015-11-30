@@ -195,10 +195,9 @@
 
 (defn- format-job-submission-response
   [job-info]
-  {:id         (:id job-info)
-   :name       (:name job-info)
-   :status     (:status job-info)
-   :start-date (:startdate job-info)})
+  (-> job-info
+      (select-keys [:id :name :status :startdate :missing-paths])
+      (clojure.set/rename-keys {:startdate :start-date})))
 
 (defn submit-job
   [{username :shortUsername email :email :as user} submission]

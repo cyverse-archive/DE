@@ -112,15 +112,22 @@
       {:trash trash-dir
        :paths trash-list})))
 
+(defn- restore-to-homedir?
+  "Whether to restore a given file to the home directory.
+
+   This happens when the trash origin attribute is missing, or when the parent
+   directory exists but is not writeable by the current user."
+  [cm user p]
+  (or (not (attribute? cm p "ipc-trash-origin"))
+      (let [origin-parent (ft/dirname (:value (first (get-attribute cm p "ipc-trash-origin"))))]
+        (and (exists? cm origin-parent)
+             (not (is-writeable? cm user origin-parent))))))
+
 (defn- trash-origin-path
   [cm user p]
-  (if (attribute? cm p "ipc-trash-origin")
+  (if (not (restore-to-homedir? cm user p))
     (:value (first (get-attribute cm p "ipc-trash-origin")))
     (ft/path-join (paths/user-home-dir user) (ft/basename p))))
-
-(defn- restore-to-homedir?
-  [cm p]
-  (not (attribute? cm p "ipc-trash-origin")))
 
 (defn- restoration-path
   [cm user path]
@@ -175,7 +182,7 @@
           (let [retval (atom (hash-map))]
             (doseq [path paths]
               (let [fully-restored      (ft/rm-last-slash (restoration-path cm user path))
-                    restored-to-homedir (restore-to-homedir? cm path)]
+                    restored-to-homedir (restore-to-homedir? cm user path)]
                 (log/warn "Restoring " path " to " fully-restored)
 
                 (validators/path-not-exists cm fully-restored)

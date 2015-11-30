@@ -47,9 +47,10 @@
         {:source source :dest dest :user user}
         (do
           (validators/user-exists cm user)
-          (validators/path-exists cm source)
+          (validators/all-paths-exist cm [source (ft/dirname dest)])
           (validators/path-is-dir cm (ft/dirname dest))
           (validators/user-owns-path cm user source)
+          (validators/path-writeable cm user (ft/dirname dest))
           (validators/path-not-exists cm dest)
 
           (let [result (move cm source dest :user user :admin-users (cfg/irods-admins))]

@@ -100,8 +100,8 @@
   (let [paths-request {:paths [path]}]
     (create-dirs params paths-request)
     (-> (st/do-stat params paths-request)
-        :paths
-        (get path))))
+        json/decode
+        (get-in ["paths" path]))))
 
 (defn- url-encoded?
   [string-to-check]
@@ -235,7 +235,7 @@
 (defn get-tree-metaurl
   "Gets the URL used to get saved tree URLs."
   [user path]
-  (->> (mt/metadata-get user path)
+  (->> (mt/metadata-get user (uuid-for-path user path))
     (:metadata)
     (filter #(= (:attr %) "tree-urls"))
     (first)

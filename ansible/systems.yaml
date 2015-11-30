@@ -3,7 +3,8 @@
 #   reboot - A boolean used to indicate whether or not the playbook should reboot the servers. It
 #            defaults to false.
 
-- hosts: systems
+- name: Create dynamic inventories
+  hosts: systems
   sudo: true
   tags:
       - systems
@@ -18,7 +19,8 @@
     - group_by: key={{ ansible_distribution }}_{{ ansible_distribution_major_version }}
       changed_when: false
 
-- hosts: CentOS:RedHat
+- name: Upgrade system packages
+  hosts: CentOS:RedHat
   gather_facts: false
   sudo: true
   tags:
@@ -27,16 +29,8 @@
     - name: upgrade system packages
       yum: name=* state=latest
 
-- hosts: CentOS:RedHat:&builders
-  gather_facts: false
-  sudo: true
-  tags:
-      - systems
-  tasks:
-    - name: ensure tomcat owns /usr/src/redhat
-      file: path=/usr/src/redhat state=directory owner=tomcat recurse=true
-
-- hosts: CentOS:RedHat:&db
+- name: Ensure DB Starts on boot
+  hosts: CentOS:RedHat:&db
   gather_facts: false
   sudo: true
   tags:
@@ -44,14 +38,6 @@
   tasks:
     - name: ensure DE DBMS starts on boot
       service: name=postgresql-9.2 enabled=true
-
-- hosts: systems:!CentOS_7
-  gather_facts: false
-  sudo: true
-  tags:
-      - systems
-  roles:
-    - denyhosts
 
 - hosts: systems
   gather_facts: false
@@ -62,11 +48,15 @@
     - name: reboot server
       when: reboot|default(false)
       command: /sbin/shutdown -r +2
+      async: 0
+      poll: 0
+      ignore_errors: true
 
     - name: wait for server to stop
       sudo: false
       when: reboot|default(false)
       local_action: wait_for host="{{ inventory_hostname }}" port={{ ansible_ssh_port }} state=stopped
+      ignore_errors: true
 
     - name: verify server up
       sudo: false

@@ -4,6 +4,8 @@
   hosts: services
   sudo: true
   gather_facts: false
+  tags:
+      - services
   roles:
       - role: 10-services-cfg
 

@@ -3,6 +3,7 @@ package org.iplantc.de.client.models.apps.integration;
 import org.iplantc.de.client.models.apps.refGenome.ReferenceGenome;
 import org.iplantc.de.client.models.apps.refGenome.ReferenceGenomeList;
 import org.iplantc.de.client.models.errorHandling.SimpleServiceError;
+import org.iplantc.de.client.services.impl.models.AnalysisSubmissionResponse;
 
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanFactory;
@@ -41,4 +42,5 @@ public interface AppTemplateAutoBeanFactory extends AutoBeanFactory {
 
     AutoBean<SimpleServiceError> simpleServiceError();
 
+    AutoBean<AnalysisSubmissionResponse> analysisSubmissionResponse();
 }

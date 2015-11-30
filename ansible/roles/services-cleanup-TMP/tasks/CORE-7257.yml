@@ -3,15 +3,19 @@
 
 - name: Stop donkey
   service: name=donkey.service state=stopped
+  ignore_errors: true
 
 - name: Stop metadactyl
   service: name=metadactyl.service state=stopped
+  ignore_errors: true
 
 - name: Disable donkey
   service: name=donkey.service enabled=false
+  ignore_errors: true
 
 - name: Disable metadactyl
   service: name=metadactyl.service enabled=false
+  ignore_errors: true
 
 - name: Remove donkey service
   file: path=/usr/lib/systemd/system/donkey.service state=absent
@@ -38,5 +42,3 @@
 - name: Remove metadactyl container
   shell: docker rm -v metadactyl
   ignore_errors: true
-
-

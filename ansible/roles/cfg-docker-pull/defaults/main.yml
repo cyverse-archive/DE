@@ -1,0 +1,4 @@
+---
+# defaults file for cfg-docker-pull
+image_tag: "{{docker.tag | default(latest)}}"
+docker_user: "{{docker.user}}"

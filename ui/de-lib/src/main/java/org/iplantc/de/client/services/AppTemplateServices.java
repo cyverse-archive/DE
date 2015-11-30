@@ -4,6 +4,7 @@ import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.integration.AppTemplate;
 import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
 import org.iplantc.de.client.models.apps.integration.JobExecution;
+import org.iplantc.de.client.services.impl.models.AnalysisSubmissionResponse;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -51,7 +52,7 @@ public interface AppTemplateServices {
      * @param je contains necessary information for job submission
      * @param callback
      */
-    void launchAnalysis(AppTemplate at, JobExecution je, AsyncCallback<String> callback);
+    void launchAnalysis(AppTemplate at, JobExecution je, AsyncCallback<AnalysisSubmissionResponse> callback);
 
     /**
      * Retrieves an <code>AppTemplate</code> with all of the values from the given analysisId.

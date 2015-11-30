@@ -1,7 +1,13 @@
 FROM centos:5
 
-ADD https://dl.fedoraproject.org/pub/epel/epel-release-latest-5.noarch.rpm /
-RUN rpm -Uvh epel-release-latest-5.noarch.rpm
+RUN yum update -y && yum install -y \
+  curl \
+  && yum -y clean all
+
+RUN curl -O https://dl.fedoraproject.org/pub/epel/epel-release-latest-5.noarch.rpm \
+    && rpm -Uvh epel-release-latest-5.noarch.rpm \
+    && rm epel-release-latest-5.noarch.rpm
+
 COPY yum.repos.d/* /etc/yum.repos.d/
 ADD http://de.iplantcollaborative.org/dl/d/D293B8D0-00E6-4394-962F-E1B761B3992E/R-RM2-0.0-4.el5.noarch.rpm /rpms/
 ADD http://de.iplantcollaborative.org/dl/d/003F9900-6F84-4C51-82C2-0DDF4BE56F36/R-biglm-0.4-1.el5.1.x86_64.rpm /rpms/
@@ -1130,10 +1136,10 @@ zenity \
 zip \
 zlib \
 zlib-devel \
+&& yum -y clean all
 
-
-RUN yum install --nogpgcheck -y rpms/*.rpm
-RUN yum install -y gd gd-devel
+RUN yum install --nogpgcheck -y rpms/*.rpm && yum -y clean all
+RUN yum install -y gd gd-devel && yum -y clean all
 RUN tar -xzf /R-library.tar.gz && tar -xzf /python24-libs.tar.gz && tar -xzf /python26-libs.tar.gz
 
 # Parts of this are borrowed from https://registry.hub.docker.com/u/genomicpariscentre/bioperl/dockerfile/
@@ -1141,6 +1147,7 @@ RUN bash -c "curl -L http://cpanmin.us | perl - --self-upgrade"
 RUN cpanm -n CPAN::Meta \
         Convert::Binary::C \
         readline \
+        Cairo \
         GD \
         GD::Graph \
         GD::Graph::smoothlines \

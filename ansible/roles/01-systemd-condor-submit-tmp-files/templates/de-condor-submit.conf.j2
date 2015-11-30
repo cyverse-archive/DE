@@ -1,0 +1,19 @@
+# Discovery Environment tmpfiles.d configuration file.
+
+# See tmpfiles.d(5) for details
+
+# Clear /tmp dir on reboot
+D /tmp 1777 root root -
+
+# Clear analyses directories older than 10d
+D /tmp/*/*/ 1777 root root 10d
+
+# Clear user directories older than 30d
+D /tmp/*/ 1777 root root 30d
+
+## Copy exclusions from /usr/tmpfiles.d/tmp.conf
+# Exclude namespace mountpoints created with PrivateTmp=yes
+x /tmp/systemd-private-*
+x /var/tmp/systemd-private-*
+X /tmp/systemd-private-*/tmp
+X /var/tmp/systemd-private-*/tmp

@@ -3,14 +3,16 @@
 
 - debug: msg="Configuring {{service_name_short}} systemd {{unit_type}}"
   tags:
-      - systemd_config
+      - systemd
+      - config
 
 - name: Disable {{unit_type}}
   service: name={{ service_name }} enabled=false
   ignore_errors: true
   when: "'{{group_name}}' in group_names"
   tags:
-      - systemd_config
+      - systemd
+      - config
 
 - name: Place systemd unit file
   template: 
@@ -18,20 +20,23 @@
       dest: "{{dest}}" 
       group: "{{group}}" 
       owner: "{{owner}}" 
-      mode: "{{mode}}"
+      mode: 0644
   when: "'{{group_name}}' in group_names"
   tags:
-      - systemd_config
+      - systemd
+      - config
 
 - name: Reload systemd
   shell: systemctl daemon-reload
   when: "'{{group_name}}' in group_names"
   tags:
-      - systemd_config
+      - systemd
+      - config
 
 - name: Enable {{unit_type}}
   service: name={{ service_name }} enabled=true
   when: "systemd_enable|bool and '{{group_name}}' in group_names"
   tags:
-      - systemd_config
+      - systemd
+      - config
 

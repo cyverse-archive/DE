@@ -36,6 +36,8 @@
   hosts: elk
   sudo: yes
   gather_facts: false
+  tags:
+      - verify
   vars: 
       elk_ls_port: "-C INPUT -m state --state NEW -m tcp -p tcp --dport {{elk.logstash.port}} -j ACCEPT"
       elk_kibana_port: "-C INPUT -m state --state NEW -m tcp -p tcp --dport {{elk.kibana.port}} -j ACCEPT"
@@ -66,6 +68,8 @@
   hosts: services
   sudo: yes
   gather_facts: false
+  tags:
+      - verify
   vars:
       svc_ports: "-C INPUT -m state --state NEW -m tcp -p tcp --dport 31300:31399 -j ACCEPT"
   tasks:
@@ -80,6 +84,8 @@
   hosts: condor-submission
   sudo: yes
   gather_facts: false
+  tags:
+      - verify
   vars: 
       submission_ports_tcp:  "-C INPUT -m state --state NEW -m tcp -p tcp -s {{ condor_submission_ip_range }} -j ACCEPT"
       submission_ports_udp:  "-C INPUT -m state --state NEW -m udp -p udp -s {{ condor_submission_ip_range }} -j ACCEPT"
@@ -102,6 +108,8 @@
   hosts: condor
   sudo: yes
   gather_facts: false
+  tags:
+      - verify
   vars:
       condor_ports_tcp: "-C INPUT -m state --state NEW -m tcp -p tcp --dport 61440:65535 -j ACCEPT"
       condor_ports_udp: "-C INPUT -m state --state NEW -m udp -p udp --dport 61440:65535 -j ACCEPT"
@@ -132,6 +140,8 @@
   hosts: docker-registry
   sudo: yes
   gather_facts: false
+  tags:
+      - verify
   vars:
       docker_registry_tcp: "-C INPUT -m state --state NEW -m tcp -p tcp --dport {{docker.registry.port}} -j ACCEPT" 
       docker_registry_udp: "-C INPUT -m state --state NEW -m udp -p udp --dport {{docker.registry.port}} -j ACCEPT" 
@@ -155,6 +165,8 @@
   hosts: db  
   sudo: yes
   gather_facts: false
+  tags:
+      - verify
   vars:
       db_tcp_port: "-C INPUT -m state --state NEW -m tcp -p tcp --dport {{db_port}} -j ACCEPT" 
   tasks:

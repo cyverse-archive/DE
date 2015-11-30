@@ -6,10 +6,12 @@
   changed_when: docker_pull_v.stdout.find('Image is up to date') == -1
   tags:
       - docker_pull
-      - docker_pull_app_index_tool
+      - app-index-tool
 
 - name: Run app index creation tool
   shell: "docker run --rm {{app_index_tool_image}} '{{elk_url}}'"  
   register: app_index_creation_result
+  tags:
+      - app-index-tool
 
 #- debug: var=app_index_creation_result

@@ -5,6 +5,7 @@
   sudo:  true
   tags:
       - third_party
+      - elasticsearch
 
   vars:
     elasticsearch_version: 1.2.2
@@ -12,6 +13,7 @@
     elasticsearch_plugins:
       - name: mobz/elasticsearch-head
 
+    elasticsearch_cluster_name:                         "{{ elasticsearch.cluster_name }}"
     elasticsearch_discovery_zen_ping_multicast_enabled: false
     elasticsearch_discovery_zen_ping_unicast_hosts:     "{{ groups['elasticsearch'] }}"
     elasticsearch_gateway_recover_after_nodes:          "{{ groups['elasticsearch']|length }}"

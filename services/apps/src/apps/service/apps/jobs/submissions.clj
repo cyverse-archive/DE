@@ -27,9 +27,18 @@
   (try+
    (data-info/get-file-stats user paths)
    (catch Object _
-     (log/error (:throwable &throw-context) "job submission failed")
-     (throw+ {:type  :clojure-commons.exception/request-failed
-              :error "Could not lookup info types of inputs"}))))
+     (log/error (:throwable &throw-context)
+                "job submission failed: Could not lookup info types of inputs.")
+     (throw+))))
+
+(defn- get-paths-exist
+  [user paths]
+  (try+
+    (:paths (data-info/get-paths-exist user paths))
+    (catch Object _
+      (log/error (:throwable &throw-context)
+                 "job submission failed: Could not lookup existence of HT paths.")
+      (throw+))))
 
 (defn- load-path-list-stats
   [user input-paths-by-id]
@@ -81,28 +90,30 @@
              :error "HT Analysis Path List files are not supported in multi-file inputs."})))
 
 (defn- validate-path-lists
-  [path-lists]
+  [user path-lists]
   (let [[first-list-path first-list] (first path-lists)
-        first-list-count             (count first-list)]
+        first-list-count             (count first-list)
+        paths-exist-list             (map (partial get-paths-exist user) (vals path-lists))
+        paths-exist                  (apply merge paths-exist-list)]
     (when (> first-list-count (config/path-list-max-paths))
       (max-batch-paths-exceeded (config/path-list-max-paths) first-list-path first-list-count))
     (when-not (every? (comp (partial = first-list-count) count second) path-lists)
       (throw+ {:type  :clojure-commons.exception/illegal-argument
-               :error "All HT Analysis Path Lists must have the same number of paths."}))))
+               :error "All HT Analysis Path Lists must have the same number of paths."}))
+    (when-not (every? (partial some (fn [[k v]] v)) paths-exist-list)
+      (throw+ {:type  :clojure-commons.exception/not-found
+               :error "One or more HT Analysis Path List inputs contain paths that no longer exist."
+               :paths (keys (remove (fn [[k v]] v) paths-exist))}))
+    paths-exist))
 
 (defn- get-path-list-contents
   [user path]
   (try+
    (when (seq path) (data-info/get-path-list-contents user path))
-   (catch [:status 500] {:keys [body]}
-     (log/error (:throwable &throw-context) "job submission failed")
-     (log/error (slurp body))
-     (throw+ {:type  :clojure-commons.exception/request-failed
-              :error "Could not get file contents of path list input"}))
    (catch Object _
-     (log/error (:throwable &throw-context) "job submission failed")
-     (throw+ {:type  :clojure-commons.exception/request-failed
-              :error "Could not get file contents of path list input"}))))
+     (log/error (:throwable &throw-context)
+                "job submission failed: Could not get file contents of path list input.")
+     (throw+))))
 
 (defn- get-path-list-contents-map
   [user paths]
@@ -115,9 +126,13 @@
      (data-info/get-file-stats user [output-dir])
      ; FIXME Update this when data-info's exception handling is updated
      (catch [:status 500] {:keys [body]}
-       (if (= (:error_code (service/parse-json body)) ce/ERR_DOES_NOT_EXIST)
-         (data-info/create-directory user output-dir)
-         (throw+))))
+       ;; The caught error can't be rethrown since we parse the body to examine its error code.
+       ;; So we must throw the parsed body, but also clear out the `cause` in our `throw+` call,
+       ;; since the transaction wrapping these functions will try to only rethrow this caught error.
+       (let [error (service/parse-json body)]
+         (if (= (:error_code error) ce/ERR_DOES_NOT_EXIST)
+           (data-info/create-directory user output-dir)
+           (throw+ error nil)))))
     output-dir))
 
 (defn- save-batch*
@@ -162,7 +177,7 @@
 
 (defn- substitute-param-values
   [path-map config]
-  (->> (map (fn [[k v]] (vector k (or (get path-map v v)))) config)
+  (->> (map (fn [[k v]] (vector k (get path-map v v))) config)
        (into {})))
 
 (defn- format-submission-in-batch
@@ -173,8 +188,9 @@
       :output_dir (ft/path-join (:output_dir submission) job-suffix))))
 
 (defn- submit-job-in-batch
-  [apps-client submission job-number path-map]
-  (.submitJob apps-client (format-submission-in-batch submission job-number path-map)))
+  [apps-client submission paths-exist job-number path-map]
+  (when (every? (partial get paths-exist) (map keyword (vals path-map)))
+    (.submitJob apps-client (format-submission-in-batch submission job-number path-map))))
 
 (defn- preprocess-batch-submission
   [submission output-dir parent-id]
@@ -190,13 +206,15 @@
         _            (validate-ht-params (vals (select-keys input-params-by-id ht-param-ids)))
         ht-paths     (set (map :path path-list-stats))
         path-lists   (get-path-list-contents-map user ht-paths)
-        _            (validate-path-lists path-lists)
+        paths-exist  (validate-path-lists user path-lists)
         path-maps    (map-slices path-lists)
         output-dir   (get-batch-output-dir user submission)
         batch-id     (save-batch user job-types app submission output-dir)
         submission   (preprocess-batch-submission submission output-dir batch-id)]
-    (dorun (map-indexed (partial submit-job-in-batch apps-client submission) path-maps))
-    (job-listings/list-job apps-client batch-id)))
+    (dorun (map-indexed (partial submit-job-in-batch apps-client submission paths-exist) path-maps))
+    (-> (job-listings/list-job apps-client batch-id)
+        (assoc :missing-paths (map name (keys (remove (fn [[k v]] v) paths-exist))))
+        remove-nil-values)))
 
 (defn submit
   [apps-client user submission]
@@ -205,5 +223,5 @@
         input-paths-by-id  (select-keys (:config submission) (keys input-params-by-id))]
     (if-let [path-list-stats (seq (load-path-list-stats user input-paths-by-id))]
       (submit-batch-job apps-client user input-params-by-id input-paths-by-id
-                        (log/spy :warn path-list-stats) job-types app submission)
+                        path-list-stats job-types app submission)
       (.submitJob apps-client submission))))

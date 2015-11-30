@@ -32,6 +32,16 @@ http {
 {% endfor %}
 {% endif %}
 
+    upstream de {
+        ip_hash;
+
+        server de-host:8080;
+    }
+
+    upstream kifshare {
+        server {{ kifshare.host }}:{{ kifshare.port }};
+    }
+
     server {
         listen 443 ssl;
         server_name {{ de.http_server.ssl.server_name }};
@@ -62,7 +72,7 @@ http {
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded_Proto $scheme;
 
-            proxy_pass http://{{ kifshare.host }}:{{ kifshare.port }}/;
+            proxy_pass http://kifshare;
         }
 
         location /de/agave-cb {
@@ -82,7 +92,7 @@ http {
 
             proxy_read_timeout 3600s;
 
-            proxy_pass http://de-host:8080/;
+            proxy_pass http://de;
         }
     }
 }
