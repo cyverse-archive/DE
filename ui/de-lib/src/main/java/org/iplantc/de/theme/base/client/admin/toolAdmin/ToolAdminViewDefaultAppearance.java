@@ -2,6 +2,7 @@ package org.iplantc.de.theme.base.client.admin.toolAdmin;
 
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
 import org.iplantc.de.resources.client.IplantResources;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
@@ -22,21 +23,25 @@ public class ToolAdminViewDefaultAppearance implements ToolAdminView.ToolAdminVi
 
     private final ToolAdminDisplayStrings displayStrings;
     private final IplantResources iplantResources;
+    private final IplantDisplayStrings iplantDisplayStrings;
     private final Templates templates;
 
     public ToolAdminViewDefaultAppearance() {
         this(GWT.<ToolAdminDisplayStrings>create(ToolAdminDisplayStrings.class),
              GWT.<IplantResources>create(IplantResources.class),
+             GWT.<IplantDisplayStrings>create(IplantDisplayStrings.class),
              GWT.<Templates>create(Templates.class));
 
     }
 
     ToolAdminViewDefaultAppearance(final ToolAdminDisplayStrings displayStrings,
                                    final IplantResources iplantResources,
+                                   final IplantDisplayStrings iplantDisplayStrings,
                                    Templates templates) {
         this.displayStrings = displayStrings;
         this.iplantResources = iplantResources;
         this.templates = templates;
+        this.iplantDisplayStrings = iplantDisplayStrings;
     }
 
     @Override
@@ -397,6 +402,11 @@ public class ToolAdminViewDefaultAppearance implements ToolAdminView.ToolAdminVi
     @Override
     public String deleteToolSuccessText() {
         return displayStrings.deleteToolSuccessText();
+    }
+
+    @Override
+    public String publicSubmitError() {
+        return iplantDisplayStrings.publicSubmitTip();
     }
 
 }

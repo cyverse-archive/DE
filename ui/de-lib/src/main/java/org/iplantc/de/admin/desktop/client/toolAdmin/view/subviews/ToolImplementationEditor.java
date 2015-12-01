@@ -55,4 +55,8 @@ public class ToolImplementationEditor extends Composite implements Editor<ToolIm
         return toolImplementation;
     }
 
+    public boolean isValid(){
+        return implementorEditor.isValid() && implementorEmailEditor.isValid();
+    }
+
 }

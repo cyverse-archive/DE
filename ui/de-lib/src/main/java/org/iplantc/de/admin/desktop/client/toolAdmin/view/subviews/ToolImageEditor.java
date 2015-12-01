@@ -55,4 +55,8 @@ public class ToolImageEditor extends Composite implements Editor<ToolImage> {
         return editorDriver.flush();
     }
 
+    public boolean isValid(){
+        return nameEditor.isValid() && urlEditor.isValid();
+    }
+
 }

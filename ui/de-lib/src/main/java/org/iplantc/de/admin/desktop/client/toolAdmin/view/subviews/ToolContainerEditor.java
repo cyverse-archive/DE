@@ -110,4 +110,8 @@ public class ToolContainerEditor extends Composite implements Editor<ToolContain
         container.setImage(imageEditor.getToolImage());
         return container;
     }
+
+    public boolean isValid(){
+        return imageEditor.isValid() && containerVolumesFromEditor.isValid();
+    }
 }

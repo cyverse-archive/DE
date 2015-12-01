@@ -24,6 +24,7 @@ import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.Store;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.Dialog;
+import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.FlowLayoutContainer;
@@ -156,13 +157,20 @@ public class ToolAdminViewImpl extends Composite
             @Override
             public void onSelect(SelectEvent event) {
                 ToolImportUpdateRequest request = detailsPanel.getToolImportUpdateRequest();
-                presenter.updateTool(request);
-                dialogWindow.hide();
-                try {
-                    grid.getSelectionModel().deselect(grid.getSelectionModel().getSelectedItem());
-                } catch (UmbrellaException umb) {
-                    //do nothing -- throws error about DeviceList, VolumeList, and VolumesFromList having null IDs
+                if (detailsPanel.isValid()){
+                    presenter.updateTool(request);
+                    dialogWindow.hide();
+                    try {
+                        grid.getSelectionModel().deselect(grid.getSelectionModel().getSelectedItem());
+                    } catch (UmbrellaException umb) {
+                        //do nothing -- throws error about DeviceList, VolumeList, and VolumesFromList having null IDs
+                    }
                 }
+                else{
+                    AlertMessageBox alertMsgBox = new AlertMessageBox("Warning", appearance.publicSubmitError());
+                    alertMsgBox.show();
+                }
+
             }
         });
         addCancelButton(dialogWindow);
@@ -184,8 +192,14 @@ public class ToolAdminViewImpl extends Composite
             @Override
             public void onSelect(SelectEvent event) {
                 ToolImportUpdateRequest request = detailsPanel.getToolImportUpdateRequest();
-                presenter.addTool(request);
-                dialogWindow.hide();
+                if (detailsPanel.isValid()) {
+                    presenter.addTool(request);
+                    dialogWindow.hide();
+                }
+                else{
+                    AlertMessageBox alertMsgBox = new AlertMessageBox("Warning", appearance.publicSubmitError());
+                    alertMsgBox.show();
+                }
             }
         });
         addCancelButton(dialogWindow);

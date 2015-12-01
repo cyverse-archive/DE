@@ -5,6 +5,7 @@ import org.iplantc.de.client.models.tool.ToolAutoBeanFactory;
 import org.iplantc.de.client.models.tool.ToolVolumesFrom;
 import org.iplantc.de.commons.client.validators.UrlValidator;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
@@ -116,9 +117,11 @@ public class ToolVolumesFromListEditor extends Composite
                                    ColumnConfig<ToolVolumesFrom, String> url,
                                    ColumnConfig<ToolVolumesFrom, Boolean> readOnly) {
         final TextField nameTextField = new TextField();
+        nameTextField.setAllowBlank(false);
         editing.addEditor(name, nameTextField);
 
         final TextField namePrefixTextfield = new TextField();
+        namePrefixTextfield.setAllowBlank(false);
         editing.addEditor(namePrefix, namePrefixTextfield);
 
         final TextField tagTextField = new TextField();
@@ -197,6 +200,16 @@ public class ToolVolumesFromListEditor extends Composite
             volumeFrom.setId(null);
             volumesFromList.add(volumeFrom);
         }
+    }
+
+    public boolean isValid(){
+        boolean valid = true;
+        for (ToolVolumesFrom volumesFrom : listStore.getAll()){
+            if (Strings.isNullOrEmpty(volumesFrom.getName()) || Strings.isNullOrEmpty(volumesFrom.getNamePrefix())){
+                return false;
+            }
+        }
+        return valid;
     }
 
 }

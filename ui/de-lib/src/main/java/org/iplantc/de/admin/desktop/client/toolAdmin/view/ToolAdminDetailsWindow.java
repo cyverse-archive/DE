@@ -86,4 +86,9 @@ public class ToolAdminDetailsWindow extends Composite implements Editor<ToolImpo
 
         return request;
     }
+
+    public boolean isValid() {
+        return containerEditor.isValid() && implementationEditor.isValid() && nameEditor.isValid()
+               && typeEditor.isValid() && locationEditor.isValid();
+    }
 }

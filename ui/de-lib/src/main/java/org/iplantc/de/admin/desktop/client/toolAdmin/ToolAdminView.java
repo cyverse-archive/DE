@@ -162,6 +162,8 @@ public interface ToolAdminView extends IsWidget, IsMaskable {
 
         String deleteToolSuccessText();
 
+        String publicSubmitError();
+
     }
 
     interface Presenter {
