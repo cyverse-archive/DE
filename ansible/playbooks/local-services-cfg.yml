@@ -11,5 +11,16 @@
       tags:
         - service_config
 
+    - name: create the logging directory
+      file: path={{de_config_dir}}/logging state=directory
+      tags:
+        - logging_config
+
+    - name: create the nginx config
+      file: path={{de_config_dir}}/nginx state=directory
+      tags:
+        - service_config
+
   roles:
     - 10-services-cfg
+    - 10-ui

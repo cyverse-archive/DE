@@ -1,0 +1,3 @@
+---
+local_config: "{{de_config_dir}}/nginx"
+nginx_config: "{{ local_config | default('/etc/nginx') }}"
