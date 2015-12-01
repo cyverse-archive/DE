@@ -17,12 +17,8 @@ Here are the definitions of the data records used to communicate through the end
 * [User Details Record](#user-details-record)
 
 # Permission
-\* The `read` access level means the user can download a file or folder, read it, and read its
-metadata. The `modify` access level gives the user `read` access level plus the ability to create,
-modify and delete file or folder metadata. For a file, this access level also gives the user the
-ability to modify the file. For a folder, this access level gives the ability to upload files and
-folders into the folder. The `own` access level gives the user complete control over the file or
-folder.
+
+\* The `read` access level means the user can download a file or folder, read it, and read its metadata. The `modify` access level gives the user `read` access level plus the ability to create, modify and delete file or folder metadata. For a file, this access level also gives the user the ability to modify the file. For a folder, this access level gives the ability to upload files and folders into the folder. The `own` access level gives the user complete control over the file or folder.
 
 # AVU Record
 
@@ -83,8 +79,7 @@ Here are the fields that describe a filesystem entry.
 
 ## File Record
 
-A file extends a [filesystem entry](#filesystem-entry-record). Here are the additional fields that
-describe a file.
+A file extends a [filesystem entry](#filesystem-entry-record). Here are the additional fields that describe a file.
 
 | Field    | Type   | Description |
 | -------- | ------ | ----------- |
@@ -133,8 +128,7 @@ describe a file.
 
 ## Folder Record
 
-A folder extends a [filesystem entry](#filesystem-entry-record). Here are the additional fields that
-describe a folder.
+A folder extends a [filesystem entry](#filesystem-entry-record). Here are the additional fields that describe a folder.
 
 | Field       | Type   | Description |
 | ----------- | ------ | ----------- |
