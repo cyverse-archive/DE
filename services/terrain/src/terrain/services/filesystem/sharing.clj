@@ -72,8 +72,9 @@
       (log/warn fpath "is a directory, setting the inherit bit.")
       (.setAccessPermissionInherit (:collectionAO cm) (:zone cm) fpath true))
 
-    (log/warn share-with "is being given read permissions on" hdir "by" user)
-    (set-permission cm share-with hdir :read false)
+    (when-not (is-readable? cm share-with hdir)
+      (log/warn share-with "is being given read permissions on" hdir "by" user)
+      (set-permission cm share-with hdir :read false))
 
     (log/warn share-with "is being given recursive permissions (" perm ") on" fpath)
     (set-permission cm share-with fpath (keyword perm) true)

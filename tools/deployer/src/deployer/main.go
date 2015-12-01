@@ -1,11 +1,11 @@
 package main
 
 import (
+	"copy"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"git"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -72,8 +72,7 @@ func (e *ExtraVars) String() string {
 
 func main() {
 	if *gitRepo == "" {
-		fmt.Println("--git-repo-internal must be set.")
-		os.Exit(-1)
+		log.Fatal("--git-repo-internal must be set.")
 	}
 
 	if *externalRepo == "" {
@@ -81,53 +80,43 @@ func main() {
 	}
 
 	if *account == "" {
-		fmt.Println("--account must be set.")
-		os.Exit(-1)
+		log.Fatal("--account must be set.")
 	}
 
 	if *repo == "" {
-		fmt.Println("--repo must be set.")
-		os.Exit(-1)
+		log.Fatal("--repo must be set.")
 	}
 
 	if *vaultPass == "" {
-		fmt.Println("--vault-pass must be set.")
-		os.Exit(-1)
+		log.Fatal("--vault-pass must be set.")
 	}
 
 	if *secretFile == "" {
-		fmt.Println("--secret must be set")
-		os.Exit(-1)
+		log.Fatal("--secret must be set")
 	}
 
 	if *inventory == "" {
-		fmt.Println("--inventory must be set")
-		os.Exit(-1)
+		log.Fatal("--inventory must be set")
 	}
 
 	if *user == "" {
-		fmt.Println("--user must be set")
-		os.Exit(-1)
+		log.Fatal("--user must be set")
 	}
 
 	if *service == "" {
-		fmt.Println("--service must be set")
-		os.Exit(-1)
+		log.Fatal("--service must be set")
 	}
 
 	if *serviceVar == "" {
-		fmt.Println("--service-var must be set")
-		os.Exit(-1)
+		log.Fatal("--service-var must be set")
 	}
 
 	if *serviceInvGroup == "" {
-		fmt.Println("--service-inv-group must be set")
-		os.Exit(-1)
+		log.Fatal("--service-inv-group must be set")
 	}
 
 	if *playbook == "" {
-		fmt.Println("--playbook must be set")
-		os.Exit(-1)
+		log.Fatal("--playbook must be set")
 	}
 
 	git, err := git.New()
@@ -196,124 +185,57 @@ func main() {
 	fmt.Printf("Moving DE/ansible to %s", externalDir)
 	err = os.Rename("DE/ansible", externalDir)
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
 
 	internalGroupVars, err := filepath.Abs(path.Join(internalDir, "group_vars"))
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
 	externalGroupVars, err := filepath.Abs(path.Join(externalDir, "group_vars"))
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
 
 	fmt.Printf("Copying files from %s to %s\n", internalGroupVars, externalGroupVars)
-	var copyPaths []string
-
-	visit := func(p string, i os.FileInfo, err error) error {
-		if !i.IsDir() {
-			fmt.Printf("Found file %s to copy\n", p)
-			copyPaths = append(copyPaths, p)
-		}
-		return err
-	}
-
-	err = filepath.Walk(internalGroupVars, visit)
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
-	}
-
-	if _, err := os.Stat(externalGroupVars); os.IsNotExist(err) {
-		fmt.Printf("Creating %s\n", externalGroupVars)
-		err = os.MkdirAll(externalGroupVars, 0755)
-		if err != nil {
-			fmt.Print(err)
-			os.Exit(-1)
-		}
-	}
-
-	for _, copyPath := range copyPaths {
-		destPath := path.Join(externalGroupVars, path.Base(copyPath))
-		fmt.Printf("Copying %s to %s\n", copyPath, destPath)
-		contents, err := ioutil.ReadFile(copyPath)
-		if err != nil {
-			fmt.Print(err)
-			os.Exit(-1)
-		}
-		err = ioutil.WriteFile(destPath, contents, 0644)
-		if err != nil {
-			fmt.Print(err)
-			os.Exit(-1)
-		}
+	groupVarCopier := copy.New()
+	if err = groupVarCopier.Copy(groupVarCopier.FileVisitor, internalGroupVars, externalGroupVars); err != nil {
+		log.Fatal(err)
 	}
 
 	internalInventories, err := filepath.Abs(path.Join(internalDir, "inventories"))
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
 	externalInventories, err := filepath.Abs(path.Join(externalDir, "inventories"))
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
 
 	fmt.Printf("Copying files from %s to %s\n", internalInventories, externalInventories)
-	copyPaths = []string{}
-
-	err = filepath.Walk(internalInventories, visit)
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
-	}
-
-	for _, copyPath := range copyPaths {
-		destPath := path.Join(externalInventories, path.Base(copyPath))
-		fmt.Printf("Copying %s to %s\n", copyPath, destPath)
-		contents, err := ioutil.ReadFile(copyPath)
-		if err != nil {
-			fmt.Print(err)
-			os.Exit(-1)
-		}
-		err = ioutil.WriteFile(destPath, contents, 0644)
-		if err != nil {
-			fmt.Print(err)
-			os.Exit(-1)
-		}
+	inventoryCopier := copy.New()
+	if err = inventoryCopier.Copy(inventoryCopier.FileVisitor, internalInventories, externalInventories); err != nil {
+		log.Fatal(err)
 	}
 
 	origPath, err := filepath.Abs(path.Join(internalDir, "sudo_secret.txt"))
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
 	destPath, err := filepath.Abs(path.Join(externalDir, "sudo_secret.txt"))
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
+
 	fmt.Printf("Copying %s to %s\n", origPath, destPath)
-	contents, err := ioutil.ReadFile(origPath)
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
-	}
-	err = ioutil.WriteFile(destPath, contents, 0644)
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+	if err = copy.File(origPath, destPath); err != nil {
+		log.Fatal(err)
 	}
 
 	fmt.Printf("cd'ing into %s\n", externalDir)
 	err = os.Chdir(externalDir)
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
 
 	pullVars := NewExtraVars(false, false, true, false, []string{*serviceVar}).String()
@@ -336,8 +258,7 @@ func main() {
 	output, err := cmd.CombinedOutput()
 	fmt.Println(string(output[:]))
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
 
 	configVars := NewExtraVars(true, true, false, true, []string{*serviceVar}).String()
@@ -361,33 +282,8 @@ func main() {
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
-
-	// serviceVars := NewExtraVars
-	// fmt.Printf("Updating service file for %s with ansible\n", *repo)
-	// cmd = exec.Command(
-	// 	ansiblePlaybook,
-	// 	"-e",
-	// 	fmt.Sprintf("@%s", *secretFile),
-	// 	fmt.Sprintf("--vault-password-file=%s", *vaultPass),
-	// 	"-i",
-	// 	*inventory,
-	// 	"--sudo",
-	// 	"-u",
-	// 	*user,
-	// 	"--tags",
-	// 	*serviceTag,
-	// 	*playbook,
-	// )
-	// fmt.Printf("%s %s\n", cmd.Path, strings.Join(cmd.Args, " "))
-	// output, err = cmd.CombinedOutput()
-	// fmt.Println(string(output[:]))
-	// if err != nil {
-	// 	fmt.Print(err)
-	// 	os.Exit(-1)
-	// }
 
 	fmt.Printf("Restarting %s with ansible\n", *repo)
 	cmd = exec.Command(
@@ -410,7 +306,6 @@ func main() {
 	output, err = cmd.CombinedOutput()
 	fmt.Println(string(output[:]))
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
 }
