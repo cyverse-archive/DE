@@ -72,8 +72,7 @@ func (e *ExtraVars) String() string {
 
 func main() {
 	if *gitRepo == "" {
-		fmt.Println("--git-repo-internal must be set.")
-		os.Exit(-1)
+		log.Fatal("--git-repo-internal must be set.")
 	}
 
 	if *externalRepo == "" {
@@ -81,53 +80,43 @@ func main() {
 	}
 
 	if *account == "" {
-		fmt.Println("--account must be set.")
-		os.Exit(-1)
+		log.Fatal("--account must be set.")
 	}
 
 	if *repo == "" {
-		fmt.Println("--repo must be set.")
-		os.Exit(-1)
+		log.Fatal("--repo must be set.")
 	}
 
 	if *vaultPass == "" {
-		fmt.Println("--vault-pass must be set.")
-		os.Exit(-1)
+		log.Fatal("--vault-pass must be set.")
 	}
 
 	if *secretFile == "" {
-		fmt.Println("--secret must be set")
-		os.Exit(-1)
+		log.Fatal("--secret must be set")
 	}
 
 	if *inventory == "" {
-		fmt.Println("--inventory must be set")
-		os.Exit(-1)
+		log.Fatal("--inventory must be set")
 	}
 
 	if *user == "" {
-		fmt.Println("--user must be set")
-		os.Exit(-1)
+		log.Fatal("--user must be set")
 	}
 
 	if *service == "" {
-		fmt.Println("--service must be set")
-		os.Exit(-1)
+		log.Fatal("--service must be set")
 	}
 
 	if *serviceVar == "" {
-		fmt.Println("--service-var must be set")
-		os.Exit(-1)
+		log.Fatal("--service-var must be set")
 	}
 
 	if *serviceInvGroup == "" {
-		fmt.Println("--service-inv-group must be set")
-		os.Exit(-1)
+		log.Fatal("--service-inv-group must be set")
 	}
 
 	if *playbook == "" {
-		fmt.Println("--playbook must be set")
-		os.Exit(-1)
+		log.Fatal("--playbook must be set")
 	}
 
 	git, err := git.New()
@@ -196,19 +185,16 @@ func main() {
 	fmt.Printf("Moving DE/ansible to %s", externalDir)
 	err = os.Rename("DE/ansible", externalDir)
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
 
 	internalGroupVars, err := filepath.Abs(path.Join(internalDir, "group_vars"))
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
 	externalGroupVars, err := filepath.Abs(path.Join(externalDir, "group_vars"))
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
 
 	fmt.Printf("Copying files from %s to %s\n", internalGroupVars, externalGroupVars)
@@ -219,13 +205,11 @@ func main() {
 
 	internalInventories, err := filepath.Abs(path.Join(internalDir, "inventories"))
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
 	externalInventories, err := filepath.Abs(path.Join(externalDir, "inventories"))
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
 
 	fmt.Printf("Copying files from %s to %s\n", internalInventories, externalInventories)
@@ -236,13 +220,11 @@ func main() {
 
 	origPath, err := filepath.Abs(path.Join(internalDir, "sudo_secret.txt"))
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
 	destPath, err := filepath.Abs(path.Join(externalDir, "sudo_secret.txt"))
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
 
 	fmt.Printf("Copying %s to %s\n", origPath, destPath)
@@ -253,8 +235,7 @@ func main() {
 	fmt.Printf("cd'ing into %s\n", externalDir)
 	err = os.Chdir(externalDir)
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
 
 	pullVars := NewExtraVars(false, false, true, false, []string{*serviceVar}).String()
@@ -277,8 +258,7 @@ func main() {
 	output, err := cmd.CombinedOutput()
 	fmt.Println(string(output[:]))
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
 
 	configVars := NewExtraVars(true, true, false, true, []string{*serviceVar}).String()
@@ -302,8 +282,7 @@ func main() {
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
 
 	fmt.Printf("Restarting %s with ansible\n", *repo)
@@ -327,7 +306,6 @@ func main() {
 	output, err = cmd.CombinedOutput()
 	fmt.Println(string(output[:]))
 	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+		log.Fatal(err)
 	}
 }
