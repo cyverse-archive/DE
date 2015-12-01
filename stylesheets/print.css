@@ -114,12 +114,14 @@ table {
 
 th {
   font-weight: 500;
+  text-align: left;
 }
 
 td {
   font-weight: 300;
   text-align: center;
   border: 1px solid #ebebeb;
+  text-align: left;
 }
 
 form {

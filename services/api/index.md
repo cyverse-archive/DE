@@ -37,7 +37,7 @@ Authentication to the DE services is currently handled by passing signed JSON We
 The DE doesn't currently support the `name` field, but there are plans to add support for this field in an upcoming release. The rest of the field values are obtained indirectly from LDAP via CAS. The fields are (or will be in the case of the `name` field) obtained as follows:
 
 | JWT Claim (Field)          | LDAP Attribute    | CAS Attribute |
-| :------------------------- | :---------------- | :------------ |
+| -------------------------- | ----------------- | ------------- |
 | sub                        | uid               | uid           |
 | email                      | mail              | email         |
 | given_name                 | givenName         | firstName     |
