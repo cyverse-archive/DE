@@ -7,15 +7,13 @@ root: ../../../../
 File and Directory Status Information
 -------------------------------------
 
-The /stat endpoint allows the caller to get serveral pieces of information about a file or directory at once.  For directories, the response includes the created and last-modified timestamps along with a file type of `dir`.  For regular files, the response contains the created and last-modified timestamps, the file size in bytes and a file type of `file`.  The following is an example call to the stat endpoint:
+The /stat endpoint allows the caller to get serveral pieces of information about a file or directory at once. For directories, the response includes the created and last-modified timestamps along with a file type of `dir`. For regular files, the response contains the created and last-modified timestamps, the file size in bytes and a file type of `file`. The following is an example call to the stat endpoint:
 
 __URL Path__: /secured/filesystem/stat
 
 __HTTP Method__: POST
 
 __Request Query Parameters__:
-
-* proxyToken - A valid CAS ticket.
 
 __Request Body__:
 
@@ -54,4 +52,4 @@ The "share-count" field is provided for both files and directories and lists the
 
 __Curl Command__:
 
-    curl -H "Content-Type:application/json" -sd '{"paths":["/iplant/home/wregglej/BTSync.dmg"]}' http://services-2:31360/secured/filesystem/stat?proxyToken=notReal
+    curl -H "$AUTH_HEADER" -H "Content-Type:application/json" -sd '{"paths":["/iplant/home/wregglej/BTSync.dmg"]}' http://services-2:31360/secured/filesystem/stat

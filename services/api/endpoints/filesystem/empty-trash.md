@@ -14,8 +14,6 @@ __Error Codes__: ERR_NOT_A_USER
 
 __Request Query Parameters__:
 
-* proxyToken - A valid CAS ticket.
-
 __Response__:
 
     {
@@ -27,4 +25,4 @@ __Response__:
 
 __Curl Command__:
 
-    curl -X DELETE http://127.0.0.1:3000/secured/filesystem/trash?proxyToken=notReal
+    curl -H "$AUTH_HEADER" -X DELETE http://127.0.0.1:3000/secured/filesystem/trash

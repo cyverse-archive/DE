@@ -15,7 +15,6 @@ __Error Codes__: ERR_DOES_NOT_EXIST, ERR_NOT_A_FILE, ERR_NOT_READABLE, ERR_NOT_A
 
 __Request Query Parameters__:
 
-* proxyToken - A valid CAS ticket.
 * path - Path to a file in iRODSs.
 
 __Response Body__:
@@ -47,4 +46,4 @@ For tree URLs, the label will usually start with "tree_", but that's not guarant
 
 __Curl Command__:
 
-    curl http://127.0.0.1:3000/secured/filesystem/file/manifest?proxyToken=notReal&path=/iplant/home/johnw/LICENSE.txt
+    curl -H "$AUTH_HEADER" http://127.0.0.1:3000/secured/filesystem/file/manifest?path=/iplant/home/johnw/LICENSE.txt

@@ -18,8 +18,6 @@ The ERR_TOO_MANY_PATHS error code is returned when all of the "paths" and the it
 
 __Request Parameters__:
 
-* proxyToken - A valid CAS ticket.
-
 __Request Body__:
 
     {
@@ -36,7 +34,7 @@ __Response__:
 
 __Curl Command__:
 
-    curl -H "Content-Type:application/json" -d '{"paths" : ["/tempZone/home/rods/test2"]}' http://127.0.0.1:3000/secured/filesystem/delete?user=rods
+    curl -H "$AUTH_HEADER" -H "Content-Type:application/json" -d '{"paths" : ["/tempZone/home/rods/test2"]}' http://127.0.0.1:3000/secured/filesystem/delete?user=rods
 
 
 Deleting all items in a Directory
@@ -53,8 +51,6 @@ __Error codes__: ERR_NOT_A_FOLDER, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_TO
 The ERR_TOO_MANY_PATHS error code is returned when all items in the source directory and its sub-directories exceed the maximum number of paths that can be processed by this endpoint.
 
 __Request Query Parameters__:
-
-* proxyToken - A valid CAS ticket.
 
 __Request Body__:
 
@@ -81,4 +77,4 @@ __Example ERR_TOO_MANY_PATHS Error Response__:
 
 __Curl Command__:
 
-    curl -H "Content-Type:application/json" -d '{"path": "/tempZone/home/rods/test"}' http://127.0.0.1:3000/secured/filesystem/delete-contents?proxyToken=notReal
+    curl -H "$AUTH_HEADER" -H "Content-Type:application/json" -d '{"path": "/tempZone/home/rods/test"}' http://127.0.0.1:3000/secured/filesystem/delete-contents

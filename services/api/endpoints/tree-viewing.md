@@ -16,10 +16,7 @@ root: ../../../
 
 Unsecured Endpoint: POST /tree-viewer-urls
 
-This service is a slight variation of the secured GET /secured/tree-viewer-urls
-service and is intended primarily for debugging. The request body should contain
-the contents of the file for which you want to view trees. The response body
-consists of a JSON object listing the paths to the TREE urls:
+This service is a slight variation of the secured GET /secured/tree-viewer-urls service and is intended primarily for debugging. The request body should contain the contents of the file for which you want to view trees. The response body consists of a JSON object listing the paths to the TREE urls:
 
 ```json
 {
@@ -40,9 +37,7 @@ consists of a JSON object listing the paths to the TREE urls:
 }
 ```
 
-If the tree file contains labels for each of its trees then those labels will be
-used. Otherwise, a generic label, tree\__n_, where _n_ is a sequential number.
-Here's an example of a successful call:
+If the tree file contains labels for each of its trees then those labels will be used. Otherwise, a generic label, tree\__n_, where _n_ is a sequential number. Here's an example of a successful call:
 
 ```
 $ curl -s --data-binary @Aquilegia.nex http://by-tor:8888/tree-viewer-urls | python -mjson.tool
@@ -68,11 +63,7 @@ $ curl -s --data-binary @Aquilegia.nex http://by-tor:8888/tree-viewer-urls | pyt
 
 Secured Endpoint: GET /secured/tree-viewer-urls
 
-This service is used to obtain tree viewer URLs for a single file in the iPlant
-data store. This URL requires one query-string parameter, `path`, in addition to
-the usual `proxyToken` parameter that is required by all secured endpoints.  The
-`path` query-string parameter should contain the path to the file. If the
-service call is successful then the response body will look something like this:
+This service is used to obtain tree viewer URLs for a single file in the iPlant data store. This URL requires one query-string parameter, `path`. The `path` query-string parameter should contain the path to the file. If the service call is successful then the response body will look something like this:
 
 ```json
 {
@@ -94,13 +85,12 @@ service call is successful then the response body will look something like this:
 }
 ```
 
-Otherwise, the response body will contain information about the cause of the
-failure.
+Otherwise, the response body will contain information about the cause of the failure.
 
 Here's an example of a successful service call:
 
 ```
-$ curl -s "http://by-tor:8888/secured/tree-viewer-urls?proxyToken=$(cas-ticket)&path=/iplant/home/nobody/sample1.newick" | python -mjson.tool
+$ curl -sH "$AUTH_HEADER" "http://by-tor:8888/secured/tree-viewer-urls?path=/iplant/home/nobody/sample1.newick" | python -mjson.tool
 {
     "tree-urls": [
         {

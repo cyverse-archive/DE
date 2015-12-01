@@ -9,7 +9,7 @@ root: ../../
 ### Generating UI configs locally.
 Some additional setup is required to generate local ui configs.
 
-1. First, follow the instructions in the [local config setup docs](Local_Configs.md) for setting up
+1. First, follow the instructions in the [local config setup docs](local_configs.html) for setting up
     `ansible/inventories/localhost.cfg` and `ansible/host_vars/localhost` on your dev machine.
 
 1. Next, use the following command to generate the configs for the UI:

@@ -13,15 +13,13 @@ __HTTP Method__: POST
 
 __Request Query Parameters__:
 
-* proxyToken - A valid CAS ticket.
-
 __Request Body__:
 
     {
-    	"path" : "/iplant/home/testuser/test-tsv",
-    	"separator" : "%09",
-    	"page" : "4",
-    	"chunk-size" : "400"
+        "path" : "/iplant/home/testuser/test-tsv",
+        "separator" : "%09",
+        "page" : "4",
+        "chunk-size" : "400"
     }
 
 __Response Body__:
@@ -65,7 +63,7 @@ __Response Body__:
 
 __CURL Command__:
 
-    curl -d '{"path" : "/iplant/home/testuser/test-tsv", "separator" : "%09", "page" : "4", "chunk-size" : "400"}' http://127.0.0.1:31325/secured/filesystem/read-csv-chunk?proxyToken=adsfadsf
+    curl -H "$AUTH_HEADER" -d '{"path" : "/iplant/home/testuser/test-tsv", "separator" : "%09", "page" : "4", "chunk-size" : "400"}' http://127.0.0.1:31325/secured/filesystem/read-csv-chunk
 
 __JSON Field Descriptions__:
 

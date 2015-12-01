@@ -15,40 +15,31 @@ root: ../../../
 
 # Collaborator List Management Endpoints
 
-Note that secured endpoints in Terrain and apps are a little different from
-each other. Please see [Terrain Vs. Apps](terrain-v-apps.md) for more
-information.
+Note that secured endpoints in Terrain and apps are a little different from each other. Please see [Terrain Vs. Apps](terrain-v-apps.html) for more information.
 
 ## Listing Collaborators
 
 Secured Endpoint: GET /secured/collaborators
 
-This service delegates all of its calls to apps's GET /collaborators
-endpoint. Please refer to apps's documentation for more information.
+This service delegates all of its calls to apps's GET /collaborators endpoint. Please refer to apps's documentation for more information.
 
 ## Adding Collaborators
 
 Secured Endpoint: POST /secured/collaborators
 
-This service delegates all of its calls to apps's POST /collaborators
-endpoint. Please refer to apps's documentation for more information.
+This service delegates all of its calls to apps's POST /collaborators endpoint. Please refer to apps's documentation for more information.
 
 ## Removing Collaborators
 
 Secured Endpoint: POST /secured/remove-collaborators
 
-This service delegates all of its calls to apps's POST
-/collaborators/shredder endpoint. Please refer to apps's documentation
-for more information.
+This service delegates all of its calls to apps's POST /collaborators/shredder endpoint. Please refer to apps's documentation for more information.
 
 ## Searching for Users
 
 Secured Endpoint: GET /secured/user-search?search={search-string}
 
-This endpoint allows the caller to search for user information by username,
-email address and actual name. The search search string provided in the URL
-should be URL encoded before being sent to the service. The response body is in
-the following format:
+This endpoint allows the caller to search for user information by username, email address and actual name. The search search string provided in the URL should be URL encoded before being sent to the service. The response body is in the following format:
 
 ```json
 {
@@ -71,14 +62,10 @@ the following format:
 }
 ```
 
-Assuming an error doesn't occur, the status code will be 200 and the response
-body will contain up to the first fifty users whose username matched the search
-string, up to the first fifty users whose actual name matched the search string,
-and up to the first fifty users whose email address matched the search
-string. Here's an example:
+Assuming an error doesn't occur, the status code will be 200 and the response body will contain up to the first fifty users whose username matched the search string, up to the first fifty users whose actual name matched the search string, and up to the first fifty users whose email address matched the search string. Here's an example:
 
 ```
-$ curl -s "http://by-tor:8888/secured/user-search?proxyToken=$(cas-ticket)&search=nobody" | python -mjson.tool
+$ curl -sH "$AUTH_HEADER" "http://by-tor:8888/secured/user-search?search=nobody" | python -mjson.tool
 {
     "truncated": false,
     "users": [
@@ -101,10 +88,7 @@ This endpoint delegates to iplant-groups' GET /subjects endpoint, but reformats 
 
 Secured Endpoint: GET /secured/user-info
 
-This endpoint allows the caller to search for information about users with
-specific usernames. Each username is specified using the `username` query string
-parameter, which can be specified multiple times to search for information about
-more than one user. The response body is in the following format:
+This endpoint allows the caller to search for information about users with specific usernames. Each username is specified using the `username` query string parameter, which can be specified multiple times to search for information about more than one user. The response body is in the following format:
 
 ```json
 {
@@ -129,15 +113,12 @@ more than one user. The response body is in the following format:
 }
 ```
 
-Assuming the service doesn't encounter an error, the status code will be 200 and
-the response body will contain the information for all of the users who were
-found. If none of the users were found then the response body will consist of an
-empty JSON object.
+Assuming the service doesn't encounter an error, the status code will be 200 and the response body will contain the information for all of the users who were found. If none of the users were found then the response body will consist of an empty JSON object.
 
 Here's an example with a match:
 
 ```
-$ curl -s "http://by-tor:8888/secured/user-info?proxyToken=$(cas-ticket)&username=nobody" | python -mjson.tool
+$ curl -sH "$AUTH_HEADER" "http://by-tor:8888/secured/user-info?username=nobody" | python -mjson.tool
 {
     "nobody": {
         "email": "nobody@iplantcollaborative.org",
@@ -154,7 +135,7 @@ $ curl -s "http://by-tor:8888/secured/user-info?proxyToken=$(cas-ticket)&usernam
 Here's an example with no matches:
 
 ```
-$ curl -s "http://by-tor:8888/secured/user-info?proxyToken=$(cas-ticket)&username=foo" | python -mjson.tool
+$ curl -sH "$AUTH_HEADER" "http://by-tor:8888/secured/user-info?username=foo" | python -mjson.tool
 {}
 ```
 

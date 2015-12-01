@@ -13,12 +13,8 @@ __HTTP Method__: POST
 __Error Codes__: ERR_NOT_A_USER, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE
 
 __Request Parameters__:
-* proxyToken - A valid CAS ticket.
 
-* public - Tells terrain whether to make the ticket accessible to the public group.
-           Setting it to 1 means that the ticket will be made publicly accessible. Any other value
-           means that the ticket will not be accessible publicly. This parameter is optional and
-           defaults to not making tickets public.
+* public - Tells terrain whether to make the ticket accessible to the public group. Setting it to 1 means that the ticket will be made publicly accessible. Any other value means that the ticket will not be accessible publicly. This parameter is optional and defaults to not making tickets public.
 
 __Request Body__:
 
@@ -45,7 +41,7 @@ __Response Body__:
 
 __Curl Command__:
 
-    curl -d '{"paths":"/path/to/file/or/directory","/path/to/another/file/or/directory"]}' 'http://127.0.0.1:3000/secured/filesystem/tickets?proxyToken=notReal&public=1'
+    curl -H "$AUTH_HEADER" -d '{"paths":"/path/to/file/or/directory","/path/to/another/file/or/directory"]}' 'http://127.0.0.1:3000/secured/filesystem/tickets?public=1'
 
 
 Listing Tickets
@@ -57,7 +53,6 @@ __HTTP Method__: POST
 __Error Codes__: ERR_NOT_A_USER, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE
 
 __Request Parameters__:
-* proxyToken - A valid CAS ticket.
 
 __Request Body__:
 
@@ -90,7 +85,7 @@ __Response Body__:
 
 __Curl Command__:
 
-    curl -d '{"paths":["/path/to/file","/path/to/dir"]}' http://127.0.0.1:3000/secured/filesystem/list-tickets?proxyToken=notReal
+    curl -H "$AUTH_HEADER" -d '{"paths":["/path/to/file","/path/to/dir"]}' http://127.0.0.1:3000/secured/filesystem/list-tickets
 
 
 Deleting Tickets
@@ -102,7 +97,6 @@ __HTTP Method__: POST
 __Error Codes__: ERR_NOT_A_USER, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE
 
 __Request Parameters__:
-* proxyToken - A valid CAS ticket.
 
 __Request Body__:
 
@@ -118,4 +112,4 @@ __Response Body__:
 
 __Curl Command__:
 
-    curl -d '{"tickets":["ticket-id1","ticket-id2"]}' http://127.0.0.1:4000/secured/filesystem/delete-tickets?proxyToken=notReal
+    curl -H "$AUTH_HEADER" -d '{"tickets":["ticket-id1","ticket-id2"]}' http://127.0.0.1:4000/secured/filesystem/delete-tickets

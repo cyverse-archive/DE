@@ -17,8 +17,6 @@ __Error Codes___: ERR_DOES_NOT_EXIST, ERR_NOT_READABLE, ERR_NOT_A_USER
 
 __Request Query Parameters___:
 
-* proxyToken - A valid CAS ticket.
-
 __Request Body__:
 
     {
@@ -40,7 +38,7 @@ __Response__:
 
 __Curl Command__:
 
-    curl -H "Content-Type:application/json" -d '{"path" : "/iplant/home/wregglej/testfile", "position" : "20", "chunk-size" : "7"}' http://127.0.0.1:31360/secured/filesystem/read-chunk?proxyUrl=notReal
+    curl -H "$AUTH_HEADER" -H "Content-Type:application/json" -d '{"path" : "/iplant/home/wregglej/testfile", "position" : "20", "chunk-size" : "7"}' http://127.0.0.1:31360/secured/filesystem/read-chunk
 
 Notes:
 * 'position' and 'chunk-size' are both in bytes.

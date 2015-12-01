@@ -17,8 +17,6 @@ The ERR_TOO_MANY_PATHS error code is returned when all of the "paths" and the it
 
 __Request Query Parameters__:
 
-* proxyToken - A valid CAS ticket.
-
 __Request Body__:
 
     {
@@ -47,7 +45,7 @@ If a file is deleted and then the directory that the file originally lived in is
 
 __Curl Command__:
 
-    curl -d '{"paths" : ["/iplant/trash/home/proxy-user/johnworth/foo.fq", "/iplant/trash/home/proxy-user/johnworth/foo1.fq"]}' http://sample.nibblonian.org/secured/filesystem/restore?proxyToken=notReal
+    curl -H "$AUTH_HEADER" -d '{"paths" : ["/iplant/trash/home/proxy-user/johnworth/foo.fq", "/iplant/trash/home/proxy-user/johnworth/foo1.fq"]}' http://sample.nibblonian.org/secured/filesystem/restore
 
 
 Restoring all items in a user's trash
@@ -62,8 +60,6 @@ __Error Codes__: ERR_EXISTS, ERR_NOT_A_USER, ERR_NOT_WRITEABLE, ERR_TOO_MANY_PAT
 The ERR_TOO_MANY_PATHS error code is returned when all items in the user's trash and its sub-directories exceed the maximum number of paths that can be processed by this endpoint.
 
 __Request Query Parameters__:
-
-* proxyToken - A valid CAS ticket.
 
 __Request Body__:
 
@@ -94,4 +90,4 @@ __Example ERR_TOO_MANY_PATHS Error Response__:
 
 __Curl Command__:
 
-    curl -H "Content-Type:application/json" -X POST http://127.0.0.1:3000/secured/filesystem/restore-all?proxyToken=notReal
+    curl -H "$AUTH_HEADER" -H "Content-Type:application/json" -X POST http://127.0.0.1:3000/secured/filesystem/restore-all

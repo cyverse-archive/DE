@@ -16,8 +16,6 @@ The ERR_TOO_MANY_PATHS error code is returned when the items and sub-directories
 
 __Request Query Parameters__:
 
-* proxyToken - A valid CAS ticket.
-
 __Request Body__:
 
     {
@@ -35,4 +33,4 @@ __Response__:
 
 __Curl Command__:
 
-    curl -H "Content-Type:application/json" -d '{"source" : "/tempZone/home/wregglej/test3", "dest" : "/tempZone/home/wregglej/test2"}' http://127.0.0.1:3000/secured/filesystem/rename?proxyToken=notReal
+    curl -H "$AUTH_HEADER" -H "Content-Type:application/json" -d '{"source" : "/tempZone/home/wregglej/test3", "dest" : "/tempZone/home/wregglej/test2"}' http://127.0.0.1:3000/secured/filesystem/rename

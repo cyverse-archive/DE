@@ -11,8 +11,7 @@ Secured Endpoint: POST /secured/filesystem/directories
 
 Delegates to data-info: POST /data/directories
 
-This endpoint is a passthrough to the data-info endpoint above.
-Please see the data-info documentation for more information.
+This endpoint is a passthrough to the data-info endpoint above. Please see the data-info documentation for more information.
 
 Directory Creation
 ------------------
@@ -30,8 +29,7 @@ __Request Body__:
 
 __Response Body__:
 
-This endpoint uses a similar response as the [/secured/filesystem/stat](stat.md#file-and-directory-status-information) endpoint.
-For example:
+This endpoint uses a similar response as the [/secured/filesystem/stat](stat.html#file-and-directory-status-information) endpoint. For example:
 
 ```json
 {
@@ -50,4 +48,4 @@ For example:
 
 __Curl Command__:
 
-    curl -H "Content-Type:application/json" -d '{"path" : "/tempZone/home/rods/test3"}' "http://127.0.0.1:3000/secured/filesystem/directory/create?proxyToken=notReal"
+    curl -H "$AUTH_HEADER" -H "Content-Type:application/json" -d '{"path" : "/tempZone/home/rods/test3"}' "http://127.0.0.1:3000/secured/filesystem/directory/create"

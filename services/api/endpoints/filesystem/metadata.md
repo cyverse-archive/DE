@@ -12,6 +12,7 @@ The following commands allow the caller to set and get attributes on files and d
 
 Adding Metadata
 ------------------------------------
+
 Note the single-quotes around the request URL in the curl command.
 
 __URL Path__: /secured/filesystem/metadata
@@ -22,7 +23,6 @@ __Error codes__: ERR_INVALID_JSON, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NO
 
 __Request Query Parameters__:
 
-* proxyToken - A valid CAS ticket.
 * path - The iRODS path to the file or directory that the metadata is associated with.
 
 __Request Body__:
@@ -42,11 +42,12 @@ __Response__:
 
 __Curl Command__:
 
-    curl -d '{"attr" : "avu_name", "value" : "avu_value", "unit" : "avu_unit"}' 'http://127.0.0.1:3000/secured/filesystem/metadata?proxyToken=notReal&path=/iplant/home/johnw/LICENSE.txt'
+    curl -H "$AUTH_HEADER" -d '{"attr" : "avu_name", "value" : "avu_value", "unit" : "avu_unit"}' 'http://127.0.0.1:3000/secured/filesystem/metadata?path=/iplant/home/johnw/LICENSE.txt'
 
 
 Getting Metadata
 ------------------------------------
+
 __URL Path__: /secured/filesystem/{data-id}/metadata
 
 __HTTP Method__: GET
@@ -56,8 +57,6 @@ __Error codes__: ERR_DOES_NOT_EXIST, ERR_NOT_READABLE, ERR_NOT_A_USER
 __Delegates to metadata__: `GET /filesystem/data/{data-id}/avus`
 
 __Request Query Parameters__:
-
-* proxyToken - A valid CAS ticket.
 
 __Response__:
 
@@ -74,16 +73,16 @@ __Response__:
 }
 ```
 
-This `metadata` value is set with the response from the corresponding metadata service endpoint.
-Please see the metadata documentation for more information on the format of this object.
+This `metadata` value is set with the response from the corresponding metadata service endpoint. Please see the metadata documentation for more information on the format of this object.
 
 __Curl Command__:
 
-    curl 'http://127.0.0.1:3000/secured/filesystem/$data_id/metadata?proxyToken=$(cas-ticket)'
+    curl -H "$AUTH_HEADER" 'http://127.0.0.1:3000/secured/filesystem/$data_id/metadata'
 
 
 Setting Metadata
 -------------------------------------
+
 __URL Path__: /secured/filesystem/{data-id}/metadata
 
 __HTTP Method__: POST
@@ -93,8 +92,6 @@ __Delegates to metadata__: `POST /filesystem/data/{data-id}/avus`
 __Error codes__: ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_A_USER
 
 __Request Query Parameters__:
-
-* proxyToken - A valid CAS ticket.
 
 __Request Body__:
 
@@ -121,10 +118,7 @@ __Request Body__:
 }
 ```
 
-This endpoint forwards the `metadata` value of the request to the corresponding metadata service endpoint.
-Please see the metadata documentation for more information on the format of this object.
-If the `metadata` key is omitted or set with an empty value, then an empty JSON body `{}` will be
-submitted to the corresponding metadata service endpoint.
+This endpoint forwards the `metadata` value of the request to the corresponding metadata service endpoint. Please see the metadata documentation for more information on the format of this object. If the `metadata` key is omitted or set with an empty value, then an empty JSON body `{}` will be submitted to the corresponding metadata service endpoint.
 
 __Response__:
 
@@ -136,10 +130,11 @@ __Response__:
 ```
 __Curl Command__:
 
-    curl -d '{"irods-avus" : [{"attr" : "attr", "value" : "value", "unit" : "unit"}], "metadata": {...}' 'http://127.0.0.1:3000/secured/filesystem/$data_id/metadata?proxyToken=$(cas-ticket)'
+    curl -H "$AUTH_HEADER" -d '{"irods-avus" : [{"attr" : "attr", "value" : "value", "unit" : "unit"}], "metadata": {...}' 'http://127.0.0.1:3000/secured/filesystem/$data_id/metadata'
 
 Deleting File and Directory Metadata
 ------------------------------------
+
 __URL Path__: /secured/filesystem/metadata
 
 __HTTP Method__: DELETE
@@ -148,7 +143,6 @@ __Error Codes__: ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_A_USER
 
 __Request Query Parameters__:
 
-* proxyToken - A valid CAS ticket.
 * path - The path to the file or directory being operated on.
 
 __Response__:
@@ -160,13 +154,13 @@ __Response__:
 
 __Curl Command__:
 
-    curl -X DELETE 'http://127.0.0.1:3000/secured/filesystem/metadata?proxyToken=notReal&path=/iplant/home/johnw/LICENSE.txt&attr=avu_name'
+    curl -X DELETE -H "$AUTH_HEADER" 'http://127.0.0.1:3000/secured/filesystem/metadata?path=/iplant/home/johnw/LICENSE.txt&attr=avu_name'
 
 
 Listing Metadata Templates
 --------------------------
-The `secured` and `admin` endpoints return the same listing, except the `admin` endpoint also
-includes Metadata Templates that have been marked as deleted.
+
+The `secured` and `admin` endpoints return the same listing, except the `admin` endpoint also includes Metadata Templates that have been marked as deleted.
 
 __URL Path__: /secured/filesystem/metadata/templates
 
@@ -194,11 +188,12 @@ __Response__:
 
 __Curl Command__:
 
-    curl -s "http://127.0.0.1:3000/secured/filesystem/metadata/templates?proxyToken=notReal"
+    curl -sH "$AUTH_HEADER" "http://127.0.0.1:3000/secured/filesystem/metadata/templates"
 
 
 Viewing a Metadata Template
 ---------------------------
+
 __URL Path__: /secured/filesystem/metadata/template/{template_id}
 
 __HTTP Method__: GET
@@ -247,10 +242,11 @@ __Response__:
 
 __Curl Command__:
 
-    curl -s "http://127.0.0.1:3000/secured/filesystem/metadata/template/59bd3d26-34d5-4e75-99f5-840a20089caf?proxyToken=notReal"
+    curl -sH "$AUTH_HEADER" "http://127.0.0.1:3000/secured/filesystem/metadata/template/59bd3d26-34d5-4e75-99f5-840a20089caf"
 
 Viewing a Metadata Attribute
 ----------------------------
+
 __URL Path__: /secured/filesystem/metadata/template/attr/{attribute_id}
 
 __HTTP Method__: GET
@@ -272,10 +268,11 @@ __Response__:
 
 __Curl Command__:
 
-    curl -s "http://127.0.0.1:3000/secured/filesystem/metadata/template/attr/33e3e3d8-cd48-4572-8b16-89207b1609ec?proxyToken=notReal"
+    curl -sH "$AUTH_HEADER" "http://127.0.0.1:3000/secured/filesystem/metadata/template/attr/33e3e3d8-cd48-4572-8b16-89207b1609ec"
 
 Adding Metadata Templates
 ---------------------------
+
 __URL Path__: /admin/filesystem/metadata/templates
 
 __HTTP Method__: POST
@@ -370,18 +367,19 @@ __Response__:
 __Curl Command__:
 
 ```json
-curl -sd '
+curl -sH "$AUTH_HEADER" -d '
 {
     "name": "iDS Genome Sequences",
     "attributes": [
         ...
     ]
 }
-' "http://127.0.0.1:3000/admin/filesystem/metadata/templates?proxyToken=notReal"
+' "http://127.0.0.1:3000/admin/filesystem/metadata/templates"
 ```
 
 Updating Metadata Templates
 ---------------------------
+
 __URL Path__: /admin/filesystem/metadata/templates/{template-id}
 
 __HTTP Method__: POST
@@ -483,7 +481,7 @@ __Response__:
 __Curl Command__:
 
 ```json
-curl -sd '
+curl -sH "$AUTH_HEADER" -d '
 {
     "name": "iDS Genome Sequences",
     "deleted": false,
@@ -491,11 +489,12 @@ curl -sd '
         ...
     ]
 }
-' "http://127.0.0.1:3000/admin/filesystem/metadata/templates/59bd3d26-34d5-4e75-99f5-840a20089caf?proxyToken=notReal"
+' "http://127.0.0.1:3000/admin/filesystem/metadata/templates/59bd3d26-34d5-4e75-99f5-840a20089caf"
 ```
 
 Marking a Metadata Template as Deleted
 ----------------------------------------------------------
+
 __URL Path__: /admin/filesystem/metadata/templates/{template-id}
 
 __HTTP Method__: DELETE
@@ -504,16 +503,12 @@ __Error Codes__: ERR_DOES_NOT_EXIST
 
 __Curl Command__:
 
-    curl -X DELETE "http://127.0.0.1:3000/admin/filesystem/metadata/templates/59bd3d26-34d5-4e75-99f5-840a20089caf?proxyToken=notReal"
+    curl -H "$AUTH_HEADER" -X DELETE "http://127.0.0.1:3000/admin/filesystem/metadata/templates/59bd3d26-34d5-4e75-99f5-840a20089caf"
 
 Adding Batch Metadata to Multiple Paths from a CSV File
 -------------------------------------------------------
-This endpoint will parse a CSV/TSV file, where the first column is absolute or relative paths to
-files in the data store, the remaining columns are metadata, attributes are listed in the first row,
-and filenames and attribute values are listed in the remaining rows.
-If a `template-id` parameter is provided, then any parsed AVUs with attributes that match the given
-template's attributes will be added as template AVUs, otherwise all other AVUs will be added as
-IRODS metadata AVUs.
+
+This endpoint will parse a CSV/TSV file, where the first column is absolute or relative paths to files in the data store, the remaining columns are metadata, attributes are listed in the first row, and filenames and attribute values are listed in the remaining rows. If a `template-id` parameter is provided, then any parsed AVUs with attributes that match the given template's attributes will be added as template AVUs, otherwise all other AVUs will be added as IRODS metadata AVUs.
 
 __URL Path__: /secured/filesystem/metadata/csv-parser
 
@@ -525,7 +520,6 @@ __Request Query Parameters__:
 
 Parameter | Required | Description
 ----------|----------|------------
-proxyToken | No | A valid CAS ticket (required if a valid JWT request header is not included).
 dest | Yes | The folder path to look under for files listed in the CSV file.
 src | Yes | Path to the CSV source file in IRODS.
 force | No | If omitted or set to `false`, then existing IRODS AVUs will be checked for attributes matching those parsed from the CSV file. If a match is found, then an `ERR_NOT_UNIQUE` is returned and metadata is not saved.
@@ -677,12 +671,12 @@ __Response__:
 
 __Curl Command__:
 
-    curl -s -X POST "http://localhost:3000/secured/filesystem/metadata/csv-parser?proxyToken=ipcuser&template-id=e7e19316-dc88-11e4-a49a-77c52ae8901a&dest=/iplant/home/ipcuser/folder_1&src=/iplant/home/ipcuser/metadata.csv"
+    curl -sH "$AUTH_HEADER" -X POST "http://localhost:3000/secured/filesystem/metadata/csv-parser?template-id=e7e19316-dc88-11e4-a49a-77c52ae8901a&dest=/iplant/home/ipcuser/folder_1&src=/iplant/home/ipcuser/metadata.csv"
 
 Copying all Metadata from a File/Folder
 -----------------------------------------------------
-Copies all IRODS AVUs visible to the client and Metadata Template AVUs from the data item with the
-ID given in the URL to other data items with the IDs sent in the request body.
+
+Copies all IRODS AVUs visible to the client and Metadata Template AVUs from the data item with the ID given in the URL to other data items with the IDs sent in the request body.
 
 __URL Path__: /secured/filesystem/{data-id}/metadata/copy
 
@@ -692,14 +686,7 @@ __Error Codes__: ERR_NOT_READABLE, ERR_NOT_WRITEABLE, ERR_DOES_NOT_EXIST, ERR_NO
 
 __Request Query Parameters__:
 
-* proxyToken - A valid CAS ticket.
-* force - Omitting this parameter, or setting its value to anything other than "true", will cause
-this endpoint to validate that none of the given "destination_ids" already have Metadata Template
-AVUs set with any of the attributes found in any of the Metadata Template AVUs associated with the
-source "data-id", otherwise an ERR_NOT_UNIQUE error is returned.
-IRODS allows duplicate attributes with different values on files and folders, so this endpoint will
-also allow copies of IRODS AVUs to destination files/folders of duplicate attributes if the source
-file/folder has a different value.
+* force - Omitting this parameter, or setting its value to anything other than "true", will cause this endpoint to validate that none of the given "destination_ids" already have Metadata Template AVUs set with any of the attributes found in any of the Metadata Template AVUs associated with the source "data-id", otherwise an ERR_NOT_UNIQUE error is returned. IRODS allows duplicate attributes with different values on files and folders, so this endpoint will also allow copies of IRODS AVUs to destination files/folders of duplicate attributes if the source file/folder has a different value.
 
 __Request Body__:
 
@@ -727,7 +714,7 @@ __Response__:
 
 __Curl Command__:
 
-    curl -sd '{"destination_ids": ["c5d42092-df89-11e3-bf8b-6abdce5a08d5"]}' "http://127.0.0.1:3000/secured/filesystem/cc20cbf8-df89-11e3-bf8b-6abdce5a08d5/metadata/copy?proxyToken=notReal&force=true"
+    curl -sH "$AUTH_HEADER" -d '{"destination_ids": ["c5d42092-df89-11e3-bf8b-6abdce5a08d5"]}' "http://127.0.0.1:3000/secured/filesystem/cc20cbf8-df89-11e3-bf8b-6abdce5a08d5/metadata/copy?force=true"
 
 Exporting Metadata to a File
 ----------------------------
@@ -736,5 +723,4 @@ Secured Endpoint: POST /secured/filesystem/{data-id}/metadata/save
 
 Delegates to data-info: POST /data/{data-id}/metadata/save
 
-This endpoint is a passthrough to the data-info endpoint above.
-Please see the data-info documentation for more information.
+This endpoint is a passthrough to the data-info endpoint above. Please see the data-info documentation for more information.

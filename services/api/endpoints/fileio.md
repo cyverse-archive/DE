@@ -34,7 +34,6 @@ __HTTP Method__: GET
 
 __Request Query Parameters__:
 
-* proxyToken - A valid CAS proxy ticket.
 * path - The path to the file in iRODS to be downloaded.
 
 __Error Codes__:
@@ -48,7 +47,7 @@ __Error Codes__:
 
 __Curl Command__:
 
-    curl 'http://127.0.0.1:31370/secured/fileio/download?proxyToken=notReal&path=/iplant/home/testuser/myfile.txt'
+    curl -H "$AUTH_HEADER" 'http://127.0.0.1:31370/secured/fileio/download?path=/iplant/home/testuser/myfile.txt'
 
 This will result is the file contents being printed out to stdout. Redirect to a file to actually get the file.
 
@@ -61,7 +60,6 @@ __HTTP Method__: POST
 
 __Request Query Parameters__:
 
-* proxyToken - A valid CAS proxy ticket.
 * dest - The path to the iRODS folder where the file(s) will be uploaded.
 
 __Request Form Fields__:
@@ -98,7 +96,7 @@ __Curl Command__:
 
 Uploading is handled through multipart requests:
 
-    curl -F file=@testfile.txt "localhost:31325/secured/fileio/upload?proxyToken=fake&dest=/iplant/home/testuser"
+    curl -H "$AUTH_HEADER" -F file=@testfile.txt "localhost:31325/secured/fileio/upload?dest=/iplant/home/testuser"
 
 Notice that the `dest` value points to a directory and not a file.
 
@@ -121,8 +119,6 @@ __Error codes__:
 + ERR_INVALID_URL (URL that was passed in couldn't be used)
 
 __Request Query Parameters__:
-
-* proxyToken - A valid CAS ticket.
 
 __Request Body__:
 
@@ -158,7 +154,7 @@ If the URL passed in is incorrect, then the error message will look like this:
 
 __Curl Command__:
 
-    curl -d '{"dest" : "/iplant/home/testuser/", "address" : "http://www.google.com/index.html"}' http://127.0.0.1:31370/secured/fileio/urlupload?proxyToken=notReal
+    curl -H "$AUTH_HEADER" -d '{"dest" : "/iplant/home/testuser/", "address" : "http://www.google.com/index.html"}' http://127.0.0.1:31370/secured/fileio/urlupload
 
 The 'dest' value in the JSON refers to the path to the directory in iRODS that the file will be saved off to. The filename of the file will be extracted from the path portion of the URL.
 
@@ -210,7 +206,7 @@ __Response Body__:
 
 __Curl Command__:
 
-    curl -d '{"dest" : "/iplant/home/testuser/savedfile.txt", "content" : "This is the content for the file."}' 'http://127.0.0.1:31370/secured/fileio/save?proxyToken=notReal'
+    curl -H "$AUTH_HEADER" -d '{"dest" : "/iplant/home/testuser/savedfile.txt", "content" : "This is the content for the file."}' 'http://127.0.0.1:31370/secured/fileio/save'
 
 
 ## Save As
@@ -255,4 +251,4 @@ __Response Body__:
 
 __Curl Command__:
 
-    curl -d '{"content" : "This is the content for the file.", "dest" : "/iplant/home/testuser/savedfile.txt"}' 'http://127.0.0.1:31370/secured/fileio/saveas?proxyToken=notReal'
+    curl -H "$AUTH_HEADER" -d '{"content" : "This is the content for the file.", "dest" : "/iplant/home/testuser/savedfile.txt"}' 'http://127.0.0.1:31370/secured/fileio/saveas'

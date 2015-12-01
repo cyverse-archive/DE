@@ -17,8 +17,6 @@ __Error Codes__: ERR_NOT_A_USER, ERR_DOES_NOT_EXIST, ERR_NOT_OWNER
 
 __Request Query Parameters__:
 
-* proxyToken - A valid CAS ticket.
-
 __Request Body__:
 
 ```json
@@ -59,4 +57,4 @@ __Response Body__:
 
 __Curl Command__:
 
-    curl -d '{"paths" : ["/iplant/home/testuser/testfile", "/iplant/home/testuser/testfile2"]}' 'http://nibblonian.example.org/secured/filesystem/user-permissions?proxyToken=notReal'
+    curl -H "$AUTH_HEADER" -d '{"paths" : ["/iplant/home/testuser/testfile", "/iplant/home/testuser/testfile2"]}' 'http://nibblonian.example.org/secured/filesystem/user-permissions

@@ -6,8 +6,7 @@ root: ../../../
 
 This document describes the favorites resource.
 
-A _favorite_ is something that a user has decided is important enough that it should be more readily
-accessible than other resources of the same time.
+A _favorite_ is something that a user has decided is important enough that it should be more readily accessible than other resources of the same time.
 
 # Resources
 
@@ -23,8 +22,7 @@ f86700ac-df88-11e3-bf3b-6abdce5a08d1
 
 ## Data Id Collection
 
-A collection of data Ids is its own resource. It is a JSON document (media type `application/json`)
-with a single `filesystem` field that holds an array of UUIDs, each for a file or folder.
+A collection of data Ids is its own resource. It is a JSON document (media type `application/json`) with a single `filesystem` field that holds an array of UUIDs, each for a file or folder.
 
 **Example**
 
@@ -39,8 +37,7 @@ with a single `filesystem` field that holds an array of UUIDs, each for a file o
 
 ## Favorite Data Collection
 
-A collection of favorite data or filesystem entities is its own resource. It is a JSON document
-(media type `application/json`) with the following fields.
+A collection of favorite data or filesystem entities is its own resource. It is a JSON document (media type `application/json`) with the following fields.
 
 | Field   | Type   | Description |
 | ------- | ------ | ----------- |
@@ -96,17 +93,13 @@ A favorite folder object has the following fields.
 
 Delegates to metadata: `PUT /favorites/filesystem/{favorite}`
 
-This endpoint marks a given file or folder a favorite of the authenticated user. `{favorite}` is the
-UUID of the file or folder being marked.
+This endpoint marks a given file or folder a favorite of the authenticated user. `{favorite}` is the UUID of the file or folder being marked.
 
-This endpoint forwards requests to the corresponding metadata service endpoint.
-Please see the metadata documentation for more information.
+This endpoint forwards requests to the corresponding metadata service endpoint. Please see the metadata documentation for more information.
 
 ### Request
 
-A request to this endpoint requires no parameters beyond the `proxyToken` authentication parameter.
-The user that owns the favorite is determined from the authentication.  Any additional parameters
-will be ignored.
+A request to this endpoint requires no parameters. The user that owns the favorite is determined from the authentication. Any query parameters will be ignored.
 
 Any body attached to the request will be ignored.
 
@@ -115,7 +108,7 @@ Any body attached to the request will be ignored.
 | Status Code | Cause |
 | ----------- | ----- |
 | 200         | The file or folder corresponding to the `<favorite>` UUID has been marked as a favorite of the authenticated user. |
-| 401         | Either the `proxyToken` was not provided, or the value wasn't correct. |
+| 401         | Either the authentication header was not provided, or its value wasn't correct. |
 | 404         | The `{favorite}` UUID doesn't belong to a known file or folder or the file or folder isn't readable by the authenticated user. |
 
 Error responses may contain a `"reason"` field, providing a short, human readable explanation of the failure.
@@ -123,7 +116,7 @@ Error responses may contain a `"reason"` field, providing a short, human readabl
 ### Example
 
 ```
-? curl -XPUT localhost/secured/favorites/filesystem/f86700ac-df88-11e3-bf3b-6abdce5a08d1?proxyToken=fake-token
+? curl -XPUT -H "$AUTH_HEADER" localhost/secured/favorites/filesystem/f86700ac-df88-11e3-bf3b-6abdce5a08d1
 ```
 
 ## Removing a Data Resource from Being a Favorite
@@ -132,17 +125,13 @@ Error responses may contain a `"reason"` field, providing a short, human readabl
 
 Delegates to metadata: `DELETE /favorites/filesystem/{favorite}`
 
-This endpoint removes a given file or folder from the authenticated user's favorites. `<favorite>`
-is the UUID of the file or folder.
+This endpoint removes a given file or folder from the authenticated user's favorites. `<favorite>` is the UUID of the file or folder.
 
-This endpoint forwards requests to the corresponding metadata service endpoint.
-Please see the metadata documentation for more information.
+This endpoint forwards requests to the corresponding metadata service endpoint. Please see the metadata documentation for more information.
 
 ### Request
 
-A request to this endpoint requires no parameters beyond the `proxyToken` authentication parameter.
-The user that owns the favorite is determined from the authentication. Any additional parameters
-will be ignored.
+A request to this endpoint requires no parameters. The user that owns the favorite is determined from the authentication. Any query parameters will be ignored.
 
 Any body attached to the request will be ignored.
 
@@ -151,7 +140,7 @@ Any body attached to the request will be ignored.
 | Status Code | Cause |
 | ----------- | ----- |
 | 200         | The file or folder corresponding to the `favorite` UUID has been marked as a favorite of the authenticated user. |
-| 401         | Either the `proxyToken` was not provided, or the value wasn't correct. |
+| 401         | Either the authentication header was not provided, or its value wasn't correct. |
 | 404         | The file or folder corresponding to the `favorite` UUID wasn't marked as a favorite. |
 
 Error responses may include a `reason` field, providing a short, human readable explanation of the failure.
@@ -159,7 +148,7 @@ Error responses may include a `reason` field, providing a short, human readable 
 ### Example
 
 ```
-? curl -XDELETE localhost/secured/favorites/filesystem/f86700ac-df88-11e3-bf3b-6abdce5a08d1?proxyToken=fake-token
+? curl -H "$AUTH_HEADER" -XDELETE localhost/secured/favorites/filesystem/f86700ac-df88-11e3-bf3b-6abdce5a08d1
 ```
 
 ### Listing Stat Info for Favorite Data
@@ -168,12 +157,9 @@ Error responses may include a `reason` field, providing a short, human readable 
 
 Requires metadata endpoint: `GET /favorites/filesystem`
 
-This endpoint lists stat information for the authenticated user's favorite files and folders. Only
-files and folders accessible to the user will be listed. The result set is paged.
+This endpoint lists stat information for the authenticated user's favorite files and folders. Only files and folders accessible to the user will be listed. The result set is paged.
 
-This endpoint fetches favorite information from the corresponding metadata service endpoint before
-applying filters, sorting, and additional stat information.
-Please see the metadata documentation for more information.
+This endpoint fetches favorite information from the corresponding metadata service endpoint before applying filters, sorting, and additional stat information. Please see the metadata documentation for more information.
 
 ### Request
 
@@ -181,7 +167,6 @@ A request to this endpoint requires the parameters in the following table.
 
 | Parameter   | Required? | Default      | Description |
 | ----------- | --------- | ------------ | ----------- |
-| proxyToken  | yes       |              | the CAS authentication token |
 | sort-col    | yes       |              | the field used to sort the filesystem entries in the result set. This can be `NAME|ID|LASTMODIFIED|DATECREATED|SIZE`. All values are case insensitive. |
 | sort-dir    | yes       |              | the sorting direction. It can be `ASC|DESC`. Both values are case insensitive. |
 | limit       | yes       |              | the maximum number of filesystem entries to return |
@@ -199,17 +184,16 @@ Any body attached to the request will be ignored.
 | ----------- | ----- |
 | 200         | The list of stat info was obtained and is included in the response body. |
 | 400         | one of the parameters was missing or had a nonsensical value. |
-| 401         | Either the `proxyToken` was not provided, or the value wasn't correct. |
+| 401         | Either the authentication header was not provided, or its value wasn't correct. |
 
-Upon success, the response body will be a [data collection](#favorite-data-collection) JSON document
-containing the stat information of the favorite files and folders.
+Upon success, the response body will be a [data collection](#favorite-data-collection) JSON document containing the stat information of the favorite files and folders.
 
 Error responses may include a `reason` field, providing a short, human readable explanation of the failure.
 
 ### Example
 
 ```
-? curl "localhost/secured/favorites/filesystem/favorites?proxyToken=fake-token&sort-col=ID&sort-dir=ASC&limit=1&offset=0"
+? curl -H "$AUTH_HEADER" "localhost/secured/favorites/filesystem/favorites?sort-col=ID&sort-dir=ASC&limit=1&offset=0"
 ```
 ```json
 {
@@ -242,17 +226,13 @@ Error responses may include a `reason` field, providing a short, human readable 
 
 Delegates to metadata: `POST /favorites/filter`
 
-This endpoint forwards requests to the corresponding metadata service endpoint.
-Please see the metadata documentation for more information.
+This endpoint forwards requests to the corresponding metadata service endpoint. Please see the metadata documentation for more information.
 
-This endpoint fetches the filtered favorite IDs from the corresponding metadata service endpoint
-before further filtering only UUIDs for files and folders accessible to the user.
+This endpoint fetches the filtered favorite IDs from the corresponding metadata service endpoint before further filtering only UUIDs for files and folders accessible to the user.
 
 ### Request
 
-A request to this endpoint requires no parameters beyond the `proxyToken` authentication parameter.
-The user that owns the favorite is determined from the authentication. Any additional parameters
-will be ignored.
+A request to this endpoint requires no parameters. The user that owns the favorite is determined from the authentication. Any query parameters will be ignored.
 
 ### Response
 
@@ -260,24 +240,22 @@ will be ignored.
 | ----------- | ----- |
 | 200         | The filtered list of UUIDs was generated and is included in the response body. |
 | 400         | The request body wasn't a syntactically correct [data id collection](#data-id-collection). |
-| 401         | Either the `proxyToken` was not provided, or the value wasn't correct. |
+| 401         | Either the authentication header was not provided, or its value wasn't correct. |
 
-Upon success, the response body will be a [data id collection](#data-id-collection) JSON document
-containing the UUIDs from the request body that correspond to favorite files and folders of the
-user.
+Upon success, the response body will be a [data id collection](#data-id-collection) JSON document containing the UUIDs from the request body that correspond to favorite files and folders of the user.
 
 Error responses may include a `reason` field, providing a short, human readable explanation of the failure.
 
 ### Example
 
 ```
-? curl -XPOST -d '
+? curl -XPOST -H "$AUTH_HEADER" -d '
     {
       "filesystem" : [
         "f86700ac-df88-11e3-bf3b-6abdce5a08d1",
         "f86700ac-df88-11e3-bf3b-6abdce5a08d5"
       ]
-    }' localhost/secured/favorites/filter?proxyToken=fake-token
+    }' localhost/secured/favorites/filter
 ```
 ```json
 {

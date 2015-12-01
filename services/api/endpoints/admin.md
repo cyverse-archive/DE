@@ -11,10 +11,6 @@ __URL Path__: /admin/config
 
 __HTTP Method__: GET
 
-__Request Query Parameters__:
-
-* proxyToken - A valid CAS ticket.
-
 __Response Body__:
 
 ```json
@@ -34,10 +30,6 @@ Status Check
 __URL Path__: /admin/status
 
 __HTTP Method__: GET
-
-__Request Query Parameters__:
-
-* proxyToken - A valid CAS ticket.
 
 __Response Body__:
 

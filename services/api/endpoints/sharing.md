@@ -16,13 +16,12 @@ root: ../../../
 
 Secured Endpoint: POST /secured/share
 
-This service can be used to share a user's files and folders with other users,
-and with specific permissions for each user and resource.
+This service can be used to share a user's files and folders with other users, and with specific permissions for each user and resource.
 
 Here's an example:
 
 ```
-$ curl -sd '
+$ curl -sH "$AUTH_HEADER" -d '
 {
     "sharing": [
         {
@@ -53,7 +52,7 @@ $ curl -sd '
         }
     ]
 }
-' "http://by-tor:8888/secured/share?proxyToken=$(cas-ticket)"
+' "http://by-tor:8888/secured/share"
 ```
 
 The service will respond with a success or failure message per user and resource:
@@ -116,7 +115,7 @@ This service can be used to unshare a user's files and folders with other users.
 Here's an example:
 
 ```
-$ curl -sd '
+$ curl -sH "$AUTH_HEADER" -d '
 {
     "unshare": [
         {
@@ -135,7 +134,7 @@ $ curl -sd '
         }
     ]
 }
-' "http://by-tor:8888/secured/unshare?proxyToken=$(cas-ticket)"
+' "http://by-tor:8888/secured/unshare"
 ```
 
 The service will respond with a success or failure message per user:

@@ -16,16 +16,14 @@ __Error Codes__: ERR_NOT_A_USER
 
 __Request Query Parameters__:
 
-* proxyToken - A valid CAS ticket.
-
 __Request Body__:
 
-	{
-		"paths" : [
-			"/iplant/home/wregglej/pom.xml",
-			"/iplant/home/wregglej/pom.xml2"
-		]
-	}
+    {
+        "paths" : [
+            "/iplant/home/wregglej/pom.xml",
+            "/iplant/home/wregglej/pom.xml2"
+        ]
+    }
 
 __Response Body__:
 
@@ -38,4 +36,4 @@ __Response Body__:
 
 __Curl Command__:
 
-    curl -H "Content-type:application/json" -d '{"paths" : ["/iplant/home/wregglej/pom.xml", "/iplant/home/wregglej/pom.xml2"]}' 'http://127.0.0.1:3000/secured/filesystem/exists?proxyToken=notReal'
+    curl -H "$AUTH_HEADER" -H "Content-type:application/json" -d '{"paths" : ["/iplant/home/wregglej/pom.xml", "/iplant/home/wregglej/pom.xml2"]}' 'http://127.0.0.1:3000/secured/filesystem/exists

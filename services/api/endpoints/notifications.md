@@ -24,16 +24,9 @@ root: ../../../
 
 Secured Endpoint: GET /secured/notifications/messages
 
-This endpoint is primarily a passthrough endpoint to the notification agent's
-`/messages` endpoint, but it does make calls into the apps service in order to add the
-app description to job status update notifications.
+This endpoint is primarily a passthrough endpoint to the notification agent's `/messages` endpoint, but it does make calls into the apps service in order to add the app description to job status update notifications.
 
-Notifications in the DE are used to inform users when some event (for example a
-job status change or the completion of a file upload) has occurred. This service
-provides a way for the DE to retrieve notifications that the user may or may not
-have seen before. This service accepts five different query-string parameters
-(in addition to the `proxyToken` parameter, which is required for all secured
-services):
+Notifications in the DE are used to inform users when some event (for example a job status change or the completion of a file upload) has occurred. This service provides a way for the DE to retrieve notifications that the user may or may not have seen before. This service accepts five different query-string parameters:
 
 <table>
     <thead>
@@ -119,10 +112,7 @@ The response body for this service is in the following format:
 }
 ```
 
-The payload object in each message is a JSON object with a format that is
-specific to the notification type, and its format will vary. There are currently
-three types of notifications that we support: `data`, `analysis` and `tool`. The
-`data` and `analysis` notification types have the same payload format:
+The payload object in each message is a JSON object with a format that is specific to the notification type, and its format will vary. There are currently three types of notifications that we support: `data`, `analysis` and `tool`. The `data` and `analysis` notification types have the same payload format:
 
 ```json
 {
@@ -157,7 +147,7 @@ The payload format for the `tool` notification type is a little simpler:
 Here's an example:
 
 ```
-$ curl -s "http://by-tor:8888/secured/notifications/messages?proxyToken=$(cas-ticket)&limit=1&offset=0" | python -mjson.tool
+$ curl -sH "$AUTH_HEADER" "http://by-tor:8888/secured/notifications/messages?limit=1&offset=0" | python -mjson.tool
 {
     "messages": [
         {
@@ -196,14 +186,9 @@ $ curl -s "http://by-tor:8888/secured/notifications/messages?proxyToken=$(cas-ti
 
 Secured Endpoint: GET /secured/notifications/count-messages
 
-This endpoint is a passthrough to the notification agent endpoint,
-`/count-messages`. Please see the notification agent documentation for more
-details.
+This endpoint is a passthrough to the notification agent endpoint, `/count-messages`. Please see the notification agent documentation for more details.
 
-This service takes a subset of the query-string parameters as the /messages
-service, and returns the number of messages that match the criteria specified in
-the query-string parameters. Here's the list of supported query-string
-parameters:
+This service takes a subset of the query-string parameters as the /messages service, and returns the number of messages that match the criteria specified in the query-string parameters. Here's the list of supported query-string parameters:
 
 <table>
     <thead>
@@ -236,14 +221,7 @@ parameters:
     </tbody>
 </table>
 
-The response body consists of a JSON object containing four fields:
-`user-total`, contains the number of user messages that have not been marked as
-deleted and match the criteria specified in the query string, `system-total`
-contains the number of system messages that are active and have not been
-dismissed by the user, `system-total-new` contains the number of system messages
-that have not been marked as received by the user, and `system-total-unseen`
-contains the number of system messages that have not been marked as seen by the
-user.
+The response body consists of a JSON object containing four fields: `user-total`, contains the number of user messages that have not been marked as deleted and match the criteria specified in the query string, `system-total` contains the number of system messages that are active and have not been dismissed by the user, `system-total-new` contains the number of system messages that have not been marked as received by the user, and `system-total-unseen` contains the number of system messages that have not been marked as seen by the user.
 
 ```json
 {
@@ -257,7 +235,7 @@ user.
 Here are some examples:
 
 ```
-$ curl -s "http://by-tor:8888/secured/notifications/count-messages?proxyToken=$(cas-ticket)" | python -mjson.tool
+$ curl -sH "$AUTH_HEADER" "http://by-tor:8888/secured/notifications/count-messages" | python -mjson.tool
 {
     "user-total":          409,
     "system-total":         10,
@@ -266,11 +244,10 @@ $ curl -s "http://by-tor:8888/secured/notifications/count-messages?proxyToken=$(
 }
 ```
 
-In this example, all messages that are available for the user that have not been
-marked as deleted are counted.
+In this example, all messages that are available for the user that have not been marked as deleted are counted.
 
 ```
-$ curl -s "http://by-tor:8888/secured/notifications/count-messages?proxyToken=$(cas-ticket)&filter=data" | python -mjson.tool
+$ curl -sH "$AUTH_HEADER" "http://by-tor:8888/secured/notifications/count-messages?filter=data" | python -mjson.tool
 {
     "user-total":          91,
     "system-total":        10,
@@ -279,23 +256,18 @@ $ curl -s "http://by-tor:8888/secured/notifications/count-messages?proxyToken=$(
 }
 ```
 
-In this example only the data notifications that have not been marked as deleted
-are counted.
+In this example only the data notifications that have not been marked as deleted are counted.
 
 ## Obtaining Unseen Notifications
 
 Secured Endpoint: GET /secured/notifications/unseen-messages
 
-This endpoint is primarily a passthrough endpoint to the notification agent's
-`/unseen-messages` endpoint, but it does make calls into the apps service in order to
-add the app description to job status update notifications.
+This endpoint is primarily a passthrough endpoint to the notification agent's `/unseen-messages` endpoint, but it does make calls into the apps service in order to add the app description to job status update notifications.
 
-This service is used to obtain notifications that the user hasn't seen yet.
-This service takes no query-string parameters other than the `proxyToken`
-parameter that is required by all secured services. Here's an example:
+This service is used to obtain notifications that the user hasn't seen yet. This service takes no query-string parameters. Here's an example:
 
 ```
-$ curl -s "http://by-tor:8888/secured/notifications/unseen-messages?proxyToken=$(cas-ticket)" | python -mjson.tool
+$ curl -sH "$AUTH_HEADER" "http://by-tor:8888/secured/notifications/unseen-messages" | python -mjson.tool
 {
     "messages": []
 }
@@ -305,28 +277,19 @@ $ curl -s "http://by-tor:8888/secured/notifications/unseen-messages?proxyToken=$
 
 Secured Endpoint: GET /secured/notifications/last-ten-messages
 
-This endpoint is primarily a passthrough endpoint to the notification agent's
-`/last-ten-messages` endpoint, but it does make calls into the apps service in order
-to add the app description to job status update notifications.
+This endpoint is primarily a passthrough endpoint to the notification agent's `/last-ten-messages` endpoint, but it does make calls into the apps service in order to add the app description to job status update notifications.
 
-This endpoint returns the ten most recent messages for the authenticated user in
-ascending order by message timestamp. Obtaining the ten most recent messages in
-ascending order is difficult using other endpoints.
+This endpoint returns the ten most recent messages for the authenticated user in ascending order by message timestamp. Obtaining the ten most recent messages in ascending order is difficult using other endpoints.
 
-Examples are omitted for this endpoint because the response body is identical to
-that of the other endpoints used to obtain notifications.
+Examples are omitted for this endpoint because the response body is identical to that of the other endpoints used to obtain notifications.
 
 ## Marking Notifications as Seen
 
 Secured Endpoint: POST /secured/notifications/seen
 
-This endpoint is a passthrough to the notification agent's `/seen`
-endpoint. Please see the notification agent documentation for more details.
+This endpoint is a passthrough to the notification agent's `/seen` endpoint. Please see the notification agent documentation for more details.
 
-Once a user has seen a notification, the notification should be marked as seen
-to prevent it from being returned by the `/notifications/unseen-messages`
-endpoint. This service provides a way to mark notifications as seen. The request
-body for this service is in the following format:
+Once a user has seen a notification, the notification should be marked as seen to prevent it from being returned by the `/notifications/unseen-messages` endpoint. This service provides a way to mark notifications as seen. The request body for this service is in the following format:
 
 ```
 {
@@ -338,44 +301,35 @@ body for this service is in the following format:
 }
 ```
 
-The response body for this service is a simple JSON object that indicates
-whether or not the service call succeeded and contains the number of messages
-that are still marked as unseen. Here's an example:
+The response body for this service is a simple JSON object that indicates whether or not the service call succeeded and contains the number of messages that are still marked as unseen. Here's an example:
 
 ```
-$ curl -sd '
+$ curl -sH "$AUTH_HEADER" -d '
 {
     "uuids": [
         "C15763CF-A5C9-48F5-BE4F-9FB3CB1897EB"
     ]
 }
-' "http://by-tor:8888/secured/notifications/seen?proxyToken=$(cas-ticket)" | python -mjson.tool
+' "http://by-tor:8888/secured/notifications/seen" | python -mjson.tool
 {
     "count": 0
 }
 ```
 
-Note that the UUIDs provided in the request body must be obtained from the
-`message` -> `id` element of the notification the user wishes to mark as seen.
+Note that the UUIDs provided in the request body must be obtained from the `message` -> `id` element of the notification the user wishes to mark as seen.
 
 ## Marking All Notifications as Seen
 
 Secured Endpoint: POST /secured/notifications/mark-all-seen
 
-This endpoint is a passthrough to the notification agent's `/mark-all-seen`
-endpoint. Please see the notification agent documentation for more information
-about the format of the request body.
+This endpoint is a passthrough to the notification agent's `/mark-all-seen` endpoint. Please see the notification agent documentation for more information about the format of the request body.
 
-This endpoint will add or overwrite the "user" field in the request body
-forwarded to the NotificationAgent with the username of the authenticated user
-making the request.
+This endpoint will add or overwrite the "user" field in the request body forwarded to the NotificationAgent with the username of the authenticated user making the request.
 
-The response body for this service is a simple JSON object that indicates
-whether or not the service call succeeded and contains the number of messages
-that are still marked as unseen. Here's an example:
+The response body for this service is a simple JSON object that indicates whether or not the service call succeeded and contains the number of messages that are still marked as unseen. Here's an example:
 
 ```
-$ curl -sd '{}' "http://by-tor:8888/secured/notifications/mark-all-seen?proxyToken=$(cas-ticket)" | python -mjson.tool
+$ curl -sH "$AUTH_HEADER" -d '{}' "http://by-tor:8888/secured/notifications/mark-all-seen" | python -mjson.tool
 {
     "count": 0
 }
@@ -385,14 +339,9 @@ $ curl -sd '{}' "http://by-tor:8888/secured/notifications/mark-all-seen?proxyTok
 
 Secured Endpoint: POST /secured/notifications/delete
 
-This endpoint is a passthrough to the notification agent's `/delete`
-endpoint. Please see the notification agent documentation for more details.
+This endpoint is a passthrough to the notification agent's `/delete` endpoint. Please see the notification agent documentation for more details.
 
-Users may wish to dismiss notifications that they've already seen. This service
-marks one or more notifications as deleted so that neither the
-`/notfications/messages` endpoint nor the `/notifications/unseen-messages`
-endpoint will return them. The request body for this service is in the following
-format:
+Users may wish to dismiss notifications that they've already seen. This service marks one or more notifications as deleted so that neither the `/notfications/messages` endpoint nor the `/notifications/unseen-messages` endpoint will return them. The request body for this service is in the following format:
 
 ```
 {
@@ -404,39 +353,32 @@ format:
 }
 ```
 
-The response body for this service is a simple JSON object that indicates
-whether or not the service call succeeded. Here's an example:
+The response body for this service is a simple JSON object that indicates whether or not the service call succeeded. Here's an example:
 
 ```
-$ curl -sd '
+$ curl -sH "$AUTH_HEADER" -d '
 {
     "uuids": [
         "C15763CF-A5C9-48F5-BE4F-9FB3CB1897EB"
     ]
 }
-' "http://by-tor:8888/secured/notifications/delete?proxyToken=$(cas-ticket)"
+' "http://by-tor:8888/secured/notifications/delete"
 ```
 
-Note that the UUIDs provided in the request body must be obtained from the
-`message` -> `id` element of the notification the user wishes to delete.
+Note that the UUIDs provided in the request body must be obtained from the `message` -> `id` element of the notification the user wishes to delete.
 
 ## Marking All Notifications as Deleted
 
 Secured Endpoint: DELETE /secured/notifications/delete-all
 
-This endpoint is a passthrough to the notification agent's `/delete-all`
-endpoint. Please see the notification agent documentation for more details.
+This endpoint is a passthrough to the notification agent's `/delete-all` endpoint. Please see the notification agent documentation for more details.
 
-This endpoint will add or replace the "user" parameter in the request forwarded
-to the NotificationAgent with the username of the authenticated user making the
-request.
+This endpoint will add or replace the "user" parameter in the request forwarded to the NotificationAgent with the username of the authenticated user making the request.
 
-The response body for this service is a simple JSON object that indicates
-whether or not the service call succeeded and contains the number of messages
-that are still marked as unseen. Here's an example:
+The response body for this service is a simple JSON object that indicates whether or not the service call succeeded and contains the number of messages that are still marked as unseen. Here's an example:
 
 ```
-$ curl -X DELETE -s "http://by-tor:8888/secured/notifications/delete-all?proxyToken=$(cas-ticket)" | python -mjson.tool
+$ curl -X DELETE -sH "$AUTH_HEADER" "http://by-tor:8888/secured/notifications/delete-all" | python -mjson.tool
 {
     "count": 0
 }
@@ -446,15 +388,11 @@ $ curl -X DELETE -s "http://by-tor:8888/secured/notifications/delete-all?proxyTo
 
 Unsecured Endpoint: POST /send-notification.
 
-This endpoint is a passthrough to the notification agent's `/notification`
-endpoint. Please see the notification agent documentation for more details.
+This endpoint is a passthrough to the notification agent's `/notification` endpoint. Please see the notification agent documentation for more details.
 
 ## Endpoints for System Messages (a.k.a. System Notifications)
 
-The endpoints for the system messages are straight pass throughs to the corresponding calls in the
-Notification Agent. The only difference is that the endpoints in Terrain are prefixed with
-__/secured/notifications__ or __/admin/notifications__ and that endpoints that require the __user__
-query string parameter instead take the __proxyToken__ parameter and its corresponding ticket string.
+The endpoints for the system messages are straight pass throughs to the corresponding calls in the Notification Agent. The only difference is that the endpoints in Terrain are prefixed with __/secured/notifications__ or __/admin/notifications__ and that endpoints that require the __user__ query string parameter instead take the authentication header.
 
 <table>
     <thead>

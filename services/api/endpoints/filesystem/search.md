@@ -18,32 +18,23 @@ This document describes the endpoints used to performing searches of user data.
 
 # Indexed Information
 
-For each file and folder stored in the iPlant data store, its ACL, system metadata, and user
-metadata are indexed as a JSON document. For files, [file records](../../schema.md#file-record) are
-indexed, and for folders, [folder records](../../schema.md#folder-record) are indexed.
+For each file and folder stored in the iPlant data store, its ACL, system metadata, and user metadata are indexed as a JSON document. For files, [file records](../../schema.html#file-record) are indexed, and for folders, [folder records](../../schema.html#folder-record) are indexed.
 
 # Basic Usage
 
-For the client without administrative privileges, Terrain provides endpoints for performing searches
-and for checking the status of the indexer.
+For the client without administrative privileges, Terrain provides endpoints for performing searches and for checking the status of the indexer.
 
 ## Search Requests
 
-Terrain provides search endpoints that allow callers to search the data by name and various pieces of
-system and user metadata. It supports the all the queries in the [ElasticSearch query DSL]
-(http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-queries.html) for
-searching.
+Terrain provides search endpoints that allow callers to search the data by name and various pieces of system and user metadata. It supports the all the queries in the [ElasticSearch query DSL] (http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-queries.html) for searching.
 
-Each field in an indexed document may be explicitly used in a search query. If the field is an
-object, i.e. an aggregate of fields, the object's fields may be explicitly referenced as well using
-dot notation, e.g. `acl.access`.
+Each field in an indexed document may be explicitly used in a search query. If the field is an object, i.e. an aggregate of fields, the object's fields may be explicitly referenced as well using dot notation, e.g. `acl.access`.
 
 ### Endpoints
 
 * `GET /secured/filesystem/index`
 
-This endpoint searches the data index and retrieves a set of files and/or folders matching the terms
-provided in the query string.
+This endpoint searches the data index and retrieves a set of files and/or folders matching the terms provided in the query string.
 
 ### Request Parameters
 
@@ -62,12 +53,7 @@ The following additional URI parameters are recognized.
 
 #### Sorting
 
-The result set is sorted. By default the sort is performed on the `score` field in descending order.
-The `sort` request parameter can be used to change the sort order.  Its value has the form
-`field:direction` where `field` is one of the fields of a **match record** and `direction` is either
-`asc` for ascending or `desc` for descending.  Use dot notation to sort by one of the nested fields
-of the match records, e.g., `entity.label` will sort by the `label` field of the matched entities.
-If no `:direction` is provided, the search direction will default to `desc`.
+The result set is sorted. By default the sort is performed on the `score` field in descending order. The `sort` request parameter can be used to change the sort order. Its value has the form `field:direction` where `field` is one of the fields of a **match record** and `direction` is either `asc` for ascending or `desc` for descending. Use dot notation to sort by one of the nested fields of the match records, e.g., `entity.label` will sort by the `label` field of the matched entities. If no `:direction` is provided, the search direction will default to `desc`.
 
 ### Response
 
@@ -86,13 +72,13 @@ When the search succeeds the response document has these additional fields.
 | ------ | ------ | ----------- |
 | score  | number | an indication of how well this entity matches the query compared to other matches |
 | type   | string | the entity is this type of filesystem entry, either `"file"` or `"folder"` |
-| entity | object | the [file record](../../schema.md#file-record) or [folder record](../../schema.md#folder-record) matched |
+| entity | object | the [file record](../../schema.html#file-record) or [folder record](../../schema.html#folder-record) matched |
 
 ### Example
 
 ```
-$ curl \
-> "http://localhost:8888/secured/filesystem/index?proxyToken=$(cas-ticket)&q=\\{\"wildcard\":\\{\"label\":\"?e*\"\\}\\}&type=file&tags=64581dbe-3aa1-11e4-a54e-3c4a92e4a804,6504ca14-3aa1-11e4-8d83-3c4a92e4a804&offset=1&limit=2&sort:desc" \
+$ curl -H "$AUTH_HEADER" \
+> "http://localhost:8888/secured/filesystem/index?q=\\{\"wildcard\":\\{\"label\":\"?e*\"\\}\\}&type=file&tags=64581dbe-3aa1-11e4-a54e-3c4a92e4a804,6504ca14-3aa1-11e4-8d83-3c4a92e4a804&offset=1&limit=2&sort:desc" \
 > | python -mjson.tool
 {
     "matches": [
@@ -186,17 +172,12 @@ There are no additional request parameters.
 | syncProcessingCount | number | This is the total number of elements to consider for indexing or pruning during the current synchronizer state. |
 | syncProcessedCount  | number | This is the total number of elements that have be indexed or pruned during the current synchronizer state. |
 
-\* Unless a synchronization has been requested, the `syncState` will be `"idle"`. When a
-synchronization has been requested, `syncState` is transitioned to `"indexing`". This means that the
-data store is being crawled and entries missing from the search index are being added. When indexing
-has been completed, `syncState` is transitioned to `"pruning"`. This means that the search index is
-scanned and entries that are no longer in the data store are removed. Finally, when pruning has
-completed, `syncState` is transitioned back to `"idle"`.
+\* Unless a synchronization has been requested, the `syncState` will be `"idle"`. When a synchronization has been requested, `syncState` is transitioned to `"indexing`". This means that the data store is being crawled and entries missing from the search index are being added. When indexing has been completed, `syncState` is transitioned to `"pruning"`. This means that the search index is scanned and entries that are no longer in the data store are removed. Finally, when pruning has completed, `syncState` is transitioned back to `"idle"`.
 
 ### Example
 
 ```
-$ curl http://localhost:8888/secured/filesystem/index/status?proxyToken=$(cas-ticket) \
+$ curl -H "$AUTH_HEADER" http://localhost:8888/secured/filesystem/index/status \
 > | python -mjson.tool
 {
     "lag": 11,
@@ -212,8 +193,7 @@ $ curl http://localhost:8888/secured/filesystem/index/status?proxyToken=$(cas-ti
 
 __NOT IMPLEMENTED YET__
 
-For clients with administrative privileges, Terrain provides additional endpoints for performing
-search requests as a specific user and controlling the indexer.
+For clients with administrative privileges, Terrain provides additional endpoints for performing search requests as a specific user and controlling the indexer.
 
 ## Search Requests by Proxy
 
@@ -223,16 +203,11 @@ An administrator can perform any search as a specific user.
 
 * Admin Endpoint: `GET /admin/filesystem/index`
 
-This endpoint searches the data index and retrieves a set of files and/or folders matching the terms
-provided in the query string.
+This endpoint searches the data index and retrieves a set of files and/or folders matching the terms provided in the query string.
 
 ### Request Parameters
 
-The request is encoded as a JSON query. It supports all of the parameters of a
-[normal search request](#search-request) with one additional parameter. The  `as-user` parameter
-identifies the user the administrator is performing the search as. This allows the administrator to
-reproduce a query the user has complained about. The parameter value takes the form
-`{username}#{zone}` where `username` is the user identity and `zone` is the authentication zone.
+The request is encoded as a JSON query. It supports all of the parameters of a [normal search request](#search-request) with one additional parameter. The `as-user` parameter identifies the user the administrator is performing the search as. This allows the administrator to reproduce a query the user has complained about. The parameter value takes the form `{username}#{zone}` where `username` is the user identity and `zone` is the authentication zone.
 
 ### Response
 
@@ -241,8 +216,8 @@ The response body is the same as a [normal response body](#response-body).
 ### Example
 
 ```
-$ curl \
-> "http://localhost:8888/admin/filesystem/search/iplant/home?proxyToken=$(cas-ticket)&as-user=rods#iplant&q=\\{\"wildcard\":\\{\"label\":\"?e*\"\\}\\}&type=file&offset=1&limit=2&sort=score:desc" \
+$ curl -H "$AUTH_HEADER" \
+> "http://localhost:8888/admin/filesystem/search/iplant/home?as-user=rods#iplant&q=\\{\"wildcard\":\\{\"label\":\"?e*\"\\}\\}&type=file&offset=1&limit=2&sort=score:desc" \
 > | python -mjson.tool
 {
     "matches": [
@@ -321,12 +296,7 @@ Terrain provides an endpoint for updating the index used by search.
 
 ### Request Parameter
 
-An indexing request has one additional parameter. The `sync` parameter indicates what operation the
-synchronizer should perform on the index. If the parameter is set to `start-full`, a full
-synchronization of the index with the data store will be performed. If the parameter is set to
-`start-incremental`, only the items in the data store that have been created or modified since the
-last completed synchronization will be indexed during this synchronization. Finally, if the
-parameter is set to `stop`, if a synchronization is currently in progress, it will be terminated.
+An indexing request has one additional parameter. The `sync` parameter indicates what operation the synchronizer should perform on the index. If the parameter is set to `start-full`, a full synchronization of the index with the data store will be performed. If the parameter is set to `start-incremental`, only the items in the data store that have been created or modified since the last completed synchronization will be indexed during this synchronization. Finally, if the parameter is set to `stop`, if a synchronization is currently in progress, it will be terminated.
 
 ### Response
 
@@ -335,6 +305,6 @@ A successful response has no additional fields.
 ### Example
 
 ```
-$ curl -X POST http://localhost:8888/admin/filesystem/index?proxyToken=$(cas-ticket) \
+$ curl -H "$AUTH_HEADER" -X POST http://localhost:8888/admin/filesystem/index \
 > | python -mjson.tool
 ```

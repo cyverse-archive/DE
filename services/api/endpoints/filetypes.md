@@ -12,7 +12,7 @@ Error code maps follow the general format of `data-info`'s errors:
 
     {
         err_code: "ERR_CODE_STRING",
- 		...
+        ...
     }
 
 Currently Supported File Types
@@ -33,7 +33,6 @@ __HTTP Method__: GET
 __Error Codes__: None
 
 __Request Query Parameters__:
-* proxyToken - A valid CAS proxy token.
 
 __Response Body__:
 
@@ -43,7 +42,7 @@ __Response Body__:
 
 __Curl Command__:
 
-    curl http://terrain.example.org:31325/secured/filetypes/type-list?proxyToken=notARealOne
+    curl -H "$AUTH_HEADER" http://terrain.example.org:31325/secured/filetypes/type-list
 
 
 Add/update/unset a file type of a file
@@ -58,7 +57,6 @@ __HTTP Method__: POST
 __Error Codes__: ERR_NOT_OWNER, ERR_BAD_OR_MISSING_FIELD, ERR_DOES_NOT_EXIST, ERR_NOT_A_USER, ERR_NOT_A_FILE
 
 __Request Query Parameters__:
-* proxyToken - A valid CAS proxy token.
 
 __Request Body__:
 
@@ -82,4 +80,4 @@ __Response Body__:
 
 __Curl Command__:
 
-    curl -d '{"path" : "/path/to/irods/file","type":"csv"}' 'http://terrain.example.org:31325/secured/filetypes/type?proxyToken=notARealOne'
+    curl -H "$AUTH_HEADER" -d '{"path" : "/path/to/irods/file","type":"csv"}' 'http://terrain.example.org:31325/secured/filetypes/type'

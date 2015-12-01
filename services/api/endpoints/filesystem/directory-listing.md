@@ -7,10 +7,7 @@ root: ../../../../
 Directory List (Non-Recursive)
 ------------------------------
 
-Only lists subdirectories of the directory path passed into it.
-Delegates to the `POST /favorites/filter` metadata endpoint in order to set the `isFavorite` flags
-in the response. If the metadata service is not available, then these flags will be set to `false`
-by default.
+Only lists subdirectories of the directory path passed into it. Delegates to the `POST /favorites/filter` metadata endpoint in order to set the `isFavorite` flags in the response. If the metadata service is not available, then these flags will be set to `false` by default.
 
 __URL Path__: /secured/filesystem/directory
 
@@ -20,7 +17,6 @@ __Error Codes__: ERR_NOT_A_USER, ERR_NOT_READABLE
 
 __Request Query Params__:
 
-* proxyToken - A valid CAS ticket.
 * path - The path to list. Optional. If ommitted, the user's home directory is used.
 
 __Response Body__:
@@ -79,16 +75,13 @@ __Response Body__:
 
 __Curl Command__:
 
-    curl http://127.0.0.1:3000/secured/filesystem/directory?proxyToken=notReal
+    curl -H "$AUTH_HEADER" http://127.0.0.1:3000/secured/filesystem/directory
 
 
 Paged Directory Listing
 -----------------------
 
-Provides a paged directory listing for large directories. Always includes files (unless the directory doesn't contain any).
-Delegates to the `POST /favorites/filter` metadata endpoint in order to set the `isFavorite` flags
-in the response. If the metadata service is not available, then these flags will be set to `false`
-by default.
+Provides a paged directory listing for large directories. Always includes files (unless the directory doesn't contain any). Delegates to the `POST /favorites/filter` metadata endpoint in order to set the `isFavorite` flags in the response. If the metadata service is not available, then these flags will be set to `false` by default.
 
 __URL Path__: /secured/filesystem/paged-directory
 
@@ -106,7 +99,6 @@ __Error Codes__:
 
 __Request Query Params__:
 
-* proxyToken - A valid CAS ticket.
 * path - The path to list. Must be a directory.
 * limit - The total number of results to return in a page. This is the number of folders and files combined.
 * offset - The offset into the directory listing result set to begin the listing at.
@@ -204,4 +196,4 @@ __Response Body__:
 
 __Curl Command__:
 
-    curl "http://127.0.0.1:31325/secured/filesystem/paged-directory?proxyToken=asdfadsfa&path=/iplant/home/wregglej&sort-col=SIZE&sort-dir=DESC&limit=5&offset=10"
+    curl -H "$AUTH_HEADER" "http://127.0.0.1:31325/secured/filesystem/paged-directory?path=/iplant/home/wregglej&sort-col=SIZE&sort-dir=DESC&limit=5&offset=10"
