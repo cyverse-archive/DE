@@ -37,6 +37,7 @@ public class ToolTestDataInputFilesListEditor extends Composite
 
     public ToolTestDataInputFilesListEditor() {
         listStore = new ListStore<>(getModelKeyProvider());
+        listStore.setAutoCommit(true);
 
         List<ColumnConfig<String, ?>> columns = new ArrayList<>();
 
@@ -96,7 +97,6 @@ public class ToolTestDataInputFilesListEditor extends Composite
     }
 
     public void addToolTestDataInputFile() {
-        listStore.commitChanges();
         String inputFile = "";
 
         editing.cancelEditing();
@@ -107,7 +107,6 @@ public class ToolTestDataInputFilesListEditor extends Composite
     }
 
     public void deleteToolTestDataInputFile() {
-        listStore.commitChanges();
         String deleteInput = grid.getSelectionModel().getSelectedItem();
         if (deleteInput != null) {
             listStore.remove(listStore.findModelWithKey(deleteInput));
