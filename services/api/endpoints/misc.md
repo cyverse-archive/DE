@@ -336,7 +336,7 @@ If you pass up invalid JSON, you'll get an error like the following:
 
 ### Deleting saved searches
 
-Secured endpoint : DELETE /secured/saved-searches
+Secured endpoint: DELETE /secured/saved-searches
 
 Curl example:
 
