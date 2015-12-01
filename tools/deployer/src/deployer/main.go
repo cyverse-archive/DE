@@ -1,11 +1,11 @@
 package main
 
 import (
+	"copy"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"git"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -212,44 +212,9 @@ func main() {
 	}
 
 	fmt.Printf("Copying files from %s to %s\n", internalGroupVars, externalGroupVars)
-	var copyPaths []string
-
-	visit := func(p string, i os.FileInfo, err error) error {
-		if !i.IsDir() {
-			fmt.Printf("Found file %s to copy\n", p)
-			copyPaths = append(copyPaths, p)
-		}
-		return err
-	}
-
-	err = filepath.Walk(internalGroupVars, visit)
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
-	}
-
-	if _, err := os.Stat(externalGroupVars); os.IsNotExist(err) {
-		fmt.Printf("Creating %s\n", externalGroupVars)
-		err = os.MkdirAll(externalGroupVars, 0755)
-		if err != nil {
-			fmt.Print(err)
-			os.Exit(-1)
-		}
-	}
-
-	for _, copyPath := range copyPaths {
-		destPath := path.Join(externalGroupVars, path.Base(copyPath))
-		fmt.Printf("Copying %s to %s\n", copyPath, destPath)
-		contents, err := ioutil.ReadFile(copyPath)
-		if err != nil {
-			fmt.Print(err)
-			os.Exit(-1)
-		}
-		err = ioutil.WriteFile(destPath, contents, 0644)
-		if err != nil {
-			fmt.Print(err)
-			os.Exit(-1)
-		}
+	groupVarCopier := copy.New()
+	if err = groupVarCopier.Copy(groupVarCopier.FileVisitor, internalGroupVars, externalGroupVars); err != nil {
+		log.Fatal(err)
 	}
 
 	internalInventories, err := filepath.Abs(path.Join(internalDir, "inventories"))
@@ -264,27 +229,9 @@ func main() {
 	}
 
 	fmt.Printf("Copying files from %s to %s\n", internalInventories, externalInventories)
-	copyPaths = []string{}
-
-	err = filepath.Walk(internalInventories, visit)
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
-	}
-
-	for _, copyPath := range copyPaths {
-		destPath := path.Join(externalInventories, path.Base(copyPath))
-		fmt.Printf("Copying %s to %s\n", copyPath, destPath)
-		contents, err := ioutil.ReadFile(copyPath)
-		if err != nil {
-			fmt.Print(err)
-			os.Exit(-1)
-		}
-		err = ioutil.WriteFile(destPath, contents, 0644)
-		if err != nil {
-			fmt.Print(err)
-			os.Exit(-1)
-		}
+	inventoryCopier := copy.New()
+	if err = inventoryCopier.Copy(inventoryCopier.FileVisitor, internalInventories, externalInventories); err != nil {
+		log.Fatal(err)
 	}
 
 	origPath, err := filepath.Abs(path.Join(internalDir, "sudo_secret.txt"))
@@ -297,16 +244,10 @@ func main() {
 		fmt.Print(err)
 		os.Exit(-1)
 	}
+
 	fmt.Printf("Copying %s to %s\n", origPath, destPath)
-	contents, err := ioutil.ReadFile(origPath)
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
-	}
-	err = ioutil.WriteFile(destPath, contents, 0644)
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(-1)
+	if err = copy.File(origPath, destPath); err != nil {
+		log.Fatal(err)
 	}
 
 	fmt.Printf("cd'ing into %s\n", externalDir)
@@ -364,30 +305,6 @@ func main() {
 		fmt.Print(err)
 		os.Exit(-1)
 	}
-
-	// serviceVars := NewExtraVars
-	// fmt.Printf("Updating service file for %s with ansible\n", *repo)
-	// cmd = exec.Command(
-	// 	ansiblePlaybook,
-	// 	"-e",
-	// 	fmt.Sprintf("@%s", *secretFile),
-	// 	fmt.Sprintf("--vault-password-file=%s", *vaultPass),
-	// 	"-i",
-	// 	*inventory,
-	// 	"--sudo",
-	// 	"-u",
-	// 	*user,
-	// 	"--tags",
-	// 	*serviceTag,
-	// 	*playbook,
-	// )
-	// fmt.Printf("%s %s\n", cmd.Path, strings.Join(cmd.Args, " "))
-	// output, err = cmd.CombinedOutput()
-	// fmt.Println(string(output[:]))
-	// if err != nil {
-	// 	fmt.Print(err)
-	// 	os.Exit(-1)
-	// }
 
 	fmt.Printf("Restarting %s with ansible\n", *repo)
 	cmd = exec.Command(
