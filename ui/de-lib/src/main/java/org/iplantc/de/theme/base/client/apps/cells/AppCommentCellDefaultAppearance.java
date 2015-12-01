@@ -23,6 +23,9 @@ public class AppCommentCellDefaultAppearance implements AppCommentCellAppearance
     public interface AppCommentCellStyles extends CssResource {
         @ClassName("comment_icon")
         String commentIcon();
+
+        @ClassName("external_comment_icon")
+        String external_comment_icon();
     }
 
     public interface AppCommentCellResources extends ClientBundle {
@@ -57,7 +60,12 @@ public class AppCommentCellDefaultAppearance implements AppCommentCellAppearance
     @Override
     public void render(Cell.Context context, App value, SafeHtmlBuilder sb) {
         String comments = displayStrings.comments();
-        String className = resources.css().commentIcon();
+        String className;
+        if (value.getAppType().equalsIgnoreCase(App.EXTERNAL_APP)) {
+            className = resources.css().external_comment_icon();
+        } else {
+            className = resources.css().commentIcon();
+        }
         SafeUri imgSrc = iplantResources.userComment().getSafeUri();
         sb.append(template.imgCell(comments, comments, className, imgSrc));
     }

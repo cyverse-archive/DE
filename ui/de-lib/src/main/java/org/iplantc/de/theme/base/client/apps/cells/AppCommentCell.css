@@ -3,3 +3,9 @@
     cursor:pointer;
     padding-right: 2px;
 }
+
+.external_comment_icon {
+    float:left;
+    cursor:hand;
+    padding-right: 2px;
+}
