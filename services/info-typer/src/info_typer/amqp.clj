@@ -58,9 +58,9 @@
 
 
 (defn- declare-queue
-  "Declares a default, anonymouse queue."
-  [channel]
-  (.getQueue (lq/declare channel)))
+  "Declares a queue by name, returning its name."
+  [channel queue-name]
+  (:queue (lq/declare channel queue-name :durable true)))
 
 
 (defn- bind
@@ -84,7 +84,7 @@
   [msg-fn]
   (log/info "configuring AMQP connection")
   (let [chan (lch/open (get-connection (connection-map)))
-        q    (declare-queue chan)]
+        q    (declare-queue chan (str "info-typer." (cfg/environment-name)))]
     (declare-exchange chan (cfg/amqp-exchange) (cfg/amqp-exchange-type)
       :durable (cfg/amqp-exchange-durable?) :auto-delete (cfg/amqp-exchange-auto-delete?))
     (bind chan q (cfg/amqp-exchange) (cfg/amqp-routing-key))
