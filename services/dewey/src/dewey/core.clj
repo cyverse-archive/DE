@@ -53,7 +53,7 @@
                                             (Integer. (get props "dewey.amqp.port"))
                                             (get props "dewey.amqp.user")
                                             (get props "dewey.amqp.password")
-                                            (str "indexing." (get props "dewey.environment_name"))
+                                            (str "indexing." (get props "dewey.environment-name"))
                                             (get props "dewey.amqp.exchange.name")
                                             (Boolean. (get props "dewey.amqp.exchange.durable"))
                                             (Boolean. (get props "dewey.amqp.exchange.auto-delete"))
