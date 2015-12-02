@@ -26,6 +26,8 @@ public interface NotificationToolbarView extends IsWidget {
 
     void setDeleteButtonEnabled(boolean enabled);
 
+    void setDeleteAllButtonEnabled(boolean enabled);
+
     void setPresenter(Presenter p);
 
     void setRefreshButton(TextButton refreshBtn);

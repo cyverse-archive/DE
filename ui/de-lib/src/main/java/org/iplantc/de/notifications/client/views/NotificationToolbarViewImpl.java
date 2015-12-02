@@ -81,6 +81,11 @@ public class NotificationToolbarViewImpl implements NotificationToolbarView {
 
     }
 
+    @Override
+    public void setDeleteAllButtonEnabled(boolean enabled) {
+        btnDeleteAll.setEnabled(enabled);
+    }
+
     @UiHandler("btnDelete")
     public void deleteClicked(SelectEvent event) {
         presenter.onDeleteClicked();
