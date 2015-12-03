@@ -6,6 +6,7 @@
             [clj-jargon.by-uuid :as uuid]
             [clj-jargon.init :refer [with-jargon]]
             [clj-jargon.metadata :as meta]
+            [service-logging.thread-context :as tc]
             [clojure-commons.error-codes :as ce]
             [langohr.basic :as lb]
             [info-typer.amqp :as amqp]
@@ -69,9 +70,10 @@
    The payload is passed to handlers as a byte stream. That should theoretically give us the
    ability to handle binary data arriving in messages, even though that doesn't seem likely."
   [irods-cfg channel {:keys [routing-key content-type delivery-tag type] :as metadata} ^bytes payload]
-  (log/info (format "[amqp/message-handler] [%s] [%s]" routing-key (String. payload "UTF-8")))
-  (when-let [handler (get routing-functions routing-key)]
-    (handler irods-cfg channel metadata payload)))
+  (tc/with-logging-context {:amqp-delivery-tag delivery-tag}
+    (log/info (format "[amqp/message-handler] [%s] [%s]" routing-key (String. payload "UTF-8")))
+    (when-let [handler (get routing-functions routing-key)]
+      (handler irods-cfg channel metadata payload))))
 
 
 (defn receive
