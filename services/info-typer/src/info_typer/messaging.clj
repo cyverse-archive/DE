@@ -70,9 +70,8 @@
    ability to handle binary data arriving in messages, even though that doesn't seem likely."
   [irods-cfg channel {:keys [routing-key content-type delivery-tag type] :as metadata} ^bytes payload]
   (log/info (format "[amqp/message-handler] [%s] [%s]" routing-key (String. payload "UTF-8")))
-  (if-let [handler (get routing-functions routing-key)]
-    (handler irods-cfg channel metadata payload)
-    nil))
+  (when-let [handler (get routing-functions routing-key)]
+    (handler irods-cfg channel metadata payload)))
 
 
 (defn receive
