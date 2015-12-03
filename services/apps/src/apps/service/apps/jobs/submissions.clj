@@ -89,21 +89,38 @@
     (throw+ {:type  :clojure-commons.exception/illegal-argument
              :error "HT Analysis Path List files are not supported in multi-file inputs."})))
 
+(defn- path-exists?
+  [[path exists?]]
+  exists?)
+
+(defn- every-input-exists?
+  [paths-exist-map & job-inputs]
+  (every? #(get paths-exist-map (keyword %)) job-inputs))
+
+(defn- extract-missing-paths
+  [paths-exist]
+  (map name (keys (remove path-exists? paths-exist))))
+
 (defn- validate-path-lists
   [user path-lists]
   (let [[first-list-path first-list] (first path-lists)
         first-list-count             (count first-list)
-        paths-exist-list             (map (partial get-paths-exist user) (vals path-lists))
+        path-lists-vals              (vals path-lists)
+        paths-exist-list             (map (partial get-paths-exist user) path-lists-vals)
         paths-exist                  (apply merge paths-exist-list)]
     (when (> first-list-count (config/path-list-max-paths))
       (max-batch-paths-exceeded (config/path-list-max-paths) first-list-path first-list-count))
     (when-not (every? (comp (partial = first-list-count) count second) path-lists)
       (throw+ {:type  :clojure-commons.exception/illegal-argument
                :error "All HT Analysis Path Lists must have the same number of paths."}))
-    (when-not (every? (partial some (fn [[k v]] v)) paths-exist-list)
+    (when-not (every? (partial some path-exists?) paths-exist-list)
       (throw+ {:type  :clojure-commons.exception/not-found
                :error "One or more HT Analysis Path List inputs contain paths that no longer exist."
-               :paths (keys (remove (fn [[k v]] v) paths-exist))}))
+               :missing-paths (extract-missing-paths paths-exist)}))
+    (when-not (some true? (apply map (partial every-input-exists? paths-exist) path-lists-vals))
+      (throw+ {:type  :clojure-commons.exception/not-found
+               :error "No jobs could be submitted for existing inputs in given HT Analysis Path Lists."
+               :missing-paths (extract-missing-paths paths-exist)}))
     paths-exist))
 
 (defn- get-path-list-contents
@@ -213,7 +230,7 @@
         submission   (preprocess-batch-submission submission output-dir batch-id)]
     (dorun (map-indexed (partial submit-job-in-batch apps-client submission paths-exist) path-maps))
     (-> (job-listings/list-job apps-client batch-id)
-        (assoc :missing-paths (map name (keys (remove (fn [[k v]] v) paths-exist))))
+        (assoc :missing-paths (extract-missing-paths paths-exist))
         remove-nil-values)))
 
 (defn submit
