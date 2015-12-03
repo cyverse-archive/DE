@@ -7,6 +7,7 @@
             [clj-jargon.init :refer [with-jargon]]
             [clj-jargon.metadata :as meta]
             [clojure-commons.error-codes :as ce]
+            [langohr.basic :as lb]
             [info-typer.amqp :as amqp]
             [info-typer.config :as cfg]
             [info-typer.irods :as irods])
@@ -21,34 +22,39 @@
     (catch Throwable _
       (throw+ {:error_code "ERR_INVALID_JSON" :payload payload}))))
 
-
 (defn- filetype-message-handler
-  [irods-cfg payload]
+  "Handle a message. Retry once in the case of missing files or exceptions."
+  [irods-cfg channel {:keys [delivery-tag redelivery?] :as metadata} payload]
   (try+
     (with-jargon irods-cfg [cm]
       (let [id   (get-file-id payload)
             path (uuid/get-path cm id)]
         (if (nil? path)
-          (log/error "file" id "does not exist")
-          (if (meta/attribute? cm path (cfg/garnish-type-attribute))
-            (log/warn "file" id "already has an attribute called" (cfg/garnish-type-attribute))
-              (let [ctype (irods/content-type cm path)]
-                (when-not (or (nil? ctype) (string/blank? ctype))
-                  (log/info "adding type" ctype "to file" id)
-                  (meta/add-metadata cm path (cfg/garnish-type-attribute) ctype "")
-                  (log/debug "done adding type" ctype "to file" id))
-                (when (or (nil? ctype) (string/blank? ctype))
-                  (log/warn "type was not detected for file" id)))))))
+          (do
+            (lb/reject channel delivery-tag (not redelivery?))
+            (log/error "file" id "does not exist"))
+          (do (if (meta/attribute? cm path (cfg/garnish-type-attribute))
+                (log/warn "file" id "already has an attribute called" (cfg/garnish-type-attribute))
+                (let [ctype (irods/content-type cm path)]
+                  (when-not (or (nil? ctype) (string/blank? ctype))
+                    (log/info "adding type" ctype "to file" id)
+                    (meta/add-metadata cm path (cfg/garnish-type-attribute) ctype "")
+                    (log/debug "done adding type" ctype "to file" id))
+                  (when (or (nil? ctype) (string/blank? ctype))
+                    (log/warn "type was not detected for file" id))))
+              (lb/ack channel delivery-tag)))))
     (catch ce/error? err
+      (lb/reject channel delivery-tag (not redelivery?))
       (log/error (ce/format-exception (:throwable &throw-context))))
     (catch Exception e
+      (lb/reject channel delivery-tag (not redelivery?))
       (log/error (ce/format-exception e)))))
 
 
 (defn- dataobject-added
   "Event handler for 'data-object.added' events."
-  [irods-cfg ^bytes payload]
-  (filetype-message-handler irods-cfg (String. payload "UTF-8")))
+  [irods-cfg channel metadata ^bytes payload]
+  (filetype-message-handler irods-cfg channel metadata (String. payload "UTF-8")))
 
 
 (def routing-functions
@@ -62,10 +68,10 @@
 
    The payload is passed to handlers as a byte stream. That should theoretically give us the
    ability to handle binary data arriving in messages, even though that doesn't seem likely."
-  [irods-cfg channel {:keys [routing-key content-type delivery-tag type] :as meta} ^bytes payload]
+  [irods-cfg channel {:keys [routing-key content-type delivery-tag type] :as metadata} ^bytes payload]
   (log/info (format "[amqp/message-handler] [%s] [%s]" routing-key (String. payload "UTF-8")))
   (if-let [handler (get routing-functions routing-key)]
-    (handler irods-cfg payload)
+    (handler irods-cfg channel metadata payload)
     nil))
 
 
