@@ -19,6 +19,12 @@
   (ref nil))
 
 
+(cc/defprop-str environment-name
+  "The short name of the environment info-typer is running in. Used for defining the name of the queue it listens on."
+  [props config-valid configs]
+  "info-typer.environment-name")
+
+
 (cc/defprop-str garnish-type-attribute
   "The value that goes in the attribute column for AVUs that define a file type."
   [props config-valid configs]
@@ -149,12 +155,6 @@
   "Toggles whether or not to auto-ack messages that are received."
   [props config-valid configs]
   "info-typer.amqp.msg-auto-ack")
-
-
-(cc/defprop-str amqp-routing-key
-  "The routing key for messages."
-  [props config-valid configs]
-  "info-typer.amqp.routing-key")
 
 
 (defn- exception-filters

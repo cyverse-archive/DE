@@ -139,7 +139,7 @@ public class SubmitAppViewDefaultAppearance implements SubmitAppForPublicUseView
 
     @Override
     public String testDataLabel() {
-        return appsMessages.testDataLabel();
+        return templates.requiredLabel(appsMessages.testDataLabel()).asString() ;
     }
 
     @Override

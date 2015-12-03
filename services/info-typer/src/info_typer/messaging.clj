@@ -51,6 +51,9 @@
   (filetype-message-handler irods-cfg (String. payload "UTF-8")))
 
 
+(def routing-functions
+  {"data-object.add" dataobject-added})
+
 (defn- message-handler
   "A langohr compatible message callback. This will push out message handling to other functions
    based on the value of the routing-key. This will allow us to pull in the full iRODS event
@@ -61,8 +64,8 @@
    ability to handle binary data arriving in messages, even though that doesn't seem likely."
   [irods-cfg channel {:keys [routing-key content-type delivery-tag type] :as meta} ^bytes payload]
   (log/info (format "[amqp/message-handler] [%s] [%s]" routing-key (String. payload "UTF-8")))
-  (case routing-key
-    "data-object.add" (dataobject-added irods-cfg payload)
+  (if-let [handler (get routing-functions routing-key)]
+    (handler irods-cfg payload)
     nil))
 
 
@@ -71,6 +74,6 @@
    the connection in a new thread."
   [^IPersistentMap irods-cfg]
   (try
-    (amqp/configure (partial message-handler irods-cfg))
+    (amqp/configure (partial message-handler irods-cfg) (keys routing-functions))
     (catch Exception e
       (log/error "[amqp/messaging-initialization]" (ce/format-exception e)))))

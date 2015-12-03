@@ -21,15 +21,15 @@
 
 
 (defn- consume
-  [connection exchange-name exchange-durable exchange-auto-delete topics delivery-fn]
+  [connection queue exchange-name exchange-durable exchange-auto-delete topics delivery-fn]
   (let [channel  (lch/open connection)
-        queue    "indexing"
         consumer (lc/create-default channel
                    :handle-consume-ok-fn (fn [_] (log/info "Registered with AMQP broker"))
                    :handle-delivery-fn   delivery-fn
                    :handle-cancel-fn     (fn [_] (log/info "AMQP broker registration canceled")
                                                  (Thread/sleep 1000)
                                                  (consume connection
+                                                          queue
                                                           exchange-name
                                                           exchange-durable
                                                           exchange-auto-delete
@@ -61,12 +61,13 @@
    Throws:
      It will throw an exception if it fails to connect to the AMQP broker, setup the exchange, or
      setup the queue."
-  [host port user password exchange-name exchange-durable exchange-auto-delete consumer-fn & topics]
+  [host port user password queue-name exchange-name exchange-durable exchange-auto-delete consumer-fn & topics]
   (consume (rmq/connect {:host                  host
                          :port                  port
                          :username              user
                          :password              password
                          :automatically-recover true})
+           queue-name
            exchange-name
            exchange-durable
            exchange-auto-delete

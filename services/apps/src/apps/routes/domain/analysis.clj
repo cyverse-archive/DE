@@ -1,6 +1,6 @@
 (ns apps.routes.domain.analysis
   (:use [common-swagger-api.schema :only [describe]]
-        [schema.core :only [defschema optional-key Any Bool]]
+        [schema.core :only [defschema optional-key Any Bool Keyword]]
         [apps.schema.containers :only [ToolContainer]])
   (:import [java.util UUID]))
 
@@ -51,6 +51,9 @@
    :value (describe String "The attribute value.")
    :unit  (describe String "The attribute unit.")})
 
+(defschema AnalysisSubmissionConfig
+  {(describe Keyword "The step-ID_param-ID") (describe Any "The param-value")})
+
 (defschema AnalysisSubmission
   {:app_id
    (describe String "The ID of the app used to perform the analysis.")
@@ -62,7 +65,7 @@
    (describe String "The callback URL to use for job status updates.")
 
    :config
-   (describe Any "A map from (str step-id \"_\" param-id) to param-value.")
+   (describe AnalysisSubmissionConfig "A map from (str step-id \"_\" param-id) to param-value.")
 
    (optional-key :create_output_subdir)
    (describe Bool (str "Indicates whether a subdirectory should be created beneath "
