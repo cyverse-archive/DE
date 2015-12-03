@@ -9,7 +9,7 @@
                  [slingshot "0.12.2"]
                  [ch.qos.logback/logback-classic "1.1.3"]
                  [org.slf4j/jcl-over-slf4j "1.7.13"]
-                 [net.logstash.logback/logstash-logback-encoder "4.3"]
+                 [net.logstash.logback/logstash-logback-encoder "4.5.1"]
                  [com.fasterxml.jackson.core/jackson-core "2.5.1"]
                  [com.fasterxml.jackson.core/jackson-databind "2.5.1"]
                  [com.fasterxml.jackson.core/jackson-annotations "2.5.1"]
