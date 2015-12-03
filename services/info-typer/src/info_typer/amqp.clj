@@ -88,4 +88,4 @@
     (declare-exchange chan (cfg/amqp-exchange) (cfg/amqp-exchange-type)
       :durable (cfg/amqp-exchange-durable?) :auto-delete (cfg/amqp-exchange-auto-delete?))
     (doseq [topic topics] (bind chan q (cfg/amqp-exchange) topic))
-    (subscribe chan q msg-fn :auto-ack true)))
+    (subscribe chan q msg-fn :auto-ack false)))

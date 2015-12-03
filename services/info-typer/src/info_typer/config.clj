@@ -153,7 +153,7 @@
 
 (defn- exception-filters
   []
-  (filter #(not (nil? %)) [(irods-pass) (irods-user)]))
+  (remove nil? [(irods-pass) (irods-user)]))
 
 
 (defn- validate-config
