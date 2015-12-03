@@ -74,7 +74,7 @@
   "Registers a callback function that fires every time a message enters the specified queue."
   [channel queue msg-fn & {:keys [auto-ack]
                            :or   {auto-ack true}}]
-  (lc/subscribe channel queue msg-fn {:auto-ack true})
+  (lc/subscribe channel queue msg-fn {:auto-ack auto-ack})
   channel)
 
 
@@ -88,4 +88,4 @@
     (declare-exchange chan (cfg/amqp-exchange) (cfg/amqp-exchange-type)
       :durable (cfg/amqp-exchange-durable?) :auto-delete (cfg/amqp-exchange-auto-delete?))
     (doseq [topic topics] (bind chan q (cfg/amqp-exchange) topic))
-    (subscribe chan q msg-fn :auto-ack (cfg/amqp-msg-auto-ack?))))
+    (subscribe chan q msg-fn :auto-ack true)))

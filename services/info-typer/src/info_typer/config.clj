@@ -151,12 +151,6 @@
   "info-typer.amqp.exchange.auto-delete")
 
 
-(cc/defprop-boolean amqp-msg-auto-ack?
-  "Toggles whether or not to auto-ack messages that are received."
-  [props config-valid configs]
-  "info-typer.amqp.msg-auto-ack")
-
-
 (defn- exception-filters
   []
   (filter #(not (nil? %)) [(irods-pass) (irods-user)]))
