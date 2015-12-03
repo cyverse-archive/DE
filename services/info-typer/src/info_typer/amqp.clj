@@ -60,7 +60,7 @@
 (defn- declare-queue
   "Declares a queue by name, returning its name."
   [channel queue-name]
-  (:queue (lq/declare channel queue-name :durable true)))
+  (:queue (lq/declare channel queue-name {:durable true :auto-delete false :exclusive false})))
 
 
 (defn- bind
