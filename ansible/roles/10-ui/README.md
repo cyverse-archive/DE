@@ -20,6 +20,7 @@ Dependencies
 cfg-logging
 cfg-service
 cfg-systemd-unit
+cfg-docker-pull
 
 Example Playbook
 ----------------

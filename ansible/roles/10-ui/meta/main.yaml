@@ -6,6 +6,8 @@ dependencies:
       group_name: ui
       log_file_name: de-ui.xml
       src: ui.logback.xml.j2
+      tags:
+          - ui
 
     - role: cfg-service
       service_name_short: "{{de.http_server.service_name_short}}"
@@ -28,6 +30,11 @@ dependencies:
       dest: "{{ de_config_dir }}/de-application.yaml" 
       tags:
           - ui
+    - role: cfg-docker-pull
+      image_name: "{{de.image_name}}"
+      group_name: ui
+      tags:
+          - ui
 
     - role: cfg-systemd-unit
       service_name_short: de-ui
@@ -36,6 +43,11 @@ dependencies:
           - ui
     - role: cfg-systemd-unit
       service_name_short: "{{de.http_server.service_name_short}}"
+      group_name: ui
+      tags:
+          - ui
+    - role: cfg-docker-pull
+      image_name: "{{de.http_server.image_name}}"
       group_name: ui
       tags:
           - ui
