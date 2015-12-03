@@ -81,11 +81,11 @@
 (defn configure
   "Sets up a channel, exchange, and queue, with the queue bound to the exchange and 'msg-fn'
    registered as the callback."
-  [msg-fn]
+  [msg-fn topics]
   (log/info "configuring AMQP connection")
   (let [chan (lch/open (get-connection (connection-map)))
         q    (declare-queue chan (str "info-typer." (cfg/environment-name)))]
     (declare-exchange chan (cfg/amqp-exchange) (cfg/amqp-exchange-type)
       :durable (cfg/amqp-exchange-durable?) :auto-delete (cfg/amqp-exchange-auto-delete?))
-    (bind chan q (cfg/amqp-exchange) (cfg/amqp-routing-key))
+    (doseq [topic topics] (bind chan q (cfg/amqp-exchange) topic))
     (subscribe chan q msg-fn :auto-ack (cfg/amqp-msg-auto-ack?))))

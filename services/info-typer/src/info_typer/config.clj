@@ -157,12 +157,6 @@
   "info-typer.amqp.msg-auto-ack")
 
 
-(cc/defprop-str amqp-routing-key
-  "The routing key for messages."
-  [props config-valid configs]
-  "info-typer.amqp.routing-key")
-
-
 (defn- exception-filters
   []
   (filter #(not (nil? %)) [(irods-pass) (irods-user)]))
