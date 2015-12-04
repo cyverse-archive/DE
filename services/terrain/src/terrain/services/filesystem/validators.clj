@@ -139,7 +139,7 @@
 (defn user-owns-paths
   [cm user paths]
   (let [belongs-to? (partial ownage? cm user)]
-    (when-not (every? #(belongs-to? %) paths)
+    (when-not (every? belongs-to? paths)
       (throw+ {:error_code ERR_NOT_OWNER
                :user user
                :paths (filterv #(not (belongs-to? %)) paths)}))))

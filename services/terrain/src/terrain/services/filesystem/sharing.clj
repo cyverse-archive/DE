@@ -27,7 +27,7 @@
 (defn- remove-user-shared-with
   "Removes 'ipc-contains-obj-shared-with' AVU for a user from an object if it's there."
   [cm fpath shared-with]
-  (when-not (empty? (get-avus-by-collection cm fpath shared-with shared-with-attr))
+  (when (seq (get-avus-by-collection cm fpath shared-with shared-with-attr))
     (delete-metadata cm fpath shared-with)))
 
 (defn- shared?

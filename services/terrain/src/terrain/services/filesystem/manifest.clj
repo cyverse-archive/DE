@@ -46,9 +46,9 @@
 (defn- extract-urls
   [cm fpath]
   (let [urls (concat (extract-tree-urls cm fpath) (extract-coge-view cm fpath))]
-    (into [] (if (anon-readable? cm fpath)
-               (conj urls (format-anon-files-url fpath))
-               urls))))
+    (vec (if (anon-readable? cm fpath)
+           (conj urls (format-anon-files-url fpath))
+           urls))))
 
 (defn- manifest-map
   [cm user path]

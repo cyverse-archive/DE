@@ -115,8 +115,7 @@
 
 (defn do-stat
   [{user :user} {paths :paths}]
-  (->> (data-raw/collect-stats user paths)
-    :body))
+  (:body (data-raw/collect-stats user paths)))
 
 (with-pre-hook! #'do-stat
   (fn [params body]
