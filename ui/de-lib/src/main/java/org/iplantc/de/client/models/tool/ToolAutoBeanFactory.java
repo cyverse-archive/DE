@@ -25,12 +25,8 @@ public interface ToolAutoBeanFactory extends AutoBeanFactory {
 
     AutoBean<ToolImage> getImage();
 
-    AutoBean<ToolImportUpdateRequest> getRequest();
-
     AutoBean<ToolImplementation> getImplementation();
 
     AutoBean<ToolTestData> getTest();
-
-    AutoBean<ToolImportUpdateRequestList> update();
 
 }

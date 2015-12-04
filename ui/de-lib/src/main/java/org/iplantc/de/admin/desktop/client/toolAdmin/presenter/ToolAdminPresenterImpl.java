@@ -2,10 +2,9 @@ package org.iplantc.de.admin.desktop.client.toolAdmin.presenter;
 
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
 import org.iplantc.de.admin.desktop.client.toolAdmin.service.ToolAdminServiceFacade;
-import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.client.models.tool.ToolAutoBeanFactory;
-import org.iplantc.de.client.models.tool.ToolImportUpdateRequest;
-import org.iplantc.de.client.models.tool.ToolImportUpdateRequestList;
+import org.iplantc.de.client.models.tool.Tool;
+import org.iplantc.de.client.models.tool.ToolList;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
@@ -49,16 +48,16 @@ public class ToolAdminPresenterImpl implements ToolAdminView.Presenter {
     }
 
     @Override
-    public void addTool(ToolImportUpdateRequest request) {
+    public void addTool(Tool tool) {
 
         //The UI handles creating a single tool request, but the admin/tools POST endpoint requires
         // an array of requests.  Wrapping the request inside an array.
-        ToolImportUpdateRequestList requestList = factory.update().as();
-        List<ToolImportUpdateRequest> toolRequestList = new ArrayList<ToolImportUpdateRequest>();
-        toolRequestList.add(request);
-        requestList.setToolImportList(toolRequestList);
+        ToolList toolListAutoBean = factory.getToolList().as();
+        List<Tool> toolList = new ArrayList<Tool>();
+        toolList.add(tool);
+        toolListAutoBean.setToolList(toolList);
 
-        toolAdminServiceFacade.addTool(requestList, new AsyncCallback<Void>() {
+        toolAdminServiceFacade.addTool(toolListAutoBean, new AsyncCallback<Void>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -75,8 +74,8 @@ public class ToolAdminPresenterImpl implements ToolAdminView.Presenter {
     }
 
     @Override
-    public void updateTool(ToolImportUpdateRequest request) {
-        toolAdminServiceFacade.updateTool(request, new AsyncCallback<Void>() {
+    public void updateTool(Tool tool) {
+        toolAdminServiceFacade.updateTool(tool, new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
@@ -92,21 +91,21 @@ public class ToolAdminPresenterImpl implements ToolAdminView.Presenter {
 
     @Override
     public void getToolDetails(Tool tool) {
-        toolAdminServiceFacade.getToolDetails(tool.getId(), new AsyncCallback<ToolImportUpdateRequest>() {
+        toolAdminServiceFacade.getToolDetails(tool.getId(), new AsyncCallback<Tool>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
             }
 
             @Override
-            public void onSuccess(ToolImportUpdateRequest result) {
+            public void onSuccess(Tool result) {
                 view.setToolDetails(result);
             }
         });
     }
 
     @Override
-    public void deleteTool(final ToolImportUpdateRequest tool) {
+    public void deleteTool(final Tool tool) {
         toolAdminServiceFacade.deleteTool(tool.getId(), new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable caught) {

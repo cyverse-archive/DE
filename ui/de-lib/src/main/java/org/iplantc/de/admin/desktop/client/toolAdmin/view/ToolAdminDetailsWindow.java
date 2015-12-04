@@ -4,7 +4,7 @@ import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews.ToolContainerEditor;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews.ToolImplementationEditor;
 import org.iplantc.de.client.models.tool.ToolAutoBeanFactory;
-import org.iplantc.de.client.models.tool.ToolImportUpdateRequest;
+import org.iplantc.de.client.models.tool.Tool;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
@@ -22,11 +22,11 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 /**
  * Created by aramsey on 10/30/15.
  */
-public class ToolAdminDetailsWindow extends Composite implements Editor<ToolImportUpdateRequest> {
+public class ToolAdminDetailsWindow extends Composite implements Editor<Tool> {
 
 
     interface EditorDriver
-            extends SimpleBeanEditorDriver<ToolImportUpdateRequest, ToolAdminDetailsWindow> {
+            extends SimpleBeanEditorDriver<Tool, ToolAdminDetailsWindow> {
     }
 
     interface ToolAdminDetailsWindowUiBinder extends UiBinder<Widget, ToolAdminDetailsWindow> {
@@ -55,7 +55,7 @@ public class ToolAdminDetailsWindow extends Composite implements Editor<ToolImpo
 
     private ToolAdminDetailsWindow(ToolAutoBeanFactory toolFactory) {
         this.factory = toolFactory;
-        ToolImportUpdateRequest request = factory.getRequest().as();
+        Tool tool = factory.getTool().as();
         initWidget(uiBinder.createAndBindUi(this));
 
         nameLabel.setHTML(appearance.toolImportNameLabel());
@@ -63,28 +63,28 @@ public class ToolAdminDetailsWindow extends Composite implements Editor<ToolImpo
         locationLabel.setHTML(appearance.toolImportLocationLabel());
 
         descriptionEditor.setHeight(250);
-        request.setType(appearance.toolImportTypeDefaultValue());
-        request.setContainer(containerEditor.getToolContainer());
+        tool.setType(appearance.toolImportTypeDefaultValue());
+        tool.setContainer(containerEditor.getToolContainer());
 
         editorDriver.initialize(this);
-        editorDriver.edit(request);
+        editorDriver.edit(tool);
     }
 
     public static ToolAdminDetailsWindow addToolDetails(ToolAutoBeanFactory factory) {
         return new ToolAdminDetailsWindow(factory);
     }
 
-    public void edit(ToolImportUpdateRequest tool) {
+    public void edit(Tool tool) {
         editorDriver.edit(tool);
     }
 
-    public ToolImportUpdateRequest getToolImportUpdateRequest() {
+    public Tool getTool() {
 
-        ToolImportUpdateRequest request = editorDriver.flush();
-        request.setContainer(containerEditor.getToolContainer());
-        request.setImplementation(implementationEditor.getToolImplementation());
+        Tool tool = editorDriver.flush();
+        tool.setContainer(containerEditor.getToolContainer());
+        tool.setImplementation(implementationEditor.getToolImplementation());
 
-        return request;
+        return tool;
     }
 
     public boolean isValid() {

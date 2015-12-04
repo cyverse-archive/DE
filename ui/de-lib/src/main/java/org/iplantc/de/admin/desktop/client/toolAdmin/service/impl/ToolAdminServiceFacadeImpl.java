@@ -8,8 +8,7 @@ import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
 import org.iplantc.de.admin.desktop.client.toolAdmin.service.ToolAdminServiceFacade;
 import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.client.models.tool.ToolAutoBeanFactory;
-import org.iplantc.de.client.models.tool.ToolImportUpdateRequest;
-import org.iplantc.de.client.models.tool.ToolImportUpdateRequestList;
+import org.iplantc.de.client.models.tool.ToolList;
 import org.iplantc.de.client.services.converters.StringToVoidCallbackConverter;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
@@ -51,29 +50,29 @@ public class ToolAdminServiceFacadeImpl implements ToolAdminServiceFacade {
     }
 
     @Override
-    public void getToolDetails(String toolId, AsyncCallback<ToolImportUpdateRequest> callback) {
+    public void getToolDetails(String toolId, AsyncCallback<Tool> callback) {
         String address = TOOLS + "/" + toolId;
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
-        deService.getServiceData(wrapper, new ToolImportUpdateRequestCallbackConverter(callback, factory));
+        deService.getServiceData(wrapper, new ToolCallbackConverter(callback, factory));
     }
 
     @Override
-    public void addTool(ToolImportUpdateRequestList requestList, AsyncCallback<Void> callback) {
+    public void addTool(ToolList toolList, AsyncCallback<Void> callback) {
         String address = TOOLS_ADMIN;
 
-        final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(requestList));
+        final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(toolList));
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode.getPayload());
         deService.getServiceData(wrapper, new StringToVoidCallbackConverter(callback));
     }
 
     @Override
-    public void updateTool(ToolImportUpdateRequest request, AsyncCallback<Void> callback) {
+    public void updateTool(Tool tool, AsyncCallback<Void> callback) {
 
-        String toolId = request.getId();
+        String toolId = tool.getId();
         String address = TOOLS_ADMIN + "/" + toolId;
 
-        final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(request));
+        final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(tool));
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address, encode.getPayload());
         deService.getServiceData(wrapper, new StringToVoidCallbackConverter(callback));
     }

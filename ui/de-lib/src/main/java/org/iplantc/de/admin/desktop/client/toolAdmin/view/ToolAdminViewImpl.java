@@ -3,7 +3,6 @@ package org.iplantc.de.admin.desktop.client.toolAdmin.view;
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
 import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.client.models.tool.ToolAutoBeanFactory;
-import org.iplantc.de.client.models.tool.ToolImportUpdateRequest;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 
 import com.google.common.base.Strings;
@@ -144,21 +143,21 @@ public class ToolAdminViewImpl extends Composite
     }
 
     @Override
-    public void setToolDetails(final ToolImportUpdateRequest request) {
+    public void setToolDetails(final Tool tool) {
         final ToolAdminDetailsWindow detailsPanel = ToolAdminDetailsWindow.addToolDetails(factory);
-        detailsPanel.edit(request);
+        detailsPanel.edit(tool);
 
         final IPlantDialog dialogWindow = getIplantDialogWindow();
 
-        final TextButton delete = getDeleteButton(request, dialogWindow);
+        final TextButton delete = getDeleteButton(tool, dialogWindow);
         dialogWindow.addButton(delete);
         dialogWindow.getOkButton().setText(appearance.dialogWindowUpdateBtnText());
         dialogWindow.addOkButtonSelectHandler(new SelectEvent.SelectHandler() {
             @Override
             public void onSelect(SelectEvent event) {
-                ToolImportUpdateRequest request = detailsPanel.getToolImportUpdateRequest();
+                Tool tool = detailsPanel.getTool();
                 if (detailsPanel.isValid()){
-                    presenter.updateTool(request);
+                    presenter.updateTool(tool);
                     dialogWindow.hide();
                     try {
                         grid.getSelectionModel().deselect(grid.getSelectionModel().getSelectedItem());
@@ -191,9 +190,9 @@ public class ToolAdminViewImpl extends Composite
 
             @Override
             public void onSelect(SelectEvent event) {
-                ToolImportUpdateRequest request = detailsPanel.getToolImportUpdateRequest();
+                Tool tool = detailsPanel.getTool();
                 if (detailsPanel.isValid()) {
-                    presenter.addTool(request);
+                    presenter.addTool(tool);
                     dialogWindow.hide();
                 }
                 else{
@@ -230,7 +229,7 @@ public class ToolAdminViewImpl extends Composite
         return container;
     }
 
-    private TextButton getDeleteButton(final ToolImportUpdateRequest tool,
+    private TextButton getDeleteButton(final Tool tool,
                                        final IPlantDialog dialogWindow) {
         final TextButton delete = new TextButton();
         delete.setText(appearance.dialogWindowDeleteBtnText());

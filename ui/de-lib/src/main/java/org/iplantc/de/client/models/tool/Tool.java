@@ -32,5 +32,16 @@ public interface Tool extends HasId, HasDescription, HasName {
     @PropertyName("version")
     String getVersion();
 
+    @PropertyName("implementation")
+    ToolImplementation getImplementation();
+
+    @PropertyName("implementation")
+    void setImplementation(ToolImplementation implementation);
+
+    @PropertyName("container")
+    ToolContainer getContainer();
+
+    @PropertyName("container")
+    void setContainer(ToolContainer container);
 
 }

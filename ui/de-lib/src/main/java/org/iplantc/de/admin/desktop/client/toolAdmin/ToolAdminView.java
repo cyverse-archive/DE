@@ -2,7 +2,6 @@ package org.iplantc.de.admin.desktop.client.toolAdmin;
 
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.tool.Tool;
-import org.iplantc.de.client.models.tool.ToolImportUpdateRequest;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -170,13 +169,13 @@ public interface ToolAdminView extends IsWidget, IsMaskable {
 
         void go(HasOneWidget container);
 
-        void addTool(ToolImportUpdateRequest request);
+        void addTool(Tool tool);
 
-        void updateTool(ToolImportUpdateRequest request);
+        void updateTool(Tool tool);
 
         void getToolDetails(Tool tool);
 
-        void deleteTool(ToolImportUpdateRequest tool);
+        void deleteTool(Tool tool);
 
     }
 
@@ -184,7 +183,7 @@ public interface ToolAdminView extends IsWidget, IsMaskable {
 
     void setToolList(List<Tool> tools);
 
-    void setToolDetails(ToolImportUpdateRequest tool);
+    void setToolDetails(Tool tool);
 
     void deleteTool(String toolId);
 
