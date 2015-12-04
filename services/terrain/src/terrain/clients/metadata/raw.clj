@@ -63,6 +63,11 @@
   (http/post (metadata-url "filesystem" "data" target-id "avus")
     (post-options (json/encode avus-req) {:data-type data-type})))
 
+(defn add-metadata-template-avus
+  [target-id data-type template-id avus-req]
+  (http/post (metadata-url "filesystem" "data" target-id "avus" template-id)
+    (post-options (json/encode avus-req) {:data-type data-type})))
+
 (defn list-data-comments
   [target-id]
   (http/get (metadata-url "filesystem" "data" target-id "comments")
