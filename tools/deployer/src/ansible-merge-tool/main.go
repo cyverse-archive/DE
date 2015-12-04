@@ -1,6 +1,7 @@
 package main
 
 import (
+	"copy"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -191,6 +192,34 @@ func CopyCompose(internalPath, externalPath string) error {
 	return nil
 }
 
+// CopyRemoteFiles copies files from the internal remote_files directory to
+// the external remote files directory.
+func CopyRemoteFiles(internalPath, externalPath string) error {
+	var (
+		err                              error
+		internalRemotes, externalRemotes string
+	)
+	if internalRemotes, err = filepath.Abs(path.Join(internalPath, "remote_files")); err != nil {
+		return err
+	}
+	if externalRemotes, err = filepath.Abs(path.Join(externalPath, "remote_files")); err != nil {
+		return err
+	}
+	_, err = os.Stat(internalRemotes)
+	if os.IsNotExist(err) {
+		log.Print(err)
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	remotesCopier := copy.New()
+	if err = remotesCopier.Copy(remotesCopier.FileVisitor, internalRemotes, externalRemotes); err != nil {
+		return err
+	}
+	return nil
+}
+
 // LaunchDocker launches the provided image
 func LaunchDocker(imageName, cwd string) error {
 	mountArg := fmt.Sprintf("%s:/de-ansible", cwd)
@@ -316,6 +345,10 @@ func main() {
 	}
 
 	if err = CopyCompose(internalPath, externalPath); err != nil {
+		log.Fatal(err)
+	}
+
+	if err = CopyRemoteFiles(internalPath, externalPath); err != nil {
 		log.Fatal(err)
 	}
 
