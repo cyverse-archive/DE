@@ -7,7 +7,6 @@ Requires= {{exim.service_name}}
 Requisite=docker.service
 
 [Service]
-User=iplant
 ExecStartPre=-/usr/bin/docker rm -v {{iplant_email.container_name}}
 ExecStart=/usr/bin/docker run --name {{iplant_email.container_name}} \
         --link {{exim.container_name}}:local-exim \

@@ -6,7 +6,6 @@ After=docker.service
 Requisite=docker.service
 
 [Service]
-User=iplant
 ExecStartPre=-/usr/bin/docker rm -v {{de.container_name}}
 ExecStart=/usr/bin/docker run --name {{de.container_name}} \
         -p 8080 \
