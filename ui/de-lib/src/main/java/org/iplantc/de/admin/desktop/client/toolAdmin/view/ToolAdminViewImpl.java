@@ -8,8 +8,9 @@ import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.shared.UmbrellaException;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -32,7 +33,6 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
-import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ import java.util.List;
 
 
 public class ToolAdminViewImpl extends Composite
-        implements ToolAdminView, SelectionChangedEvent.SelectionChangedHandler<Tool> {
+        implements ToolAdminView, SelectionHandler<Tool> {
 
     interface ToolAdminViewImplUiBinder extends UiBinder<Widget, ToolAdminViewImpl> {
 
@@ -90,7 +90,7 @@ public class ToolAdminViewImpl extends Composite
         this.factory = factory;
         initWidget(uiBinder.createAndBindUi(this));
         nameFilter = new NameFilter();
-        grid.getSelectionModel().addSelectionChangedHandler(this);
+        grid.getSelectionModel().addSelectionHandler(this);
         grid.getSelectionModel().setSelectionMode(Style.SelectionMode.SINGLE);
     }
 
@@ -159,11 +159,7 @@ public class ToolAdminViewImpl extends Composite
                 if (detailsPanel.isValid()){
                     presenter.updateTool(tool);
                     dialogWindow.hide();
-                    try {
-                        grid.getSelectionModel().deselect(grid.getSelectionModel().getSelectedItem());
-                    } catch (UmbrellaException umb) {
-                        //do nothing -- throws error about DeviceList, VolumeList, and VolumesFromList having null IDs
-                    }
+                    grid.getSelectionModel().deselect(grid.getSelectionModel().getSelectedItem());
                 }
                 else{
                     AlertMessageBox alertMsgBox = new AlertMessageBox("Warning", appearance.publicSubmitError());
@@ -257,15 +253,12 @@ public class ToolAdminViewImpl extends Composite
 
     @Override
     public void deleteTool(String toolId) {
-        try {
-            listStore.remove(listStore.findModelWithKey(toolId));
-        } catch (UmbrellaException umb) {
-            //do nothing -- throws error about DeviceList, VolumeList, and VolumesFromList having null IDs
-        }
+        listStore.remove(listStore.findModelWithKey(toolId));
     }
 
+
     @Override
-    public void onSelectionChanged(SelectionChangedEvent<Tool> event) {
+    public void onSelection(SelectionEvent event) {
         presenter.getToolDetails(grid.getSelectionModel().getSelectedItem());
     }
 
