@@ -47,6 +47,11 @@
     {:as               :stream
      :follow_redirects false}))
 
+(defn set-metadata-template-avus
+  [target-id data-type avus-req]
+  (http/post (metadata-url "filesystem" "data" target-id "avus")
+    (post-options (json/encode avus-req) {:data-type data-type})))
+
 (defn copy-metadata-template-avus
   [target-id force? dest-items]
   (http/post (metadata-url "filesystem" "data" target-id "avus" "copy")
@@ -57,11 +62,6 @@
   (http/get (metadata-url "filesystem" "data" target-id "avus" template-id)
     {:as               :stream
      :follow_redirects false}))
-
-(defn set-metadata-template-avus
-  [target-id data-type avus-req]
-  (http/post (metadata-url "filesystem" "data" target-id "avus")
-    (post-options (json/encode avus-req) {:data-type data-type})))
 
 (defn add-metadata-template-avus
   [target-id data-type template-id avus-req]
