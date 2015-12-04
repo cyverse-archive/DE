@@ -26,7 +26,8 @@
 - name: add the docker group to condor user
   sudo: yes
   user: name=condor groups=docker append=yes
-  when: "'docker-ready' in group_names"
+  when: ('docker-ready' in group_names) and
+        ('condor' in group_names or 'condor-submission' in group_names)
   tags:
       - init_users
 
