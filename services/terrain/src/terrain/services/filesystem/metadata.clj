@@ -183,7 +183,7 @@
   "Throws an error if any of the given paths already have metadata set with any of the given attrs."
   [cm paths attrs]
   (let [duplicates (remove nil? (map (partial find-attributes cm attrs) paths))]
-    (when (seq duplicates)
+    (when-not (empty? duplicates)
       (validators/duplicate-attrs-error duplicates))))
 
 (defn- metadata-batch-add
@@ -192,7 +192,7 @@
   [cm path avus]
   (loop [avus-current (get-metadata cm path)
          avus-to-add  avus]
-    (when (seq avus-to-add)
+    (when-not (empty? avus-to-add)
       (let [{:keys [attr value] :as avu} (first avus-to-add)
             new-unit (reserved-unit avu)]
         (if-not (attr-value? avus-current attr value)
@@ -352,9 +352,9 @@
   (let [avus (map (partial zipmap [:attr :value :unit]) (map vector attrs values (repeat "")))
         template-attr? #(contains? template-attrs (:attr %))
         [template-avus irods-avus] ((juxt filter remove) template-attr? avus)]
-    (when (seq template-avus)
+    (when-not (empty? template-avus)
       (add-metadata-template-avus cm user path template-id template-avus))
-    (when (seq irods-avus)
+    (when-not (empty? irods-avus)
       (authorized-avus irods-avus)
       (metadata-batch-add cm path irods-avus))
     {:path path
