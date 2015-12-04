@@ -87,4 +87,7 @@ public interface IplantContextualHelpStrings extends com.google.gwt.i18n.client.
   @Key("toolRequestStatusValidationHelp")
   String toolRequestStatusValidationHelp();
 
+  @DefaultMessage("A custom status can sometimes be applicable. Please see the Status Comments for more information.")
+  @Key("toolRequestStatusOtherHelp")
+  String toolRequestStatusOtherHelp();
 }
