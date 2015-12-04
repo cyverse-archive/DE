@@ -7,8 +7,7 @@
         [terrain.auth.user-attributes :only [current-user]]
         [terrain.clients.tree-urls]
         [slingshot.slingshot :only [throw+ try+]])
-  (:require [cemerick.url :as curl]
-            [cheshire.core :as cheshire]
+  (:require [cheshire.core :as cheshire]
             [clj-http.client :as client]
             [clojure.string :as string]
             [clojure.tools.logging :as log]

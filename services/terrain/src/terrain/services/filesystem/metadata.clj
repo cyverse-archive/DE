@@ -20,8 +20,7 @@
             [terrain.services.filesystem.uuids :as uuids]
             [terrain.services.filesystem.validators :as validators]
             [terrain.util.config :as cfg]
-            [terrain.util.service :as service]
-            [ring.middleware.multipart-params :as multipart])
+            [terrain.util.service :as service])
   (:import [au.com.bytecode.opencsv CSVReader]
            [java.io InputStream]))
 

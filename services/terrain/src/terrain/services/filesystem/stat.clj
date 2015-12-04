@@ -8,7 +8,6 @@
   (:require [clojure.tools.logging :as log]
             [clojure.string :as string]
             [clojure-commons.file-utils :as ft]
-            [cheshire.core :as json]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
             [terrain.services.filesystem.validators :as validators]
             [terrain.services.filesystem.garnish.irods :as filetypes]

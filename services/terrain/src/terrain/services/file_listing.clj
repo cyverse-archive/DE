@@ -1,12 +1,9 @@
 (ns terrain.services.file-listing
   (:use [clojure-commons.error-codes]
-        [terrain.util.config]
         [terrain.util.service :only [decode-stream required-param success-response]]
         [slingshot.slingshot :only [throw+]]
         [terrain.auth.user-attributes])
-  (:require [cheshire.core :as cheshire]
-            [clojure.string :as string]
-            [clojure.tools.logging :as log]
+  (:require [clojure.tools.logging :as log]
             [terrain.clients.data-info :as di]
             [terrain.services.user-prefs :as prefs]))
 

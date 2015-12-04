@@ -1,7 +1,5 @@
 (ns terrain.services.filesystem.manifest
-  (:use [clojure-commons.error-codes]
-        [clojure-commons.validators]
-        [terrain.services.filesystem.common-paths]
+  (:use [terrain.services.filesystem.common-paths]
         [terrain.services.filesystem.validators]
         [terrain.services.filesystem.sharing :only [anon-file-url anon-readable?]]
         [clj-jargon.init :only [with-jargon]]
@@ -9,7 +7,6 @@
         [slingshot.slingshot :only [try+ throw+]])
   (:require [clojure.tools.logging :as log]
             [clojure-commons.file-utils :as ft]
-            [cheshire.core :as json]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
             [terrain.services.filesystem.validators :as validators]
             [terrain.services.filesystem.stat :refer [detect-content-type]]

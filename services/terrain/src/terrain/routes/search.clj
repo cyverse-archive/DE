@@ -5,8 +5,7 @@
   (:require [terrain.auth.user-attributes :as user]
             [terrain.services.search :as search]
             [terrain.util :as util]
-            [terrain.util.config :as config]
-            [terrain.util.service :as svc]))
+            [terrain.util.config :as config]))
 
 
 (defn secured-search-routes

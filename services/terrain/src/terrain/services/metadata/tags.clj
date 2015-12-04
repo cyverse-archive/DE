@@ -1,9 +1,6 @@
 (ns terrain.services.metadata.tags
-  (:use [kameleon.uuids :only [uuidify]]
-        [slingshot.slingshot :only [throw+]])
-  (:require [clojure.set :as set]
-            [cheshire.core :as json]
-            [clojure-commons.error-codes :as error]
+  (:use [kameleon.uuids :only [uuidify]])
+  (:require [cheshire.core :as json]
             [terrain.auth.user-attributes :as user]
             [terrain.clients.data-info :as data]
             [terrain.clients.metadata.raw :as meta]

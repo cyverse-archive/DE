@@ -2,8 +2,6 @@
   (:use [terrain.util.service :only [success-response]])
   (:require [clojure.tools.logging :as log]
             [cemerick.url :as url]
-            [cheshire.core :as json]
-            [clojure-commons.config :as cc]
             [clojure-commons.error-codes :as ce]
             [terrain.util.config :as config]
             [clj-http.client :as client]

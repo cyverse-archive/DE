@@ -1,13 +1,11 @@
 (ns terrain.services.filesystem.uuids
   (:use [clj-jargon.metadata]
         [clj-jargon.permissions]
-        [clojure-commons.validators]
         [slingshot.slingshot :only [throw+]]
         [terrain.services.filesystem.validators])
   (:require [clojure.tools.logging :as log]
             [clj-icat-direct.icat :as icat]
             [terrain.services.filesystem.stat :as stat]
-            [cheshire.core :as json]
             [clj-jargon.init :as init]
             [clojure-commons.error-codes :as error]
             [terrain.util.config :as cfg]

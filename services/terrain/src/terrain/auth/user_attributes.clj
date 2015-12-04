@@ -1,6 +1,5 @@
 (ns terrain.auth.user-attributes
-  (:require [cheshire.core :as cheshire]
-            [clojure.string :as string]
+  (:require [clojure.string :as string]
             [clojure.tools.logging :as log]
             [clojure-commons.response :as resp]
             [clj-cas.cas-proxy-auth :as cas]
