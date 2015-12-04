@@ -162,7 +162,7 @@ public class ToolAdminViewImpl extends Composite
                     grid.getSelectionModel().deselect(grid.getSelectionModel().getSelectedItem());
                 }
                 else{
-                    AlertMessageBox alertMsgBox = new AlertMessageBox("Warning", appearance.publicSubmitError());
+                    AlertMessageBox alertMsgBox = new AlertMessageBox("Warning", appearance.completeRequiredFieldsError());
                     alertMsgBox.show();
                 }
 
@@ -192,7 +192,7 @@ public class ToolAdminViewImpl extends Composite
                     dialogWindow.hide();
                 }
                 else{
-                    AlertMessageBox alertMsgBox = new AlertMessageBox("Warning", appearance.publicSubmitError());
+                    AlertMessageBox alertMsgBox = new AlertMessageBox("Warning", appearance.completeRequiredFieldsError());
                     alertMsgBox.show();
                 }
             }

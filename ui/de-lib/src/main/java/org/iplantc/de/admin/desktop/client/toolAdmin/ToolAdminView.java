@@ -161,7 +161,7 @@ public interface ToolAdminView extends IsWidget, IsMaskable {
 
         String deleteToolSuccessText();
 
-        String publicSubmitError();
+        String completeRequiredFieldsError();
 
     }
 

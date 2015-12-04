@@ -58,8 +58,8 @@ public class PreferencesViewDefaultAppearance implements PreferencesDialog.Prefe
     }
 
     @Override
-    public String publicSubmitTip() {
-        return displayStrings.publicSubmitTip();
+    public String completeRequiredFieldsError() {
+        return displayStrings.completeRequiredFieldsError();
     }
 
     @Override

@@ -43,7 +43,7 @@ public interface SubmitAppForPublicUseView extends IsWidget {
 
         String publicSubmissionFormCategories();
 
-        String publicSubmitTip();
+        String completeRequiredFieldsError();
 
         String publishFailureDefaultMessage();
 

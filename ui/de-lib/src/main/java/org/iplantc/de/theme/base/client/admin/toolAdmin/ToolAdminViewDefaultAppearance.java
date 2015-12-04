@@ -405,8 +405,8 @@ public class ToolAdminViewDefaultAppearance implements ToolAdminView.ToolAdminVi
     }
 
     @Override
-    public String publicSubmitError() {
-        return iplantDisplayStrings.publicSubmitTip();
+    public String completeRequiredFieldsError() {
+        return iplantDisplayStrings.completeRequiredFieldsError();
     }
 
 }

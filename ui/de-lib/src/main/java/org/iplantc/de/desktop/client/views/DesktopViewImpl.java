@@ -285,7 +285,7 @@ public class DesktopViewImpl implements DesktopView, UnregisterEvent.UnregisterH
                     presenter.submitUserFeedback(feedbackDialog.toJson(), feedbackDialog);
                 } else {
                     AlertMessageBox amb = new AlertMessageBox(appearance.feedbackAlertValidationWarning(),
-                                                              appearance.publicSubmitTip());
+                                                              appearance.completeRequiredFieldsError());
                     amb.setModal(true);
                     amb.show();
                 }
