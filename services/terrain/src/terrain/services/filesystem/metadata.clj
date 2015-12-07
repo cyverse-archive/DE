@@ -13,9 +13,9 @@
             [clojure-commons.file-utils :as ft]
             [cemerick.url :as url]
             [cheshire.core :as json]
-            [clj-http.client :as http]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
             [terrain.clients.metadata.raw :as metadata-client]
+            [terrain.clients.data-info.raw :as data-raw]
             [terrain.services.filesystem.icat :as icat]
             [terrain.services.filesystem.uuids :as uuids]
             [terrain.services.filesystem.validators :as validators]
@@ -321,11 +321,7 @@
 (defn do-metadata-save
   "Forwards request to data-info service."
   [data-id params body]
-  (let [url (url/url (cfg/data-info-base-url) "data" data-id "metadata" "save")
-        req-map {:query-params (select-keys params [:user])
-                 :content-type :json
-                 :body         (json/encode body)}]
-    (http/post (str url) req-map)))
+  (data-raw/save-metadata (:user params) data-id (:dest body) (:recursive body)))
 
 (with-pre-hook! #'do-metadata-save
   (fn [data-id params body]
