@@ -2,8 +2,7 @@
   (:use [compojure.core]
         [terrain.services.user-sessions]
         [terrain.util])
-  (:require [clojure-commons.error-codes :as ce]
-            [terrain.util.config :as config]))
+  (:require [terrain.util.config :as config]))
 
 (defn secured-session-routes
   []

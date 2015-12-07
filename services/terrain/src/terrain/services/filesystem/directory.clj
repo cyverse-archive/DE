@@ -4,9 +4,7 @@
         [slingshot.slingshot :only [try+ throw+]])
   (:require [clojure.tools.logging :as log]
             [clojure.string :as string]
-            [cemerick.url :as url]
             [cheshire.core :as json]
-            [clj-http.client :as http]
             [clojure-commons.file-utils :as ft]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
             [me.raynes.fs :as fs]

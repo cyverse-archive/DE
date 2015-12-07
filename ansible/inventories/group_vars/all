@@ -65,7 +65,6 @@ amqp_irods_exchange: irods
 amqp_irods_exchange_type: topic
 amqp_irods_exchange_durable: true
 amqp_irods_exchange_auto_delete: false
-amqp_irods_message_auto_ack: true
 amqp_irods_connection_health_check_interval: 5000
 
 amqp_broker:

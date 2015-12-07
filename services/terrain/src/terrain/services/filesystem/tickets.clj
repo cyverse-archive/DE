@@ -9,7 +9,6 @@
             [clojure.string :as string]
             [clojure-commons.file-utils :as ft]
             [clostache.parser :as stache]
-            [cheshire.core :as json]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
             [terrain.util.config :as cfg]
             [terrain.services.filesystem.icat :as icat]

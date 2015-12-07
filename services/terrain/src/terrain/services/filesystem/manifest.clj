@@ -1,7 +1,5 @@
 (ns terrain.services.filesystem.manifest
-  (:use [clojure-commons.error-codes]
-        [clojure-commons.validators]
-        [terrain.services.filesystem.common-paths]
+  (:use [terrain.services.filesystem.common-paths]
         [terrain.services.filesystem.validators]
         [terrain.services.filesystem.sharing :only [anon-file-url anon-readable?]]
         [clj-jargon.init :only [with-jargon]]
@@ -9,7 +7,6 @@
         [slingshot.slingshot :only [try+ throw+]])
   (:require [clojure.tools.logging :as log]
             [clojure-commons.file-utils :as ft]
-            [cheshire.core :as json]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
             [terrain.services.filesystem.validators :as validators]
             [terrain.services.filesystem.stat :refer [detect-content-type]]
@@ -46,9 +43,9 @@
 (defn- extract-urls
   [cm fpath]
   (let [urls (concat (extract-tree-urls cm fpath) (extract-coge-view cm fpath))]
-    (into [] (if (anon-readable? cm fpath)
-               (conj urls (format-anon-files-url fpath))
-               urls))))
+    (vec (if (anon-readable? cm fpath)
+           (conj urls (format-anon-files-url fpath))
+           urls))))
 
 (defn- manifest-map
   [cm user path]

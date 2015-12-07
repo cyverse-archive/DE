@@ -1,10 +1,10 @@
-.comment_icon {
+.commentIcon {
     float:left;
     cursor:pointer;
     padding-right: 2px;
 }
 
-.external_comment_icon {
+.externalAppCommentIcon {
     float:left;
     cursor:hand;
     padding-right: 2px;

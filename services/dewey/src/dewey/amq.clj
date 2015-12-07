@@ -2,6 +2,7 @@
   "This library mananges the connection to the AMQP queue."
   (:use [slingshot.slingshot :only [try+]])
   (:require [clojure.tools.logging :as log]
+            [service-logging.thread-context :as tc]
             [cheshire.core :as json]
             [langohr.basic :as lb]
             [langohr.channel :as lch]
@@ -13,11 +14,12 @@
 
 (defn- mk-handler
   [consume]
-  (fn [_ {:keys [routing-key]} ^bytes payload]
-    (try+
-      (consume routing-key (json/parse-string (String. payload "UTF-8") true))
-      (catch Object _
-        (log/error (:throwable &throw-context) "MESSAGE HANDLING ERROR")))))
+  (fn [_ {:keys [routing-key delivery-tag]} ^bytes payload]
+    (tc/with-logging-context {:amqp-delivery-tag delivery-tag}
+      (try+
+        (consume routing-key (json/parse-string (String. payload "UTF-8") true))
+        (catch Object _
+          (log/error (:throwable &throw-context) "MESSAGE HANDLING ERROR"))))))
 
 
 (defn- consume

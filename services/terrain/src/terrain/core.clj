@@ -27,8 +27,7 @@
         [terrain.routes.tags]
         [terrain.routes.comments]
         [terrain.auth.user-attributes]
-        [terrain.util.service]
-        [slingshot.slingshot :only [try+ throw+]])
+        [terrain.util.service])
   (:require [compojure.route :as route]
             [cheshire.core :as cheshire]
             [clojure-commons.exception :as cx]

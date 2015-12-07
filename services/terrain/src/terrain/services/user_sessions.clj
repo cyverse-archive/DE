@@ -1,13 +1,8 @@
 (ns terrain.services.user-sessions
-  (:use [slingshot.slingshot :only [try+ throw+]]
-        [clojure-commons.error-codes]
-        [terrain.util.config]
-        [terrain.util.service]
+  (:use [terrain.util.service]
         [terrain.clients.user-sessions]
         [terrain.auth.user-attributes])
-  (:require [clojure.string :as string]
-            [clojure.tools.logging :as log]
-            [clojure-commons.file-utils :as ft]))
+  (:require [clojure.tools.logging :as log]))
 
 (defn user-session
   ([]

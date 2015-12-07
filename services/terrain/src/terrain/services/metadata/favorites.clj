@@ -1,6 +1,5 @@
 (ns terrain.services.metadata.favorites
-  (:require [clojure.set :as set]
-            [cheshire.core :as json]
+  (:require [cheshire.core :as json]
             [terrain.auth.user-attributes :as user]
             [terrain.clients.data-info :as data]
             [terrain.clients.metadata.raw :as metadata]

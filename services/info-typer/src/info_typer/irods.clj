@@ -18,10 +18,9 @@
   "Determines the filetype of path. Reads in a chunk, writes it to a temp file, runs it
    against the configured script. If the script can't identify it, it's passed to Tika."
   [cm path]
-  (log/info "in content-type")
 
-  (let [script-type (get-file-type cm path)]
-    (log/info "Path " path " has a type of " script-type " from the script.")
-    (if (or (nil? script-type) (empty? script-type))
+  (let [info-type (get-file-type cm path)]
+    (log/info "Data object at" path "identified as type" info-type)
+    (if (or (nil? info-type) (empty? info-type))
       ""
-      script-type)))
+      info-type)))

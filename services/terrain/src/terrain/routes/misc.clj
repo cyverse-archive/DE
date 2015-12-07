@@ -1,6 +1,5 @@
 (ns terrain.routes.misc
-  (:use [compojure.core]
-        [terrain.util])
+  (:use [compojure.core])
   (:require [clojure.string :as string])
   (:import [java.util UUID]))
 
