@@ -17,6 +17,7 @@
     elasticsearch_discovery_zen_ping_multicast_enabled: false
     elasticsearch_discovery_zen_ping_unicast_hosts:     "{{ groups['elasticsearch'] }}"
     elasticsearch_gateway_recover_after_nodes:          "{{ groups['elasticsearch']|length }}"
+    elasticsearch_heap_size:                            "{{ elasticsearch.heap_size }}"
     elasticsearch_index_number_of_replicas:             "{{ groups['elasticsearch']|length - 1 }}"
     elasticsearch_number_of_replicas:                   "{{ groups['elasticsearch']|length - 1 }}"  # This is a hack to work around a bug in the gpstathis.elasticsearch role
     elasticsearch_network_http_port:                    "{{ elasticsearch.network_http_port }}"
