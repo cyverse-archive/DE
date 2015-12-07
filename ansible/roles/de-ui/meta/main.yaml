@@ -1,15 +1,6 @@
 ---
 # dependecies file for de-ui
 dependencies:
-    - role: util-cfg-logging
-      service_name_short: "{{de.service_name_short}}"
-      group_name: ui
-      log_file_name: de-ui.xml
-      src: ui.logback.xml.j2
-      tags:
-        - logging_config
-        - ui
-
     - role: util-cfg-service
       service_name_short: "{{de.http_server.service_name_short}}"
       group_name: ui
