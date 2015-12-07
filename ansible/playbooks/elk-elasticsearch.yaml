@@ -1,8 +1,0 @@
----
-- name: Deploy ELK Elasticsearch
-  hosts: elk
-  sudo: true
-  gather_facts: false
-  roles:
-    - role: elk-elasticsearch
-

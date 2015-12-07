@@ -1,3 +1,0 @@
----
-# Vars for cron-stats role
-dockerHostStats_url: "https://everdene.iplantcollaborative.org/jenkins/job/build-docker-host-stats-go-app/lastSuccessfulBuild/artifact/dockerHostStats"

@@ -1,9 +1,0 @@
----
-# dependecies file for elk-logstash
-dependencies:
-    - role: cfg-systemd-unit
-      group_name: elk
-      service_name_short: "{{elk.logstash.service_name_short}}"
-      tags:
-          - elk-logstash
-

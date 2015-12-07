@@ -1,3 +1,0 @@
----
-# vars file for elk-logstash
-elk_host: "{{ groups['elk'][0]}}"
