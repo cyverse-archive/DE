@@ -43,16 +43,6 @@ dependencies:
       tags:
           - ui
 
-    - role: util-cfg-systemd-unit
-      service_name_short: de-ui
-      group_name: ui
-      tags:
-          - ui
-    - role: util-cfg-systemd-unit
-      service_name_short: "{{de.http_server.service_name_short}}"
-      group_name: ui
-      tags:
-          - ui
     - role: util-cfg-docker-pull
       image_name: "{{de.http_server.image_name}}"
       group_name: ui
