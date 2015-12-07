@@ -27,7 +27,7 @@ Example Playbook
 
     - hosts: condor
       roles:
-         - 01-condor-exec-jar
+         - infra-condor-exec-jar
 
 License
 -------

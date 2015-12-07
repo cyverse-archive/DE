@@ -1,5 +1,5 @@
-cfg-logging
-===========
+util-cfg-logging
+================
 
 A parameterized role which deploys log files to specified host group.
 
@@ -37,7 +37,7 @@ Example Playbook
     - hosts: some-group
       sudo: yes
       roles:
-         - role: cfg-logging
+         - role: util-cfg-logging
            log_file_name: my-service-logging.xml
            group_name: my-group
 

@@ -1,5 +1,4 @@
 ---
-
 - name: Configure Backend Services
   hosts: services
   sudo: true
@@ -7,5 +6,5 @@
   tags:
       - services
   roles:
-      - role: 10-services-cfg
+      - role: de-services-cfg
 

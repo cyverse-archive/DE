@@ -23,10 +23,11 @@
       - rabbitmq_management: '[{listener, [{port, 31366}]}]'
 
   roles:
-    - role: notify-chat
-      msg: "Updating AMQP broker on {{ ansible_hostname }}"
+      - role: util-notify-chat
+        msg: "Updating AMQP broker on {{ ansible_hostname }}"
 
-    - Rackspace_Automation.rabbitmq
+      - Rackspace_Automation.rabbitmq
 
-    - role: notify-chat
-      msg: "Done updating AMQP broker on {{ ansible_hostname }}."
+      - role: util-notify-chat
+        msg: "Done updating AMQP broker on {{ ansible_hostname }}."
+

@@ -1,7 +1,7 @@
 ---
-# dependecies file for elk-data
+# dependecies file for support-elk-data
 dependencies:
-    - role: cfg-systemd-unit
+    - role: util-cfg-systemd-unit
       group_name: elk
       service_name_short: "{{elk.data.service_name_short}}"
       tags:

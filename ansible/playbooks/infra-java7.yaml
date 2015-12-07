@@ -1,7 +1,7 @@
 ---
-
 - name: Deploy java
   hosts: services
   sudo: yes
   roles:
-      - java7
+      - infra-java7
+

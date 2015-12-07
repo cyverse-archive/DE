@@ -1,10 +1,11 @@
 ---
 - hosts: docker-ready
   roles:
-    - role: pip
-    - role: docker
-    - role: cron-stats
+      - role: infra-pip
+      - role: infra-docker
+      - role: infra-cron-stats
 
 - hosts: services
   roles:
-    - role: services-common
+      - role: de-services-common
+

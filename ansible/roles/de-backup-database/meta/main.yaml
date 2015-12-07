@@ -1,4 +1,3 @@
 ---
 allow_duplicates: yes
-dependencies:
-    - { role: database-prereqs, sudo: True }
+

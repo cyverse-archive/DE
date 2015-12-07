@@ -1,6 +1,4 @@
 ---
-# ansible-playbook -K services-common.yaml
-
 - name: Perform common systems configuration
   hosts: systems
   sudo: yes
@@ -8,4 +6,4 @@
   tags:
       - config
   roles:
-      - services-common
+      - de-services-common

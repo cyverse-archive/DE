@@ -3,17 +3,17 @@
   hosts: grouper
   sudo: yes
   roles:
-      - role: notify-chat
+      - role: util-notify-chat
         username: Grouper
         icon: ":fish:"
         msg: "Deploying Grouper"
 
-      - role: services-common
+      - role: de-services-common
         tags: [ 'init_iplant_user' ]
 
-      - role: grouper
+      - role: infra-grouper
 
-      - role: notify-chat
+      - role: util-notify-chat
         username: Grouper
         icon: ":fish:"
         msg: ":heavy_check_mark: Done deploying Grouper"

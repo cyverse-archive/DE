@@ -1,4 +1,4 @@
-10-iplant-data-cfg
+de-iplant-data-cfg
 ==================
 
 This role will remove any existing `iplant_data` containers, pull updates, and re-load the data container
@@ -24,7 +24,7 @@ Example Playbook
 
     - hosts: docker-ready
       roles:
-         - role: 10-iplant-data-cfg
+         - role: de-iplant-data-cfg
 
 License
 -------

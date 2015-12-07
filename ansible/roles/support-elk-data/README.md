@@ -1,5 +1,5 @@
-Elk-Data
-=========
+support-Elk-Data
+================
 
 For deploying the service definitions for the ELK data container.
 
@@ -21,14 +21,14 @@ N/A
 Dependencies
 ------------
 
-cfg-systemd-unit
+util-cfg-systemd-unit
 
 Example Playbook
 ----------------
 
     - hosts: elk
       roles:
-         - role: elk-data
+         - role: support-elk-data
 
 License
 -------

@@ -7,6 +7,6 @@
       - systemd
       - de-target
   roles:
-      - role: 01-systemd-de-target
+      - role: de-systemd-de-target
         up: false
 

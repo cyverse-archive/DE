@@ -4,5 +4,5 @@
   sudo: yes
   gather_facts: false
   roles:
-      - 01-systemd-condor-submit-tmp-files
+      - infra-systemd-condor-submit-tmp-files
 

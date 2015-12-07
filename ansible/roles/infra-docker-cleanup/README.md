@@ -1,4 +1,4 @@
-01-docker-cleanup
+infra-docker-cleanup
 =================
 
 This role deploys the `docker-cleanup` systemd service.
@@ -19,15 +19,15 @@ N/A
 Dependencies
 ------------
 
-cfg-service
-cfg-systemd-unit
+util-cfg-service
+util-cfg-systemd-unit
 
 Example Playbook
 ----------------
 
     - hosts: docker-ready
       roles:
-         - role: 01-docker-cleanup
+         - role: infra-docker-cleanup
 
 License
 -------

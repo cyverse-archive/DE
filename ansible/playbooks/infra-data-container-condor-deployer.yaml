@@ -1,4 +1,4 @@
 ---
 - hosts: condor
   roles:
-    - data-container-condor-deployer
+      - infra-data-container-condor-deployer

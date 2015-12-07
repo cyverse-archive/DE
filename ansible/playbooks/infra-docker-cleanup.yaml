@@ -3,4 +3,4 @@
 - hosts: docker-ready
   sudo: yes
   roles:
-    - 01-docker-cleanup
+    - infra-docker-cleanup

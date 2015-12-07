@@ -1,4 +1,4 @@
-10-elk-kibana
+support-elk-kibana
 =============
 
 For deploying and configuring the Kibana instance for the DE ELK stack.
@@ -16,14 +16,14 @@ TBD
 Dependencies
 ------------
 
-cfg-systemd-unit
+util-cfg-systemd-unit
 
 Example Playbook
 ----------------
 
     - hosts: elk
       roles:
-         - role: 10-elk-kibana
+         - role: support-elk-kibana
 
 License
 -------

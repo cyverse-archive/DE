@@ -41,13 +41,13 @@
     elasticsearch_timezone: America/Phoenix
 
   roles:
-    - role: notify-chat
-      msg: "Deploying irods dependent applications and services"
-    - role: gpstathis.elasticsearch
-      when: "not parasitic and 'elasticsearch' in group_names"
-    - role: elasticsearch-master
-      when: "not parasitic and elasticsearch_node_master and 'elasticsearch' in group_names"
-            
-    - role: notify-chat
-      msg: "Done deploying irods dependent applications and services"
+      - role: util-notify-chat
+        msg: "Deploying irods dependent applications and services"
+      - role: gpstathis.elasticsearch
+        when: "not parasitic and 'elasticsearch' in group_names"
+      - role: infra-elasticsearch-master
+        when: "not parasitic and elasticsearch_node_master and 'elasticsearch' in group_names"
+              
+      - role: util-notify-chat
+        msg: "Done deploying irods dependent applications and services"
 

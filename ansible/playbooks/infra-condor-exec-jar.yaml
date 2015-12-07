@@ -5,4 +5,4 @@
   tags:
       - condor
   roles:
-      - 01-condor-exec-jar
+      - infra-condor-exec-jar

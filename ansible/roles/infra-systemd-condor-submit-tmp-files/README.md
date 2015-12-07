@@ -1,5 +1,5 @@
-01-systemd-tmp-files
-====================
+infra-systemd-tmp-files
+=======================
 
 Places a systemd temp files configuration file on a host. See 
 [tmpfiles.d|http://www.freedesktop.org/software/systemd/man/tmpfiles.d.html]  
@@ -25,7 +25,7 @@ Example Playbook
 
     - hosts: condor|condor-submission
       roles:
-         - role: 01-systemd-tmp-files
+         - role: infra-systemd-tmp-files
 
 License
 -------

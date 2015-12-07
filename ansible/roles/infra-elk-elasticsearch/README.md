@@ -1,5 +1,5 @@
-elk-elasticsearch
-=================
+infra-elk-elasticsearch
+=======================
 
 This role deploys the elastic search instance for the DE ELK stack. 
 The ELK stack refers to the use of ElasticSearch, Kibana, and Logstash together.
@@ -41,7 +41,7 @@ Including an example of how to use your role (for instance, with variables passe
 
     - hosts: elk
       roles:
-         - { role: elk-stack }
+         - { role: infra-elk-elasticsearch }
 
 License
 -------

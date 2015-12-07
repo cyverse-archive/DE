@@ -5,5 +5,5 @@
   tags:
       - logstash-forwarder
   roles:
-      - role: 10-logstash-forwarder
+      - role: support-logstash-forwarder
 

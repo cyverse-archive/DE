@@ -1,5 +1,5 @@
-systemd-service-cfg
-===================
+util-cfg-systemd-unit
+=====================
 
 A parameterized service which installs or updates systemd unit files.
 
@@ -40,12 +40,10 @@ None.
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
     - hosts: services
       sudo: yes
       roles:
-         - role: cfg-systemd-unit
+         - role: util-cfg-systemd-unit
            service_name_short:
 
 License
@@ -56,4 +54,5 @@ BSD
 Author Information
 ------------------
 
-Contact jstroot@iplantcollaborative.org
+Jonathan Strootman - jstroot@iplantcollaborative.org
+

@@ -1,5 +1,5 @@
-grouper
-=======
+infra-grouper
+=============
 
 This role will update configs and deploy Grouper.
 
@@ -27,7 +27,7 @@ Example Playbook
 
     - hosts: grouper
       roles:
-         - { role: grouper }
+         - { role: infra-grouper }
 
 License
 -------

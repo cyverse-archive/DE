@@ -4,5 +4,5 @@
   sudo: true
   gather_facts: false
   roles:
-      - role: 10-elk-logstash
+      - role: support-elk-logstash
 

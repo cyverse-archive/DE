@@ -2,5 +2,5 @@
 - hosts: docker-ready
   sudo: true
   roles:
-    - timezone
+      - infra-timezone
 

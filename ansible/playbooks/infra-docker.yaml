@@ -1,6 +1,6 @@
 ---
-
 - hosts: docker-ready
   sudo: yes
   roles:
-      - docker
+      - infra-docker
+

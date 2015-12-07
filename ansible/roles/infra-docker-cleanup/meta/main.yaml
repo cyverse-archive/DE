@@ -1,15 +1,15 @@
 ---
-# dependecies file for docker-cleanup
+# dependecies file for infra-docker-cleanup
 dependencies:
 
-    - role: cfg-service
+    - role: util-cfg-service
       service_name_short: docker-cleanup
       group_name: docker-ready
       src: docker-cleanup/docker-gc-exclude.j2
       dest: /etc/docker-gc-exclude
       tags:
           - docker-cleanup
-    - role: cfg-service
+    - role: util-cfg-service
       group_name: docker-ready
       service_name_short: docker-cleanup
       src: docker-cleanup/docker-gc-exclude-containers.j2
@@ -17,13 +17,13 @@ dependencies:
       tags:
           - docker-cleanup
 
-    - role: cfg-systemd-unit
+    - role: util-cfg-systemd-unit
       group_name: docker-ready
       service_name_short: docker-cleanup
       systemd_enable: false
       tags:
           - docker-cleanup
-    - role: cfg-systemd-unit
+    - role: util-cfg-systemd-unit
       group_name: docker-ready
       service_name_short: docker-cleanup
       unit_type: timer

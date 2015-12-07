@@ -1,5 +1,5 @@
-cfg-service
-===========
+util-cfg-service
+================
 
 A parameterized role which deploys service config files to specified host groups.
 
@@ -37,7 +37,7 @@ Example Playbook
     - hosts: some-group
       sudo: yes
       roles:
-         - role: cfg-service
+         - role: util-cfg-service
            service_name_short: my-service 
 
 License

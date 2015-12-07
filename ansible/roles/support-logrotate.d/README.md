@@ -1,5 +1,5 @@
-Logrotate.d
-===========
+support-Logrotate.d
+===================
 
 This role places a logrotate file on the host system. 
 
@@ -27,7 +27,7 @@ Including an example of how to use your role (for instance, with variables passe
 
     - hosts: all
       roles:
-           - logrotate.d
+           - support-logrotate.d
 
 License
 -------

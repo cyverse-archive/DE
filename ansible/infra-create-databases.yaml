@@ -1,32 +1,33 @@
 ---
 - hosts: db
   roles:
-    - db-creator
+      - infra-db-creator
   pre_tasks:
       - pause: prompt="Is postgress installed? And did you set the admin password?"
 
 - hosts: db-proxy
   roles:
-    - services-common
+      - de-services-common
 
-    - role: notify-chat
-      msg: "Initializing databases"
+      - role: util-notify-chat
+        msg: "Initializing databases"
 
-    - role: update-database-de
-      sudo: False
-      fmode: "init"
+      - role: de-update-database-de
+        sudo: False
+        fmode: "init"
 
-    - role: update-database-jex
-      sudo: False
-      fmode: "init"
+      - role: de-update-database-jex
+        sudo: False
+        fmode: "init"
 
-    - role: update-database-metadata
-      sudo: False
-      fmode: "init"
+      - role: de-update-database-metadata
+        sudo: False
+        fmode: "init"
 
-    - role: update-database-notifications
-      sudo: False
-      fmode: "init"
+      - role: de-update-database-notifications
+        sudo: False
+        fmode: "init"
 
-    - role: notify-chat
-      msg: "Done initializing databases"
+      - role: util-notify-chat
+        msg: "Done initializing databases"
+

@@ -1,4 +1,4 @@
-10-ui
+de-ui
 =====
 
 This role is responsible for deploying the Discovery Environment UI, which includes an http server.
@@ -17,17 +17,17 @@ N/A
 Dependencies
 ------------
 
-cfg-logging
-cfg-service
-cfg-systemd-unit
-cfg-docker-pull
+util-cfg-logging
+util-cfg-service
+util-cfg-systemd-unit
+util-cfg-docker-pull
 
 Example Playbook
 ----------------
 
     - hosts: ui
       roles:
-         - role: 10-ui
+         - role: de-ui
 
 License
 -------

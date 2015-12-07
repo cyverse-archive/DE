@@ -1,7 +1,7 @@
 ---
-# dependecies file for 01-de-target
+# dependecies file for de-systemd-de-target
 dependencies:
-    - role: cfg-systemd-unit
+    - role: util-cfg-systemd-unit
       group_name: docker-ready
       service_name_short: de
       unit_type: target

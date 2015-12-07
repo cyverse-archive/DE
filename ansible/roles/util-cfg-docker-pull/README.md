@@ -1,5 +1,5 @@
-cfg-docker-pull
-===============
+util-cfg-docker-pull
+====================
 
 A parameterized role which performs docker pulls.
 
@@ -28,7 +28,7 @@ Example Playbook
 
     - hosts: servers
       roles:
-         - role: cfg-docker-pull
+         - role: util-cfg-docker-pull
            image_name: my-image
            group_name: my-group
 
@@ -40,4 +40,5 @@ BSD
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Jonathan Strootman - jstroot@iplantcollaborative.org
+

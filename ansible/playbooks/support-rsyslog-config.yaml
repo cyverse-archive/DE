@@ -4,5 +4,5 @@
   sudo: yes
   gather_facts: false
   roles:
-      - rsyslog-config
+      - support-rsyslog-config
 
