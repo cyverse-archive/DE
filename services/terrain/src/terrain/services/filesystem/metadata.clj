@@ -103,6 +103,13 @@
       (add-metadata cm fixed-path attr value new-unit))
     fixed-path))
 
+(defn- common-add-validate
+  [cm user path avu-map]
+  (when (= "failure" (:status avu-map))
+    (throw+ {:error_code ERR_INVALID_JSON}))
+  (validators/path-exists cm path)
+  (validators/path-writeable cm user path))
+
 (defn- metadata-add
   "Allows user to set metadata on a path. The user must exist in iRODS
    and have write permissions on the path. The path must exist. The
@@ -115,10 +122,7 @@
   [user path avu-map]
   (with-jargon (icat/jargon-cfg) [cm]
     (validators/user-exists cm user)
-    (when (= "failure" (:status avu-map))
-      (throw+ {:error_code ERR_INVALID_JSON}))
-    (validators/path-exists cm path)
-    (validators/path-writeable cm user path)
+    (common-add-validate cm user path avu-map)
     (authorized-avus [avu-map])
     {:path (common-metadata-add cm path avu-map)
      :user user}))
@@ -128,10 +132,7 @@
    for the AVU map format."
   [path avu-map]
   (with-jargon (icat/jargon-cfg) [cm]
-    (when (= "failure" (:status avu-map))
-      (throw+ {:error_code ERR_INVALID_JSON}))
-    (validators/path-exists cm path)
-    (validators/path-writeable cm (cfg/irods-user) path)
+    (common-add-validate cm user path avu-map)
     (common-metadata-add cm path avu-map)))
 
 (defn- metadata-set
