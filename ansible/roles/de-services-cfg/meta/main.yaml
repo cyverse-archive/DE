@@ -52,6 +52,7 @@ dependencies:
       service_name_short: "{{infosquito.service_name_short}}"
     - role: util-cfg-docker-pull
       service_name: "{{infosquito.compose_service}}"
+      service_name_short: "{{infosquito.service_name_short}}"
 
     - role: util-cfg-service
       service_name_short: "{{iplant_email.service_name_short}}"
