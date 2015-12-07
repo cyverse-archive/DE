@@ -13,6 +13,7 @@ docker:
   tag: latest
   user: discoenv
   version: 1.9.1
+  compose_path: /etc/docker-compose.yml
   registry:
     host: "{{ groups['docker-registry'][0] }}"
     port: 5000
@@ -25,6 +26,7 @@ logstash_forwarder:
   service_description: logstash forwarder service
   service_name: logstash-forwarder.service
   service_name_short: logstash-forwarder
+  compose_service: logstash_forwarder
   image_name: willdurand/logstash-forwarder
   container_name: logstash-fowarder
 
@@ -81,6 +83,7 @@ anon_files:
   anon_user: anonymous
   service_name: anon-files.service
   service_name_short: anon-files
+  compose_service: anon_files
   service_description: anon-files service
   image_name: anon-files
   log_driver: "{{ docker.log_driver }}"
@@ -97,6 +100,7 @@ de:
   app_base: "https://{{ groups['ui'][0] }}"
   service_name: de-ui.service
   service_name_short: ui
+  compose_service: de_ui
   service_description: DE UI; iPlant Discovery Environment user interface
   image_name: de
   container_name: de_ui
@@ -112,6 +116,7 @@ de:
   http_server:
     service_name: de-ui-nginx.service
     service_name_short: de-ui-nginx
+    compose_service: de_ui_nginx
     service_description: DE UI nginx
     image_name: nginx-ssl
     container_name: de_ui_nginx
@@ -163,6 +168,7 @@ condor_log_monitor_event_log: /var/log/condor/event_log
 condor_log_monitor:
   service_name: condor-log-monitor.service
   service_name_short: condor-log-monitor
+  compose_service: clm
   service_description: CLM; Condor log monitor
   image_name: jex-events
   container_name: clm
@@ -178,6 +184,7 @@ coge:
 clockwork:
   service_name: clockwork.service
   service_name_short: clockwork
+  compose_service: clockwork
   service_description: clockwork service
   image_name: clockwork
   container_name: clockwork
@@ -190,6 +197,7 @@ data_info:
   port:
   service_name: data-info.service
   service_name_short: data-info
+  compose_service: data_info
   service_description: data-info service
   image_name: data-info
   container_name: data-info
@@ -215,6 +223,7 @@ db_allowed_IPv4_remote:
 dewey:
   service_name: dewey.service
   service_name_short: dewey
+  compose_service: dewey
   service_description: dewey service
   image_name: dewey
   container_name: dewey
@@ -261,6 +270,7 @@ terrain:
   base: http://{{ groups['terrain'][0] }}
   service_name: terrain.service
   service_name_short: terrain
+  compose_service: terrain
   service_description: terrain service
   image_name: terrain
   container_name: terrain
@@ -276,6 +286,7 @@ iplant_email:
   base: http://{{ groups['iplant-email'][0] }}
   service_name: iplant-email.service
   service_name_short: iplant-email
+  compose_service: iplant_email
   service_description: iPlant Email service
   image_name: iplant-email
   container_name: iplant-email
@@ -292,6 +303,7 @@ elk:
     container_name: elk_logstash
     service_name: elk-logstash.service
     service_name_short: elk-logstash
+    compose_service: elk_logstash
     service_description: ELK logstash
     image_name: de-logstash
     log_file: elk-logstash-docker.log
@@ -299,6 +311,7 @@ elk:
     container_name: elk_data
     service_name: elk-data.service
     service_name_short: elk-data
+    compose_service: elk_data
     service_description: ELK data container
     image_name: busybox
   elasticsearch:
@@ -306,6 +319,7 @@ elk:
     container_name: elk_elasticsearch
     service_name: elk-elasticsearch.service
     service_name_short: elk-elasticsearch
+    compose_service: elk_elasticsearch
     service_description: ELK elasticsearch
     image_name: elasticsearch
     image_version: 1.7.3
@@ -317,6 +331,7 @@ elk:
     container_name: elk_kibana
     service_name: elk-kibana.service
     service_name_short: elk-kibana
+    compose_service: elk_kibana
     service_description: ELK kibana
     version: 4.1.2
     image_name: "kibana:4.1.2"
@@ -335,6 +350,7 @@ elasticsearch:
 exim:
   service_name: exim-sender.service
   service_name_short: exim-sender
+  compose_service: exim_sender
   service_description: exim-sender service
   image_name: exim-sender
   container_name: exim
@@ -349,6 +365,7 @@ group_config:
 grouper:
   service_name: iplant-grouper.service
   service_name_short: iplant-grouper
+  compose_service: iplant_grouper
   service_description: Grouper UI and Web Services
   image_name: iplant-grouper
   init_image: sharkbait
@@ -369,6 +386,7 @@ grouper:
   http_server:
     service_name: grouper-nginx.service
     service_name_short: grouper-nginx
+    compose_service: grouper_nginx
     service_description: Grouper nginx
     image_name: "{{ de.http_server.image_name }}"
     container_name: grouper-nginx
@@ -404,6 +422,7 @@ infosquito:
   host: "{{ groups['infosquito'][0] }}"
   service_name: infosquito.service
   service_name_short: infosquito
+  compose_service: infosquito
   service_description: infosquito service
   image_name: infosquito
   container_name: infosquito
@@ -418,6 +437,7 @@ info_typer:
   host: "{{ groups['info-typer'][0] }}"
   service_name: info-typer.service
   service_name_short: info-typer
+  compose_service: info_typer
   service_description: info-typer service
   image_name: info-typer
   container_name: info-typer
@@ -431,6 +451,7 @@ iplant_groups:
   base_url: "http://{{ groups['iplant-groups'][0] }}"
   service_name: iplant-groups.service
   service_name_short: iplant-groups
+  compose_service: iplant_groups
   service_description: iplant-groups service
   image_name: iplant-groups
   container_name: iplant-groups
@@ -463,6 +484,7 @@ jex:
   base: http://{{ groups['jex'][0] }}
   service_name: jex.service
   service_name_short: jex
+  compose_service: jex
   log_file: jex/jex.log
   container_name: jex
   batch_group: batch_processing
@@ -485,6 +507,7 @@ jexevents:
   event_url: "{{ apps.base }}/callbacks/de-job"
   service_name: jexevents.service
   service_name_short: jexevents
+  compose_service: jex_events
   service_description: jex events service
   image_name: jex-events
   container_name: jex-events
@@ -513,6 +536,7 @@ kifshare:
   external_url_suffix: dl
   service_name: kifshare.service
   service_name_short: kifshare
+  compose_service: kifshare
   service_description: kifshare service
   image_name: kifshare
   container_name: kifshare
@@ -531,6 +555,7 @@ apps:
   base: "http://{{ groups['apps'][0] }}"
   service_name: apps.service
   service_name_short: apps
+  compose_service: apps
   service_description: apps service
   image_name: apps
   container_name: apps
@@ -560,6 +585,7 @@ metadata:
   port:
   service_name: metadata.service
   service_name_short: metadata
+  compose_service: metadata
   service_description: metadata service
   image_name: metadata
   container_name: metadata
@@ -572,6 +598,7 @@ monkey:
   host: "{{ groups['monkey'][0] }}"
   service_name: monkey.service
   service_name_short: monkey
+  compose_service: monkey
   service_description: monkey service
   image_name: monkey
   container_name: monkey
@@ -594,6 +621,7 @@ notificationagent:
   base: "http://{{ groups['notificationagent'][0] }}"
   service_name: notificationagent.service
   service_name_short: notificationagent
+  compose_service: notification_agent
   service_description: notification agent service
   image_name: notificationagent
   container_name: notificationagent
@@ -628,6 +656,7 @@ saved_searches:
   port:
   service_name: saved-searches.service
   service_name_short: saved-searches
+  compose_service: saved_searches
   service_description: saved searches services
   image_name: saved-searches
   container_name: saved-searches
@@ -645,6 +674,7 @@ tree_urls:
   port:
   service_name: tree-urls.service
   service_name_short: tree-urls
+  compose_service: tree_urls
   service_description: Tree urls service
   image_name: tree-urls
   container_name: tree-urls
@@ -669,6 +699,7 @@ user_preferences:
   port:
   service_name: user-preferences.service
   service_name_short: user-preferences
+  compose_service: user_preferences
   service_description: user preferences service
   image_name: user-preferences
   container_name: user-preferences
@@ -682,6 +713,7 @@ user_sessions:
   port:
   service_name: user-sessions.service
   service_name_short: user-sessions
+  compose_service: user_sessions
   service_description: user sessions service
   image_name: user-sessions
   container_name: user-sessions
@@ -695,6 +727,7 @@ data_container:
   container_name: iplant_data
   service_name: iplant-data.service
   service_name_short: iplant-data
+  compose_service: iplant_data
   service_description: The iPlant Discovery Environment data container
   ssl:
     cert: "{{ nginx_ssl.cert }}"

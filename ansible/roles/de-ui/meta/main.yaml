@@ -29,13 +29,13 @@ dependencies:
           - service_config
 
     - role: util-cfg-docker-pull
-      image_name: "{{de.image_name}}"
-      group_name: ui
+      service_name: "{{de.compose_service}}"
+      service_name_short: "{{de.service_name_short}}"
       tags:
           - ui
 
     - role: util-cfg-docker-pull
-      image_name: "{{de.http_server.image_name}}"
-      group_name: ui
+      service_name: "{{de.compose_service}}"
+      service_name_short: "{{de.service_name_short}}"
       tags:
           - ui

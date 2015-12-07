@@ -5,6 +5,6 @@ service_cfg_file_name: "{{service_name_short}}.properties"
 group_name: "{{service_name_short}}"
 src: "{{service_name_short}}.properties.j2"
 dest: "{{service_conf_dir}}/{{service_cfg_file_name}}"
-group: "{{group | default(root)}}"
-owner: "{{owner | default(root)}}"
+group: "{{g | default('root')}}"
+owner: "{{o | default('root')}}"
 mode: 0644
