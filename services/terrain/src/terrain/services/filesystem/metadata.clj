@@ -132,7 +132,7 @@
    for the AVU map format."
   [path avu-map]
   (with-jargon (icat/jargon-cfg) [cm]
-    (common-add-validate cm user path avu-map)
+    (common-add-validate cm (cfg/irods-user) path avu-map)
     (common-metadata-add cm path avu-map)))
 
 (defn- metadata-set
