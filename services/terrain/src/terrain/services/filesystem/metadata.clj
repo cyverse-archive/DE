@@ -46,7 +46,7 @@
     (throw+ {:type :clojure-commons.exception/not-authorized
              :avus avus})))
 
-(defn service-response->json
+(defn- service-response->json
   [response]
   (->> response :body service/decode-json))
 
@@ -103,7 +103,7 @@
       (add-metadata cm fixed-path attr value new-unit))
     fixed-path))
 
-(defn metadata-add
+(defn- metadata-add
   "Allows user to set metadata on a path. The user must exist in iRODS
    and have write permissions on the path. The path must exist. The
    avu-map parameter must be in this format:
@@ -134,7 +134,7 @@
     (validators/path-writeable cm (cfg/irods-user) path)
     (common-metadata-add cm path avu-map)))
 
-(defn metadata-set
+(defn- metadata-set
   "Allows user to set metadata on an item with the given data-id. The user must exist in iRODS and have
    write permissions on the data item. The request parameter is a map with :irods-avus and :metadata keys
    in the following format:
@@ -225,7 +225,7 @@
        :src   src-path
        :paths dest-paths})))
 
-(defn metadata-delete
+(defn- metadata-delete
   "Deletes an AVU from path on behalf of a user. attr and value should be strings."
   [user path attr value]
   (with-jargon (icat/jargon-cfg) [cm]
