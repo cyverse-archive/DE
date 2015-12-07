@@ -1,36 +1,23 @@
 ---
 # dependecies file for de-ui
 dependencies:
-    - role: util-cfg-service
+    - role: util-cfg-docker-pull-configs
+      service_name: "{{de.http_server.compose_service}}"
       service_name_short: "{{de.http_server.service_name_short}}"
-      group_name: ui
-      src: ui/nginx.conf.j2
-      dest: "{{nginx_config}}/nginx.conf"
       tags:
           - ui
           - service_config
 
-    - role: util-cfg-service
+    - role: util-cfg-docker-pull-configs
+      service_name: "{{de.compose_service}}"
       service_name_short: "{{de.service_name_short}}"
-      group_name: ui
-      src: ui/de.properties.j2
-      dest: "{{ de_config_dir }}/de.properties"
-      tags:
-          - ui
-          - service_config
-
-    - role: util-cfg-service
-      service_name_short: "{{de.service_name_short}}"
-      group_name: ui
-      src: ui/de-application.yaml.j2
-      dest: "{{ de_config_dir }}/de-application.yaml"
       tags:
           - ui
           - service_config
 
     - role: util-cfg-docker-pull
-      service_name: "{{de.compose_service}}"
-      service_name_short: "{{de.service_name_short}}"
+      service_name: "{{de.http_server.compose_service}}"
+      service_name_short: "{{de.http_server.service_name_short}}"
       tags:
           - ui
 
