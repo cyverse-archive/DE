@@ -1,3 +1,0 @@
----
-dependencies:
-    - { role: infra-database-prereqs }

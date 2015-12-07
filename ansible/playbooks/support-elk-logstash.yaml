@@ -1,8 +1,0 @@
----
-- name: Configure ELK Logstash
-  hosts: elk
-  sudo: true
-  gather_facts: false
-  roles:
-      - role: support-elk-logstash
-

@@ -1,8 +1,0 @@
----
-- name: Deploy docker cron stats
-  hosts: docker-ready
-  sudo: yes
-  roles:
-      - role: infra-cron-stats
-        install: false
-

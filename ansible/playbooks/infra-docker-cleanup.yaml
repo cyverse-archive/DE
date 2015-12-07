@@ -1,6 +1,0 @@
-# View the README.md in the `01-docker-cleanup` role for details
----
-- hosts: docker-ready
-  sudo: yes
-  roles:
-    - infra-docker-cleanup
