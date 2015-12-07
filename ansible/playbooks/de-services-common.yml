@@ -1,0 +1,9 @@
+---
+- name: Perform common systems configuration
+  hosts: systems
+  sudo: yes
+  gather_facts: false
+  tags:
+      - config
+  roles:
+      - de-services-common

@@ -1,0 +1,9 @@
+---
+- name: Deploy porklock
+  hosts: condor
+  sudo: True
+  gather_facts: false
+  tags:
+      - porklock
+  roles:
+      - de-porklock

@@ -7,24 +7,24 @@
 ############################################
 # Third-party      
 ############################################
-- include: amqp-brokers.yaml
+- include: infra-amqp-brokers.yaml
   when: not parasitic
 
-- include: deploy-irods-elasticsearch.yaml
+- include: infra-deploy-irods-elasticsearch.yaml
   when: not parasitic
 
 ############################################
 # Services Support
 ############################################
-- include: playbooks/services-common.yml
-- include: playbooks/01-systemd-de-target_down.yaml
-- include: playbooks/01-docker-cleanup.yaml
+- include: playbooks/de-services-common.yml
+- include: playbooks/de-systemd-de-target_down.yaml
+- include: playbooks/infra-docker-cleanup.yaml
 
 ############################################
 # Condor      
 ############################################
-- include: playbooks/01-condor-exec-jar.yaml
-- include: playbooks/porklock.yaml
+- include: playbooks/infra-condor-exec-jar.yaml
+- include: playbooks/de-porklock.yaml
 
 ############################################
 # Databases      
@@ -35,31 +35,31 @@
 # Services
 ############################################
   
-- include: playbooks/10-iplant-data-cfg.yaml
-- include: playbooks/10-jex.yaml
-- include: playbooks/10-services-cfg.yaml
+- include: playbooks/de-iplant-data-cfg.yaml
+- include: playbooks/de-jex.yaml
+- include: playbooks/de-services-cfg.yaml
 
 ############################################
 # DE UI
 ############################################
-- include: playbooks/10-ui.yaml
+- include: playbooks/de-ui.yaml
 
 ############################################
 # Logging; ELK Stack
 ############################################
-- include: elk-stack.yaml
+- include: support-elk-stack.yaml
 
-- include: playbooks/rsyslog-config.yaml
-- include: playbooks/10-logstash-forwarder.yaml
+- include: playbooks/support-rsyslog-config.yaml
+- include: playbooks/support-logstash-forwarder.yaml
 
 ############################################
 # Systems
 ############################################
-- include: systems.yaml
+- include: infra-systems.yaml
   vars:
     reboot: true
 
-- include: playbooks/01-systemd-de-target_up.yaml
+- include: playbooks/de-systemd-de-target_up.yaml
 
 - include: verify-POST_DEPLOY.yaml
 

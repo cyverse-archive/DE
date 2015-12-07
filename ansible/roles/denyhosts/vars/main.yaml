@@ -1,4 +1,0 @@
----
-packager_centos: yum
-packager_ubuntu: apt
-packager: "{{ packager_centos if ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat' else packager_ubuntu }}"

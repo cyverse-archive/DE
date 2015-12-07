@@ -1,0 +1,5 @@
+---
+dependencies:
+    - { role: util-notify-chat, username: "DB Updater", icon: ":facepalm:", msg: ":warning: Updating {{curr_db_name}} database" }
+    - { role: de-update-database }
+    - { role: util-notify-chat, username: "DB Updater", icon: ":facepalm:", msg: ":white_check_mark: Done updating {{curr_db_name}} database" }

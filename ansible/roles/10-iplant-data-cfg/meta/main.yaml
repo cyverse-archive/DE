@@ -1,8 +1,0 @@
----
-# dependencies file for data-container-services-deployer
-dependencies:
-    - role: cfg-systemd-unit
-      service_name_short: "{{data_container.service_name_short}}"
-      group_name: docker-ready
-      tags:
-          - iplant-data
