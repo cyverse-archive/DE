@@ -32,11 +32,6 @@ logstash_forwarder:
 # environment
 parasitic: false
 
-denyhosts_allowed:
-#  - 192.168.0.[1-127]
-#  - 172.16.0.*
-#  - 10.0.0.*
-
 max_heap:
   low: "512M"
   high: "1G"

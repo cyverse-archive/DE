@@ -1,9 +1,5 @@
 (ns terrain.services.user-info
-  (:use [clojure.string :only [split blank?]]
-        [clojure-commons.validators]
-        [terrain.util.config]
-        [terrain.util.service :only [success-response]]
-        [slingshot.slingshot :only [try+ throw+]])
+  (:use [terrain.util.service :only [success-response]])
   (:require [cheshire.core :as cheshire]
             [terrain.clients.iplant-groups :as ipg]
             [terrain.auth.user-attributes :as user]

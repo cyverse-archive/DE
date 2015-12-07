@@ -1,6 +1,5 @@
 (ns terrain.services.filesystem.sharing
-  (:use [clojure-commons.error-codes]
-        [clojure-commons.validators]
+  (:use [clojure-commons.validators]
         [clj-jargon.init :only [with-jargon]]
         [clj-jargon.item-info :only [trash-base-dir is-dir?]]
         [clj-jargon.metadata]

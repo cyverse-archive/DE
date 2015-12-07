@@ -1,7 +1,0 @@
----
-
-- name: Deploy java
-  hosts: services
-  sudo: yes
-  roles:
-      - java7

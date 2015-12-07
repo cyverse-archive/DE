@@ -21,11 +21,11 @@ import com.google.gwt.safehtml.shared.SafeUri;
 public class AppCommentCellDefaultAppearance implements AppCommentCellAppearance {
 
     public interface AppCommentCellStyles extends CssResource {
-        @ClassName("comment_icon")
+        @ClassName("commentIcon")
         String commentIcon();
 
-        @ClassName("external_comment_icon")
-        String external_comment_icon();
+        @ClassName("externalAppCommentIcon")
+        String externalAppCommentIcon();
     }
 
     public interface AppCommentCellResources extends ClientBundle {
@@ -62,7 +62,7 @@ public class AppCommentCellDefaultAppearance implements AppCommentCellAppearance
         String comments = displayStrings.comments();
         String className;
         if (value.getAppType().equalsIgnoreCase(App.EXTERNAL_APP)) {
-            className = resources.css().external_comment_icon();
+            className = resources.css().externalAppCommentIcon();
         } else {
             className = resources.css().commentIcon();
         }

@@ -1,8 +1,0 @@
-{
-  "title": "Top 25 Launched Public Apps",
-  "visState": "{\"type\":\"pie\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"isDonut\":false},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"app.name.raw\",\"size\":25,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
-  "description": "Displays the top 25 publix apps which have been launched by users in the Discovery Environment.",
-  "kibanaSavedObjectMeta": {
-    "searchSourceJSON": "{\"index\":\"de-metrics\",\"query\":{\"query_string\":{\"query\":\"_type: \\\"app_event\\\" AND request.path-info: \\\"/analyses\\\" AND request.request-method: \\\"POST\\\"\",\"analyze_wildcard\":true}},\"filter\":[]}"
-  }
-}

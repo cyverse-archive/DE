@@ -1,0 +1,213 @@
+---
+dependencies:
+    - role: util-cfg-logging
+      service_name_short: "{{anon_files.service_name_short}}"
+    - role: util-cfg-service
+      service_name_short: "{{anon_files.service_name_short}}"
+    - role: util-cfg-systemd-unit
+      service_name_short: "{{anon_files.service_name_short}}"
+    - role: util-cfg-docker-pull
+      image_name: "{{anon_files.image_name}}"
+      group_name: "{{anon_files.service_name_short}}"
+
+    - role: util-cfg-logging
+      service_name_short: "{{apps.service_name_short}}"
+    - role: util-cfg-service
+      service_name_short: "{{apps.service_name_short}}"
+    - role: util-cfg-systemd-unit
+      service_name_short: "{{apps.service_name_short}}"
+    - role: util-cfg-docker-pull
+      image_name: "{{apps.image_name}}"
+      group_name: "{{apps.service_name_short}}"
+
+    - role: util-cfg-logging
+      service_name_short: "{{clockwork.service_name_short}}"
+    - role: util-cfg-service
+      service_name_short: "{{clockwork.service_name_short}}"
+    - role: util-cfg-systemd-unit
+      service_name_short: "{{clockwork.service_name_short}}"
+    - role: util-cfg-docker-pull
+      image_name: "{{clockwork.image_name}}"
+      group_name: "{{clockwork.service_name_short}}"
+
+    - role: util-cfg-logging
+      service_name_short: "{{condor_log_monitor.service_name_short}}"
+    - role: util-cfg-service
+      service_name_short: "{{condor_log_monitor.service_name_short}}"
+    - role: util-cfg-systemd-unit
+      service_name_short: "{{condor_log_monitor.service_name_short}}"
+    - role: util-cfg-docker-pull
+      image_name: "{{condor_log_monitor.image_name}}"
+      group_name: "{{condor_log_monitor.service_name_short}}"
+
+    - role: util-cfg-logging
+      service_name_short: "{{data_info.service_name_short}}"
+    - role: util-cfg-service
+      service_name_short: "{{data_info.service_name_short}}"
+    - role: util-cfg-systemd-unit
+      service_name_short: "{{data_info.service_name_short}}"
+    - role: util-cfg-docker-pull
+      image_name: "{{data_info.image_name}}"
+      group_name: "{{data_info.service_name_short}}"
+
+    - role: util-cfg-logging
+      service_name_short: "{{dewey.service_name_short}}"
+    - role: util-cfg-service
+      service_name_short: "{{dewey.service_name_short}}"
+    - role: util-cfg-systemd-unit
+      service_name_short: "{{dewey.service_name_short}}"
+    - role: util-cfg-docker-pull
+      image_name: "{{dewey.image_name}}"
+      group_name: "{{dewey.service_name_short}}"
+
+    - role: util-cfg-logging
+      service_name_short: "{{exim.service_name_short}}"
+    - role: util-cfg-service
+      service_name_short: "{{exim.service_name_short}}"
+    - role: util-cfg-systemd-unit
+      service_name_short: "{{exim.service_name_short}}"
+    - role: util-cfg-docker-pull
+      image_name: "{{exim.image_name}}"
+      group_name: "{{exim.service_name_short}}"
+
+    - role: util-cfg-logging
+      service_name_short: "{{info_typer.service_name_short}}"
+    - role: util-cfg-service
+      service_name_short: "{{info_typer.service_name_short}}"
+    - role: util-cfg-systemd-unit
+      service_name_short: "{{info_typer.service_name_short}}"
+    - role: util-cfg-docker-pull
+      image_name: "{{info_typer.image_name}}"
+      group_name: "{{info_typer.service_name_short}}"
+
+    - role: util-cfg-logging
+      service_name_short: "{{infosquito.service_name_short}}"
+    - role: util-cfg-service
+      service_name_short: "{{infosquito.service_name_short}}"
+    - role: util-cfg-systemd-unit
+      service_name_short: "{{infosquito.service_name_short}}"
+    - role: util-cfg-docker-pull
+      image_name: "{{infosquito.image_name}}"
+      group_name: "{{infosquito.service_name_short}}"
+
+    - role: util-cfg-logging
+      service_name_short: "{{iplant_email.service_name_short}}"
+    - role: util-cfg-service
+      service_name_short: "{{iplant_email.service_name_short}}"
+    - role: util-cfg-systemd-unit
+      service_name_short: "{{iplant_email.service_name_short}}"
+    - role: util-cfg-docker-pull
+      image_name: "{{iplant_email.image_name}}"
+      group_name: "{{iplant_email.service_name_short}}"
+
+    - role: util-cfg-logging
+      service_name_short: "{{iplant_groups.service_name_short}}"
+    - role: util-cfg-service
+      service_name_short: "{{iplant_groups.service_name_short}}"
+    - role: util-cfg-systemd-unit
+      service_name_short: "{{iplant_groups.service_name_short}}"
+    - role: util-cfg-docker-pull
+      image_name: "{{iplant_groups.image_name}}"
+      group_name: "{{iplant_groups.service_name_short}}"
+
+    - role: util-cfg-logging
+      service_name_short: "{{jexevents.service_name_short}}"
+    - role: util-cfg-service
+      service_name_short: "{{jexevents.service_name_short}}"
+    - role: util-cfg-systemd-unit
+      service_name_short: "{{jexevents.service_name_short}}"
+    - role: util-cfg-docker-pull
+      image_name: "{{jexevents.image_name}}"
+      group_name: "{{jexevents.service_name_short}}"
+
+    - role: util-cfg-logging
+      service_name_short: "{{kifshare.service_name_short}}"
+    - role: util-cfg-service
+      service_name_short: "{{kifshare.service_name_short}}"
+    - role: util-cfg-systemd-unit
+      service_name_short: "{{kifshare.service_name_short}}"
+    - role: util-cfg-docker-pull
+      image_name: "{{kifshare.image_name}}"
+      group_name: "{{kifshare.service_name_short}}"
+
+    - role: util-cfg-logging
+      service_name_short: "{{metadata.service_name_short}}"
+    - role: util-cfg-service
+      service_name_short: "{{metadata.service_name_short}}"
+    - role: util-cfg-systemd-unit
+      service_name_short: "{{metadata.service_name_short}}"
+    - role: util-cfg-docker-pull
+      image_name: "{{metadata.image_name}}"
+      group_name: "{{metadata.service_name_short}}"
+
+    - role: util-cfg-logging
+      service_name_short: "{{monkey.service_name_short}}"
+    - role: util-cfg-service
+      service_name_short: "{{monkey.service_name_short}}"
+    - role: util-cfg-systemd-unit
+      service_name_short: "{{monkey.service_name_short}}"
+    - role: util-cfg-docker-pull
+      image_name: "{{monkey.image_name}}"
+      group_name: "{{monkey.service_name_short}}"
+
+    - role: util-cfg-logging
+      service_name_short: "{{notificationagent.service_name_short}}"
+    - role: util-cfg-service
+      service_name_short: "{{notificationagent.service_name_short}}"
+    - role: util-cfg-systemd-unit
+      service_name_short: "{{notificationagent.service_name_short}}"
+    - role: util-cfg-docker-pull
+      image_name: "{{notificationagent.image_name}}"
+      group_name: "{{notificationagent.service_name_short}}"
+
+    - role: util-cfg-logging
+      service_name_short: "{{saved_searches.service_name_short}}"
+    - role: util-cfg-service
+      service_name_short: "{{saved_searches.service_name_short}}"
+    - role: util-cfg-systemd-unit
+      service_name_short: "{{saved_searches.service_name_short}}"
+    - role: util-cfg-docker-pull
+      image_name: "{{saved_searches.image_name}}"
+      group_name: "{{saved_searches.service_name_short}}"
+
+    - role: util-cfg-logging
+      service_name_short: "{{terrain.service_name_short}}"
+    - role: util-cfg-service
+      service_name_short: "{{terrain.service_name_short}}"
+    - role: util-cfg-systemd-unit
+      service_name_short: "{{terrain.service_name_short}}"
+    - role: util-cfg-docker-pull
+      image_name: "{{terrain.image_name}}"
+      group_name: "{{terrain.service_name_short}}"
+
+    - role: util-cfg-logging
+      service_name_short: "{{tree_urls.service_name_short}}"
+    - role: util-cfg-service
+      service_name_short: "{{tree_urls.service_name_short}}"
+    - role: util-cfg-systemd-unit
+      service_name_short: "{{tree_urls.service_name_short}}"
+    - role: util-cfg-docker-pull
+      image_name: "{{tree_urls.image_name}}"
+      group_name: "{{tree_urls.service_name_short}}"
+
+    - role: util-cfg-logging
+      service_name_short: "{{user_preferences.service_name_short}}"
+    - role: util-cfg-service
+      service_name_short: "{{user_preferences.service_name_short}}"
+    - role: util-cfg-systemd-unit
+      service_name_short: "{{user_preferences.service_name_short}}"
+    - role: util-cfg-docker-pull
+      image_name: "{{user_preferences.image_name}}"
+      group_name: "{{user_preferences.service_name_short}}"
+
+    - role: util-cfg-logging
+      service_name_short: "{{user_sessions.service_name_short}}"
+    - role: util-cfg-service
+      service_name_short: "{{user_sessions.service_name_short}}"
+    - role: util-cfg-systemd-unit
+      service_name_short: "{{user_sessions.service_name_short}}"
+    - role: util-cfg-docker-pull
+      image_name: "{{user_sessions.image_name}}"
+      group_name: "{{user_sessions.service_name_short}}"
+
+

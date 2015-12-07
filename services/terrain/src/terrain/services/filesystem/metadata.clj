@@ -20,8 +20,7 @@
             [terrain.services.filesystem.uuids :as uuids]
             [terrain.services.filesystem.validators :as validators]
             [terrain.util.config :as cfg]
-            [terrain.util.service :as service]
-            [ring.middleware.multipart-params :as multipart])
+            [terrain.util.service :as service])
   (:import [au.com.bytecode.opencsv CSVReader]
            [java.io InputStream]))
 
@@ -342,7 +341,7 @@
   (let [{:keys [id type]} (uuids/uuid-for-path cm user path)
         data-id (uuidify id)
         data-type (metadata-client/resolve-data-type type)]
-    (metadata-client/set-metadata-template-avus data-id data-type template-id {:avus avus})))
+    (metadata-client/add-metadata-template-avus data-id data-type template-id {:avus avus})))
 
 (defn- bulk-add-file-avus
   "Applies metadata from a list of attributes and values to the given path.

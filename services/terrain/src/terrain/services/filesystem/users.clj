@@ -1,7 +1,5 @@
 (ns terrain.services.filesystem.users
-  (:use [clojure-commons.error-codes]
-        [clojure-commons.validators]
-        [clj-jargon.init :only [with-jargon]]
+  (:use [clj-jargon.init :only [with-jargon]]
         [clj-jargon.users])
   (:require [clj-jargon.permissions :as perm]
             [terrain.services.filesystem.icat :as icat]

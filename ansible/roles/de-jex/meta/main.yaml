@@ -1,0 +1,15 @@
+---
+dependencies:
+    - role: de-condor-submitter
+      tags:
+          - condor
+          - condor-submitter
+
+    - role: util-cfg-systemd-unit
+      service_name_short: "{{jex.service_name_short}}"
+      tags:
+          - jex
+    - role: util-cfg-service
+      service_name_short: "{{jex.service_name_short}}"
+      tags:
+          - jex

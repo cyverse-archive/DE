@@ -1,8 +1,0 @@
----
-- name: Deploy rsyslog config
-  hosts: docker-ready
-  sudo: yes
-  gather_facts: false
-  roles:
-      - rsyslog-config
-

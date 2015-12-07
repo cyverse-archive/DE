@@ -7,7 +7,6 @@
         [clojure-commons.error-codes]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [clojure.tools.logging :as log]
-            [clojure-commons.file-utils :as ft]
             [terrain.util.config :as cfg]
             [terrain.services.filesystem.icat :as icat])
   (:import [org.apache.tika Tika]))
