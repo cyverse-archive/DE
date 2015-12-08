@@ -107,10 +107,10 @@
       dest: "{{service_conf_dir}}/nginx.conf"
       service_name_short: "{{de.service_name_short}}"
 
-    # - role: util-cfg-service
-    #   src: "logstash-forwarder/logstash-forwarder-conf.json.j2"
-    #   dest: "{{service_conf_dir}}/logstash-forwarder/config.json"
-    #   service_name_short: "{{logstash_forwarder.service_name_short}}"
+    - role: util-cfg-service
+      src: "logstash-forwarder/logstash-forwarder-conf.json.j2"
+      dest: "{{service_conf_dir}}/logstash-forwarder/config.json"
+      service_name_short: "{{logstash_forwarder.service_name_short}}"
 
     - role: util-cfg-service
       src: "docker-cleanup/docker-gc-exclude-containers.j2"
