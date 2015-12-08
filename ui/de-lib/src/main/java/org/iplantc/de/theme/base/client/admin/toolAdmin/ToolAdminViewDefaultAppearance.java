@@ -409,4 +409,69 @@ public class ToolAdminViewDefaultAppearance implements ToolAdminView.ToolAdminVi
         return iplantDisplayStrings.completeRequiredFieldsError();
     }
 
+    @Override
+    public String confirmOverwriteTitle() {
+        return displayStrings.confirmOverwriteTitle();
+    }
+
+    @Override
+    public String confirmOverwriteDangerZone() {
+        return displayStrings.confirmOverwriteDangerZone();
+    }
+
+    @Override
+    public String confirmOverwriteBody() {
+        return displayStrings.confirmOverwriteBody();
+    }
+
+    @Override
+    public String deletePublicToolTitle() {
+        return displayStrings.deletePublicToolTitle();
+    }
+
+    @Override
+    public String deletePublicToolBody() {
+        return displayStrings.deletePublicToolBody();
+    }
+
+    @Override
+    public int publicAppNameColumnWidth() {
+        return 200;
+    }
+
+    @Override
+    public String publicAppNameLabel() {
+        return displayStrings.publicAppNameLabel();
+    }
+
+    @Override
+    public int publicAppIntegratorColumnWidth() {
+        return 100;
+    }
+
+    @Override
+    public String publicAppIntegratorLabel() {
+        return displayStrings.publicAppIntegratorLabel();
+    }
+
+    @Override
+    public int publicAppIntegratorEmailColumnWidth() {
+        return 200;
+    }
+
+    @Override
+    public String publicAppIntegratorEmailLabel() {
+        return displayStrings.publicAppIntegratorEmailLabel();
+    }
+
+    @Override
+    public int publicAppDisabledColumnWidth() {
+        return 100;
+    }
+
+    @Override
+    public String publicAppDisabledLabel() {
+        return displayStrings.publicAppDisabledLabel();
+    }
+
 }

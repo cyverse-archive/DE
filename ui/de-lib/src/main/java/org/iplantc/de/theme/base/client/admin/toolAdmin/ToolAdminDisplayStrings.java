@@ -157,4 +157,31 @@ public interface ToolAdminDisplayStrings extends Messages {
 
     @Key("toolImplementationFieldSetLabel")
     String toolImplementationFieldSetLabel();
+
+    @Key("confirmOverwriteTitle")
+    String confirmOverwriteTitle();
+
+    @Key("confirmOverwriteBody")
+    String confirmOverwriteBody();
+
+    @Key("deletePublicToolTitle")
+    String deletePublicToolTitle();
+
+    @Key("deletePublicToolBody")
+    String deletePublicToolBody();
+
+    @Key("confirmOverwriteDangerZone")
+    String confirmOverwriteDangerZone();
+
+    @Key("publicAppNameLabel")
+    String publicAppNameLabel();
+
+    @Key("publicAppIntegratorLabel")
+    String publicAppIntegratorLabel();
+
+    @Key("publicAppIntegratorEmailLabel")
+    String publicAppIntegratorEmailLabel();
+
+    @Key("publicAppDisabledLabel")
+    String publicAppDisabledLabel();
 }

@@ -163,6 +163,32 @@ public interface ToolAdminView extends IsWidget, IsMaskable {
 
         String completeRequiredFieldsError();
 
+        String confirmOverwriteTitle();
+
+        String confirmOverwriteDangerZone();
+
+        String confirmOverwriteBody();
+
+        String deletePublicToolTitle();
+
+        String deletePublicToolBody();
+
+        int publicAppNameColumnWidth();
+
+        String publicAppNameLabel();
+
+        int publicAppIntegratorColumnWidth();
+
+        String publicAppIntegratorLabel();
+
+        int publicAppIntegratorEmailColumnWidth();
+
+        String publicAppIntegratorEmailLabel();
+
+        int publicAppDisabledColumnWidth();
+
+        String publicAppDisabledLabel();
+
     }
 
     interface Presenter {

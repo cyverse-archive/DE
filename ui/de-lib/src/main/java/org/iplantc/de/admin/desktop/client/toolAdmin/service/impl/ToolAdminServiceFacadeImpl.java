@@ -67,10 +67,15 @@ public class ToolAdminServiceFacadeImpl implements ToolAdminServiceFacade {
     }
 
     @Override
-    public void updateTool(Tool tool, AsyncCallback<Void> callback) {
+    public void updateTool(Tool tool, boolean overwrite, AsyncCallback<Void> callback) {
 
         String toolId = tool.getId();
-        String address = TOOLS_ADMIN + "/" + toolId;
+        String address;
+        if (overwrite) {
+            address = TOOLS_ADMIN + "/" + toolId + "?overwrite-public=true";
+        } else {
+            address = TOOLS_ADMIN + "/" + toolId;
+        }
 
         final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(tool));
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address, encode.getPayload());

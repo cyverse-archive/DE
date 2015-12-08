@@ -18,7 +18,7 @@ public interface ToolAdminServiceFacade {
 
     void addTool(ToolList toolList, AsyncCallback<Void> callback);
 
-    void updateTool(Tool tool, AsyncCallback<Void> callback);
+    void updateTool(Tool tool, boolean overwrite, AsyncCallback<Void> callback);
 
     void deleteTool(String toolId, AsyncCallback<Void> callback);
 
