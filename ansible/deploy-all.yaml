@@ -2,8 +2,6 @@
 
 - include: verify-PRE_DEPLOY.yaml
 
-- include: TMP-services-cleanup.yaml
-
 ############################################
 # Third-party
 ############################################
