@@ -115,6 +115,9 @@
     - role: util-cfg-docker-pull-configs
       service_name: "{{de.http_server.compose_service}}"
       service_name_short: "{{de.http_server.service_name_short}}"
+    - role: util-cfg-docker-pull
+      service_name: "{{de.http_server.compose_service}}"
+      service_name_short: "{{de.http_server.service_name_short}}"
 
 - name: Update exim-sender
   hosts: exim-sender

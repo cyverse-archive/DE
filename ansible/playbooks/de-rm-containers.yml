@@ -90,6 +90,35 @@
       service_name: "{{dewey.compose_service}}"
       service_name_short: "{{dewey.service_name_short}}"
 
+- name: Remove de-ui
+  hosts: ui
+  sudo: true
+  gather_facts: false
+  tags:
+    - ui
+  roles:
+    - role: util-cfg-docker-rm-configs
+      service_name: "{{de.compose_service}}"
+      service_name_short: "{{de.service_name_short}}"
+    - role: util-cfg-docker-rm
+      service_name: "{{de.compose_service}}"
+      service_name_short: "{{de.service_name_short}}"
+
+- name: Remove de-ui-nginx
+  hosts: ui
+  sudo: true
+  gather_facts: false
+  tags:
+    - ui
+    - de-ui-nginx
+  roles:
+    - role: util-cfg-docker-rm-configs
+      service_name: "{{de.http_server.compose_service}}"
+      service_name_short: "{{de.http_server.service_name_short}}"
+    - role: util-cfg-docker-rm
+      service_name: "{{de.http_server.compose_service}}"
+      service_name_short: "{{de.http_server.service_name_short}}"
+
 - name: Remove exim-sender
   hosts: exim-sender
   sudo: true
