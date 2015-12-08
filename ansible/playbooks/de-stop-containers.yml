@@ -8,6 +8,7 @@
     - anon-files
   roles:
     - role: util-cfg-docker-stop
+      ignore_errors: yes
       service_name: "{{anon_files.compose_service}}"
       service_name_short: "{{anon_files.service_name_short}}"
 
@@ -20,6 +21,7 @@
     - apps
   roles:
     - role: util-cfg-docker-stop
+      ignore_errors: yes
       service_name: "{{apps.compose_service}}"
       service_name_short: "{{apps.service_name_short}}"
 
@@ -32,6 +34,7 @@
     - clockwork
   roles:
     - role: util-cfg-docker-stop
+      ignore_errors: yes
       service_name: "{{clockwork.compose_service}}"
       service_name_short: "{{clockwork.service_name_short}}"
 
@@ -44,6 +47,7 @@
     - condor-log-monitor
   roles:
     - role: util-cfg-docker-stop
+      ignore_errors: yes
       service_name: "{{condor_log_monitor.compose_service}}"
       service_name_short: "{{condor_log_monitor.service_name_short}}"
 
@@ -56,6 +60,7 @@
     - data-info
   roles:
     - role: util-cfg-docker-stop
+      ignore_errors: yes
       service_name: "{{data_info.compose_service}}"
       service_name_short: "{{data_info.service_name_short}}"
 
@@ -68,6 +73,7 @@
     - dewey
   roles:
     - role: util-cfg-docker-stop
+      ignore_errors: yes
       service_name: "{{dewey.compose_service}}"
       service_name_short: "{{dewey.service_name_short}}"
 
@@ -79,6 +85,7 @@
     - ui
   roles:
     - role: util-cfg-docker-stop
+      ignore_errors: yes
       service_name: "{{de.compose_service}}"
       service_name_short: "{{de.service_name_short}}"
 
@@ -91,6 +98,7 @@
     - de-ui-nginx
   roles:
     - role: util-cfg-docker-stop
+      ignore_errors: yes
       service_name: "{{de.http_server.compose_service}}"
       service_name_short: "{{de.http_server.service_name_short}}"
 
@@ -103,6 +111,7 @@
     - exim-sender
   roles:
     - role: util-cfg-docker-stop
+      ignore_errors: yes
       service_name: "{{exim.compose_service}}"
       service_name_short: "{{exim.service_name_short}}"
 
@@ -115,6 +124,7 @@
     - info-typer
   roles:
     - role: util-cfg-docker-stop
+      ignore_errors: yes
       service_name: "{{info_typer.compose_service}}"
       service_name_short: "{{info_typer.service_name_short}}"
 
@@ -127,6 +137,7 @@
     - infosquito
   roles:
     - role: util-cfg-docker-stop
+      ignore_errors: yes
       service_name: "{{infosquito.compose_service}}"
       service_name_short: "{{infosquito.service_name_short}}"
 
@@ -139,6 +150,7 @@
     - iplant-email
   roles:
     - role: util-cfg-docker-stop
+      ignore_errors: yes
       service_name: "{{iplant_email.compose_service}}"
       service_name_short: "{{iplant_email.service_name_short}}"
 
@@ -151,6 +163,7 @@
     - iplant-groups
   roles:
     - role: util-cfg-docker-stop
+      ignore_errors: yes
       service_name: "{{iplant_groups.compose_service}}"
       service_name_short: "{{iplant_groups.service_name_short}}"
 
@@ -163,6 +176,7 @@
     - jexevents
   roles:
     - role: util-cfg-docker-stop
+      ignore_errors: yes
       service_name: "{{jexevents.compose_service}}"
       service_name_short: "{{jexevents.service_name_short}}"
 
@@ -175,6 +189,7 @@
     - kifshare
   roles:
     - role: util-cfg-docker-stop
+      ignore_errors: yes
       service_name: "{{kifshare.compose_service}}"
       service_name_short: "{{kifshare.service_name_short}}"
 
@@ -187,6 +202,7 @@
     - metadata
   roles:
     - role: util-cfg-docker-stop
+      ignore_errors: yes
       service_name: "{{metadata.compose_service}}"
       service_name_short: "{{metadata.service_name_short}}"
 
@@ -199,6 +215,7 @@
     - monkey
   roles:
     - role: util-cfg-docker-stop
+      ignore_errors: yes
       service_name: "{{monkey.compose_service}}"
       service_name_short: "{{monkey.service_name_short}}"
 
@@ -211,6 +228,7 @@
     - notificationagent
   roles:
     - role: util-cfg-docker-stop
+      ignore_errors: yes
       service_name: "{{notificationagent.compose_service}}"
       service_name_short: "{{notificationagent.service_name_short}}"
 
@@ -223,6 +241,7 @@
     - saved-searches
   roles:
     - role: util-cfg-docker-stop
+      ignore_errors: yes
       service_name: "{{saved_searches.compose_service}}"
       service_name_short: "{{saved_searches.service_name_short}}"
 
@@ -235,6 +254,7 @@
     - terrain
   roles:
     - role: util-cfg-docker-stop
+      ignore_errors: yes
       service_name: "{{terrain.compose_service}}"
       service_name_short: "{{terrain.service_name_short}}"
 
@@ -247,6 +267,7 @@
     - tree-urls
   roles:
     - role: util-cfg-docker-stop
+      ignore_errors: yes
       service_name: "{{tree_urls.compose_service}}"
       service_name_short: "{{tree_urls.service_name_short}}"
 
@@ -259,6 +280,7 @@
     - user-preferences
   roles:
     - role: util-cfg-docker-stop
+      ignore_errors: yes
       service_name: "{{user_preferences.compose_service}}"
       service_name_short: "{{user_preferences.service_name_short}}"
 
@@ -271,5 +293,6 @@
     - user-sessions
   roles:
     - role: util-cfg-docker-stop
+      ignore_errors: yes
       service_name: "{{user_sessions.compose_service}}"
       service_name_short: "{{user_sessions.service_name_short}}"
