@@ -229,8 +229,8 @@
     (DELETE "/tools/:tool-id" [tool-id]
             (apps/delete-tool tool-id))
 
-    (PATCH "/tools/:tool-id" [tool-id :as {:keys [body]}]
-           (apps/update-tool tool-id body))
+    (PATCH "/tools/:tool-id" [tool-id :as {:keys [params body]}]
+           (apps/update-tool tool-id params body))
 
     (GET "/tool-requests" [:as {params :params}]
          (admin-list-tool-requests params))
