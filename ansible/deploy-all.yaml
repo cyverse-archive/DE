@@ -5,7 +5,7 @@
 - include: TMP-services-cleanup.yaml
 
 ############################################
-# Third-party      
+# Third-party
 ############################################
 - include: infra-amqp-brokers.yaml
   when: not parasitic
@@ -21,23 +21,24 @@
 - include: playbooks/infra-docker-cleanup.yaml
 
 ############################################
-# Condor      
+# Condor
 ############################################
 - include: playbooks/infra-condor-exec-jar.yaml
 - include: playbooks/de-porklock.yaml
 
 ############################################
-# Databases      
+# Databases
 ############################################
 - include: db-migrations.yaml
 
 ############################################
 # Services
 ############################################
-  
+
 - include: playbooks/de-iplant-data-cfg.yaml
 - include: playbooks/de-jex.yaml
-- include: playbooks/de-services-cfg.yaml
+- include: playbooks/de-pull-images.yaml
+- include: playbooks/de-start-containers.yml
 
 ############################################
 # DE UI
@@ -62,4 +63,3 @@
 - include: playbooks/de-systemd-de-target_up.yaml
 
 - include: verify-POST_DEPLOY.yaml
-

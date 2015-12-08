@@ -1,0 +1,17 @@
+---
+# tasks file for cfg-docker-pull
+#
+
+- debug: msg="Starting {{service_name}}"
+  tags:
+      - docker_up
+
+- name: pull the {{service_name}} image
+  environment:
+    DE_TAG: "{{docker.tag}}"
+    DE_ENV: "{{environment_name}}"
+  shell: "docker-compose up -f {{docker.compose_path}} {{service_name}} --force-recreate"
+  register: docker_up_v
+  changed_when: docker_up_v.stdout.find('Image is up to date') == -1
+  tags:
+    - docker_up
