@@ -2,7 +2,7 @@ FROM scratch
 
 COPY t /t
 COPY config_files/logging/ /etc/iplant/de/logging/
-COPY config_files/nginx/* /etc/nginx/
+COPY config_files/nginx/ /etc/nginx/
 COPY config_files/*.properties /etc/iplant/de/
 COPY config_files/logstash-forwarder/ /etc/logstash-forwarder/
 COPY config_files/docker-gc-* /etc/
