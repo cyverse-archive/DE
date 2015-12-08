@@ -1,0 +1,17 @@
+---
+# tasks file for cfg-docker-pull
+#
+
+- debug: msg="Removing {{service_name}}"
+  tags:
+      - docker_rm
+
+- name: remove the {{service_name}} image
+  environment:
+    DE_TAG: "{{docker.tag}}"
+    DE_ENV: "{{environment_name}}"
+  shell: "docker-compose rm -f {{docker.compose_path}} -v {{service_name}}"
+  register: docker_pull_v
+  changed_when: docker_pull_v.stdout.find('Image is up to date') == -1
+  tags:
+    - docker_rm
