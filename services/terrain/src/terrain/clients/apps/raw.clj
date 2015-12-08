@@ -452,9 +452,9 @@
                   :follow-redirects false}))
 
 (defn update-tool
-  [tool-id tool]
+  [tool-id params tool]
   (client/patch (apps-url "admin" "tools" tool-id)
-                {:query-params     (secured-params)
+                {:query-params     (secured-params params [:overwrite-public])
                  :as               :stream
                  :body             tool
                  :content-type     :json

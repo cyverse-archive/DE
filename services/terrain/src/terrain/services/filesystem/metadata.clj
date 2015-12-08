@@ -12,10 +12,9 @@
             [clojure.string :as string]
             [clojure-commons.file-utils :as ft]
             [cemerick.url :as url]
-            [cheshire.core :as json]
-            [clj-http.client :as http]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
             [terrain.clients.metadata.raw :as metadata-client]
+            [terrain.clients.data-info.raw :as data-raw]
             [terrain.services.filesystem.icat :as icat]
             [terrain.services.filesystem.uuids :as uuids]
             [terrain.services.filesystem.validators :as validators]
@@ -46,7 +45,7 @@
     (throw+ {:type :clojure-commons.exception/not-authorized
              :avus avus})))
 
-(defn service-response->json
+(defn- service-response->json
   [response]
   (->> response :body service/decode-json))
 
@@ -103,7 +102,14 @@
       (add-metadata cm fixed-path attr value new-unit))
     fixed-path))
 
-(defn metadata-add
+(defn- common-add-validate
+  [cm user path avu-map]
+  (when (= "failure" (:status avu-map))
+    (throw+ {:error_code ERR_INVALID_JSON}))
+  (validators/path-exists cm path)
+  (validators/path-writeable cm user path))
+
+(defn- metadata-add
   "Allows user to set metadata on a path. The user must exist in iRODS
    and have write permissions on the path. The path must exist. The
    avu-map parameter must be in this format:
@@ -115,10 +121,7 @@
   [user path avu-map]
   (with-jargon (icat/jargon-cfg) [cm]
     (validators/user-exists cm user)
-    (when (= "failure" (:status avu-map))
-      (throw+ {:error_code ERR_INVALID_JSON}))
-    (validators/path-exists cm path)
-    (validators/path-writeable cm user path)
+    (common-add-validate cm user path avu-map)
     (authorized-avus [avu-map])
     {:path (common-metadata-add cm path avu-map)
      :user user}))
@@ -128,13 +131,10 @@
    for the AVU map format."
   [path avu-map]
   (with-jargon (icat/jargon-cfg) [cm]
-    (when (= "failure" (:status avu-map))
-      (throw+ {:error_code ERR_INVALID_JSON}))
-    (validators/path-exists cm path)
-    (validators/path-writeable cm (cfg/irods-user) path)
+    (common-add-validate cm (cfg/irods-user) path avu-map)
     (common-metadata-add cm path avu-map)))
 
-(defn metadata-set
+(defn- metadata-set
   "Allows user to set metadata on an item with the given data-id. The user must exist in iRODS and have
    write permissions on the data item. The request parameter is a map with :irods-avus and :metadata keys
    in the following format:
@@ -225,7 +225,7 @@
        :src   src-path
        :paths dest-paths})))
 
-(defn metadata-delete
+(defn- metadata-delete
   "Deletes an AVU from path on behalf of a user. attr and value should be strings."
   [user path attr value]
   (with-jargon (icat/jargon-cfg) [cm]
@@ -320,11 +320,7 @@
 (defn do-metadata-save
   "Forwards request to data-info service."
   [data-id params body]
-  (let [url (url/url (cfg/data-info-base-url) "data" data-id "metadata" "save")
-        req-map {:query-params (select-keys params [:user])
-                 :content-type :json
-                 :body         (json/encode body)}]
-    (http/post (str url) req-map)))
+  (data-raw/save-metadata (:user params) data-id (:dest body) (:recursive body)))
 
 (with-pre-hook! #'do-metadata-save
   (fn [data-id params body]
