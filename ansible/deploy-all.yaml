@@ -1,27 +1,15 @@
 ---
-
 - include: verify-PRE_DEPLOY.yaml
-
-############################################
-# Third-party      
-############################################
-- include: infra-amqp-brokers.yaml
-  when: not parasitic
-
-- include: infra-deploy-irods-elasticsearch.yaml
-  when: not parasitic
 
 ############################################
 # Services Support
 ############################################
 - include: playbooks/de-services-common.yml
 - include: playbooks/de-systemd-de-target_down.yaml
-- include: playbooks/infra-docker-cleanup.yaml
 
 ############################################
 # Condor      
 ############################################
-- include: playbooks/infra-condor-exec-jar.yaml
 - include: playbooks/de-porklock.yaml
 
 ############################################
@@ -43,20 +31,8 @@
 - include: playbooks/de-ui.yaml
 
 ############################################
-# Logging; ELK Stack
+# Bring system back up.
 ############################################
-- include: support-elk-stack.yaml
-
-- include: playbooks/support-rsyslog-config.yaml
-- include: playbooks/support-logstash-forwarder.yaml
-
-############################################
-# Systems
-############################################
-- include: infra-systems.yaml
-  vars:
-    reboot: true
-
 - include: playbooks/de-systemd-de-target_up.yaml
 
 - include: verify-POST_DEPLOY.yaml
