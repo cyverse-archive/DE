@@ -13,6 +13,5 @@
   shell: "docker-compose pull -f {{docker.compose_path}} {{service_name}}"
   register: docker_pull_v
   changed_when: docker_pull_v.stdout.find('Image is up to date') == -1
-  when: "'{{group_name}}' in group_names"
   tags:
     - docker_pull

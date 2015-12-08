@@ -1,4 +1,17 @@
 ---
+- name: Remove iplant-data
+  hosts: docker-ready
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - iplant-data
+  roles:
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{data_container.compose_service}}"
+      service_name_short: "{{data_container.service_name_short}}"
+
 - name: Remove anon-files
   hosts: anon-files
   sudo: true

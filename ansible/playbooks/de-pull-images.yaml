@@ -1,4 +1,16 @@
 ---
+- name: Update iplant-data
+  hosts: docker-ready
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - iplant-data
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: "{{data_container.compose_service}}"
+      service_name_short: "{{data_container.service_name_short}}"
+
 - name: Update anon-files
   hosts: anon-files
   sudo: true
