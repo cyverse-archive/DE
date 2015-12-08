@@ -94,6 +94,39 @@
       service_name: "{{de.http_server.compose_service}}"
       service_name_short: "{{de.http_server.service_name_short}}"
 
+- name: Start elk-elasticsearch
+  hosts: elk
+  sudo: true
+  gather_facts: false
+  tags:
+    - elk
+  roles:
+    - role: util-cfg-docker-up
+      service_name: "{{elk.elasticsearch.compose_service}}"
+      service_name_short: "{{elk.elasticsearch.service_name_short}}"
+
+- name: Start elk-kibana
+  hosts: elk
+  sudo: true
+  gather_facts: false
+  tags:
+    - elk
+  roles:
+    - role: util-cfg-docker-up
+      service_name: "{{elk.kibana.compose_service}}"
+      service_name_short: "{{elk.kibana.service_name_short}}"
+
+- name: Start elk-logstash
+  hosts: elk
+  sudo: true
+  gather_facts: false
+  tags:
+    - elk
+  roles:
+    - role: util-cfg-docker-up
+      service_name: "{{elk.logstash.compose_service}}"
+      service_name_short: "{{elk.logstash.service_name_short}}"
+
 - name: Start exim-sender
   hosts: exim-sender
   sudo: true
