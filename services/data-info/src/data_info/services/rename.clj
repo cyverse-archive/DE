@@ -36,7 +36,9 @@
       {:user user :sources sources :dest dest})))
 
 (defn- rename-path
-  "Data item renaming. As 'user', move 'source' to 'dest'."
+  "Data item renaming. As 'user', move 'source' to 'dest'.
+
+   If the data item is remaining in the same directory, do not validate if it's writeable."
   [user source dest]
   (with-jargon (cfg/jargon-cfg) [cm]
     (let [source    (ft/rm-last-slash source)
@@ -50,7 +52,8 @@
           (validators/all-paths-exist cm [source (ft/dirname dest)])
           (validators/path-is-dir cm (ft/dirname dest))
           (validators/user-owns-path cm user source)
-          (validators/path-writeable cm user (ft/dirname dest))
+          (if-not (= (ft/dirname source) (ft/dirname dest))
+            (validators/path-writeable cm user (ft/dirname dest)))
           (validators/path-not-exists cm dest)
 
           (let [result (move cm source dest :user user :admin-users (cfg/irods-admins))]

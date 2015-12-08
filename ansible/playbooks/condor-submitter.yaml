@@ -1,4 +1,0 @@
-- hosts: condor-submission
-  sudo: True
-  roles:
-    - condor-submitter

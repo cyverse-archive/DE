@@ -8,7 +8,6 @@
   (:require [clojure.tools.logging :as log]
             [clojure.string :as string]
             [clojure-commons.file-utils :as ft]
-            [cheshire.core :as json]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
             [terrain.services.filesystem.validators :as validators]
             [terrain.services.filesystem.garnish.irods :as filetypes]
@@ -115,8 +114,7 @@
 
 (defn do-stat
   [{user :user} {paths :paths}]
-  (->> (data-raw/collect-stats user paths)
-    :body))
+  (:body (data-raw/collect-stats user paths)))
 
 (with-pre-hook! #'do-stat
   (fn [params body]

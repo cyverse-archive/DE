@@ -4,8 +4,7 @@
   (:use [compojure.core]
         [terrain.util.service]
         [terrain.util.transformers]
-        [terrain.util.validators :only [parse-body]]
-        [slingshot.slingshot :only [try+ throw+]]))
+        [terrain.util.validators :only [parse-body]]))
 
 (defn as-vector
   "Returns the given parameter inside a vector if it's not a vector already."

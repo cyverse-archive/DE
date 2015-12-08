@@ -1,0 +1,11 @@
+---
+# dependecies file for de-systemd-de-target
+dependencies:
+    - role: util-cfg-systemd-unit
+      group_name: docker-ready
+      service_name_short: de
+      unit_type: target
+      systemd_enable: false
+      when: config|bool or config_only|bool
+      tags:
+          - de-target

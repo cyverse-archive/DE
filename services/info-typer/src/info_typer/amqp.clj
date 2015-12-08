@@ -58,9 +58,9 @@
 
 
 (defn- declare-queue
-  "Declares a default, anonymouse queue."
-  [channel]
-  (.getQueue (lq/declare channel)))
+  "Declares a queue by name, returning its name."
+  [channel queue-name]
+  (:queue (lq/declare channel queue-name {:durable true :auto-delete false :exclusive false})))
 
 
 (defn- bind
@@ -74,18 +74,18 @@
   "Registers a callback function that fires every time a message enters the specified queue."
   [channel queue msg-fn & {:keys [auto-ack]
                            :or   {auto-ack true}}]
-  (lc/subscribe channel queue msg-fn {:auto-ack true})
+  (lc/subscribe channel queue msg-fn {:auto-ack auto-ack})
   channel)
 
 
 (defn configure
   "Sets up a channel, exchange, and queue, with the queue bound to the exchange and 'msg-fn'
    registered as the callback."
-  [msg-fn]
+  [msg-fn topics]
   (log/info "configuring AMQP connection")
   (let [chan (lch/open (get-connection (connection-map)))
-        q    (declare-queue chan)]
+        q    (declare-queue chan (str "info-typer." (cfg/environment-name)))]
     (declare-exchange chan (cfg/amqp-exchange) (cfg/amqp-exchange-type)
       :durable (cfg/amqp-exchange-durable?) :auto-delete (cfg/amqp-exchange-auto-delete?))
-    (bind chan q (cfg/amqp-exchange) (cfg/amqp-routing-key))
-    (subscribe chan q msg-fn :auto-ack (cfg/amqp-msg-auto-ack?))))
+    (doseq [topic topics] (bind chan q (cfg/amqp-exchange) topic))
+    (subscribe chan q msg-fn :auto-ack false)))

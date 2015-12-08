@@ -1,6 +1,5 @@
 (ns terrain.util.service
-  (:use [cemerick.url :only [url]]
-        [ring.util.codec :only [url-encode]]
+  (:use [ring.util.codec :only [url-encode]]
         [clojure.java.io :only [reader]]
         [clojure.string :only [join blank?] :as string]
         [slingshot.slingshot :only [throw+]])

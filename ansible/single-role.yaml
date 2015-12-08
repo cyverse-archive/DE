@@ -11,7 +11,7 @@
 # =======
 # To execute the `logstash-forwarder` one-to-one playbook;
 #
-#     ansible-playbook single-role.yaml -K --extra-vars "playbook=playbooks/logstash-forwarder.yml"
+#     ansible-playbook single-role.yaml -K --extra-vars "playbook=playbooks/de-ui.yaml"
 #
 # [1] http://docs.ansible.com/ansible/playbooks_best_practices.html
 ---

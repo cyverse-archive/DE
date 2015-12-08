@@ -27,6 +27,9 @@ libs/mescal/mescal
 node_modules/
 .idea
 *.iml
+*.ipr
+*.iws
+/out
 .DS_Store
 services/*/*-build
 *.rpm

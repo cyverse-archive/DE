@@ -158,6 +158,14 @@
      (request :post ["restorer"]
               (mk-req-map user (json/encode {:paths paths})))))
 
+;; METADATA
+
+(defn save-metadata
+  "Request that metadata be saved to a file."
+  [user path-uuid dest recursive]
+  (request :post ["data" path-uuid "metadata" "save"]
+           (mk-req-map user (json/encode {:dest dest :recursive recursive}))))
+
 ;; MISC
 
 (defn collect-permissions

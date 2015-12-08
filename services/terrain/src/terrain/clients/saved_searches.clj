@@ -4,8 +4,7 @@
         [clojure-commons.error-codes]
         [slingshot.slingshot :only [throw+]])
   (:require [clj-http.client :as http]
-            [cemerick.url :refer [url]]
-            [cheshire.core :as json]))
+            [cemerick.url :refer [url]]))
 
 (defn saved-searches-url
   [user]

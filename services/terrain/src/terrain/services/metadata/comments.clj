@@ -1,14 +1,12 @@
 (ns terrain.services.metadata.comments
   (:use [slingshot.slingshot :only [try+ throw+]])
-  (:require [cheshire.core :as json]
-            [clojure-commons.error-codes :as err]
+  (:require [clojure-commons.error-codes :as err]
             [clojure-commons.validators :as validators]
             [terrain.auth.user-attributes :as user]
             [terrain.clients.data-info :as data]
             [terrain.clients.apps :as apps]
             [terrain.clients.metadata.raw :as metadata]
             [terrain.services.filesystem.uuids :as data-uuids]
-            [terrain.util.service :as svc]
             [terrain.util.validators :as valid]))
 
 (defn- extract-accessible-entry-id

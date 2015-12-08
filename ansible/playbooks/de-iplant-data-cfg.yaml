@@ -1,0 +1,13 @@
+---
+- name: Configure iPlant-data container service
+  hosts: docker-ready
+  sudo: yes
+  tags:
+      - iplant-data
+  roles:
+      - de-iplant-data-cfg
+  tasks:
+      - name: Start iplant-data container
+        service: name={{data_container.service_name}} state=restarted
+        tags:
+            - iplant-data

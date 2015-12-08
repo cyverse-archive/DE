@@ -1,9 +1,0 @@
----
-# dependecies file for elk-elasticsearch
-dependencies:
-    - role: cfg-systemd-unit
-      group_name: elk
-      service_name_short: "{{elk.elasticsearch.service_name_short}}"
-      tags:
-          - elk-elasticsearch
-
