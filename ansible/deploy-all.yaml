@@ -38,6 +38,8 @@
 - include: playbooks/de-iplant-data-cfg.yaml
 - include: playbooks/de-jex.yaml
 - include: playbooks/de-pull-images.yaml
+- include: playbooks/de-stop-containers.yml
+- include: playbooks/de-rm-containers.yml
 - include: playbooks/de-start-containers.yml
 
 ############################################
