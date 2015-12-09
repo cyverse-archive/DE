@@ -104,7 +104,7 @@
 
     - role: util-cfg-service
       src: "ui/nginx.conf.j2"
-      dest: "{{service_conf_dir}}/nginx.conf"
+      dest: "{{service_conf_dir}}/nginx/nginx.conf"
       service_name_short: "{{de.service_name_short}}"
 
     - role: util-cfg-service
