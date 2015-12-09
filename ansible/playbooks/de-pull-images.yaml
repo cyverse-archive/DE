@@ -195,9 +195,6 @@
     - services
     - exim-sender
   roles:
-    - role: util-cfg-docker-pull-configs
-      service_name: "{{exim.compose_service}}"
-      service_name_short: "{{exim.service_name_short}}"
     - role: util-cfg-docker-pull
       service_name: "{{exim.compose_service}}"
       service_name_short: "{{exim.service_name_short}}"
