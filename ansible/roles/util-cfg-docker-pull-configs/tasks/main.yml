@@ -6,7 +6,7 @@
   environment:
     DE_TAG: "{{docker.tag}}"
     DE_ENV: "{{environment_name}}"
-  shell: "docker-compose pull -f {{docker.compose_path}} config_{{service_name}}"
+  shell: "docker-compose -f {{docker.compose_path}} pull config_{{service_name}}"
   register: docker_pull_v
   changed_when: docker_pull_v.stdout.find('Image is up to date') == -1
   when: "'{{group_name}}' in group_names"
