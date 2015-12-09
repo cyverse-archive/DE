@@ -1,6 +1,4 @@
 ---
-- include: verify-PRE_DEPLOY.yaml
-
 ############################################
 # Services Support
 ############################################
@@ -34,6 +32,4 @@
 # Bring system back up.
 ############################################
 - include: playbooks/de-systemd-de-target_up.yaml
-
-- include: verify-POST_DEPLOY.yaml
 
