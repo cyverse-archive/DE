@@ -6,11 +6,11 @@
   tags:
       - docker_up
 
-- name: pull the {{service_name}} image
+- name: start {{service_name}} 
   environment:
     DE_TAG: "{{docker.tag}}"
     DE_ENV: "{{environment_name}}"
-  shell: "docker-compose -f {{docker.compose_path}} up {{service_name}} --force-recreate"
+  shell: "docker-compose -f {{docker.compose_path}} up -d --force-recreate {{service_name}}"
   register: docker_up_v
   changed_when: docker_up_v.stdout.find('Image is up to date') == -1
   tags:
