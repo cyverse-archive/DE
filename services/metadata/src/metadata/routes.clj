@@ -16,7 +16,8 @@
 
 (defapi app
   {:exceptions cx/exception-handlers}
-  (swagger-ui config/docs-uri)
+  (swagger-ui config/docs-uri
+    :validator-url nil)
   (swagger-docs
     {:info {:title "Discovery Environment Metadata API"
             :description "Documentation for the Discovery Environment Metadata REST API"
