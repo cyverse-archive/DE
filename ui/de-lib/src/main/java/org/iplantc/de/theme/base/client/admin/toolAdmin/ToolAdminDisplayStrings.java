@@ -122,9 +122,6 @@ public interface ToolAdminDisplayStrings extends Messages {
     @Key("toolImplementationImplementorEmailLabel")
     String toolImplementationImplementorEmailLabel();
 
-    @Key("testToolDataParamsLabel")
-    String testToolDataParamsLabel();
-
     @Key("testToolDataInputFilesLabel")
     String testToolDataInputFilesLabel();
 

@@ -21,15 +21,6 @@
 
     <g:FormPanel>
         <container:VerticalLayoutContainer ui:field="layoutContainer">
-            <!--<container:child layoutData="{layoutData}">-->
-                <!--<toolbar:ToolBar title="">-->
-                    <!--<button:TextButton ui:field="addParameterButton" text="Add"-->
-                                       <!--icon="{appearance.addIcon}"/>-->
-                <!--</toolbar:ToolBar>-->
-            <!--</container:child>-->
-            <!--<container:child layoutData="{layoutData}">-->
-                <!--<d:ToolTestDataParamsListEditor ui:field="paramsEditor"/>-->
-            <!--</container:child>-->
             <container:child layoutData="{layoutData}">
                 <toolbar:ToolBar title="">
                     <button:TextButton ui:field="addInputFileButton" text="Add"

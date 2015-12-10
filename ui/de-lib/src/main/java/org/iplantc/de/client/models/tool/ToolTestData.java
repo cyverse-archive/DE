@@ -9,12 +9,6 @@ import java.util.List;
  */
 public interface ToolTestData {
 
-    @PropertyName("params")
-    List<String> getParams();
-
-    @PropertyName("params")
-    void setParams(List<String> params);
-
     @PropertyName("input_files")
     List<String> getInputFiles();
 

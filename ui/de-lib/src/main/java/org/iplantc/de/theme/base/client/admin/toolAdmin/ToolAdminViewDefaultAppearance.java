@@ -345,11 +345,6 @@ public class ToolAdminViewDefaultAppearance implements ToolAdminView.ToolAdminVi
     }
 
     @Override
-    public String toolTestDataParamsLabel() {
-        return displayStrings.testToolDataParamsLabel();
-    }
-
-    @Override
     public int toolTestDataParamsWidth() {
         return 500;
     }

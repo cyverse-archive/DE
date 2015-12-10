@@ -28,9 +28,6 @@ public class ToolTestDataEditor extends Composite implements Editor<ToolTestData
 
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
-    //    @Ignore
-//    @UiField TextButton addParameterButton;
-//    @UiField ToolTestDataParamsListEditor paramsEditor;
     @Ignore
     @UiField TextButton addInputFileButton;
     @Ignore
@@ -52,16 +49,10 @@ public class ToolTestDataEditor extends Composite implements Editor<ToolTestData
 
     public ToolTestData getToolTestData() {
         ToolTestData toolTestData = editorDriver.flush();
-//        toolTestData.setParams(paramsEditor.getTestDataParamsList());
         toolTestData.setInputFiles(inputFilesEditor.getTestDataInputFilesList());
         toolTestData.setOutputFiles(outputFilesEditor.getTestDataOutputFilesList());
         return toolTestData;
     }
-
-//    @UiHandler("addParameterButton")
-//    void onAddParameterButtonClicked(SelectEvent event){
-//        paramsEditor.addToolTestDataParam(factory);
-//    }
 
     @UiHandler("addInputFileButton")
     void onAddInputFileButtonClicked(SelectEvent event) {

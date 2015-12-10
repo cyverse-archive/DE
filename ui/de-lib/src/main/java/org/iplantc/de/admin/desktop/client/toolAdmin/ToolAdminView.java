@@ -137,8 +137,6 @@ public interface ToolAdminView extends IsWidget, IsMaskable {
 
         SafeHtml toolImplementationImplementorEmailLabel();
 
-        String toolTestDataParamsLabel();
-
         int toolTestDataParamsWidth();
 
         String toolTestDataInputFilesLabel();
