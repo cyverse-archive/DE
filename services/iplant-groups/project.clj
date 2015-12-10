@@ -20,7 +20,7 @@
                  [clj-time "0.10.0"]
                  [com.cemerick/url "0.1.1"]
                  [medley "0.7.0"]
-                 [metosin/compojure-api "0.23.1"]
+                 [metosin/compojure-api "0.24.2"]
                  [me.raynes/fs "1.4.6"]
                  [org.iplantc/clojure-commons "5.2.3.0"]
                  [org.iplantc/common-cfg "5.2.3.0"]

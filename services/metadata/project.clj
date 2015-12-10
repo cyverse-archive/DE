@@ -14,7 +14,7 @@
             :url "http://www.iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :manifest {"Git-Ref" ~(git-ref)}
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [metosin/compojure-api "0.23.1"]
+                 [metosin/compojure-api "0.24.2"]
                  [org.iplantc/clojure-commons "5.2.3.0"]
                  [org.iplantc/common-cfg "5.2.3.0"]
                  [org.iplantc/common-cli "5.2.3.0"]
