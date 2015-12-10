@@ -21,7 +21,8 @@
             [ring.middleware.keyword-params :as params]))
 
 (defapi app
-  (swagger-ui config/docs-uri)
+  (swagger-ui config/docs-uri
+    :supported-submit-methods ["get", "post", "put", "delete", "patch", "head"])
   (swagger-docs
     {:info {:title "Discovery Environment Data Info API"
             :description "Documentation for the Discovery Environment Data Info REST API"
