@@ -24,7 +24,7 @@
                  [dire "0.5.3"]
                  [me.raynes/fs "1.4.6"]
                  [medley "0.7.0"]
-                 [metosin/compojure-api "0.23.1"]
+                 [metosin/compojure-api "0.24.2"]
                  [net.sf.json-lib/json-lib "2.4" :classifier "jdk15"]
                  [org.apache.tika/tika-core "1.11"]
                  [net.sf.opencsv/opencsv "2.3"]
