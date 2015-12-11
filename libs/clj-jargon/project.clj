@@ -1,4 +1,4 @@
-(defproject org.iplantc/clj-jargon "5.2.3.0"
+(defproject org.iplantc/clj-jargon "5.2.4.0"
   :description "Clojure API on top of iRODS's jargon-core."
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"
@@ -17,7 +17,7 @@
                   :exclusions [[org.slf4j/slf4j-api]
                                [org.slf4j/slf4j-log4j12]]]
                  [slingshot "0.12.2"]
-                 [org.iplantc/clojure-commons "5.2.3.0"]]
+                 [org.iplantc/clojure-commons "5.2.4.0"]]
   :repositories [["dice.repository"
                   {:url "https://raw.github.com/DICE-UNC/DICE-Maven/master/releases"}]
                  ["renci-snapshot.repository"
