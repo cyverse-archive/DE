@@ -17,7 +17,8 @@
 
 (defapi app
   {:exceptions cx/exception-handlers}
-  (swagger-ui config/docs-uri)
+  (swagger-ui config/docs-uri
+    :validator-url nil)
   (swagger-docs
    {:info {:title       "RESTful Service Facade for Grouper"
            :description "Documentation for the iplant-groups API"

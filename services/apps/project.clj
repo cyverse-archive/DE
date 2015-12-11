@@ -19,7 +19,7 @@
                  [com.cemerick/url "0.1.1"]
                  [com.google.guava/guava "18.0"]
                  [medley "0.7.0"]
-                 [metosin/compojure-api "0.23.1"]
+                 [metosin/compojure-api "0.24.2"]
                  [org.iplantc/authy "5.2.3.0"]
                  [org.iplantc/clojure-commons "5.2.3.0"]
                  [org.iplantc/kameleon "5.2.3.0"]

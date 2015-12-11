@@ -1,6 +1,4 @@
 ---
-- include: verify-PRE_DEPLOY.yaml
-
 ############################################
 # Third-party
 ############################################
@@ -38,5 +36,3 @@
 - include: playbooks/de-stop-containers.yml
 - include: playbooks/de-rm-containers.yml
 - include: playbooks/de-start-containers.yml
-
-- include: verify-POST_DEPLOY.yaml
