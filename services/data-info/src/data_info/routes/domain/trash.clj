@@ -12,7 +12,7 @@
    :partial-restore (describe Boolean "If this file was restored to the home directory rather than to its former location, due to missing metadata.")})
 
 (s/defschema RestorationMap
- {(describe String "The IRODS data item's original path in the trash")
+ {(describe s/Keyword "The IRODS data item's original path in the trash")
   (describe RestoredFile "The restored file information.")})
 
 (s/defschema Restoration

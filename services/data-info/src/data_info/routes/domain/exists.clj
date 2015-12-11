@@ -3,7 +3,7 @@
   (:require [schema.core :as s]))
 
 (s/defschema PathExistenceMap
-  {(describe String "The IRDOS data item's path")
+  {(describe s/Keyword "The IRDOS data item's path")
    (describe Boolean "Whether this path from the request exists")})
 
 (s/defschema ExistenceInfo

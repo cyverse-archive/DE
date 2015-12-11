@@ -59,7 +59,7 @@
   {:file (describe FileStatInfo "File info")})
 
 (s/defschema PathsMap
-  {(describe String "The IRDOS data item's path")
+  {(describe s/Keyword "The IRDOS data item's path")
    (describe (s/either FileStatInfo DirStatInfo) "The data item's info")})
 
 (s/defschema StatusInfo
