@@ -1,7 +1,6 @@
 ---
 - name: Database migrations
   hosts: db-proxy
-  gather_facts: false
   tags:
       - databases
   sudo: False
@@ -16,9 +15,8 @@
       - { role: de-update-database-notifications, tags: ["notification-db"] }
       - { role: de-update-database-metadata, tags: ["metadata-db"] }
       - { role: de-update-database-jex, tags: ["jex-db"] }
-  
+
       - role: util-notify-chat
         username: "DB Updater"
         icon: ":facepalm:"
         msg: ":white_check_mark: Done updating databases"
-
