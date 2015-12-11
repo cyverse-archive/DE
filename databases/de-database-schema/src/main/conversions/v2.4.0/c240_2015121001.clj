@@ -18,6 +18,7 @@
   (load-sql-file "tables/78_permanent_id_request_statuses.sql")
 
   (println "\t* Adding permanent_id_request_status_codes constraints...")
+  (load-sql-file "constraints/76_permanent_id_request_status_codes.sql")
   (load-sql-file "constraints/00_76_permanent_id_request_status_codes_pkey.sql")
 
   (println "\t* Adding permanent_id_requests constraints...")

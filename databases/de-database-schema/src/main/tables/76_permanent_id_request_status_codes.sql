@@ -8,9 +8,3 @@ CREATE TABLE permanent_id_request_status_codes (
     name VARCHAR(64) NOT NULL,
     description TEXT NOT NULL
 );
-
---
--- All Permanent ID request status code names should be unique.
---
-CREATE UNIQUE INDEX permanent_id_request_status_codes_name_index
-    ON permanent_id_request_status_codes(name);
