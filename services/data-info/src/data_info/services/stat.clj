@@ -95,7 +95,7 @@
     (validators/user-exists cm user)
     (validators/all-paths-exist cm paths)
     (validators/all-paths-readable cm user paths)
-    {:paths (into {} (map (juxt identity (partial path-stat cm user)) paths))}))
+    {:paths (into {} (map (juxt keyword (partial path-stat cm user)) paths))}))
 
 (with-pre-hook! #'do-stat
   (fn [params body]

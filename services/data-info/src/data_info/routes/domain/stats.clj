@@ -60,7 +60,7 @@
 
 (s/defschema PathsMap
   {(describe s/Keyword "The IRDOS data item's path")
-   (describe (s/either FileStatInfo DirStatInfo) "The data item's info")})
+   (describe (s/conditional #(contains? % :file-size) FileStatInfo :else DirStatInfo) "The data item's info")})
 
 (s/defschema StatusInfo
   {:paths (describe PathsMap "Paths info")})
