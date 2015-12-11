@@ -7,7 +7,7 @@
       (string/trim (:out (sh "git" "rev-parse" "HEAD")))
       ""))
 
-(defproject org.iplantc/user-preferences "5.2.3.0"
+(defproject org.iplantc/user-preferences "5.2.4.0"
   :description "DE API for managing user preferences."
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"}
@@ -16,10 +16,10 @@
   :main user-preferences.core
   :uberjar-name "user-preferences-standalone.jar"
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [org.iplantc/common-cli "5.2.3.0"]
-                 [org.iplantc/common-cfg "5.2.3.0"]
-                 [org.iplantc/kameleon "5.2.3.0"]
-                 [org.iplantc/service-logging "5.2.3.0"]
+                 [org.iplantc/common-cli "5.2.4.0"]
+                 [org.iplantc/common-cfg "5.2.4.0"]
+                 [org.iplantc/kameleon "5.2.4.0"]
+                 [org.iplantc/service-logging "5.2.4.0"]
                  [io.aviso/pretty "0.1.17"]
                  [me.raynes/fs "1.4.6"]
                  [cheshire "5.5.0"
