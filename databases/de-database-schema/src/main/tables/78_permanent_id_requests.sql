@@ -6,6 +6,7 @@ SET search_path = public, pg_catalog;
 CREATE TABLE permanent_id_requests (
     id UUID NOT NULL DEFAULT uuid_generate_v1(),
     requestor_id UUID NOT NULL,
+    type UUID,
     data_id UUID,
     original_path TEXT
 );
