@@ -68,6 +68,7 @@
     - dewey
   roles:
     - role: util-cfg-docker-up
+      when: not parasitic
       service_name: "{{dewey.compose_service}}"
       service_name_short: "{{dewey.service_name_short}}"
 
@@ -148,6 +149,7 @@
     - info-typer
   roles:
     - role: util-cfg-docker-up
+      when: not parasitic
       service_name: "{{info_typer.compose_service}}"
       service_name_short: "{{info_typer.service_name_short}}"
 
@@ -160,6 +162,7 @@
     - infosquito
   roles:
     - role: util-cfg-docker-up
+      when: not parasitic
       service_name: "{{infosquito.compose_service}}"
       service_name_short: "{{infosquito.service_name_short}}"
 
@@ -232,6 +235,7 @@
     - monkey
   roles:
     - role: util-cfg-docker-up
+      when: not parasitic
       service_name: "{{monkey.compose_service}}"
       service_name_short: "{{monkey.service_name_short}}"
 
