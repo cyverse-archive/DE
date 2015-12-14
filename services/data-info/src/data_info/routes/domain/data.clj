@@ -112,7 +112,7 @@
    :chunk      (describe String "The read result.")})
 
 (s/defschema CSVEntry
-  {(describe String "The column number.")
+  {(describe s/Keyword "The column number.")
    (describe String "The column data.")})
 
 (s/defschema CSVDoc

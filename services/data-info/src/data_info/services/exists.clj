@@ -18,7 +18,7 @@
   [{user :user} {paths :paths}]
   (with-jargon (cfg/jargon-cfg) [cm]
     (duv/user-exists cm user)
-    {:paths (into {} (map (juxt identity (partial path-exists-for-user? cm user)) (set paths)))}))
+    {:paths (into {} (map (juxt keyword (partial path-exists-for-user? cm user)) (set paths)))}))
 
 (with-pre-hook! #'do-exists
   (fn [params body]
