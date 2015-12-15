@@ -22,3 +22,4 @@ Request and response bodies are in JSON format unless otherwise noted.
 * [Comments Endpoints](comments.html)
 * [Favorites Endpoints](favorites.html)
 * [Tags Endpoints](tags.html)
+* [EZID Requests](ezid-requests.html)
