@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Docker Setup Instructions
-root: ../../
 ---
 
 ## OSX

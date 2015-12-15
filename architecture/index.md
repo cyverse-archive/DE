@@ -1,7 +1,6 @@
 ---
 layout: page
 title: DE Architecture 
-root: ../
 ---
 
 # Infrastructure
@@ -21,7 +20,7 @@ intense analyses.
 ## PostgreSQL
 Nearly all application use a database. The DE uses [PostgreSQL](http://www.postgresql.org/). The 
 schemas can be found 
-[here](https://github.com/iPlantCollaborativeOpenSource/DE/tree/master/databases).
+[here]({{site.github.repository_url}}/tree/master/databases).
 
 ## RabbitMQ
 [RabbitMQ](https://www.rabbitmq.com/) is used throughout our services, but primarily to integrate 
@@ -45,17 +44,17 @@ The DE is composed of backend services and a user interface (UI).
 
 ## Backend Services
 The DE backend is built as a micro-services architecture. Each of these services are contained in 
-the [services/](https://github.com/iPlantCollaborativeOpenSource/DE/tree/master/services) folder.
+the [services/]({{site.github.repository_url}}/tree/master/services) folder.
 
 The functionality of the micro-service architecture is aggregated in the `Terrain` service, and
-exposed as a RESTful [api](/api).
+exposed as a RESTful [api]({{site.github.url}}/api).
 
 More information about the backend micro-service architecture and implementation may be found
-[here](/services).
+[here]({{site.github.url}}/services).
 
 ## UI
 All of the UI services are provided by the DE api. The application itself is built with 
 [GWT](http://www.gwtproject.org/). 
 
-More information about the UI design and implementation may be found [here](/ui).
+More information about the UI design and implementation may be found [here]({{site.github.url}}/ui).
 

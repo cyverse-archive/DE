@@ -1,7 +1,6 @@
 ---
 layout: page
 title: DE Ansible Documentation
-root: ../
 ---
 
 ## Using this Repository

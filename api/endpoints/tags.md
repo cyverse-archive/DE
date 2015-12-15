@@ -1,7 +1,6 @@
 ---
 layout: page
 title: DE API Documentation
-root: ../../../
 ---
 
 This document describes the tags resource.

@@ -1,7 +1,6 @@
 ---
 layout: page
 title: DE API Documentation
-root: ../../../../
 ---
 
 Moving Files and/or Directories

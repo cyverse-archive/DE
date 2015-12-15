@@ -1,7 +1,6 @@
 ---
 layout: page
 title: DE API Documentation
-root: ../../../../
 ---
 
 Viewing a Genome File in CoGe

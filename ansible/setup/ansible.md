@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Ansible Setup Instructions
-root: ../../
 ---
 
 ## Installing Ansible
