@@ -8,6 +8,10 @@
 
 (defn- add-ezid-request-tables
   []
+  (println "\t* Adding first and last functions...")
+  (load-sql-file "functions/02_first.sql")
+  (load-sql-file "functions/03_last.sql")
+
   (println "\t* Adding permanent_id_request_status_codes table...")
   (load-sql-file "tables/permanent_id_request_status_codes.sql")
 
