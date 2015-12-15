@@ -7,8 +7,9 @@ title: Discovery Environment (DE) Docs
 
 * [Getting Started](GettingStarted.html)
 * [Architecture](architecture)
-* [Services API](api)
-* [User Interface](ui)
+* [API](api)
+* [Services](services)
+* [UI](ui)
 * [Ansible](ansible)
 * [About](about.html)
 
