@@ -7,6 +7,8 @@ import org.iplantc.de.admin.desktop.client.metadata.view.EditMetadataTemplateVie
 import org.iplantc.de.admin.desktop.client.metadata.view.EditMetadataTemplateViewImpl;
 import org.iplantc.de.admin.desktop.client.metadata.view.TemplateListingView;
 import org.iplantc.de.admin.desktop.client.metadata.view.TemplatesListingViewImpl;
+import org.iplantc.de.admin.desktop.client.permIdRequest.presenter.PermanentIdRequestPresenter;
+import org.iplantc.de.admin.desktop.client.permIdRequest.view.PermIdRequestView;
 import org.iplantc.de.admin.desktop.client.presenter.BelphegorPresenterImpl;
 import org.iplantc.de.admin.desktop.client.refGenome.RefGenomeView;
 import org.iplantc.de.admin.desktop.client.refGenome.presenter.RefGenomePresenterImpl;
@@ -65,6 +67,8 @@ public class BelphegorAppsGinModule extends AbstractGinModule {
         bind(TemplateListingView.Presenter.class).to(MetadataTemplatesPresenterImpl.class);
         bind(MetadataTemplateAdminServiceFacade.class).to(MetadataTemplateAdminServiceFacadeImpl.class);
         bind(EditMetadataTemplateView.class).to(EditMetadataTemplateViewImpl.class);
+
+        bind(PermIdRequestView.Presenter.class).to(PermanentIdRequestPresenter.class);
 
         bind(DiscEnvApiService.class).in(Singleton.class);
 

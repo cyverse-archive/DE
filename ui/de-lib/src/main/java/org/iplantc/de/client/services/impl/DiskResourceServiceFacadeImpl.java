@@ -1016,4 +1016,10 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address.toString(), "{}");
         callService(wrapper, callback);
     }
+
+    @Override
+    public void requestIdentifier(String uuid, String path, AsyncCallback<String> callback) {
+
+
+    }
 }

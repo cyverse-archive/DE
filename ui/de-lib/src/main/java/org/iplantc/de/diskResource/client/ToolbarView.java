@@ -223,6 +223,12 @@ public interface ToolbarView extends IsWidget,
         String applyBulkMetadata();
 
         String selectMetadata();
+
+        String requestDOI();
+
+        String doiLinkMsg();
+
+        String needDOI();
     }
 
     interface Presenter {

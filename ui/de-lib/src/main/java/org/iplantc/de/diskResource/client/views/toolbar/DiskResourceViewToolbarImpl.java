@@ -49,8 +49,12 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 import com.sencha.gxt.widget.core.client.Composite;
+import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
+import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.box.MessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent.DialogHideHandler;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.menu.Item;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
@@ -94,7 +98,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
     MenuItem renameMi, moveMi, deleteMi, editFileMi, editCommentsMi, editInfoTypeMi, metadataMi,
             savemetadatami,
  copymetadataMi, editmetadataMi, bulkmetadataMi,
-            selectmetadataMi;
+ selectmetadataMi, doiMi;
     @UiField
     MenuItem shareFolderLocationMi;
     @UiField
@@ -316,6 +320,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         copymetadataMi.setEnabled(metadataMiEnabled);
         savemetadatami.setEnabled(metadataMiEnabled);
         bulkmetadataMi.setEnabled(metadataMiEnabled && isFolderSelect);
+        doiMi.setEnabled(metadataMiEnabled && isFolderSelect);
         editmetadataMi.setEnabled(metadataMiEnabled);
 
         simpleDownloadMi.setEnabled(simpleDownloadMiEnabled);
@@ -595,6 +600,31 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         presenter.onImportFromCoge();
     }
 
+    @UiHandler("doiMi")
+    void onRequestDOI(SelectionEvent<Item> event) {
+        final ConfirmMessageBox mb = new ConfirmMessageBox(appearance.requestDOI(),
+                                                           appearance.doiLinkMsg());
+
+        mb.getButton(PredefinedButton.YES).setText(appearance.needDOI());
+        mb.getButton(PredefinedButton.NO).setText(PredefinedButton.CANCEL.toString());
+        mb.addDialogHideHandler(new DialogHideHandler() {
+            @Override
+            public void onDialogHide(DialogHideEvent event) {
+                switch (event.getHideButton()) {
+                    case YES:
+                        // Perform YES action
+                        break;
+                    case NO:
+                        // perform NO action
+                        break;
+                    default:
+                        // error, button added with no specific action ready
+                }
+            }
+        });
+        mb.setWidth(300);
+        mb.show();
+    }
     // </editor-fold>
 
     @Override
@@ -677,8 +707,10 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         editFileMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_EDIT_FILE);
         editInfoTypeMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_EDIT_INFO_TYPE);
         metadataMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_METADATA);
-        copymetadataMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_METADATA_COPY);
-        savemetadatami.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_METADATA_SAVE);
+        copymetadataMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_METADATA
+                + Ids.MENU_ITEM_METADATA_COPY);
+        savemetadatami.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_METADATA
+                + Ids.MENU_ITEM_METADATA_SAVE);
 
         // Download menu
         simpleDownloadMi.ensureDebugId(baseID + Ids.DOWNLOAD_MENU + Ids.MENU_ITEM_SIMPLE_DOWNLOAD);
@@ -771,4 +803,5 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         bmd.show();
 
     }
+
 }

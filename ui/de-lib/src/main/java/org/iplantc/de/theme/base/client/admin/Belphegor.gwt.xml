@@ -52,4 +52,9 @@
      <replace-with class="org.iplantc.de.theme.base.client.admin.metadata.DefaultEditMetadataTemplateViewAppearance">
         <when-type-is class="org.iplantc.de.admin.desktop.client.metadata.view.EditMetadataTemplateView.EditMetadataTemplateViewAppearance" />
     </replace-with>
+    
+    <replace-with class="org.iplantc.de.theme.base.client.admin.permIdRequest.PermIdRequestViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.desktop.client.permIdRequest.view.PermIdRequestView.PermIdRequestViewAppearance"></when-type-is>
+    </replace-with>
 </module>
+
