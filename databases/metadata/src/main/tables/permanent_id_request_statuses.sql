@@ -8,6 +8,6 @@ CREATE TABLE permanent_id_request_statuses (
     permanent_id_request UUID NOT NULL,
     permanent_id_request_status_code UUID NOT NULL,
     date_assigned TIMESTAMP DEFAULT now() NOT NULL,
-    updater_id UUID NOT NULL,
+    updated_by varchar(512) NOT NULL,
     comments TEXT
 );
