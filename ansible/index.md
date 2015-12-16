@@ -27,31 +27,45 @@ If you intend to use our ansible scripts, we highly suggest that you read the
 # Design
 We have strived to follow Ansible's 
 [best practices](http://docs.ansible.com/ansible/playbooks_best_practices.html). 
-However, we have slightly diverted on the topics of 
+However, we have slightly diverged on the topics of 
 [directory layout](http://docs.ansible.com/ansible/playbooks_best_practices.html#directory-layout) and
 [role-separated top level playbooks](http://docs.ansible.com/ansible/playbooks_best_practices.html#top-level-playbooks-are-separated-by-role).
 
 ## Directory Layout
-This repository is organized with group_vars defined with some default values in
-`inventories/group_vars/all`, with the intention that these playbooks are used with inventory 
-created in this `inventories` directory (use a `.cfg` extension to prevent committing the files) and
-group_vars files containing private and overriding values in a top-level `group_vars` directory.
+The ansible best practices for directory layout suggests using a `group_vars` folder, but you may 
+have noticed that the repo doesn't contain a `ansible/group_vars` folder. Our `group_vars` folder 
+resides in the `inventories` folder; 
+[ansible/inventories/group_vars]({{site.github.repository_url}}/tree/master/ansible/inventories/group_vars).
+Also, this folder contains a single file, `all`, which contains all of the variables used by the 
+provided roles and playbooks with default values.
+
+If you desire to override the defaults, you may edit the 
+[inventories/group_vars/all]({{site.github.repository_url}}/tree/master/ansible/group_vars/all) 
+file directly. Alternatively, you can create another file named `all`, but place it in a new 
+folder; `ansible/group_vars`. If you do this, the variables set in `ansible/group_vars/all` will 
+override the variables set in `ansible/inventories/group_vars/all`. You only need to include the 
+variables you wish to override.
 
 ## Role-Separated Playbooks
 We maintain role-separated playbooks, but they are kept in the 
-[ansible/playbooks/]({{ site.github.repository_url }}/tree/master/ansible/playbooks) folder. If you wish to use
-these playbooks, we have created the 
-[single-role.yaml]({{ site.github.repository_url }}/tree/master/ansible/single-role.yaml) playbook. 
+[ansible/playbooks/]({{site.github.repository_url}}/tree/master/ansible/playbooks) folder. The 
+remaining playbooks in the root of the `ansible/` folder are composite (utilize more than one role)
+or one off playbooks (do not use any roles). 
+
+If you wish to use these playbooks, we have created the 
+[single-role.yaml]({{site.github.repository_url}}/tree/master/ansible/single-role.yaml) playbook. 
 The documentation on its use is contained within the playbook.
 
 ## Inventories
 We have provided an example inventory file; 
-[example.cfg]({{ site.github.repository_url }}/tree/master/ansible/inventories/example.cfg). Our 
-roles and playbooks are written against the host groups in this inventory. 
+[example.cfg]({{site.github.repository_url}}/tree/master/ansible/inventories/example.cfg). Our 
+roles and playbooks are written against the host groups in this inventory. Files with a `.cfg` 
+extension are ignored by git in the `inventories` folder. This is done to prevent us from 
+accidentally exposing our inventories to the public.
 
-The host groups in the inventory reference the host machines for the DE's underlying architecture,
-as well as host groups for the application itself. Each micro-service has a corresponding host 
-group in the inventory.
+The host groups within the example inventory reference the host machines for the DE's underlying 
+architecture, as well as host groups for the application itself. Each micro-service has a 
+corresponding host group in the inventory.
 
 Refer to the 
 [example.cfg]({{ site.github.repository_url }}/tree/master/ansible/inventories/example.cfg) file for
@@ -60,5 +74,3 @@ more info.
 # Playbooks
 * [Updating Databases](work_instructions/database.html)
 
-
-Infrastructure vs Application
