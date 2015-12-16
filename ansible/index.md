@@ -22,7 +22,8 @@ If you intend to use our ansible scripts, we highly suggest that you read the
 
 # Setup
 
-* [Setup](setup)
+* [Ansible Setup](setup/ansible.html)
+* [Docker-based Ansible Setup](setup/docker.html)
 
 # Design
 We have strived to follow Ansible's 
