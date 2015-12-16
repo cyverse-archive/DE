@@ -56,7 +56,7 @@ The design of the DE's ansible variables makes use of YAML
 ["hashes"](http://docs.ansible.com/ansible/YAMLSyntax.html#yaml-basics). If you ever intend to 
 override a single value in a hash, you will need to set ansible's hash behaviour to _"merge"_.
 The easiest way to set these are with environment variables.
-For example, add these lines to your `~/.bash_developer` or `~/.bashrc` file:
+For example, add these lines to your `~/.bash_profile` or `~/.bashrc` file:
 
     export ANSIBLE_HASH_BEHAVIOUR="merge"
     

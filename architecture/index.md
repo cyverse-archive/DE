@@ -8,7 +8,7 @@ title: DE Architecture
 The following sections describe the components of the infrastructure on which the DE operates.
 
 ## Data Store
-The DE is provides access and management of data via the CyVerse 
+The DE provides access and management of data via the CyVerse 
 [Data Store](http://www.cyverse.org/ci/data-store), which is built on top of 
 [iRODS](http://irods.org/).
 
@@ -18,7 +18,7 @@ The DE integrates the Data Store with [HTCondor](https://research.cs.wisc.edu/ht
 intense analyses.
 
 ## PostgreSQL
-Nearly all application use a database. The DE uses [PostgreSQL](http://www.postgresql.org/). The 
+Nearly all applications use a database. The DE uses [PostgreSQL](http://www.postgresql.org/). The 
 schemas can be found 
 [here]({{site.github.repository_url}}/tree/master/databases).
 
