@@ -7,7 +7,7 @@ The [Discovery Environment (DE)](http://www.cyverse.org/ci/discovery-environment
 web interface and platform to access the powerful computing, storage, and analysis application 
 resources of the [CyVerse](http://www.cyverse.org) cyberinfrastructure.
 
-# Useful Links Links
+# Useful Links
 
 * [CyVerse Main Page](http://www.cyverse.org/)
 * [Discovery Environment Main Page](http://www.cyverse.org/ci/discovery-environment)
@@ -17,3 +17,10 @@ resources of the [CyVerse](http://www.cyverse.org) cyberinfrastructure.
 * [iPlant Wiki](https://pods.iplantcollaborative.org/wiki/dashboard.action)
 * [iPlant Facebook](https://www.facebook.com/iPlantCollab/)
 * [iPlant Twitter](https://twitter.com/iPlantCollab)
+
+# Other Links
+* [RFC 7519; JSON Web Token](https://tools.ietf.org/html/rfc7519)
+* [RFC 7515; JSON Web Signature](https://tools.ietf.org/html/rfc7515)
+* [jwt.io](http://jwt.io/)
+* [GWT](http://www.gwtproject.org/)
+* [Ansible](http://www.ansible.com/)
