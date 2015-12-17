@@ -6,7 +6,7 @@ import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 import java.util.List;
 
 /**
- * Created by aramsey on 10/30/15.
+ * @author aramsey
  */
 
 
@@ -31,16 +31,16 @@ public interface ToolContainer extends HasName {
     void setEntryPoint(String entryPoint);
 
     @PropertyName("memory_limit")
-    int getMemoryLimit();
+    Integer getMemoryLimit();
 
     @PropertyName("memory_limit")
-    void setMemoryLimit(int memoryLimit);
+    void setMemoryLimit(Integer memoryLimit);
 
     @PropertyName("cpu_shares")
-    int getCpuShares();
+    Integer getCpuShares();
 
     @PropertyName("cpu_shares")
-    void setCpuShares(int cpuShares);
+    void setCpuShares(Integer cpuShares);
 
     @PropertyName("network_mode")
     String getNetworkMode();

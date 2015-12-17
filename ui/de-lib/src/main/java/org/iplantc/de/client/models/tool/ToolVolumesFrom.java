@@ -1,17 +1,12 @@
 package org.iplantc.de.client.models.tool;
 
-import org.iplantc.de.client.models.HasId;
-
 import com.google.gwt.user.client.ui.HasName;
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
 /**
  * Created by aramsey on 10/30/15.
  */
-public interface ToolVolumesFrom extends HasName, HasId {
-
-    @PropertyName("id")
-    void setId(String id);
+public interface ToolVolumesFrom extends HasName {
 
     @PropertyName("tag")
     void setTag(String tag);

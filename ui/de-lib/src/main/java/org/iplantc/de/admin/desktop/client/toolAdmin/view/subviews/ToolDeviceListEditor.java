@@ -1,22 +1,21 @@
 package org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews;
 
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
+import org.iplantc.de.admin.desktop.client.toolAdmin.model.ToolDeviceProperties;
 import org.iplantc.de.client.models.tool.ToolAutoBeanFactory;
 import org.iplantc.de.client.models.tool.ToolDevice;
 
-import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 
-import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.client.editor.ListStoreEditor;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
-import com.sencha.gxt.data.shared.PropertyAccess;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
@@ -35,49 +34,39 @@ public class ToolDeviceListEditor extends Composite implements IsEditor<Editor<L
     private Grid<ToolDevice> grid;
     private static final String TOOL_DEVICE_MODEL_KEY = "model_key";
     private int unique_device_id;
-
+    private ListStoreEditor<ToolDevice> listStoreEditor;
 
     @UiField ListStore<ToolDevice> listStore;
-    @UiField(provided = true)
-    ToolAdminView.ToolAdminViewAppearance appearance =
-            GWT.create(ToolAdminView.ToolAdminViewAppearance.class);
+    @UiField(provided = true) ToolAdminView.ToolAdminViewAppearance appearance;
 
-
-    interface ToolDeviceProperties extends PropertyAccess<ToolDevice> {
-
-        ValueProvider<ToolDevice, String> hostPath();
-
-        ValueProvider<ToolDevice, String> containerPath();
-    }
-
-    private static final ToolDeviceProperties ToolDeviceProperties =
-            GWT.create(ToolDeviceProperties.class);
-
-    public ToolDeviceListEditor() {
-        listStore = new ListStore<ToolDevice>(new ModelKeyProvider<ToolDevice>() {
+    @Inject
+    public ToolDeviceListEditor(ToolDeviceProperties toolDeviceProperties,
+                                ToolAdminView.ToolAdminViewAppearance appearance) {
+        this.appearance = appearance;
+        listStore = new ListStore<>(new ModelKeyProvider<ToolDevice>() {
             @Override
             public String getKey(ToolDevice item) {
                 return getDeviceTag(item);
             }
         });
+        listStoreEditor = new ListStoreEditor<>(listStore);
+        listStore.setAutoCommit(true);
 
-        ColumnConfig<ToolDevice, String> hostPath = new ColumnConfig<ToolDevice, String>(
-                ToolDeviceProperties.hostPath(),
-                appearance.containerDevicesHostPathWidth(),
-                appearance.containerDevicesHostPathLabel());
-        ColumnConfig<ToolDevice, String> containerPath = new ColumnConfig<ToolDevice, String>(
-                ToolDeviceProperties.containerPath(),
-                appearance.containerDevicesContainerPathWidth(),
-                appearance.containerDevicesContainerPathLabel());
+        ColumnConfig<ToolDevice, String> hostPath = new ColumnConfig<>(toolDeviceProperties.hostPath(),
+                                                                       appearance.containerDevicesHostPathWidth(),
+                                                                       appearance.containerDevicesHostPathLabel());
+        ColumnConfig<ToolDevice, String> containerPath = new ColumnConfig<>(toolDeviceProperties.containerPath(),
+                                                                            appearance.containerDevicesContainerPathWidth(),
+                                                                            appearance.containerDevicesContainerPathLabel());
 
-        List<ColumnConfig<ToolDevice, ?>> columns = new ArrayList<ColumnConfig<ToolDevice, ?>>();
+        List<ColumnConfig<ToolDevice, ?>> columns = new ArrayList<>();
         columns.add(hostPath);
         columns.add(containerPath);
-        ColumnModel<ToolDevice> cm = new ColumnModel<ToolDevice>(columns);
+        ColumnModel<ToolDevice> cm = new ColumnModel<>(columns);
 
-        grid = new Grid<ToolDevice>(listStore, cm);
+        grid = new Grid<>(listStore, cm);
 
-        editing = new GridInlineEditing<ToolDevice>(grid);
+        editing = new GridInlineEditing<>(grid);
         editing.addEditor(hostPath, new TextField());
         editing.addEditor(containerPath, new TextField());
 
@@ -86,7 +75,7 @@ public class ToolDeviceListEditor extends Composite implements IsEditor<Editor<L
 
     @Override
     public Editor<List<ToolDevice>> asEditor() {
-        return new ListStoreEditor<ToolDevice>(listStore);
+        return listStoreEditor;
     }
 
     public void addDevice() {
@@ -116,19 +105,6 @@ public class ToolDeviceListEditor extends Composite implements IsEditor<Editor<L
         ToolDevice deleteDevice = grid.getSelectionModel().getSelectedItem();
         if (deleteDevice != null){
             listStore.remove(listStore.findModelWithKey(getDeviceTag(deleteDevice)));
-        }
-    }
-
-    public List<ToolDevice> getDeviceList() {
-        List<ToolDevice> devices = Lists.newArrayList();
-        removeDisabledId(devices);
-        return devices;
-    }
-
-    private void removeDisabledId(List<ToolDevice> devices) {
-        for (ToolDevice device : listStore.getAll()) {
-            device.setId(null);
-            devices.add(device);
         }
     }
 }

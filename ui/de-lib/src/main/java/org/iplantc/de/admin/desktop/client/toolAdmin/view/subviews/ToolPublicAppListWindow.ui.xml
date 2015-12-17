@@ -1,8 +1,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
-             xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
-             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
+             xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid">
 
     <ui:with field="appearance"
              type="org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView.ToolAdminViewAppearance"/>

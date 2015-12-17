@@ -1,5 +1,9 @@
 package org.iplantc.de.admin.desktop.client.toolAdmin;
 
+import org.iplantc.de.admin.desktop.client.toolAdmin.events.AddToolSelectedEvent;
+import org.iplantc.de.admin.desktop.client.toolAdmin.events.DeleteToolSelectedEvent;
+import org.iplantc.de.admin.desktop.client.toolAdmin.events.SaveToolSelectedEvent;
+import org.iplantc.de.admin.desktop.client.toolAdmin.events.ToolSelectedEvent;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.tool.Tool;
 
@@ -8,12 +12,15 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
-import java.util.List;
-
 /**
- * Created by aramsey on 10/26/15.
+ * @author aramsey
  */
-public interface ToolAdminView extends IsWidget, IsMaskable {
+public interface ToolAdminView extends IsWidget,
+                                       IsMaskable,
+                                       AddToolSelectedEvent.HasAddToolSelectedEventHandlers,
+                                       ToolSelectedEvent.HasToolSelectedEventHandlers,
+                                       SaveToolSelectedEvent.HasSaveToolSelectedEventHandlers,
+                                       DeleteToolSelectedEvent.HasDeleteToolSelectedEventHandlers {
 
     interface ToolAdminViewAppearance {
 
@@ -121,7 +128,7 @@ public interface ToolAdminView extends IsWidget, IsMaskable {
 
         String containerVolumesFromURLLabel();
 
-        int containervolumesFromURLWidth();
+        int containerVolumesFromURLWidth();
 
         String containerVolumesFromNamePrefixLabel();
 
@@ -193,22 +200,8 @@ public interface ToolAdminView extends IsWidget, IsMaskable {
 
         void go(HasOneWidget container);
 
-        void addTool(Tool tool);
-
-        void updateTool(Tool tool);
-
-        void getToolDetails(Tool tool);
-
-        void deleteTool(Tool tool);
-
     }
 
-    void setPresenter(Presenter presenter);
-
-    void setToolList(List<Tool> tools);
-
-    void setToolDetails(Tool tool);
-
-    void deleteTool(String toolId);
+    void editToolDetails(Tool tool);
 
 }

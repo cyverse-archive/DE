@@ -1,24 +1,23 @@
 package org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews;
 
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
+import org.iplantc.de.admin.desktop.client.toolAdmin.model.ToolVolumesFromProperties;
 import org.iplantc.de.client.models.tool.ToolAutoBeanFactory;
 import org.iplantc.de.client.models.tool.ToolVolumesFrom;
 import org.iplantc.de.commons.client.validators.UrlValidator;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 
-import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.client.editor.ListStoreEditor;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
-import com.sencha.gxt.data.shared.PropertyAccess;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.event.CompleteEditEvent;
 import com.sencha.gxt.widget.core.client.form.CheckBox;
@@ -40,72 +39,55 @@ public class ToolVolumesFromListEditor extends Composite
     private Grid<ToolVolumesFrom> grid;
     private static final String TOOL_VOLUMES_FROM_MODEL_KEY = "model_key";
     private int unique_volumes_from_id;
+    private ListStoreEditor<ToolVolumesFrom> listStoreEditor;
 
     @UiField
     ListStore<ToolVolumesFrom> listStore;
     @UiField(provided = true)
-    ToolAdminView.ToolAdminViewAppearance appearance =
-            GWT.create(ToolAdminView.ToolAdminViewAppearance.class);
+    ToolAdminView.ToolAdminViewAppearance appearance;
 
 
-    interface ToolVolumesFromProperties extends PropertyAccess<ToolVolumesFrom> {
-
-        ValueProvider<ToolVolumesFrom, String> name();
-
-        ValueProvider<ToolVolumesFrom, String> namePrefix();
-
-        ValueProvider<ToolVolumesFrom, String> tag();
-
-        ValueProvider<ToolVolumesFrom, String> url();
-
-        ValueProvider<ToolVolumesFrom, Boolean> readOnly();
-    }
-
-    private static final ToolVolumesFromProperties ToolVolumesFromProperties =
-            GWT.create(ToolVolumesFromProperties.class);
-
-    public ToolVolumesFromListEditor() {
-        listStore = new ListStore<ToolVolumesFrom>(new ModelKeyProvider<ToolVolumesFrom>() {
+    @Inject
+    public ToolVolumesFromListEditor(ToolAdminView.ToolAdminViewAppearance appearance,
+                                     ToolVolumesFromProperties toolVolumesFromProperties) {
+        this.appearance = appearance;
+        listStore = new ListStore<>(new ModelKeyProvider<ToolVolumesFrom>() {
             @Override
             public String getKey(ToolVolumesFrom item) {
                 return getVolumesFromTag(item);
             }
         });
+        listStoreEditor = new ListStoreEditor<>(listStore);
+        listStore.setAutoCommit(true);
 
-        ColumnConfig<ToolVolumesFrom, String> name = new ColumnConfig<ToolVolumesFrom, String>(
-                ToolVolumesFromProperties.name(),
-                appearance.containerVolumesFromNameWidth(),
-                appearance.containerVolumesFromNameLabel());
-        ColumnConfig<ToolVolumesFrom, String> namePrefix = new ColumnConfig<ToolVolumesFrom, String>(
-                ToolVolumesFromProperties.namePrefix(),
-                appearance.containerVolumesFromNamePrefixWidth(),
-                appearance.containerVolumesFromNamePrefixLabel());
-        ColumnConfig<ToolVolumesFrom, String> tag = new ColumnConfig<ToolVolumesFrom, String>(
-                ToolVolumesFromProperties.tag(),
-                appearance.containerVolumesFromTagWidth(),
-                appearance.containerVolumesFromTagLabel());
-        ColumnConfig<ToolVolumesFrom, String> url = new ColumnConfig<ToolVolumesFrom, String>(
-                ToolVolumesFromProperties.url(),
-                appearance.containervolumesFromURLWidth(),
-                appearance.containerVolumesFromURLLabel());
-        ColumnConfig<ToolVolumesFrom, Boolean> readOnly = new ColumnConfig<ToolVolumesFrom, Boolean>(
-                ToolVolumesFromProperties.readOnly(),
-                appearance.containerVolumesFromReadOnlyWidth(),
-                appearance.containerVolumesFromReadOnlyLabel());
+        ColumnConfig<ToolVolumesFrom, String> name = new ColumnConfig<>(toolVolumesFromProperties.name(),
+                                                                        appearance.containerVolumesFromNameWidth(),
+                                                                        appearance.containerVolumesFromNameLabel());
+        ColumnConfig<ToolVolumesFrom, String> namePrefix = new ColumnConfig<>(toolVolumesFromProperties.namePrefix(),
+                                                                              appearance.containerVolumesFromNamePrefixWidth(),
+                                                                              appearance.containerVolumesFromNamePrefixLabel());
+        ColumnConfig<ToolVolumesFrom, String> tag = new ColumnConfig<>(toolVolumesFromProperties.tag(),
+                                                                       appearance.containerVolumesFromTagWidth(),
+                                                                       appearance.containerVolumesFromTagLabel());
+        ColumnConfig<ToolVolumesFrom, String> url = new ColumnConfig<>(toolVolumesFromProperties.url(),
+                                                                       appearance.containerVolumesFromURLWidth(),
+                                                                       appearance.containerVolumesFromURLLabel());
+        ColumnConfig<ToolVolumesFrom, Boolean> readOnly = new ColumnConfig<>(toolVolumesFromProperties.readOnly(),
+                                                                             appearance.containerVolumesFromReadOnlyWidth(),
+                                                                             appearance.containerVolumesFromReadOnlyLabel());
 
 
-        List<ColumnConfig<ToolVolumesFrom, ?>> columns =
-                new ArrayList<ColumnConfig<ToolVolumesFrom, ?>>();
+        List<ColumnConfig<ToolVolumesFrom, ?>> columns = new ArrayList<>();
         columns.add(name);
         columns.add(namePrefix);
         columns.add(tag);
         columns.add(url);
         columns.add(readOnly);
-        ColumnModel<ToolVolumesFrom> cm = new ColumnModel<ToolVolumesFrom>(columns);
+        ColumnModel<ToolVolumesFrom> cm = new ColumnModel<>(columns);
 
-        grid = new Grid<ToolVolumesFrom>(listStore, cm);
+        grid = new Grid<>(listStore, cm);
 
-        editing = new GridInlineEditing<ToolVolumesFrom>(grid);
+        editing = new GridInlineEditing<>(grid);
         enableGridEditing(name, namePrefix, tag, url, readOnly);
 
         initWidget(grid);
@@ -155,7 +137,7 @@ public class ToolVolumesFromListEditor extends Composite
 
     @Override
     public Editor<List<ToolVolumesFrom>> asEditor() {
-        return new ListStoreEditor<>(listStore);
+        return listStoreEditor;
     }
 
     public void addVolumesFrom() {
@@ -189,27 +171,13 @@ public class ToolVolumesFromListEditor extends Composite
         }
     }
 
-    public List<ToolVolumesFrom> getVolumesFromList() {
-        List<ToolVolumesFrom> volumesFromList = Lists.newArrayList();
-        removeDisallowedId(volumesFromList);
-        return volumesFromList;
-    }
-
-    private void removeDisallowedId(List<ToolVolumesFrom> volumesFromList) {
-        for (ToolVolumesFrom volumeFrom : listStore.getAll()) {
-            volumeFrom.setId(null);
-            volumesFromList.add(volumeFrom);
-        }
-    }
-
     public boolean isValid(){
-        boolean valid = true;
         for (ToolVolumesFrom volumesFrom : listStore.getAll()){
             if (Strings.isNullOrEmpty(volumesFrom.getName()) || Strings.isNullOrEmpty(volumesFrom.getNamePrefix())){
                 return false;
             }
         }
-        return valid;
+        return true;
     }
 
 }

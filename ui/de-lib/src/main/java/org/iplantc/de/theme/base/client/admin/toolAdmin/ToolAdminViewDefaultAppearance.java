@@ -11,7 +11,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.sencha.gxt.core.client.XTemplates;
 
 /**
- * Created by aramsey on 10/26/15.
+ * @author aramsey
  */
 public class ToolAdminViewDefaultAppearance implements ToolAdminView.ToolAdminViewAppearance {
 
@@ -305,7 +305,7 @@ public class ToolAdminViewDefaultAppearance implements ToolAdminView.ToolAdminVi
     }
 
     @Override
-    public int containervolumesFromURLWidth() {
+    public int containerVolumesFromURLWidth() {
         return 350;
     }
 

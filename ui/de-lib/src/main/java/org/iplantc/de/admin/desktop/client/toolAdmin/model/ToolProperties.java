@@ -1,12 +1,14 @@
-package org.iplantc.de.admin.desktop.client.toolAdmin.view;
+package org.iplantc.de.admin.desktop.client.toolAdmin.model;
+
+import org.iplantc.de.client.models.tool.Tool;
 
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.PropertyAccess;
-import org.iplantc.de.client.models.tool.Tool;
 
 /**
- * Created by aramsey on 10/27/15.
+ * @author jstroot
+ * @author aramsey
  */
 public interface ToolProperties extends PropertyAccess<Tool> {
 

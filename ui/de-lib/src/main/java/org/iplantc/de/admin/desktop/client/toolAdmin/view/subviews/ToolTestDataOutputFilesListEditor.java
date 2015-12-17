@@ -2,10 +2,10 @@ package org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews;
 
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.inject.Inject;
 
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.client.editor.ListStoreEditor;
@@ -28,34 +28,34 @@ public class ToolTestDataOutputFilesListEditor extends Composite
 
     private GridEditing<String> editing;
     private Grid<String> grid;
+    private ListStoreEditor<String> listStoreEditor;
 
-    @UiField
-    ListStore<String> listStore;
-    @UiField(provided = true)
-    ToolAdminView.ToolAdminViewAppearance appearance =
-            GWT.create(ToolAdminView.ToolAdminViewAppearance.class);
+    @UiField ListStore<String> listStore;
+    @UiField (provided = true) ToolAdminView.ToolAdminViewAppearance appearance;
 
-    public ToolTestDataOutputFilesListEditor() {
+    @Inject
+    public ToolTestDataOutputFilesListEditor(ToolAdminView.ToolAdminViewAppearance appearance) {
+        this.appearance = appearance;
         listStore = new ListStore<>(getModelKeyProvider());
+        listStoreEditor = new ListStoreEditor<>(listStore);
         listStore.setAutoCommit(true);
 
         List<ColumnConfig<String, ?>> columns = new ArrayList<>();
 
-        ColumnConfig<String, String> outputFile =
-                new ColumnConfig<String, String>(getValueProvider(), appearance.toolTestDataOutputFilesWidth(), appearance.toolTestDataOutputFilesLabel());
+        ColumnConfig<String, String> outputFile = new ColumnConfig<>(getValueProvider(),
+                                                                     appearance.toolTestDataOutputFilesWidth(),
+                                                                     appearance.toolTestDataOutputFilesLabel());
 
         columns.add(outputFile);
         ColumnModel<String> columnModel = new ColumnModel<>(columns);
 
-        grid = new Grid<String>(listStore, columnModel);
+        grid = new Grid<>(listStore, columnModel);
         editing = new GridInlineEditing<>(grid);
         ColumnConfig<String, String> columnConfig = grid.getColumnModel().getColumn(0);
         final TextField editor = new TextField();
         editing.addEditor(columnConfig, editor);
 
-
         initWidget(grid);
-
     }
 
     private ModelKeyProvider<String> getModelKeyProvider() {
@@ -89,12 +89,7 @@ public class ToolTestDataOutputFilesListEditor extends Composite
 
     @Override
     public Editor<List<String>> asEditor() {
-        return new ListStoreEditor<String>(listStore);
-    }
-
-    public List<String> getTestDataOutputFilesList() {
-
-        return listStore.getAll();
+        return listStoreEditor;
     }
 
     public void addToolTestDataOutputFile() {

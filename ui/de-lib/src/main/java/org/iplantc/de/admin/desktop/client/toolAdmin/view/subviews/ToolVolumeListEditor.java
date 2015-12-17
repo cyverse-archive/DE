@@ -1,22 +1,21 @@
 package org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews;
 
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
+import org.iplantc.de.admin.desktop.client.toolAdmin.model.ToolVolumeProperties;
 import org.iplantc.de.client.models.tool.ToolAutoBeanFactory;
 import org.iplantc.de.client.models.tool.ToolVolume;
 
-import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 
-import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.client.editor.ListStoreEditor;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
-import com.sencha.gxt.data.shared.PropertyAccess;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
@@ -35,48 +34,40 @@ public class ToolVolumeListEditor extends Composite implements IsEditor<Editor<L
     private Grid<ToolVolume> grid;
     private static final String TOOL_VOLUME_MODEL_KEY = "model_key";
     private int unique_volume_id;
+    private ListStoreEditor<ToolVolume> listStoreEditor;
 
     @UiField
     ListStore<ToolVolume> listStore;
     @UiField(provided = true)
-    ToolAdminView.ToolAdminViewAppearance appearance =
-            GWT.create(ToolAdminView.ToolAdminViewAppearance.class);
+    ToolAdminView.ToolAdminViewAppearance appearance;
 
-
-    interface ToolVolumeProperties extends PropertyAccess<ToolVolume> {
-        ValueProvider<ToolVolume, String> hostPath();
-
-        ValueProvider<ToolVolume, String> containerPath();
-    }
-
-    private static final ToolVolumeProperties toolVolumeProperties =
-            GWT.create(ToolVolumeProperties.class);
-
-    public ToolVolumeListEditor() {
-        listStore = new ListStore<ToolVolume>(new ModelKeyProvider<ToolVolume>() {
+    @Inject
+    public ToolVolumeListEditor(ToolVolumeProperties toolVolumeProperties, ToolAdminView.ToolAdminViewAppearance appearance) {
+        this.appearance = appearance;
+        listStore = new ListStore<>(new ModelKeyProvider<ToolVolume>() {
             @Override
             public String getKey(ToolVolume item) {
                 return getVolumeTag(item);
             }
         });
+        listStoreEditor = new ListStoreEditor<>(listStore);
+        listStore.setAutoCommit(true);
 
-        ColumnConfig<ToolVolume, String> hostPath = new ColumnConfig<ToolVolume, String>(
-                toolVolumeProperties.hostPath(),
-                appearance.containerVolumesHostPathWidth(),
-                appearance.containerVolumesHostPathLabel());
-        ColumnConfig<ToolVolume, String> containerPath = new ColumnConfig<ToolVolume, String>(
-                toolVolumeProperties.containerPath(),
-                appearance.containerVolumesContainerPathWidth(),
-                appearance.containerVolumesContainerPathLabel());
+        ColumnConfig<ToolVolume, String> hostPath = new ColumnConfig<>(toolVolumeProperties.hostPath(),
+                                                                       appearance.containerVolumesHostPathWidth(),
+                                                                       appearance.containerVolumesHostPathLabel());
+        ColumnConfig<ToolVolume, String> containerPath = new ColumnConfig<>(toolVolumeProperties.containerPath(),
+                                                                            appearance.containerVolumesContainerPathWidth(),
+                                                                            appearance.containerVolumesContainerPathLabel());
 
-        List<ColumnConfig<ToolVolume, ?>> columns = new ArrayList<ColumnConfig<ToolVolume, ?>>();
+        List<ColumnConfig<ToolVolume, ?>> columns = new ArrayList<>();
         columns.add(hostPath);
         columns.add(containerPath);
-        ColumnModel<ToolVolume> cm = new ColumnModel<ToolVolume>(columns);
+        ColumnModel<ToolVolume> cm = new ColumnModel<>(columns);
 
-        grid = new Grid<ToolVolume>(listStore, cm);
+        grid = new Grid<>(listStore, cm);
 
-        editing = new GridInlineEditing<ToolVolume>(grid);
+        editing = new GridInlineEditing<>(grid);
         editing.addEditor(hostPath, new TextField());
         editing.addEditor(containerPath, new TextField());
 
@@ -85,7 +76,7 @@ public class ToolVolumeListEditor extends Composite implements IsEditor<Editor<L
 
     @Override
     public Editor<List<ToolVolume>> asEditor() {
-        return new ListStoreEditor<ToolVolume>(listStore);
+        return listStoreEditor;
     }
 
     public void addVolume() {
@@ -116,20 +107,6 @@ public class ToolVolumeListEditor extends Composite implements IsEditor<Editor<L
         ToolVolume deleteVolume = grid.getSelectionModel().getSelectedItem();
         if (deleteVolume != null) {
             listStore.remove(listStore.findModelWithKey(getVolumeTag(deleteVolume)));
-        }
-    }
-
-
-    public List<ToolVolume> getVolumeList() {
-        List<ToolVolume> volumeList = Lists.newArrayList();
-        removeDisabledId(volumeList);
-        return volumeList;
-    }
-
-    private void removeDisabledId(List<ToolVolume> volumeList) {
-        for (ToolVolume volume : listStore.getAll()) {
-            volume.setId(null);
-            volumeList.add(volume);
         }
     }
 

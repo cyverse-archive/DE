@@ -1,16 +1,11 @@
 package org.iplantc.de.client.models.tool;
 
-import org.iplantc.de.client.models.HasId;
-
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
 /**
  * Created by aramsey on 10/30/15.
  */
-public interface ToolVolume extends HasId {
-
-    @PropertyName("id")
-    void setId(String id);
+public interface ToolVolume {
 
     @PropertyName("host_path")
     void setHostPath(String hostPath);

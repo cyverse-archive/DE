@@ -8,7 +8,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.List;
 
 /**
- * Created by aramsey on 10/28/15.
+ * @author aramsey
  */
 public interface ToolAdminServiceFacade {
 

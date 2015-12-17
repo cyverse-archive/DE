@@ -4,7 +4,7 @@ import com.google.gwt.i18n.client.Messages;
 
 
 /**
- * Created by aramsey on 10/26/15.
+ * @author aramsey
  */
 public interface ToolAdminDisplayStrings extends Messages {
 

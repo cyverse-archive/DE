@@ -23,11 +23,6 @@ import org.iplantc.de.admin.desktop.client.systemMessage.presenter.SystemMessage
 import org.iplantc.de.admin.desktop.client.systemMessage.service.SystemMessageServiceFacade;
 import org.iplantc.de.admin.desktop.client.systemMessage.service.impl.SystemMessageServiceFacadeImpl;
 import org.iplantc.de.admin.desktop.client.systemMessage.view.SystemMessageViewImpl;
-import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
-import org.iplantc.de.admin.desktop.client.toolAdmin.presenter.ToolAdminPresenterImpl;
-import org.iplantc.de.admin.desktop.client.toolAdmin.service.ToolAdminServiceFacade;
-import org.iplantc.de.admin.desktop.client.toolAdmin.service.impl.ToolAdminServiceFacadeImpl;
-import org.iplantc.de.admin.desktop.client.toolAdmin.view.ToolAdminViewImpl;
 import org.iplantc.de.admin.desktop.client.toolRequest.ToolRequestView;
 import org.iplantc.de.admin.desktop.client.toolRequest.presenter.ToolRequestPresenterImpl;
 import org.iplantc.de.admin.desktop.client.toolRequest.service.ToolRequestServiceFacade;
@@ -67,9 +62,7 @@ public class BelphegorAppsGinModule extends AbstractGinModule {
         bind(ToolRequestView.Presenter.class).to(ToolRequestPresenterImpl.class);
         bind(ToolRequestServiceFacade.class).to(ToolRequestServiceFacadeImpl.class);
 
-        bind(ToolAdminView.class).to(ToolAdminViewImpl.class);
-        bind(ToolAdminView.Presenter.class).to(ToolAdminPresenterImpl.class);
-        bind(ToolAdminServiceFacade.class).to(ToolAdminServiceFacadeImpl.class);
+
 
         bind(SystemMessageView.class).to(SystemMessageViewImpl.class);
         bind(SystemMessageView.Presenter.class).to(SystemMessagePresenterImpl.class);

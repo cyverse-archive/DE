@@ -23,10 +23,8 @@ import com.google.web.bindery.autobean.shared.Splittable;
 import java.util.List;
 
 /**
- * Created by aramsey on 10/28/15.
+ * @author aramsey
  */
-
-
 public class ToolAdminServiceFacadeImpl implements ToolAdminServiceFacade {
 
     private final String TOOLS = "org.iplantc.services.tools";
