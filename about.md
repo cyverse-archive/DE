@@ -22,5 +22,6 @@ resources of the [CyVerse](http://www.cyverse.org) cyberinfrastructure.
 * [RFC 7519; JSON Web Token](https://tools.ietf.org/html/rfc7519)
 * [RFC 7515; JSON Web Signature](https://tools.ietf.org/html/rfc7515)
 * [jwt.io](http://jwt.io/)
+* [GXT](https://www.sencha.com/products/gxt/)
 * [GWT](http://www.gwtproject.org/)
 * [Ansible](http://www.ansible.com/)
