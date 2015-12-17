@@ -32,7 +32,8 @@ other capabilities.
 
 ## Docker
 [Docker](https://www.docker.com/) is used throughout the DE architecture. Most importantly, all of 
-the tools used on the compute platform are packaged as Docker images. 
+the tools that run in the DE's HTCondor cluster run within docker containers, allowing us to 
+integrate new tools without affecting existing tools.
 
 Additionally, the components of the DE application are packaged as Docker containers.
 
