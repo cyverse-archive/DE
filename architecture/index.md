@@ -55,6 +55,7 @@ More information about the backend micro-service architecture and implementation
 
 ## UI
 All of the UI services are provided by the DE api. The application itself is built with 
+[GXT](https://www.sencha.com/products/gxt/), a UI component library built on top of
 [GWT](http://www.gwtproject.org/). 
 
 More information about the UI design and implementation may be found [here]({{site.github.url}}/ui).
