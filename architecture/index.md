@@ -18,8 +18,8 @@ The DE integrates the Data Store with [HTCondor](https://research.cs.wisc.edu/ht
 intense analyses.
 
 ## PostgreSQL
-Nearly all applications use a database. The DE uses [PostgreSQL](http://www.postgresql.org/). The 
-schemas can be found 
+Nearly all applications use a database. The DE is backed by a 
+[PostgreSQL](http://www.postgresql.org/) database. The schemas can be found 
 [here]({{site.github.repository_url}}/tree/master/databases).
 
 ## RabbitMQ
