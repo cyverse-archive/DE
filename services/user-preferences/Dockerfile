@@ -15,5 +15,6 @@ LABEL org.iplantc.de.user-preferences.git-ref="$git_commit" \
       org.iplantc.de.buildenv.git-ref="$buildenv_git_commit"
 
 USER iplant
-ENTRYPOINT ["java", "-Dlogback.configurationFile=/etc/iplant/de/logging/user-preferences-logging.xml", "-cp", ".:user-preferences-standalone.jar", "user_preferences.core"]
+RUN ln -s "/opt/jdk/bin/java" "/home/iplant/bin/user-preferences"
+ENTRYPOINT ["user-preferences", "-Dlogback.configurationFile=/etc/iplant/de/logging/user-preferences-logging.xml", "-cp", ".:user-preferences-standalone.jar", "user_preferences.core"]
 CMD ["--help"]

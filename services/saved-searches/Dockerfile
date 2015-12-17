@@ -15,5 +15,6 @@ LABEL org.iplantc.de.saved-searches.git-ref="$git_commit" \
       org.iplantc.de.buildenv.git-ref="$buildenv_git_commit"
 
 USER iplant
-ENTRYPOINT ["java", "-Dlogback.configurationFile=/etc/iplant/de/logging/saved-searches-logging.xml", "-cp", ".:saved-searches-standalone.jar", "saved_searches.core"]
+RUN ln -s "/opt/jdk/bin/java" "/home/iplant/bin/saved-searches"
+ENTRYPOINT ["saved-searches", "-Dlogback.configurationFile=/etc/iplant/de/logging/saved-searches-logging.xml", "-cp", ".:saved-searches-standalone.jar", "saved_searches.core"]
 CMD ["--help"]

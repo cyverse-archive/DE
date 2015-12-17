@@ -46,10 +46,15 @@
     - jex
     - docker_pull
 
+- name: create /usr/local/bin/jex
+  sudo: yes
+  template: dest=/usr/local/bin/jex src=jex.j2 mode=0755
+  tags:
+    - jex
+    - docker_pull
+
 - name: ensure that /etc/iplant/de exists
   file: path={{ de_config_dir }} state=directory mode=0755
   tags:
     - jex
     - config
-
-

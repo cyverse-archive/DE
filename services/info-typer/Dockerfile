@@ -15,5 +15,6 @@ LABEL org.iplantc.de.info-typer.git-ref="$git_commit" \
       org.iplantc.de.buildenv.git-ref="$buildenv_git_commit"
 
 USER iplant
-ENTRYPOINT ["java", "-Dlogback.configurationFile=/etc/iplant/de/logging/info-typer-logging.xml", "-cp", ".:info-typer-standalone.jar", "info_typer.core"]
+RUN ln -s "/opt/jdk/bin/java" "/home/iplant/bin/info-typer"
+ENTRYPOINT ["info-typer", "-Dlogback.configurationFile=/etc/iplant/de/logging/info-typer-logging.xml", "-cp", ".:info-typer-standalone.jar", "info_typer.core"]
 CMD ["--help"]

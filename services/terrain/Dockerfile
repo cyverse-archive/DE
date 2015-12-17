@@ -22,5 +22,6 @@ LABEL org.iplantc.de.terrain.git-ref="$git_commit" \
       org.iplantc.de.buildenv.git-ref="$buildenv_git_commit"
 
 USER iplant
-ENTRYPOINT ["java", "-Dlogback.configurationFile=/etc/iplant/de/logging/terrain-logging.xml", "-cp", ".:terrain-standalone.jar", "terrain.core"]
+RUN ln -s "/opt/jdk/bin/java" "/home/iplant/bin/terrain"
+ENTRYPOINT ["terrain", "-Dlogback.configurationFile=/etc/iplant/de/logging/terrain-logging.xml", "-cp", ".:terrain-standalone.jar", "terrain.core"]
 CMD ["--help"]

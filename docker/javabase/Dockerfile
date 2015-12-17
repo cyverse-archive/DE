@@ -16,6 +16,7 @@ RUN mkdir -p /home/iplant
 RUN busybox adduser -s /bin/sh -u 1337 -D -h /home/iplant iplant
 
 USER iplant
-RUN mkdir -p /home/iplant/logs/
+RUN mkdir -p /home/iplant/logs/ /home/iplant/bin/
 WORKDIR /home/iplant
+ENV PATH /home/iplant/bin:${PATH}
 EXPOSE 60000

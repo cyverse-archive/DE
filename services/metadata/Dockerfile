@@ -15,5 +15,6 @@ LABEL org.iplantc.de.metadata.git-ref="$git_commit" \
       org.iplantc.de.buildenv.git-ref="$buildenv_git_commit"
 
 USER iplant
-ENTRYPOINT ["java", "-Dlogback.configurationFile=/etc/iplant/de/logging/metadata-logging.xml", "-cp", ".:metadata-standalone.jar:/home/iplant/", "metadata.core"]
+RUN ln -s "/opt/jdk/bin/java" "/home/iplant/bin/metadata"
+ENTRYPOINT ["metadata", "-Dlogback.configurationFile=/etc/iplant/de/logging/metadata-logging.xml", "-cp", ".:metadata-standalone.jar:/home/iplant/", "metadata.core"]
 CMD ["--help"]
