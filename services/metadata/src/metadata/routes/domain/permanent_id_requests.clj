@@ -58,7 +58,8 @@
 
 (s/defschema PermanentIDRequestListPagingParams
   (-> PagingParams
-      (assoc SortFieldOptionalKey (describe ValidPermanentIDRequestListSortFields SortFieldDocs))
+      (assoc SortFieldOptionalKey       (describe ValidPermanentIDRequestListSortFields SortFieldDocs)
+             (s/optional-key :statuses) (describe [String] "Status Codes with which to filter results"))
       (merge StandardUserQueryParams)))
 
 (s/defschema PermanentIDRequestStatusCode

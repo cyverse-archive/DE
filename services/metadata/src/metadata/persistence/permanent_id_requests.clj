@@ -12,9 +12,9 @@
   "Adds a where clause to a query, filtering out all conditions for which the value is nil."
   [query clause]
   (let [clause (remove-nil-values clause)]
-    (if clause
-      (where query (remove-nil-values clause))
-      query)))
+    (if (empty? clause)
+      query
+      (where query clause))))
 
 (defn- list-permanent-id-requests-subselect
   "Creates a subselect query that can be used to list Permanent ID Requests."
@@ -33,7 +33,7 @@
     (join [:permanent_id_request_status_codes :status_codes]
           {:status_codes.id :statuses.permanent_id_request_status_code})
     (where-if-defined {:requested_by user})
-    (order :statuses.date_assigned :DESC)))
+    (order :statuses.date_assigned :ASC)))
 
 (defn- list-permanent-id-requests-query
   "Lists the Permanent ID Requests that have been submitted by the user."
@@ -42,7 +42,7 @@
     row-limit  :limit
     sort-field :sort-field
     sort-dir   :sort-dir}]
-  (-> (select* [(list-permanent-id-requests-subselect user) :reqs])
+  (subselect [(list-permanent-id-requests-subselect user) :reqs]
       (fields :id :type :target_id :target_type :requested_by
               [(sqlfn :first :status_date) :date_submitted]
               [(sqlfn :last :status) :status]
@@ -65,7 +65,7 @@
   [{:keys [statuses] :as params}]
   (let [status-clause (when statuses ['in statuses])]
     (map format-request-listing
-      (select (list-permanent-id-requests-query params)
+      (select [(list-permanent-id-requests-query params) :request_list]
         (where-if-defined {:status status-clause})))))
 
 (defn get-permanent-id-request
@@ -167,7 +167,7 @@
                        (update-in [:type] request-type-subselect))
         request-id (-> (select :permanent_id_requests (where where-vals)) first :id)]
     (when request-id
-      (-> (select (list-permanent-id-requests-query {}) (where {:id request-id}))
+      (-> (select [(list-permanent-id-requests-query {}) :request_list] (where {:id request-id}))
           first
           format-request-listing))))
 
