@@ -34,18 +34,15 @@ However, we have slightly diverged on the topics of
 
 ## Directory Layout
 The ansible best practices for directory layout suggests using a `group_vars` folder, but you may 
-have noticed that the repo doesn't contain a `ansible/group_vars` folder. Our `group_vars` folder 
-resides in the `inventories` folder; 
+have noticed that the repo doesn't contain a `ansible/group_vars` folder. Our default `group_vars` 
+folder resides in the `inventories` folder; 
 [ansible/inventories/group_vars]({{site.github.repository_url}}/tree/master/ansible/inventories/group_vars).
 Also, this folder contains a single file, `all`, which contains all of the variables used by the 
 provided roles and playbooks with default values.
+This is done with intent that developers will create their own `group_vars/all` file, which will 
+override any of the defaults set in the `inventories/group_vars/all` file.
 
-If you desire to override the defaults, you may edit the 
-[inventories/group_vars/all]({{site.github.repository_url}}/tree/master/ansible/group_vars/all) 
-file directly. Alternatively, you can create another file named `all`, but place it in a new 
-folder; `ansible/group_vars`. If you do this, the variables set in `ansible/group_vars/all` will 
-override the variables set in `ansible/inventories/group_vars/all`. You only need to include the 
-variables you wish to override.
+You only need to include the variables you wish to override.
 
 ## Role-Separated Playbooks
 We maintain role-separated playbooks, but they are kept in the 
