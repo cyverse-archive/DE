@@ -15,5 +15,6 @@ LABEL org.iplantc.de.user-sessions.git-ref="$git_commit" \
       org.iplantc.de.buildenv.git-ref="$buildenv_git_commit"
 
 USER iplant
-ENTRYPOINT ["java", "-Dlogback.configurationFile=/etc/iplant/de/logging/user-sessions-logging.xml", "-cp", ".:user-sessions-standalone.jar", "user_sessions.core"]
+RUN ln -s "/opt/jdk/bin/java" "/home/iplant/bin/user-sessions"
+ENTRYPOINT ["user-sessions", "-Dlogback.configurationFile=/etc/iplant/de/logging/user-sessions-logging.xml", "-cp", ".:user-sessions-standalone.jar", "user_sessions.core"]
 CMD ["--help"]

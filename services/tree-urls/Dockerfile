@@ -15,5 +15,6 @@ LABEL org.iplantc.de.tree-urls.git-ref="$git_commit" \
       org.iplantc.de.buildenv.git-ref="$buildenv_git_commit"
 
 USER iplant
-ENTRYPOINT ["java", "-Dlogback.configurationFile=/etc/iplant/de/logging/tree-urls-logging.xml", "-cp", ".:tree-urls-standalone.jar", "tree_urls.core"]
+RUN ln -s "/opt/jdk/bin/java" "/home/iplant/bin/tree-urls"
+ENTRYPOINT ["tree-urls", "-Dlogback.configurationFile=/etc/iplant/de/logging/tree-urls-logging.xml", "-cp", ".:tree-urls-standalone.jar", "tree_urls.core"]
 CMD ["--help"]
