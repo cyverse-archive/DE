@@ -1,7 +1,5 @@
 ---
 layout: page
-title: DE Services Documentation
-root: ../
+title: DE Services
+description: Development and design documentation for the Discovery Environment micro-service architecture
 ---
-
-* [API](api)

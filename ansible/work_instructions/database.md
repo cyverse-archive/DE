@@ -1,7 +1,6 @@
 ---
 layout: page
 title: DE Database Ansible Instructions
-root: ../../
 ---
 
 ## Updating the DE database

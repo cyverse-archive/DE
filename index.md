@@ -1,11 +1,16 @@
 ---
 layout: page
-title: Discovery Environment Docs
+title: Discovery Environment (DE) Docs
 ---
 
-* [Getting Started](setup)
+# Overview
+
+* [Getting Started](GettingStarted.html)
 * [Architecture](architecture)
+* [API](api)
 * [Services](services)
-* [User Interface](ui)
+* [UI](ui)
 * [Ansible](ansible)
-* [Tools](tools)
+* [About](about.html)
+
+

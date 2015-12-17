@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Ansible Setup Instructions
-root: ../../
 ---
 
 ## Installing Ansible
@@ -50,6 +49,18 @@ http://docs.ansible.com/intro_inventory.html.
 Each playbook uses one or more modules. Modules encapsulate operations that run on servers and make
 them idempotent. There are a lot of existing modules, which you can read about at
 http://docs.ansible.com/modules_by_category.html.
+
+## Ansible Config Settings 
+
+The design of the DE's ansible variables makes use of YAML
+["hashes"](http://docs.ansible.com/ansible/YAMLSyntax.html#yaml-basics). If you ever intend to 
+override a single value in a hash, you will need to set ansible's hash behaviour to _"merge"_.
+The easiest way to set these are with environment variables.
+For example, add these lines to your `~/.bash_profile` or `~/.bashrc` file:
+
+    export ANSIBLE_HASH_BEHAVIOUR="merge"
+    
+Or these settings can be updated in a local `ansible.cfg`.
 
 ## Preparing Servers
 
