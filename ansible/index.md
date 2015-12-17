@@ -39,7 +39,7 @@ folder resides in the `inventories` folder;
 [ansible/inventories/group_vars]({{site.github.repository_url}}/tree/master/ansible/inventories/group_vars).
 Also, this folder contains a single file, `all`, which contains all of the variables used by the 
 provided roles and playbooks with default values.
-This is done with intent that developers will create their own `group_vars/all` file, which will 
+This is done with the intent that developers will create their own `group_vars/all` file, which will 
 override any of the defaults set in the `inventories/group_vars/all` file.
 
 You only need to include the variables you wish to override.
