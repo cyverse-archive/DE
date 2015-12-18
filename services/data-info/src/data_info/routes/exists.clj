@@ -4,7 +4,7 @@
         [data-info.routes.domain.exists])
   (:require [data-info.services.exists :as exists]
             [data-info.util.service :as svc]
-            [schema.core :as s]))
+            [data-info.util.schema :as s]))
 
 
 (defroutes* existence-marker
@@ -15,7 +15,7 @@
     (POST* "/" [:as {uri :uri}]
       :query [params StandardUserQueryParams]
       :body [body (describe Paths "The paths to check for existence.")]
-      :return (s/either ExistenceResponse ExistenceInfo)
+      :return (s/doc-only ExistenceInfo ExistenceResponse)
       :summary "File and Folder Existence"
       :description (str
 "This endpoint allows the caller to check for the existence of a set of files and folders."

@@ -15,5 +15,6 @@ LABEL org.iplantc.de.iplant-groups.git-ref="$git_commit" \
       org.iplantc.de.buildenv.git-ref="$buildenv_git_commit"
 
 USER iplant
-ENTRYPOINT ["java", "-Dlogback.configurationFile=/etc/iplant/de/logging/iplant-groups-logging.xml", "-cp", ".:iplant-groups-standalone.jar:/home/iplant/", "iplant_groups.core"]
+RUN ln -s "/opt/jdk/bin/java" "/home/iplant/bin/iplant-groups"
+ENTRYPOINT ["iplant-groups", "-Dlogback.configurationFile=/etc/iplant/de/logging/iplant-groups-logging.xml", "-cp", ".:iplant-groups-standalone.jar:/home/iplant/", "iplant_groups.core"]
 CMD ["--help"]

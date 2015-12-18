@@ -4,7 +4,7 @@
         [data-info.routes.domain.stats])
   (:require [data-info.services.stat :as stat]
             [data-info.util.service :as svc]
-            [schema.core :as s]))
+            [data-info.util.schema :as s]))
 
 
 (defroutes* stat-gatherer
@@ -17,7 +17,7 @@
     (POST* "/" [:as {uri :uri}]
       :query [params StandardUserQueryParams]
       :body [body (describe Paths "The paths to gather status information on.")]
-      :return (s/either StatResponse StatusInfo)
+      :return (s/doc-only StatusInfo StatResponse)
       :summary "File and Folder Status Information"
       :description (str
 "This endpoint allows the caller to get information about many files and folders at once."
