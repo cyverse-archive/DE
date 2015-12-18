@@ -6,6 +6,6 @@
             [sharkbait.subjects :as subjects]))
 
 (defn register-de-users
-  [session subjects]
-  (let [de-users-role (roles/create-role session consts/de-users-folder consts/de-users-role-name)]
+  [session de-users-folder subjects]
+  (let [de-users-role (roles/create-role session de-users-folder consts/de-users-role-name)]
     (roles/replace-members de-users-role subjects)))

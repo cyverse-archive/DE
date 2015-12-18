@@ -1,8 +1,14 @@
 (ns sharkbait.folders
+  (:require [sharkbait.consts :as consts])
   (:import [edu.internet2.middleware.grouper Stem StemFinder]
            [edu.internet2.middleware.grouper.misc SaveMode]))
 
 (def valid-privs #{:stem :create :attr-read :attr-update})
+
+(defn folder-names
+  "Formats the default folder names for the environment."
+  [env]
+  (into {} (map (fn [[k v]] (vector k (format v env))) consts/folder-format-strings)))
 
 (defn find-folder
   "Finds a folder in Grouper, creating it and any parent folders if necessary."

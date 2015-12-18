@@ -41,8 +41,10 @@
 
 (defn register-de-apps
   "Registers all DE apps in Grouper."
-  [database session subjects folder-name permission-def-name]
-  (let [permission-def       (perms/find-permission-def folder-name permission-def-name)
-        de-users-role        (roles/find-role session consts/full-de-users-role-name)]
-    (dorun (map (partial register-app session subjects de-users-role permission-def folder-name)
+  [database session subjects folder-names permission-def-name]
+  (let [apps-folder-name   (:de-apps folder-names)
+        permission-def     (perms/find-permission-def apps-folder-name permission-def-name)
+        de-users-role-name (format "%s:%s" (:de-users folder-names) consts/de-users-role-name)
+        de-users-role      (roles/find-role session de-users-role-name)]
+    (dorun (map (partial register-app session subjects de-users-role permission-def apps-folder-name)
                 (db/list-de-apps database)))))

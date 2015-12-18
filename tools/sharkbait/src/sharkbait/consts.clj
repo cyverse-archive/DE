@@ -4,10 +4,11 @@
 (def de-username "de_grouper")
 
 ;; Various folders used by the DE.
-(def de-folder          "iplant:de")
-(def de-users-folder    "iplant:de:users")
-(def de-apps-folder     "iplant:de:apps")
-(def de-analyses-folder "iplant:de:analyses")
+(def folder-format-strings
+  {:de          "iplant:de:%s"
+   :de-users    "iplant:de:%s:users"
+   :de-apps     "iplant:de:%s:apps"
+   :de-analyses "iplant:de:%s:analyses"})
 
 ;; Roles used by the DE.
 (def de-users-role-name "de-users")
@@ -18,6 +19,3 @@
 
 ;; Common permission resources.
 (def public-apps-resource-name "public-apps")
-
-;; Some full names for convenience
-(def full-de-users-role-name (str de-users-folder ":" de-users-role-name))

@@ -26,4 +26,5 @@
 (defn find-effective-membership
   "Finds an effective membership in a role."
   [session role subject]
-  (first (MembershipFinder/findEffectiveMemberships session role subject nil nil 0)))
+  #_(first (MembershipFinder/findEffectiveMemberships session role subject nil nil 0))
+  nil)
