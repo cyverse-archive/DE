@@ -10,6 +10,7 @@
         [terrain.routes.admin]
         [terrain.routes.callbacks]
         [terrain.routes.data]
+        [terrain.routes.permanent-id-requests]
         [terrain.routes.fileio]
         [terrain.routes.metadata]
         [terrain.routes.misc]
@@ -133,6 +134,7 @@
     (coge-routes)
     (reference-genomes-routes)
     (tool-routes)
+    (permanent-id-request-routes)
     (route/not-found (unrecognized-path-response))))
 
 (defn secured-routes
@@ -168,6 +170,7 @@
     (admin-notification-routes)
     (admin-reference-genomes-routes)
     (admin-tool-routes)
+    (admin-permanent-id-request-routes)
     (route/not-found (unrecognized-path-response))))
 
 (defn unsecured-routes
