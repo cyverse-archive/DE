@@ -644,6 +644,14 @@ notification_db_admin_password: "{{ db_admin_password }}"
 path_list_file_identifier: "# application/vnd.de.path-list+csv; version=1"
 path_list_info_type: ht-analysis-path-list
 
+permanent_id:
+  curators:
+  staging_dir: /iplant/home/shared/staging
+  ezid:
+    base_url: http://ezid.cdlib.org
+    username: apitest
+    password:
+
 pgp_keyring_path: "{{ gpg_home_dir }}/secring.gpg"
 pgp_key_password:
 

@@ -438,6 +438,31 @@
   [props config-valid configs]
   "terrain.job-exec.default-output-folder")
 
+(cc/defprop-vec permanent-id-curators
+  "List of data store usernames of the curators that manage permanent ID requests."
+  [props config-valid configs]
+  "terrain.permanent-id.curators")
+
+(cc/defprop-str permanent-id-staging-dir
+  "The data store directory where user folders are staged for permanent ID requests."
+  [props config-valid configs]
+  "terrain.permanent-id.staging-dir")
+
+(cc/defprop-str ezid-base-url
+  "The EZID API base URL."
+  [props config-valid configs]
+  "terrain.permanent-id.ezid.base-url")
+
+(cc/defprop-str ezid-username
+  "The EZID API account username."
+  [props config-valid configs]
+  "terrain.permanent-id.ezid.username")
+
+(cc/defprop-str ezid-password
+  "The EZID API account password."
+  [props config-valid configs]
+  "terrain.permanent-id.ezid.password")
+
 (cc/defprop-str prefs-base-url
   "The hostname of the user-preferences service"
   [props config-valid configs]
