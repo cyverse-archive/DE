@@ -1,6 +1,6 @@
 ---
 layout: page
-title: DE API Documentation
+title: DE Permanent ID Request API Documentation
 ---
 
 # Table of Contents
@@ -8,9 +8,9 @@ title: DE API Documentation
 * [Permanent ID Requests](#permanent-id-requests)
     * [List all Permanent ID Requests](#list-all-permanent-id-requests)
     * [Get any Permanent ID Request Details](#get-any-permanent-id-request-details)
-    * [Update the Status of an Permanent ID Request](#update-the-status-of-an-permanent-id-request)
+    * [Update the Status of a Permanent ID Request](#update-the-status-of-a-permanent-id-request)
     * [List Permanent ID Requests](#list-permanent-id-requests)
-    * [Create an Permanent ID Requests](#create-an-permanent-id-requests)
+    * [Create a Permanent ID Requests](#create-a-permanent-id-requests)
     * [List Permanent ID Request Status Codes](#list-permanent-id-request-status-codes)
     * [List Permanent ID Request Types](#list-permanent-id-request-types)
     * [List Permanent ID Request Details](#list-permanent-id-request-details)
@@ -58,7 +58,7 @@ Please see the data-info endpoint's documentation for more details.
 
 Delegates to data-info: `POST /stat-gatherer`
 
-Allows administrators to retrieve details for an Permanent ID Request from any user.
+Allows administrators to retrieve details for a Permanent ID Request from any user.
 
 ### Response
 
@@ -82,11 +82,11 @@ Allows administrators to retrieve details for an Permanent ID Request from any u
 The `folder` object is populated by the corresponding data-info endpoint.
 Please see the data-info endpoint's documentation for more details.
 
-## Update the Status of an Permanent ID Request
+## Update the Status of a Permanent ID Request
 
 `POST /admin/permanent-id-requests/{request-id}/status`
 
-Allows administrators to update the status of an Permanent ID Request from any user.
+Allows administrators to update the status of a Permanent ID Request from any user.
 
 ### Request
 
@@ -116,11 +116,11 @@ Lists all Permanent ID Requests submitted by the requesting user.
 
 Same as [GET /admin/permanent-id-requests](#list-all-permanent-id-requests)
 
-## Create an Permanent ID Requests
+## Create a Permanent ID Requests
 
 `POST /permanent-id-requests`
 
-Creates an Permanent ID Request for the requesting user.
+Creates a Permanent ID Request for the requesting user.
 
 ### Request
 
