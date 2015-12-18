@@ -20,8 +20,8 @@
       :query [{:keys [user]} StandardUserQueryParams]
       :body [body PermanentIDRequest]
       :return PermanentIDRequestDetails
-      :summary "Create an Permanent ID Request"
-      :description "Creates an Permanent ID Request for the requesting user."
+      :summary "Create a Permanent ID Request"
+      :description "Creates a Permanent ID Request for the requesting user."
       (ok (create-permanent-id-request user body)))
 
     (GET* "/status-codes" []
@@ -65,7 +65,7 @@
       :query [{:keys [user]} StandardUserQueryParams]
       :return PermanentIDRequestDetails
       :summary "Get Permanent ID Request Details"
-      :description "Allows administrators to retrieve details for an Permanent ID Request from any user."
+      :description "Allows administrators to retrieve details for a Permanent ID Request from any user."
       (ok (admin-get-permanent-id-request user request-id)))
 
     (POST* "/:request-id/status" []
@@ -73,9 +73,9 @@
       :query [{:keys [user]} StandardUserQueryParams]
       :body [body PermanentIDRequestStatusUpdate]
       :return PermanentIDRequestDetails
-      :summary "Update the Status of an Permanent ID Request"
+      :summary "Update the Status of a Permanent ID Request"
       :description
-"Allows administrators to update the status of an Permanent ID Request from any user.
+"Allows administrators to update the status of a Permanent ID Request from any user.
 
 `Note`: The status code is case-sensitive, and if it isn't defined in the database already then it will
  be added to the list of known status codes."
