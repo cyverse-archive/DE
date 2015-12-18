@@ -16,7 +16,8 @@
 (s/defschema PermanentIDRequest
   {:type (describe PermanentIDRequestTypeEnum "The type of persistent ID requested")
    :target_id (describe UUID "The UUID of the data item for which the persistent ID is being requested")
-   :target_type DataTypeParam})
+   :target_type DataTypeParam
+   (s/optional-key :original_path) (describe String "The path associated with the given `target_id`")})
 
 (s/defschema PermanentIDRequestBase
   (merge PermanentIDRequest
