@@ -6,11 +6,11 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface PermIdRequestAdminServiceFacade {
 
+    public final String PERMID_REQUEST = "org.iplantc.services.permIdRequests";
+
+    public final String PERMID_ADMIN_REQUEST = "org.iplantc.services.admin.permIdRequests";
+
     void getPermanentIdRequests(AsyncCallback<String> callback);
-
-    void getMetadata(String uuid, AsyncCallback<String> callback);
-
-    void updateMetatdata(String uuid, String metadata, AsyncCallback<String> callback);
 
     void updatePermanentIdRequestStatus(PermanentIdRequestStatus status, AsyncCallback<String> callback);
 

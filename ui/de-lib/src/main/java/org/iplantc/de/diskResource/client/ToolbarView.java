@@ -307,6 +307,8 @@ public interface ToolbarView extends IsWidget,
                                                 String templateId,
                                                 boolean force);
 
+        void onDoiRequest(String uuid);
+
     }
 
     DiskResourceSearchField getSearchField();

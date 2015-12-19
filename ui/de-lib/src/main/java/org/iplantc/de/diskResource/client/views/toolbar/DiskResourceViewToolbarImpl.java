@@ -612,10 +612,9 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
             public void onDialogHide(DialogHideEvent event) {
                 switch (event.getHideButton()) {
                     case YES:
-                        // Perform YES action
+                        presenter.onDoiRequest(selectedDiskResources.get(0).getId());
                         break;
                     case NO:
-                        // perform NO action
                         break;
                     default:
                         // error, button added with no specific action ready

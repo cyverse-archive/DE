@@ -10,13 +10,17 @@ import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 
+import com.sencha.gxt.core.client.Style.SelectionMode;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
+import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
+import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 import java.util.ArrayList;
@@ -48,15 +52,32 @@ public class PermIdRequestViewImpl extends Composite implements PermIdRequestVie
     @UiField
     Grid<PermanentIdRequest> grid;
 
+    @UiField
+    ListStore<PermanentIdRequest> store;
+
     PermanentIdRequestProperties pr_props;
 
     PermIdRequestViewAppearance appearance;
 
+    private Presenter presenter;
+
+    @Inject
     public PermIdRequestViewImpl(PermanentIdRequestProperties pr_props) {
         this.pr_props = pr_props;
         appearance = GWT.create(PermIdRequestViewAppearance.class);
         initWidget(uiBinder.createAndBindUi(this));
+        grid.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        grid.getSelectionModel()
+            .addSelectionChangedHandler(new SelectionChangedHandler<PermanentIdRequest>() {
+
+                @Override
+                public void onSelectionChanged(SelectionChangedEvent<PermanentIdRequest> event) {
+                    presenter.setSelectedRequest(event.getSelection().get(0));
+
+                }
+            });
     }
+
 
     @UiFactory
     ListStore<PermanentIdRequest> createListStore() {
@@ -107,6 +128,19 @@ public class PermIdRequestViewImpl extends Composite implements PermIdRequestVie
     @Override
     public void unmask() {
         con.unmask();
+    }
+
+    @Override
+    public void setPresenter(Presenter p) {
+        this.presenter = p;
+
+    }
+
+    @Override
+    public void loadRequests(List<PermanentIdRequest> requests) {
+        store.clear();
+        store.addAll(requests);
+
     }
 
 }

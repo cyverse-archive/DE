@@ -7,8 +7,9 @@ package org.iplantc.de.client.models.identifiers;
  */
 public enum PermanentIdRequestStatus {
     Submitted("Submitted"),
+    Pending("Pending"),
     Evaluation("Evaluation"),
-    Validation("Validation"),
+    Approved("Approved"),
     Completion("Completion"),
     Failed("Failed");
 

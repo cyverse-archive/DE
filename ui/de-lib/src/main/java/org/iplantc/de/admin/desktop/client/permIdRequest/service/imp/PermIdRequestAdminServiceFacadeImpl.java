@@ -2,27 +2,31 @@ package org.iplantc.de.admin.desktop.client.permIdRequest.service.imp;
 
 import org.iplantc.de.admin.desktop.client.permIdRequest.service.PermIdRequestAdminServiceFacade;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestStatus;
+import org.iplantc.de.shared.services.DiscEnvApiService;
+import org.iplantc.de.shared.services.ServiceCallWrapper;
+import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.inject.Inject;
+import com.google.web.bindery.autobean.shared.Splittable;
+import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 public class PermIdRequestAdminServiceFacadeImpl implements PermIdRequestAdminServiceFacade {
 
+    @Inject
+    private DiscEnvApiService deService;
+
+    @Inject
+    public PermIdRequestAdminServiceFacadeImpl() {
+
+    }
+
     @Override
     public void getPermanentIdRequests(AsyncCallback<String> callback) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void getMetadata(String uuid, AsyncCallback<String> callback) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void updateMetatdata(String uuid, String metadata, AsyncCallback<String> callback) {
-        // TODO Auto-generated method stub
-
+        String address = PERMID_ADMIN_REQUEST;
+        final ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.GET, address);
+        deService.getServiceData(wrapper, callback);
     }
 
     @Override

@@ -13,9 +13,11 @@ import org.iplantc.de.client.models.errors.diskResources.DiskResourceErrorAutoBe
 import org.iplantc.de.client.models.errors.diskResources.ErrorDiskResource;
 import org.iplantc.de.client.models.genomes.GenomeAutoBeanFactory;
 import org.iplantc.de.client.models.genomes.GenomeList;
+import org.iplantc.de.client.models.identifiers.PermanentIdRequestType;
 import org.iplantc.de.client.models.viewer.MimeType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
+import org.iplantc.de.client.services.PermIdRequestUserServiceFacade;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
@@ -128,6 +130,8 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
     @Inject EventBus eventBus;
     @Inject
     DiskResourceServiceFacade drFacade;
+
+    PermIdRequestUserServiceFacade prFacade = ServicesInjector.INSTANCE.getPermIdRequestUserServiceFacade();
 
     @Inject
     DiskResourceErrorAutoBeanFactory drFactory;
@@ -383,6 +387,25 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
                                          force,
                                          new BulkMetadataCallback(filePath, templateId, destFolder));
 
+    }
+
+    @Override
+    public void onDoiRequest(String uuid) {
+        prFacade.requestPermId(uuid, PermanentIdRequestType.DOI, new AsyncCallback<String>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                IplantAnnouncer.getInstance()
+                               .schedule(new ErrorAnnouncementConfig("DOI request failed!"));
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                IplantAnnouncer.getInstance()
+                               .schedule(new SuccessAnnouncementConfig("Your request for DOI has been submitted! You will receive notification when there are updates to this request."));
+
+            }
+        });
     }
 
 }
