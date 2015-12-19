@@ -2,6 +2,7 @@
   (:require [clojure.string :as string]
             [sharkbait.consts :as consts]
             [sharkbait.db :as db]
+            [sharkbait.members :as members]
             [sharkbait.permissions :as perms]
             [sharkbait.roles :as roles]))
 
@@ -18,25 +19,23 @@
   (when-let [username (extract-username app)]
     (subjects (string/replace username #"@iplantcollaborative.org$" ""))))
 
-(defn- find-app-owner-membership
-  [session subjects de-users-role app]
+(defn- find-app-owner-member
+  [session subjects app]
   (when-let [subject (find-app-owner-subject subjects app)]
-    (println "DEBUG: searching for an effective membership")
-    (roles/find-effective-membership session de-users-role subject)))
+    (members/find-subject-member session subject true)))
 
 (defn- grant-owner-permission
   "Grants ownership permission to an app."
   [session subjects de-users-role app-resource app]
-  (when-let [membership (find-app-owner-membership session subjects de-users-role app)]
-    (println "DEBUG: membership =" membership)
-    (perms/grant-permission membership perms/own app-resource)))
+  (when-let [member (find-app-owner-member session subjects app)]
+    (perms/grant-role-membership-permission de-users-role member perms/own app-resource)))
 
 (defn- register-app
   "Registers an app in Grouper."
   [session subjects de-users-role permission-def folder-name app]
   (let [app-resource (perms/create-permission-resource session permission-def folder-name (:id app))]
     (if (:is_public app)
-      (perms/grant-permission de-users-role perms/read app-resource)
+      (perms/grant-role-permission de-users-role perms/read app-resource)
       (grant-owner-permission session subjects de-users-role app-resource app))))
 
 (defn register-de-apps

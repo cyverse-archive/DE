@@ -51,7 +51,12 @@
       (.assignSaveMode SaveMode/INSERT_OR_UPDATE)
       (.save)))
 
-(defn grant-permission
-  "Grants permission to a Grouper role or membership."
-  [role-or-membership action permission-def]
-  (.saveOrUpdate (AttributeAssign. role-or-membership action permission-def nil)))
+(defn grant-role-permission
+  "Grants permission to a Grouper role."
+  [role action permission-def-name]
+  (.saveOrUpdate (AttributeAssign. role action permission-def-name nil)))
+
+(defn grant-role-membership-permission
+  "Grants permission to a membership within a role."
+  [role member action permission-def-name]
+  (.saveOrUpdate (AttributeAssign. role mmber action permission-def-name nil)))
