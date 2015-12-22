@@ -8,14 +8,14 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
+
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
+import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.core.client.Style.SelectionMode;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.button.TextButton;
-import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -41,9 +41,6 @@ public class PermIdRequestViewImpl extends Composite implements PermIdRequestVie
     }
 
     @UiField
-    BorderLayoutContainer con;
-
-    @UiField
     ToolBar toolbar;
 
     @UiField
@@ -62,9 +59,9 @@ public class PermIdRequestViewImpl extends Composite implements PermIdRequestVie
     private Presenter presenter;
 
     @Inject
-    public PermIdRequestViewImpl(PermanentIdRequestProperties pr_props) {
+    public PermIdRequestViewImpl(PermanentIdRequestProperties pr_props, PermIdRequestViewAppearance appearance) {
         this.pr_props = pr_props;
-        appearance = GWT.create(PermIdRequestViewAppearance.class);
+        this.appearance = appearance;
         initWidget(uiBinder.createAndBindUi(this));
         grid.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         grid.getSelectionModel()
@@ -76,6 +73,7 @@ public class PermIdRequestViewImpl extends Composite implements PermIdRequestVie
 
                 }
             });
+        grid.getView().setEmptyText("No rows to display!");
     }
 
 
@@ -87,7 +85,7 @@ public class PermIdRequestViewImpl extends Composite implements PermIdRequestVie
     @UiFactory
     ColumnModel<PermanentIdRequest> createColumnModel() {
         List<ColumnConfig<PermanentIdRequest, ?>> list = new ArrayList<>();
-        ColumnConfig<PermanentIdRequest, String> nameCol = new ColumnConfig<>(pr_props.name(),
+        ColumnConfig<PermanentIdRequest, String> nameCol = new ColumnConfig<>(pr_props.requestedBy(),
                                                                               appearance.nameColumnWidth(),
                                                                               appearance.nameColumnLabel());
         ColumnConfig<PermanentIdRequest, String> pathCol = new ColumnConfig<>(pr_props.path(),
@@ -121,13 +119,13 @@ public class PermIdRequestViewImpl extends Composite implements PermIdRequestVie
 
     @Override
     public void mask(String loadingMask) {
-        con.mask(loadingMask);
+        grid.mask(loadingMask);
 
     }
 
     @Override
     public void unmask() {
-        con.unmask();
+        grid.unmask();
     }
 
     @Override

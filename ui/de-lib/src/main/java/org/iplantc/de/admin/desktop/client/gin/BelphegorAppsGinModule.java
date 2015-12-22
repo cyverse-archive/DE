@@ -71,8 +71,8 @@ public class BelphegorAppsGinModule extends AbstractGinModule {
         bind(MetadataTemplateAdminServiceFacade.class).to(MetadataTemplateAdminServiceFacadeImpl.class);
         bind(EditMetadataTemplateView.class).to(EditMetadataTemplateViewImpl.class);
 
-        bind(PermIdRequestView.Presenter.class).to(PermanentIdRequestPresenter.class);
         bind(PermIdRequestView.class).to(PermIdRequestViewImpl.class);
+        bind(PermIdRequestView.Presenter.class).to(PermanentIdRequestPresenter.class);
         bind(PermIdRequestAdminServiceFacade.class).to(PermIdRequestAdminServiceFacadeImpl.class);
         bind(DiscEnvApiService.class).in(Singleton.class);
     }

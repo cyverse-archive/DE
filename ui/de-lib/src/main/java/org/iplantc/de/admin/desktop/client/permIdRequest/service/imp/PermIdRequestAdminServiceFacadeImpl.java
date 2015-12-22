@@ -2,15 +2,12 @@ package org.iplantc.de.admin.desktop.client.permIdRequest.service.imp;
 
 import org.iplantc.de.admin.desktop.client.permIdRequest.service.PermIdRequestAdminServiceFacade;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestStatus;
+import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
-import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
-import com.google.web.bindery.autobean.shared.Splittable;
-import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 public class PermIdRequestAdminServiceFacadeImpl implements PermIdRequestAdminServiceFacade {
 

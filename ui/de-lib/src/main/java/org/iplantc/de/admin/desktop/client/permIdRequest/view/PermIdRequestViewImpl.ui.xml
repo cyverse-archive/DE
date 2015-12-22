@@ -3,26 +3,20 @@
 	xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
 	xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
 	xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
-	xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
-	xmlns:metadata="urn:import:org.iplantc.de.diskResource.client.views.metadata">
+	xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button">
 
 	<ui:with field="appearance"
 		type="org.iplantc.de.admin.desktop.client.permIdRequest.view.PermIdRequestView.PermIdRequestViewAppearance" />
 
 	<ui:with field="northData"
 		type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
-		<ui:attributes size="{appearance.northPanelSize}"
-			maxSize="{appearance.northPanelSize}" />
+		<ui:attributes size="30"
+			maxSize="40" />
 	</ui:with>
 	<ui:with field="centerData"
 		type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
 		<ui:attributes size="1" />
 	</ui:with>
-	<ui:with field="eastData"
-		type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
-		<ui:attributes size="{appearance.eastPanelSize}" split="true" />
-	</ui:with>
-
 	<ui:with type="com.sencha.gxt.widget.core.client.grid.ColumnModel"
 		field="cm" />
 	<ui:with type="com.sencha.gxt.data.shared.ListStore" field="store" />
@@ -38,12 +32,12 @@
 			<toolbar:ToolBar ui:field="toolbar">
 				<toolbar:child>
 					<button:TextButton ui:field="updateBtn"
-						text="{appearance.updateBtnText}" icon="{appearance.updateIcon}"
+						text="Update Request" icon="{appearance.updateIcon}"
 						enabled="false" />
 				</toolbar:child>
 				<toolbar:child>
 					<button:TextButton ui:field="metadataBtn"
-						text="{appearance.updateBtnText}" icon="{appearance.updateIcon}"
+						text="Metadata" icon="{appearance.updateIcon}"
 						enabled="false" />
 				</toolbar:child>
 			</toolbar:ToolBar>

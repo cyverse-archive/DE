@@ -18,13 +18,13 @@ public interface PermanentIdRequest extends HasId {
     Folder getFolder();
 
     @PropertyName("requested_by")
-    String getUsername();
+    String getRequestedBy();
 
     @PropertyName("date_submitted")
-    Date getCreatedDate();
+    Date getDateSubmitted();
 
     @PropertyName("date_updated")
-    Date getUpdatedDate();
+    Date getDateUpdated();
 
     @PropertyName("updated_by")
     String getUpatedBy();

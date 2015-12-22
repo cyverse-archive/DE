@@ -23,13 +23,10 @@ public interface PermanentIdRequestProperties extends PropertyAccess<PermanentId
 
     ModelKeyProvider<PermanentIdRequest> id();
     
-    @Path("requested_by")
-    ValueProvider<PermanentIdRequest, String> name();
+    ValueProvider<PermanentIdRequest, String> requestedBy();
 
-    @Path("date_submitted")
     ValueProvider<PermanentIdRequest, Date> dateSubmitted();
 
-    @Path("date_updated")
     ValueProvider<PermanentIdRequest, Date> dateUpdated();
 
     @Path("Folder.path")

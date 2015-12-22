@@ -73,7 +73,7 @@ public class PermanentIdRequestPresenter implements Presenter {
         }
     }
 
-    @Inject
+
     PermIdRequestView view;
 
     final DiskResourceServiceFacade drsvc;
@@ -90,15 +90,18 @@ public class PermanentIdRequestPresenter implements Presenter {
 
     @Inject
     public PermanentIdRequestPresenter(DiskResourceServiceFacade drsvc,
-                                       PermIdRequestAdminServiceFacade prsvc) {
+                                       PermIdRequestAdminServiceFacade prsvc,
+                                       PermIdRequestView view) {
         this.drsvc = drsvc;
         this.prsvc = prsvc;
+        this.view = view;
         metadataDialog = new Dialog();
         metadataDialog.setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
         metadataDialog.setHeadingHtml("Metadata");
         metadataDialog.setSize("600px", "400px");
         metadataDialog.getButton(PredefinedButton.OK).addSelectHandler(new OkSelectHandler());
         metadataDialog.getButton(PredefinedButton.CANCEL).addSelectHandler(new CancelSelectHandler());
+        view.setPresenter(this);
     }
 
     @Override
