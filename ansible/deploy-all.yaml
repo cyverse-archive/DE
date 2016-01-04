@@ -18,10 +18,6 @@
 ############################################
 # Services
 ############################################
-- include: playbooks/infra-docker-compose.yml
-- include: playbooks/infra-remove-de-config-dirs.yml
-- include: playbooks/infra-remove-service-log-files.yml
-- include: playbooks/infra-remove-service-systemd-files.yml
 - include: playbooks/de-jex.yaml
 - include: playbooks/de-pull-images.yaml
 - include: playbooks/de-stop-containers.yml
