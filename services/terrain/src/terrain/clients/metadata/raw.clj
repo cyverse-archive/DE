@@ -25,7 +25,9 @@
   ([params]
      {:query-params     (user-params params)
       :as               :stream
-      :follow-redirects false}))
+      :follow-redirects false})
+  ([params param-keys]
+    (get-options (user-params params param-keys))))
 
 (def delete-options get-options)
 
@@ -193,7 +195,11 @@
 
 (defn list-permanent-id-requests
   [params]
-  (http/get (metadata-url "permanent-id-requests") (get-options params)))
+  (http/get (metadata-url "permanent-id-requests") (get-options params [:statuses
+                                                                        :limit
+                                                                        :offset
+                                                                        :sort-field
+                                                                        :sort-dir])))
 
 (defn create-permanent-id-request
   [request]
@@ -213,7 +219,11 @@
 
 (defn admin-list-permanent-id-requests
   [params]
-  (http/get (metadata-url "admin" "permanent-id-requests") (get-options params)))
+  (http/get (metadata-url "admin" "permanent-id-requests") (get-options params [:statuses
+                                                                                :limit
+                                                                                :offset
+                                                                                :sort-field
+                                                                                :sort-dir])))
 
 (defn admin-get-permanent-id-request
   [request-id]
