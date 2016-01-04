@@ -16,7 +16,6 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
-import com.sencha.gxt.widget.core.client.grid.editing.GridEditing;
 import com.sencha.gxt.widget.core.client.grid.editing.GridInlineEditing;
 
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ import java.util.List;
 public class ToolTestDataInputFilesListEditor extends Composite
         implements IsEditor<Editor<List<String>>> {
 
-    private GridEditing<String> editing;
+    private GridInlineEditing<String> editing;
     private Grid<String> grid;
     private ListStoreEditor<String> listStoreEditor;
 
@@ -36,8 +35,8 @@ public class ToolTestDataInputFilesListEditor extends Composite
     @Inject
     public ToolTestDataInputFilesListEditor(ToolAdminView.ToolAdminViewAppearance appearance) {
         this.appearance = appearance;
-        listStore = new ListStore<>(getModelKeyProvider());
-        listStoreEditor = new ListStoreEditor<>(listStore);
+        listStore = getStringListStore();
+        listStoreEditor = getListStoreEditor();
         listStore.setAutoCommit(true);
 
         List<ColumnConfig<String, ?>> columns = new ArrayList<>();
@@ -48,9 +47,8 @@ public class ToolTestDataInputFilesListEditor extends Composite
 
         columns.add(inputFile);
         ColumnModel<String> columnModel = new ColumnModel<>(columns);
-
-        grid = new Grid<>(listStore, columnModel);
-        editing = new GridInlineEditing<>(grid);
+        grid = getStringGrid(columnModel);
+        editing = getStringGridInlineEditing();
         ColumnConfig<String, String> columnConfig = grid.getColumnModel().getColumn(0);
         final TextField editor = new TextField();
         editing.addEditor(columnConfig, editor);
@@ -59,16 +57,33 @@ public class ToolTestDataInputFilesListEditor extends Composite
 
     }
 
-    private ModelKeyProvider<String> getModelKeyProvider() {
+    GridInlineEditing<String> getStringGridInlineEditing() {
+        return new GridInlineEditing<>(grid);
+    }
+
+    Grid<String> getStringGrid(ColumnModel<String> columnModel) {
+        return new Grid<>(listStore, columnModel);
+    }
+
+    ListStoreEditor<String> getListStoreEditor() {
+        return new ListStoreEditor<>(listStore);
+    }
+
+    ListStore<String> getStringListStore() {
+        return new ListStore<>(getModelKeyProvider());
+    }
+
+    ModelKeyProvider<String> getModelKeyProvider() {
         return new ModelKeyProvider<String>() {
             @Override
             public String getKey(String item) {
                 return item;
             }
+
         };
     }
 
-    private ValueProvider<String, String> getValueProvider() {
+    ValueProvider<String, String> getValueProvider() {
         return new ValueProvider<String, String>() {
             @Override
             public String getValue(String object) {

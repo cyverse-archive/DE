@@ -109,10 +109,8 @@ public class ToolAdminPresenterImpl implements ToolAdminView.Presenter,
         toolAdminServiceFacade.deleteTool(event.getTool().getId(), new AsyncCallback<Void>() {
             @Override
             public void onFailure(final Throwable caught) {
-                SimpleServiceError serviceError =
-                        AutoBeanCodex.decode(factory, SimpleServiceError.class, caught.getMessage())
-                                     .as();
-                if (serviceError.getErrorCode().equals(ServiceErrorCode.ERR_NOT_WRITEABLE.toString())) {
+                String serviceError = getServiceError(caught);
+                if (serviceError.equals(ServiceErrorCode.ERR_NOT_WRITEABLE.toString())) {
                     deleteAppDialog.get(new AsyncCallback<DeleteAppDialog>() {
                         @Override
                         public void onFailure(Throwable caught) {
@@ -162,10 +160,8 @@ public class ToolAdminPresenterImpl implements ToolAdminView.Presenter,
         toolAdminServiceFacade.updateTool(tool, overwrite, new AsyncCallback<Void>() {
             @Override
             public void onFailure(final Throwable caught) {
-                SimpleServiceError serviceError =
-                        AutoBeanCodex.decode(factory, SimpleServiceError.class, caught.getMessage())
-                                     .as();
-                if (serviceError.getErrorCode().equals(ServiceErrorCode.ERR_NOT_WRITEABLE.toString())) {
+                String serviceError = getServiceError(caught);
+                if (serviceError.equals(ServiceErrorCode.ERR_NOT_WRITEABLE.toString())) {
                     overwriteAppDialog.get(new AsyncCallback<OverwriteAppDialog>() {
                         @Override
                         public void onFailure(Throwable caught) {
@@ -196,6 +192,12 @@ public class ToolAdminPresenterImpl implements ToolAdminView.Presenter,
                 updateView();
             }
         });
+    }
+
+    String getServiceError(Throwable caught) {
+        SimpleServiceError simpleServiceError =  AutoBeanCodex.decode(factory, SimpleServiceError.class, caught.getMessage())
+                     .as();
+        return simpleServiceError.getErrorCode();
     }
 
     void updateView() {
