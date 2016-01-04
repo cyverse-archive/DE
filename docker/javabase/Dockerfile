@@ -13,6 +13,6 @@ RUN apk add --update curl \
     && rm -rf /var/cache/apk/*
 
 RUN mkdir -p /logs/ /bin/
-WORKDIR /home/iplant
+WORKDIR /
 EXPOSE 60000
 

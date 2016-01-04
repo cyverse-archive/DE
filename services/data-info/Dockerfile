@@ -3,8 +3,8 @@ FROM discoenv/javabase
 USER root
 VOLUME ["/etc/iplant/de"]
 
-COPY conf/main/logback.xml /home/iplant/
-COPY target/data-info-standalone.jar /home/iplant/
+COPY conf/main/logback.xml /
+COPY target/data-info-standalone.jar /
 
 ARG git_commit=unknown
 ARG buildenv_git_commit=unknown
