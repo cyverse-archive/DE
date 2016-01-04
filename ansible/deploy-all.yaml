@@ -1,14 +1,5 @@
 ---
 ############################################
-# Third-party
-############################################
-- include: infra-amqp-brokers.yaml
-  when: not parasitic
-
-- include: infra-deploy-irods-elasticsearch.yaml
-  when: not parasitic
-
-############################################
 # Services Support
 ############################################
 - include: playbooks/de-services-common.yml
