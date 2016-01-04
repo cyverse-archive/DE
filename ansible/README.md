@@ -1,2 +1,2 @@
-Documentation may be found [here](http://iplantcollaborativeopensource.github.io/DE/ansible/).
+Documentation may be found [here](http://cyverse.github.io/DE/ansible/).
 
