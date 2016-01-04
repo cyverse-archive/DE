@@ -59,4 +59,4 @@
 (defn grant-role-membership-permission
   "Grants permission to a membership within a role."
   [role member action permission-def-name]
-  (.saveOrUpdate (AttributeAssign. role mmber action permission-def-name nil)))
+  (.saveOrUpdate (AttributeAssign. role member action permission-def-name nil)))
