@@ -318,8 +318,8 @@ elk:
     service_name: elk-kibana.service
     service_name_short: elk-kibana
     service_description: ELK kibana
-    version: 4.1.2
-    image_name: "kibana:4.1.2"
+    version: 4.1.4
+    image_name: "kibana:4.1.4"
     log_file: elk-kibana-docker.log
 
 elasticsearch:
