@@ -2,7 +2,8 @@
   (:import [edu.internet2.middleware.grouper.attr AttributeDefNameSave AttributeDefSave AttributeDefType]
            [edu.internet2.middleware.grouper.attr.assign AttributeAssign]
            [edu.internet2.middleware.grouper.attr.finder AttributeDefFinder]
-           [edu.internet2.middleware.grouper.misc SaveMode]))
+           [edu.internet2.middleware.grouper.misc SaveMode]
+           [edu.internet2.middleware.grouper.permissions PermissionFinder]))
 
 (def read  "read")
 (def write "write")
@@ -51,12 +52,35 @@
       (.assignSaveMode SaveMode/INSERT_OR_UPDATE)
       (.save)))
 
+(defn role-permission-exists?
+  "Determines whether or not a role permission exists."
+  [role action permission-def-name]
+  (-> (PermissionFinder.)
+      (.addRole role)
+      (.assignActions [action])
+      (.addPermissionName permission-def-name)
+      (.findPermissions)
+      (seq)))
+
 (defn grant-role-permission
   "Grants permission to a Grouper role."
   [role action permission-def-name]
-  (.saveOrUpdate (AttributeAssign. role action permission-def-name nil)))
+  (when-not (role-permission-exists? role action permission-def-name)
+    (.saveOrUpdate (AttributeAssign. role action permission-def-name nil))))
+
+(defn role-membership-permission-exists?
+  "Determines whether or not a membershiup within a role has permission to a resource."
+  [role member action permission-def-name]
+  (-> (PermissionFinder.)
+      (.addRole role)
+      (.addMemberId (.getId member))
+      (.assignActions [action])
+      (.addPermissionName permission-def-name)
+      (.findPermissions)
+      (seq)))
 
 (defn grant-role-membership-permission
   "Grants permission to a membership within a role."
   [role member action permission-def-name]
-  (.saveOrUpdate (AttributeAssign. role member action permission-def-name nil)))
+  (when-not (role-membership-permission-exists? role member action permission-def-name)
+    (.saveOrUpdate (AttributeAssign. role member action permission-def-name nil))))
