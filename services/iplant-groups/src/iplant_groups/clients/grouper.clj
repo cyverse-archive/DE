@@ -520,22 +520,41 @@
 
 ;; Permission assignment
 ;; search/lookup
+(defn- format-attribute-def-lookup
+  [{:keys [attribute_def_id attribute_def]}]
+  (cond attribute_def_id [{:uuid attribute_def_id}]
+        attribute_def    [{:name attribute_def}]))
+
+(defn- format-attribute-def-name-lookup
+  [{:keys [attribute_def_name_id attribute_def_name]}]
+  (cond attribute_def_name_id [{:uuid attribute_def_name_id}]
+        attribute_def_name    [{:name attribute_def_name}]))
+
+(defn- format-role-lookup
+  [{:keys [role_id role]}]
+  (cond role_id [{:uuid role_id}]
+        role    [{:name role}]))
+
+(defn- format-action-names-lookup
+  [{:keys [action_names]}]
+  (when (seq action_names) action_names))
+
 (defn- format-permission-search-request
-  [username attribute-def-id attribute-name-id role-id subject-id action-names immediate-only]
+  [username {:keys [subject_id immediate_only] :as params}]
   {:WsRestGetPermissionAssignmentsRequest
    (remove-vals nil? {:actAsSubjectLookup (act-as-subject-lookup username)
                       :includePermissionAssignDetail "T"
-                      :wsAttributeDefLookups (if attribute-def-id [{:uuid attribute-def-id}])
-                      :wsAttributeDefNameLookups (if attribute-name-id [{:uuid attribute-name-id}])
-                      :roleLookups (if role-id [{:uuid role-id}])
-                      :actions (if (seq action-names) action-names)
-                      :wsSubjectLookups (if subject-id [{:subjectId subject-id}])
-                      :immediateOnly (parse-boolean immediate-only)})})
+                      :wsAttributeDefLookups (format-attribute-def-lookup params)
+                      :wsAttributeDefNameLookups (format-attribute-def-name-lookup params)
+                      :roleLookups (format-role-lookup params)
+                      :actions (format-action-names-lookup params)
+                      :wsSubjectLookups (if subject_id [{:subjectId subject_id}])
+                      :immediateOnly (parse-boolean immediate_only)})})
 
 (defn permission-assignment-search
-  [username attribute-def-id attribute-name-id role-id subject-id action-names immediate-only]
+  [username params]
   (with-trap [default-error-handler]
-    (-> (format-permission-search-request username attribute-def-id attribute-name-id role-id subject-id action-names immediate-only)
+    (-> (format-permission-search-request username params)
         (grouper-post "permissionAssignments")
         :WsGetPermissionAssignmentsResults
         :wsPermissionAssigns)))
