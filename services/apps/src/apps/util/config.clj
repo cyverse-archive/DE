@@ -32,6 +32,11 @@
   [props config-valid configs]
   "apps.app.listen-port")
 
+(cc/defprop-str env-name
+  "The name of the DE deployment environment."
+  [props config-valid configs]
+  "apps.app.environment-name")
+
 (cc/defprop-optboolean agave-enabled
   "Enables or disables all features that require connections to Agave."
   [props config-valid configs]
