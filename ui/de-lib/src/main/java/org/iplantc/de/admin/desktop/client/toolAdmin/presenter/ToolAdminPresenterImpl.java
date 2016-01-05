@@ -8,9 +8,8 @@ import org.iplantc.de.admin.desktop.client.toolAdmin.events.ToolSelectedEvent;
 import org.iplantc.de.admin.desktop.client.toolAdmin.gin.factory.ToolAdminViewFactory;
 import org.iplantc.de.admin.desktop.client.toolAdmin.model.ToolProperties;
 import org.iplantc.de.admin.desktop.client.toolAdmin.service.ToolAdminServiceFacade;
-import org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews.ToolPublicAppListWindow;
-import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
-import org.iplantc.de.client.models.apps.AppList;
+import org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs.DeleteAppDialog;
+import org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs.OverwriteAppDialog;
 import org.iplantc.de.client.models.errorHandling.ServiceErrorCode;
 import org.iplantc.de.client.models.errorHandling.SimpleServiceError;
 import org.iplantc.de.client.models.tool.Tool;
@@ -19,18 +18,14 @@ import org.iplantc.de.client.models.tool.ToolList;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
-import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 
-import com.google.gwt.core.client.GWT;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
-import com.sencha.gxt.core.client.dom.ScrollSupport;
 import com.sencha.gxt.data.shared.ListStore;
-import com.sencha.gxt.widget.core.client.container.FlowLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 
 import java.util.ArrayList;
@@ -50,7 +45,9 @@ public class ToolAdminPresenterImpl implements ToolAdminView.Presenter,
     private final ToolAutoBeanFactory factory;
     private final ToolAdminView.ToolAdminViewAppearance appearance;
     private final ListStore<Tool> listStore;
-    @Inject private IplantAnnouncer announcer;
+    @Inject IplantAnnouncer announcer;
+    @Inject AsyncProvider<OverwriteAppDialog> overwriteAppDialog;
+    @Inject AsyncProvider<DeleteAppDialog> deleteAppDialog;
 
     @Inject
     public ToolAdminPresenterImpl(final ToolAdminViewFactory viewFactory,
@@ -86,12 +83,12 @@ public class ToolAdminPresenterImpl implements ToolAdminView.Presenter,
     public void onAddToolSelected(AddToolSelectedEvent event) {
         //The UI handles creating a single tool request, but the admin/tools POST endpoint requires
         // an array of requests.  Wrapping the request inside an array.
-        ToolList toolListAutoBean = factory.getToolList().as();
-        List<Tool> toolList = new ArrayList<>();
-        toolList.add(event.getTool());
-        toolListAutoBean.setToolList(toolList);
+        ToolList toolList = factory.getToolList().as();
+        List<Tool> listTool = new ArrayList<>();
+        listTool.add(event.getTool());
+        toolList.setToolList(listTool);
 
-        toolAdminServiceFacade.addTool(toolListAutoBean, new AsyncCallback<Void>() {
+        toolAdminServiceFacade.addTool(toolList, new AsyncCallback<Void>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -111,17 +108,23 @@ public class ToolAdminPresenterImpl implements ToolAdminView.Presenter,
     public void onDeleteToolSelected(final DeleteToolSelectedEvent event) {
         toolAdminServiceFacade.deleteTool(event.getTool().getId(), new AsyncCallback<Void>() {
             @Override
-            public void onFailure(Throwable caught) {
+            public void onFailure(final Throwable caught) {
                 SimpleServiceError serviceError =
                         AutoBeanCodex.decode(factory, SimpleServiceError.class, caught.getMessage())
                                      .as();
                 if (serviceError.getErrorCode().equals(ServiceErrorCode.ERR_NOT_WRITEABLE.toString())) {
-                    IPlantDialog publicAppDialog = getPublicAppDialog(caught,
-                                                                      appearance.deletePublicToolTitle(),
-                                                                      appearance.deletePublicToolBody(),
-                                                                      null);
+                    deleteAppDialog.get(new AsyncCallback<DeleteAppDialog>() {
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            ErrorHandler.post(caught);
+                        }
 
-                    publicAppDialog.show();
+                        @Override
+                        public void onSuccess(DeleteAppDialog result) {
+                            result.setText(caught);
+                            result.show();
+                        }
+                    });
                 } else {
                     ErrorHandler.post(caught);
                 }
@@ -155,25 +158,33 @@ public class ToolAdminPresenterImpl implements ToolAdminView.Presenter,
         updateTool(event.getTool(), false);
     }
 
-    private void updateTool(final Tool tool, final boolean overwrite) {
+    void updateTool(final Tool tool, final boolean overwrite) {
         toolAdminServiceFacade.updateTool(tool, overwrite, new AsyncCallback<Void>() {
             @Override
-            public void onFailure(Throwable caught) {
+            public void onFailure(final Throwable caught) {
                 SimpleServiceError serviceError =
                         AutoBeanCodex.decode(factory, SimpleServiceError.class, caught.getMessage())
                                      .as();
                 if (serviceError.getErrorCode().equals(ServiceErrorCode.ERR_NOT_WRITEABLE.toString())) {
-                    IPlantDialog overwriteDialog = getPublicAppDialog(caught,
-                                                                      appearance.confirmOverwriteTitle(),
-                                                                      appearance.confirmOverwriteDangerZone(),
-                                                                      appearance.confirmOverwriteBody());
-                    overwriteDialog.addOkButtonSelectHandler(new SelectEvent.SelectHandler() {
+                    overwriteAppDialog.get(new AsyncCallback<OverwriteAppDialog>() {
                         @Override
-                        public void onSelect(SelectEvent event) {
-                            updateTool(tool, true);
+                        public void onFailure(Throwable caught) {
+                            ErrorHandler.post(caught);
+                        }
+
+                        @Override
+                        public void onSuccess(OverwriteAppDialog result) {
+                            result.setText(caught);
+                            result.show();
+                            result.addOkButtonSelectHandler(new SelectEvent.SelectHandler() {
+                                @Override
+                                public void onSelect(SelectEvent event) {
+                                    updateTool(tool, true);
+                                }
+                            });
                         }
                     });
-                    overwriteDialog.show();
+
                 } else {
                     ErrorHandler.post(caught);
                 }
@@ -187,50 +198,12 @@ public class ToolAdminPresenterImpl implements ToolAdminView.Presenter,
         });
     }
 
-    private IPlantDialog getPublicAppDialog(Throwable caught,
-                                            String title,
-                                            String before,
-                                            String after) {
-        AppAutoBeanFactory appAutoBeanFactory = GWT.create(AppAutoBeanFactory.class);
-        AppList appList =
-                AutoBeanCodex.decode(appAutoBeanFactory, AppList.class, caught.getMessage()).as();
-        ToolPublicAppListWindow publicAppListWindow = new ToolPublicAppListWindow();
-        publicAppListWindow.addApps(appList.getApps());
-        IPlantDialog publicAppDialog = getIplantDialogWindow(title);
-        publicAppDialog.setMinHeight(200);
-        HTML bodyBeforeApps = new HTML();
-        bodyBeforeApps.setHTML(before);
-        HTML bodyAfterApps = new HTML();
-        bodyAfterApps.setHTML(after);
-
-        FlowLayoutContainer container = addScrollSupport();
-        container.add(bodyBeforeApps);
-        container.add(publicAppListWindow);
-        container.add(bodyAfterApps);
-        publicAppDialog.add(container);
-
-        return publicAppDialog;
-    }
-
-    private IPlantDialog getIplantDialogWindow(String title) {
-        final IPlantDialog dialogWindow = new IPlantDialog();
-        dialogWindow.setHeadingText(title);
-        dialogWindow.setResizable(true);
-        return dialogWindow;
-    }
-
-    private FlowLayoutContainer addScrollSupport() {
-        FlowLayoutContainer container = new FlowLayoutContainer();
-        container.getScrollSupport().setScrollMode(ScrollSupport.ScrollMode.AUTO);
-        return container;
-    }
-
-    private void updateView() {
+    void updateView() {
         String searchTerm = "*";
         updateView(searchTerm);
     }
 
-    private void updateView(String searchTerm) {
+    void updateView(String searchTerm) {
         toolAdminServiceFacade.getTools(searchTerm, new AsyncCallback<List<Tool>>() {
             @Override
             public void onFailure(Throwable caught) {

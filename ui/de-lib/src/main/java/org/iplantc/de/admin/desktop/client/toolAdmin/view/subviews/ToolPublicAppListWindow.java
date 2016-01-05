@@ -9,6 +9,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.Composite;
@@ -31,6 +32,13 @@ public class ToolPublicAppListWindow extends Composite {
     @UiField ListStore<App> listStore;
     @UiField(provided = true)
     ToolAdminView.ToolAdminViewAppearance appearance;
+
+    @Inject
+    public ToolPublicAppListWindow(ToolAdminView.ToolAdminViewAppearance appearance) {
+        this.appearance = appearance;
+        initWidget(uiBinder.createAndBindUi(this));
+        grid.setAllowTextSelection(true);
+    }
 
     @UiFactory
     ListStore<App> createListStore() {
@@ -58,11 +66,6 @@ public class ToolPublicAppListWindow extends Composite {
         columns.add(integratorEmail);
         columns.add(isDisabled);
         return new ColumnModel<>(columns);
-    }
-
-    public ToolPublicAppListWindow() {
-        initWidget(uiBinder.createAndBindUi(this));
-        grid.setAllowTextSelection(true);
     }
 
     public void addApps(List<App> apps) {

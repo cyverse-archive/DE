@@ -7,11 +7,14 @@ import org.iplantc.de.admin.desktop.client.toolAdmin.service.ToolAdminServiceFac
 import org.iplantc.de.admin.desktop.client.toolAdmin.service.impl.ToolAdminServiceFacadeImpl;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.ToolAdminDetailsView;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.ToolAdminViewImpl;
+import org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs.DeleteAppDialog;
+import org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs.OverwriteAppDialog;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs.ToolAdminDetailsDialog;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews.ToolContainerEditor;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews.ToolDeviceListEditor;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews.ToolImageEditor;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews.ToolImplementationEditor;
+import org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews.ToolPublicAppListWindow;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews.ToolTestDataEditor;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews.ToolTestDataInputFilesListEditor;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews.ToolTestDataOutputFilesListEditor;
@@ -33,6 +36,9 @@ public class ToolAdminGinModule extends AbstractGinModule {
         bind(ToolAdminDetailsView.class);
         bind(ToolImplementationEditor.class);
         bind(ToolTestDataEditor.class);
+        bind(ToolPublicAppListWindow.class);
+        bind(OverwriteAppDialog.class);
+        bind(DeleteAppDialog.class);
         bind(ToolTestDataInputFilesListEditor.class);
         bind(ToolTestDataOutputFilesListEditor.class);
         bind(ToolContainerEditor.class);
