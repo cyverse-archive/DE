@@ -622,7 +622,7 @@ pgp_key_password:
 
 prod_deployment: false
 
-saved_searches_log_file: /home/iplant/logs/saved-searches.log
+saved_searches_log_file: /logs/saved-searches.log
 saved_searches:
   host: "{{ groups['saved-searches'][0] }}"
   port:
@@ -639,7 +639,7 @@ search_default_limit: 200
 
 tree_parser_base: http://portnoy.iplantcollaborative.org/parseTree
 
-tree_urls_log_file: /home/iplant/logs/tree-urls.log
+tree_urls_log_file: /logs/tree-urls.log
 tree_urls:
   host: "{{ groups['tree-urls'][0] }}"
   port:
@@ -663,7 +663,7 @@ user_info:
   client_key:
   client_secret:
 
-user_preferences_log_file: /home/iplant/logs/user-preferences.log
+user_preferences_log_file: /logs/user-preferences.log
 user_preferences:
   host: "{{ groups['user-preferences'][0] }}"
   port:
@@ -676,7 +676,7 @@ user_preferences:
   log_file: user-preferences-docker.log
   max_heap: "{{ max_heap.low }}"
 
-user_sessions_log_file: /home/iplant/logs/user-sessions.log
+user_sessions_log_file: /logs/user-sessions.log
 user_sessions:
   host: "{{ groups['user-sessions'][0] }}"
   port:

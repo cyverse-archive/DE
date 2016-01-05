@@ -6,7 +6,6 @@ After=docker.service
 Requisite=docker.service
 
 [Service]
-User=iplant
 ExecStartPre=-/usr/bin/docker rm -v {{exim.container_name}}
 ExecStart=/usr/bin/docker run --name {{exim.container_name}} \
         -e PRIMARY_HOST=iplantcollaborative.org \

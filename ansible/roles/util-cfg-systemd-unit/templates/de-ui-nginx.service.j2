@@ -7,7 +7,6 @@ Requisite=docker.service
 Requires={{de.service_name}}
 
 [Service]
-User=iplant
 ExecStartPre=-/usr/bin/docker rm -v {{de.http_server.container_name}}
 ExecStart=/usr/bin/docker run --name {{de.http_server.container_name}} \
         -p 80:80 -p 443:443 \

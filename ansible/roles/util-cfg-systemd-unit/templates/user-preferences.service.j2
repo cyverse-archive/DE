@@ -6,7 +6,6 @@ After=docker.service
 Requisite=docker.service
 
 [Service]
-User=iplant
 ExecStartPre=-/usr/bin/docker rm -v {{user_preferences.container_name}}
 ExecStart=/usr/bin/docker run --name {{user_preferences.container_name}} \
         -v {{ de_config_dir }}:/etc/iplant/de \
