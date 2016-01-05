@@ -39,11 +39,17 @@
       (grant-owner-permission session subjects de-users-role app-resource app))))
 
 (defn register-de-apps
-  "Registers all DE apps in Grouper."
+  "Registers all DE apps in Grouper. This function assumes that the permission assignments for an app
+  are correct if the app resource definition already exists."
   [database session subjects folder-names permission-def-name]
   (let [apps-folder-name   (:de-apps folder-names)
         permission-def     (perms/find-permission-def apps-folder-name permission-def-name)
+        pre-existing-apps  (perms/load-permission-resource-name-set permission-def)
         de-users-role-name (format "%s:%s" (:de-users folder-names) consts/de-users-role-name)
         de-users-role      (roles/find-role session de-users-role-name)]
-    (dorun (map (partial register-app session subjects de-users-role permission-def apps-folder-name)
-                (db/list-de-apps database)))))
+    (->> (db/list-de-apps database)
+         (remove (comp (partial contains? pre-existing-apps)
+                       (partial str apps-folder-name ":")
+                       :id))
+         (map (partial register-app session subjects de-users-role permission-def apps-folder-name))
+         (dorun))))

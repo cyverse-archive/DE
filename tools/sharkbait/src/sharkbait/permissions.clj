@@ -1,7 +1,7 @@
 (ns sharkbait.permissions
   (:import [edu.internet2.middleware.grouper.attr AttributeDefNameSave AttributeDefSave AttributeDefType]
            [edu.internet2.middleware.grouper.attr.assign AttributeAssign]
-           [edu.internet2.middleware.grouper.attr.finder AttributeDefFinder]
+           [edu.internet2.middleware.grouper.attr.finder AttributeDefFinder AttributeDefNameFinder]
            [edu.internet2.middleware.grouper.misc SaveMode]
            [edu.internet2.middleware.grouper.permissions PermissionFinder]))
 
@@ -41,8 +41,10 @@
 
 (defn find-permission-def
   "Finds a permission definition."
-  [folder permission-def-name]
-  (AttributeDefFinder/findByName (str folder ":" permission-def-name) true))
+  ([full-permission-def-name]
+     (AttributeDefFinder/findByName full-permission-def-name true))
+  ([folder permission-def-name]
+     (find-permission-def (str folder ":" permission-def-name))))
 
 (defn create-permission-resource
   "Creates a permission resource."
@@ -52,35 +54,24 @@
       (.assignSaveMode SaveMode/INSERT_OR_UPDATE)
       (.save)))
 
-(defn role-permission-exists?
-  "Determines whether or not a role permission exists."
-  [role action permission-def-name]
-  (-> (PermissionFinder.)
-      (.addRole role)
-      (.assignActions [action])
-      (.addPermissionName permission-def-name)
-      (.findPermissions)
-      (seq)))
-
 (defn grant-role-permission
   "Grants permission to a Grouper role."
   [role action permission-def-name]
-  (when-not (role-permission-exists? role action permission-def-name)
-    (.saveOrUpdate (AttributeAssign. role action permission-def-name nil))))
-
-(defn role-membership-permission-exists?
-  "Determines whether or not a membershiup within a role has permission to a resource."
-  [role member action permission-def-name]
-  (-> (PermissionFinder.)
-      (.addRole role)
-      (.addMemberId (.getId member))
-      (.assignActions [action])
-      (.addPermissionName permission-def-name)
-      (.findPermissions)
-      (seq)))
+  (.saveOrUpdate (AttributeAssign. role action permission-def-name nil)))
 
 (defn grant-role-membership-permission
   "Grants permission to a membership within a role."
   [role member action permission-def-name]
-  (when-not (role-membership-permission-exists? role member action permission-def-name)
-    (.saveOrUpdate (AttributeAssign. role member action permission-def-name nil))))
+  (.saveOrUpdate (AttributeAssign. role member action permission-def-name nil)))
+
+(defn load-permission-resources
+  "Loads all permission resources for a permission definition."
+  [permission-def]
+  (-> (AttributeDefNameFinder.)
+      (.assignAttributeDefId (.getId permission-def))
+      (.findAttributeNames)))
+
+(defn load-permission-resource-name-set
+  "Loads the set of permission resource names for a permission definition."
+  [permission-def]
+  (into #{} (map #(.getName %) (load-permission-resources permission-def))))
