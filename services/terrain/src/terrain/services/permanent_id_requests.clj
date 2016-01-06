@@ -29,15 +29,6 @@
              :folder-id id}))
   data-item)
 
-(defn- create-staging-dir
-  []
-  (let [staging-path (config/permanent-id-staging-dir)
-        curators     (set (config/permanent-id-curators))]
-    (when-not (data-info/path-exists? (config/irods-user) staging-path)
-      (log/warn "creating" staging-path "for:" (clojure.string/join ", " curators))
-      (data-info-client/create-dirs (config/irods-user) [staging-path])
-      (data-info/share (config/irods-user) curators [staging-path] "own"))))
-
 (defn- validate-staging-dest
   [{:keys [path] :as data-item}]
   (let [staging-dest (ft/path-join (config/permanent-id-staging-dir) (ft/basename path))]
@@ -53,15 +44,44 @@
        (validate-owner user)
        validate-staging-dest))
 
+(defn- get-requested-data-item
+  "Gets data-info stat for the given ID and checks if the data item is valid for a Permanent ID request."
+  [user data-id]
+  (->> data-id
+       (data-info/stat-by-uuid user)
+       (validate-data-item user)))
+
+(defn- submit-permanent-id-request
+  "Submits the request to the metadata create-permanent-id-request endpoint."
+  [type folder-id target-type path]
+  (-> {:type type
+       :target_id folder-id
+       :target_type target-type
+       :original_path path}
+      json/encode
+      metadata/create-permanent-id-request
+      :body
+      service/decode-json))
+
+(defn- create-staging-dir
+  "Creates the Permanent ID Requests staging directory, if it doesn't already exist."
+  []
+  (let [staging-path (config/permanent-id-staging-dir)
+        curators     (set (config/permanent-id-curators))]
+    (when-not (data-info/path-exists? (config/irods-user) staging-path)
+      (log/warn "creating" staging-path "for:" (clojure.string/join ", " curators))
+      (data-info-client/create-dirs (config/irods-user) [staging-path])
+      (data-info/share (config/irods-user) curators [staging-path] "own"))))
+
 (defn- stage-data-item
   [user {:keys [id path] :as data-item}]
-  (let [folder-name (ft/basename path)
+  (let [staged-path (ft/path-join (config/permanent-id-staging-dir) (ft/basename path))
         curators (set (config/permanent-id-curators))]
-    (log/warn "share" path "with:" (clojure.string/join ", " curators))
-    (data-info/share user curators [path] "own")
     (data-info-client/move-single (config/irods-user) id (config/permanent-id-staging-dir))
+    (log/warn "share" staged-path "with:" (clojure.string/join ", " curators))
+    (data-info/share (config/irods-user) curators [staged-path] "own")
     (when-not (contains? curators user)
-      (data-info/share (config/irods-user) [user] [path] "write"))))
+      (data-info/share (config/irods-user) [user] [staged-path] "write"))))
 
 (defn- format-perm-id-req-response
   [user {:keys [target_id] :as response}]
@@ -79,18 +99,9 @@
   (let [{type :type folder-id :folder} (service/decode-json body)
         folder-id                      (uuidify folder-id)
         user                           (:shortUsername current-user)
-        {:keys [path] :as folder}      (->> folder-id
-                                            (data-info/stat-by-uuid user)
-                                            (validate-data-item user))
+        {:keys [path] :as folder}      (get-requested-data-item user folder-id)
         target-type                    (validate-request-target-type folder)
-        response                       (-> {:type type
-                                            :target_id folder-id
-                                            :target_type target-type
-                                            :original_path path}
-                                         json/encode
-                                         metadata/create-permanent-id-request
-                                         :body
-                                         service/decode-json)]
+        response                       (submit-permanent-id-request type folder-id target-type path)]
     (stage-data-item user folder)
     (format-perm-id-req-response user response)))
 
