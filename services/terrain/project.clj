@@ -7,9 +7,9 @@
       (string/trim (:out (sh "git" "rev-parse" "HEAD")))
       ""))
 
-(defproject org.iplantc/terrain "5.2.3.0-SNAPSHOT"
+(defproject org.iplantc/terrain "5.2.4.0-SNAPSHOT"
   :description "Framework for hosting DiscoveryEnvironment metadata services."
-  :url "https://github.com/iPlantCollaborativeOpenSource/DE"
+  :url "https://github.com/cyverse/DE"
   :license {:name "BSD Standard License"
             :url "http://www.iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :manifest {"Git-Ref" ~(git-ref)}
@@ -23,7 +23,7 @@
                  [com.cemerick/url "0.1.1" :exclusions [com.cemerick/clojurescript.test]]
                  [commons-net "3.3"]                               ; provides org.apache.commons.net
                  [compojure "1.4.0"]
-                 [metosin/compojure-api "0.23.1"]
+                 [metosin/compojure-api "0.24.2"]
                  [de.ubercode.clostache/clostache "1.4.0" :exclusions [org.clojure/core.incubator]]
                  [dire "0.5.3"]
                  [me.raynes/fs "1.4.6"]
@@ -33,15 +33,15 @@
                  [org.nexml.model/nexml "1.5-SNAPSHOT"]  ; provides org.nexml.model
                  [org/forester "1.005" ]
                  [slingshot "0.12.2"]
-                 [org.iplantc/clj-cas "5.2.3.0"]
-                 [org.iplantc/clj-icat-direct "5.2.3.0"]
-                 [org.iplantc/clj-jargon "5.2.3.0"]
-                 [org.iplantc/clojure-commons "5.2.3.0"]
-                 [org.iplantc/common-cfg "5.2.3.0"]
-                 [org.iplantc/common-cli "5.2.3.0"]
-                 [org.iplantc/kameleon "5.2.3.0"]
-                 [org.iplantc/heuristomancer "5.2.3.0"]
-                 [org.iplantc/service-logging "5.2.3.0"]]
+                 [org.iplantc/clj-cas "5.2.4.0"]
+                 [org.iplantc/clj-icat-direct "5.2.4.0"]
+                 [org.iplantc/clj-jargon "5.2.4.0"]
+                 [org.iplantc/clojure-commons "5.2.4.0"]
+                 [org.iplantc/common-cfg "5.2.4.0"]
+                 [org.iplantc/common-cli "5.2.4.0"]
+                 [org.iplantc/kameleon "5.2.4.0"]
+                 [org.iplantc/heuristomancer "5.2.4.0"]
+                 [org.iplantc/service-logging "5.2.4.0"]]
   :plugins [[lein-ring "0.9.2" :exclusions [org.clojure/clojure]]
             [swank-clojure "1.4.2" :exclusions [org.clojure/clojure]]]
   :profiles {:dev     {:resource-paths ["conf/test"]}

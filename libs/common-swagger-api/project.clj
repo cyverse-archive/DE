@@ -1,4 +1,4 @@
-(defproject org.iplantc/common-swagger-api "5.2.3.0"
+(defproject org.iplantc/common-swagger-api "5.2.4.0"
   :description "Common library for Swagger documented RESTful APIs"
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"
@@ -11,6 +11,6 @@
                                [com.fasterxml.jackson.core/jackson-databind]
                                [com.fasterxml.jackson.core/jackson-core]]]
                  [clj-time "0.9.0"] ; required due to bug in lein-ring
-                 [metosin/compojure-api "0.23.1"]]
+                 [metosin/compojure-api "0.24.2"]]
   :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]]
                    :plugins [[lein-ring "0.9.6"]]}})

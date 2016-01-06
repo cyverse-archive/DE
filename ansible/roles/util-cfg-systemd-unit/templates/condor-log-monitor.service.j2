@@ -6,7 +6,6 @@ After=docker.service
 Requisite=docker.service
 
 [Service]
-User=iplant
 ExecStartPre=-/usr/bin/docker rm -v {{condor_log_monitor.container_name}}
 ExecStart=/usr/bin/docker run --name {{condor_log_monitor.container_name}} \
         -v /var/log/condor/:/var/log/condor/ \

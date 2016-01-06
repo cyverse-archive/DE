@@ -55,7 +55,7 @@
    :infoType     (filetypes/get-types cm user path)})
 
 (defn- manifest
-  [user path data-threshold]
+  [user path]
   (let [path (ft/rm-last-slash path)]
     (with-jargon (icat/jargon-cfg) [cm]
       (validators/user-exists cm user)
@@ -66,7 +66,7 @@
 
 (defn do-manifest
   [{user :user path :path}]
-  (manifest user path (cfg/fs-data-threshold)))
+  (manifest user path))
 
 (with-pre-hook! #'do-manifest
   (fn [params]

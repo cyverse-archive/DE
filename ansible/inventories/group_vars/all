@@ -131,7 +131,7 @@ de:
 #          ssl_certificate_key: "/etc/ssl/example.com.key"
 
 app_version_name: Phthalo
-app_version: 2.3.0
+app_version: 2.4.0
 
 de_feedback_to_addr: ""
 de_mail_from_addr: "{{ de_feedback_to_addr }}"
@@ -318,8 +318,8 @@ elk:
     service_name: elk-kibana.service
     service_name_short: elk-kibana
     service_description: ELK kibana
-    version: 4.1.2
-    image_name: "kibana:4.1.2"
+    version: 4.1.4
+    image_name: "kibana:4.1.4"
     log_file: elk-kibana-docker.log
 
 elasticsearch:
@@ -622,7 +622,7 @@ pgp_key_password:
 
 prod_deployment: false
 
-saved_searches_log_file: /home/iplant/logs/saved-searches.log
+saved_searches_log_file: /logs/saved-searches.log
 saved_searches:
   host: "{{ groups['saved-searches'][0] }}"
   port:
@@ -639,7 +639,7 @@ search_default_limit: 200
 
 tree_parser_base: http://portnoy.iplantcollaborative.org/parseTree
 
-tree_urls_log_file: /home/iplant/logs/tree-urls.log
+tree_urls_log_file: /logs/tree-urls.log
 tree_urls:
   host: "{{ groups['tree-urls'][0] }}"
   port:
@@ -663,7 +663,7 @@ user_info:
   client_key:
   client_secret:
 
-user_preferences_log_file: /home/iplant/logs/user-preferences.log
+user_preferences_log_file: /logs/user-preferences.log
 user_preferences:
   host: "{{ groups['user-preferences'][0] }}"
   port:
@@ -676,7 +676,7 @@ user_preferences:
   log_file: user-preferences-docker.log
   max_heap: "{{ max_heap.low }}"
 
-user_sessions_log_file: /home/iplant/logs/user-sessions.log
+user_sessions_log_file: /logs/user-sessions.log
 user_sessions:
   host: "{{ groups['user-sessions'][0] }}"
   port:

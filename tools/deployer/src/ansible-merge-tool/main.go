@@ -1,6 +1,7 @@
 package main
 
 import (
+	"copy"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -191,6 +192,21 @@ func CopyCompose(internalPath, externalPath string) error {
 	return nil
 }
 
+// CopyPlaybooks copies the contents of the internal playbooks directory to the
+// external playbooks directory
+func CopyPlaybooks(internalPath, externalPath string) error {
+	internalPlaybooks, err := filepath.Abs(path.Join(internalPath, "playbooks"))
+	if err != nil {
+		return err
+	}
+	externalPlaybooks, err := filepath.Abs(path.Join(externalPath, "playbooks"))
+	if err != nil {
+		return err
+	}
+	playbookCopier := copy.New()
+	return playbookCopier.Copy(playbookCopier.FileVisitor, internalPlaybooks, externalPlaybooks)
+}
+
 // LaunchDocker launches the provided image
 func LaunchDocker(imageName, cwd string) error {
 	mountArg := fmt.Sprintf("%s:/de-ansible", cwd)
@@ -316,6 +332,10 @@ func main() {
 	}
 
 	if err = CopyCompose(internalPath, externalPath); err != nil {
+		log.Fatal(err)
+	}
+
+	if err = CopyPlaybooks(internalPath, externalPath); err != nil {
 		log.Fatal(err)
 	}
 

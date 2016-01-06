@@ -313,11 +313,6 @@
   [props config-valid configs filesystem-routes-enabled]
   "terrain.fs.preview-size")
 
-(cc/defprop-int fs-data-threshold
-  "Um...hmmm..."
-  [props config-valid configs filesystem-routes-enabled]
-  "terrain.fs.data-threshold")
-
 (cc/defprop-str fs-community-data
   "The path to the root directory for community data."
   [props config-valid configs filesystem-routes-enabled]

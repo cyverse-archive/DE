@@ -50,7 +50,7 @@ ADD build_profiles.clj /root/.lein/profiles.clj
 RUN chmod a+x /usr/bin/lein
 RUN npm install -g grunt-cli
 RUN lein help
-RUN git clone https://github.com/iPlantCollaborativeOpenSource/DE.git backend && \
+RUN git clone https://github.com/cyverse/DE.git backend && \
     cd backend && \
     git checkout $git_commit && \
     lein exec build-all.clj lein-plugins libs

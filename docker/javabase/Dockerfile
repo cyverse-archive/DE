@@ -12,10 +12,7 @@ RUN apk add --update curl \
     && apk del curl \
     && rm -rf /var/cache/apk/*
 
-RUN mkdir -p /home/iplant
-RUN busybox adduser -s /bin/sh -u 1337 -D -h /home/iplant iplant
-
-USER iplant
-RUN mkdir -p /home/iplant/logs/
-WORKDIR /home/iplant
+RUN mkdir -p /logs/ /bin/
+WORKDIR /
 EXPOSE 60000
+

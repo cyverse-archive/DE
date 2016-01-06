@@ -19,12 +19,6 @@
            [clojure.lang IPersistentMap]))
 
 
-(defn copy-metadata
-  "Copies AVUs from src and applies them to dest."
-  [cm src dest]
-  (doseq [m (get-metadata cm src)]
-    (set-metadata cm dest (:attr m) (:value m) (:unit m))))
-
 (defn save
   [cm istream user dest-path]
   (log/info "In save function for " user dest-path)

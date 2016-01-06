@@ -12,7 +12,7 @@
             [data-info.util.config :as cfg]
             [clojure-commons.error-codes :as ce]
             [data-info.util.service :as svc]
-            [schema.core :as s]))
+            [data-info.util.schema :as s]))
 
 (defroutes* data-operations
 
@@ -130,7 +130,7 @@ with characters in a runtime-configurable parameter. Currently, this parameter l
 
       (GET* "/chunks-tabular" [:as {uri :uri}]
         :query [params TabularChunkParams]
-        :return (s/either TabularChunkDoc TabularChunkReturn)
+        :return (s/doc-only TabularChunkReturn TabularChunkDoc)
         :summary "Get Tabular File Chunk"
         :description (str
   "Gets the specified page of the tabular file, with a page size roughly corresponding to the provided size. The size is not precisely guaranteed, because partial lines cannot be correctly parsed."
