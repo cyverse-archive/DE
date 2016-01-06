@@ -1,6 +1,5 @@
 (ns kameleon.app-groups
   (:use [kameleon.entities]
-        [kameleon.queries :only [add-agave-pipeline-where-clause]]
         [korma.core :exclude [update]]
         [korma.db :only [transaction]]
         [slingshot.slingshot :only [throw+]])

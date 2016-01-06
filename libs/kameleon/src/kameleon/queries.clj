@@ -325,10 +325,3 @@
     (where {:user_id                                       (get-user-id username)
             :ip_address                                    ip-address})
     (where {(sqlfn :date_trunc "milliseconds" :login_time) (Timestamp. login-time)})))
-
-(defn add-agave-pipeline-where-clause
-  [query {agave-enabled? :agave-enabled :or {agave-enaled? "false"}}]
-  (let [agave-enabled? (Boolean/parseBoolean agave-enabled?)]
-    (if-not agave-enabled?
-      (where query {:step_count :task_count})
-      query)))

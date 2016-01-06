@@ -13,7 +13,8 @@
         [apps.util.config]
         [apps.util.conversions :only [to-long remove-nil-vals]]
         [apps.workspace])
-  (:require [cemerick.url :as curl]))
+  (:require [apps.clients.iplant-groups :as iplant-groups]
+            [cemerick.url :as curl]))
 
 (def my-public-apps-id (uuidify "00000000-0000-0000-0000-000000000000"))
 (def trash-category-id (uuidify "FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"))
@@ -21,6 +22,8 @@
 (def default-sort-params
   {:sort-field :lower_case_name
    :sort-dir   :ASC})
+
+(def permission-precedence (into {} (map-indexed (fn [i v] (vector v i)) ["own" "write" "read"])))
 
 (defn- fix-sort-params
   [params]
@@ -190,24 +193,32 @@
   [{tool-count :tool_count external-app-count :external_app_count task-count :task_count}]
   (= (+ tool-count external-app-count) task-count))
 
-(defn format-app-listing
+(defn- format-app-permissions
+  "Formats the permission setting in the app."
+  [app perms]
+  (assoc app :permission (first (sort-by permission-precedence (map :action_name (perms (:id app)))))))
+
+(defn- format-app-listing
   "Formats certain app fields into types more suitable for the client."
-  [app]
+  [perms app]
   (-> (assoc app :can_run (app-can-run? app))
       (dissoc :tool_count :task_count :external_app_count :lower_case_name)
       (format-app-ratings)
       (format-app-pipeline-eligibility)
+      (format-app-permissions perms)
       (assoc :can_favor true :can_rate true :app_type "DE")
       (remove-nil-vals)))
 
+;; TODO: add permission checks to this function.
 (defn- list-apps-in-virtual-group
   "Formats a listing for a virtual group."
   [user workspace group-id params]
-  (let [group-key (keyword (str group-id))]
+  (let [group-key (keyword (str group-id))
+        perms     (iplant-groups/load-app-permissions (:shortUsername user))]
     (when-let [format-fns (virtual-group-fns group-key)]
       (-> ((:format-group format-fns) user (:id workspace) params)
           (assoc :apps (->> ((:format-listing format-fns) user workspace params)
-                            (map format-app-listing)))))))
+                            (map (partial format-app-listing perms))))))))
 
 (defn- count-apps-in-group
   "Counts the number of apps in an app group, including virtual app groups that may be included."
@@ -228,11 +239,13 @@
   "This service lists all of the apps in a real app group and all of its descendents."
   [user workspace category-id params]
   (let [app_group      (->> (get-app-category category-id)
-                            (assert-not-nil [:category_id category-id])
+                            (assert-not-nil ["category_id" category-id])
                             remove-nil-vals)
+        perms          (iplant-groups/load-app-permissions (:shortUsername user))
+        params         (assoc params :app-ids (set (keys perms)))
         total          (count-apps-in-group user workspace app_group params)
         apps_in_group  (get-apps-in-group user workspace app_group params)
-        apps_in_group  (map format-app-listing apps_in_group)]
+        apps_in_group  (map (partial format-app-listing perms) apps_in_group)]
     (assoc app_group
       :app_count total
       :apps apps_in_group)))
@@ -252,19 +265,21 @@
   (or (#{my-public-apps-id trash-category-id} category-id)
       (seq (select :app_categories (where {:id category-id})))))
 
+;; TODO: add permission checks to this function.
 (defn search-apps
   "This service searches for apps in the user's workspace and all public app
    groups, based on a search term."
   [user params]
   (let [search_term (curl/url-decode (:search params))
         workspace (get-workspace (:username user))
+        perms (iplant-groups/load-app-permissions (:shortUsername user))
         total (count-search-apps-for-user search_term (:id workspace) params)
         search_results (search-apps-for-user
                         search_term
                         workspace
                         (workspace-favorites-app-category-index)
                         (fix-sort-params params))
-        search_results (map format-app-listing search_results)]
+        search_results (map (partial format-app-listing perms) search_results)]
     {:app_count total
      :apps search_results}))
 

@@ -365,7 +365,10 @@
      (describe Long "The number of Tasks this App executes")
 
      (optional-key :wiki_url)
-     AppDocUrlParam}))
+     AppDocUrlParam
+
+     :permission
+     (describe String "The user's access leve for the app.")}))
 
 (defschema AppListing
   {:app_count (describe Long "The total number of Apps in the listing")
