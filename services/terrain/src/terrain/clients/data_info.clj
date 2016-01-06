@@ -235,9 +235,9 @@
 (defn get-tree-metaurl
   "Gets the URL used to get saved tree URLs."
   [user path]
-  (->> (raw/get-avus user (uuid-for-path user path))
+  (->> (raw/admin-get-avus user (uuid-for-path user path))
     :irods-avus
-    (filter #(= (:attr %) "tree-urls"))
+    (filter #(= (:attr %) (cfg/tree-urls-attr)))
     first
     :value))
 
@@ -246,7 +246,7 @@
    obtain the tree URLs."
   [user path metaurl]
   (let [path-uuid (uuid-for-path user path)]
-    (raw/admin-add-avus user path-uuid [{:attr "tree-urls" :value metaurl :unit ""}])))
+    (raw/admin-add-avus user path-uuid [{:attr (cfg/tree-urls-attr) :value metaurl :unit ""}])))
 
 
 (defn ^ISeq list-user-groups
