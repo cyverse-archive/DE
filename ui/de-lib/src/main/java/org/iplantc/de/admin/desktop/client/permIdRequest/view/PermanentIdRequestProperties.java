@@ -1,7 +1,6 @@
 package org.iplantc.de.admin.desktop.client.permIdRequest.view;
 
 import org.iplantc.de.client.models.identifiers.PermanentIdRequest;
-import org.iplantc.de.client.models.identifiers.PermanentIdRequestStatus;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestType;
 
 import com.google.gwt.editor.client.Editor.Path;

@@ -118,9 +118,9 @@ public class PermIdRequestViewImpl extends Composite implements PermIdRequestVie
         ColumnConfig<PermanentIdRequest, String> nameCol = new ColumnConfig<>(pr_props.requestedBy(),
                                                                               appearance.nameColumnWidth(),
                                                                               appearance.nameColumnLabel());
-       // ColumnConfig<PermanentIdRequest, String> pathCol = new ColumnConfig<>(pr_props.path(),
-       //                                                                       appearance.pathColumnWidth(),
-       //                                                                       appearance.pathColumnLabel());
+        ColumnConfig<PermanentIdRequest, String> pathCol = new ColumnConfig<>(pr_props.path(),
+                                                                              appearance.pathColumnWidth(),
+                                                                              appearance.pathColumnLabel());
         ColumnConfig<PermanentIdRequest, Date> dateSubCol = new ColumnConfig<>(pr_props.dateSubmitted(),
                                                                                appearance.dateSubmittedColumnWidth(),
                                                                                appearance.dateSubmittedColumnLabel());
@@ -138,7 +138,7 @@ public class PermIdRequestViewImpl extends Composite implements PermIdRequestVie
                                                                                                                                            "Status");
 
         list.add(nameCol);
-      //  list.add(pathCol);
+        list.add(pathCol);
         list.add(dateSubCol);
         list.add(dateUpCol);
         list.add(type);

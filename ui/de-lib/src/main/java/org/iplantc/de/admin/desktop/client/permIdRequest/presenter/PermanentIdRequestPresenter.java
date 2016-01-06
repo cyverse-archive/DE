@@ -3,38 +3,33 @@ package org.iplantc.de.admin.desktop.client.permIdRequest.presenter;
 import org.iplantc.de.admin.desktop.client.permIdRequest.service.PermIdRequestAdminServiceFacade;
 import org.iplantc.de.admin.desktop.client.permIdRequest.view.PermIdRequestView;
 import org.iplantc.de.admin.desktop.client.permIdRequest.view.PermIdRequestView.Presenter;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadataList;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplateList;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequest;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestAutoBeanFactory;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestList;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestUpdate;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
+import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.MetadataView;
+import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceMetadataUpdateCallback;
+import org.iplantc.de.diskResource.client.presenters.metadata.MetadataPresenterImpl;
 import org.iplantc.de.diskResource.client.views.metadata.DiskResourceMetadataViewImpl;
 import org.iplantc.de.resources.client.messages.I18N;
 
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
-import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent.DialogHideHandler;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
-
-import java.util.List;
 
 /**
  * 
@@ -64,8 +59,7 @@ public class PermanentIdRequestPresenter implements Presenter {
                     public void onDialogHide(DialogHideEvent event) {
                         if (event.getHideButton().equals(PredefinedButton.YES)) {
                             metadataDialog.mask(I18N.DISPLAY.loadingMask());
-                            // mdPresenter.setDiskResourceMetadata(new
-                            // DiskResourceMetadataUpdateCallback(ManageMetadataDialog.this));
+                            meta_pre.setDiskResourceMetadata(new DiskResourceMetadataUpdateCallback(metadataDialog));
                         }
 
                     }
@@ -73,12 +67,10 @@ public class PermanentIdRequestPresenter implements Presenter {
                 cmb.show();
             } else {
                 metadataDialog.mask(I18N.DISPLAY.loadingMask());
-                // mdPresenter.setDiskResourceMetadata(new
-                // DiskResourceMetadataUpdateCallback(ManageMetadataDialog.this));
+                meta_pre.setDiskResourceMetadata(new DiskResourceMetadataUpdateCallback(metadataDialog));
             }
         }
     }
-
 
     PermIdRequestView view;
 
@@ -92,9 +84,11 @@ public class PermanentIdRequestPresenter implements Presenter {
 
     final DiskResourceUtil diskResourceUtil = DiskResourceUtil.getInstance();
 
-    private final Dialog metadataDialog;
+    private final IPlantDialog metadataDialog;
 
     private final PermanentIdRequestAutoBeanFactory factory;
+
+    private MetadataView.Presenter meta_pre;
 
     @Inject
     public PermanentIdRequestPresenter(DiskResourceServiceFacade drsvc,
@@ -105,7 +99,7 @@ public class PermanentIdRequestPresenter implements Presenter {
         this.prsvc = prsvc;
         this.view = view;
         this.factory = factory;
-        metadataDialog = new Dialog();
+        metadataDialog = new IPlantDialog();
         metadataDialog.setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
         metadataDialog.setHeadingHtml("Metadata");
         metadataDialog.setSize("600px", "400px");
@@ -116,32 +110,10 @@ public class PermanentIdRequestPresenter implements Presenter {
 
     @Override
     public void fetchMetadata() {
-        drsvc.getDiskResourceMetaData(selectedRequest.getFolder(),
-                                      new AsyncCallback<DiskResourceMetadataList>() {
-                                          @Override
-                                          public void onSuccess(final DiskResourceMetadataList result) {
-                                              metadataView = new DiskResourceMetadataViewImpl(diskResourceUtil.isWritable(selectedRequest.getFolder()));
-                                              metadataView.loadMetadata(result.getMetadata());
-
-                                              final DiskResourceMetadataTemplateList metadataTemplateList = result.getMetadataTemplates();
-                                              if (metadataTemplateList != null) {
-                                                  final List<DiskResourceMetadataTemplate> templates = metadataTemplateList.getTemplates();
-                                                  if (templates != null && !templates.isEmpty()) {
-                                                      metadataView.loadMetadataTemplate(templates.get(0));
-                                                  }
-                                              }
-
-                                              metadataDialog.setWidget(metadataView);
-                                              metadataDialog.show();
-
-                                          }
-
-                                          @Override
-                                          public void onFailure(Throwable caught) {
-                                              ErrorHandler.post(caught);
-                                          }
-                                      });
-
+        metadataView = new DiskResourceMetadataViewImpl(diskResourceUtil.isWritable(selectedRequest.getFolder()));
+        meta_pre = new MetadataPresenterImpl(selectedRequest.getFolder(), metadataView, drsvc);
+        meta_pre.go(metadataDialog);
+        metadataDialog.show();
     }
 
     @Override
@@ -173,16 +145,11 @@ public class PermanentIdRequestPresenter implements Presenter {
 
             @Override
             public void onSuccess(String result) {
-                GWT.log("result-->" + result);
-                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig("got requests!"));
                 final AutoBean<PermanentIdRequestList> decode = AutoBeanCodex.decode(factory,
                                                                                      PermanentIdRequestList.class,
                                                                                      result);
 
-                List<PermanentIdRequest> request = decode.as().getRequests();
                 view.loadRequests(decode.as().getRequests());
-                GWT.log(request.size() + "<---");
-
             }
         });
 
@@ -199,21 +166,21 @@ public class PermanentIdRequestPresenter implements Presenter {
                                              update,
                                              new AsyncCallback<String>() {
 
-            @Override
-            public void onFailure(Throwable caught) {
-                IplantAnnouncer.getInstance()
-                               .schedule(new ErrorAnnouncementConfig("Unable to update DOI request!"));
+                                                 @Override
+                                                 public void onFailure(Throwable caught) {
+                                                     IplantAnnouncer.getInstance()
+                                                                    .schedule(new ErrorAnnouncementConfig("Unable to update DOI request!"));
 
-            }
+                                                 }
 
-            @Override
-            public void onSuccess(String result) {
-                IplantAnnouncer.getInstance()
-                               .schedule(new SuccessAnnouncementConfig("Request Updated!"));
+                                                 @Override
+                                                 public void onSuccess(String result) {
+                                                     IplantAnnouncer.getInstance()
+                                                                    .schedule(new SuccessAnnouncementConfig("Request Updated!"));
                                                      selectedRequest.setStatus(update.getStatus());
                                                      view.update(selectedRequest);
-            }
-        });
+                                                 }
+                                             });
     }
 
 }
