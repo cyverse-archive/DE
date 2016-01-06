@@ -79,42 +79,6 @@
     (assoc irods-avus
            :metadata template-avus)))
 
-(defn- common-metadata-add
-  "Adds an AVU to 'path'. The AVU is passed in as a map in the format:
-   {
-      :attr attr-string
-      :value value-string
-      :unit unit-string
-   }
-   It's a no-op if an AVU with the same attribute and value is already
-   associated with the path."
-  [cm path avu-map]
-  (let [fixed-path (ft/rm-last-slash path)
-        new-unit   (reserved-unit avu-map)
-        attr       (:attr avu-map)
-        value      (:value avu-map)]
-    (log/warn "Fixed Path:" fixed-path)
-    (log/warn "check" (true? (attr-value? cm fixed-path attr value)))
-    (when-not (attr-value? cm fixed-path attr value)
-      (log/warn "Adding " attr value "to" fixed-path)
-      (add-metadata cm fixed-path attr value new-unit))
-    fixed-path))
-
-(defn- common-add-validate
-  [cm user path avu-map]
-  (when (= "failure" (:status avu-map))
-    (throw+ {:error_code ERR_INVALID_JSON}))
-  (validators/path-exists cm path)
-  (validators/path-writeable cm user path))
-
-(defn admin-metadata-add
-  "Adds the AVU to path, bypassing user permission checks. See (metadata-set)
-   for the AVU map format."
-  [path avu-map]
-  (with-jargon (icat/jargon-cfg) [cm]
-    (common-add-validate cm (cfg/irods-user) path avu-map)
-    (common-metadata-add cm path avu-map)))
-
 (defn- metadata-set
   "Allows user to set metadata on an item with the given data-id. The user must exist in iRODS and have
    write permissions on the data item. The request parameter is a map with :irods-avus and :metadata keys
