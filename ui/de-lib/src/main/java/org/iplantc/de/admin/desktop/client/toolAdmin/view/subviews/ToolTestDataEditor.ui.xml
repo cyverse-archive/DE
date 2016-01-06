@@ -1,6 +1,5 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
-             xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:d="urn:import:org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews"
              xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
              xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button">
@@ -17,30 +16,28 @@
         <ui:attributes width="1" height="-1" margins="{margins}"/>
     </ui:with>
 
-    <g:FormPanel>
-        <container:VerticalLayoutContainer ui:field="layoutContainer">
-            <container:child layoutData="{layoutData}">
-                <toolbar:ToolBar title="">
-                    <button:TextButton ui:field="addInputFileButton" text="Add"
-                                       icon="{appearance.addIcon}"/>
-                    <button:TextButton ui:field="deleteInputFileButton" text="Delete"
-                                       icon="{appearance.deleteIcon}"/>
-                </toolbar:ToolBar>
-            </container:child>
-            <container:child layoutData="{layoutData}">
-                <d:ToolTestDataInputFilesListEditor ui:field="inputFilesEditor"/>
-            </container:child>
-            <container:child layoutData="{layoutData}">
-                <toolbar:ToolBar title="">
-                    <button:TextButton ui:field="addOutputFileButton" text="Add"
-                                       icon="{appearance.addIcon}"/>
-                    <button:TextButton ui:field="deleteOutputFileButton" text="Delete"
-                                       icon="{appearance.deleteIcon}"/>
-                </toolbar:ToolBar>
-            </container:child>
-            <container:child layoutData="{layoutData}">
-                <d:ToolTestDataOutputFilesListEditor ui:field="outputFilesEditor"/>
-            </container:child>
-        </container:VerticalLayoutContainer>
-    </g:FormPanel>
+    <container:VerticalLayoutContainer ui:field="layoutContainer">
+        <container:child layoutData="{layoutData}">
+            <toolbar:ToolBar title="">
+                <button:TextButton ui:field="addInputFileButton" text="Add"
+                                   icon="{appearance.addIcon}"/>
+                <button:TextButton ui:field="deleteInputFileButton" text="Delete"
+                                   icon="{appearance.deleteIcon}"/>
+            </toolbar:ToolBar>
+        </container:child>
+        <container:child layoutData="{layoutData}">
+            <d:ToolTestDataInputFilesListEditor ui:field="inputFilesEditor"/>
+        </container:child>
+        <container:child layoutData="{layoutData}">
+            <toolbar:ToolBar title="">
+                <button:TextButton ui:field="addOutputFileButton" text="Add"
+                                   icon="{appearance.addIcon}"/>
+                <button:TextButton ui:field="deleteOutputFileButton" text="Delete"
+                                   icon="{appearance.deleteIcon}"/>
+            </toolbar:ToolBar>
+        </container:child>
+        <container:child layoutData="{layoutData}">
+            <d:ToolTestDataOutputFilesListEditor ui:field="outputFilesEditor"/>
+        </container:child>
+    </container:VerticalLayoutContainer>
 </ui:UiBinder> 

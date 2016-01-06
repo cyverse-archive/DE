@@ -1,6 +1,5 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
-             xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:d="urn:import:org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews"
              xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
 
@@ -16,70 +15,68 @@
         <ui:attributes width="1" height="-1" margins="{margins}"/>
     </ui:with>
 
-    <g:FormPanel>
-        <container:VerticalLayoutContainer ui:field="layoutContainer">
-            <container:child layoutData="{layoutData}">
-                <form:FieldLabel ui:field="nameLabel">
-                    <form:widget>
-                        <form:TextField readOnly="false"
-                                        enabled="true"
-                                        allowBlank="false"
-                                        ui:field="nameEditor"/>
-                    </form:widget>
-                </form:FieldLabel>
-            </container:child>
-            <container:child layoutData="{layoutData}">
-                <form:FieldLabel text="{appearance.toolImportDescriptionLabel}">
-                    <form:widget>
-                        <form:TextArea readOnly="false"
-                                       enabled="true"
-                                       ui:field="descriptionEditor"/>
-                    </form:widget>
-                </form:FieldLabel>
-            </container:child>
-            <container:child layoutData="{layoutData}">
-                <form:FieldLabel ui:field="typeLabel">
-                    <form:widget>
-                        <form:TextField readOnly="true"
-                                        enabled="false"
-                                        ui:field="typeEditor"/>
-                    </form:widget>
-                </form:FieldLabel>
-            </container:child>
-            <container:child layoutData="{layoutData}">
-                <form:FieldLabel text="{appearance.toolImportAttributionLabel}">
-                    <form:widget>
-                        <form:TextField readOnly="false"
-                                        enabled="true"
-                                        ui:field="attributionEditor"/>
-                    </form:widget>
-                </form:FieldLabel>
-            </container:child>
-            <container:child layoutData="{layoutData}">
-                <form:FieldLabel text="{appearance.toolImportVersionLabel}">
-                    <form:widget>
-                        <form:TextField readOnly="false"
-                                        enabled="true"
-                                        ui:field="versionEditor"/>
-                    </form:widget>
-                </form:FieldLabel>
-            </container:child>
-            <container:child layoutData="{layoutData}">
-                <form:FieldLabel ui:field="locationLabel">
-                    <form:widget>
-                        <form:TextField readOnly="false"
-                                        enabled="true"
-                                        allowBlank="false"
-                                        ui:field="locationEditor"/>
-                    </form:widget>
-                </form:FieldLabel>
-            </container:child>
-            <container:child layoutData="{layoutData}">
-                <d:ToolImplementationEditor ui:field="implementationEditor"/>
-            </container:child>
-            <container:child layoutData="{layoutData}">
-                <d:ToolContainerEditor ui:field="containerEditor"/>
-            </container:child>
-        </container:VerticalLayoutContainer>
-    </g:FormPanel>
+    <container:VerticalLayoutContainer ui:field="layoutContainer">
+        <container:child layoutData="{layoutData}">
+            <form:FieldLabel ui:field="nameLabel">
+                <form:widget>
+                    <form:TextField readOnly="false"
+                                    enabled="true"
+                                    allowBlank="false"
+                                    ui:field="nameEditor"/>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+        <container:child layoutData="{layoutData}">
+            <form:FieldLabel text="{appearance.toolImportDescriptionLabel}">
+                <form:widget>
+                    <form:TextArea readOnly="false"
+                                   enabled="true"
+                                   ui:field="descriptionEditor"/>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+        <container:child layoutData="{layoutData}">
+            <form:FieldLabel ui:field="typeLabel">
+                <form:widget>
+                    <form:TextField readOnly="true"
+                                    enabled="false"
+                                    ui:field="typeEditor"/>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+        <container:child layoutData="{layoutData}">
+            <form:FieldLabel text="{appearance.toolImportAttributionLabel}">
+                <form:widget>
+                    <form:TextField readOnly="false"
+                                    enabled="true"
+                                    ui:field="attributionEditor"/>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+        <container:child layoutData="{layoutData}">
+            <form:FieldLabel text="{appearance.toolImportVersionLabel}">
+                <form:widget>
+                    <form:TextField readOnly="false"
+                                    enabled="true"
+                                    ui:field="versionEditor"/>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+        <container:child layoutData="{layoutData}">
+            <form:FieldLabel ui:field="locationLabel">
+                <form:widget>
+                    <form:TextField readOnly="false"
+                                    enabled="true"
+                                    allowBlank="false"
+                                    ui:field="locationEditor"/>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+        <container:child layoutData="{layoutData}">
+            <d:ToolImplementationEditor ui:field="implementationEditor"/>
+        </container:child>
+        <container:child layoutData="{layoutData}">
+            <d:ToolContainerEditor ui:field="containerEditor"/>
+        </container:child>
+    </container:VerticalLayoutContainer>
 </ui:UiBinder> 

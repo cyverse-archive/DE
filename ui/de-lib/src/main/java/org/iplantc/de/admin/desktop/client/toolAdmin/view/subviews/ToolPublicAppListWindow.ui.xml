@@ -1,6 +1,5 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
-             xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid">
 
     <ui:with field="appearance"
@@ -23,14 +22,12 @@
         <ui:attributes stripeRows="true" forceFit="true" autoFill="true"/>
     </ui:with>
 
-    <g:FormPanel>
-        <container:VerticalLayoutContainer ui:field="layoutContainer">
-            <container:child layoutData="{layoutData}">
-                <grid:Grid ui:field="grid"
-                           cm="{cm}"
-                           store="{listStore}"
-                           view="{view}"/>
-            </container:child>
-        </container:VerticalLayoutContainer>
-    </g:FormPanel>
+    <container:VerticalLayoutContainer ui:field="layoutContainer">
+        <container:child layoutData="{layoutData}">
+            <grid:Grid ui:field="grid"
+                       cm="{cm}"
+                       store="{listStore}"
+                       view="{view}"/>
+        </container:child>
+    </container:VerticalLayoutContainer>
 </ui:UiBinder> 
