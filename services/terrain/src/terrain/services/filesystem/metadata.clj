@@ -74,12 +74,10 @@
   "Returns the metadata for a path. Filters out system AVUs and replaces
    units set to ipc-reserved with an empty string."
   [user data-id]
-  (with-jargon (icat/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (let [path (get-readable-path cm user data-id)
-          template-avus (service-response->json (metadata-client/list-metadata-avus data-id))]
-      {:irods-avus (list-path-metadata cm path)
-       :metadata template-avus})))
+  (let [irods-avus (service-response->json (data-raw/get-avus user data-id))
+        template-avus (service-response->json (metadata-client/list-metadata-avus data-id))]
+    (assoc irods-avus
+           :metadata template-avus)))
 
 (defn- common-metadata-add
   "Adds an AVU to 'path'. The AVU is passed in as a map in the format:
