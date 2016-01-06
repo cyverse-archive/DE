@@ -124,32 +124,10 @@
      :metadata {:template_id UUID :avus [{:attr string :value string :unit string}]}
    }"
   [data-id user {:keys [irods-avus metadata]}]
-  (with-jargon (icat/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (let [{:keys [path type] :as data-item} (uuids/path-for-uuid cm user data-id)
-          data-type (metadata-client/resolve-data-type type)
-          irods-avus (set (map #(select-keys % [:attr :value :unit]) irods-avus))
-          current-avus (set (list-path-metadata cm path))
-          delete-irods-avus (clojure.set/difference current-avus irods-avus)]
-      (validators/path-writeable cm user path)
-      (authorized-avus irods-avus)
-
-      (metadata-client/set-metadata-template-avus data-id data-type (or metadata {}))
-
-      (doseq [del-avu delete-irods-avus]
-        (let [attr  (:attr del-avu)
-              value (:value del-avu)]
-          (if (attr-value? cm path attr value)
-            (delete-metadata cm path attr value))))
-      (doseq [avu irods-avus]
-        (let [new-unit (reserved-unit avu)
-              attr     (:attr avu)
-              value    (:value avu)]
-          (if-not (attr-value? cm path attr value)
-            (add-metadata cm path attr value new-unit))))
-
-      {:path path
-       :user user})))
+  (let [modification-data (data-raw/set-avus user data-id irods-avus)
+        data-type (metadata-client/resolve-data-type (:type modification-data))]
+    (metadata-client/set-metadata-template-avus data-id data-type (or metadata {}))
+    (select-keys modification-data [:user :path])))
 
 (defn- find-attributes
   [cm attrs path]
