@@ -109,23 +109,6 @@
   (validators/path-exists cm path)
   (validators/path-writeable cm user path))
 
-(defn- metadata-add
-  "Allows user to set metadata on a path. The user must exist in iRODS
-   and have write permissions on the path. The path must exist. The
-   avu-map parameter must be in this format:
-   {
-      :attr attr-string
-      :value value-string
-      :unit unit-string
-   }"
-  [user path avu-map]
-  (with-jargon (icat/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (common-add-validate cm user path avu-map)
-    (authorized-avus [avu-map])
-    {:path (common-metadata-add cm path avu-map)
-     :user user}))
-
 (defn admin-metadata-add
   "Adds the AVU to path, bypassing user permission checks. See (metadata-set)
    for the AVU map format."
@@ -225,17 +208,6 @@
        :src   src-path
        :paths dest-paths})))
 
-(defn- metadata-delete
-  "Deletes an AVU from path on behalf of a user. attr and value should be strings."
-  [user path attr value]
-  (with-jargon (icat/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (validators/path-exists cm path)
-    (validators/path-writeable cm user path)
-    (authorized-avus [{:attr attr :value value :unit ""}])
-    (delete-metadata cm path attr value)
-    {:path path :user user}))
-
 (defn- check-avus
   [avus]
   (mapv
@@ -258,20 +230,6 @@
 
 (with-post-hook! #'do-metadata-get (log-func "do-metadata-get"))
 
-(defn do-metadata-add
-  "Entrypoint for the API. Calls (metadata-add). Parameter should be a map
-   with :user and :path as keys. Values are strings."
-  [{user :user path :path} body]
-  (metadata-add user path body))
-
-(with-pre-hook! #'do-metadata-add
-  (fn [params body]
-    (log-call "do-metadata-add" params body)
-    (validate-map params {:user string? :path string?})
-    (validate-map body {:attr string? :value string? :unit string?})))
-
-(with-post-hook! #'do-metadata-add (log-func "do-metadata-add"))
-
 (defn do-metadata-set
   "Entrypoint for the API that calls (metadata-set).
    Body is a map with :irods-avus and :metadata keys."
@@ -286,22 +244,6 @@
       (validate-field :irods-avus irods-avus (comp (partial every? true?) check-avus)))))
 
 (with-post-hook! #'do-metadata-set (log-func "do-metadata-set"))
-
-(defn do-metadata-delete
-  "Entrypoint for the API that calls (metadata-delete). Parameter is a map
-   with :user, :path, :attr, :value as keys. Values are strings."
-  [{user :user path :path attr :attr value :value}]
-  (metadata-delete user path attr value))
-
-(with-pre-hook! #'do-metadata-delete
-  (fn [params]
-    (log-call "do-metadata-delete" params)
-    (validate-map params {:user string?
-                          :path string?
-                          :attr string?
-                          :value string?})))
-
-(with-post-hook! #'do-metadata-delete (log-func "do-metadata-delete"))
 
 (defn do-metadata-copy
   "Entrypoint for the API that calls (metadata-copy)."
