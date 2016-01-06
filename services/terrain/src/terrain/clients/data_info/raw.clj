@@ -160,6 +160,42 @@
 
 ;; METADATA
 
+(defn get-avus
+  "Get the set of iRODS AVUs for a data item."
+  [user path-uuid]
+  (request :get ["data" path-uuid "avus"]
+           (mk-req-map user)))
+
+(defn admin-get-avus
+  "Get the set of iRODS AVUs, including administrative AVUs, for a data-item."
+  [user path-uuid]
+  (request :get ["admin" "data" path-uuid "avus"]
+           (mk-req-map user)))
+
+(defn set-avus
+  "Set the iRODs AVUs to a specific set."
+  [user path-uuid avu-map]
+  (request :put ["data" path-uuid "avus"]
+           (mk-req-map user (json/encode {:irods-avus avu-map}))))
+
+(defn add-avus
+  "Add AVUs to a data item."
+  [user path-uuid avu-map]
+  (request :post ["data" path-uuid "avus"]
+           (mk-req-map user (json/encode {:irods-avus avu-map}))))
+
+(defn admin-add-avus
+  "Add AVUs, allowing administrative AVUs to be included, for a data item."
+  [user path-uuid avu-map]
+  (request :post ["admin" "data" path-uuid "avus"]
+           (mk-req-map user (json/encode {:irods-avus avu-map}))))
+
+(defn admin-delete-avu
+  "Delete an AVU for a data item by attr/value, allowing any AVU to be deleted."
+  [user path-uuid avu]
+  (request :delete ["admin" "data" path-uuid "avus"]
+           (mk-req-map user (select-keys avu [:attr :value]))))
+
 (defn save-metadata
   "Request that metadata be saved to a file."
   [user path-uuid dest recursive]
