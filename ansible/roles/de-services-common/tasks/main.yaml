@@ -1,28 +1,5 @@
 ---
 # tasks for services-common role
-
-- name: add the iplant group
-  sudo: yes
-  group: name=iplant state=present
-  tags:
-      - init_users
-      - init_iplant_user
-
-- name: add the iplant user
-  sudo: yes
-  user: name=iplant shell=/bin/bash groups=iplant append=yes
-  tags:
-      - init_users
-      - init_iplant_user
-
-- name: add the docker group to iplant user
-  sudo: yes
-  user: name=iplant groups=docker append=yes
-  when: "'docker-ready' in group_names"
-  tags:
-      - init_users
-      - init_iplant_user
-
 - name: add the docker group to condor user
   sudo: yes
   user: name=condor groups=docker append=yes

@@ -9,7 +9,7 @@
 
 (defproject org.iplantc/terrain "5.2.4.0-SNAPSHOT"
   :description "Framework for hosting DiscoveryEnvironment metadata services."
-  :url "https://github.com/iPlantCollaborativeOpenSource/DE"
+  :url "https://github.com/cyverse/DE"
   :license {:name "BSD Standard License"
             :url "http://www.iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :manifest {"Git-Ref" ~(git-ref)}

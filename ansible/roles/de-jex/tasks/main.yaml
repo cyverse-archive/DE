@@ -11,7 +11,7 @@
     - docker_pull
 
 - name: create the /usr/local/lib/jex/ directory
-  file: path=/usr/local/lib/jex/ owner=iplant group=iplant state=directory
+  file: path=/usr/local/lib/jex/ owner=root group=root state=directory
   tags:
     - jex
 
