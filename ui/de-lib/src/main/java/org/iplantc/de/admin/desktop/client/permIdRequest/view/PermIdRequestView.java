@@ -2,6 +2,7 @@ package org.iplantc.de.admin.desktop.client.permIdRequest.view;
 
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequest;
+import org.iplantc.de.client.models.identifiers.PermanentIdRequestUpdate;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.HasOneWidget;
@@ -21,6 +22,8 @@ public interface PermIdRequestView extends IsWidget, IsMaskable {
     void setPresenter(Presenter p);
 
     void loadRequests(List<PermanentIdRequest> requests);
+
+    void update(PermanentIdRequest request);
 
     public interface PermIdRequestViewAppearance {
         String dateSubmittedColumnLabel();
@@ -64,6 +67,8 @@ public interface PermIdRequestView extends IsWidget, IsMaskable {
         void saveMetadata();
 
         void setSelectedRequest(PermanentIdRequest request);
+
+        void updateRequest(PermanentIdRequestUpdate update);
     }
 
 }

@@ -1,0 +1,40 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
+
+
+    <ui:with field="margins"
+             type="com.sencha.gxt.core.client.util.Margins">
+        <ui:attributes top="0" right="5" bottom="10" left="5"/>
+    </ui:with>
+    <ui:with field="layoutData"
+             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+        <ui:attributes width="1" height="-1" margins="{margins}"/>
+    </ui:with>
+
+    <container:VerticalLayoutContainer>
+        <container:child layoutData="{layoutData}">
+            <form:FieldLabel text="Current Status">
+                <form:widget>
+                    <g:Label ui:field="currentStatusLabel"/>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+        <container:child layoutData="{layoutData}">
+            <form:FieldLabel text="Set Status">
+                <form:widget>
+                    <form:SimpleComboBox ui:field="statusCombo"/>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+        <container:child layoutData="{layoutData}">
+            <form:FieldLabel text="Comments">
+                <form:widget>
+                    <form:TextArea ui:field="commentsEditor"/>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+    </container:VerticalLayoutContainer>
+</ui:UiBinder> 

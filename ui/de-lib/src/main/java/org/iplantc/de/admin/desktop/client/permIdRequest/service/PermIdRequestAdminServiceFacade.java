@@ -1,6 +1,6 @@
 package org.iplantc.de.admin.desktop.client.permIdRequest.service;
 
-import org.iplantc.de.client.models.identifiers.PermanentIdRequestStatus;
+import org.iplantc.de.client.models.identifiers.PermanentIdRequestUpdate;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -12,7 +12,9 @@ public interface PermIdRequestAdminServiceFacade {
 
     void getPermanentIdRequests(AsyncCallback<String> callback);
 
-    void updatePermanentIdRequestStatus(PermanentIdRequestStatus status, AsyncCallback<String> callback);
+    void updatePermanentIdRequestStatus(String requestId,
+                                        PermanentIdRequestUpdate status,
+                                        AsyncCallback<String> callback);
 
     void getPermanentIdRequestStatuses(AsyncCallback<String> callback);
 

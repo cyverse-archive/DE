@@ -65,7 +65,7 @@ public class PermIdRequestViewDefaultAppearance implements PermIdRequestViewAppe
 
     @Override
     public String updateBtnText() {
-        return null;
+        return displayStrings.updateBtnText();
     }
 
     @Override
@@ -85,13 +85,11 @@ public class PermIdRequestViewDefaultAppearance implements PermIdRequestViewAppe
 
     @Override
     public int northPanelSize() {
-        // TODO Auto-generated method stub
         return 30;
     }
 
     @Override
     public int eastPanelSize() {
-        // TODO Auto-generated method stub
         return 0;
     }
 

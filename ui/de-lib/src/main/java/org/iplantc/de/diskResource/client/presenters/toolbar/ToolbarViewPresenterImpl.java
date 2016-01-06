@@ -376,8 +376,7 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
     }
 
     @Override
-    public void
- submitBulkMetadataFromExistingFile(String filePath,
+    public void submitBulkMetadataFromExistingFile(String filePath,
                                                    String templateId,
                                                    String destFolder,
                                                    boolean force) {

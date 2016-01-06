@@ -37,7 +37,7 @@
 				</toolbar:child>
 				<toolbar:child>
 					<button:TextButton ui:field="metadataBtn"
-						text="Metadata" icon="{appearance.updateIcon}"
+						text="View Metadata" icon="{appearance.updateIcon}"
 						enabled="false" />
 				</toolbar:child>
 			</toolbar:ToolBar>

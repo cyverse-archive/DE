@@ -1019,7 +1019,16 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
 
     @Override
     public void requestIdentifier(String uuid, String path, AsyncCallback<String> callback) {
+        StringBuilder address = new StringBuilder(deProperties.getPermIdBaseUrl());
 
+        Splittable body = StringQuoter.createSplittable();
+        Splittable sppath = StringQuoter.create(uuid);
+        sppath.assign(body, "folder");
+        Splittable sprec = StringQuoter.create("DOI");
+        sprec.assign(body, "type");
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address.toString(), body.getPayload());
+        callService(wrapper, callback);
 
     }
 }

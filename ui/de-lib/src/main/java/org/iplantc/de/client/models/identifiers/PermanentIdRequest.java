@@ -29,7 +29,9 @@ public interface PermanentIdRequest extends HasId {
     @PropertyName("updated_by")
     String getUpatedBy();
 
-    PermanentIdRequestStatus getStatus();
+    String getStatus();
+
+    void setStatus(String status);
 
     PermanentIdRequestType getType();
 }

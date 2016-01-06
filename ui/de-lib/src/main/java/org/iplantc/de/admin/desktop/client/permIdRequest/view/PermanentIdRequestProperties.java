@@ -34,6 +34,6 @@ public interface PermanentIdRequestProperties extends PropertyAccess<PermanentId
 
     ValueProvider<PermanentIdRequest, PermanentIdRequestType> type();
 
-    ValueProvider<PermanentIdRequest, PermanentIdRequestStatus> status();
+    ValueProvider<PermanentIdRequest, String> status();
 
 }
