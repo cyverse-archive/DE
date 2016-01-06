@@ -10,7 +10,6 @@
             [data-info.services.directory :as directory]
             [data-info.util.config :as cfg]
             [data-info.util.logging :as dul]
-            [data-info.util.paths :as paths]
             [data-info.util.validators :as validators]))
 
 (defn- source->dest
@@ -110,35 +109,23 @@
 
 (with-pre-hook! #'do-rename-uuid
   (fn [params body source-uuid]
-    (dul/log-call "do-rename-uuid" params body source-uuid)
-    (when (paths/super-user? (:user params))
-      (throw+ {:error_code ERR_NOT_AUTHORIZED
-               :user       (:user params)}))))
+    (dul/log-call "do-rename-uuid" params body source-uuid)))
 
 (with-post-hook! #'do-move-uuid (dul/log-func "do-move-uuid"))
 
 (with-pre-hook! #'do-move-uuid
   (fn [params body source-uuid]
-    (dul/log-call "do-move-uuid" params body source-uuid)
-    (when (paths/super-user? (:user params))
-      (throw+ {:error_code ERR_NOT_AUTHORIZED
-               :user       (:user params)}))))
+    (dul/log-call "do-move-uuid" params body source-uuid)))
 
 (with-post-hook! #'do-move-uuid-contents (dul/log-func "do-move-uuid-contents"))
 
 (with-pre-hook! #'do-move-uuid-contents
   (fn [params body source-uuid]
-    (dul/log-call "do-move-uuid-contents" params body source-uuid)
-    (when (paths/super-user? (:user params))
-      (throw+ {:error_code ERR_NOT_AUTHORIZED
-               :user       (:user params)}))))
+    (dul/log-call "do-move-uuid-contents" params body source-uuid)))
 
 (with-pre-hook! #'do-move
   (fn [params body]
     (dul/log-call "do-move" params body)
-    (when (paths/super-user? (:user params))
-      (throw+ {:error_code ERR_NOT_AUTHORIZED
-               :user (:user params)}))
     (validators/validate-num-paths-under-paths (:user params) (:sources body))))
 
 (with-post-hook! #'do-move (dul/log-func "do-move"))

@@ -214,9 +214,6 @@
 (with-pre-hook! #'do-delete
   (fn [params body]
     (dul/log-call "do-delete" params body)
-    (when (paths/super-user? (:user params))
-      (throw+ {:error_code ERR_NOT_AUTHORIZED
-               :user       (:user params)}))
     (validate-not-homedir (:user params) (:paths body))
     (validators/validate-num-paths-under-paths (:user params) (:paths body))))
 
@@ -228,11 +225,7 @@
 
 (with-pre-hook! #'do-delete-uuid
   (fn [params data-id]
-    (dul/log-call "do-delete-uuid" params data-id)
-
-    (when (paths/super-user? (:user params))
-      (throw+ {:error_code ERR_NOT_AUTHORIZED
-               :user       (:user params)}))))
+    (dul/log-call "do-delete-uuid" params data-id)))
 
 (with-post-hook! #'do-delete-uuid (dul/log-func "do-delete-uuid"))
 
@@ -242,11 +235,7 @@
 
 (with-pre-hook! #'do-delete-uuid-contents
   (fn [params data-id]
-    (dul/log-call "do-delete-uuid-contents" params data-id)
-
-    (when (paths/super-user? (:user params))
-      (throw+ {:error_code ERR_NOT_AUTHORIZED
-               :user       (:user params)}))))
+    (dul/log-call "do-delete-uuid-contents" params data-id)))
 
 (with-post-hook! #'do-delete-uuid-contents (dul/log-func "do-delete-uuid-contents"))
 
