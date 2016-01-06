@@ -51,6 +51,10 @@
        (data-info/stat-by-uuid user)
        (validate-data-item user)))
 
+(defn- parse-service-json
+  [response]
+  (-> response :body service/decode-json))
+
 (defn- submit-permanent-id-request
   "Submits the request to the metadata create-permanent-id-request endpoint."
   [type folder-id target-type path]
@@ -60,8 +64,7 @@
        :original_path path}
       json/encode
       metadata/create-permanent-id-request
-      :body
-      service/decode-json))
+      parse-service-json))
 
 (defn- create-staging-dir
   "Creates the Permanent ID Requests staging directory, if it doesn't already exist."
@@ -89,9 +92,17 @@
       (dissoc :target_id :target_type :original_path)
       (assoc :folder (data-info/stat-by-uuid user (uuidify target_id)))))
 
+(defn- format-perm-id-req-list
+  [requests]
+  (map
+    (partial format-perm-id-req-response (:shortUsername current-user))
+    requests))
+
 (defn list-permanent-id-requests
   [params]
-  (metadata/list-permanent-id-requests params))
+  (-> (metadata/list-permanent-id-requests params)
+      parse-service-json
+      (update-in [:requests] format-perm-id-req-list)))
 
 (defn create-permanent-id-request
   [params body]
@@ -115,16 +126,24 @@
 
 (defn get-permanent-id-request
   [request-id params]
-  (metadata/get-permanent-id-request request-id))
+  (->> (metadata/get-permanent-id-request request-id)
+       parse-service-json
+       (format-perm-id-req-response (:shortUsername current-user))))
 
 (defn admin-list-permanent-id-requests
   [params]
-  (metadata/admin-list-permanent-id-requests params))
+  (-> (metadata/admin-list-permanent-id-requests params)
+      parse-service-json
+      (update-in [:requests] format-perm-id-req-list)))
 
 (defn admin-get-permanent-id-request
   [request-id params]
-  (metadata/admin-get-permanent-id-request request-id))
+  (->> (metadata/admin-get-permanent-id-request request-id)
+       parse-service-json
+       (format-perm-id-req-response (:shortUsername current-user))))
 
 (defn update-permanent-id-request
   [request-id params body]
-  (metadata/update-permanent-id-request request-id body))
+  (->> (metadata/update-permanent-id-request request-id body)
+       parse-service-json
+       (format-perm-id-req-response (:shortUsername current-user))))
