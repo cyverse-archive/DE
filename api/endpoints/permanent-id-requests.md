@@ -10,7 +10,7 @@ title: DE Permanent ID Request API Documentation
     * [Get any Permanent ID Request Details](#get-any-permanent-id-request-details)
     * [Update the Status of a Permanent ID Request](#update-the-status-of-a-permanent-id-request)
     * [List Permanent ID Requests](#list-permanent-id-requests)
-    * [Create a Permanent ID Requests](#create-a-permanent-id-requests)
+    * [Create a Permanent ID Request](#create-a-permanent-id-request)
     * [List Permanent ID Request Status Codes](#list-permanent-id-request-status-codes)
     * [List Permanent ID Request Types](#list-permanent-id-request-types)
     * [List Permanent ID Request Details](#list-permanent-id-request-details)
@@ -116,7 +116,7 @@ Lists all Permanent ID Requests submitted by the requesting user.
 
 Same as [GET /admin/permanent-id-requests](#list-all-permanent-id-requests)
 
-## Create a Permanent ID Requests
+## Create a Permanent ID Request
 
 `POST /permanent-id-requests`
 
