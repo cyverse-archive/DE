@@ -1,15 +1,15 @@
 ---
-- name: Update iplant-data
-  hosts: docker-ready
-  sudo: true
-  gather_facts: false
-  tags:
-    - services
-    - iplant-data
-  roles:
-    - role: util-cfg-docker-pull
-      service_name: "{{data_container.compose_service}}"
-      service_name_short: "{{data_container.service_name_short}}"
+# - name: Update iplant-data
+#   hosts: docker-ready
+#   sudo: true
+#   gather_facts: false
+#   tags:
+#     - services
+#     - iplant-data
+#   roles:
+#     - role: util-cfg-docker-pull
+#       service_name: "{{data_container.compose_service}}"
+#       service_name_short: "{{data_container.service_name_short}}"
 
 - name: Update anon-files
   hosts: anon-files
@@ -41,6 +41,18 @@
     - role: util-cfg-docker-pull
       service_name: "{{apps.compose_service}}"
       service_name_short: "{{apps.service_name_short}}"
+
+- name: Update iplant-data-apps
+  hosts: docker-ready
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - iplant-data
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: "iplant_data_{{apps.compose_service}}"
+      service_name_short: "iplant_data_{{apps.service_name_short}}"
 
 - name: Update clockwork
   hosts: clockwork
@@ -118,6 +130,18 @@
       service_name: "{{de.compose_service}}"
       service_name_short: "{{de.service_name_short}}"
 
+- name: Update iplant-data-de-ui
+  hosts: docker-ready
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - iplant-data
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: "iplant_data_{{de.compose_service}}"
+      service_name_short: "iplant_data_{{de.service_name_short}}"
+
 - name: Update de-ui-nginx
   hosts: ui
   sudo: true
@@ -132,6 +156,18 @@
     - role: util-cfg-docker-pull
       service_name: "{{de.http_server.compose_service}}"
       service_name_short: "{{de.http_server.service_name_short}}"
+
+- name: Update iplant-data-de-ui-nginx
+  hosts: docker-ready
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - iplant-data
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: "iplant_data_{{de.http_server.compose_service}}"
+      service_name_short: "iplant_data_{{de.http_server.service_name_short}}"
 
 - name: Update exim-sender
   hosts: exim-sender
@@ -315,6 +351,18 @@
     - role: util-cfg-docker-pull
       service_name: "{{terrain.compose_service}}"
       service_name_short: "{{terrain.service_name_short}}"
+
+- name: Update iplant-data-terrain
+  hosts: docker-ready
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - iplant-data
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: "iplant_data_{{terrain.compose_service}}"
+      service_name_short: "iplant_data_{{terrain.service_name_short}}"
 
 - name: Update tree-urls
   hosts: tree-urls
