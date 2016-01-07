@@ -42,7 +42,7 @@
 
 (defn format-trash-category
   "Formats the virtual group for the admin's deleted and orphaned apps category."
-  [user workspace-id params]
+  [_ _ params]
   {:id         trash-category-id
    :name       "Trash"
    :is_public  true
@@ -50,7 +50,7 @@
 
 (defn list-trashed-apps
   "Lists the public, deleted apps and orphaned apps."
-  [user workspace params]
+  [_ _ params]
   (list-deleted-and-orphaned-apps params))
 
 (defn- format-my-public-apps-group
@@ -104,20 +104,20 @@
       (add-private-virtual-groups user result workspace-id params)
       result)))
 
-(defn get-workspace-app-groups
+(defn- get-workspace-app-groups
   "Retrieves the list of the current user's workspace app groups."
   [user params]
   (let [workspace (get-workspace (:username user))
         workspace-id (:id workspace)]
     [(format-app-group-hierarchy user workspace-id params workspace)]))
 
-(defn get-visible-app-groups-for-workspace
-  "Retrieves the list of app groups that."
+(defn- get-visible-app-groups-for-workspace
+  "Retrieves the list of app groups that are visible from a workspace."
   [workspace-id user params]
   (let [workspaces (get-visible-workspaces workspace-id)]
     (map (partial format-app-group-hierarchy user workspace-id params) workspaces)))
 
-(defn get-visible-app-groups
+(defn- get-visible-app-groups
   "Retrieves the list of app groups that are visible to a user."
   [user params]
   (-> (get-optional-workspace (:username user))
@@ -128,11 +128,13 @@
   "Retrieves the list of app groups that are visible to all users, the current user's app groups, or
    both, depending on the :public param."
   [user {:keys [public] :as params}]
-  (if (contains? params :public)
-    (if-not public
-      (get-workspace-app-groups user params)
-      (get-visible-app-groups-for-workspace nil user params))
-    (get-visible-app-groups user params)))
+  (let [perms  (iplant-groups/load-app-permissions (:shortUsername user))
+        params (assoc params :app-ids (set (keys perms)))]
+    (if (contains? params :public)
+      (if-not public
+        (get-workspace-app-groups user params)
+        (get-visible-app-groups-for-workspace nil user params))
+      (get-visible-app-groups user params))))
 
 (defn get-admin-app-groups
   "Retrieves the list of app groups that are accessible to administrators. This includes all public
@@ -194,9 +196,13 @@
   (= (+ tool-count external-app-count) task-count))
 
 (defn- format-app-permissions
-  "Formats the permission setting in the app."
+  "Formats the permission setting in the app. There are some cases where admins can view apps
+  for which they don't have permissions. For example, when viewing orphaned and deleted apps.
+  For the time being we'll deal with that by defaulting the permission level to the empty string,
+  indicating that the user has no explicit permissions on the app."
   [app perms]
-  (assoc app :permission (first (sort-by permission-precedence (map :action_name (perms (:id app)))))))
+  (let [level (first (sort-by permission-precedence (map :action_name (perms (:id app)))))]
+    (assoc app :permission (or level ""))))
 
 (defn- format-app-listing
   "Formats certain app fields into types more suitable for the client."
@@ -209,12 +215,10 @@
       (assoc :can_favor true :can_rate true :app_type "DE")
       (remove-nil-vals)))
 
-;; TODO: add permission checks to this function.
 (defn- list-apps-in-virtual-group
   "Formats a listing for a virtual group."
-  [user workspace group-id params]
-  (let [group-key (keyword (str group-id))
-        perms     (iplant-groups/load-app-permissions (:shortUsername user))]
+  [user workspace group-id perms params]
+  (let [group-key (keyword (str group-id))]
     (when-let [format-fns (virtual-group-fns group-key)]
       (-> ((:format-group format-fns) user (:id workspace) params)
           (assoc :apps (->> ((:format-listing format-fns) user workspace params)
@@ -237,12 +241,10 @@
 
 (defn- list-apps-in-real-group
   "This service lists all of the apps in a real app group and all of its descendents."
-  [user workspace category-id params]
+  [user workspace category-id perms params]
   (let [app_group      (->> (get-app-category category-id)
                             (assert-not-nil ["category_id" category-id])
                             remove-nil-vals)
-        perms          (iplant-groups/load-app-permissions (:shortUsername user))
-        params         (assoc params :app-ids (set (keys perms)))
         total          (count-apps-in-group user workspace app_group params)
         apps_in_group  (get-apps-in-group user workspace app_group params)
         apps_in_group  (map (partial format-app-listing perms) apps_in_group)]
@@ -255,9 +257,10 @@
    descendents."
   [user app-group-id params]
   (let [workspace (get-optional-workspace (:username user))
-        params    (fix-sort-params params)]
-    (or (list-apps-in-virtual-group user workspace app-group-id params)
-        (list-apps-in-real-group user workspace app-group-id params))))
+        perms     (iplant-groups/load-app-permissions (:shortUsername user))
+        params    (fix-sort-params (assoc params :app-ids (set (keys perms))))]
+    (or (list-apps-in-virtual-group user workspace app-group-id perms params)
+        (list-apps-in-real-group user workspace app-group-id perms params))))
 
 (defn has-category
   "Determines whether or not a category with the given ID exists."
@@ -265,7 +268,6 @@
   (or (#{my-public-apps-id trash-category-id} category-id)
       (seq (select :app_categories (where {:id category-id})))))
 
-;; TODO: add permission checks to this function.
 (defn search-apps
   "This service searches for apps in the user's workspace and all public app
    groups, based on a search term."
@@ -273,12 +275,13 @@
   (let [search_term (curl/url-decode (:search params))
         workspace (get-workspace (:username user))
         perms (iplant-groups/load-app-permissions (:shortUsername user))
+        params (fix-sort-params (assoc params :app-ids (set (keys perms))))
         total (count-search-apps-for-user search_term (:id workspace) params)
         search_results (search-apps-for-user
                         search_term
                         workspace
                         (workspace-favorites-app-category-index)
-                        (fix-sort-params params))
+                        params)
         search_results (map (partial format-app-listing perms) search_results)]
     {:app_count total
      :apps search_results}))
