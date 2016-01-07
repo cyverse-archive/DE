@@ -12,6 +12,7 @@
             [clojure.string :as string]
             [clojure-commons.file-utils :as ft]
             [cemerick.url :as url]
+            [cheshire.core :as json]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
             [terrain.clients.metadata.raw :as metadata-client]
             [terrain.clients.data-info.raw :as data-raw]
@@ -74,10 +75,10 @@
   "Returns the metadata for a path. Filters out system AVUs and replaces
    units set to ipc-reserved with an empty string."
   [user data-id]
-  (let [irods-avus (service-response->json (data-raw/get-avus user data-id))
+  (let [irods-avus (:irods-avus (service-response->json (data-raw/get-avus user data-id)))
         template-avus (service-response->json (metadata-client/list-metadata-avus data-id))]
-    (assoc irods-avus
-           :metadata template-avus)))
+    {:irods-avus irods-avus
+     :metadata template-avus}))
 
 (defn- metadata-set
   "Allows user to set metadata on an item with the given data-id. The user must exist in iRODS and have
@@ -94,8 +95,9 @@
     (select-keys modification-data [:user :path])))
 
 (defn- find-attributes
-  [cm attrs path]
-  (let [matching-avus (get-attributes cm attrs path)]
+  [attrs user uuid]
+  (let [{:keys [irods-avus path]} (service-response->json (data-raw/get-avus user uuid))
+        matching-avus (filter #(contains? attrs (:attr %)) irods-avus)]
     (if-not (empty? matching-avus)
       {:path path
        :avus matching-avus}
@@ -103,8 +105,8 @@
 
 (defn- validate-batch-add-attrs
   "Throws an error if any of the given paths already have metadata set with any of the given attrs."
-  [cm paths attrs]
-  (let [duplicates (remove nil? (map (partial find-attributes cm attrs) paths))]
+  [user uuids attrs]
+  (let [duplicates (remove nil? (map (partial find-attributes attrs user) uuids))]
     (when-not (empty? duplicates)
       (validators/duplicate-attrs-error duplicates))))
 
@@ -136,11 +138,12 @@
     (let [src-path (get-readable-path cm user src-id)
           dest-items (map (partial uuids/path-for-uuid cm user) dest-ids)
           dest-paths (map :path dest-items)
+          dest-uuids (map :id dest-items)
           irods-avus (list-path-metadata cm src-path)
           attrs (set (map :attr irods-avus))]
       (validators/all-paths-writeable cm user dest-paths)
       (if-not force?
-        (validate-batch-add-attrs cm dest-paths attrs))
+        (validate-batch-add-attrs user dest-uuids attrs))
       (metadata-client/copy-metadata-template-avus src-id force? (map format-copy-dest-item dest-items))
       (doseq [path dest-paths]
         (metadata-batch-add cm path irods-avus))
@@ -262,12 +265,13 @@
   [cm user dest-dir force? template-id template-attrs attrs csv-filename-values]
   (let [format-path (partial format-csv-metadata-filename dest-dir)
         paths (map (comp format-path first) csv-filename-values)
+        path-info-map (-> (data-raw/collect-stats user paths) :body json/decode (get "paths"))
         value-lists (map rest csv-filename-values)
         irods-attrs (clojure.set/difference (set attrs) (set (keys template-attrs)))]
     (validators/all-paths-exist cm paths)
     (validators/all-paths-writeable cm user paths)
     (if-not force?
-      (validate-batch-add-attrs cm paths irods-attrs))
+      (validate-batch-add-attrs user (map #(get-in path-info-map [% "id"]) paths) irods-attrs))
   (mapv (partial bulk-add-file-avus cm user dest-dir template-id template-attrs attrs)
     paths value-lists)))
 

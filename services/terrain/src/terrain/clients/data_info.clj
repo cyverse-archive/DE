@@ -14,7 +14,6 @@
             [terrain.services.filesystem.common-paths :as cp]
             [terrain.services.filesystem.create :as cr]
             [terrain.services.filesystem.icat :as icat]
-            [terrain.services.filesystem.metadata :as mt]
             [terrain.services.filesystem.sharing :as sharing]
             [terrain.services.filesystem.stat :as st]
             [terrain.services.filesystem.users :as users]
