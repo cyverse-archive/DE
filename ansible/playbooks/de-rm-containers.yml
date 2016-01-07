@@ -1,16 +1,16 @@
 ---
-- name: Remove iplant-data
-  hosts: docker-ready
-  sudo: true
-  gather_facts: false
-  tags:
-    - services
-    - iplant-data
-  roles:
-    - role: util-cfg-docker-rm
-      ignore_errors: yes
-      service_name: "{{data_container.compose_service}}"
-      service_name_short: "{{data_container.service_name_short}}"
+# - name: Remove iplant-data
+#   hosts: docker-ready
+#   sudo: true
+#   gather_facts: false
+#   tags:
+#     - services
+#     - iplant-data
+#   roles:
+#     - role: util-cfg-docker-rm
+#       ignore_errors: yes
+#       service_name: "{{data_container.compose_service}}"
+#       service_name_short: "{{data_container.service_name_short}}"
 
 - name: Remove anon-files
   hosts: anon-files
@@ -46,6 +46,10 @@
       ignore_errors: yes
       service_name: "{{apps.compose_service}}"
       service_name_short: "{{apps.service_name_short}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "iplant_data_{{apps.compose_service}}"
+      service_name_short: "iplant_data_{{apps.compose_service}}"
 
 - name: Remove clockwork
   hosts: clockwork
@@ -130,6 +134,10 @@
       ignore_errors: yes
       service_name: "{{de.compose_service}}"
       service_name_short: "{{de.service_name_short}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "iplant_data_{{de.compose_service}}"
+      service_name_short: "iplant_data_{{de.service_name_short}}"
 
 - name: Remove de-ui-nginx
   hosts: ui
@@ -147,6 +155,10 @@
       ignore_errors: yes
       service_name: "{{de.http_server.compose_service}}"
       service_name_short: "{{de.http_server.service_name_short}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "iplant_data_{{de.http_server.compose_service}}"
+      service_name_short: "iplant_data_{{de.http_server.service_name_short}}"
 
 - name: Remove exim-sender
   hosts: exim-sender
@@ -347,6 +359,10 @@
       ignore_errors: yes
       service_name: "{{terrain.compose_service}}"
       service_name_short: "{{terrain.service_name_short}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "iplant_data_{{terrain.compose_service}}"
+      service_name_short: "iplant_data_{{terrain.service_name_short}}"
 
 - name: Remove tree-urls
   hosts: tree-urls
