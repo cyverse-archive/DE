@@ -335,7 +335,7 @@
       sudo: true
       shell: docker rm -v {{jexevents.service_name_short}}
     - name: annihilate jex-events part 2
-      ingore_errors: yes
+      ignore_errors: yes
       sudo: true
       shell: docker rm -v jex-events
 
