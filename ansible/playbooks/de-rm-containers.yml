@@ -103,6 +103,10 @@
       ignore_errors: yes
       sudo: true
       shell: docker rm -v {{condor_log_monitor.service_name_short}}
+    - name: annihilate clm part 2
+      ignore_errors: yes
+      sudo: true
+      shell: docker rm -v clm
 
 - name: Remove data-info
   hosts: data-info
@@ -216,6 +220,10 @@
       ignore_errors: yes
       sudo: true
       shell: docker rm -v {{exim.service_name_short}}
+    - name: annihilate exim-sender part 2
+      ignore_errors: yes
+      sudo: true
+      shell: docker rm -v exim
 
 - name: Remove info-typer
   hosts: info-typer
@@ -326,6 +334,10 @@
       ignore_errors: yes
       sudo: true
       shell: docker rm -v {{jexevents.service_name_short}}
+    - name: annihilate jex-events part 2
+      ingore_errors: yes
+      sudo: true
+      shell: docker rm -v jex-events
 
 - name: Remove kifshare
   hosts: kifshare
