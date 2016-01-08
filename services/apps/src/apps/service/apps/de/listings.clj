@@ -119,8 +119,8 @@
 
 (defn- get-visible-app-groups
   "Retrieves the list of app groups that are visible to a user."
-  [user params]
-  (-> (get-optional-workspace (:username user))
+  [user {:keys [admin?] :as params}]
+  (-> (when-not admin? (get-optional-workspace (:username user)))
       (:id)
       (get-visible-app-groups-for-workspace user params)))
 
@@ -139,9 +139,10 @@
 (defn get-admin-app-groups
   "Retrieves the list of app groups that are accessible to administrators. This includes all public
    app groups along with the trash group."
-  [params]
-  (conj (vec (get-app-groups nil params))
-        (format-trash-category nil nil params)))
+  [user params]
+  (let [params (assoc params :admin true)]
+    (conj (vec (get-app-groups user params))
+          (format-trash-category nil nil params))))
 
 (defn- validate-app-pipeline-eligibility
   "Validates an App for pipeline eligibility, throwing a slingshot stone ."
