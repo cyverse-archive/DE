@@ -50,8 +50,3 @@
       - condor
       - enable_services
       - enable_condor
-
-- name: Running condor_reconfig
-  command: /usr/sbin/condor_reconfig
-  tags:
-      - condor
