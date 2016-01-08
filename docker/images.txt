@@ -4,13 +4,6 @@ condor-log-monitor
 curl-wrapper
 data-info
 de
-de-configs-de-2
-de-configs-gargery
-de-configs-archer
-de-configs-qa-1
-de-configs-qa-3
-de-configs-uat
-de-configs-prod
 unittest-dedb
 dewey
 terrain
