@@ -497,7 +497,7 @@
   "Formats the arguments to porklock for an input job."
   [condor-map step-map source input-map]
   (let [file-metadata (or (:file-metadata condor-map) [])
-        arg-prefix    (str "run --rm -a stdout -a stderr -v $(pwd):/de-app-work -w /de-app-work discoenv/porklock:" (cfg/porklock-tag))]
+        arg-prefix    (str "run --rm -a stdout -a stderr -v $(pwd):/de-app-work -w /de-app-work --log-driver=none discoenv/porklock:" (cfg/porklock-tag))]
     (str arg-prefix
          " get --user " (:username condor-map)
          " --source " (quote-value
@@ -560,7 +560,7 @@
 (defn output-arguments
   "Formats the porklock arguments for output jobs."
   [step-map user source dest]
-  (let [arg-prefix (str "run --rm -a stdout -a stderr -v $(pwd):/de-app-work -w /de-app-work discoenv/porklock:" (cfg/porklock-tag))]
+  (let [arg-prefix (str "run --rm -a stdout -a stderr -v $(pwd):/de-app-work -w /de-app-work --log-driver=none discoenv/porklock:" (cfg/porklock-tag))]
     (str arg-prefix
          " put --user " user
          " --source " (quote-value source)
@@ -729,7 +729,7 @@
     file-metadata :file-metadata
     :or {file-metadata []}
     :as condor-map}]
-  (let [arg-prefix (str "run --rm -a stdout -a stderr -v $(pwd):/de-app-work -w /de-app-work discoenv/porklock:" (cfg/porklock-tag))]
+  (let [arg-prefix (str "run --rm -a stdout -a stderr -v $(pwd):/de-app-work -w /de-app-work --log-driver=none discoenv/porklock:" (cfg/porklock-tag))]
     (str arg-prefix
          " put --user " username
          " --config irods-config"
