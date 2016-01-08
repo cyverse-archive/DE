@@ -54,8 +54,7 @@
   :uberjar-exclusions [#".*[.]SF" #"LICENSE" #"NOTICE"]
   :repositories [["biojava"
                   {:url "http://www.biojava.org/download/maven"}]
-                 ["nexml"
-                  {:url "http://nexml-dev.nescent.org/.m2/repository"
-                   :checksum :ignore
-                   :update :never}]]
+                 ["local"
+                  {:url "https://everdene.iplantcollaborative.org/maven/repository"
+                   :checksum :ignore}]]
   :jvm-opts ["-Dlogback.configurationFile=/etc/iplant/de/logging/terrain-logging.xml"])
