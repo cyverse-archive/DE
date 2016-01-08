@@ -90,6 +90,8 @@ public class PermanentIdRequestPresenter implements Presenter {
 
     private MetadataView.Presenter meta_pre;
 
+    boolean requestId;
+
     @Inject
     public PermanentIdRequestPresenter(DiskResourceServiceFacade drsvc,
                                        PermIdRequestAdminServiceFacade prsvc,
@@ -179,8 +181,35 @@ public class PermanentIdRequestPresenter implements Presenter {
                                                                     .schedule(new SuccessAnnouncementConfig("Request Updated!"));
                                                      selectedRequest.setStatus(update.getStatus());
                                                      view.update(selectedRequest);
+                                                     if (requestId) {
+                                                         submitRequestForId();
+                                                     }
                                                  }
                                              });
+    }
+
+    @Override
+    public void setSubmitRequestForId() {
+        // set up flag for submitting request Perm Id request
+        requestId = true;
+    }
+
+    public void submitRequestForId() {
+        prsvc.submitRequestForId(selectedRequest.getId(), new AsyncCallback<String>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                // reset flag for request
+                requestId = false;
+                
+            }
+        });
     }
 
 }

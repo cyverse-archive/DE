@@ -45,4 +45,10 @@ public class PermIdRequestAdminServiceFacadeImpl implements PermIdRequestAdminSe
 
     }
 
+    @Override
+    public void submitRequestForId(String id, AsyncCallback<String> asyncCallback) {
+        // TODO Auto-generated method stub
+
+    }
+
 }

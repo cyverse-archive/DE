@@ -18,4 +18,6 @@ public interface PermIdRequestAdminServiceFacade {
 
     void getPermanentIdRequestStatuses(AsyncCallback<String> callback);
 
+    void submitRequestForId(String id, AsyncCallback<String> asyncCallback);
+
 }

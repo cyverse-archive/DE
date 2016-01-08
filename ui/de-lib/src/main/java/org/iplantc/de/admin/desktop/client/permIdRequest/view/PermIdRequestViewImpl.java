@@ -3,7 +3,6 @@ package org.iplantc.de.admin.desktop.client.permIdRequest.view;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequest;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestAutoBeanFactory;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestType;
-import org.iplantc.de.client.models.identifiers.PermanentIdRequestUpdate;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -18,7 +17,6 @@ import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
-import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -88,17 +86,9 @@ public class PermIdRequestViewImpl extends Composite implements PermIdRequestVie
     @UiHandler("updateBtn")
     void onUpdateBtnClicked(SelectEvent event) {
         final UpdatePermanentIdRequestDialog dialog = new UpdatePermanentIdRequestDialog(grid.getSelectionModel()
-                                                                                       .getSelectedItem(),
+                                                                                             .getSelectedItem(),
+                                                                                         presenter,
                                                                                    factory);
-        dialog.addOkButtonSelectHandler(new SelectHandler() {
-
-            @Override
-            public void onSelect(SelectEvent event) {
-                PermanentIdRequestUpdate update = dialog.getPermanentIdRequestUpdate();
-                presenter.updateRequest(update);
-            }
-        });
-
         dialog.show();
     }
 

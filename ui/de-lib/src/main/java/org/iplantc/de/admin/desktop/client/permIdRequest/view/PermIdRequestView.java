@@ -69,6 +69,8 @@ public interface PermIdRequestView extends IsWidget, IsMaskable {
         void setSelectedRequest(PermanentIdRequest request);
 
         void updateRequest(PermanentIdRequestUpdate update);
+
+        void setSubmitRequestForId();
     }
 
 }
