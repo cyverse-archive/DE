@@ -15,15 +15,15 @@
   :manifest {"Git-Ref" ~(git-ref)}
   :uberjar-name "terrain-standalone.jar"
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [org.clojure/tools.nrepl "0.2.10"]
+                 [org.clojure/tools.nrepl "0.2.12"]
                  [cheshire "5.5.0"]
                  [clj-http "2.0.0"]
                  [clj-time "0.11.0"]
-                 [clojurewerkz/elastisch "2.1.0"]
+                 [clojurewerkz/elastisch "2.2.0"]
                  [com.cemerick/url "0.1.1" :exclusions [com.cemerick/clojurescript.test]]
-                 [commons-net "3.3"]                               ; provides org.apache.commons.net
+                 [commons-net "3.4"]                               ; provides org.apache.commons.net
                  [compojure "1.4.0"]
-                 [metosin/compojure-api "0.24.2"]
+                 [metosin/compojure-api "0.24.3"]
                  [de.ubercode.clostache/clostache "1.4.0" :exclusions [org.clojure/core.incubator]]
                  [dire "0.5.3"]
                  [me.raynes/fs "1.4.6"]
