@@ -13,10 +13,9 @@ Role Variables
 
 |Variable     | required | default                           | choices        | comments                                               |
 |-------------|----------|-----------------------------------|----------------|--------------------------------------------------------|
-| image_name  |    yes   |                                   |                | The docker image name. |
-| docker_user |    no    | {{docker.user}}                   |                | The docker user name. |
-| image_tag   |    no    | {{docker.tag | default(latest) }} |                | The tag for the docker image. |
-| group_name  |    yes   |                                   |                | The host group name for which the tasks will execute. |
+| service_name |    yes   |                                   |                | The name of the service in the docker-compose.yml. |
+| docker.tag  |    yes   | The value of docker.tag in the group_vars| | Passed into the docker-compose command as the DE_TAG environment variable. |
+| environment_name | yes | The value of the environment_name variable in the group_vars | | Passed into the docker-compose command as the DE_ENV environment variable.|
 
 Dependencies
 ------------
@@ -29,8 +28,7 @@ Example Playbook
     - hosts: servers
       roles:
          - role: util-cfg-docker-pull
-           image_name: my-image
-           group_name: my-group
+           service_name: my_service
 
 License
 -------
@@ -41,4 +39,3 @@ Author Information
 ------------------
 
 Jonathan Strootman - jstroot@iplantcollaborative.org
-

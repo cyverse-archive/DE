@@ -6,30 +6,20 @@
 - include: playbooks/de-systemd-de-target_down.yaml
 
 ############################################
-# Condor      
+# Condor
 ############################################
 - include: playbooks/de-porklock.yaml
 
 ############################################
-# Databases      
+# Databases
 ############################################
 - include: db-migrations.yaml
 
 ############################################
 # Services
 ############################################
-  
-- include: playbooks/de-iplant-data-cfg.yaml
 - include: playbooks/de-jex.yaml
-- include: playbooks/de-services-cfg.yaml
-
-############################################
-# DE UI
-############################################
-- include: playbooks/de-ui.yaml
-
-############################################
-# Bring system back up.
-############################################
-- include: playbooks/de-systemd-de-target_up.yaml
-
+- include: playbooks/de-pull-images.yaml
+- include: playbooks/de-stop-containers.yml
+- include: playbooks/de-rm-containers.yml
+- include: playbooks/de-start-containers.yml

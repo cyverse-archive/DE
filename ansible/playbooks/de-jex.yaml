@@ -4,6 +4,9 @@
   sudo: yes
   tags:
       - jex
+  pre_tasks:
+      - name: create the /etc/iplant/de directory
+        file: path=/etc/iplant/de state=directory owner=root group=root mode=0755
   roles:
       - de-jex
 

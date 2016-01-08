@@ -2,16 +2,16 @@
 # tasks file for cfg-docker-pull
 #
 
-- debug: msg="Pulling {{service_name}}"
+- debug: msg="Removing config_{{service_name}}"
   tags:
-      - docker_pull
+      - docker_rm
 
-- name: pull the {{service_name}} image
+- name: remove the config_{{service_name}} image
   environment:
     DE_TAG: "{{docker.tag}}"
     DE_ENV: "{{environment_name}}"
-  shell: "docker-compose -f {{docker.compose_path}} pull {{service_name}}"
+  shell: "docker-compose -f {{docker.compose_path}} rm -f -v config_{{service_name}}"
   register: docker_pull_v
   changed_when: docker_pull_v.stdout.find('Image is up to date') == -1
   tags:
-    - docker_pull
+    - docker_rm

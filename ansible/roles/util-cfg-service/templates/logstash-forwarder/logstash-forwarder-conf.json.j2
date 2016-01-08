@@ -1,6 +1,6 @@
 {
     "network": {
-        "servers": [ "{{ elk_host }}:{{elk.logstash.port}}" ],
+        "servers": [ "{{ groups['elk'][0] }}:{{elk.logstash.port}}" ],
         "ssl certificate": "{{ data_container.ssl.cert }}",
         "ssl key": "{{ data_container.ssl.key }}",
         "ssl ca": "{{ data_container.ssl.gd_bundle_crt }}"
@@ -17,19 +17,16 @@
          {
             "paths": [ "{{logging.dir}}/de-docker.log" ],
             "fields": { "type": "docker-log",
-                        "logsource": "{{ansible_hostname}}",
                         "de_version": "{{de_version}}",
                         "drop_number": "{{drop_number}}"}
          },
          {
             "paths": [ "/var/log/registry/iplant-registry.log" ],
-            "fields": { "type": "registry-log",
-                        "logsource": "{{ansible_hostname}}"}
+            "fields": { "type": "registry-log"}
          },
          {
             "paths": [ "/var/log/registry/iplant-registry-redis.log" ],
-            "fields": { "type": "registry-log",
-                        "logsource": "{{ansible_hostname}}"}
+            "fields": { "type": "registry-log"}
          }
     ]
 }

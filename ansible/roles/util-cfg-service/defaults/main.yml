@@ -8,4 +8,3 @@ dest: "{{service_conf_dir}}/{{service_cfg_file_name}}"
 group: root
 owner: root
 mode: 0644
-    

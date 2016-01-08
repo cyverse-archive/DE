@@ -192,6 +192,34 @@ func CopyCompose(internalPath, externalPath string) error {
 	return nil
 }
 
+// CopyRemoteFiles copies files from the internal remote_files directory to
+// the external remote files directory.
+func CopyRemoteFiles(internalPath, externalPath string) error {
+	var (
+		err                              error
+		internalRemotes, externalRemotes string
+	)
+	if internalRemotes, err = filepath.Abs(path.Join(internalPath, "remote_files")); err != nil {
+		return err
+	}
+	if externalRemotes, err = filepath.Abs(path.Join(externalPath, "remote_files")); err != nil {
+		return err
+	}
+	_, err = os.Stat(internalRemotes)
+	if os.IsNotExist(err) {
+		log.Print(err)
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	remotesCopier := copy.New()
+	if err = remotesCopier.Copy(remotesCopier.FileVisitor, internalRemotes, externalRemotes); err != nil {
+		return err
+	}
+	return nil
+}
+
 // CopyPlaybooks copies the contents of the internal playbooks directory to the
 // external playbooks directory
 func CopyPlaybooks(internalPath, externalPath string) error {
@@ -205,6 +233,32 @@ func CopyPlaybooks(internalPath, externalPath string) error {
 	}
 	playbookCopier := copy.New()
 	return playbookCopier.Copy(playbookCopier.FileVisitor, internalPlaybooks, externalPlaybooks)
+}
+
+func globberCopy(glob, externalPath string) error {
+	matches, err := filepath.Glob(glob)
+	if err != nil {
+		return err
+	}
+	for _, m := range matches {
+		p := path.Join(externalPath, filepath.Base(m))
+		if err = copy.File(m, p); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// CopyToplevelFiles copies any additional .yaml or .yml files in the top-level
+// that it finds.
+func CopyToplevelFiles(internalPath, externalPath string) error {
+	var err error
+	glob := path.Join(internalPath, "*.yaml")
+	if err = globberCopy(glob, externalPath); err != nil {
+		return err
+	}
+	glob = path.Join(internalPath, "*.yml")
+	return globberCopy(glob, externalPath)
 }
 
 // LaunchDocker launches the provided image
@@ -335,7 +389,15 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if err = CopyRemoteFiles(internalPath, externalPath); err != nil {
+		log.Fatal(err)
+	}
+
 	if err = CopyPlaybooks(internalPath, externalPath); err != nil {
+		log.Fatal(err)
+	}
+
+	if err = CopyToplevelFiles(internalPath, externalPath); err != nil {
 		log.Fatal(err)
 	}
 
