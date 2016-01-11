@@ -44,7 +44,7 @@ public class ToolTestDataOutputFilesListEditor extends Composite
 
         ColumnConfig<String, String> outputFile = new ColumnConfig<>(getValueProvider(),
                                                                      appearance.toolTestDataOutputFilesWidth(),
-                                                                     appearance.toolTestDataOutputFilesLabel());
+                                                                     appearance.toolTestDataOutputFilesColumnLabel());
 
         columns.add(outputFile);
         ColumnModel<String> columnModel = new ColumnModel<>(columns);

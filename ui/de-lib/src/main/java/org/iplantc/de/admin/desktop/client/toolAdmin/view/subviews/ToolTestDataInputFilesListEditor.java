@@ -43,7 +43,7 @@ public class ToolTestDataInputFilesListEditor extends Composite
 
         ColumnConfig<String, String> inputFile = new ColumnConfig<>(getValueProvider(),
                                                                     appearance.toolTestDataInputFilesWidth(),
-                                                                    appearance.toolTestDataInputFilesLabel());
+                                                                    appearance.toolTestDataInputFilesColumnLabel());
 
         columns.add(inputFile);
         ColumnModel<String> columnModel = new ColumnModel<>(columns);

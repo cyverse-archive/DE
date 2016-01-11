@@ -125,8 +125,14 @@ public interface ToolAdminDisplayStrings extends Messages {
     @Key("testToolDataInputFilesLabel")
     String testToolDataInputFilesLabel();
 
+    @Key("testToolDataInputFilesColumnLabel")
+    String testToolDataInputFilesColumnLabel();
+
     @Key("testToolOutputFilesLabel")
     String testToolOutputFilesLabel();
+
+    @Key("testToolOutputFilesColumnLabel")
+    String testToolOutputFilesColumnLabel();
 
     @Key("dialogWindowName")
     String dialogWindowName();

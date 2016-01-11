@@ -355,6 +355,11 @@ public class ToolAdminViewDefaultAppearance implements ToolAdminView.ToolAdminVi
     }
 
     @Override
+    public String toolTestDataInputFilesColumnLabel() {
+        return displayStrings.testToolDataInputFilesColumnLabel();
+    }
+
+    @Override
     public int toolTestDataInputFilesWidth() {
         return 500;
     }
@@ -362,6 +367,11 @@ public class ToolAdminViewDefaultAppearance implements ToolAdminView.ToolAdminVi
     @Override
     public String toolTestDataOutputFilesLabel() {
         return displayStrings.testToolOutputFilesLabel();
+    }
+
+    @Override
+    public String toolTestDataOutputFilesColumnLabel() {
+        return displayStrings.testToolOutputFilesColumnLabel();
     }
 
     @Override

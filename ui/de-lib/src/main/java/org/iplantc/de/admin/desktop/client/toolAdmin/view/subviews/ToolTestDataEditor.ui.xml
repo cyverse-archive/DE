@@ -2,7 +2,8 @@
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
              xmlns:d="urn:import:org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews"
              xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
-             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button">
+             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
 
     <ui:with field="appearance"
              type="org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView.ToolAdminViewAppearance"/>
@@ -18,6 +19,10 @@
 
     <container:VerticalLayoutContainer ui:field="layoutContainer">
         <container:child layoutData="{layoutData}">
+            <form:FieldLabel text="{appearance.toolTestDataInputFilesLabel}"
+                             labelWidth="300"/>
+        </container:child>
+        <container:child layoutData="{layoutData}">
             <toolbar:ToolBar title="">
                 <button:TextButton ui:field="addInputFileButton" text="Add"
                                    icon="{appearance.addIcon}"/>
@@ -27,6 +32,10 @@
         </container:child>
         <container:child layoutData="{layoutData}">
             <d:ToolTestDataInputFilesListEditor ui:field="inputFilesEditor"/>
+        </container:child>
+        <container:child layoutData="{layoutData}">
+            <form:FieldLabel text="{appearance.toolTestDataOutputFilesLabel}"
+                             labelWidth="300"/>
         </container:child>
         <container:child layoutData="{layoutData}">
             <toolbar:ToolBar title="">

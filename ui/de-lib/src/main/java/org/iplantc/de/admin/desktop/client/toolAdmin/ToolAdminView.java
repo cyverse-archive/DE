@@ -148,9 +148,13 @@ public interface ToolAdminView extends IsWidget,
 
         String toolTestDataInputFilesLabel();
 
+        String toolTestDataInputFilesColumnLabel();
+
         int toolTestDataInputFilesWidth();
 
         String toolTestDataOutputFilesLabel();
+
+        String toolTestDataOutputFilesColumnLabel();
 
         int toolTestDataOutputFilesWidth();
 
