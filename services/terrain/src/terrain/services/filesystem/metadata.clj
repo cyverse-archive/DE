@@ -10,6 +10,7 @@
         [slingshot.slingshot :only [try+ throw+]])
   (:require [clojure.tools.logging :as log]
             [clojure.string :as string]
+            [clojure.walk :as walk]
             [clojure-commons.file-utils :as ft]
             [cemerick.url :as url]
             [cheshire.core :as json]
@@ -23,13 +24,6 @@
             [terrain.util.service :as service])
   (:import [au.com.bytecode.opencsv CSVReader]
            [java.io InputStream]))
-
-(defn- fix-unit
-  "Used to replace the IPCRESERVED unit with an empty string."
-  [avu]
-  (if (= (:unit avu) IPCRESERVED)
-    (assoc avu :unit "")
-    avu))
 
 (def ^:private ipc-regex #"(?i)^ipc")
 
@@ -49,20 +43,6 @@
 (defn- service-response->json
   [response]
   (->> response :body service/decode-json))
-
-(defn- get-readable-path
-  [cm user data-id]
-  (let [path (:path (uuids/path-for-uuid cm user data-id))]
-    (validators/path-readable cm user path)
-    path))
-
-(defn- list-path-metadata
-  "Returns the metadata for a path. Passes all AVUs to (fix-unit).
-   AVUs with a unit matching IPCSYSTEM are filtered out."
-  [cm path]
-  (remove
-   ipc-avu?
-   (map fix-unit (get-metadata cm (ft/rm-last-slash path)))))
 
 (defn- reserved-unit
   "Turns a blank unit into a reserved unit."
@@ -135,20 +115,18 @@
   [user force? src-id dest-ids]
   (with-jargon (icat/jargon-cfg) [cm]
     (validators/user-exists cm user)
-    (let [src-path (get-readable-path cm user src-id)
-          dest-items (map (partial uuids/path-for-uuid cm user) dest-ids)
+    (let [dest-items (-> (data-raw/collect-stats user :ids dest-ids) :body json/decode (get "ids") vals walk/keywordize-keys)
           dest-paths (map :path dest-items)
-          dest-uuids (map :id dest-items)
-          irods-avus (list-path-metadata cm src-path)
+          {:keys [irods-avus path]} (service-response->json (data-raw/get-avus user src-id))
           attrs (set (map :attr irods-avus))]
       (validators/all-paths-writeable cm user dest-paths)
       (if-not force?
-        (validate-batch-add-attrs user dest-uuids attrs))
+        (validate-batch-add-attrs user dest-ids attrs))
       (metadata-client/copy-metadata-template-avus src-id force? (map format-copy-dest-item dest-items))
-      (doseq [path dest-paths]
-        (metadata-batch-add cm path irods-avus))
+      (doseq [dest-path dest-paths]
+        (metadata-batch-add cm dest-path irods-avus))
       {:user  user
-       :src   src-path
+       :src   path
        :paths dest-paths})))
 
 (defn- check-avus
