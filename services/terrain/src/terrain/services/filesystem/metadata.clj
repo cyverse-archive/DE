@@ -265,7 +265,7 @@
   [cm user dest-dir force? template-id template-attrs attrs csv-filename-values]
   (let [format-path (partial format-csv-metadata-filename dest-dir)
         paths (map (comp format-path first) csv-filename-values)
-        path-info-map (-> (data-raw/collect-stats user paths) :body json/decode (get "paths"))
+        path-info-map (-> (data-raw/collect-stats user :paths paths) :body json/decode (get "paths"))
         value-lists (map rest csv-filename-values)
         irods-attrs (clojure.set/difference (set attrs) (set (keys template-attrs)))]
     (validators/all-paths-exist cm paths)

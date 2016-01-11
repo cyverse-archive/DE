@@ -1,4 +1,5 @@
 (ns terrain.clients.data-info.raw
+  (:use [medley.core :only [remove-vals]])
   (:require [clojure.tools.logging :as log]
             [cemerick.url :as url]
             [me.raynes.fs :as fs]
@@ -212,9 +213,9 @@
 
 (defn collect-stats
   "Uses the data-info stat-gatherer endpoint to gather stat information for a set of files/folders."
-  [user paths]
+  [user & {:keys [paths ids]}]
   (request :post ["stat-gatherer"]
-           (mk-req-map user (json/encode {:paths paths}))))
+           (mk-req-map user (json/encode (remove-vals nil? {:paths paths :ids ids})))))
 
 (defn check-existence
   "Uses the data-info existence-marker endpoint to gather existence information for a set of files/folders."

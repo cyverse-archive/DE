@@ -64,7 +64,7 @@
 
 (defn- uuid-for-path
   [^String user ^String path]
-  (-> (raw/collect-stats user [path])
+  (-> (raw/collect-stats user :paths [path])
       :body
       json/decode
       (get-in ["paths" path "id"])))

@@ -16,7 +16,7 @@
 
     (POST* "/" [:as {uri :uri}]
       :query [params StandardUserQueryParams]
-      :body [body (describe Paths "The paths to gather status information on.")]
+      :body [body (describe OptionalPathsOrDataIds "The path or data ids of the data objects to gather status information on.")]
       :return (s/doc-only StatusInfo StatResponse)
       :summary "File and Folder Status Information"
       :description (str
