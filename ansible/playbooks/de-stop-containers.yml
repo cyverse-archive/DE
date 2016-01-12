@@ -45,11 +45,11 @@
   tags:
     - services
     - condor-log-monitor
-  roles:
-    - role: util-cfg-docker-stop
+  post_tasks:
+    - name: remove clm
       ignore_errors: yes
-      service_name: "{{condor_log_monitor.compose_service}}"
-      service_name_short: "{{condor_log_monitor.service_name_short}}"
+      sudo: yes
+      shell: docker kill clm
 
 - name: Stop data-info
   hosts: data-info
@@ -174,11 +174,15 @@
   tags:
     - services
     - jexevents
-  roles:
-    - role: util-cfg-docker-stop
+  post_tasks:
+    - name: stop jex-events
       ignore_errors: yes
-      service_name: "{{jexevents.compose_service}}"
-      service_name_short: "{{jexevents.service_name_short}}"
+      sudo: true
+      shell: docker kill jexevents
+    - name: stop jex-events part 2
+      ignore_errors: yes
+      sudo: true
+      shell: docker kill jex-events
 
 - name: Stop kifshare
   hosts: kifshare
