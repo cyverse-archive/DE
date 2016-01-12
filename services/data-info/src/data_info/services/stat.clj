@@ -96,13 +96,17 @@
     (path-stat cm user path)))
 
 (defn do-stat
-  [{user :user} {paths :paths uuids :ids}]
+  [{user :user validation :validation-behavior} {paths :paths uuids :ids}]
   (with-jargon (cfg/jargon-cfg) [cm]
     (validators/user-exists cm user)
     (let [uuid-paths (map (juxt (comp keyword str) (partial uuid/get-path cm)) uuids)
           all-paths (into paths (map second uuid-paths))]
       (validators/all-paths-exist cm all-paths)
-      (validators/all-paths-readable cm user all-paths)
+      (case (keyword validation)
+            :own (validators/user-owns-paths cm user all-paths)
+            :write (validators/all-paths-writeable cm user all-paths)
+            :read (validators/all-paths-readable cm user all-paths)
+            (validators/all-paths-readable cm user all-paths))
       {:paths (into {} (map (juxt keyword (partial path-stat cm user)) paths))
        :ids (into {} (map (juxt first #(path-stat cm user (second %))) uuid-paths))})))
 

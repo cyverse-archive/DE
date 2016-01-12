@@ -1,5 +1,5 @@
 (ns data-info.routes.domain.stats
-  (:use [common-swagger-api.schema :only [describe NonBlankString]]
+  (:use [common-swagger-api.schema :only [describe NonBlankString StandardUserQueryParams]]
         [data-info.routes.domain.common])
   (:require [schema.core :as s])
   (:import [java.util UUID]))
@@ -8,6 +8,11 @@
 (def PermissionEnum (s/enum :read :write :own))
 (def DataItemIdParam (describe UUID "The UUID of this data item"))
 (def DataItemPathParam (describe NonBlankString "The IRODS paths to this data item"))
+
+(s/defschema StatQueryParams
+  (assoc StandardUserQueryParams
+         (s/optional-key :validation-behavior)
+         (describe PermissionEnum "What level of permissions on the queried files should be validated?")))
 
 (s/defschema DataStatInfo
   {:id

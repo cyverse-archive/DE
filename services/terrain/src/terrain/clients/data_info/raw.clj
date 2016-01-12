@@ -213,9 +213,11 @@
 
 (defn collect-stats
   "Uses the data-info stat-gatherer endpoint to gather stat information for a set of files/folders."
-  [user & {:keys [paths ids]}]
+  [user & {:keys [paths ids validation-behavior]}]
   (request :post ["stat-gatherer"]
-           (mk-req-map user (json/encode (remove-vals nil? {:paths paths :ids ids})))))
+           (mk-req-map user
+                       (json/encode (remove-vals nil? {:paths paths :ids ids}))
+                       (remove-vals nil? {:validation-behavior validation-behavior}))))
 
 (defn check-existence
   "Uses the data-info existence-marker endpoint to gather existence information for a set of files/folders."
