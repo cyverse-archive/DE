@@ -35,18 +35,6 @@
       service_name: "{{clockwork.compose_service}}"
       service_name_short: "{{clockwork.service_name_short}}"
 
-- name: Start clm
-  hosts: condor-log-monitor
-  sudo: true
-  gather_facts: false
-  tags:
-    - services
-    - condor-log-monitor
-  roles:
-    - role: util-cfg-docker-up
-      service_name: "{{condor_log_monitor.compose_service}}"
-      service_name_short: "{{condor_log_monitor.service_name_short}}"
-
 - name: Start data-info
   hosts: data-info
   sudo: true
@@ -156,18 +144,6 @@
     - role: util-cfg-docker-up
       service_name: "{{iplant_groups.compose_service}}"
       service_name_short: "{{iplant_groups.service_name_short}}"
-
-- name: Start jex-events
-  hosts: jexevents
-  sudo: true
-  gather_facts: false
-  tags:
-    - services
-    - jexevents
-  roles:
-    - role: util-cfg-docker-up
-      service_name: "{{jexevents.compose_service}}"
-      service_name_short: "{{jexevents.service_name_short}}"
 
 - name: Start kifshare
   hosts: kifshare
