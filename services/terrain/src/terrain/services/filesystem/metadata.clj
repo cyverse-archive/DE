@@ -82,21 +82,19 @@
    src-id to the items with dest-ids. When the 'force?' parameter is false or not set, additional
    validation is performed."
   [user force? src-id dest-ids]
-  (with-jargon (icat/jargon-cfg) [cm]
-    (let [dest-items (-> (data-raw/collect-stats user :ids dest-ids) :body json/decode (get "ids") vals walk/keywordize-keys)
-          dest-paths (map :path dest-items)
-          dest-ids (map :id dest-items)
-          {:keys [irods-avus path]} (service-response->json (data-raw/get-avus user src-id))
-          attrs (set (map :attr irods-avus))]
-      (validators/all-paths-writeable cm user dest-paths)
-      (if-not force?
-        (validate-batch-add-attrs user dest-ids attrs))
-      (metadata-client/copy-metadata-template-avus src-id force? (map format-copy-dest-item dest-items))
-      (doseq [dest-id dest-ids]
-        (metadata-batch-add user dest-id irods-avus))
-      {:user  user
-       :src   path
-       :paths dest-paths})))
+  (let [dest-items (-> (data-raw/collect-stats user :ids dest-ids :validation-behavior "write") :body json/decode (get "ids") vals walk/keywordize-keys)
+        dest-paths (map :path dest-items)
+        dest-ids (map :id dest-items)
+        {:keys [irods-avus path]} (service-response->json (data-raw/get-avus user src-id))
+        attrs (set (map :attr irods-avus))]
+    (if-not force?
+      (validate-batch-add-attrs user dest-ids attrs))
+    (metadata-client/copy-metadata-template-avus src-id force? (map format-copy-dest-item dest-items))
+    (doseq [dest-id dest-ids]
+      (metadata-batch-add user dest-id irods-avus))
+    {:user  user
+     :src   path
+     :paths dest-paths}))
 
 (defn- check-avus
   [avus]
@@ -205,13 +203,12 @@
 (defn- bulk-add-avus
   "Applies metadata from a list of attributes and filename/values to those files found under
    dest-dir."
-  [cm user dest-dir force? template-id template-attrs attrs csv-filename-values]
+  [user dest-dir force? template-id template-attrs attrs csv-filename-values]
   (let [format-path (partial format-csv-metadata-filename dest-dir)
         paths (map (comp format-path first) csv-filename-values)
-        path-info-map (-> (data-raw/collect-stats user :paths paths) :body json/decode (get "paths"))
+        path-info-map (-> (data-raw/collect-stats user :paths paths :validation-behavior "write") :body json/decode (get "paths"))
         value-lists (map rest csv-filename-values)
         irods-attrs (clojure.set/difference (set attrs) (set (keys template-attrs)))]
-    (validators/all-paths-writeable cm user paths)
     (if-not force?
       (validate-batch-add-attrs user (map #(get-in path-info-map [% "id"]) paths) irods-attrs))
   (mapv (partial bulk-add-file-avus user dest-dir template-id template-attrs attrs)
@@ -221,14 +218,14 @@
   "Parses filenames and metadata to apply from a CSV file input stream.
    If a template-id is provided, then AVUs with template attributes are stored in the metadata db,
    and all other AVUs are stored in IRODS."
-  [cm user dest-dir force? template-id ^String separator ^InputStream stream]
+  [user dest-dir force? template-id ^String separator ^InputStream stream]
   (let [stream-reader (java.io.InputStreamReader. stream "UTF-8")
         csv (mapv (partial mapv string/trim) (.readAll (CSVReader. stream-reader (.charAt separator 0))))
         attrs (-> csv first rest)
         csv-filename-values (rest csv)
         template-attrs (parse-template-attrs template-id)]
     {:path-metadata
-     (bulk-add-avus cm user dest-dir force? template-id template-attrs attrs csv-filename-values)}))
+     (bulk-add-avus user dest-dir force? template-id template-attrs attrs csv-filename-values)}))
 
 (defn parse-metadata-csv-file
   "Parses filenames and metadata to apply from a source CSV file in the data store"
@@ -238,7 +235,7 @@
     (validators/path-exists cm src)
     (validators/path-readable cm user src)
     (service/success-response
-      (parse-metadata-csv cm user dest
+      (parse-metadata-csv user dest
         (Boolean/parseBoolean force)
         (uuidify template-id)
         (url/url-decode separator)
