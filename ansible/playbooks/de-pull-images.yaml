@@ -230,6 +230,21 @@
       service_name: "{{iplant_groups.compose_service}}"
       service_name_short: "{{iplant_groups.service_name_short}}"
 
+- name: Update jobservices
+  hosts: jexevents
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - jobservices
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: jobservices
+      service_name_short: jobservices
+    - role: util-cfg-docker-pull
+      service_name: jobservices
+      service_name_short: jobservices
+
 - name: Update kifshare
   hosts: kifshare
   sudo: true
