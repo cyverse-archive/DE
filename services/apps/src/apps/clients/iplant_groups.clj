@@ -1,13 +1,16 @@
 (ns apps.clients.iplant-groups
+  (:use [slingshot.slingshot :only [throw+]])
   (:require [apps.util.config :as config]
             [cemerick.url :as curl]
             [clj-http.client :as http]
             [clojure.string :as string]
+            [clojure-commons.exception :as cx]
             [kameleon.uuids :refer [uuidify]]))
 
 (def grouper-user "de_grouper")
 (def grouper-user-group-fmt "iplant:de:%s:users:de-users")
 (def grouper-app-permission-def-fmt "iplant:de:%s:apps:app-permission-def")
+(def grouper-app-resource-name-fmt "iplant:de:%s:apps:%s")
 
 (defn- grouper-user-group
   []
@@ -17,9 +20,29 @@
   []
   (format grouper-app-permission-def-fmt (config/env-name)))
 
+(defn- grouper-app-resource-name
+  [app-id]
+  (format grouper-app-resource-name-fmt (config/env-name) app-id))
+
 (defn- grouper-url
   [& components]
   (str (apply curl/url (config/ipg-base) components)))
+
+(defn- get-grouper-user-group-id
+  []
+  (some->> (http/get (grouper-url "groups")
+                     {:query-params {:user   grouper-user
+                                     :search (grouper-user-group)}
+                      :as           :json})
+           :body
+           :groups
+           first
+           :id))
+
+(def ^:private grouper-user-group-id
+  (memoize (fn [] (or (get-grouper-user-group-id)
+                      (throw+ {:type  ::cx/request-failed
+                               :error "de-users group not found in Grouper"})))))
 
 (defn lookup-subject
   "Uses iplant-groups's subject lookup by ID endpoint to retrieve user details."
@@ -40,3 +63,30 @@
          (:body)
          (:assignments)
          (group-by (comp uuidify id-from-resource :name :attribute_definition_name)))))
+
+(defn- create-resource
+  "Creates a new permission name in grouper."
+  [resource-name permission-def]
+  (:body (http/post (grouper-url "attributes")
+                    {:query-params {:user grouper-user}
+                     :form-params  {:name                 resource-name
+                                    :attribute_definition {:name permission-def}}
+                     :content-type :json
+                     :as           :json})))
+
+(defn- grant-role-user-permission
+  "Grants permission to access a resource to an individual user."
+  [user role-id resource-id action]
+  (:body (http/put (grouper-url "attributes" resource-id "permissions" "memberships" role-id user action)
+                   {:query-params {:user grouper-user}
+                    :form-params  {:allowed true}
+                    :content-type :json
+                    :as           :json})))
+
+(defn register-private-app
+  "Registers a new private app in Grouper."
+  [user app-id]
+  (let [app-resource-name (grouper-app-resource-name app-id)
+        permission-def    (grouper-app-permission-def)
+        resource-def      (create-resource app-resource-name permission-def)]
+    (grant-role-user-permission user (grouper-user-group-id) (:id resource-def) "own")))
