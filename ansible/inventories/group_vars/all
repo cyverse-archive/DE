@@ -649,6 +649,9 @@ permanent_id:
   ezid:
     username: apitest
     password:
+    shoulders:
+      ark: "ark:/99999/fk4"
+      doi: "doi:10.5072/FK2"
 
 pgp_keyring_path: "{{ gpg_home_dir }}/secring.gpg"
 pgp_key_password:

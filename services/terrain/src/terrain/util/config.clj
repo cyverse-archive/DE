@@ -448,6 +448,11 @@
   [props config-valid configs]
   "terrain.permanent-id.staging-dir")
 
+(cc/defprop-str permanent-id-publish-dir
+  "The data store directory where curated folders with a permanent ID are published."
+  [props config-valid configs]
+  "terrain.permanent-id.publish-dir")
+
 (cc/defprop-str ezid-base-url
   "The EZID API base URL."
   [props config-valid configs]
@@ -462,6 +467,16 @@
   "The EZID API account password."
   [props config-valid configs]
   "terrain.permanent-id.ezid.password")
+
+(cc/defprop-str ezid-shoulders-ark
+  "The EZID ARK shoulder or namespace."
+  [props config-valid configs]
+  "terrain.permanent-id.ezid.shoulders.ark")
+
+(cc/defprop-str ezid-shoulders-doi
+  "The EZID DOI shoulder or namespace."
+  [props config-valid configs]
+  "terrain.permanent-id.ezid.shoulders.doi")
 
 (cc/defprop-str prefs-base-url
   "The hostname of the user-preferences service"

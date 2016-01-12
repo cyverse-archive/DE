@@ -1,15 +1,21 @@
 (ns terrain.services.permanent-id-requests
   (:use [kameleon.uuids :only [uuidify]]
-        [slingshot.slingshot :only [throw+]]
-        [terrain.auth.user-attributes :only [current-user]])
+        [slingshot.slingshot :only [try+ throw+]]
+        [terrain.auth.user-attributes :only [current-user]]
+        [terrain.services.filesystem.metadata :only [metadata-get]])
   (:require [cheshire.core :as json]
             [clojure.tools.logging :as log]
             [clojure-commons.file-utils :as ft]
             [terrain.clients.data-info :as data-info]
             [terrain.clients.data-info.raw :as data-info-client]
+            [terrain.clients.ezid :as ezid]
             [terrain.clients.metadata.raw :as metadata]
             [terrain.util.config :as config]
             [terrain.util.service :as service]))
+
+;; Status Codes.
+(def ^:private status-code-completion "Completion")
+(def ^:private status-code-failed "Failed")
 
 (defn- validate-request-target-type
   [{target-type :type :as folder}]
@@ -36,6 +42,15 @@
     (throw+ {:type :clojure-commons.exception/exists
              :error "A folder with this name has already been submitted for a Permanent ID request."
              :path staging-dest})))
+  data-item)
+
+(defn- validate-publish-dest
+  [{:keys [path] :as data-item}]
+  (let [publish-dest (ft/path-join (config/permanent-id-publish-dir) (ft/basename path))]
+    (when (data-info/path-exists? (config/irods-user) publish-dest)
+      (throw+ {:type :clojure-commons.exception/exists
+               :error "A folder with this name has already been published."
+               :path publish-dest})))
   data-item)
 
 (defn- validate-data-item
@@ -76,6 +91,16 @@
       (data-info-client/create-dirs (config/irods-user) [staging-path])
       (data-info/share (config/irods-user) curators [staging-path] "own"))))
 
+(defn- create-publish-dir
+  "Creates the Permanent ID Requests publish directory, if it doesn't already exist."
+  []
+  (let [publish-path (config/permanent-id-publish-dir)
+        curators     (set (config/permanent-id-curators))]
+    (when-not (data-info/path-exists? (config/irods-user) publish-path)
+      (log/warn "creating" publish-path "for:" (clojure.string/join ", " curators))
+      (data-info-client/create-dirs (config/irods-user) [publish-path])
+      (data-info/share (config/irods-user) curators [publish-path] "own"))))
+
 (defn- stage-data-item
   [user {:keys [id path] :as data-item}]
   (let [staged-path (ft/path-join (config/permanent-id-staging-dir) (ft/basename path))
@@ -85,6 +110,33 @@
     (data-info/share (config/irods-user) curators [staged-path] "own")
     (when-not (contains? curators user)
       (data-info/share (config/irods-user) [user] [staged-path] "write"))))
+
+(defn- publish-data-item
+  [{:keys [id path] :as data-item}]
+  (let [publish-path (ft/path-join (config/permanent-id-publish-dir) (ft/basename path))
+        curators (set (config/permanent-id-curators))]
+    (data-info-client/move-single (config/irods-user) id (config/permanent-id-publish-dir))
+    (log/warn "share" publish-path "with:" (clojure.string/join ", " curators))
+    (data-info/share (config/irods-user) curators [publish-path] "own")))
+
+(defn- request-type->shoulder
+  [type]
+  (case type
+    "ARK" (config/ezid-shoulders-ark)
+    "DOI" (config/ezid-shoulders-doi)
+    (throw+ {:type :clojure-commons.exception/bad-request-field
+             :error "No EZID shoulder defined for this Permanent ID Request type."
+             :request-type type})))
+
+(defn- parse-ezid-metadata
+  [irods-avus metadata]
+  (let [metadata (mapcat :avus (:templates metadata))
+        format-avus #(vector (:attr %) (:value %))]
+    (into {} (concat (map format-avus irods-avus) (map format-avus metadata)))))
+
+(defn- ezid-response->avus
+  [response]
+  (map (fn [[k v]] {:attr (name k) :value v :unit ""}) response))
 
 (defn- format-perm-id-req-response
   [user {:keys [target_id] :as response}]
@@ -147,3 +199,24 @@
   (->> (metadata/update-permanent-id-request request-id body)
        parse-service-json
        (format-perm-id-req-response (:shortUsername current-user))))
+
+(defn create-permanent-id
+  [request-id params body]
+  (try+
+    (create-publish-dir)
+    (let [user                              (:shortUsername current-user)
+          {:keys [folder type] :as request} (admin-get-permanent-id-request request-id nil)
+          shoulder                          (request-type->shoulder type)
+          folder                            (validate-publish-dest folder)
+          folder-id                         (uuidify (:id folder))
+          {:keys [irods-avus metadata]}     (metadata-get user folder-id)
+          template-id                       (-> metadata :templates first :template_id)
+          ezid-metadata                     (parse-ezid-metadata irods-avus metadata)
+          response                          (ezid/mint-id shoulder ezid-metadata)]
+      (data-info-client/admin-add-avus user folder-id (ezid-response->avus response))
+      (publish-data-item folder))
+    (catch Object e
+      (log/error e)
+      (update-permanent-id-request request-id nil (json/encode {:status status-code-failed}))
+      (throw+ e)))
+  (update-permanent-id-request request-id nil (json/encode {:status status-code-completion})))

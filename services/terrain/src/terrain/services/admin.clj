@@ -76,6 +76,18 @@
       (log/error (ce/format-exception e))
       false)))
 
+(defn perform-ezid-check
+  []
+  (try
+    (let [ezid-status-url (str (url/url (config/ezid-base-url) "status"))
+          status          (:body (client/get ezid-status-url))]
+      (log/info "HTTP Status from EZID: " status)
+      status)
+    (catch Exception e
+      (log/error "Error performing EZID status check:")
+      (log/error (ce/format-exception e))
+      false)))
+
 
 (defn- status-irods
   [status]
@@ -101,6 +113,10 @@
     (merge status {:notificationagent (perform-notificationagent-check)})
     status))
 
+(defn status-ezid
+  [status]
+  (merge status {:ezid (perform-ezid-check)}))
+
 (defn status
   "Returns JSON containing the Terrain's status."
   [request]
@@ -109,5 +125,6 @@
     (status-jex)
     (status-apps)
     (status-notificationagent)
+    (status-ezid)
     success-response))
 
