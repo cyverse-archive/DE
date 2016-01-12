@@ -98,21 +98,21 @@
 ;; Group retrieval.
 
 (defn- group-retrieval-query-filter
-  [group-id]
-  (remove-vals nil? {:groupUuid       group-id
-                     :queryFilterType "FIND_BY_GROUP_UUID"}))
+  [group-name]
+  (remove-vals nil? {:groupName       group-name
+                     :queryFilterType "FIND_BY_GROUP_NAME_EXACT"}))
 
 (defn- format-group-retrieval-request
-  [username group-id]
+  [username group-name]
   {:WsRestFindGroupsRequest
    {:actAsSubjectLookup (act-as-subject-lookup username)
-    :wsQueryFilter      (group-retrieval-query-filter group-id)
+    :wsQueryFilter      (group-retrieval-query-filter group-name)
     :includeGroupDetail "T"}})
 
 (defn get-group
-  [username group-id]
+  [username group-name]
   (with-trap [default-error-handler]
-    (-> (format-group-retrieval-request username group-id)
+    (-> (format-group-retrieval-request username group-name)
         (grouper-post "groups")
         :WsFindGroupsResults
         :groupResults
@@ -131,8 +131,7 @@
                          :displayExtension display-extension
                          :typeOfGroup type})
       :wsGroupLookup group-lookup
-      :saveMode (if update? "UPDATE" "INSERT")}
-    ]
+      :saveMode (if update? "UPDATE" "INSERT")}]
     :includeGroupDetail "T"}})
 
 (defn- format-group-add-request
@@ -142,10 +141,10 @@
     false username type name display-extension description))
 
 (defn- format-group-update-request
-  [username uuid name display-extension description]
+  [username original-name new-name display-extension description]
   (format-group-add-update-request
-    {:uuid uuid}
-    true username nil name display-extension description)) ;; nil is for 'type' which we shouldn't change for now
+    {:groupName original-name}
+    true username nil new-name display-extension description)) ;; nil is for 'type' which we shouldn't change for now
 
 (defn- add-update-group
   [request-body]
@@ -162,23 +161,23 @@
     (format-group-add-request username type name display-extension description)))
 
 (defn update-group
-  [username uuid name display-extension description]
+  [username original-name new-name display-extension description]
   (add-update-group
-    (format-group-update-request username uuid name display-extension description)))
+    (format-group-update-request username original-name new-name display-extension description)))
 
 ;; Group delete
 
 (defn- format-group-delete-request
-  [username group-id]
+  [username group-name]
   {:WsRestGroupDeleteRequest
    {:actAsSubjectLookup (act-as-subject-lookup username)
     :wsGroupLookups [
-     {:uuid group-id}]}})
+     {:groupName group-name}]}})
 
 (defn delete-group
-  [username group-id]
+  [username group-name]
   (with-trap [default-error-handler]
-    (-> (format-group-delete-request username group-id)
+    (-> (format-group-delete-request username group-name)
         (grouper-post "groups")
         :WsGroupDeleteResults
         :results
@@ -188,24 +187,24 @@
 ;; Group membership listings.
 
 (defn- group-membership-listing-error-handler
-  [group-id error-code {:keys [body] :as response}]
+  [group-name error-code {:keys [body] :as response}]
   (log/warn "Grouper request failed:" response)
   (let [body    (service/parse-json body)
         get-grc (fn [m] (-> m :WsGetMembersResults :results first :resultMetadata :resultCode))]
     (if (and (= error-code ce/ERR_REQUEST_FAILED) (= (get-grc body) "GROUP_NOT_FOUND"))
-      (service/not-found "group" group-id)
+      (service/not-found "group" group-name)
       (throw+ (build-error-object error-code body)))))
 
 (defn- format-group-member-listing-request
-  [username group-id]
+  [username group-name]
   {:WsRestGetMembersRequest
    {:actAsSubjectLookup (act-as-subject-lookup username)
-    :wsGroupLookups     [{:uuid group-id}]}})
+    :wsGroupLookups     [{:groupName group-name}]}})
 
 (defn get-group-members
-  [username group-id]
-  (with-trap [(partial group-membership-listing-error-handler group-id)]
-    (let [response (-> (format-group-member-listing-request username group-id)
+  [username group-name]
+  (with-trap [(partial group-membership-listing-error-handler group-name)]
+    (let [response (-> (format-group-member-listing-request username group-name)
                        (grouper-post "groups")
                        :WsGetMembersResults)]
       [(:wsSubjects (first (:results response))) (:subjectAttributeNames response)])))
@@ -234,20 +233,20 @@
 ;; Folder retrieval.
 
 (defn- folder-retrieval-query-filter
-  [folder-id]
-  {:stemUuid            folder-id
-   :stemQueryFilterType "FIND_BY_STEM_UUID"})
+  [folder-name]
+  {:stemName            folder-name
+   :stemQueryFilterType "FIND_BY_STEM_NAME"})
 
 (defn- format-folder-retrieval-request
-  [username folder-id]
+  [username folder-name]
   {:WsRestFindStemsRequest
    {:actAsSubjectLookup (act-as-subject-lookup username)
-    :wsStemQueryFilter  (folder-retrieval-query-filter folder-id)}})
+    :wsStemQueryFilter  (folder-retrieval-query-filter folder-name)}})
 
 (defn get-folder
-  [username folder-id]
+  [username folder-name]
   (with-trap [default-error-handler]
-    (-> (format-folder-retrieval-request username folder-id)
+    (-> (format-folder-retrieval-request username folder-name)
         (grouper-post "stems")
         :WsFindStemsResults
         :stemResults
@@ -256,12 +255,12 @@
 ;; Folder add.
 
 (defn- folder-forbidden-error-handler
-  [result-key folder-id error-code {:keys [body] :as response}]
+  [result-key folder-name error-code {:keys [body] :as response}]
   (log/warn "Grouper request failed:" response)
   (let [body    (service/parse-json body)
         get-grc (fn [m] (-> m result-key :results first :resultMetadata :resultCode))]
     (if (and (= error-code ce/ERR_REQUEST_FAILED) (= (get-grc body) "INSUFFICIENT_PRIVILEGES"))
-      (service/forbidden "folder" folder-id)
+      (service/forbidden "folder" folder-name)
       (throw+ (build-error-object error-code body)))))
 
 (defn- format-folder-add-update-request
@@ -284,10 +283,10 @@
     false username name display-extension description))
 
 (defn- format-folder-update-request
-  [username uuid name display-extension description]
+  [username original-name new-name display-extension description]
   (format-folder-add-update-request
-    {:uuid uuid}
-    true username name display-extension description))
+    {:stemName original-name}
+    true username new-name display-extension description))
 
 (defn- add-update-folder
   [request-body name]
@@ -304,23 +303,24 @@
     (format-folder-add-request username name display-extension description) name))
 
 (defn update-folder
-  [username uuid name display-extension description]
+  [username original-name new-name display-extension description]
   (add-update-folder
-    (format-folder-update-request username uuid name display-extension description) uuid))
+    (format-folder-update-request username original-name new-name display-extension description)
+    original-name))
 
 ;; Folder delete
 
 (defn- format-folder-delete-request
-  [username folder-id]
+  [username folder-name]
   {:WsRestStemDeleteRequest
    {:actAsSubjectLookup (act-as-subject-lookup username)
     :wsStemLookups [
-     {:uuid folder-id}]}})
+     {:stemName folder-name}]}})
 
 (defn delete-folder
-  [username folder-id]
-  (with-trap [(partial folder-forbidden-error-handler :WsStemDeleteResults folder-id)]
-    (-> (format-folder-delete-request username folder-id)
+  [username folder-name]
+  (with-trap [(partial folder-forbidden-error-handler :WsStemDeleteResults folder-name)]
+    (-> (format-folder-delete-request username folder-name)
         (grouper-post "stems")
         :WsStemDeleteResults
         :results
@@ -331,30 +331,30 @@
 
 ;; This is only available as a Lite request; ActAsSubject works differently.
 (defn- format-group-folder-privileges-lookup-request
-  [entity-type username group-or-folder-id]
-  (if-let [uuid-key (get {:group :groupUuid
-                          :folder :stemUuid}
+  [entity-type username group-or-folder-name]
+  (if-let [name-key (get {:group :groupName
+                          :folder :stemName}
                          entity-type)]
     {:WsRestGetGrouperPrivilegesLiteRequest
      {:actAsSubjectId username
-      uuid-key group-or-folder-id}}
+      name-key group-or-folder-name}}
     (throw+ {:error_code ce/ERR_BAD_REQUEST :entity-type entity-type})))
 
 (defn- get-group-folder-privileges
-  [entity-type username group-or-folder-id]
+  [entity-type username group-or-folder-name]
   (with-trap [default-error-handler]
-    (let [response (-> (format-group-folder-privileges-lookup-request entity-type username group-or-folder-id)
+    (let [response (-> (format-group-folder-privileges-lookup-request entity-type username group-or-folder-name)
                        (grouper-post "grouperPrivileges")
                        :WsGetGrouperPrivilegesLiteResult)]
       [(:privilegeResults response) (:subjectAttributeNames response)])))
 
 (defn get-group-privileges
-  [username group-id]
-  (get-group-folder-privileges :group username group-id))
+  [username group-name]
+  (get-group-folder-privileges :group username group-name))
 
 (defn get-folder-privileges
-  [username folder-id]
-  (get-group-folder-privileges :folder username folder-id))
+  [username folder-name]
+  (get-group-folder-privileges :folder username folder-name))
 
 ;; Add/remove group/folder privileges
 
@@ -369,15 +369,15 @@
      :wsSubjectLookups [{:subjectId subject-id}])})
 
 (defn- format-group-privileges-add-remove-request
-  [allowed? username group-id subject-id privilege-names]
+  [allowed? username group-name subject-id privilege-names]
   (format-group-folder-privileges-add-remove-request
-    {:wsGroupLookup {:uuid group-id}}
+    {:wsGroupLookup {:groupName group-name}}
     allowed? username subject-id privilege-names))
 
 (defn- format-folder-privileges-add-remove-request
-  [allowed? username folder-id subject-id privilege-names]
+  [allowed? username folder-name subject-id privilege-names]
   (format-group-folder-privileges-add-remove-request
-    {:wsStemLookup {:uuid folder-id}}
+    {:wsStemLookup {:stemName folder-name}}
     allowed? username subject-id privilege-names))
 
 (defn- add-remove-group-folder-privileges
@@ -388,30 +388,30 @@
       [(first (:results response)) (:subjectAttributeNames response)])))
 
 (defn- add-remove-group-privileges
-  [allowed? username group-id subject-id privilege-names]
+  [allowed? username group-name subject-id privilege-names]
   (add-remove-group-folder-privileges
-    (format-group-privileges-add-remove-request allowed? username group-id subject-id privilege-names)))
+    (format-group-privileges-add-remove-request allowed? username group-name subject-id privilege-names)))
 
 (defn- add-remove-folder-privileges
-  [allowed? username folder-id subject-id privilege-names]
+  [allowed? username folder-name subject-id privilege-names]
   (add-remove-group-folder-privileges
-    (format-folder-privileges-add-remove-request allowed? username folder-id subject-id privilege-names)))
+    (format-folder-privileges-add-remove-request allowed? username folder-name subject-id privilege-names)))
 
 (defn add-group-privileges
-  [username group-id subject-id privilege-names]
-  (add-remove-group-privileges true username group-id subject-id privilege-names))
+  [username group-name subject-id privilege-names]
+  (add-remove-group-privileges true username group-name subject-id privilege-names))
 
 (defn remove-group-privileges
-  [username group-id subject-id privilege-names]
-  (add-remove-group-privileges false username group-id subject-id privilege-names))
+  [username group-name subject-id privilege-names]
+  (add-remove-group-privileges false username group-name subject-id privilege-names))
 
 (defn add-folder-privileges
-  [username folder-id subject-id privilege-names]
-  (add-remove-folder-privileges true username folder-id subject-id privilege-names))
+  [username folder-name subject-id privilege-names]
+  (add-remove-folder-privileges true username folder-name subject-id privilege-names))
 
 (defn remove-folder-privileges
-  [username folder-id subject-id privilege-names]
-  (add-remove-folder-privileges false username folder-id subject-id privilege-names))
+  [username folder-name subject-id privilege-names]
+  (add-remove-folder-privileges false username folder-name subject-id privilege-names))
 
 ;; Subject search.
 
@@ -487,7 +487,7 @@
 
 ;; Attribute Definition Name add/update
 
-(defn- format-attribute-name-add-update-request ;; functionally add-only to start. need to add a wsAttributeDefNameLookup for update
+(defn- format-attribute-name-add-update-request
   [update? username attribute-def name display-extension description]
   {:WsRestAttributeDefNameSaveRequest
    {:actAsSubjectLookup (act-as-subject-lookup username)
@@ -533,7 +533,7 @@
 (defn- format-role-lookup
   [{:keys [role_id role]}]
   (cond role_id [{:uuid role_id}]
-        role    [{:name role}]))
+        role    [{:groupName role}]))
 
 (defn- format-action-names-lookup
   [{:keys [action_names]}]
@@ -561,13 +561,14 @@
 
 ;; assign/remove
 (defn- format-permission-assign-remove-request
-  "Format request. lookups-and-type should have the permissionType key as well as any lookups necessary for that type (e.g. type role + roleLookups)"
-  [assignment? lookups-and-type username attribute-def-name-id allowed? action-names]
+  "Format request. lookups-and-type should have the permissionType key as well as any lookups necessary for that
+   type (e.g. type role + roleLookups)"
+  [assignment? lookups-and-type username attribute-def-name allowed? action-names]
   {:WsRestAssignPermissionsRequest
     (assoc lookups-and-type
            :permissionAssignOperation (if assignment? "assign_permission" "remove_permission")
            :actAsSubjectLookup (act-as-subject-lookup username)
-           :permissionDefNameLookups [{:uuid attribute-def-name-id}]
+           :permissionDefNameLookups [{:name attribute-def-name}]
            :disallowed (if allowed? "F" "T")
            :actions action-names)})
 
@@ -580,44 +581,43 @@
   (apply format-permission-assign-remove-request false args))
 
 (defn- role-permission
-  [role-id]
+  [role-name]
   {:permissionType "role"
-   :roleLookups [
-    {:uuid role-id}]})
+   :roleLookups [{:groupName role-name}]})
 
 (defn- membership-permission
-  [role-id subject-id]
+  [role-name subject-id]
   {:permissionType "role_subject"
    :subjectRoleLookups [
    {:wsGroupLookup
-     {:uuid role-id}
+     {:groupName role-name}
     :wsSubjectLookup
      {:subjectId subject-id}}]})
 
 (defn- format-role-permission-assign-request
-  [username attribute-def-name-id role-id allowed? action-names]
+  [username attribute-def-name role-name allowed? action-names]
   (format-permission-assign-request
-    (role-permission role-id)
-    username attribute-def-name-id allowed? action-names))
+    (role-permission role-name)
+    username attribute-def-name allowed? action-names))
 
 (defn- format-membership-permission-assign-request
-  [username attribute-def-name-id role-id subject-id allowed? action-names]
+  [username attribute-def-name role-name subject-id allowed? action-names]
   (format-permission-assign-request
-    (membership-permission role-id subject-id)
-    username attribute-def-name-id allowed? action-names))
+    (membership-permission role-name subject-id)
+    username attribute-def-name allowed? action-names))
 
 ; For remove requests, 'allowed' is ignored. Pass true as a default.
 (defn- format-role-permission-remove-request
-  [username attribute-def-name-id role-id action-names]
+  [username attribute-def-name role-name action-names]
   (format-permission-remove-request
-    (role-permission role-id)
-    username attribute-def-name-id true action-names))
+    (role-permission role-name)
+    username attribute-def-name true action-names))
 
 (defn- format-membership-permission-remove-request
-  [username attribute-def-name-id role-id subject-id action-names]
+  [username attribute-def-name role-name subject-id action-names]
   (format-permission-remove-request
-    (membership-permission role-id subject-id)
-    username attribute-def-name-id true action-names))
+    (membership-permission role-name subject-id)
+    username attribute-def-name true action-names))
 
 (defn- assign-remove-permission
   [request-body]
@@ -630,25 +630,25 @@
         first)))
 
 (defn assign-role-permission
-  [username attribute-def-name-id role-id allowed? action-names]
+  [username attribute-def-name role-name allowed? action-names]
   (assign-remove-permission
     (format-role-permission-assign-request
-      username attribute-def-name-id role-id allowed? action-names)))
+      username attribute-def-name role-name allowed? action-names)))
 
 (defn remove-role-permission
-  [username attribute-def-name-id role-id action-names]
+  [username attribute-def-name role-name action-names]
   (assign-remove-permission
     (format-role-permission-remove-request
-      username attribute-def-name-id role-id action-names)))
+      username attribute-def-name role-name action-names)))
 
 (defn assign-membership-permission
-  [username attribute-def-name-id role-id subject-id allowed? action-names]
+  [username attribute-def-name role-name subject-id allowed? action-names]
   (assign-remove-permission
     (format-membership-permission-assign-request
-      username attribute-def-name-id role-id subject-id allowed? action-names)))
+      username attribute-def-name role-name subject-id allowed? action-names)))
 
 (defn remove-membership-permission
-  [username attribute-def-name-id role-id subject-id action-names]
+  [username attribute-def-name role-name subject-id action-names]
   (assign-remove-permission
     (format-membership-permission-remove-request
-      username attribute-def-name-id role-id subject-id action-names)))
+      username attribute-def-name role-name subject-id action-names)))

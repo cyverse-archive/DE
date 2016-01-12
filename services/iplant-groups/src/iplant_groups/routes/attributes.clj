@@ -28,8 +28,8 @@
         :description "This endpoint allows adding a new attribute name. Grouper also uses attribute names to store resources to which permissions are assigned. An attribute definition must be present, already made by using the Grouper UI (most likely), as there is no web service for creating them."
         (ok (attributes/add-attribute-name body params)))
 
-  (context* "/:attribute-id" []
-    :path-params [attribute-id :- AttributeIdPathParam]
+  (context* "/:attribute-name" []
+    :path-params [attribute-name :- AttributeNamePathParam]
 
     (context* "/permissions" []
 
@@ -38,10 +38,10 @@
             :return PermissionWithDetailList
             :summary "Permissions Lookup"
             :description "This endpoint allows callers to look up all permission assignments for this attribute ID. Only permissions that are visible to the given user will be listed."
-            (ok (attributes/permission-assignment-search (assoc params :attribute_def_name_id attribute-id))))
+            (ok (attributes/permission-assignment-search (assoc params :attribute_def_name attribute-name))))
 
-      (context* "/roles/:role-id/:action-name" []
-        :path-params [role-id     :- GroupIdPathParam
+      (context* "/roles/:role-name/:action-name" []
+        :path-params [role-name   :- GroupNamePathParam
                       action-name :- NonBlankString]
 
         (PUT* "/" []
@@ -50,17 +50,17 @@
               :query  [params StandardUserQueryParams]
               :summary "Assign Role Permission"
               :description "This endpoint allows assigning a permission to a role (group). The provided group is assigned a permission corresponding to the action-name on the resource defined by this attribute. The 'allowed' query parameter specifies whether the permission assignment is granting the permission or denying the permission (the latter is useful if the role has an inherited permission)."
-              (ok (attributes/assign-role-permission params body attribute-id role-id action-name)))
+              (ok (attributes/assign-role-permission params body attribute-name role-name action-name)))
 
         (DELETE* "/" []
                  :return AttributeAssignment
                  :query  [params StandardUserQueryParams]
                  :summary "Remove Role Permission"
                  :description "This endpoint allows removing a permission to a role (group). The permission corresponding to this attribute, group, action, and allowed/disallowed value is removed, if it exists."
-                 (ok (attributes/remove-role-permission params attribute-id role-id action-name))))
+                 (ok (attributes/remove-role-permission params attribute-name role-name action-name))))
 
-      (context* "/memberships/:role-id/:subject-id/:action-name" []
-        :path-params [role-id     :- GroupIdPathParam
+      (context* "/memberships/:role-name/:subject-id/:action-name" []
+        :path-params [role-name   :- GroupNamePathParam
                       subject-id  :- SubjectIdPathParam
                       action-name :- NonBlankString]
 
@@ -70,11 +70,11 @@
               :query  [params StandardUserQueryParams]
               :summary "Assign Membership Permission"
               :description "This endpoint allows assigning a permission to a membership (i.e., a subject in the context of a group). The provided membership is assigned a permission corresponding to the action-name on the resource defined by this attribute. The 'allowed' query parameter specifies whether the permission assignment is granting the permission or denying the permission (the latter is useful if the role has an inherited permission)."
-              (ok (attributes/assign-membership-permission params body attribute-id role-id subject-id action-name)))
+              (ok (attributes/assign-membership-permission params body attribute-name role-name subject-id action-name)))
 
         (DELETE* "/" []
                  :return AttributeAssignment
                  :query  [params StandardUserQueryParams]
                  :summary "Remove Membership Permission"
                  :description "This endpoint allows removing a permission to a membership (i.e., a subject in the context of a group). The permission corresponding to this attribute, membership, action, and allowed/disallowed value is removed, if it exists."
-                 (ok (attributes/remove-membership-permission params attribute-id role-id subject-id action-name)))))))
+                 (ok (attributes/remove-membership-permission params attribute-name role-name subject-id action-name)))))))

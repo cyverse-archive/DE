@@ -6,14 +6,14 @@
 (def SubjectIdPathParam
   (describe String "The subject identifier."))
 
-(def GroupIdPathParam
-  (describe String "The group identifier."))
+(def GroupNamePathParam
+  (describe String "The full group name."))
 
-(def FolderIdPathParam
-  (describe String "The folder identifier."))
+(def FolderNamePathParam
+  (describe String "The full folder name."))
 
-(def AttributeIdPathParam
-  (describe String "The attribute-name identifier."))
+(def AttributeNamePathParam
+  (describe String "The full attribute name."))
 
 (s/defschema SearchParams
   (assoc StandardUserQueryParams
