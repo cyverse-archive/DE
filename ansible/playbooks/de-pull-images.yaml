@@ -230,23 +230,35 @@
       service_name: "{{iplant_groups.compose_service}}"
       service_name_short: "{{iplant_groups.service_name_short}}"
 
-- name: Update jobservices
+- name: Update jex-adapter
   hosts: jexevents
   sudo: true
   gather_facts: false
   tags:
     - services
-    - jobservices
+    - jex-adapter
   roles:
-    - role: util-cfg-docker-pull-configs
-      service_name: job_status_recorder
-      service_name_short: job_status_recorder
     - role: util-cfg-docker-pull-configs
       service_name: jex_adapter
       service_name_short: jex_adapter
     - role: util-cfg-docker-pull
-      service_name: jobservices
-      service_name_short: jobservices
+      service_name: jex_adapter
+      service_name_short: jex_adapter
+
+- name: Update job-status-recorder
+  hosts: jexevents
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - job-status-recorder
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: job_status_recorder
+      service_name_short: job_status_recorder
+    - role: util-cfg-docker-pull
+      service_name: job_status_recorder
+      service_name_short: job_status_recorder
 
 - name: Update kifshare
   hosts: kifshare
