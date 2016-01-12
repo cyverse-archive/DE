@@ -10,14 +10,13 @@ import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.notifications.NotificationAutoBeanFactory;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
-import org.iplantc.de.client.models.notifications.payload.PayloadToolRequest;
-import org.iplantc.de.client.models.toolRequest.ToolRequestHistory;
+import org.iplantc.de.client.models.notifications.payload.PayloadRequest;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.views.window.configs.AnalysisWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.DiskResourceWindowConfig;
 import org.iplantc.de.notifications.client.events.WindowShowRequestEvent;
-import org.iplantc.de.notifications.client.views.dialogs.ToolRequestHistoryDialog;
+import org.iplantc.de.notifications.client.views.dialogs.RequestHistoryDialog;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.cell.client.AbstractCell;
@@ -106,13 +105,13 @@ public class NotificationMessageCell extends AbstractCell<NotificationMessage> {
                         break;
 
                     case TOOLREQUEST:
-                        PayloadToolRequest toolRequest = AutoBeanCodex.decode(notificationFactory,
-                                                                              PayloadToolRequest.class,
+                        PayloadRequest toolRequest = AutoBeanCodex.decode(notificationFactory,
+                                                                              PayloadRequest.class,
                                                                               context1).as();
 
-                        List<ToolRequestHistory> history = toolRequest.getHistory();
+                        List<org.iplantc.de.client.models.requestStatus.RequestHistory> history = toolRequest.getHistory();
 
-                        ToolRequestHistoryDialog dlg = new ToolRequestHistoryDialog(toolRequest.getName(),
+                        RequestHistoryDialog dlg = new RequestHistoryDialog(toolRequest.getName(),
                                 history);
                         dlg.show();
 

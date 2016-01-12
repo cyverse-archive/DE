@@ -13,7 +13,7 @@ import com.sencha.gxt.core.client.util.Format;
  * @author psarando
  * 
  */
-public class ToolRequestStatusCell extends AbstractCell<String> {
+public class RequestStatusCell extends AbstractCell<String> {
 
     @Override
     public void render(Context context, String value, SafeHtmlBuilder sb) {

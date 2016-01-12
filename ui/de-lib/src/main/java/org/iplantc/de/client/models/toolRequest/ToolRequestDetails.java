@@ -2,6 +2,7 @@ package org.iplantc.de.client.models.toolRequest;
 
 import org.iplantc.de.client.models.HasDescription;
 import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.requestStatus.RequestHistory;
 
 import com.google.gwt.user.client.ui.HasName;
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
@@ -30,7 +31,7 @@ public interface ToolRequestDetails extends HasId, HasName, HasDescription {
     @PropertyName("documentation_url")
     String getDocumentationUrl();
 
-    List<ToolRequestHistory> getHistory();
+    List<RequestHistory> getHistory();
 
     boolean getMultiThreaded();
 

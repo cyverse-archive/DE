@@ -1,16 +1,16 @@
-package org.iplantc.de.client.models.toolRequest;
+package org.iplantc.de.client.models.identifiers;
 
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
 import java.util.Date;
 
 /**
- * A Status History AutoBean for PayloadToolRequest.
  * 
- * @author psarando
+ * 
+ * @author sriram
  * 
  */
-public interface ToolRequestHistory {
+public interface PermanentIdRequestStatusHistory {
 
     String getStatus();
 
@@ -21,4 +21,5 @@ public interface ToolRequestHistory {
     Date getStatusDate();
 
     String getComments();
+
 }
