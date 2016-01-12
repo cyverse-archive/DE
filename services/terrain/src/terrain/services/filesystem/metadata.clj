@@ -211,7 +211,6 @@
         path-info-map (-> (data-raw/collect-stats user :paths paths) :body json/decode (get "paths"))
         value-lists (map rest csv-filename-values)
         irods-attrs (clojure.set/difference (set attrs) (set (keys template-attrs)))]
-    (validators/all-paths-exist cm paths)
     (validators/all-paths-writeable cm user paths)
     (if-not force?
       (validate-batch-add-attrs user (map #(get-in path-info-map [% "id"]) paths) irods-attrs))
