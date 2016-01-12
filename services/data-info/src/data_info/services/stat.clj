@@ -3,7 +3,6 @@
             [clojure.tools.logging :as log]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
             [slingshot.slingshot :refer [throw+]]
-            [medley.core :only [remove-vals]]
             [clj-icat-direct.icat :as icat]
             [clj-jargon.by-uuid :as uuid]
             [clj-jargon.init :refer [with-jargon]]
