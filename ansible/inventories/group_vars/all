@@ -646,9 +646,7 @@ path_list_info_type: ht-analysis-path-list
 
 permanent_id:
   curators:
-  staging_dir: /iplant/home/shared/data_commons/staging
   ezid:
-    base_url: http://ezid.cdlib.org
     username: apitest
     password:
 
