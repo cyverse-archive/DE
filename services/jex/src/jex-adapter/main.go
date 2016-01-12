@@ -1,6 +1,7 @@
 package main
 
 import (
+	"configurate"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -16,15 +17,15 @@ import (
 )
 
 var (
-	logger     = logcabin.New()
-	version    = flag.Bool("version", false, "Print version information")
-	configPath = flag.String("config", "", "Path to the configuration file")
-	amqpURI    = flag.String("amqp", "", "The amqp:// URI for the broker to connect to")
-	addr       = flag.String("addr", ":60000", "The port to listen on for HTTP requests")
-	gitref     string
-	appver     string
-	builtby    string
-	client     *messaging.Client
+	logger  = logcabin.New()
+	version = flag.Bool("version", false, "Print version information")
+	cfgPath = flag.String("config", "", "Path to the configuration file")
+	amqpURI string
+	addr    = flag.String("addr", ":60000", "The port to listen on for HTTP requests")
+	gitref  string
+	appver  string
+	builtby string
+	client  *messaging.Client
 )
 
 func init() {
@@ -193,10 +194,20 @@ func main() {
 		AppVersion()
 		os.Exit(0)
 	}
-	if *amqpURI == "" {
-		log.Fatal("--amqp is required")
+	if *cfgPath == "" {
+		fmt.Println("--config is required")
+		flag.PrintDefaults()
+		os.Exit(-1)
 	}
-	client, err := messaging.NewClient(*amqpURI, false)
+	err := configurate.Init(*cfgPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	amqpURI, err = configurate.C.String("amqp.uri")
+	if err != nil {
+		log.Fatal(err)
+	}
+	client, err := messaging.NewClient(amqpURI, false)
 	if err != nil {
 		logger.Fatal(err)
 	}
