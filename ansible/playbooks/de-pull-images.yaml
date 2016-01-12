@@ -239,8 +239,11 @@
     - jobservices
   roles:
     - role: util-cfg-docker-pull-configs
-      service_name: jobservices
-      service_name_short: jobservices
+      service_name: job_status_recorder
+      service_name_short: job_status_recorder
+    - role: util-cfg-docker-pull-configs
+      service_name: jex_adapter
+      service_name_short: jex_adapter
     - role: util-cfg-docker-pull
       service_name: jobservices
       service_name_short: jobservices
