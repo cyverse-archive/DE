@@ -18,6 +18,7 @@ import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import com.google.common.collect.Lists;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.inject.Inject;
 
 import com.sencha.gxt.core.client.dom.ScrollSupport;
@@ -44,6 +45,7 @@ public class ToolAdminDetailsDialog extends IPlantDialog implements IsHideable,
     @Inject
     public ToolAdminDetailsDialog(final ToolAdminDetailsView view,
                                   final ToolAdminView.ToolAdminViewAppearance appearance) {
+        super(true);
         this.view = view;
         this.appearance = appearance;
 
@@ -51,6 +53,8 @@ public class ToolAdminDetailsDialog extends IPlantDialog implements IsHideable,
         setHeadingText(appearance.dialogWindowName());
         setResizable(true);
         setPixelSize(1000, 500);
+
+        addHelp(new HTML(appearance.toolAdminHelp()));
 
         setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL, PredefinedButton.CLOSE);
         getOkButton().setText(appearance.dialogWindowUpdateBtnText());

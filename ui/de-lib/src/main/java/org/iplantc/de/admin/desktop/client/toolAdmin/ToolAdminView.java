@@ -88,7 +88,7 @@ public interface ToolAdminView extends IsWidget,
 
         String containerNetworkModeLabel();
 
-        String containerDevicesLabel();
+        SafeHtml containerDevicesLabel();
 
         String containerDevicesHostPathLabel();
 
@@ -98,7 +98,7 @@ public interface ToolAdminView extends IsWidget,
 
         int containerDevicesContainerPathWidth();
 
-        String containerVolumesLabel();
+        SafeHtml containerVolumesLabel();
 
         String containerVolumesHostPathLabel();
 
@@ -116,7 +116,7 @@ public interface ToolAdminView extends IsWidget,
 
         String containerImageURLLabel();
 
-        String containerVolumesFromLabel();
+        SafeHtml containerVolumesFromLabel();
 
         String containerVolumesFromNameLabel();
 
@@ -146,13 +146,13 @@ public interface ToolAdminView extends IsWidget,
 
         int toolTestDataParamsWidth();
 
-        String toolTestDataInputFilesLabel();
+        SafeHtml toolTestDataInputFilesLabel();
 
         String toolTestDataInputFilesColumnLabel();
 
         int toolTestDataInputFilesWidth();
 
-        String toolTestDataOutputFilesLabel();
+        SafeHtml toolTestDataOutputFilesLabel();
 
         String toolTestDataOutputFilesColumnLabel();
 
@@ -198,6 +198,7 @@ public interface ToolAdminView extends IsWidget,
 
         String publicAppDisabledLabel();
 
+        SafeHtml toolAdminHelp();
     }
 
     interface Presenter {

@@ -1,6 +1,7 @@
 package org.iplantc.de.theme.base.client.admin.toolAdmin;
 
 import com.google.gwt.i18n.client.Messages;
+import com.google.gwt.safehtml.shared.SafeHtml;
 
 
 /**
@@ -187,4 +188,22 @@ public interface ToolAdminDisplayStrings extends Messages {
 
     @Key("publicAppDisabledLabel")
     String publicAppDisabledLabel();
+
+    @Key("inputFilesHelp")
+    String inputFilesHelp();
+
+    @Key("outputFilesHelp")
+    String outputFilesHelp();
+
+    @Key("containerDeviceHelp")
+    String containerDeviceHelp();
+
+    @Key("containerVolumeHelp")
+    String containerVolumeHelp();
+
+    @Key("containerVolumesFromHelp")
+    String containerVolumesFromHelp();
+
+    @Key("toolAdminHelp")
+    SafeHtml toolAdminHelp();
 }

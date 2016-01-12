@@ -52,7 +52,7 @@ public class ToolTestDataInputFilesListEditorTest {
     @Before
     public void setUp() {
         when(appearanceMock.toolTestDataInputFilesWidth()).thenReturn(0);
-        when(appearanceMock.toolTestDataInputFilesLabel()).thenReturn("sample");
+        when(appearanceMock.toolTestDataInputFilesColumnLabel()).thenReturn("sample");
         when(modelKeyProviderMock.getKey(anyString())).thenReturn("sample");
         when(valueProviderMock.getPath()).thenReturn("sample");
         when(valueProviderMock.getValue(anyString())).thenReturn("sample");

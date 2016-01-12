@@ -11,12 +11,10 @@ import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
 import org.iplantc.de.admin.desktop.client.toolAdmin.events.AddToolSelectedEvent;
 import org.iplantc.de.admin.desktop.client.toolAdmin.events.DeleteToolSelectedEvent;
 import org.iplantc.de.admin.desktop.client.toolAdmin.events.SaveToolSelectedEvent;
-import org.iplantc.de.admin.desktop.client.toolAdmin.events.ToolSelectedEvent;
 import org.iplantc.de.admin.desktop.client.toolAdmin.model.ToolProperties;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs.ToolAdminDetailsDialog;
 import org.iplantc.de.client.models.tool.Tool;
 
-import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwtmockito.GxtMockitoTestRunner;
@@ -124,16 +122,6 @@ public class ToolAdminViewImplTest {
 
         verify(spy).fireEvent(isA(DeleteToolSelectedEvent.class));
         verify(resultMock).hide();
-    }
-
-    @Test
-    public void testOnSelection() {
-        SelectionEvent selectEventMock = mock(SelectionEvent.class);
-        ToolAdminViewImpl spy = spy(uut);
-
-        /** CALL METHOD UNDER TEST **/
-        spy.onSelection(selectEventMock);
-        verify(spy).fireEvent(isA(ToolSelectedEvent.class));
     }
 
     @Test

@@ -1,14 +1,17 @@
 package org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwtmockito.GxtMockitoTestRunner;
 
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.form.FieldLabel;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,16 +30,26 @@ public class ToolContainerEditorTest {
     @Mock ToolVolumesFromListEditor toolVolumesFromListEditorMock;
     @Mock ToolImageEditor toolImageEditorMock;
     @Mock SelectEvent selectEventMock;
+    @Mock FieldLabel containerDevicesLabelMock;
+    @Mock FieldLabel containerVolumesLabelMock;
+    @Mock FieldLabel containerVolumesFromLabelMock;
 
     private ToolContainerEditor uut;
 
     @Before
     public void setUp() {
+        when(appearanceMock.containerDevicesLabel()).thenReturn(mock(SafeHtml.class));
+        when(appearanceMock.containerVolumesLabel()).thenReturn(mock(SafeHtml.class));
+        when(appearanceMock.containerVolumesFromLabel()).thenReturn(mock(SafeHtml.class));
+
         uut = new ToolContainerEditor(appearanceMock,
                                       toolDeviceListEditorMock,
                                       toolVolumeListEditorMock,
                                       toolVolumesFromListEditorMock,
-                                      toolImageEditorMock);
+                                      toolImageEditorMock) {
+            @Override
+            void setUpLabelToolTips() {}
+        };
     }
 
     @Test

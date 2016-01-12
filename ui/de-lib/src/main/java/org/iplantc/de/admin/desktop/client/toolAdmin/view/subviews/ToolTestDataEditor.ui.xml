@@ -19,8 +19,8 @@
 
     <container:VerticalLayoutContainer ui:field="layoutContainer">
         <container:child layoutData="{layoutData}">
-            <form:FieldLabel text="{appearance.toolTestDataInputFilesLabel}"
-                             labelWidth="300"/>
+            <form:FieldLabel ui:field="inputFilesLabel"
+                             labelAlign="TOP"/>
         </container:child>
         <container:child layoutData="{layoutData}">
             <toolbar:ToolBar title="">
@@ -34,8 +34,8 @@
             <d:ToolTestDataInputFilesListEditor ui:field="inputFilesEditor"/>
         </container:child>
         <container:child layoutData="{layoutData}">
-            <form:FieldLabel text="{appearance.toolTestDataOutputFilesLabel}"
-                             labelWidth="300"/>
+            <form:FieldLabel ui:field="outputFilesLabel"
+                             labelAlign="TOP"/>
         </container:child>
         <container:child layoutData="{layoutData}">
             <toolbar:ToolBar title="">

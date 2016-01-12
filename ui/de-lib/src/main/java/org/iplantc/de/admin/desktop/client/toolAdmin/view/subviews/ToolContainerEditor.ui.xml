@@ -90,7 +90,8 @@
                     </container:child>
 
                     <container:child layoutData="{layoutData}">
-                        <form:FieldLabel text="{appearance.containerDevicesLabel}"/>
+                        <form:FieldLabel ui:field="containerDevicesLabel"
+                                         labelAlign="TOP"/>
                     </container:child>
                     <container:child layoutData="{layoutData}">
                         <toolbar:ToolBar title="">
@@ -105,7 +106,8 @@
                     </container:child>
 
                     <container:child layoutData="{layoutData}">
-                        <form:FieldLabel text="{appearance.containerVolumesLabel}" labelWidth="200"/>
+                        <form:FieldLabel ui:field="containerVolumesLabel"
+                                         labelAlign="TOP"/>
                     </container:child>
                     <container:child layoutData="{layoutData}">
                         <toolbar:ToolBar title="">
@@ -118,10 +120,9 @@
                     <container:child layoutData="{layoutData}">
                         <d:ToolVolumeListEditor ui:field="containerVolumesEditor"/>
                     </container:child>
-
                     <container:child layoutData="{layoutData}">
-                        <form:FieldLabel text="{appearance.containerVolumesFromLabel}"
-                                         labelWidth="300"/>
+                        <form:FieldLabel ui:field="containerVolumesFromLabel"
+                                         labelAlign="TOP"/>
                     </container:child>
                     <container:child layoutData="{layoutData}">
                         <toolbar:ToolBar title="">

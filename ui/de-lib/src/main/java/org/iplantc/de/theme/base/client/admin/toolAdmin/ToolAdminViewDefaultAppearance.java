@@ -6,7 +6,10 @@ import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.safehtml.shared.SafeUri;
 
 import com.sencha.gxt.core.client.XTemplates;
 
@@ -21,27 +24,41 @@ public class ToolAdminViewDefaultAppearance implements ToolAdminView.ToolAdminVi
         SafeHtml requiredFieldLabel(String label);
     }
 
+    interface HelpTemplates extends SafeHtmlTemplates {
+        @SafeHtmlTemplates.Template("{0}<img style='float: right;' src='{1}' qtip='{2}'></img>")
+        SafeHtml fieldLabelImgFloatRight(SafeHtml label, SafeUri img, String toolTip);
+    }
+
     private final ToolAdminDisplayStrings displayStrings;
     private final IplantResources iplantResources;
     private final IplantDisplayStrings iplantDisplayStrings;
     private final Templates templates;
+    private final HelpTemplates helpTemplates;
+
 
     public ToolAdminViewDefaultAppearance() {
         this(GWT.<ToolAdminDisplayStrings>create(ToolAdminDisplayStrings.class),
              GWT.<IplantResources>create(IplantResources.class),
              GWT.<IplantDisplayStrings>create(IplantDisplayStrings.class),
-             GWT.<Templates>create(Templates.class));
+             GWT.<Templates>create(Templates.class),
+             GWT.<HelpTemplates> create(HelpTemplates.class));
 
     }
 
     ToolAdminViewDefaultAppearance(final ToolAdminDisplayStrings displayStrings,
                                    final IplantResources iplantResources,
                                    final IplantDisplayStrings iplantDisplayStrings,
-                                   Templates templates) {
+                                   Templates templates,
+                                   HelpTemplates helpTemplates) {
         this.displayStrings = displayStrings;
         this.iplantResources = iplantResources;
         this.templates = templates;
+        this.helpTemplates = helpTemplates;
         this.iplantDisplayStrings = iplantDisplayStrings;
+    }
+
+    SafeHtml getContextualHelp (String labelText, String helpText) {
+        return helpTemplates.fieldLabelImgFloatRight(SafeHtmlUtils.fromString(labelText), iplantResources.help().getSafeUri(), helpText);
     }
 
     @Override
@@ -205,8 +222,8 @@ public class ToolAdminViewDefaultAppearance implements ToolAdminView.ToolAdminVi
     }
 
     @Override
-    public String containerDevicesLabel() {
-        return displayStrings.containerDevicesLabel();
+    public SafeHtml containerDevicesLabel() {
+        return getContextualHelp(displayStrings.containerDevicesLabel(), displayStrings.containerDeviceHelp());
     }
 
     @Override
@@ -230,8 +247,8 @@ public class ToolAdminViewDefaultAppearance implements ToolAdminView.ToolAdminVi
     }
 
     @Override
-    public String containerVolumesLabel() {
-        return displayStrings.containerVolumesLabel();
+    public SafeHtml containerVolumesLabel() {
+        return getContextualHelp(displayStrings.containerVolumesLabel(), displayStrings.containerVolumeHelp());
     }
 
     @Override
@@ -275,8 +292,8 @@ public class ToolAdminViewDefaultAppearance implements ToolAdminView.ToolAdminVi
     }
 
     @Override
-    public String containerVolumesFromLabel() {
-        return displayStrings.containerVolumesFromLabel();
+    public SafeHtml containerVolumesFromLabel() {
+        return getContextualHelp(displayStrings.containerVolumesFromLabel(), displayStrings.containerVolumesFromHelp());
     }
 
     @Override
@@ -350,8 +367,9 @@ public class ToolAdminViewDefaultAppearance implements ToolAdminView.ToolAdminVi
     }
 
     @Override
-    public String toolTestDataInputFilesLabel() {
-        return displayStrings.testToolDataInputFilesLabel();
+    public SafeHtml toolTestDataInputFilesLabel() {
+        return getContextualHelp(displayStrings.testToolDataInputFilesLabel(),
+                                 displayStrings.inputFilesHelp());
     }
 
     @Override
@@ -365,8 +383,8 @@ public class ToolAdminViewDefaultAppearance implements ToolAdminView.ToolAdminVi
     }
 
     @Override
-    public String toolTestDataOutputFilesLabel() {
-        return displayStrings.testToolOutputFilesLabel();
+    public SafeHtml toolTestDataOutputFilesLabel() {
+        return getContextualHelp(displayStrings.testToolOutputFilesLabel(), displayStrings.outputFilesHelp());
     }
 
     @Override
@@ -479,4 +497,8 @@ public class ToolAdminViewDefaultAppearance implements ToolAdminView.ToolAdminVi
         return displayStrings.publicAppDisabledLabel();
     }
 
+    @Override
+    public SafeHtml toolAdminHelp() {
+        return displayStrings.toolAdminHelp();
+    }
 }
