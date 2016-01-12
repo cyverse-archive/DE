@@ -4,8 +4,6 @@
         [terrain.services.filesystem.common-paths]
         [terrain.services.filesystem.validators]
         [kameleon.uuids :only [uuidify]]
-        [clj-jargon.init :only [with-jargon]]
-        [clj-jargon.item-ops :only [input-stream]]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [clojure.tools.logging :as log]
             [clojure.string :as string]
@@ -15,13 +13,12 @@
             [cheshire.core :as json]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
             [terrain.clients.metadata.raw :as metadata-client]
+            [terrain.clients.data-info :as data]
             [terrain.clients.data-info.raw :as data-raw]
             [terrain.services.filesystem.icat :as icat]
             [terrain.services.filesystem.validators :as validators]
             [terrain.util.config :as cfg]
-            [terrain.util.service :as service])
-  (:import [au.com.bytecode.opencsv CSVReader]
-           [java.io InputStream]))
+            [terrain.util.service :as service]))
 
 (defn- service-response->json
   [response]
@@ -214,13 +211,33 @@
   (mapv (partial bulk-add-file-avus user dest-dir template-id template-attrs attrs)
     path-info-map value-lists)))
 
+(defn- keyword-to-int [kw] (Integer/parseInt (name kw)))
+
+(defn- deparse-csv-line
+  [line]
+  (mapv second (into (sorted-map-by #(< (keyword-to-int %1) (keyword-to-int %2))) line)))
+
+(defn- get-csv
+  [user src separator]
+  (let [path-uuid (data/uuid-for-path user src)
+        chunk-size 1048576 ;; This corresponds to the largest size allowed by the UI's viewer, 1024KB.
+                           ;; It could probably be larger without issue, but this is the expected largest
+                           ;; value for the underlying endpoint in practice. Ideally, it'll never matter
+                           ;; and everything will fit in one page.
+        get-page  (fn [page] (service-response->json (data-raw/read-tabular-chunk user path-uuid separator page chunk-size)))]
+    (loop [page 1 max-pages nil csv []]
+      (let [{max-pages :number-pages new-csv :csv :as res} (get-page page)
+            csv (concat csv (map deparse-csv-line (remove empty? new-csv)))]
+        (if (< page (Integer/parseInt max-pages))
+            (recur (+ page 1) (Integer/parseInt max-pages) csv)
+            csv)))))
+
 (defn- parse-metadata-csv
   "Parses filenames and metadata to apply from a CSV file input stream.
    If a template-id is provided, then AVUs with template attributes are stored in the metadata db,
    and all other AVUs are stored in IRODS."
-  [user dest-dir force? template-id ^String separator ^InputStream stream]
-  (let [stream-reader (java.io.InputStreamReader. stream "UTF-8")
-        csv (mapv (partial mapv string/trim) (.readAll (CSVReader. stream-reader (.charAt separator 0))))
+  [user dest-dir force? template-id ^String separator src]
+  (let [csv (get-csv user src separator)
         attrs (-> csv first rest)
         csv-filename-values (rest csv)
         template-attrs (parse-template-attrs template-id)]
@@ -230,16 +247,12 @@
 (defn parse-metadata-csv-file
   "Parses filenames and metadata to apply from a source CSV file in the data store"
   [{:keys [user]} {:keys [src dest force template-id separator] :or {separator "%2C"}}]
-  (with-jargon (icat/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (validators/path-exists cm src)
-    (validators/path-readable cm user src)
-    (service/success-response
-      (parse-metadata-csv user dest
-        (Boolean/parseBoolean force)
-        (uuidify template-id)
-        (url/url-decode separator)
-        (input-stream cm src)))))
+  (service/success-response
+    (parse-metadata-csv user dest
+      (Boolean/parseBoolean force)
+      (uuidify template-id)
+      separator
+      src)))
 
 (with-pre-hook! #'parse-metadata-csv-file
   (fn [user-info params]

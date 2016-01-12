@@ -28,7 +28,6 @@
                  [dire "0.5.3"]
                  [me.raynes/fs "1.4.6"]
                  [medley "0.7.0"]
-                 [net.sf.opencsv/opencsv "2.3"]
                  [org.apache.tika/tika-core "1.11"]      ; provides org.apache.tika
                  [org.nexml.model/nexml "1.5-SNAPSHOT"]  ; provides org.nexml.model
                  [org/forester "1.005" ]

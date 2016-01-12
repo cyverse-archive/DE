@@ -62,7 +62,7 @@
   [^String user]
   (cp/user-trash-path user))
 
-(defn- uuid-for-path
+(defn uuid-for-path
   [^String user ^String path]
   (-> (raw/collect-stats user :paths [path])
       :body
