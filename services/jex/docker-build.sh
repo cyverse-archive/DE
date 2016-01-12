@@ -7,7 +7,7 @@ if [ -z "$DOCKER_USER" ]; then
 fi
 
 if [ -z "$DOCKER_REPO" ]; then
-	DOCKER_REPO=jex
+	DOCKER_REPO=jobservices
 fi
 
 VERSION=$(cat version | sed -e 's/^ *//' -e 's/ *$//')
@@ -19,8 +19,8 @@ docker pull $DOCKER_USER/buildenv:latest
 BUILDENV_GIT_COMMIT=$(docker inspect -f '{{ (index .Config.Labels "org.iplantc.de.buildenv.git-ref")}}' $DOCKER_USER/buildenv:latest)
 
 docker run --rm \
-	-v $(pwd):/jex-events \
-	-w /jex-events \
+	-v $(pwd):/jobservices \
+	-w /jobservices \
 	$DOCKER_USER/buildenv:latest \
 	gb build -f -F --ldflags "-X main.appver=$VERSION -X main.gitref=$GIT_COMMIT -X main.builtby=$BUILD_USER"
 
