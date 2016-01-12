@@ -22,7 +22,7 @@ import (
 
 var (
 	logger  = logcabin.New()
-	cfgPath = flag.String("config", "", "Path to the config value. Required.")
+	cfgPath = flag.String("config", "", "Path to the config file. Required.")
 	version = flag.Bool("version", false, "Print the version information")
 	gitref  string
 	appver  string
