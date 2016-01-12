@@ -116,3 +116,7 @@
       src: "docker-cleanup/docker-gc-exclude.j2"
       dest: "{{service_conf_dir}}/docker-gc-exclude"
       service_name_short: "docker-gc"
+
+    - role: util-cfg-service
+      service_name_short: jobservices
+      service_cfg_file_name: jobservices.yml

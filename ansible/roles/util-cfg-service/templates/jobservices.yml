@@ -1,0 +1,15 @@
+amqp:
+  uri: amqp://{{amqp_user}}:{{amqp_password}}@{{amqp_broker.host}}:{{amqp_broker.port}}/jobs
+
+condor:
+  condor_config: /etc/condor/condor_config
+  path_env_var: /opt/condor/bin/:/usr/bin/:/usr/local/bin/:/bin/
+
+irods:
+  user: {{irods.user}}
+  pass: {{irods.password}}
+  host: {{irods.host}}
+  port: {{irods.port}}
+  base: {{irods.home}}
+  resc: {{irods.default_resource}}
+  zone: {{irods.zone}}
