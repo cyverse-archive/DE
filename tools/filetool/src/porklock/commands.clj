@@ -85,10 +85,6 @@
         (when (= (count tuple) 3)
           (apply-metadatum cm dest tuple))))))
 
-(defn user-home-dir
-  [cm username]
-  (ft/path-join "/" (:zone cm) "home" username))
-
 (defn home-folder?
   [zone full-path]
   (let [parent (ft/dirname full-path)]
