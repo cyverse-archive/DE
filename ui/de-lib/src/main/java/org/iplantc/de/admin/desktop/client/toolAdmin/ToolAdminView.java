@@ -209,4 +209,6 @@ public interface ToolAdminView extends IsWidget,
 
     void editToolDetails(Tool tool);
 
+    void toolSelected(Tool tool);
+
 }

@@ -46,6 +46,10 @@
     <replace-with class="org.iplantc.de.theme.base.client.admin.toolAdmin.ToolAdminViewDefaultAppearance">
         <when-type-is class="org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView.ToolAdminViewAppearance" />
     </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.admin.toolAdmin.cells.ToolAdminViewCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.desktop.client.toolAdmin.view.cells.ToolAdminNameCell.ToolAdminNameCellAppearance" />
+    </replace-with>
     
     <!--  Metadata -->
      <replace-with class="org.iplantc.de.theme.base.client.admin.metadata.DefaultTemplateListingAppearance">
@@ -57,7 +61,7 @@
      <replace-with class="org.iplantc.de.theme.base.client.admin.metadata.DefaultEditMetadataTemplateViewAppearance">
         <when-type-is class="org.iplantc.de.admin.desktop.client.metadata.view.EditMetadataTemplateView.EditMetadataTemplateViewAppearance" />
     </replace-with>
-    
+
     <replace-with class="org.iplantc.de.theme.base.client.admin.permIdRequest.PermanentIdRequestViewDefaultAppearance">
         <when-type-is class="org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView.PermanentIdRequestViewAppearance"></when-type-is>
     </replace-with>

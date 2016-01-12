@@ -6,6 +6,7 @@ import org.iplantc.de.admin.desktop.client.toolAdmin.events.DeleteToolSelectedEv
 import org.iplantc.de.admin.desktop.client.toolAdmin.events.SaveToolSelectedEvent;
 import org.iplantc.de.admin.desktop.client.toolAdmin.events.ToolSelectedEvent;
 import org.iplantc.de.admin.desktop.client.toolAdmin.model.ToolProperties;
+import org.iplantc.de.admin.desktop.client.toolAdmin.view.cells.ToolAdminNameCell;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs.ToolAdminDetailsDialog;
 import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -13,8 +14,6 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.inject.client.AsyncProvider;
@@ -27,6 +26,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
+import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.core.client.Style;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.Store;
@@ -37,13 +37,13 @@ import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 
+import java.util.Comparator;
 import java.util.List;
 
 /**
  * @author aramsey
  */
-public class ToolAdminViewImpl extends Composite
-        implements ToolAdminView, SelectionHandler<Tool> {
+public class ToolAdminViewImpl extends Composite implements ToolAdminView {
 
     interface ToolAdminViewImplUiBinder extends UiBinder<Widget, ToolAdminViewImpl> {
 
@@ -62,6 +62,14 @@ public class ToolAdminViewImpl extends Composite
 
         public void setQuery(String query) {
             this.filterText = query;
+        }
+    }
+
+    private final class ToolNameComparator implements Comparator<Tool> {
+
+        @Override
+        public int compare(Tool o1, Tool o2) {
+            return o1.getName().compareToIgnoreCase(o2.getName());
         }
     }
 
@@ -85,7 +93,6 @@ public class ToolAdminViewImpl extends Composite
         this.listStore = listStore;
         initWidget(uiBinder.createAndBindUi(this));
         nameFilter = new NameFilter();
-        grid.getSelectionModel().addSelectionHandler(this);
         grid.getSelectionModel().setSelectionMode(Style.SelectionMode.SINGLE);
     }
 
@@ -113,7 +120,7 @@ public class ToolAdminViewImpl extends Composite
     @UiFactory
     ColumnModel<Tool> createColumnModel() {
         List<ColumnConfig<Tool, ?>> list = Lists.newArrayList();
-        ColumnConfig<Tool, String> nameCol = new ColumnConfig<>(toolProps.name(),
+        ColumnConfig<Tool, Tool> nameCol = new ColumnConfig<>(new IdentityValueProvider<Tool>("name"),
                                                                 appearance.nameColumnWidth(),
                                                                 appearance.nameColumnLabel());
         ColumnConfig<Tool, String> descriptionCol = new ColumnConfig<>(toolProps.description(),
@@ -132,6 +139,8 @@ public class ToolAdminViewImpl extends Composite
                                                                    appearance.versionColumnInfoWidth(),
                                                                    appearance.versionColumnInfoLabel());
 
+        nameCol.setCell(new ToolAdminNameCell(this));
+        nameCol.setComparator(new ToolNameComparator());
         list.add(nameCol);
         list.add(descriptionCol);
         list.add(locationCol);
@@ -194,9 +203,9 @@ public class ToolAdminViewImpl extends Composite
         });
     }
 
-  @Override
-    public void onSelection(SelectionEvent event) {
-        ToolSelectedEvent toolSelectedEvent = new ToolSelectedEvent(grid.getSelectionModel().getSelectedItem());
+    public void toolSelected(Tool tool) {
+        ToolSelectedEvent toolSelectedEvent =
+                new ToolSelectedEvent(tool);
         fireEvent(toolSelectedEvent);
     }
 
