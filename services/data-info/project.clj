@@ -54,4 +54,5 @@
          :init data-info.core/lein-ring-init
          :port 60000
          :auto-reload? false}
-  :uberjar-exclusions [#".*[.]SF" #"LICENSE" #"NOTICE"])
+  :uberjar-exclusions [#".*[.]SF" #"LICENSE" #"NOTICE"]
+  :jvm-opts ["-Dlogback.configurationFile=/etc/iplant/de/logging/data-info-logging.xml"])

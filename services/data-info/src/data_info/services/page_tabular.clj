@@ -27,12 +27,15 @@
 
 (defn- seek-prev-line
   [chunk start-pos]
+  (log/debug "seeking for a line-ending backwards starting at" start-pos)
   (loop [pos start-pos]
     (let [^Character start-str (nth chunk pos)]
       (if-not (or (= pos 0)
                   (= start-str (.charAt line-ending 0)))
         (recur (dec pos))
-        (if (= pos 0) 0 (inc pos))))))
+        (if (= pos 0)
+            (do (log/debug "defaulting to assuming line ending before position 0") 0)
+            (do (log/debug "found line ending at position" (inc pos)) (inc pos)))))))
 
 (defn- end-pos
   [^String chunk page pages]
@@ -42,6 +45,7 @@
 
 (defn- trim-chunk
   [^String chunk chunk-size page pages]
+  (log/debug "untrimmed chunk:" chunk)
   (let [lstart (seek-prev-line chunk (chunk-start page chunk-size))
         lend   (end-pos chunk page pages)]
     (.substring chunk lstart lend)))
@@ -93,6 +97,7 @@
           pages           (num-pages chunk-size fsize)
           position        (start-pos page chunk-size)
           load-pos        (start-pos start-pg chunk-size)]
+      (log/debug "reading from" load-pos "for" full-chunk-size)
 
       (when-not (<= page pages)
         (throw+ {:error_code   "ERR_INVALID_PAGE"
@@ -101,6 +106,8 @@
 
       (let [^String chunk   (trim-chunk (read-at-position cm path load-pos full-chunk-size) chunk-size page pages)
                     the-csv (read-csv chunk separator)]
+        (log/debug "trimmed chunk for page" (inc page) ":" chunk)
+        (log/debug "parsed csv" the-csv)
         {:path         path
          :page         (str (inc page))
          :number-pages (str pages)
