@@ -18,6 +18,9 @@ public enum NotificationCategory {
     /** tool rquest status update notification */
     TOOLREQUEST("Tool Request"),
 
+    /** EZID request */
+    EZIDREQUEST("EZID Request"),
+
     /** unseen notifications */
     NEW("New");
 
