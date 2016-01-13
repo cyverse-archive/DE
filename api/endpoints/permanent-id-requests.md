@@ -9,6 +9,7 @@ title: DE Permanent ID Request API Documentation
     * [List all Permanent ID Requests](#list-all-permanent-id-requests)
     * [Get any Permanent ID Request Details](#get-any-permanent-id-request-details)
     * [Update the Status of a Permanent ID Request](#update-the-status-of-a-permanent-id-request)
+    * [Create a Permanent ID](#create-a-permanent-id)
     * [List Permanent ID Requests](#list-permanent-id-requests)
     * [Create a Permanent ID Request](#create-a-permanent-id-request)
     * [List Permanent ID Request Status Codes](#list-permanent-id-request-status-codes)
@@ -101,6 +102,25 @@ Allows administrators to update the status of a Permanent ID Request from any us
                             Permanent ID Request status update"
 }
 ```
+
+### Response
+
+Same as [GET /admin/permanent-id-requests/{request-id}](#get-any-permanent-id-request-details)
+
+## Create a Permanent ID
+
+`POST /admin/permanent-id-requests/{request-id}/ezid`
+
+Delegates to metadata: `POST /admin/permanent-id-requests/{request-id}/status`
+
+This endopint will mint a permanent ID using the
+[EZID API](http://ezid.cdlib.org/doc/apidoc.html#operation-mint-identifier)
+and the requested folder's metadata,
+add the new ID(s) to the folder's metadata,
+move the folder to a curated directory,
+then set the Permanent ID Request's status to "Completed".
+If an error is encountered during this process,
+then the Permanent ID Request's status will be set to "Failed".
 
 ### Response
 

@@ -36,6 +36,7 @@ title: DE API Documentation
 * [POST /admin/notifications/system/:uuid](endpoints/notifications.html#endpoints-for-system-messages-aka-system-notifications)
 * [GET /admin/permanent-id-requests](endpoints/permanent-id-requests.html#list-all-permanent-id-requests)
 * [GET /admin/permanent-id-requests/{request-id}](endpoints/permanent-id-requests.html#get-any-permanent-id-request-details)
+* [POST /admin/permanent-id-requests/{request-id}/ezid](endpoints/permanent-id-requests.html#create-a-permanent-id)
 * [POST /admin/permanent-id-requests/{request-id}/status](endpoints/permanent-id-requests.html#update-the-status-of-a-permanent-id-request)
 * [POST /admin/reference-genomes](endpoints/reference-genomes.html#adding-reference-genomes)
 * [PUT /admin/reference-genomes](endpoints/reference-genomes.html#importing-reference-genomes)
