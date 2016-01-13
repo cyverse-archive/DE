@@ -15,8 +15,12 @@ import com.google.inject.Inject;
 import com.sencha.gxt.core.client.Style.SelectionMode;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.Composite;
+import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
+import com.sencha.gxt.widget.core.client.box.MessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent.DialogHideHandler;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -45,7 +49,7 @@ public class PermIdRequestViewImpl extends Composite implements PermIdRequestVie
     ToolBar toolbar;
 
     @UiField
-    TextButton updateBtn, metadataBtn;
+    TextButton updateBtn, metadataBtn, createDOIBtn;
 
     @UiField
     Grid<PermanentIdRequest> grid;
@@ -78,9 +82,10 @@ public class PermIdRequestViewImpl extends Composite implements PermIdRequestVie
                     presenter.setSelectedRequest(event.getSelection().get(0));
                     updateBtn.setEnabled(true);
                     metadataBtn.setEnabled(true);
+                    createDOIBtn.setEnabled(true);
                 }
             });
-        grid.getView().setEmptyText("No rows to display!");
+        grid.getView().setEmptyText(appearance.noRows());
     }
 
     @UiHandler("updateBtn")
@@ -88,6 +93,7 @@ public class PermIdRequestViewImpl extends Composite implements PermIdRequestVie
         final UpdatePermanentIdRequestDialog dialog = new UpdatePermanentIdRequestDialog(grid.getSelectionModel()
                                                                                              .getSelectedItem(),
                                                                                          presenter,
+                                                                                         appearance,
                                                                                    factory);
         dialog.show();
     }
@@ -95,6 +101,38 @@ public class PermIdRequestViewImpl extends Composite implements PermIdRequestVie
     @UiHandler("metadataBtn")
     void onMetadataBtnClicked(SelectEvent event) {
         presenter.fetchMetadata();
+    }
+
+    @UiHandler("createDOIBtn")
+    void onCreateDOIBtnClicked(SelectEvent event) {
+        final MessageBox amb = new MessageBox(appearance.request()
+                                                      + " "
+                                                      + grid.getSelectionModel()
+                                                            .getSelectedItem()
+                                                            .getType(),
+                                              appearance.confirmCreate(grid.getSelectionModel()
+                                                                           .getSelectedItem()
+                                                                           .getType()
+                                                                           .toString()));
+        amb.setPredefinedButtons(PredefinedButton.YES, PredefinedButton.NO, PredefinedButton.CANCEL);
+        amb.setIcon(MessageBox.ICONS.question());
+        amb.addDialogHideHandler(new DialogHideHandler() {
+            @SuppressWarnings("incomplete-switch")
+            @Override
+            public void onDialogHide(DialogHideEvent event) {
+
+                switch (event.getHideButton()) {
+                    case YES:
+                        presenter.createPermanentId();
+                        break;
+                    case NO:
+                        break;
+                    case CANCEL:
+                        break;
+                }
+            }
+        });
+        amb.show();
     }
 
     @UiFactory

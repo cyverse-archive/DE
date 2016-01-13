@@ -16,9 +16,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.sencha.gxt.cell.core.client.form.ComboBoxCell.TriggerAction;
 import com.sencha.gxt.data.shared.LabelProvider;
-import com.sencha.gxt.widget.core.client.box.MessageBox;
-import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
-import com.sencha.gxt.widget.core.client.event.DialogHideEvent.DialogHideHandler;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.SimpleComboBox;
@@ -49,56 +46,28 @@ public class UpdatePermanentIdRequestDialog extends IPlantDialog {
     @SuppressWarnings("unused")
     private final PermIdRequestView.Presenter presenter;
 
+    private final PermIdRequestView.PermIdRequestViewAppearance appearance;
+    
     public UpdatePermanentIdRequestDialog(final PermanentIdRequest request,
                                           final PermIdRequestView.Presenter presenter,
+                                          final PermIdRequestView.PermIdRequestViewAppearance appearance,
                                           final PermanentIdRequestAutoBeanFactory factory) {
 
         this.factory = factory;
         this.request = request;
         this.presenter = presenter;
-        setHeadingText("Update Status");
-        getOkButton().setText("Submit");
+        this.appearance = appearance;
+        setHeadingText(appearance.updateStatus());
+        getOkButton().setText(appearance.update());
         add(uiBinder.createAndBindUi(this));
         currentStatusLabel.setText(request.getStatus());
         commentsEditor.setHeight(200);
-        setHideOnButtonClick(false);
         getOkButton().addSelectHandler(new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
-                if (statusCombo.getValue() != null
-                        && statusCombo.getValue().equals(PermanentIdRequestStatus.Approved)) {
-                    final MessageBox amb = new MessageBox("Request " + request.getType(),
-                                                          "Do you want to submit request for "
-                                                                  + request.getType() + " now?");
-                    amb.setPredefinedButtons(PredefinedButton.YES,
-                                             PredefinedButton.NO,
-                                             PredefinedButton.CANCEL);
-                    amb.setIcon(MessageBox.ICONS.question());
-                    amb.addDialogHideHandler(new DialogHideHandler() {
-                        @SuppressWarnings("incomplete-switch")
-                        @Override
-                        public void onDialogHide(DialogHideEvent event) {
-                            PermanentIdRequestUpdate update = getPermanentIdRequestUpdate();
-                            switch (event.getHideButton()) {
-                                case YES:
-                                    presenter.setSubmitRequestForId();
-                                    presenter.updateRequest(update);
-                                    UpdatePermanentIdRequestDialog.this.hide();
-                                    break;
-                                case NO:
-                                    presenter.updateRequest(update);
-                                    UpdatePermanentIdRequestDialog.this.hide();
-                                    break;
-                                case CANCEL:
-                                    presenter.updateRequest(update);
-                                    UpdatePermanentIdRequestDialog.this.hide();
-                                    break;
-                            }
-                        }
-                    });
-                    amb.show();
-                }
+                final PermanentIdRequestUpdate update = getPermanentIdRequestUpdate();
+                presenter.updateRequest(update);
             }
         });
     }

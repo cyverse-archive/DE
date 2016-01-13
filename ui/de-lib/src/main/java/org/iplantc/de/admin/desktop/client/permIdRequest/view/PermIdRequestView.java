@@ -52,6 +52,23 @@ public interface PermIdRequestView extends IsWidget, IsMaskable {
 
         int eastPanelSize();
 
+        String noRows();
+
+        String confirmCreate(String type);
+
+        String createBtnText();
+
+        String currentStatusLbl();
+
+        String setStatusLbl();
+
+        String commentsLbl();
+
+        String updateStatus();
+
+        String update();
+
+        String request();
     }
 
     public interface Presenter {
@@ -64,13 +81,13 @@ public interface PermIdRequestView extends IsWidget, IsMaskable {
 
         void loadPermIdRequests();
 
-        void saveMetadata();
-
         void setSelectedRequest(PermanentIdRequest request);
 
         void updateRequest(PermanentIdRequestUpdate update);
 
         void setSubmitRequestForId();
+
+        void createPermanentId();
     }
 
 }

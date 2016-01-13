@@ -5,6 +5,9 @@
              xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
 
 
+    <ui:with field="appearance"
+        type="org.iplantc.de.admin.desktop.client.permIdRequest.view.PermIdRequestView.PermIdRequestViewAppearance" />
+
     <ui:with field="margins"
              type="com.sencha.gxt.core.client.util.Margins">
         <ui:attributes top="0" right="5" bottom="10" left="5"/>
@@ -16,21 +19,21 @@
 
     <container:VerticalLayoutContainer>
         <container:child layoutData="{layoutData}">
-            <form:FieldLabel text="Current Status">
+            <form:FieldLabel text="{appearance.currentStatusLbl}">
                 <form:widget>
                     <g:Label ui:field="currentStatusLabel"/>
                 </form:widget>
             </form:FieldLabel>
         </container:child>
         <container:child layoutData="{layoutData}">
-            <form:FieldLabel text="Set Status">
+            <form:FieldLabel text="{appearance.setStatusLbl}">
                 <form:widget>
                     <form:SimpleComboBox ui:field="statusCombo"/>
                 </form:widget>
             </form:FieldLabel>
         </container:child>
         <container:child layoutData="{layoutData}">
-            <form:FieldLabel text="Comments">
+            <form:FieldLabel text="{appearance.commentsLbl}">
                 <form:widget>
                     <form:TextArea ui:field="commentsEditor"/>
                 </form:widget>

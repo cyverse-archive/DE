@@ -22,4 +22,22 @@ public interface PermIdRequestDisplayStrings extends Messages {
     String submitBtnText();
 
     String pathColumnLabel();
+
+    String update();
+
+    String updateStatus();
+
+    String commentsLbl();
+
+    String setStatusLbl();
+
+    String currentStatusLbl();
+
+    String createBtnText();
+
+    String confirmCreate(String type);
+
+    String noRows();
+
+    String request();
 }

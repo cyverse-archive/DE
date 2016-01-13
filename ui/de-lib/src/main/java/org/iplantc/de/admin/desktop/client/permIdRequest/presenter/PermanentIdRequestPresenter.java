@@ -90,7 +90,7 @@ public class PermanentIdRequestPresenter implements Presenter {
 
     private MetadataView.Presenter meta_pre;
 
-    boolean requestId;
+    boolean createId;
 
     @Inject
     public PermanentIdRequestPresenter(DiskResourceServiceFacade drsvc,
@@ -116,11 +116,6 @@ public class PermanentIdRequestPresenter implements Presenter {
         meta_pre = new MetadataPresenterImpl(selectedRequest.getFolder(), metadataView, drsvc);
         meta_pre.go(metadataDialog);
         metadataDialog.show();
-    }
-
-    @Override
-    public void saveMetadata() {
-
     }
 
     @Override
@@ -181,8 +176,8 @@ public class PermanentIdRequestPresenter implements Presenter {
                                                                     .schedule(new SuccessAnnouncementConfig("Request Updated!"));
                                                      selectedRequest.setStatus(update.getStatus());
                                                      view.update(selectedRequest);
-                                                     if (requestId) {
-                                                         submitRequestForId();
+                                                     if (createId) {
+                                                         createPermanentId();
                                                      }
                                                  }
                                              });
@@ -191,23 +186,25 @@ public class PermanentIdRequestPresenter implements Presenter {
     @Override
     public void setSubmitRequestForId() {
         // set up flag for submitting request Perm Id request
-        requestId = true;
+        createId = true;
     }
 
-    public void submitRequestForId() {
-        prsvc.submitRequestForId(selectedRequest.getId(), new AsyncCallback<String>() {
+    @Override
+    public void createPermanentId() {
+        prsvc.createPermanentId(selectedRequest.getId(), new AsyncCallback<String>() {
 
             @Override
             public void onFailure(Throwable caught) {
-                // TODO Auto-generated method stub
-                
+                createId = false;
+                IplantAnnouncer.getInstance()
+                               .schedule(new ErrorAnnouncementConfig("Unable to create DOI!"));
             }
 
             @Override
             public void onSuccess(String result) {
-                // reset flag for request
-                requestId = false;
-                
+                createId = false;
+                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig("DOI created!"));
+
             }
         });
     }

@@ -46,8 +46,10 @@ public class PermIdRequestAdminServiceFacadeImpl implements PermIdRequestAdminSe
     }
 
     @Override
-    public void submitRequestForId(String id, AsyncCallback<String> asyncCallback) {
-        // TODO Auto-generated method stub
+    public void createPermanentId(String requestId, AsyncCallback<String> asyncCallback) {
+        String address = PERMID_ADMIN_REQUEST + "/" + requestId + "/ezid";
+        final ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.POST, address, "{}");
+        deService.getServiceData(wrapper, asyncCallback);
 
     }
 

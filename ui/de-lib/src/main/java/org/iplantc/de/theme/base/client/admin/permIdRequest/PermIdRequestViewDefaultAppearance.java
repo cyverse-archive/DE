@@ -93,4 +93,49 @@ public class PermIdRequestViewDefaultAppearance implements PermIdRequestViewAppe
         return 0;
     }
 
+    @Override
+    public String noRows() {
+        return displayStrings.noRows();
+    }
+
+    @Override
+    public String confirmCreate(String type) {
+        return displayStrings.confirmCreate(type);
+    }
+
+    @Override
+    public String createBtnText() {
+        return displayStrings.createBtnText();
+    }
+
+    @Override
+    public String currentStatusLbl() {
+        return displayStrings.currentStatusLbl();
+    }
+
+    @Override
+    public String setStatusLbl() {
+        return displayStrings.setStatusLbl();
+    }
+
+    @Override
+    public String commentsLbl() {
+        return displayStrings.commentsLbl();
+    }
+
+    @Override
+    public String updateStatus() {
+        return displayStrings.updateStatus();
+    }
+
+    @Override
+    public String update() {
+        return displayStrings.update();
+    }
+
+    @Override
+    public String request() {
+        return displayStrings.request();
+    }
+
 }
