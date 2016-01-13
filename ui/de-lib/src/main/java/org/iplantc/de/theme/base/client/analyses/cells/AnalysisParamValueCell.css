@@ -2,6 +2,7 @@
     cursor: pointer;
     text-decoration: underline;
     white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
 .other {
