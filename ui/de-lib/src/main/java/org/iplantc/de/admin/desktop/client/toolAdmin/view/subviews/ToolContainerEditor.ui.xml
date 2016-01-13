@@ -3,7 +3,8 @@
              xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
              xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
              xmlns:d="urn:import:org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews"
-             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
     <ui:with field="appearance"
              type="org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView.ToolAdminViewAppearance"/>
@@ -53,6 +54,9 @@
                         </form:FieldLabel>
                     </container:child>
                     <container:child layoutData="{layoutData}">
+                        <g:HTML ui:field="entryPointWarningHTML"/>
+                    </container:child>
+                    <container:child layoutData="{layoutData}">
                         <form:FieldLabel text="{appearance.containerEntryPointLabel}">
                             <form:widget>
                                 <form:TextField readOnly="false"
@@ -88,7 +92,6 @@
                             </form:widget>
                         </form:FieldLabel>
                     </container:child>
-
                     <container:child layoutData="{layoutData}">
                         <form:FieldLabel ui:field="containerDevicesLabel"
                                          labelAlign="TOP"/>
@@ -104,7 +107,9 @@
                     <container:child layoutData="{layoutData}">
                         <d:ToolDeviceListEditor ui:field="deviceListEditor"/>
                     </container:child>
-
+                    <container:child layoutData="{layoutData}">
+                        <g:HTML ui:field="toolVolumesWarningHTML"/>
+                    </container:child>
                     <container:child layoutData="{layoutData}">
                         <form:FieldLabel ui:field="containerVolumesLabel"
                                          labelAlign="TOP"/>

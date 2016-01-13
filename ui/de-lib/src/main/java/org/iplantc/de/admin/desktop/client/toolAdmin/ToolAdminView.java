@@ -199,6 +199,10 @@ public interface ToolAdminView extends IsWidget,
         String publicAppDisabledLabel();
 
         SafeHtml toolAdminHelp();
+
+        SafeHtml toolEntryPointWarning();
+
+        SafeHtml toolVolumeWarning();
     }
 
     interface Presenter {

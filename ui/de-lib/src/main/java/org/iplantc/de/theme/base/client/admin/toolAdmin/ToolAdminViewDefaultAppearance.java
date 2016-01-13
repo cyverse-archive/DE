@@ -501,4 +501,14 @@ public class ToolAdminViewDefaultAppearance implements ToolAdminView.ToolAdminVi
     public SafeHtml toolAdminHelp() {
         return displayStrings.toolAdminHelp();
     }
+
+    @Override
+    public SafeHtml toolEntryPointWarning() {
+        return displayStrings.toolEntryPointWarning();
+    }
+
+    @Override
+    public SafeHtml toolVolumeWarning() {
+        return displayStrings.toolVolumeWarning();
+    }
 }

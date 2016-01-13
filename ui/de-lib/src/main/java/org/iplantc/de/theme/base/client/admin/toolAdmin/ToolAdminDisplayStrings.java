@@ -206,4 +206,10 @@ public interface ToolAdminDisplayStrings extends Messages {
 
     @Key("toolAdminHelp")
     SafeHtml toolAdminHelp();
+
+    @Key("toolEntryPointWarning")
+    SafeHtml toolEntryPointWarning();
+
+    @Key("toolVolumeWarning")
+    SafeHtml toolVolumeWarning();
 }

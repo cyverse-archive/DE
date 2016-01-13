@@ -8,6 +8,7 @@ import com.google.gwt.editor.client.Editor;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -29,6 +30,8 @@ public class ToolContainerEditor extends Composite implements Editor<ToolContain
 
     @UiField TextField nameEditor;
     @UiField TextField workingDirectoryEditor;
+    @Ignore
+    @UiField HTML entryPointWarningHTML;
     @UiField TextField entryPointEditor;
     @UiField IntegerField memoryLimitEditor;
     @UiField IntegerField cpuSharesEditor;
@@ -40,6 +43,8 @@ public class ToolContainerEditor extends Composite implements Editor<ToolContain
     @Ignore
     @UiField TextButton deleteDeviceButton;
     @UiField (provided = true) ToolDeviceListEditor deviceListEditor;
+    @Ignore
+    @UiField HTML toolVolumesWarningHTML;
     @Ignore
     @UiField FieldLabel containerVolumesLabel;
     @Ignore
@@ -73,6 +78,8 @@ public class ToolContainerEditor extends Composite implements Editor<ToolContain
         this.imageEditor = toolImageEditor;
         initWidget(uiBinder.createAndBindUi(this));
 
+        entryPointWarningHTML.setHTML(appearance.toolEntryPointWarning());
+        toolVolumesWarningHTML.setHTML(appearance.toolVolumeWarning());
         containerDevicesLabel.setHTML(appearance.containerDevicesLabel());
         containerVolumesLabel.setHTML(appearance.containerVolumesLabel());
         containerVolumesFromLabel.setHTML(appearance.containerVolumesFromLabel());
