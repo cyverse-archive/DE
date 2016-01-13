@@ -28,22 +28,6 @@
   [& components]
   (str (apply curl/url (config/ipg-base) components)))
 
-(defn- get-grouper-user-group-id
-  []
-  (some->> (http/get (grouper-url "groups")
-                     {:query-params {:user   grouper-user
-                                     :search (grouper-user-group)}
-                      :as           :json})
-           :body
-           :groups
-           first
-           :id))
-
-(def ^:private grouper-user-group-id
-  (memoize (fn [] (or (get-grouper-user-group-id)
-                      (throw+ {:type  ::cx/request-failed
-                               :error "de-users group not found in Grouper"})))))
-
 (defn lookup-subject
   "Uses iplant-groups's subject lookup by ID endpoint to retrieve user details."
   [user short-username]
@@ -76,8 +60,8 @@
 
 (defn- grant-role-user-permission
   "Grants permission to access a resource to an individual user."
-  [user role-id resource-id action]
-  (:body (http/put (grouper-url "attributes" resource-id "permissions" "memberships" role-id user action)
+  [user role resource-name action]
+  (:body (http/put (grouper-url "attributes" resource-name "permissions" "memberships" role user action)
                    {:query-params {:user grouper-user}
                     :form-params  {:allowed true}
                     :content-type :json
@@ -86,7 +70,6 @@
 (defn register-private-app
   "Registers a new private app in Grouper."
   [user app-id]
-  (let [app-resource-name (grouper-app-resource-name app-id)
-        permission-def    (grouper-app-permission-def)
-        resource-def      (create-resource app-resource-name permission-def)]
-    (grant-role-user-permission user (grouper-user-group-id) (:id resource-def) "own")))
+  (let [app-resource-name (grouper-app-resource-name app-id)]
+    (create-resource app-resource-name (grouper-app-permission-def))
+    (grant-role-user-permission user (grouper-user-group) app-resource-name "own")))
