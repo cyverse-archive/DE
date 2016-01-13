@@ -1,0 +1,10 @@
+---
+- name: remove binary
+  file: path=/usr/local/bin/condor-launcher state=absent
+
+- name: remove systemd file
+  file: path=/lib/systemd/system/condor-launcher.service state=absent
+
+- name: reload systemd
+  sudo: true
+  shell: systemctl daemon-reload

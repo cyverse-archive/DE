@@ -23,3 +23,5 @@
 
 - name: change permissions on jobservices.yml
   file: path=/etc/jobservices.yml mode=0644
+
+- include: systemd.yml

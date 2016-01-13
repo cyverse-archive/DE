@@ -2,7 +2,7 @@
 - include: stop.yml
   tags:
     - condor-launcher
-    - update
+    - stop
 
 - include: remove.yml
   tags:
