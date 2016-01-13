@@ -6,9 +6,6 @@
             [terrain.util.validators :as valid]))
 
 
-(def IPCRESERVED "ipc-reserved-unit")
-(def IPCSYSTEM "ipc-system-avu")
-
 (defn trace-log
   [trace-type func-name namespace params]
   (let [log-ns (str "trace." namespace)
@@ -75,5 +72,3 @@
     (sharing? id)                         "Shared With Me"
     (community? id)                       "Community Data"
     :else                                 (ft/basename id)))
-
-(def path->label id->label)
