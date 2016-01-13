@@ -9,10 +9,10 @@ db:
   uri: postgresql://{{db_user}}:{{db_password}}@{{db_host}}:{{db_port}}/{{db_name}}?sslmode=disable
 
 irods:
-  user: {{irods.user}}
-  pass: {{irods.password}}
-  host: {{irods.host}}
-  port: {{irods.port}}
-  base: {{irods.home}}
-  resc: {{irods.default_resource}}
-  zone: {{irods.zone}}
+  user: "{{irods.user}}"
+  pass: "{{irods.password}}"
+  host: "{{irods.host}}"
+  port: "{{irods.port}}"
+  base: "{{irods.home}}"
+  resc: "{{irods.default_resource}}"
+  zone: "{{irods.zone}}"
