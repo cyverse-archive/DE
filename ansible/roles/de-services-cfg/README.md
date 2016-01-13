@@ -22,9 +22,8 @@ N/A
 Dependencies
 ------------
 
-util-cfg-logging
-util-cfg-service
-util-cfg-systemd-unit
+util-cfg-docker-pull-configs
+util-cfg-docker-pull
 
 Example Playbook
 ----------------
