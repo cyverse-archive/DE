@@ -1,0 +1,5 @@
+---
+dependencies:
+  - role: util-cfg-systemd-unit
+    service_name_short: condor-launcher
+    group_name: jex
