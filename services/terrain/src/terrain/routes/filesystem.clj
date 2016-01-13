@@ -105,12 +105,6 @@
    [#(and (config/filesystem-routes-enabled)
           (config/metadata-routes-enabled))]
 
-    (POST "/filesystem/metadata" [data-id :as req]
-      (controller req meta/do-metadata-add :params :body))
-
-    (DELETE "/filesystem/metadata" [:as req]
-      (controller req meta/do-metadata-delete :params))
-
     (POST "/filesystem/metadata/csv-parser" [:as {:keys [user-info params] :as req}]
       (meta/parse-metadata-csv-file user-info params))
 

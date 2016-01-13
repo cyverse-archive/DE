@@ -75,9 +75,9 @@
 
 (defn- save-tree-metaurl
   "Saves the URL used to obtain the tree URLs in the AVUs for the file."
-  [path metaurl]
+  [user path metaurl]
   (try+
-   (di/save-tree-metaurl path metaurl)
+   (di/save-tree-metaurl user path metaurl)
    (catch [:error_code ce/ERR_REQUEST_FAILED] {:keys [body]}
      (log/warn "unable to save the tree metaurl for" path "-"
                (cheshire/generate-string (cheshire/parse-string body) {:pretty true})))
@@ -101,7 +101,7 @@
      (log/debug "searching for existing tree URLs for SHA1 hash" sha1)
      (let [metaurl (metaurl-for sha1)]
        (when-let [urls (get-tree-urls sha1)]
-         (save-tree-metaurl path metaurl)
+         (save-tree-metaurl user path metaurl)
          urls))))
 
 (defn- save-tree-file
@@ -156,7 +156,7 @@
      (let [urls    (get-tree-viewer-urls dir infile)
            metaurl (metaurl-for sha1)]
        (set-tree-urls sha1 urls)
-       (save-tree-metaurl path metaurl)
+       (save-tree-metaurl user path metaurl)
        (build-response-map urls))))
 
 (defn tree-urls-response

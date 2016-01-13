@@ -1,4 +1,5 @@
 (ns terrain.clients.data-info.raw
+  (:use [medley.core :only [remove-vals]])
   (:require [clojure.tools.logging :as log]
             [cemerick.url :as url]
             [me.raynes.fs :as fs]
@@ -160,6 +161,42 @@
 
 ;; METADATA
 
+(defn get-avus
+  "Get the set of iRODS AVUs for a data item."
+  [user path-uuid]
+  (request :get ["data" path-uuid "avus"]
+           (mk-req-map user)))
+
+(defn admin-get-avus
+  "Get the set of iRODS AVUs, including administrative AVUs, for a data-item."
+  [user path-uuid]
+  (request :get ["admin" "data" path-uuid "avus"]
+           (mk-req-map user)))
+
+(defn set-avus
+  "Set the iRODs AVUs to a specific set."
+  [user path-uuid avu-map]
+  (request :put ["data" path-uuid "avus"]
+           (mk-req-map user (json/encode {:irods-avus avu-map}))))
+
+(defn add-avus
+  "Add AVUs to a data item."
+  [user path-uuid avu-map]
+  (request :post ["data" path-uuid "avus"]
+           (mk-req-map user (json/encode {:irods-avus avu-map}))))
+
+(defn admin-add-avus
+  "Add AVUs, allowing administrative AVUs to be included, for a data item."
+  [user path-uuid avu-map]
+  (request :post ["admin" "data" path-uuid "avus"]
+           (mk-req-map user (json/encode {:irods-avus avu-map}))))
+
+(defn admin-delete-avu
+  "Delete an AVU for a data item by attr/value, allowing any AVU to be deleted."
+  [user path-uuid avu]
+  (request :delete ["admin" "data" path-uuid "avus"]
+           (mk-req-map user (select-keys avu [:attr :value]))))
+
 (defn save-metadata
   "Request that metadata be saved to a file."
   [user path-uuid dest recursive]
@@ -176,9 +213,11 @@
 
 (defn collect-stats
   "Uses the data-info stat-gatherer endpoint to gather stat information for a set of files/folders."
-  [user paths]
+  [user & {:keys [paths ids validation-behavior]}]
   (request :post ["stat-gatherer"]
-           (mk-req-map user (json/encode {:paths paths}))))
+           (mk-req-map user
+                       (json/encode (remove-vals nil? {:paths paths :ids ids}))
+                       (remove-vals nil? {:validation-behavior validation-behavior}))))
 
 (defn check-existence
   "Uses the data-info existence-marker endpoint to gather existence information for a set of files/folders."

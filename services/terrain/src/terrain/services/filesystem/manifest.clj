@@ -20,8 +20,8 @@
 
 (defn- extract-tree-urls
   [cm fpath]
-  (if (attribute? cm fpath "tree-urls")
-    (-> (get-attribute cm fpath "tree-urls")
+  (if (attribute? cm fpath (cfg/tree-urls-attr))
+    (-> (get-attribute cm fpath (cfg/tree-urls-attr))
       first
       :value
       ft/basename

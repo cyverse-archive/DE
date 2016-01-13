@@ -14,7 +14,6 @@
             [terrain.services.filesystem.common-paths :as cp]
             [terrain.services.filesystem.create :as cr]
             [terrain.services.filesystem.icat :as icat]
-            [terrain.services.filesystem.metadata :as mt]
             [terrain.services.filesystem.sharing :as sharing]
             [terrain.services.filesystem.stat :as st]
             [terrain.services.filesystem.users :as users]
@@ -63,9 +62,9 @@
   [^String user]
   (cp/user-trash-path user))
 
-(defn- uuid-for-path
+(defn uuid-for-path
   [^String user ^String path]
-  (-> (raw/collect-stats user [path])
+  (-> (raw/collect-stats user :paths [path])
       :body
       json/decode
       (get-in ["paths" path "id"])))
@@ -235,18 +234,18 @@
 (defn get-tree-metaurl
   "Gets the URL used to get saved tree URLs."
   [user path]
-  (->> (mt/metadata-get user (uuid-for-path user path))
-    (:metadata)
-    (filter #(= (:attr %) "tree-urls"))
-    (first)
-    (:value)))
-
+  (->> (raw/admin-get-avus user (uuid-for-path user path))
+    :irods-avus
+    (filter #(= (:attr %) (cfg/tree-urls-attr)))
+    first
+    :value))
 
 (defn save-tree-metaurl
   "Saves the URL used to get saved tree URLs. The metaurl argument should contain the URL used to
    obtain the tree URLs."
-  [path metaurl]
-  (mt/admin-metadata-add path {:attr "tree-urls" :value metaurl :unit ""}))
+  [user path metaurl]
+  (let [path-uuid (uuid-for-path user path)]
+    (raw/admin-add-avus user path-uuid [{:attr (cfg/tree-urls-attr) :value metaurl :unit ""}])))
 
 
 (defn ^ISeq list-user-groups

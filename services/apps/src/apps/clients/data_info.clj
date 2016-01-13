@@ -15,6 +15,7 @@
   (str (apply curl/url (config/data-info-base-url)
               (map #(string/replace % #"^/+|/+$" "") components))))
 
+;; currently doesn't support passing UUIDs, but could be changed to
 (defn get-file-stats
   [user paths]
   (when (seq paths)
