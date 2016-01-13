@@ -9,7 +9,7 @@ would display the documentation of all available endpoints.
 
 ## Installation
 
-Please see [DE Installation Instructions](http://iplantcollaborativeopensource.github.io/DE/ansible/).
+Please see [DE Installation Instructions](http://cyverse.github.io/DE/ansible/).
 
 ## Unit Testing And Development
 
