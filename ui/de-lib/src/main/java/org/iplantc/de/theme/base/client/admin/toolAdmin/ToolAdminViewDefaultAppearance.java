@@ -418,8 +418,8 @@ public class ToolAdminViewDefaultAppearance implements ToolAdminView.ToolAdminVi
     }
 
     @Override
-    public String dialogWindowDeleteBtnText() {
-        return displayStrings.dialogWindowDeleteBtnText();
+    public String deleteBtnText() {
+        return displayStrings.deleteBtnText();
     }
 
     @Override

@@ -141,8 +141,8 @@ public interface ToolAdminDisplayStrings extends Messages {
     @Key("dialogWindowUpdateBtnText")
     String dialogWindowUpdateBtnText();
 
-    @Key("dialogWindowDeleteBtnText")
-    String dialogWindowDeleteBtnText();
+    @Key("deleteBtnText")
+    String deleteBtnText();
 
     @Key("deleteToolSuccessText")
     String deleteToolSuccessText();

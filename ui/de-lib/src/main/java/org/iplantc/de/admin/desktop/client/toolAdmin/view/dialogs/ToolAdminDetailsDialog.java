@@ -1,7 +1,6 @@
 package org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs;
 
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
-import org.iplantc.de.admin.desktop.client.toolAdmin.events.DeleteToolSelectedEvent;
 import org.iplantc.de.admin.desktop.client.toolAdmin.events.SaveToolSelectedEvent;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.ToolAdminDetailsView;
 import org.iplantc.de.client.models.IsHideable;
@@ -23,10 +22,7 @@ import com.google.inject.Inject;
 
 import com.sencha.gxt.core.client.dom.ScrollSupport;
 import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
-import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
-import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.FlowLayoutContainer;
-import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 
 /**
@@ -34,8 +30,7 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent;
  * @author aramsey
  */
 public class ToolAdminDetailsDialog extends IPlantDialog implements IsHideable,
-                                                                    SaveToolSelectedEvent.HasSaveToolSelectedEventHandlers,
-                                                                    DeleteToolSelectedEvent.HasDeleteToolSelectedEventHandlers {
+                                                                    SaveToolSelectedEvent.HasSaveToolSelectedEventHandlers{
 
     private final ToolAdminDetailsView view;
     private final ToolAdminView.ToolAdminViewAppearance appearance;
@@ -60,22 +55,15 @@ public class ToolAdminDetailsDialog extends IPlantDialog implements IsHideable,
 
         addHelp(new HTML(appearance.toolAdminHelp()));
 
-        setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL, PredefinedButton.CLOSE);
+        setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
         getOkButton().setText(appearance.dialogWindowUpdateBtnText());
-        getDeleteButton().setText(appearance.dialogWindowDeleteBtnText());
 
         addOkButtonSelectHandler(new OkSelectHandler(this, this, this.appearance, this.view));
         addCancelButtonSelectHandler(new CancelSelectHandler());
-        getDeleteButton().addSelectHandler(new DeleteSelectHandler(this, view));
-
         FlowLayoutContainer container = new FlowLayoutContainer();
         container.getScrollSupport().setScrollMode(ScrollSupport.ScrollMode.AUTO);
         container.add(this.view);
         add(container);
-    }
-
-    TextButton getDeleteButton() {
-        return getButton(PredefinedButton.CLOSE);
     }
 
     public void show(final Tool tool) {
@@ -85,10 +73,6 @@ public class ToolAdminDetailsDialog extends IPlantDialog implements IsHideable,
 
     @Override
     public void show() {
-        final TextButton deleteButton = getDeleteButton();
-        deleteButton.disable();
-        deleteButton.setVisible(false);
-
         final ToolContainer toolContainer = factory.getContainer().as();
         toolContainer.setDeviceList(Lists.<ToolDevice>newArrayList());
         toolContainer.setContainerVolumes(Lists.<ToolVolume>newArrayList());
@@ -107,11 +91,6 @@ public class ToolAdminDetailsDialog extends IPlantDialog implements IsHideable,
         tool.setImplementation(toolImplementation);
 
         show(tool);
-    }
-
-    @Override
-    public HandlerRegistration addDeleteToolSelectedEventHandler(DeleteToolSelectedEvent.DeleteToolSelectedEventHandler handler) {
-        return addHandler(handler, DeleteToolSelectedEvent.TYPE);
     }
 
     @Override
@@ -155,37 +134,6 @@ public class ToolAdminDetailsDialog extends IPlantDialog implements IsHideable,
         @Override
         public void onSelect(SelectEvent event) {
             hide();
-        }
-    }
-
-    private class DeleteSelectHandler implements SelectEvent.SelectHandler {
-        private final HasHandlers hasHandlers;
-        private final ToolAdminDetailsView view;
-
-        public DeleteSelectHandler(HasHandlers hasHandlers, ToolAdminDetailsView view) {
-            this.hasHandlers = hasHandlers;
-            this.view = view;
-        }
-
-        @Override
-        public void onSelect(SelectEvent event) {
-            final Tool tool = view.getTool();
-            final ConfirmMessageBox deleteMsgBox =
-                    new ConfirmMessageBox("Confirm", "Delete " + tool.getName() + "?");
-            deleteMsgBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
-                @Override
-                public void onDialogHide(DialogHideEvent event) {
-                    if (event.getHideButton().equals(PredefinedButton.OK) || event.getHideButton()
-                                                                                  .equals(PredefinedButton.YES)) {
-                        DeleteToolSelectedEvent deleteToolSelectedEvent =
-                                new DeleteToolSelectedEvent(tool);
-                        hasHandlers.fireEvent(deleteToolSelectedEvent);
-                        deleteMsgBox.hide();
-                        hide();
-                    }
-                }
-            });
-            deleteMsgBox.show();
         }
     }
 }

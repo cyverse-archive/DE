@@ -166,7 +166,7 @@ public interface ToolAdminView extends IsWidget,
 
         String updateToolSuccessText();
 
-        String dialogWindowDeleteBtnText();
+        String deleteBtnText();
 
         String deleteToolSuccessText();
 

@@ -38,6 +38,11 @@
                                        icon="{appearance.addIcon}"/>
                 </toolbar:child>
                 <toolbar:child>
+                    <button:TextButton ui:field="deleteButton"
+                                       text="{appearance.deleteBtnText}"
+                                       icon="{appearance.deleteIcon}"/>
+                </toolbar:child>
+                <toolbar:child>
                     <form:TextField ui:field="filterField"
                                     emptyText="{appearance.filter}"/>
                 </toolbar:child>

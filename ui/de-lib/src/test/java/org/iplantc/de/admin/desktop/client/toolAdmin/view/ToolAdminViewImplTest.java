@@ -96,35 +96,6 @@ public class ToolAdminViewImplTest {
     }
 
     @Test
-    public void testEditToolDetails_deleteEvent() {
-
-        ToolAdminViewImpl spy = spy(uut);
-
-        /** CALL METHOD UNDER TEST **/
-        spy.editToolDetails(toolMock);
-        verify(toolDetailsDialogMock).get(asyncCallbackDialogCaptor.capture());
-
-        AsyncCallback<ToolAdminDetailsDialog> asyncCallback = asyncCallbackDialogCaptor.getValue();
-        ToolAdminDetailsDialog resultMock = mock(ToolAdminDetailsDialog.class);
-
-        /** CALL METHOD UNDER TEST **/
-        asyncCallback.onSuccess(resultMock);
-        verify(resultMock).show(eq(toolMock));
-        verify(resultMock).addSaveToolSelectedEventHandler(saveToolSelectedEventHandlerArgumentCaptor.capture());
-
-        verify(resultMock).addDeleteToolSelectedEventHandler(deleteToolSelectedEventHandlerArgumentCaptor
-                                                                     .capture());
-
-        DeleteToolSelectedEvent.DeleteToolSelectedEventHandler deleteHandlerMock =
-                deleteToolSelectedEventHandlerArgumentCaptor.getValue();
-        DeleteToolSelectedEvent deleteEventMock = mock(DeleteToolSelectedEvent.class);
-        deleteHandlerMock.onDeleteToolSelected(deleteEventMock);
-
-        verify(spy).fireEvent(isA(DeleteToolSelectedEvent.class));
-        verify(resultMock).hide();
-    }
-
-    @Test
     public void testAddButtonClicked() {
         ToolAdminViewImpl spy = spy(uut);
 

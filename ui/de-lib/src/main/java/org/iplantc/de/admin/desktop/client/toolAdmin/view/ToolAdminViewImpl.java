@@ -31,7 +31,10 @@ import com.sencha.gxt.core.client.Style;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.Store;
 import com.sencha.gxt.widget.core.client.Composite;
+import com.sencha.gxt.widget.core.client.Dialog;
+import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
@@ -76,6 +79,7 @@ public class ToolAdminViewImpl extends Composite implements ToolAdminView {
     private static ToolAdminViewImplUiBinder uiBinder = GWT.create(ToolAdminViewImplUiBinder.class);
 
     @UiField TextButton addButton;
+    @UiField TextButton deleteButton;
     @UiField Grid<Tool> grid;
     @UiField(provided = true) ListStore<Tool> listStore;
     @UiField(provided = true) ToolAdminViewAppearance appearance;
@@ -169,13 +173,6 @@ public class ToolAdminViewImpl extends Composite implements ToolAdminView {
                         grid.getSelectionModel().deselect(grid.getSelectionModel().getSelectedItem());
                     }
                 });
-                result.addDeleteToolSelectedEventHandler(new DeleteToolSelectedEvent.DeleteToolSelectedEventHandler() {
-                    @Override
-                    public void onDeleteToolSelected(DeleteToolSelectedEvent event) {
-                        fireEvent(event);
-                        result.hide();
-                    }
-                });
             }
         });
     }
@@ -201,6 +198,28 @@ public class ToolAdminViewImpl extends Composite implements ToolAdminView {
                 });
             }
         });
+    }
+
+    @UiHandler("deleteButton")
+    void deleteButtonClicked(SelectEvent event) {
+        final Tool tool = grid.getSelectionModel().getSelectedItem();
+        if (tool != null) {
+            final ConfirmMessageBox deleteMsgBox =
+                    new ConfirmMessageBox("Confirm", "Delete " + tool.getName() + "?");
+            deleteMsgBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
+                @Override
+                public void onDialogHide(DialogHideEvent event) {
+                    if (event.getHideButton().equals(Dialog.PredefinedButton.OK) || event.getHideButton()
+                                                                                         .equals(Dialog.PredefinedButton.YES)) {
+                        DeleteToolSelectedEvent deleteToolSelectedEvent =
+                                new DeleteToolSelectedEvent(tool);
+                        fireEvent(deleteToolSelectedEvent);
+                        deleteMsgBox.hide();
+                    }
+                }
+            });
+            deleteMsgBox.show();
+        }
     }
 
     public void toolSelected(Tool tool) {
