@@ -26,6 +26,12 @@ docker run --rm \
 	-v $(pwd):/jobservices \
 	-w /jobservices \
 	$DOCKER_USER/buildenv:latest \
+	gb vendor restore
+
+docker run --rm \
+	-v $(pwd):/jobservices \
+	-w /jobservices \
+	$DOCKER_USER/buildenv:latest \
 	gb build -f -F --ldflags "-X main.appver=$VERSION -X main.gitref=$GIT_COMMIT -X main.builtby=$BUILD_USER"
 
 docker build --build-arg git_commit=$GIT_COMMIT \
