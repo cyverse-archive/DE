@@ -2,6 +2,7 @@
   (:gen-class)
   (:require [iplant_groups.util.config :as config]
             [me.raynes.fs :as fs]
+            [clj-http.client :as http]
             [clojure.tools.logging :as log]
             [common-cli.core :as ccli]
             [service-logging.thread-context :as tc]))
@@ -33,4 +34,5 @@
   (tc/with-logging-context config/svc-info
     (let [{:keys [options arguments errors summary]} (ccli/handle-args config/svc-info args cli-options)]
       (init-service (:config options))
-      (run-jetty))))
+      (http/with-connection-pool {:timeout 5 :threads 10 :insecure? false :default-per-route 10}
+        (run-jetty)))))

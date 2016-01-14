@@ -1,5 +1,5 @@
 (ns data-info.routes.domain.stats
-  (:use [common-swagger-api.schema :only [describe NonBlankString]]
+  (:use [common-swagger-api.schema :only [describe NonBlankString StandardUserQueryParams]]
         [data-info.routes.domain.common])
   (:require [schema.core :as s])
   (:import [java.util UUID]))
@@ -8,6 +8,11 @@
 (def PermissionEnum (s/enum :read :write :own))
 (def DataItemIdParam (describe UUID "The UUID of this data item"))
 (def DataItemPathParam (describe NonBlankString "The IRODS paths to this data item"))
+
+(s/defschema StatQueryParams
+  (assoc StandardUserQueryParams
+         (s/optional-key :validation-behavior)
+         (describe PermissionEnum "What level of permissions on the queried files should be validated?")))
 
 (s/defschema DataStatInfo
   {:id
@@ -62,8 +67,13 @@
   {(describe s/Keyword "The iRODS data item's path")
    (describe (s/conditional #(contains? % :file-size) FileStatInfo :else DirStatInfo) "The data item's info")})
 
+(s/defschema DataIdsMap
+  {(describe s/Keyword "The iRODS data item's ID")
+   (describe (s/conditional #(contains? % :file-size) FileStatInfo :else DirStatInfo) "The data item's info")})
+
 (s/defschema StatusInfo
-  {:paths (describe PathsMap "Paths info")})
+  {(s/optional-key :paths) (describe PathsMap "Paths info")
+   (s/optional-key :ids) (describe DataIdsMap "IDs info")})
 
 ;; Used only for display as documentation in Swagger UI
 (s/defschema StatResponsePathsMap
@@ -71,5 +81,11 @@
    :/path/from/request/to/a/file   (describe FileStatInfo "A file's info")})
 
 ;; Used only for display as documentation in Swagger UI
+(s/defschema StatResponseIdsMap
+  {:some-folder-uuid (describe DirStatInfo "A folder's info")
+   :some-file-uuid   (describe FileStatInfo "A file's info")})
+
+;; Used only for display as documentation in Swagger UI
 (s/defschema StatResponse
-  {:paths (describe StatResponsePathsMap "A map of paths from the request to their status info")})
+  {(s/optional-key :paths) (describe StatResponsePathsMap "A map of paths from the request to their status info")
+   (s/optional-key :ids) (describe StatResponseIdsMap "A map of ids from the request to their status info")})

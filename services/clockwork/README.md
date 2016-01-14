@@ -40,7 +40,7 @@ All rights reserved.
 
 Developed by: iPlant Collaborative as a collaboration between participants at BIO5 at The University
 of Arizona (the primary hosting institution), Cold Spring Harbor Laboratory, The University of Texas
-at Austin, and individual contributors. Find out more at http://www.iplantcollaborative.org/.
+at Austin, and individual contributors. Find out more at http://www.cyverse.org/.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted
 provided that the following conditions are met:

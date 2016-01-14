@@ -9,6 +9,7 @@
         [slingshot.slingshot :only [try+ throw+]])
   (:require [clojure.tools.logging :as log]
             [clojure.string :as string]
+            [clojure.set :as s]
             [clojure-commons.file-utils :as ft]
             [cheshire.core :as json]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
@@ -36,13 +37,170 @@
   [avu]
   (re-find ipc-regex (:attr avu)))
 
+(defn- authorized-avus
+  "Validation to make sure the AVUs aren't system AVUs. Throws a slingshot error
+   map if the validation fails."
+  [avus]
+  (when (some ipc-avu? avus)
+    (throw+ {:error_code ERR_NOT_AUTHORIZED
+             :avus avus})))
+
+(defn- get-readable-path
+  [cm user data-id]
+  (let [path (:path (uuids/path-for-uuid cm user data-id))]
+    (validators/path-readable cm user path)
+    path))
+
 (defn- list-path-metadata
   "Returns the metadata for a path. Passes all AVUs to (fix-unit).
    AVUs with a unit matching IPCSYSTEM are filtered out."
-  [cm path]
-  (remove
-   ipc-avu?
-   (map fix-unit (get-metadata cm (ft/rm-last-slash path)))))
+  [cm path & {:keys [system] :or {system false}}]
+  (let [fixed-metadata (map fix-unit (get-metadata cm (ft/rm-last-slash path)))]
+  (if system
+      fixed-metadata
+      (remove ipc-avu? fixed-metadata))))
+
+(defn- reserved-unit
+  "Turns a blank unit into a reserved unit."
+  [avu-map]
+  (if (string/blank? (:unit avu-map))
+    paths/IPCRESERVED
+    (:unit avu-map)))
+
+(defn metadata-get
+  "Returns the metadata for a path. Filters out system AVUs
+   if :system true is not passed to it, and replaces
+   units set to ipc-reserved with an empty string."
+  [user data-id & {:keys [system] :or {system false}}]
+  (with-jargon (cfg/jargon-cfg) [cm]
+    (validators/user-exists cm user)
+    (let [path (get-readable-path cm user data-id)]
+      {:irods-avus (list-path-metadata cm path :system system)
+       :path path})))
+
+(defn admin-metadata-get
+  "Lists metadata for a path, showing all AVUs."
+  [data-id]
+  (metadata-get (cfg/irods-user) data-id :system true))
+
+(defn- common-metadata-add
+  "Adds an AVU to 'path'. The AVU is passed in as a map in the format:
+   {
+      :attr attr-string
+      :value value-string
+      :unit unit-string
+   }
+   It's a no-op if an AVU with the same attribute and value is already
+   associated with the path."
+  [cm path avu-map]
+  (let [fixed-path (ft/rm-last-slash path)
+        new-unit   (reserved-unit avu-map)
+        attr       (:attr avu-map)
+        value      (:value avu-map)]
+    (log/debug "Fixed Path:" fixed-path)
+    (log/debug "check" (true? (attr-value? cm fixed-path attr value)))
+    (when-not (attr-value? cm fixed-path attr value)
+      (log/debug "Adding " attr value "to" fixed-path)
+      (add-metadata cm fixed-path attr value new-unit))
+    fixed-path))
+
+(defn- common-metadata-delete
+  "Removes an AVU from 'path'. The AVU is passed somewhat confusingly
+   as a map of attr and value:
+   {
+      :attr attr-string
+      :value value-string
+   }
+   It's a no-op if no AVU with that attribute and value is associated
+   with the path."
+   [cm path avu-map]
+  (let [fixed-path (ft/rm-last-slash path)
+        attr       (:attr avu-map)
+        value      (:value avu-map)]
+    (log/debug "Fixed Path:" fixed-path)
+    (log/debug "check" (true? (attr-value? cm fixed-path attr value)))
+    (when (attr-value? cm fixed-path attr value)
+      (log/debug "Removing " attr value "from" fixed-path)
+      (delete-metadata cm fixed-path attr value))
+    fixed-path))
+
+(defn metadata-add
+  "Allows user to set metadata on a path. The user must exist in iRODS
+   and have write permissions on the path. The path must exist. The
+   avu-map parameter must be a list of objects in this format:
+   {
+      :attr attr-string
+      :value value-string
+      :unit unit-string
+   }
+
+   Pass :system true to ignore restrictions on AVUs which may be added."
+  [user data-id avu-maps & {:keys [system] :or {system false}}]
+  (with-jargon (cfg/jargon-cfg) [cm]
+    (validators/user-exists cm user)
+    (let [path (ft/rm-last-slash (get-readable-path cm user data-id))]
+      (validators/path-writeable cm user path)
+      (when-not system (authorized-avus avu-maps))
+      (doseq [avu-map avu-maps]
+        (common-metadata-add cm path avu-map))
+      {:path path
+       :user user})))
+
+(defn admin-metadata-add
+  "Adds AVUs to path, bypassing user permission checks. See (metadata-add)
+   for the AVU map format."
+  [data-id avu-maps]
+  (metadata-add (cfg/irods-user) data-id avu-maps :system true))
+
+(defn metadata-delete
+  "Allows user to remove metadata on a path. The user must exist in iRODS
+   and have write permissions on the path. The path must exist. The
+   avu-map parameter must be a list of objects in this format:
+   {
+      :attr attr-string
+      :value value-string
+   }
+
+   Pass :system true to ignore restrictions on AVUs which may be added."
+  [user data-id avu-maps & {:keys [system] :or {system false}}]
+  (with-jargon (cfg/jargon-cfg) [cm]
+    (validators/user-exists cm user)
+    (let [path (ft/rm-last-slash (get-readable-path cm user data-id))]
+      (validators/path-writeable cm user path)
+      (when-not system (authorized-avus avu-maps))
+      (doseq [avu-map avu-maps]
+        (common-metadata-delete cm path avu-map))
+      {:path path
+       :user user})))
+
+(defn admin-metadata-delete
+  "Deletes AVUs from path, bypassing user permission checks. See (metadata-delete)
+   for the AVU map format."
+  [data-id avu-maps]
+  (metadata-delete (cfg/irods-user) data-id avu-maps :system true))
+
+(defn metadata-set
+  "Allows user to set metadata on an item with the given data-id. The user must exist in iRODS and have
+   write permissions on the data item. The 'irods-avus' parameter should be an array of AVU maps following
+   the format used for (metadata-add)."
+  [user data-id irods-avus]
+  (with-jargon (cfg/jargon-cfg) [cm]
+    (validators/user-exists cm user)
+    (let [{:keys [path type]} (uuids/path-for-uuid cm user data-id)
+          irods-avus (set (map #(select-keys % [:attr :value :unit]) irods-avus))
+          current-avus (set (list-path-metadata cm path :system false))
+          delete-irods-avus (s/difference current-avus irods-avus)]
+      (validators/path-writeable cm user path)
+      (authorized-avus irods-avus)
+
+      (doseq [del-avu delete-irods-avus]
+        (common-metadata-delete cm path del-avu))
+      (doseq [avu irods-avus]
+        (common-metadata-add cm path avu))
+
+      {:path path
+       :user user
+       :type type})))
 
 (defn- stat-is-dir?
   [{:keys [type]}]

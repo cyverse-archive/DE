@@ -4,135 +4,34 @@
         [terrain.services.filesystem.common-paths]
         [terrain.services.filesystem.validators]
         [kameleon.uuids :only [uuidify]]
-        [clj-jargon.init :only [with-jargon]]
-        [clj-jargon.item-ops :only [input-stream]]
-        [clj-jargon.metadata]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [clojure.tools.logging :as log]
             [clojure.string :as string]
+            [clojure.walk :as walk]
             [clojure-commons.file-utils :as ft]
             [cemerick.url :as url]
+            [cheshire.core :as json]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
             [terrain.clients.metadata.raw :as metadata-client]
+            [terrain.clients.data-info :as data]
             [terrain.clients.data-info.raw :as data-raw]
             [terrain.services.filesystem.icat :as icat]
-            [terrain.services.filesystem.uuids :as uuids]
             [terrain.services.filesystem.validators :as validators]
             [terrain.util.config :as cfg]
-            [terrain.util.service :as service])
-  (:import [au.com.bytecode.opencsv CSVReader]
-           [java.io InputStream]))
-
-(defn- fix-unit
-  "Used to replace the IPCRESERVED unit with an empty string."
-  [avu]
-  (if (= (:unit avu) IPCRESERVED)
-    (assoc avu :unit "")
-    avu))
-
-(def ^:private ipc-regex #"(?i)^ipc")
-
-(defn- ipc-avu?
-  "Returns a truthy value if the AVU map passed in is reserved for the DE's use."
-  [avu]
-  (re-find ipc-regex (:attr avu)))
-
-(defn- authorized-avus
-  "Validation to make sure the AVUs aren't system AVUs. Throws a slingshot error
-   map if the validation fails."
-  [avus]
-  (when (some ipc-avu? avus)
-    (throw+ {:type :clojure-commons.exception/not-authorized
-             :avus avus})))
+            [terrain.util.service :as service]))
 
 (defn- service-response->json
   [response]
   (->> response :body service/decode-json))
 
-(defn- get-readable-path
-  [cm user data-id]
-  (let [path (:path (uuids/path-for-uuid cm user data-id))]
-    (validators/path-readable cm user path)
-    path))
-
-(defn- list-path-metadata
-  "Returns the metadata for a path. Passes all AVUs to (fix-unit).
-   AVUs with a unit matching IPCSYSTEM are filtered out."
-  [cm path]
-  (remove
-   ipc-avu?
-   (map fix-unit (get-metadata cm (ft/rm-last-slash path)))))
-
-(defn- reserved-unit
-  "Turns a blank unit into a reserved unit."
-  [avu-map]
-  (if (string/blank? (:unit avu-map))
-    IPCRESERVED
-    (:unit avu-map)))
-
 (defn metadata-get
   "Returns the metadata for a path. Filters out system AVUs and replaces
    units set to ipc-reserved with an empty string."
   [user data-id]
-  (with-jargon (icat/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (let [path (get-readable-path cm user data-id)
-          template-avus (service-response->json (metadata-client/list-metadata-avus data-id))]
-      {:irods-avus (list-path-metadata cm path)
-       :metadata template-avus})))
-
-(defn- common-metadata-add
-  "Adds an AVU to 'path'. The AVU is passed in as a map in the format:
-   {
-      :attr attr-string
-      :value value-string
-      :unit unit-string
-   }
-   It's a no-op if an AVU with the same attribute and value is already
-   associated with the path."
-  [cm path avu-map]
-  (let [fixed-path (ft/rm-last-slash path)
-        new-unit   (reserved-unit avu-map)
-        attr       (:attr avu-map)
-        value      (:value avu-map)]
-    (log/warn "Fixed Path:" fixed-path)
-    (log/warn "check" (true? (attr-value? cm fixed-path attr value)))
-    (when-not (attr-value? cm fixed-path attr value)
-      (log/warn "Adding " attr value "to" fixed-path)
-      (add-metadata cm fixed-path attr value new-unit))
-    fixed-path))
-
-(defn- common-add-validate
-  [cm user path avu-map]
-  (when (= "failure" (:status avu-map))
-    (throw+ {:error_code ERR_INVALID_JSON}))
-  (validators/path-exists cm path)
-  (validators/path-writeable cm user path))
-
-(defn- metadata-add
-  "Allows user to set metadata on a path. The user must exist in iRODS
-   and have write permissions on the path. The path must exist. The
-   avu-map parameter must be in this format:
-   {
-      :attr attr-string
-      :value value-string
-      :unit unit-string
-   }"
-  [user path avu-map]
-  (with-jargon (icat/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (common-add-validate cm user path avu-map)
-    (authorized-avus [avu-map])
-    {:path (common-metadata-add cm path avu-map)
-     :user user}))
-
-(defn admin-metadata-add
-  "Adds the AVU to path, bypassing user permission checks. See (metadata-set)
-   for the AVU map format."
-  [path avu-map]
-  (with-jargon (icat/jargon-cfg) [cm]
-    (common-add-validate cm (cfg/irods-user) path avu-map)
-    (common-metadata-add cm path avu-map)))
+  (let [irods-avus (:irods-avus (service-response->json (data-raw/get-avus user data-id)))
+        template-avus (service-response->json (metadata-client/list-metadata-avus data-id))]
+    {:irods-avus irods-avus
+     :metadata template-avus}))
 
 (defn- metadata-set
   "Allows user to set metadata on an item with the given data-id. The user must exist in iRODS and have
@@ -143,36 +42,15 @@
      :metadata {:template_id UUID :avus [{:attr string :value string :unit string}]}
    }"
   [data-id user {:keys [irods-avus metadata]}]
-  (with-jargon (icat/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (let [{:keys [path type] :as data-item} (uuids/path-for-uuid cm user data-id)
-          data-type (metadata-client/resolve-data-type type)
-          irods-avus (set (map #(select-keys % [:attr :value :unit]) irods-avus))
-          current-avus (set (list-path-metadata cm path))
-          delete-irods-avus (clojure.set/difference current-avus irods-avus)]
-      (validators/path-writeable cm user path)
-      (authorized-avus irods-avus)
-
-      (metadata-client/set-metadata-template-avus data-id data-type (or metadata {}))
-
-      (doseq [del-avu delete-irods-avus]
-        (let [attr  (:attr del-avu)
-              value (:value del-avu)]
-          (if (attr-value? cm path attr value)
-            (delete-metadata cm path attr value))))
-      (doseq [avu irods-avus]
-        (let [new-unit (reserved-unit avu)
-              attr     (:attr avu)
-              value    (:value avu)]
-          (if-not (attr-value? cm path attr value)
-            (add-metadata cm path attr value new-unit))))
-
-      {:path path
-       :user user})))
+  (let [modification-data (data-raw/set-avus user data-id irods-avus)
+        data-type (metadata-client/resolve-data-type (:type modification-data))]
+    (metadata-client/set-metadata-template-avus data-id data-type (or metadata {}))
+    (select-keys modification-data [:user :path])))
 
 (defn- find-attributes
-  [cm attrs path]
-  (let [matching-avus (get-attributes cm attrs path)]
+  [attrs user uuid]
+  (let [{:keys [irods-avus path]} (service-response->json (data-raw/get-avus user uuid))
+        matching-avus (filter #(contains? attrs (:attr %)) irods-avus)]
     (if-not (empty? matching-avus)
       {:path path
        :avus matching-avus}
@@ -180,23 +58,16 @@
 
 (defn- validate-batch-add-attrs
   "Throws an error if any of the given paths already have metadata set with any of the given attrs."
-  [cm paths attrs]
-  (let [duplicates (remove nil? (map (partial find-attributes cm attrs) paths))]
+  [user uuids attrs]
+  (let [duplicates (remove nil? (map (partial find-attributes attrs user) uuids))]
     (when-not (empty? duplicates)
       (validators/duplicate-attrs-error duplicates))))
 
 (defn- metadata-batch-add
   "Adds metadata to the given path. If the destination path already has an AVU with the same attr
    and value as one from the given avus list, that AVU is not added."
-  [cm path avus]
-  (loop [avus-current (get-metadata cm path)
-         avus-to-add  avus]
-    (when-not (empty? avus-to-add)
-      (let [{:keys [attr value] :as avu} (first avus-to-add)
-            new-unit (reserved-unit avu)]
-        (if-not (attr-value? avus-current attr value)
-          (add-metadata cm path attr value new-unit))
-        (recur (conj avus-current {:attr attr :value value :unit new-unit}) (rest avus-to-add))))))
+  [user id avus]
+  (data-raw/add-avus user id avus))
 
 (defn- format-copy-dest-item
   [{:keys [id type]}]
@@ -208,33 +79,19 @@
    src-id to the items with dest-ids. When the 'force?' parameter is false or not set, additional
    validation is performed."
   [user force? src-id dest-ids]
-  (with-jargon (icat/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (let [src-path (get-readable-path cm user src-id)
-          dest-items (map (partial uuids/path-for-uuid cm user) dest-ids)
-          dest-paths (map :path dest-items)
-          irods-avus (list-path-metadata cm src-path)
-          attrs (set (map :attr irods-avus))]
-      (validators/all-paths-writeable cm user dest-paths)
-      (if-not force?
-        (validate-batch-add-attrs cm dest-paths attrs))
-      (metadata-client/copy-metadata-template-avus src-id force? (map format-copy-dest-item dest-items))
-      (doseq [path dest-paths]
-        (metadata-batch-add cm path irods-avus))
-      {:user  user
-       :src   src-path
-       :paths dest-paths})))
-
-(defn- metadata-delete
-  "Deletes an AVU from path on behalf of a user. attr and value should be strings."
-  [user path attr value]
-  (with-jargon (icat/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (validators/path-exists cm path)
-    (validators/path-writeable cm user path)
-    (authorized-avus [{:attr attr :value value :unit ""}])
-    (delete-metadata cm path attr value)
-    {:path path :user user}))
+  (let [dest-items (-> (data-raw/collect-stats user :ids dest-ids :validation-behavior "write") :body json/decode (get "ids") vals walk/keywordize-keys)
+        dest-paths (map :path dest-items)
+        dest-ids (map :id dest-items)
+        {:keys [irods-avus path]} (service-response->json (data-raw/get-avus user src-id))
+        attrs (set (map :attr irods-avus))]
+    (if-not force?
+      (validate-batch-add-attrs user dest-ids attrs))
+    (metadata-client/copy-metadata-template-avus src-id force? (map format-copy-dest-item dest-items))
+    (doseq [dest-id dest-ids]
+      (metadata-batch-add user dest-id irods-avus))
+    {:user  user
+     :src   path
+     :paths dest-paths}))
 
 (defn- check-avus
   [avus]
@@ -258,20 +115,6 @@
 
 (with-post-hook! #'do-metadata-get (log-func "do-metadata-get"))
 
-(defn do-metadata-add
-  "Entrypoint for the API. Calls (metadata-add). Parameter should be a map
-   with :user and :path as keys. Values are strings."
-  [{user :user path :path} body]
-  (metadata-add user path body))
-
-(with-pre-hook! #'do-metadata-add
-  (fn [params body]
-    (log-call "do-metadata-add" params body)
-    (validate-map params {:user string? :path string?})
-    (validate-map body {:attr string? :value string? :unit string?})))
-
-(with-post-hook! #'do-metadata-add (log-func "do-metadata-add"))
-
 (defn do-metadata-set
   "Entrypoint for the API that calls (metadata-set).
    Body is a map with :irods-avus and :metadata keys."
@@ -286,22 +129,6 @@
       (validate-field :irods-avus irods-avus (comp (partial every? true?) check-avus)))))
 
 (with-post-hook! #'do-metadata-set (log-func "do-metadata-set"))
-
-(defn do-metadata-delete
-  "Entrypoint for the API that calls (metadata-delete). Parameter is a map
-   with :user, :path, :attr, :value as keys. Values are strings."
-  [{user :user path :path attr :attr value :value}]
-  (metadata-delete user path attr value))
-
-(with-pre-hook! #'do-metadata-delete
-  (fn [params]
-    (log-call "do-metadata-delete" params)
-    (validate-map params {:user string?
-                          :path string?
-                          :attr string?
-                          :value string?})))
-
-(with-post-hook! #'do-metadata-delete (log-func "do-metadata-delete"))
 
 (defn do-metadata-copy
   "Entrypoint for the API that calls (metadata-copy)."
@@ -331,11 +158,8 @@
 
 (defn- add-metadata-template-avus
   "Adds or Updates AVUs associated with a Metadata Template for the given user's data item."
-  [cm user path template-id avus]
-  (validators/path-exists cm path)
-  (validators/path-writeable cm user path)
-  (let [{:keys [id type]} (uuids/uuid-for-path cm user path)
-        data-id (uuidify id)
+  [user id type template-id avus]
+  (let [data-id (uuidify id)
         data-type (metadata-client/resolve-data-type type)]
     (metadata-client/add-metadata-template-avus data-id data-type template-id {:avus avus})))
 
@@ -343,15 +167,14 @@
   "Applies metadata from a list of attributes and values to the given path.
    If an AVU's attribute is found in the given template-attrs map, then that AVU is stored in the
    metadata db; all other AVUs are stored in IRODS."
-  [cm user dest-dir template-id template-attrs attrs path values]
+  [user dest-dir template-id template-attrs attrs [path path-info] values]
   (let [avus (map (partial zipmap [:attr :value :unit]) (map vector attrs values (repeat "")))
         template-attr? #(contains? template-attrs (:attr %))
         [template-avus irods-avus] ((juxt filter remove) template-attr? avus)]
     (when-not (empty? template-avus)
-      (add-metadata-template-avus cm user path template-id template-avus))
+      (add-metadata-template-avus user (get path-info "id") (get path-info "type") template-id template-avus))
     (when-not (empty? irods-avus)
-      (authorized-avus irods-avus)
-      (metadata-batch-add cm path irods-avus))
+      (metadata-batch-add user (get path-info "id") irods-avus))
     {:path path
      :metadata template-avus
      :irods-avus irods-avus}))
@@ -377,44 +200,59 @@
 (defn- bulk-add-avus
   "Applies metadata from a list of attributes and filename/values to those files found under
    dest-dir."
-  [cm user dest-dir force? template-id template-attrs attrs csv-filename-values]
+  [user dest-dir force? template-id template-attrs attrs csv-filename-values]
   (let [format-path (partial format-csv-metadata-filename dest-dir)
         paths (map (comp format-path first) csv-filename-values)
+        path-info-map (-> (data-raw/collect-stats user :paths paths :validation-behavior "write") :body json/decode (get "paths"))
         value-lists (map rest csv-filename-values)
         irods-attrs (clojure.set/difference (set attrs) (set (keys template-attrs)))]
-    (validators/all-paths-exist cm paths)
-    (validators/all-paths-writeable cm user paths)
     (if-not force?
-      (validate-batch-add-attrs cm paths irods-attrs))
-  (mapv (partial bulk-add-file-avus cm user dest-dir template-id template-attrs attrs)
-    paths value-lists)))
+      (validate-batch-add-attrs user (map #(get-in path-info-map [% "id"]) paths) irods-attrs))
+  (mapv (partial bulk-add-file-avus user dest-dir template-id template-attrs attrs)
+    path-info-map value-lists)))
+
+(defn- keyword-to-int [kw] (Integer/parseInt (name kw)))
+
+(defn- deparse-csv-line
+  [line]
+  (mapv second (into (sorted-map-by #(< (keyword-to-int %1) (keyword-to-int %2))) line)))
+
+(defn- get-csv
+  [user src separator]
+  (let [path-uuid (data/uuid-for-path user src)
+        chunk-size 1048576 ;; This corresponds to the largest size allowed by the UI's viewer, 1024KB.
+                           ;; It could probably be larger without issue, but this is the expected largest
+                           ;; value for the underlying endpoint in practice. Ideally, it'll never matter
+                           ;; and everything will fit in one page.
+        get-page  (fn [page] (service-response->json (data-raw/read-tabular-chunk user path-uuid separator page chunk-size)))]
+    (loop [page 1 max-pages nil csv []]
+      (let [{max-pages :number-pages new-csv :csv :as res} (get-page page)
+            csv (concat csv (map deparse-csv-line (remove empty? new-csv)))]
+        (if (< page (Integer/parseInt max-pages))
+            (recur (+ page 1) (Integer/parseInt max-pages) csv)
+            csv)))))
 
 (defn- parse-metadata-csv
   "Parses filenames and metadata to apply from a CSV file input stream.
    If a template-id is provided, then AVUs with template attributes are stored in the metadata db,
    and all other AVUs are stored in IRODS."
-  [cm user dest-dir force? template-id ^String separator ^InputStream stream]
-  (let [stream-reader (java.io.InputStreamReader. stream "UTF-8")
-        csv (mapv (partial mapv string/trim) (.readAll (CSVReader. stream-reader (.charAt separator 0))))
+  [user dest-dir force? template-id ^String separator src]
+  (let [csv (get-csv user src separator)
         attrs (-> csv first rest)
         csv-filename-values (rest csv)
         template-attrs (parse-template-attrs template-id)]
     {:path-metadata
-     (bulk-add-avus cm user dest-dir force? template-id template-attrs attrs csv-filename-values)}))
+     (bulk-add-avus user dest-dir force? template-id template-attrs attrs csv-filename-values)}))
 
 (defn parse-metadata-csv-file
   "Parses filenames and metadata to apply from a source CSV file in the data store"
   [{:keys [user]} {:keys [src dest force template-id separator] :or {separator "%2C"}}]
-  (with-jargon (icat/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (validators/path-exists cm src)
-    (validators/path-readable cm user src)
-    (service/success-response
-      (parse-metadata-csv cm user dest
-        (Boolean/parseBoolean force)
-        (uuidify template-id)
-        (url/url-decode separator)
-        (input-stream cm src)))))
+  (service/success-response
+    (parse-metadata-csv user dest
+      (Boolean/parseBoolean force)
+      (uuidify template-id)
+      separator
+      src)))
 
 (with-pre-hook! #'parse-metadata-csv-file
   (fn [user-info params]

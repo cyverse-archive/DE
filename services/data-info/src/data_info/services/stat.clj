@@ -88,21 +88,31 @@
     (validators/path-exists cm path)
     (decorate-stat cm user (info/stat cm path))))
 
+(defn ^IPersistentMap uuid-stat
+  [^IPersistentMap cm ^String user uuid]
+  (log/debug "[uuid-stat] user:" user "uuid:" uuid)
+  (let [path (uuid/get-path cm uuid)]
+    (path-stat cm user path)))
 
 (defn do-stat
-  [{user :user} {paths :paths}]
+  [{user :user validation :validation-behavior} {paths :paths uuids :ids}]
   (with-jargon (cfg/jargon-cfg) [cm]
     (validators/user-exists cm user)
-    (validators/all-paths-exist cm paths)
-    (validators/all-paths-readable cm user paths)
-    {:paths (into {} (map (juxt keyword (partial path-stat cm user)) paths))}))
+    (let [uuid-paths (map (juxt (comp keyword str) (partial uuid/get-path cm)) uuids)
+          all-paths (into paths (map second uuid-paths))]
+      (validators/all-paths-exist cm all-paths)
+      (case (keyword validation)
+            :own (validators/user-owns-paths cm user all-paths)
+            :write (validators/all-paths-writeable cm user all-paths)
+            :read (validators/all-paths-readable cm user all-paths)
+            (validators/all-paths-readable cm user all-paths))
+      {:paths (into {} (map (juxt keyword (partial path-stat cm user)) paths))
+       :ids (into {} (map (juxt first #(path-stat cm user (second %))) uuid-paths))})))
 
 (with-pre-hook! #'do-stat
   (fn [params body]
     (dul/log-call "do-stat" params body)
-    (cv/validate-map body {:paths vector?})
-    (cv/validate-map body {:paths (complement empty?)})
-    (cv/validate-map body {:paths (partial every? (comp not string/blank?))})
-    (validators/validate-num-paths (:paths body))))
+    (validators/validate-num-paths (:paths body))
+    (validators/validate-num-paths (:ids body))))
 
 (with-post-hook! #'do-stat (dul/log-func "do-stat"))

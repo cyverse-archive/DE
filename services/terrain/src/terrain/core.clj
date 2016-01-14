@@ -34,6 +34,7 @@
             [terrain.util.config :as config]
             [clojure.tools.nrepl.server :as nrepl]
             [me.raynes.fs :as fs]
+            [clj-http.client :as http]
             [common-cli.core :as ccli]
             [terrain.services.filesystem.icat :as icat]
             [terrain.util :as util]
@@ -238,5 +239,6 @@
       (when-not (fs/readable? (:config options))
         (ccli/exit 1 "The config file is not readable."))
       (config/load-config-from-file (:config options))
-      (icat/configure-icat)
-      (run-jetty))))
+      (http/with-connection-pool {:timeout 5 :threads 10 :insecure? false :default-per-route 10}
+        (icat/configure-icat)
+        (run-jetty)))))

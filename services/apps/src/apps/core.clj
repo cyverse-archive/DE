@@ -5,6 +5,7 @@
   (:require [clojure.tools.logging :as log]
             [common-cli.core :as ccli]
             [me.raynes.fs :as fs]
+            [clj-http.client :as http]
             [apps.tasks :as tasks]
             [apps.util.config :as config]
             [service-logging.thread-context :as tc]))
@@ -78,4 +79,5 @@
       (load-config-from-file (:config options))
       (tasks/set-logging-context! config/svc-info)
       (tasks/schedule-tasks)
-      (run-jetty))))
+      (http/with-connection-pool {:timeout 5 :threads 10 :insecure? false :default-per-route 10}
+        (run-jetty)))))

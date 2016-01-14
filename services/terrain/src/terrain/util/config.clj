@@ -502,6 +502,8 @@
        (cfg/env-setting "TREE_URLS_PORT")
        (tree-urls-base-url)))))
 
+(defn tree-urls-attr [] "ipc-tree-urls")
+
 (def get-allowed-groups
   (memoize
     (fn []
