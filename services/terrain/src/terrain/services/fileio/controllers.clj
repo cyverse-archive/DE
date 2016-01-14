@@ -22,16 +22,6 @@
            [java.io IOException]))
 
 
-(defn- in-stream
-  [address]
-  (try+
-   (ssl/input-stream address)
-   (catch IOException e
-     (throw+ {:error_code ERR_INVALID_URL
-              :url address
-              :msg (.getMessage e)}))))
-
-
 (defn download
   [req-params]
   (let [params (add-current-user-to-map req-params)]
