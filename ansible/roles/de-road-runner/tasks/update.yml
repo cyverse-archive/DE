@@ -6,7 +6,7 @@
   shell: docker run --rm -v /usr/local/bin:/road-runner --entrypoint "cp" discoenv/jobservices:{{docker.tag}} /bin/road-runner /road-runner/road-runner
 
 - name: remove config container
-  shell: docker rm -v condor-launcher-configs
+  shell: docker rm -v road-runner-configs
   ignore_errors: true
 
 - name: create config container
