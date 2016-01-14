@@ -37,7 +37,17 @@
             :query [params StandardUserQueryParams]
             :return PermissionWithDetailList
             :summary "Permissions Lookup"
-            :description "This endpoint allows callers to look up all permission assignments for this attribute ID. Only permissions that are visible to the given user will be listed."
+            :description "This endpoint allows callers to look up all permission assignments for this attribute. Only permissions that are visible to the given user will be listed."
+            (ok (attributes/permission-assignment-search (assoc params :attribute_def_name attribute-name))))
+
+      (PUT* "/" []
+            :query [params StandardUserQueryParams]
+            :return PermissionWithDetailList
+            :body [body (describe PermissionReplacement "The new permission assignments.")]
+            :summary "Permissions Replacement"
+            :description "This endpoint allows callers to remove existing permission assignments for this attribute
+            and replace them with a new set of permission assignments."
+            ;; TODO: add the code to replace the permissions.
             (ok (attributes/permission-assignment-search (assoc params :attribute_def_name attribute-name))))
 
       (context* "/roles/:role-name/:action-name" []

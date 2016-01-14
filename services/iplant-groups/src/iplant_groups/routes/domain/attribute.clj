@@ -94,3 +94,19 @@
 
 (s/defschema PermissionAllowed
   {:allowed (describe Boolean "Whether this permission should be marked as allowed or disallowed (latter to override an inherited permission).")})
+
+(s/defschema RolePermission
+  {:role_name   (describe String "The full name of the role.")
+   :action_name (describe String "The name of the permission action (e.g. read, write or own).")})
+
+(s/defschema MembershipPermission
+  {:role_name      (describe String "The full name of the role.")
+   :subject_id     (describe String "The subject identifier.")
+   :action_name    (describe String "The name of the permission action (e.g. read, write or own).")})
+
+(s/defschema PermissionReplacement
+  {(s/optional-key :role_permissions)
+   (describe [RolePermission] "The new list of role permissions.")
+
+   (s/optional-key :membership_permissions)
+   (describe [MembershipPermission] "The new list of membership permissions.")})
