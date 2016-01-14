@@ -56,6 +56,8 @@ public class ToolAdminDetailsDialog extends IPlantDialog implements IsHideable,
         setMinHeight(200);
         setMinWidth(500);
 
+        setOnEsc(false);
+
         addHelp(new HTML(appearance.toolAdminHelp()));
 
         setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL, PredefinedButton.CLOSE);
