@@ -21,8 +21,10 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
+import com.sencha.gxt.widget.core.client.grid.editing.AbstractGridEditing;
+import com.sencha.gxt.widget.core.client.grid.editing.ClicksToEdit;
 import com.sencha.gxt.widget.core.client.grid.editing.GridEditing;
-import com.sencha.gxt.widget.core.client.grid.editing.GridInlineEditing;
+import com.sencha.gxt.widget.core.client.grid.editing.GridRowEditing;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,10 +68,12 @@ public class ToolVolumeListEditor extends Composite implements IsEditor<Editor<L
         ColumnModel<ToolVolume> cm = new ColumnModel<>(columns);
 
         grid = new Grid<>(listStore, cm);
+        grid.setHeight(100);
 
-        editing = new GridInlineEditing<>(grid);
+        editing = new GridRowEditing<>(grid);
         editing.addEditor(hostPath, new TextField());
         editing.addEditor(containerPath, new TextField());
+        ((AbstractGridEditing<ToolVolume>)editing).setClicksToEdit(ClicksToEdit.TWO);
 
         initWidget(grid);
     }
