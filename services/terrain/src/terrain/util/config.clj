@@ -286,12 +286,6 @@
   "The value that goes in the attribute column for AVUs that define a file type."
   [props config-valid configs data-routes-enabled]
   "terrain.garnish.type-attribute")
-
-
-(cc/defprop-long filetype-read-amount
-  "The size, in bytes as a long, of the sample read from iRODS"
-  [props config-valid configs data-routes-enabled]
-  "terrain.garnish.filetype-read-amount")
 ;;; End of Garnish configuration
 
 ;;; File IO configuration
@@ -308,11 +302,6 @@
 
 ;;; Filesystem configuration (a.k.a. data-info).
 
-(cc/defprop-long fs-preview-size
-  "The size, in bytes, of the generated previews."
-  [props config-valid configs filesystem-routes-enabled]
-  "terrain.fs.preview-size")
-
 (cc/defprop-str fs-community-data
   "The path to the root directory for community data."
   [props config-valid configs filesystem-routes-enabled]
@@ -327,11 +316,6 @@
   "Hmmm..."
   [props config-valid configs filesystem-routes-enabled]
   "terrain.fs.perms-filter")
-
-(cc/defprop-str fs-copy-attribute
-  "The attribute to tag files with when they're a copy of another file."
-  [props config-valid configs filesystem-routes-enabled]
-  "terrain.fs.copy-key")
 
 (cc/defprop-str fs-bad-chars
   "The characters that are considered invalid in iRODS dir- and filenames."
@@ -503,11 +487,6 @@
        (tree-urls-base-url)))))
 
 (defn tree-urls-attr [] "ipc-tree-urls")
-
-(def get-allowed-groups
-  (memoize
-    (fn []
-      (map #(string/replace (string/trim %) #"^'(.*)'$" "$1") (allowed-groups)))))
 
 (defn- validate-config
   "Validates the configuration settings after they've been loaded."
