@@ -19,7 +19,7 @@ docker pull $DOCKER_USER/buildenv:latest
 BUILDENV_GIT_COMMIT=$(docker inspect -f '{{ (index .Config.Labels "org.iplantc.de.buildenv.git-ref")}}' $DOCKER_USER/buildenv:latest)
 
 if [ -d ./bin ]; then
-	rm -r ./bin/
+	docker run --rm -v $(pwd):/work -w /work $DOCKER_USER/buildenv rm -r bin
 fi
 
 docker run --rm \
