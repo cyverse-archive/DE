@@ -1,0 +1,4 @@
+---
+- name: remove binary
+  file: path=/usr/local/bin/road-runner state=absent
+  
