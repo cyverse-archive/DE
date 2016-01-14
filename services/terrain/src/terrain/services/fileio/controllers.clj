@@ -7,7 +7,6 @@
   (:require [terrain.services.fileio.actions :as actions]
             [clojure-commons.file-utils :as ft]
             [clojure.string :as string]
-            [terrain.util.ssl :as ssl]
             [clojure.tools.logging :as log]
             [cemerick.url :as url-parser]
             [ring.middleware.multipart-params :as multipart]
