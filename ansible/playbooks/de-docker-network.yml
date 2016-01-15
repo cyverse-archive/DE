@@ -1,0 +1,4 @@
+- hosts: services
+  sudo: true
+  roles:
+    - de-docker-network
