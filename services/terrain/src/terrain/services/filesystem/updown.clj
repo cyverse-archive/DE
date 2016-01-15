@@ -10,9 +10,9 @@
 
 
 (defn- download-file
-  [user file]
+  [user file attachment]
   (let [url-path         (data/mk-data-path-url-path file)
-        req-map          {:query-params {:user user} :as :stream}
+        req-map          {:query-params {:user user :attachment attachment} :as :stream}
         handle-not-found (fn [_ _ _] (throw+ {:error_code error/ERR_NOT_FOUND :path file}))]
     (data/trapped-request :get url-path req-map
       :403 handle-not-found
@@ -23,31 +23,11 @@
 
 (defn- attachment?
   [params]
-  (if-not (contains? params :attachment)
-    true
-    (if (= "1" (:attachment params)) true false)))
-
-
-(defn- get-disposition
-  [params]
-  (cond
-    (not (contains? params :attachment))
-    (str "attachment; filename=\"" (ft/basename (:path params)) "\"")
-
-    (not (attachment? params))
-    (str "filename=\"" (ft/basename (:path params)) "\"")
-
-    :else
-    (str "attachment; filename=\"" (ft/basename (:path params)) "\"")))
-
+  (if (= "1" (:attachment params "1")) true false))
 
 (defn do-special-download
   [{user :user path :path :as params}]
-  (let [resp (download-file user path)]
-    {:status  200
-     :body    (:body resp)
-     :headers {"Content-Disposition" (get-disposition params)
-               "Content-Type"        (get-in resp [:headers "Content-Type"])}}))
+  (download-file user path (attachment? params)))
 
 (with-pre-hook! #'do-special-download
   (fn [params]

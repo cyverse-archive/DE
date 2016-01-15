@@ -7,7 +7,6 @@
   (:require [terrain.services.fileio.actions :as actions]
             [clojure-commons.file-utils :as ft]
             [clojure.string :as string]
-            [terrain.util.ssl :as ssl]
             [clojure.tools.logging :as log]
             [cemerick.url :as url-parser]
             [ring.middleware.multipart-params :as multipart]
@@ -20,16 +19,6 @@
             [terrain.services.filesystem.icat :as icat])
   (:import [clojure.lang IPersistentMap]
            [java.io IOException]))
-
-
-(defn- in-stream
-  [address]
-  (try+
-   (ssl/input-stream address)
-   (catch IOException e
-     (throw+ {:error_code ERR_INVALID_URL
-              :url address
-              :msg (.getMessage e)}))))
 
 
 (defn download

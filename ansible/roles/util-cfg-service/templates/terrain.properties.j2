@@ -84,7 +84,6 @@ terrain.icat.db             = {{ icat.db }}
 
 # Garnish configuration
 terrain.garnish.type-attribute = ipc-filetype
-terrain.garnish.filetype-read-amount = 1024
 
 # File IO settings
 terrain.fileio.url-import-app = 1E8F719B-0452-4D39-A2F3-8714793EE3E6
@@ -92,11 +91,9 @@ terrain.fileio.max-edit-file-size = {{ max_edit_file_size }}
 
 # Filesystem settings
 terrain.data-info.base-url            = http://{{ data_info.host }}:{{ data_info.port }}
-terrain.fs.preview-size               = 8000
 terrain.fs.community-data             = {{ irods.home }}/shared
 terrain.fs.bad-names                  = cacheServiceTempDir
 terrain.fs.perms-filter               = {{ irods.admins }}
-terrain.fs.copy-key                   = ipc-de-copy-from
 terrain.fs.bad-chars                  = {{ irods.bad_chars }}
 terrain.fs.max-paths-in-request       = {{ fs_max_paths_in_request }}
 terrain.fs.kifshare-download-template = {{ kifshare.de_url }}

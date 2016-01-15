@@ -1,6 +1,5 @@
 (ns terrain.services.fileio.actions
   (:use [clj-jargon.init :only [with-jargon]]
-        [clj-jargon.metadata]
         [clojure-commons.error-codes]
         [terrain.util.service :only [success-response]]
         [slingshot.slingshot :only [try+ throw+]])
@@ -77,23 +76,9 @@
       (ops/input-stream cm file-path))))
 
 
-(defn url-encoded?
+(defn- url-encoded?
   [string-to-check]
   (re-seq #"\%[A-Fa-f0-9]{2}" string-to-check))
-
-(defn url-encode-path
-  [path-to-encode]
-  (string/join "/"
-   (mapv
-    #(if-not (url-encoded? %1)
-       (url/url-encode %1)
-       %1)
-    (string/split path-to-encode #"\/"))))
-
-(defn url-encode-url
-  [url-to-encode]
-  (let [full-url (url/url url-to-encode)]
-    (str (assoc full-url :path (url-encode-path (:path full-url))))))
 
 (defn urlimport
   "Submits a URL import job for execution.
