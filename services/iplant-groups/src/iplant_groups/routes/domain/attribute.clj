@@ -64,7 +64,8 @@
    :attribute_definition_name (describe {:id String :name String} "This assignment's attribute-name information.")
    (s/optional-key :group) (describe {:id String :name String} "The group this was assigned to, if relevant.")
    (s/optional-key :membership) (describe {:id String} "The membership this was assigned to, if relevant.")
-   (s/optional-key :subject) (describe {:id String :source_id String} "The member/subject this was assigned to, if relevant.")})
+   (s/optional-key :subject) (describe {:id String :source_id String} "The member/subject this was assigned to, if relevant.")
+   (s/optional-key :permission_type) (describe String "The type of the permission assignment (e.g. role or role_subject)")})
 
 (s/defschema PermissionAssignment
   (dissoc AttributeAssignment
