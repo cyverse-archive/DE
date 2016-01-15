@@ -61,10 +61,13 @@
 
 (defn- mk-data-query
   "Builds the full query for elasticsearch."
-  [query tags memberships]
+  [query include-de-trash tags user memberships]
+  (let [in-folders (conj (when include-de-trash
+                           [(str "/" (cfg/irods-zone) "/trash/home/" (cfg/irods-user) "/" user)])
+                         (str "/" (cfg/irods-zone) "/home"))]
     (if query
-      (search/mk-data-query query tags memberships)
-      (search/mk-data-tags-filter tags memberships)))
+      (search/mk-data-query query in-folders tags memberships)
+      (search/mk-data-tags-filter in-folders tags memberships))))
 
 
 (defn- mk-sort
@@ -116,6 +119,20 @@
                                                  :reason "invalid match record field"
                                                  :arg    :sort
                                                  :val    field-str})))
+
+
+(defn- extract-include-trash
+  "Extracts the includeTrash flag from the URL parameters."
+  [params default]
+  (if-let [it-str (:includetrash params)]
+    (case it-str
+      "false" false
+      "true"  true
+              (throw+ {:type   :invalid-argument
+                       :reason "includeTrash must be 'true' or 'false'"
+                       :arg    "includeTrash"
+                       :val    it-str}))
+    default))
 
 
 (defn- extract-sort
@@ -185,7 +202,7 @@
                :val    tags-str}))))
 
 
-(defn qualify-name
+(defn- qualify-name
   "Qualifies a user or group name with the default zone."
   [name]
   (str name \# (cfg/irods-zone)))
@@ -203,8 +220,7 @@
   "Looks up the groups a user belongs to. The result is a set of zone-qualified group names.
    Unqualified user names are assumed to belong to the default zone."
   [user]
-  (map qualify-name
-       (data/list-user-groups (string/replace user (str \# (cfg/irods-zone)) ""))))
+  (map qualify-name (data/list-user-groups user)))
 
 
 (defn ^IPersistentMap search
@@ -222,16 +238,17 @@
      It returns the response as a map."
   [^String user ^String query-str ^String tags-str ^IPersistentMap opts]
   (try+
-    (let [start       (l/local-now)
-          query       (extract-query query-str)
-          tags        (extract-tags user tags-str)
-          type        (extract-type opts)
-          offset      (extract-uint opts :offset 0)
-          limit       (extract-uint opts :limit (cfg/default-search-result-limit))
-          sort        (extract-sort opts [[:score] :desc])
-          memberships (conj (list-user-groups user) user)
-          query-req   (mk-data-query query tags memberships)
-          sort-req    (mk-sort sort)]
+    (let [start         (l/local-now)
+          query         (extract-query query-str)
+          tags          (extract-tags user tags-str)
+          type          (extract-type opts)
+          offset        (extract-uint opts :offset 0)
+          limit         (extract-uint opts :limit (cfg/default-search-result-limit))
+          sort          (extract-sort opts [[:score] :desc])
+          include-trash (extract-include-trash opts false)
+          memberships   (conj (list-user-groups user) (qualify-name user))
+          query-req     (mk-data-query query include-trash tags user memberships)
+          sort-req      (mk-sort sort)]
       (-> (send-request type query-req offset limit sort-req)
         (extract-result offset memberships)
         (add-timing start)
