@@ -1,5 +1,6 @@
-package org.iplantc.de.admin.desktop.client.permIdRequest.view;
+package org.iplantc.de.admin.desktop.client.permIdRequest.views;
 
+import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView.PermanentIdRequestViewAppearance;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequest;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestAutoBeanFactory;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestStatus;
@@ -44,13 +45,13 @@ public class UpdatePermanentIdRequestDialog extends IPlantDialog {
     @SuppressWarnings("unused")
     private final PermanentIdRequest request;
     @SuppressWarnings("unused")
-    private final PermIdRequestView.Presenter presenter;
+    private final PermanentIdRequestView.Presenter presenter;
 
-    private final PermIdRequestView.PermIdRequestViewAppearance appearance;
+    private final PermanentIdRequestViewAppearance appearance;
     
     public UpdatePermanentIdRequestDialog(final PermanentIdRequest request,
-                                          final PermIdRequestView.Presenter presenter,
-                                          final PermIdRequestView.PermIdRequestViewAppearance appearance,
+                                          final PermanentIdRequestView.Presenter presenter,
+                                          final PermanentIdRequestViewAppearance appearance,
                                           final PermanentIdRequestAutoBeanFactory factory) {
 
         this.factory = factory;

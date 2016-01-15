@@ -1,4 +1,4 @@
-package org.iplantc.de.admin.desktop.client.permIdRequest.view;
+package org.iplantc.de.admin.desktop.client.permIdRequest.views;
 
 import org.iplantc.de.client.models.identifiers.PermanentIdRequest;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestType;

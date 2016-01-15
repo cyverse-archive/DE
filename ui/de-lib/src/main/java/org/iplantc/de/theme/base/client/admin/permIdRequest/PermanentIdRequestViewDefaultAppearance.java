@@ -1,25 +1,25 @@
 package org.iplantc.de.theme.base.client.admin.permIdRequest;
 
-import org.iplantc.de.admin.desktop.client.permIdRequest.view.PermIdRequestView.PermIdRequestViewAppearance;
+import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView.PermanentIdRequestViewAppearance;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 
-public class PermIdRequestViewDefaultAppearance implements PermIdRequestViewAppearance {
+public class PermanentIdRequestViewDefaultAppearance implements PermanentIdRequestViewAppearance {
 
     private final PermIdRequestDisplayStrings displayStrings;
     private final IplantResources iplantResources;
     private final IplantDisplayStrings iplantDisplayStrings;
 
-    public PermIdRequestViewDefaultAppearance() {
+    public PermanentIdRequestViewDefaultAppearance() {
         this(GWT.<PermIdRequestDisplayStrings> create(PermIdRequestDisplayStrings.class),
              GWT.<IplantResources> create(IplantResources.class),
              GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class));
     }
 
-    public PermIdRequestViewDefaultAppearance(PermIdRequestDisplayStrings displayStrings,
+    public PermanentIdRequestViewDefaultAppearance(PermIdRequestDisplayStrings displayStrings,
                                               IplantResources iplantResources,
                                               IplantDisplayStrings iplantDisplayStrings) {
         this.displayStrings = displayStrings;

@@ -40,4 +40,16 @@ public interface PermIdRequestDisplayStrings extends Messages {
     String noRows();
 
     String request();
+
+    String createPermIdSucess();
+
+    String createPermIdFailure();
+
+    String metadataSaveError();
+
+    String requestLoadFailure();
+
+    String statusUpdateFailure();
+
+    String statusUpdateSuccess();
 }

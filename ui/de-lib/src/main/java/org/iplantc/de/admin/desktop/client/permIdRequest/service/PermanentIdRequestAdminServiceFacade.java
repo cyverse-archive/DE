@@ -4,7 +4,12 @@ import org.iplantc.de.client.models.identifiers.PermanentIdRequestUpdate;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface PermIdRequestAdminServiceFacade {
+/**
+ * 
+ * @author sriram
+ * 
+ */
+public interface PermanentIdRequestAdminServiceFacade {
 
     public final String PERMID_REQUEST = "org.iplantc.services.permIdRequests";
 
@@ -15,8 +20,6 @@ public interface PermIdRequestAdminServiceFacade {
     void updatePermanentIdRequestStatus(String requestId,
                                         PermanentIdRequestUpdate status,
                                         AsyncCallback<String> callback);
-
-    void getPermanentIdRequestStatuses(AsyncCallback<String> callback);
 
     void createPermanentId(String id, AsyncCallback<String> asyncCallback);
 

@@ -1,4 +1,4 @@
-package org.iplantc.de.admin.desktop.client.permIdRequest.view;
+package org.iplantc.de.admin.desktop.client.permIdRequest.views;
 
 import org.iplantc.de.client.models.identifiers.PermanentIdRequest;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestAutoBeanFactory;
@@ -38,18 +38,24 @@ import java.util.List;
  * @author sriram
  * 
  */
-public class PermIdRequestViewImpl extends Composite implements PermIdRequestView {
+public class PermanentIdRequestViewImpl extends Composite implements PermanentIdRequestView {
 
-    private static PermIdRequestViewImplUiBinder uiBinder = GWT.create(PermIdRequestViewImplUiBinder.class);
+    private static PermanentIdRequestViewImplUiBinder uiBinder = GWT.create(PermanentIdRequestViewImplUiBinder.class);
 
-    interface PermIdRequestViewImplUiBinder extends UiBinder<Widget, PermIdRequestViewImpl> {
+    interface PermanentIdRequestViewImplUiBinder extends UiBinder<Widget, PermanentIdRequestViewImpl> {
     }
 
     @UiField
     ToolBar toolbar;
 
     @UiField
-    TextButton updateBtn, metadataBtn, createDOIBtn;
+    TextButton updateBtn;
+
+    @UiField
+    TextButton metadataBtn;
+
+    @UiField
+    TextButton createDOIBtn;
 
     @UiField
     Grid<PermanentIdRequest> grid;
@@ -59,16 +65,16 @@ public class PermIdRequestViewImpl extends Composite implements PermIdRequestVie
 
     PermanentIdRequestProperties pr_props;
 
-    PermIdRequestViewAppearance appearance;
+    PermanentIdRequestViewAppearance appearance;
 
     private Presenter presenter;
 
     private final PermanentIdRequestAutoBeanFactory factory;
 
     @Inject
-    public PermIdRequestViewImpl(PermanentIdRequestProperties pr_props,
-                                 PermanentIdRequestAutoBeanFactory factory,
-                                 PermIdRequestViewAppearance appearance) {
+    PermanentIdRequestViewImpl(PermanentIdRequestProperties pr_props,
+                               PermanentIdRequestAutoBeanFactory factory,
+                               PermanentIdRequestViewAppearance appearance) {
         this.pr_props = pr_props;
         this.factory = factory;
         this.appearance = appearance;
@@ -79,10 +85,7 @@ public class PermIdRequestViewImpl extends Composite implements PermIdRequestVie
 
                 @Override
                 public void onSelectionChanged(SelectionChangedEvent<PermanentIdRequest> event) {
-                    presenter.setSelectedRequest(event.getSelection().get(0));
-                    updateBtn.setEnabled(true);
-                    metadataBtn.setEnabled(true);
-                    createDOIBtn.setEnabled(true);
+                    onSelectionChange(event);
                 }
             });
         grid.getView().setEmptyText(appearance.noRows());
@@ -94,7 +97,7 @@ public class PermIdRequestViewImpl extends Composite implements PermIdRequestVie
                                                                                              .getSelectedItem(),
                                                                                          presenter,
                                                                                          appearance,
-                                                                                   factory);
+                                                                                         factory);
         dialog.show();
     }
 
@@ -162,8 +165,8 @@ public class PermIdRequestViewImpl extends Composite implements PermIdRequestVie
                                                                                                                                      "Type");
 
         ColumnConfig<PermanentIdRequest, String> status = new ColumnConfig<PermanentIdRequest, String>(pr_props.status(),
-                                                                                                                                           75,
-                                                                                                                                           "Status");
+                                                                                                       75,
+                                                                                                       "Status");
 
         list.add(nameCol);
         list.add(pathCol);
@@ -203,6 +206,21 @@ public class PermIdRequestViewImpl extends Composite implements PermIdRequestVie
     public void update(PermanentIdRequest request) {
         store.update(request);
 
+    }
+
+    void onSelectionChange(SelectionChangedEvent<PermanentIdRequest> event) {
+        List<PermanentIdRequest> selection = event.getSelection();
+        if (selection.size() > 0) {
+            presenter.setSelectedRequest(selection.get(0));
+            updateBtn.setEnabled(true);
+            metadataBtn.setEnabled(true);
+            createDOIBtn.setEnabled(true);
+        } else {
+            presenter.setSelectedRequest(null);
+            updateBtn.setEnabled(false);
+            metadataBtn.setEnabled(false);
+            createDOIBtn.setEnabled(false);
+        }
     }
 
 }

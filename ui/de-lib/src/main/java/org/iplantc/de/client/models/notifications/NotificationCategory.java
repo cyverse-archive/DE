@@ -19,7 +19,7 @@ public enum NotificationCategory {
     TOOLREQUEST("Tool Request"),
 
     /** EZID request */
-    EZIDREQUEST("EZID Request"),
+    PERMANENTIDREQUEST("Permanent ID Request"),
 
     /** unseen notifications */
     NEW("New");

@@ -1,4 +1,4 @@
-package org.iplantc.de.admin.desktop.client.permIdRequest.view;
+package org.iplantc.de.admin.desktop.client.permIdRequest.views;
 
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequest;
@@ -17,7 +17,7 @@ import java.util.List;
  * 
  */
 
-public interface PermIdRequestView extends IsWidget, IsMaskable {
+public interface PermanentIdRequestView extends IsWidget, IsMaskable {
 
     void setPresenter(Presenter p);
 
@@ -25,7 +25,7 @@ public interface PermIdRequestView extends IsWidget, IsMaskable {
 
     void update(PermanentIdRequest request);
 
-    public interface PermIdRequestViewAppearance {
+    public interface PermanentIdRequestViewAppearance {
         String dateSubmittedColumnLabel();
 
         int dateSubmittedColumnWidth();
@@ -85,9 +85,21 @@ public interface PermIdRequestView extends IsWidget, IsMaskable {
 
         void updateRequest(PermanentIdRequestUpdate update);
 
-        void setSubmitRequestForId();
-
         void createPermanentId();
+    }
+
+    public interface PermanentIdRequestPresenterAppearance {
+        String createPermIdSucess();
+
+        String createPermIdFailure();
+
+        String metadataSaveError();
+
+        String requestLoadFailure();
+
+        String statusUpdateFailure();
+
+        String statusUpdateSuccess();
     }
 
 }

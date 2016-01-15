@@ -1,8 +1,9 @@
 package org.iplantc.de.admin.desktop.client.permIdRequest.presenter;
 
-import org.iplantc.de.admin.desktop.client.permIdRequest.service.PermIdRequestAdminServiceFacade;
-import org.iplantc.de.admin.desktop.client.permIdRequest.view.PermIdRequestView;
-import org.iplantc.de.admin.desktop.client.permIdRequest.view.PermIdRequestView.Presenter;
+import org.iplantc.de.admin.desktop.client.permIdRequest.service.PermanentIdRequestAdminServiceFacade;
+import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView;
+import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView.PermanentIdRequestPresenterAppearance;
+import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView.Presenter;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequest;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestAutoBeanFactory;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestList;
@@ -72,11 +73,11 @@ public class PermanentIdRequestPresenter implements Presenter {
         }
     }
 
-    PermIdRequestView view;
+    PermanentIdRequestView view;
 
     final DiskResourceServiceFacade drsvc;
 
-    final PermIdRequestAdminServiceFacade prsvc;
+    final PermanentIdRequestAdminServiceFacade prsvc;
 
     private PermanentIdRequest selectedRequest;
 
@@ -90,17 +91,19 @@ public class PermanentIdRequestPresenter implements Presenter {
 
     private MetadataView.Presenter meta_pre;
 
-    boolean createId;
+    private final PermanentIdRequestPresenterAppearance appearance;
 
     @Inject
     public PermanentIdRequestPresenter(DiskResourceServiceFacade drsvc,
-                                       PermIdRequestAdminServiceFacade prsvc,
+                                       PermanentIdRequestAdminServiceFacade prsvc,
                                        PermanentIdRequestAutoBeanFactory factory,
-                                       PermIdRequestView view) {
+                                       PermanentIdRequestView view,
+                                       PermanentIdRequestPresenterAppearance appearance) {
         this.drsvc = drsvc;
         this.prsvc = prsvc;
         this.view = view;
         this.factory = factory;
+        this.appearance = appearance;
         metadataDialog = new IPlantDialog();
         metadataDialog.setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
         metadataDialog.setHeadingHtml("Metadata");
@@ -137,7 +140,7 @@ public class PermanentIdRequestPresenter implements Presenter {
             @Override
             public void onFailure(Throwable caught) {
                 IplantAnnouncer.getInstance()
-                               .schedule(new ErrorAnnouncementConfig("Unable to retrieve DOI request!"));
+                               .schedule(new ErrorAnnouncementConfig(appearance.requestLoadFailure()));
             }
 
             @Override
@@ -166,27 +169,18 @@ public class PermanentIdRequestPresenter implements Presenter {
                                                  @Override
                                                  public void onFailure(Throwable caught) {
                                                      IplantAnnouncer.getInstance()
-                                                                    .schedule(new ErrorAnnouncementConfig("Unable to update DOI request!"));
+                                                                    .schedule(new ErrorAnnouncementConfig(appearance.statusUpdateFailure()));
 
                                                  }
 
                                                  @Override
                                                  public void onSuccess(String result) {
                                                      IplantAnnouncer.getInstance()
-                                                                    .schedule(new SuccessAnnouncementConfig("Request Updated!"));
+                                                                    .schedule(new SuccessAnnouncementConfig(appearance.statusUpdateSuccess()));
                                                      selectedRequest.setStatus(update.getStatus());
                                                      view.update(selectedRequest);
-                                                     if (createId) {
-                                                         createPermanentId();
-                                                     }
                                                  }
                                              });
-    }
-
-    @Override
-    public void setSubmitRequestForId() {
-        // set up flag for submitting request Perm Id request
-        createId = true;
     }
 
     @Override
@@ -195,15 +189,14 @@ public class PermanentIdRequestPresenter implements Presenter {
 
             @Override
             public void onFailure(Throwable caught) {
-                createId = false;
                 IplantAnnouncer.getInstance()
-                               .schedule(new ErrorAnnouncementConfig("Unable to create DOI!"));
+                               .schedule(new ErrorAnnouncementConfig(appearance.createPermIdFailure()));
             }
 
             @Override
             public void onSuccess(String result) {
-                createId = false;
-                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig("DOI created!"));
+                IplantAnnouncer.getInstance()
+                               .schedule(new SuccessAnnouncementConfig(appearance.createPermIdSucess()));
 
             }
         });

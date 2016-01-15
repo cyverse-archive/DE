@@ -6,7 +6,7 @@
 
 
     <ui:with field="appearance"
-        type="org.iplantc.de.admin.desktop.client.permIdRequest.view.PermIdRequestView.PermIdRequestViewAppearance" />
+        type="org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView.PermanentIdRequestViewAppearance" />
 
     <ui:with field="margins"
              type="com.sencha.gxt.core.client.util.Margins">

@@ -6,7 +6,7 @@
 	xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button">
 
 	<ui:with field="appearance"
-		type="org.iplantc.de.admin.desktop.client.permIdRequest.view.PermIdRequestView.PermIdRequestViewAppearance" />
+		type="org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView.PermanentIdRequestViewAppearance" />
 
 	<ui:with field="northData"
 		type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
