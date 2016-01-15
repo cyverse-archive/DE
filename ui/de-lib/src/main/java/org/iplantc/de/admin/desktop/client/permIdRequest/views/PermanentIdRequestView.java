@@ -1,8 +1,10 @@
 package org.iplantc.de.admin.desktop.client.permIdRequest.views;
 
 import org.iplantc.de.client.models.IsMaskable;
+import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequest;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestUpdate;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.HasOneWidget;
@@ -24,6 +26,10 @@ public interface PermanentIdRequestView extends IsWidget, IsMaskable {
     void loadRequests(List<PermanentIdRequest> requests);
 
     void update(PermanentIdRequest request);
+
+    void fetchMetadata(Folder selectedFolder,
+                       PermanentIdRequestPresenterAppearance appearance,
+                       DiskResourceServiceFacade drsvc);
 
     public interface PermanentIdRequestViewAppearance {
         String dateSubmittedColumnLabel();

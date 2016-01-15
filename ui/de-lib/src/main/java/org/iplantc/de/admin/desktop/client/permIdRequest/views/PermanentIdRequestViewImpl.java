@@ -1,8 +1,11 @@
 package org.iplantc.de.admin.desktop.client.permIdRequest.views;
 
+import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequest;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestAutoBeanFactory;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestType;
+import org.iplantc.de.client.models.identifiers.PermanentIdRequestUpdate;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -19,8 +22,9 @@ import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.MessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
-import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent.DialogHideHandler;
+import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -96,8 +100,19 @@ public class PermanentIdRequestViewImpl extends Composite implements PermanentId
         final UpdatePermanentIdRequestDialog dialog = new UpdatePermanentIdRequestDialog(grid.getSelectionModel()
                                                                                              .getSelectedItem(),
                                                                                          presenter,
-                                                                                         appearance,
                                                                                          factory);
+
+        dialog.setHeadingText(appearance.updateStatus());
+        dialog.getOkButton().setText(appearance.update());
+        dialog.getOkButton().addSelectHandler(new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                final PermanentIdRequestUpdate update = dialog.getPermanentIdRequestUpdate();
+                presenter.updateRequest(update);
+            }
+        });
+
         dialog.show();
     }
 
@@ -221,6 +236,15 @@ public class PermanentIdRequestViewImpl extends Composite implements PermanentId
             metadataBtn.setEnabled(false);
             createDOIBtn.setEnabled(false);
         }
+    }
+
+    @Override
+    public void fetchMetadata(Folder selectedFolder,
+                              PermanentIdRequestPresenterAppearance appearance,
+                              DiskResourceServiceFacade drsvc) {
+        MetadataDialog dialog = new MetadataDialog(selectedFolder, appearance, drsvc);
+        dialog.show();
+
     }
 
 }

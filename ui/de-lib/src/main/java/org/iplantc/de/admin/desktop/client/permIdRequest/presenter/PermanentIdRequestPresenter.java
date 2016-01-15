@@ -13,11 +13,6 @@ import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
-import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
-import org.iplantc.de.diskResource.client.MetadataView;
-import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceMetadataUpdateCallback;
-import org.iplantc.de.diskResource.client.presenters.metadata.MetadataPresenterImpl;
-import org.iplantc.de.diskResource.client.views.metadata.DiskResourceMetadataViewImpl;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -25,12 +20,6 @@ import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
-
-import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
-import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
-import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
-import com.sencha.gxt.widget.core.client.event.DialogHideEvent.DialogHideHandler;
-import com.sencha.gxt.widget.core.client.event.SelectEvent;
 
 /**
  * 
@@ -40,39 +29,6 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent;
  */
 public class PermanentIdRequestPresenter implements Presenter {
 
-    private class CancelSelectHandler implements SelectEvent.SelectHandler {
-        @Override
-        public void onSelect(SelectEvent event) {
-            metadataDialog.hide();
-        }
-    }
-
-    private class OkSelectHandler implements SelectEvent.SelectHandler {
-        @Override
-        public void onSelect(SelectEvent event) {
-
-            if (!metadataView.isValid()) {
-                ConfirmMessageBox cmb = new ConfirmMessageBox("Error",
-                                                              "Metadata Invlid! Please fix the errors!");
-                cmb.addDialogHideHandler(new DialogHideHandler() {
-
-                    @Override
-                    public void onDialogHide(DialogHideEvent event) {
-                        if (event.getHideButton().equals(PredefinedButton.YES)) {
-                            metadataDialog.mask(I18N.DISPLAY.loadingMask());
-                            meta_pre.setDiskResourceMetadata(new DiskResourceMetadataUpdateCallback(metadataDialog));
-                        }
-
-                    }
-                });
-                cmb.show();
-            } else {
-                metadataDialog.mask(I18N.DISPLAY.loadingMask());
-                meta_pre.setDiskResourceMetadata(new DiskResourceMetadataUpdateCallback(metadataDialog));
-            }
-        }
-    }
-
     PermanentIdRequestView view;
 
     final DiskResourceServiceFacade drsvc;
@@ -81,15 +37,9 @@ public class PermanentIdRequestPresenter implements Presenter {
 
     private PermanentIdRequest selectedRequest;
 
-    MetadataView metadataView;
-
     final DiskResourceUtil diskResourceUtil = DiskResourceUtil.getInstance();
 
-    private final IPlantDialog metadataDialog;
-
     private final PermanentIdRequestAutoBeanFactory factory;
-
-    private MetadataView.Presenter meta_pre;
 
     private final PermanentIdRequestPresenterAppearance appearance;
 
@@ -104,21 +54,12 @@ public class PermanentIdRequestPresenter implements Presenter {
         this.view = view;
         this.factory = factory;
         this.appearance = appearance;
-        metadataDialog = new IPlantDialog();
-        metadataDialog.setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
-        metadataDialog.setHeadingHtml("Metadata");
-        metadataDialog.setSize("600px", "400px");
-        metadataDialog.getButton(PredefinedButton.OK).addSelectHandler(new OkSelectHandler());
-        metadataDialog.getButton(PredefinedButton.CANCEL).addSelectHandler(new CancelSelectHandler());
         view.setPresenter(this);
     }
 
     @Override
     public void fetchMetadata() {
-        metadataView = new DiskResourceMetadataViewImpl(diskResourceUtil.isWritable(selectedRequest.getFolder()));
-        meta_pre = new MetadataPresenterImpl(selectedRequest.getFolder(), metadataView, drsvc);
-        meta_pre.go(metadataDialog);
-        metadataDialog.show();
+        view.fetchMetadata(selectedRequest.getFolder(), appearance, drsvc);
     }
 
     @Override
@@ -162,44 +103,54 @@ public class PermanentIdRequestPresenter implements Presenter {
 
     @Override
     public void updateRequest(final PermanentIdRequestUpdate update) {
-        prsvc.updatePermanentIdRequestStatus(selectedRequest.getId(),
-                                             update,
-                                             new AsyncCallback<String>() {
+        view.mask(I18N.DISPLAY.loadingMask());
+        if (selectedRequest != null && update != null) {
+            prsvc.updatePermanentIdRequestStatus(selectedRequest.getId(),
+                                                 update,
+                                                 new AsyncCallback<String>() {
 
-                                                 @Override
-                                                 public void onFailure(Throwable caught) {
-                                                     IplantAnnouncer.getInstance()
-                                                                    .schedule(new ErrorAnnouncementConfig(appearance.statusUpdateFailure()));
+                                                     @Override
+                                                     public void onFailure(Throwable caught) {
+                                                         view.unmask();
+                                                         IplantAnnouncer.getInstance()
+                                                                        .schedule(new ErrorAnnouncementConfig(appearance.statusUpdateFailure()));
 
-                                                 }
+                                                     }
 
-                                                 @Override
-                                                 public void onSuccess(String result) {
-                                                     IplantAnnouncer.getInstance()
-                                                                    .schedule(new SuccessAnnouncementConfig(appearance.statusUpdateSuccess()));
-                                                     selectedRequest.setStatus(update.getStatus());
-                                                     view.update(selectedRequest);
-                                                 }
-                                             });
+                                                     @Override
+                                                     public void onSuccess(String result) {
+                                                         view.unmask();
+                                                         IplantAnnouncer.getInstance()
+                                                                        .schedule(new SuccessAnnouncementConfig(appearance.statusUpdateSuccess()));
+                                                         selectedRequest.setStatus(update.getStatus());
+                                                         view.update(selectedRequest);
+                                                     }
+                                                 });
+        }
     }
 
     @Override
     public void createPermanentId() {
-        prsvc.createPermanentId(selectedRequest.getId(), new AsyncCallback<String>() {
+        view.mask(I18N.DISPLAY.loadingMask());
+        if (selectedRequest != null) {
+            prsvc.createPermanentId(selectedRequest.getId(), new AsyncCallback<String>() {
 
-            @Override
-            public void onFailure(Throwable caught) {
-                IplantAnnouncer.getInstance()
-                               .schedule(new ErrorAnnouncementConfig(appearance.createPermIdFailure()));
-            }
+                @Override
+                public void onFailure(Throwable caught) {
+                    view.unmask();
+                    IplantAnnouncer.getInstance()
+                                   .schedule(new ErrorAnnouncementConfig(appearance.createPermIdFailure()));
+                }
 
-            @Override
-            public void onSuccess(String result) {
-                IplantAnnouncer.getInstance()
-                               .schedule(new SuccessAnnouncementConfig(appearance.createPermIdSucess()));
+                @Override
+                public void onSuccess(String result) {
+                    view.unmask();
+                    IplantAnnouncer.getInstance()
+                                   .schedule(new SuccessAnnouncementConfig(appearance.createPermIdSucess()));
 
-            }
-        });
+                }
+            });
+        }
     }
 
 }

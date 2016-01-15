@@ -47,30 +47,18 @@ public class UpdatePermanentIdRequestDialog extends IPlantDialog {
     @SuppressWarnings("unused")
     private final PermanentIdRequestView.Presenter presenter;
 
-    private final PermanentIdRequestViewAppearance appearance;
     
     public UpdatePermanentIdRequestDialog(final PermanentIdRequest request,
                                           final PermanentIdRequestView.Presenter presenter,
-                                          final PermanentIdRequestViewAppearance appearance,
                                           final PermanentIdRequestAutoBeanFactory factory) {
 
         this.factory = factory;
         this.request = request;
         this.presenter = presenter;
-        this.appearance = appearance;
-        setHeadingText(appearance.updateStatus());
-        getOkButton().setText(appearance.update());
         add(uiBinder.createAndBindUi(this));
         currentStatusLabel.setText(request.getStatus());
         commentsEditor.setHeight(200);
-        getOkButton().addSelectHandler(new SelectHandler() {
 
-            @Override
-            public void onSelect(SelectEvent event) {
-                final PermanentIdRequestUpdate update = getPermanentIdRequestUpdate();
-                presenter.updateRequest(update);
-            }
-        });
     }
 
     @UiFactory
