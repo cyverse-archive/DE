@@ -116,7 +116,7 @@
       {:type "permanent_id_request"
        :user user
        :subject subject
-       :payload {:request_id request-id}})
+       :payload {:uuid request-id}})
     (catch Exception e
       (log/error e
         "Could not send permanent_id_request (" request-id ") notification to" user ":" subject))))
