@@ -35,3 +35,7 @@
   [{:keys [user]} attribute-name role-name subject-id action-name]
   (let [attribute-assign (grouper/remove-membership-permission user attribute-name role-name subject-id [action-name])]
     (fmt/format-attribute-assign attribute-assign)))
+
+(defn replace-permissions
+  [{:keys [user]} {:keys [role_permissions membership_permissions]} attribute-name]
+  (grouper/replace-permissions user attribute-name role_permissions membership_permissions))

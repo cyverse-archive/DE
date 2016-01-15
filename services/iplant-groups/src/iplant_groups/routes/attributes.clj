@@ -47,7 +47,7 @@
             :summary "Permissions Replacement"
             :description "This endpoint allows callers to remove existing permission assignments for this attribute
             and replace them with a new set of permission assignments."
-            ;; TODO: add the code to replace the permissions.
+            (attributes/replace-permissions params body attribute-name)
             (ok (attributes/permission-assignment-search (assoc params :attribute_def_name attribute-name))))
 
       (context* "/roles/:role-name/:action-name" []

@@ -1,5 +1,5 @@
 (ns iplant_groups.clients.grouper
-  (:use [medley.core :only [remove-vals]]
+  (:use [medley.core :only [distinct-by map-kv remove-vals]]
         [slingshot.slingshot :only [throw+ try+]])
   (:require [cemerick.url :as curl]
             [cheshire.core :as json]
@@ -551,13 +551,16 @@
                       :wsSubjectLookups (if subject_id [{:subjectId subject_id}])
                       :immediateOnly (parse-boolean immediate_only)})})
 
+(defn permission-assignment-search*
+  [request-body]
+  (-> (grouper-post request-body "permissionAssignments")
+      :WsGetPermissionAssignmentsResults
+      :wsPermissionAssigns))
+
 (defn permission-assignment-search
   [username params]
   (with-trap [default-error-handler]
-    (-> (format-permission-search-request username params)
-        (grouper-post "permissionAssignments")
-        :WsGetPermissionAssignmentsResults
-        :wsPermissionAssigns)))
+    (permission-assignment-search* (format-permission-search-request username params))))
 
 ;; assign/remove
 (defn- format-permission-assign-remove-request
@@ -580,19 +583,28 @@
   [& args]
   (apply format-permission-assign-remove-request false args))
 
+(defn- role-permissions
+  [role-names]
+  {:permissionType "role"
+   :roleLookups (mapv (partial hash-map :groupName) role-names)})
+
 (defn- role-permission
   [role-name]
-  {:permissionType "role"
-   :roleLookups [{:groupName role-name}]})
+  (role-permissions [role-name]))
+
+(defn- subject-role-lookup
+  [[role-name subject-id]]
+  {:wsGroupLookup {:groupName role-name}
+   :wsSubjectLookup {:subjectId subject-id}})
+
+(defn- membership-permissions
+  [roles-and-subjects]
+  {:permissionType "role_subject"
+   :subjectRoleLookups (mapv subject-role-lookup roles-and-subjects)})
 
 (defn- membership-permission
   [role-name subject-id]
-  {:permissionType "role_subject"
-   :subjectRoleLookups [
-   {:wsGroupLookup
-     {:groupName role-name}
-    :wsSubjectLookup
-     {:subjectId subject-id}}]})
+  (membership-permissions [[role-name subject-id]]))
 
 (defn- format-role-permission-assign-request
   [username attribute-def-name role-name allowed? action-names]
@@ -652,3 +664,58 @@
   (assign-remove-permission
     (format-membership-permission-remove-request
       username attribute-def-name role-name subject-id action-names)))
+
+(defn- format-all-permission-search-request
+  [username attribute-def-name]
+  {:WsRestGetPermissionAssignmentsRequest
+   (remove-vals nil? {:actAsSubjectLookup (act-as-subject-lookup username)
+                      :wsAttributeDefNameLookups [{:name attribute-def-name}]})})
+
+(defn- get-permission-assign-ids
+  [username attribute-def-name]
+  (->> (format-all-permission-search-request username attribute-def-name)
+       (permission-assignment-search*)
+       (distinct-by :attributeAssignId)
+       (group-by :permissionType)
+       (map-kv (fn [k v] [k (mapv :attributeAssignId v)]))))
+
+(defn- format-permission-assign-id-removal-request
+  [username permission-type ids]
+  {:WsRestAssignPermissionsRequest
+   {:permissionAssignOperation "remove_permission"
+    :actAsSubjectLookup (act-as-subject-lookup username)
+    :permissionType permission-type
+    :wsAttributeAssignLookups (mapv (partial hash-map :uuid) ids)}})
+
+(defn- remove-permission-assign-ids
+  [username permission-type ids]
+  (->> (format-permission-assign-id-removal-request username permission-type ids)
+       (assign-remove-permission)))
+
+(defn- remove-existing-permissions
+  [username attribute-def-name]
+  (->> (get-permission-assign-ids username attribute-def-name)
+       (map (fn [[permission-type ids]] (remove-permission-assign-ids username permission-type ids)))
+       dorun))
+
+(defn- assign-role-permissions
+  [username attribute-def-name new-role-permissions]
+  (let [fmt (fn [[k v]] (format-permission-assign-request v username attribute-def-name true [k]))]
+    (->> (group-by :action_name new-role-permissions)
+         (map-kv (fn [k v] [k (role-permissions (mapv :role_name v))]))
+         (map (comp assign-remove-permission fmt))
+         dorun)))
+
+(defn- assign-membership-permissions
+  [username attribute-def-name new-membership-permissions]
+  (let [fmt (fn [[k v]] (format-permission-assign-request v username attribute-def-name true [k]))]
+    (->> (group-by :action_name new-membership-permissions)
+         (map-kv (fn [k v] [k (membership-permissions (map (juxt :role_name :subject_id) v))]))
+         (map (comp assign-remove-permission fmt))
+         dorun)))
+
+(defn replace-permissions
+  [username attribute-def-name new-role-permissions new-membership-permissions]
+  (remove-existing-permissions username attribute-def-name)
+  (assign-role-permissions username attribute-def-name new-role-permissions)
+  (assign-membership-permissions username attribute-def-name new-membership-permissions))
