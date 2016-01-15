@@ -81,43 +81,30 @@
       metadata/create-permanent-id-request
       parse-service-json))
 
+(defn- create-publish-dir
+  "Creates the Permanent ID Requests publish directory, if it doesn't already exist."
+  []
+  (let [publish-path (config/permanent-id-publish-dir)]
+    (when-not (data-info/path-exists? (config/irods-user) publish-path)
+      (data-info-client/create-dirs (config/irods-user) [publish-path]))))
+
 (defn- create-staging-dir
   "Creates the Permanent ID Requests staging directory, if it doesn't already exist."
   []
   (let [staging-path (config/permanent-id-staging-dir)
-        curators     (set (config/permanent-id-curators))]
+        curators     (config/permanent-id-curators-group)]
     (when-not (data-info/path-exists? (config/irods-user) staging-path)
-      (log/warn "creating" staging-path "for:" (clojure.string/join ", " curators))
+      (log/warn "creating" staging-path "for:" curators)
       (data-info-client/create-dirs (config/irods-user) [staging-path])
-      (data-info/share (config/irods-user) curators [staging-path] "own"))))
-
-(defn- create-publish-dir
-  "Creates the Permanent ID Requests publish directory, if it doesn't already exist."
-  []
-  (let [publish-path (config/permanent-id-publish-dir)
-        curators     (set (config/permanent-id-curators))]
-    (when-not (data-info/path-exists? (config/irods-user) publish-path)
-      (log/warn "creating" publish-path "for:" (clojure.string/join ", " curators))
-      (data-info-client/create-dirs (config/irods-user) [publish-path])
-      (data-info/share (config/irods-user) curators [publish-path] "own"))))
+      (data-info/share (config/irods-user) [curators] [staging-path] "own"))))
 
 (defn- stage-data-item
   [user {:keys [id path] :as data-item}]
   (let [staged-path (ft/path-join (config/permanent-id-staging-dir) (ft/basename path))
-        curators (set (config/permanent-id-curators))]
+        curators    (config/permanent-id-curators-group)]
     (data-info-client/move-single (config/irods-user) id (config/permanent-id-staging-dir))
-    (log/warn "share" staged-path "with:" (clojure.string/join ", " curators))
-    (data-info/share (config/irods-user) curators [staged-path] "own")
-    (when-not (contains? curators user)
-      (data-info/share (config/irods-user) [user] [staged-path] "write"))))
-
-(defn- publish-data-item
-  [{:keys [id path] :as data-item}]
-  (let [publish-path (ft/path-join (config/permanent-id-publish-dir) (ft/basename path))
-        curators (set (config/permanent-id-curators))]
-    (data-info-client/move-single (config/irods-user) id (config/permanent-id-publish-dir))
-    (log/warn "share" publish-path "with:" (clojure.string/join ", " curators))
-    (data-info/share (config/irods-user) curators [publish-path] "own")))
+    (data-info/share (config/irods-user) [user] [staged-path] "write")
+    (data-info/share (config/irods-user) [curators] [staged-path] "own")))
 
 (defn- request-type->shoulder
   [type]
@@ -214,7 +201,7 @@
           ezid-metadata                     (parse-ezid-metadata irods-avus metadata)
           response                          (ezid/mint-id shoulder ezid-metadata)]
       (data-info-client/admin-add-avus user folder-id (ezid-response->avus response))
-      (publish-data-item folder))
+      (data-info-client/move-single (config/irods-user) folder-id (config/permanent-id-publish-dir)))
     (catch Object e
       (log/error e)
       (update-permanent-id-request request-id nil (json/encode {:status status-code-failed}))

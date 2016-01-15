@@ -473,6 +473,7 @@ irods:
   home: /iplant/home
   default_resource: ""
   admins: rodsadmin
+  data_curators_group: data-curators
   bad_chars: \u0060\u0027\u000A\u0009
 
 # Jex does not actually have a container. The container name is how most syslog entries
@@ -645,7 +646,6 @@ path_list_file_identifier: "# application/vnd.de.path-list+csv; version=1"
 path_list_info_type: ht-analysis-path-list
 
 permanent_id:
-  curators:
   ezid:
     username: apitest
     password:

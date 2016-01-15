@@ -438,10 +438,10 @@
   [props config-valid configs]
   "terrain.job-exec.default-output-folder")
 
-(cc/defprop-vec permanent-id-curators
-  "List of data store usernames of the curators that manage permanent ID requests."
+(cc/defprop-str permanent-id-curators-group
+  "The data store group that manages permanent ID request data."
   [props config-valid configs]
-  "terrain.permanent-id.curators")
+  "terrain.permanent-id.curators-group")
 
 (cc/defprop-str permanent-id-staging-dir
   "The data store directory where user folders are staged for permanent ID requests."
