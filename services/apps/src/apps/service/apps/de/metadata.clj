@@ -16,6 +16,7 @@
         [slingshot.slingshot :only [throw+]])
   (:require [cheshire.core :as cheshire]
             [clj-http.client :as client]
+            [apps.clients.iplant-groups :as iplant-groups]
             [apps.persistence.app-metadata :as amp]
             [apps.service.apps.de.docs :as app-docs]
             [apps.translations.app-metadata :as atx]
@@ -138,7 +139,8 @@
     (amp/set-app-references app-id references)
     (amp/set-app-suggested-categories app-id categories)
     (decategorize-app app-id)
-    (add-app-to-category app-id (uuidify (workspace-beta-app-category-id))))
+    (add-app-to-category app-id (uuidify (workspace-beta-app-category-id)))
+    (iplant-groups/make-app-public app-id))
   nil)
 
 (defn make-app-public

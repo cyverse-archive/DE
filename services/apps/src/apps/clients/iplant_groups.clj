@@ -1,5 +1,6 @@
 (ns apps.clients.iplant-groups
-  (:use [slingshot.slingshot :only [throw+]])
+  (:use [medley.core :only [remove-vals]]
+        [slingshot.slingshot :only [throw+]])
   (:require [apps.util.config :as config]
             [cemerick.url :as curl]
             [clj-http.client :as http]
@@ -73,3 +74,37 @@
   (let [app-resource-name (grouper-app-resource-name app-id)]
     (create-resource app-resource-name (grouper-app-permission-def))
     (grant-role-user-permission user (grouper-user-group) app-resource-name "own")))
+
+(defn- format-role-permissions
+  "Formats the role permissions for a permission update request."
+  [role-permissions]
+  (mapv (fn [[role-name action-name]]
+          {:role_name role-name :action_name action-name})
+        role-permissions))
+
+(defn- format-membership-permissions
+  "Formats the membership permissions for a permission update request."
+  [membership-permissions]
+  (mapv (fn [[role-name subject-id action-name]]
+          {:role_name role-name :subject_id subject-id :action_name action-name})
+        membership-permissions))
+
+(defn- permission-update-body
+  "Formats the request body for altering the the permissions of a single app in bulk."
+  [role-permissions membership-permissions]
+  (remove-vals nil? {:role_permissions       (format-role-permissions role-permissions)
+                     :membership_permissions (format-membership-permissions membership-permissions)}))
+
+(defn- public-permission-update-body
+  "Formats the request body for making a resource publicly accessible in the DE."
+  []
+  (permission-update-body [[(grouper-user-group) "read"]] []))
+
+(defn make-app-public
+  "Makes an app publicly accessible in Grouper."
+  [app-id]
+  (:body (http/put (grouper-url "attributes" (grouper-app-resource-name app-id) "permissions")
+                   {:query-params {:user grouper-user}
+                    :form-params  (public-permission-update-body)
+                    :content-type :json
+                    :as           :json})))
