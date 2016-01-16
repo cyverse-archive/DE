@@ -29,6 +29,7 @@ import org.iplantc.de.collaborators.client.views.ManageCollaboratorsDialog;
 import org.iplantc.de.collaborators.client.views.ManageCollaboratorsView;
 import org.iplantc.de.commons.client.CommonUiConstants;
 import org.iplantc.de.commons.client.ErrorHandler;
+import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
@@ -326,6 +327,12 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
                 show(analysisWindowConfig, true);
                 break;
 
+            case PERMANENTIDREQUEST:
+                PayloadRequest request = AutoBeanCodex.decode(notificationFactory,
+                                                                  PayloadRequest.class,
+                                                                  context).as();
+                getRequestStatusHistory(request.getId(), NotificationCategory.PERMANENTIDREQUEST);
+                break;
             case TOOLREQUEST:
                 PayloadRequest toolRequest = AutoBeanCodex.decode(notificationFactory,
                                                                       PayloadRequest.class,
@@ -333,7 +340,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
 
                 List<RequestHistory> history = toolRequest.getHistory();
 
-                RequestHistoryDialog dlg = new RequestHistoryDialog(toolRequest.getName(),
+                RequestHistoryDialog dlg = new RequestHistoryDialog(NotificationCategory.TOOLREQUEST.toString(),
                         history);
                 dlg.show();
 
@@ -360,6 +367,33 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
             }
         });
 
+    }
+
+    private void getRequestStatusHistory(String id, NotificationCategory cat) {
+        if (cat.equals(NotificationCategory.PERMANENTIDREQUEST)) {
+            messageServiceFacade.getPermanentIdRequestStatusHistory(id, new AsyncCallback<String>() {
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    IplantAnnouncer.getInstance()
+                                   .schedule(new ErrorAnnouncementConfig(appearance.requestHistoryError()));
+                }
+
+                @Override
+                public void onSuccess(String result) {
+                    PayloadRequest toolRequest = AutoBeanCodex.decode(notificationFactory,
+                                                                      PayloadRequest.class,
+                                                                      result).as();
+
+                    List<RequestHistory> history = toolRequest.getHistory();
+
+                    RequestHistoryDialog dlg = new RequestHistoryDialog(NotificationCategory.PERMANENTIDREQUEST.toString(),
+                                                                        history);
+                    dlg.show();
+
+                }
+            });
+        }
     }
 
     @Override

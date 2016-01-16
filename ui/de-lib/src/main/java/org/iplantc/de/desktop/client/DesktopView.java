@@ -178,6 +178,8 @@ public interface DesktopView extends IsWidget {
             String systemInitializationError();
 
             String welcome();
+
+            String requestHistoryError();
         }
 
         List<WindowState> getOrderedWindowStates();

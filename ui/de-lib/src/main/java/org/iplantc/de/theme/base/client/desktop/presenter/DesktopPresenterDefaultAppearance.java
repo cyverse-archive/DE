@@ -118,4 +118,9 @@ public class DesktopPresenterDefaultAppearance implements DesktopView.Presenter.
     public String welcome() {
         return desktopMessages.welcome();
     }
+
+    @Override
+    public String requestHistoryError() {
+        return desktopMessages.requestHistoryError();
+    }
 }

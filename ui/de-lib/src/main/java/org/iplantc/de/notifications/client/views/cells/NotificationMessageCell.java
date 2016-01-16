@@ -103,7 +103,7 @@ public class NotificationMessageCell extends AbstractCell<NotificationMessage> {
                         EventBus.getInstance().fireEvent(new WindowShowRequestEvent(analysisWindowConfig, true));
 
                         break;
-                    case EZIDREQUEST:
+                    case PERMANENTIDREQUEST:
                         // fall through to ToolRequest logic
                     case TOOLREQUEST:
                         PayloadRequest toolRequest = AutoBeanCodex.decode(notificationFactory,
