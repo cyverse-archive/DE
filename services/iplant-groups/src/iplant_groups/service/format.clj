@@ -145,6 +145,7 @@
           :delegatable (string-to-boolean (or (:attributeAssignDelegatable attribute-assign)
                                               (get-in attribute-assign [:detail :permissionDelegatable])))
           :assign_type (:attributeAssignType attribute-assign)
+          :permission_type (:permissionType attribute-assign)
           :created_at  (timestamp-to-millis (:createdOn attribute-assign))
           :modified_at (timestamp-to-millis (:lastUpdated attribute-assign))
           :group       (cond

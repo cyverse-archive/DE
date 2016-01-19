@@ -44,6 +44,19 @@
               (where {:app_category_app.app_category_id
                       fav_group_id_subselect})))))
 
+(defn- add-app-id-where-clause
+  [query {:keys [app-ids]}]
+  (if (seq app-ids)
+    (where query {:id [in app-ids]})
+    query))
+
+(defn- add-agave-pipeline-where-clause
+  [query {agave-enabled? :agave-enabled :or {agave-enaled? "false"}}]
+  (let [agave-enabled? (Boolean/parseBoolean agave-enabled?)]
+    (if-not agave-enabled?
+      (where query {:step_count :task_count})
+      query)))
+
 (defn- add-app-group-where-clause
   "Adds a where clause to an analysis listing query to restrict app results to
    an app group and all of its descendents."
@@ -85,6 +98,7 @@
     (select* app_listing)
     (fields (raw "count(DISTINCT app_listing.id) AS total"))
     (where {:deleted false})
+    (add-app-id-where-clause query-opts)
     (add-agave-pipeline-where-clause query-opts)))
 
 (defn count-apps-in-group-for-user
@@ -160,6 +174,7 @@
     ;; Add limits and sorting, if required, and return the query
     (->
       listing_query
+      (add-app-id-where-clause query_opts)
       (add-agave-pipeline-where-clause query_opts)
       (add-query-limit row_limit)
       (add-query-offset row_offset)
@@ -288,6 +303,7 @@
        (aggregate (count :*) :count)
        (where {:deleted false})
        (add-public-apps-by-user-where-clause email)
+       (add-app-id-where-clause params)
        (add-agave-pipeline-where-clause params)
        (select))))
 

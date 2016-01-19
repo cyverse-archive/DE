@@ -8,14 +8,14 @@
   {:folders (mapv fmt/format-folder (grouper/folder-search user search))})
 
 (defn get-folder
-  [folder-id {:keys [user]}]
-  (if-let [folder (grouper/get-folder user folder-id)]
+  [folder-name {:keys [user]}]
+  (if-let [folder (grouper/get-folder user folder-name)]
     (fmt/format-folder folder)
-    (service/not-found "folder" folder-id)))
+    (service/not-found "folder" folder-name)))
 
 (defn get-folder-privileges
-  [folder-id {:keys [user]}]
-  (let [[privileges attribute-names] (grouper/get-folder-privileges user folder-id)]
+  [folder-name {:keys [user]}]
+  (let [[privileges attribute-names] (grouper/get-folder-privileges user folder-name)]
     {:privileges (mapv #(fmt/format-privilege attribute-names %) privileges)}))
 
 (defn add-folder
@@ -24,20 +24,20 @@
     (fmt/format-folder folder)))
 
 (defn add-folder-privilege
-  [folder-id subject-id privilege-name {:keys [user]}]
-  (let [[privilege attribute-names] (grouper/add-folder-privileges user folder-id subject-id [privilege-name])]
+  [folder-name subject-id privilege-name {:keys [user]}]
+  (let [[privilege attribute-names] (grouper/add-folder-privileges user folder-name subject-id [privilege-name])]
     (fmt/format-privilege attribute-names privilege :wsSubject)))
 
 (defn remove-folder-privilege
-  [folder-id subject-id privilege-name {:keys [user]}]
-  (let [[privilege attribute-names] (grouper/remove-folder-privileges user folder-id subject-id [privilege-name])]
+  [folder-name subject-id privilege-name {:keys [user]}]
+  (let [[privilege attribute-names] (grouper/remove-folder-privileges user folder-name subject-id [privilege-name])]
     (fmt/format-privilege attribute-names privilege :wsSubject)))
 
 (defn update-folder
-  [folder-id {:keys [name description display_extension]} {:keys [user]}]
-  (let [folder (grouper/update-folder user folder-id name display_extension description)]
+  [folder-name {:keys [name description display_extension]} {:keys [user]}]
+  (let [folder (grouper/update-folder user folder-name name display_extension description)]
     (fmt/format-folder folder)))
 
 (defn delete-folder
-  [folder-id {:keys [user]}]
-  (fmt/format-folder (grouper/delete-folder user folder-id)))
+  [folder-name {:keys [user]}]
+  (fmt/format-folder (grouper/delete-folder user folder-name)))

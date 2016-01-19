@@ -1,5 +1,6 @@
-# Connection details.
-apps.app.listen-port = {{ default_service_port }}
+# Application details.
+apps.app.listen-port      = {{ default_service_port }}
+apps.app.environment-name = {{ environment_name }}
 
 # Route-independent feature flags.
 apps.features.agave      = true
