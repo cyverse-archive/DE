@@ -53,4 +53,5 @@ RUN lein help
 RUN git clone https://github.com/cyverse/DE.git backend && \
     cd backend && \
     git checkout $git_commit && \
-    lein exec build-all.clj lein-plugins libs
+    lein exec build-all.clj lein-plugins libs && \
+    for dir in $(find . -exec test -f {}/project.clj \; -print -prune); do pushd $dir; lein deps; popd; done
