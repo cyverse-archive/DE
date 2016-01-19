@@ -6,7 +6,7 @@ set -x
 CMD=$1
 
 if [ -z $CMD ]; then
-    CMD=test
+    CMD=test2junit
 fi
 
 OS=$(uname)

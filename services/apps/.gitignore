@@ -21,3 +21,5 @@ pom.xml
 .*.eld
 .nrepl-port
 apps.properties
+test2junit
+build.xml
