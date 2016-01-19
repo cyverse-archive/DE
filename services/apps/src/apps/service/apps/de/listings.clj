@@ -119,8 +119,8 @@
 
 (defn- get-visible-app-groups
   "Retrieves the list of app groups that are visible to a user."
-  [user {:keys [admin?] :as params}]
-  (-> (when-not admin? (get-optional-workspace (:username user)))
+  [user {:keys [admin] :as params}]
+  (-> (when-not admin (get-optional-workspace (:username user)))
       (:id)
       (get-visible-app-groups-for-workspace user params)))
 
