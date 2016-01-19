@@ -13,3 +13,5 @@ pom.xml
 /.classpath
 /.project
 /bin
+test2junit
+build.xml

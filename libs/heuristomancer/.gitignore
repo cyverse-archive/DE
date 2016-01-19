@@ -15,3 +15,5 @@ pom.xml.asc
 .project
 .classpath
 /bin
+test2junit
+build.xml

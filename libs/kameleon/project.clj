@@ -12,5 +12,6 @@
                  [me.raynes/fs "1.4.6"]
                  [postgresql "9.3-1102.jdbc41"]
                  [slingshot "0.12.2"]]
-  :plugins [[lein-marginalia "0.7.1"]]
+  :plugins [[lein-marginalia "0.7.1"]
+            [test2junit "1.1.3"]]
   :manifest {"db-version" "2.4.0:20160106.01"})

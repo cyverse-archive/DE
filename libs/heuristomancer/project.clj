@@ -8,6 +8,7 @@
                  [org.clojure/tools.cli "0.3.2"]
                  [org.clojure/tools.logging "0.3.1"]
                  [instaparse "1.4.1"]]
-  :plugins [[org.iplantc/lein-iplant-cmdtar "5.2.4.0"]]
+  :plugins [[org.iplantc/lein-iplant-cmdtar "5.2.4.0"]
+            [test2junit "1.1.3"]]
   :aot [heuristomancer.core]
   :main heuristomancer.core)
