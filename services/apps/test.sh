@@ -21,6 +21,6 @@ if [ $(docker ps -aqf "name=$DBCONTAINER" | wc -l) -gt 0 ]; then
 fi
 
 docker run --name $DBCONTAINER -e POSTGRES_PASSWORD=notprod -d -p 35432:5432 discoenv/de-db
-sleep 5
+sleep 10
 docker run --rm --link $DBCONTAINER:postgres discoenv/de-db-loader:dev
 docker run --rm -v $(pwd):/build -v ~/.m2:/root/.m2 -w /build --link $DBCONTAINER:postgres clojure lein $CMD
