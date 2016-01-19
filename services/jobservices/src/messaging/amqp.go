@@ -198,6 +198,7 @@ func NewClient(uri string, reconnect bool) (*Client, error) {
 		if err != nil {
 			return nil, err
 		}
+		logger.Println("Successfully connected to the AMQP broker")
 	}
 	c.connection = connection
 	c.aggregationChan = make(chan aggregationMessage)
