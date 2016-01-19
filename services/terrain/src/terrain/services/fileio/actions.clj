@@ -63,20 +63,6 @@
       nil)))
 
 
-(defn- get-istream
-  [user file-path]
-  (with-jargon (icat/jargon-cfg) :client-user user [cm]
-    (when-not (info/exists? cm file-path)
-      (throw+ {:error_code ERR_DOES_NOT_EXIST :path file-path}))
-    (when-not (perm/is-readable? cm user file-path)
-      (throw+ {:error_code ERR_NOT_READABLE
-               :user       user
-               :path       file-path}))
-    (if (= (info/file-size cm file-path) 0)
-      ""
-      (ops/input-stream cm file-path))))
-
-
 (defn- url-encoded?
   [string-to-check]
   (re-seq #"\%[A-Fa-f0-9]{2}" string-to-check))
