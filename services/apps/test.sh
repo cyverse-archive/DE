@@ -12,7 +12,7 @@ fi
 OS=$(uname)
 DBCONTAINER=apps-de-db
 
-if [ $(docker ps -qf "name=$DBCONTAINER" wc -l) -gt 0 ]; then
+if [ $(docker ps -qf "name=$DBCONTAINER" | wc -l) -gt 0 ]; then
     docker kill $DBCONTAINER
 fi
 
