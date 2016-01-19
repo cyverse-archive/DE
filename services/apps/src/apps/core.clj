@@ -78,6 +78,5 @@
         (ccli/exit 1 "The config file is not readable."))
       (load-config-from-file (:config options))
       (tasks/set-logging-context! config/svc-info)
-      (tasks/schedule-tasks)
       (http/with-connection-pool {:timeout 5 :threads 10 :insecure? false :default-per-route 10}
         (run-jetty)))))
