@@ -14,4 +14,4 @@ docker build --build-arg git_commit=$GIT_COMMIT \
              --build-arg buildenv_git_commit=$BUILDENV_GIT_COMMIT \
              --build-arg version=$VERSION \
              --pull --rm -t "$DOCKER_USER/$DOCKER_REPO:dev" .
-docker push $DOCKER_USER/$DOCKER_REPO:dev
+docker push $DOCKER_USER/$DOCKER_REPO:jex-go
