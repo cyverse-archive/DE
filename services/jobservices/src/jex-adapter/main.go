@@ -207,7 +207,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	client, err := messaging.NewClient(amqpURI, false)
+	client, err = messaging.NewClient(amqpURI, false)
 	if err != nil {
 		logger.Fatal(err)
 	}
