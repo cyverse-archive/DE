@@ -9,7 +9,7 @@
             [terrain.clients.data-info :as data]))
 
 
-(defn- download-file
+(defn download-file-as-stream
   [user file attachment]
   (let [url-path         (data/mk-data-path-url-path file)
         req-map          {:query-params {:user user :attachment attachment} :as :stream}
@@ -27,7 +27,7 @@
 
 (defn do-special-download
   [{user :user path :path :as params}]
-  (download-file user path (attachment? params)))
+  (download-file-as-stream user path (attachment? params)))
 
 (with-pre-hook! #'do-special-download
   (fn [params]

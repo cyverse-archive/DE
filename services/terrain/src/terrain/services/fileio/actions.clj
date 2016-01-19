@@ -13,6 +13,7 @@
             [clj-jargon.permissions :as perm]
             [terrain.services.filesystem.icat :as icat]
             [terrain.services.filesystem.validators :as validators]
+            [terrain.services.filesystem.updown :as updown]
             [terrain.services.metadata.internal-jobs :as internal-jobs])
   (:import [java.io InputStream]
            [clojure.lang IPersistentMap]))
@@ -104,16 +105,11 @@
 
 (defn download
   "Returns a response map filled out with info that lets the client download
-   a file."
+   a file.
+
+   Forcibly set Content-Type to application/octet-stream to ensure the file
+   is downloaded rather than displayed."
   [user file-path]
   (log/debug "In download.")
-  (let [istream (get-istream user file-path)]
-    (-> {:status 200
-         :body istream}
-      (rsp-utils/header
-        "Content-Disposition"
-        (str "attachment; filename=\"" (ft/basename file-path) "\""))
-      (rsp-utils/header
-       "Content-Type"
-       "application/octet-stream")
-      success-response)))
+  (let [resp (updown/download-file-as-stream user file-path true)]
+    (assoc-in resp [:headers "Content-Type"] "application/octet-stream")))
