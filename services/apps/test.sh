@@ -23,4 +23,4 @@ fi
 docker run --name $DBCONTAINER -e POSTGRES_PASSWORD=notprod -d -p 35432:5432 discoenv/de-db
 sleep 10
 docker run --rm --link $DBCONTAINER:postgres discoenv/de-db-loader:dev
-docker run --rm -v $(pwd):/build -v ~/.m2:/root/.m2 -w /build --link $DBCONTAINER:postgres clojure lein $CMD
+docker run --rm -v $(pwd):/build -w /build --link $DBCONTAINER:postgres discoenv/buildenv lein $CMD
