@@ -3,7 +3,6 @@
 # Services Support
 ############################################
 - include: playbooks/de-services-common.yml
-- include: playbooks/de-systemd-de-target_down.yaml
 
 ############################################
 # Condor
