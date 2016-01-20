@@ -527,8 +527,8 @@
 
 (defn- format-attribute-def-name-lookup
   [{:keys [attribute_def_name_ids attribute_def_names]}]
-  (cond (seq attribute_def_name_ids) (mapv (partial hash-map :uuid) attribute_def_name_ids)
-        (seq attribute_def_names)    (mapv (partial hash-map :name) attribute_def_names)))
+  (concat (mapv (partial hash-map :uuid) attribute_def_name_ids)
+          (mapv (partial hash-map :name) attribute_def_names)))
 
 (defn- format-role-lookup
   [{:keys [role_id role]}]
