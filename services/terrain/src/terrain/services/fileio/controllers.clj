@@ -2,7 +2,6 @@
   (:use [clj-jargon.init :only [with-jargon]]
         [clojure-commons.error-codes]
         [terrain.util.service :only [success-response]]
-        [terrain.util.transformers :only [add-current-user-to-map]]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [terrain.services.fileio.actions :as actions]
             [clojure-commons.file-utils :as ft]
