@@ -16,11 +16,11 @@
     (POST "/fileio/upload" [dest :as req]
       (fio/upload (get-in req [:user-info :user]) dest req))
 
-    (POST "/fileio/urlupload" [:as {:keys [params body]}]
-      (fio/urlupload params body))
+    (POST "/fileio/urlupload" [:as req]
+      (util/controller req fio/urlupload :params :body))
 
-    (POST "/fileio/save" [:as {:keys [params body]}]
-      (fio/save params body))
+    (POST "/fileio/save" [:as req]
+      (util/controller req fio/save :params :body))
 
-    (POST "/fileio/saveas" [:as {:keys [params body]}]
-      (fio/saveas params body))))
+    (POST "/fileio/saveas" [:as req]
+      (util/controller req fio/saveas :params :body))))
