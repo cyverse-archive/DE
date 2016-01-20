@@ -57,7 +57,8 @@
   [user data-item]
   (->> data-item
        (validate-owner user)
-       validate-staging-dest))
+       validate-staging-dest
+       validate-publish-dest))
 
 (defn- get-requested-data-item
   "Gets data-info stat for the given ID and checks if the data item is valid for a Permanent ID request."
