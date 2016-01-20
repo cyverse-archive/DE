@@ -12,6 +12,7 @@
             [terrain.clients.metadata.raw :as metadata]
             [terrain.clients.notifications :as notifications]
             [terrain.util.config :as config]
+            [terrain.util.email :as email]
             [terrain.util.service :as service]))
 
 ;; Status Codes.
@@ -128,6 +129,11 @@
     (str type " Request for " (ft/basename (:path folder)) " Status Changed to " (:status (last history)))
     id))
 
+(defn- send-request-complete-email
+  [request-type {:keys [path]}]
+  (let [publish-dest (ft/path-join (config/permanent-id-publish-dir) (ft/basename path))]
+    (email/send-permanent-id-request-complete request-type publish-dest)))
+
 (defn- request-type->shoulder
   [type]
   (case type
@@ -176,6 +182,7 @@
         {request-id :id :as response}  (submit-permanent-id-request type folder-id target-type path)]
     (stage-data-item user folder)
     (send-notification user (str type " Request Submitted for " (ft/basename path)) request-id)
+    (email/send-permanent-id-request-new type path current-user)
     (format-perm-id-req-response user response)))
 
 (defn list-permanent-id-request-status-codes
@@ -226,7 +233,8 @@
           ezid-metadata                     (parse-ezid-metadata irods-avus metadata)
           response                          (ezid/mint-id shoulder ezid-metadata)]
       (data-info-client/admin-add-avus user folder-id (ezid-response->avus response))
-      (data-info-client/move-single (config/irods-user) folder-id (config/permanent-id-publish-dir)))
+      (data-info-client/move-single (config/irods-user) folder-id (config/permanent-id-publish-dir))
+      (send-request-complete-email type folder))
     (catch Object e
       (log/error e)
       (update-permanent-id-request request-id nil (json/encode {:status status-code-failed}))

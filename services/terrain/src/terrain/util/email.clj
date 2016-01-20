@@ -32,6 +32,39 @@
       :template  "tool_request"
       :values    template-values)))
 
+(defn- send-permanent-id-request
+  "Sends a Permanent ID Request email message to data curators."
+  [subject template template-values]
+  (send-email
+    :to        (config/permanent-id-request-dest-addr)
+    :from-addr (config/permanent-id-request-src-addr)
+    :subject   subject
+    :template  template
+    :values    template-values))
+
+(defn send-permanent-id-request-new
+  "Sends an email message informing data curators of a new Permanent ID Request."
+  [request-type path {:keys [commonName email]}]
+  (let [template-values {:username     commonName
+                         :environment  (config/environment-name)
+                         :request_type request-type
+                         :path         path}]
+    (send-permanent-id-request
+      "New Permanent ID Request"
+      "permanent_id_request"
+      template-values)))
+
+(defn send-permanent-id-request-complete
+  "Sends an email message informing data curators of a Permanent ID Request completion."
+  [request-type path]
+  (let [template-values {:environment  (config/environment-name)
+                         :request_type request-type
+                         :path         path}]
+    (send-permanent-id-request
+      "Permanent ID Request Complete"
+      "permanent_id_request_complete"
+      template-values)))
+
 (defn- format-question
   "Formats a question and answer for a user feedback submission."
   [[q a]]

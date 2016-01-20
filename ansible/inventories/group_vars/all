@@ -646,6 +646,8 @@ path_list_file_identifier: "# application/vnd.de.path-list+csv; version=1"
 path_list_info_type: ht-analysis-path-list
 
 permanent_id:
+  admin_email_addr: "{{ de_mail_to_addr }}"
+  email_from_addr: "{{ de_mail_from_addr }}"
   ezid:
     username: apitest
     password:
