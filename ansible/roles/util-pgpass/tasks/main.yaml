@@ -1,0 +1,4 @@
+---
+- name: place .pgpass
+  sudo: yes
+  template: src=postgres.pgpass.j2 dest=~/.pgpass mode=0600 backup=yes
