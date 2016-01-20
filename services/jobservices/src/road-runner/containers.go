@@ -165,16 +165,14 @@ func (d *Docker) NukeImage(name, tag string) error {
 func (d *Docker) Pull(name, tag string) error {
 	auth := docker.AuthConfiguration{}
 	reg := "base"
-	repo := name
 	if strings.Contains(name, "/") {
 		parts := strings.Split(name, "/")
 		if strings.Contains(parts[0], ".") {
 			reg = parts[0]
-			repo = parts[1]
 		}
 	}
 	opts := docker.PullImageOptions{
-		Repository:   repo,
+		Repository:   name,
 		Registry:     reg,
 		Tag:          tag,
 		OutputStream: logger,

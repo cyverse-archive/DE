@@ -1,3 +1,22 @@
+//
+// condor-launcher launches jobs on an HTCondor cluster.
+//
+// Required configuration keys are:
+//   amqp.uri
+//   irods.user
+//   irods.pass
+//   irods.host
+//   irods.port
+//   irods.base
+//   irods.resc
+//   irods.zone
+//   condor.condor_config
+//   condor.path_env_var
+//   condor.log_path
+//   condor.request_disk
+//   porklock.image
+//   porklock.tag
+//
 package main
 
 import (
@@ -37,7 +56,7 @@ func init() {
 // of what should go into an HTCondor submission file.
 func GenerateCondorSubmit(submission *model.Job) (string, error) {
 	tmpl := `universe = vanilla
-executable = /bin/runner
+executable = /usr/local/bin/road-runner
 rank = mips
 arguments = --config config --job job
 output = script-output.log
@@ -52,7 +71,7 @@ concurrency_limits = {{.Submitter}}
 {{with $x := index .Steps 0}}+IpcExe = "{{$x.Component.Name}}"{{end}}
 {{with $x := index .Steps 0}}+IpcExePath = "{{$x.Component.Location}}"{{end}}
 should_transfer_files = YES
-transfer_input_files = iplant.sh,irods-config,iplant.cmd,config,job
+transfer_input_files = irods-config,iplant.cmd,config,job
 transfer_output_files = logs/de-transfer-trigger.log,logs/logs-stdout-output,logs/logs-stderr-output
 when_to_transfer_output = ON_EXIT_OR_EVICT
 notification = NEVER
@@ -80,7 +99,12 @@ type scriptable struct {
 // into the job.
 func GenerateJobConfig() (string, error) {
 	tmpl := `amqp:
-	uri: {{.String "amqp.uri"}}`
+  uri: {{.String "amqp.uri"}}
+irods:
+  base: "{{.String "irods.base"}}"
+porklock:
+  image: "{{.String "porklock.image"}}"
+  tag: "{{.String "porklock.tag"}}"`
 	t, err := template.New("job_config").Parse(tmpl)
 	if err != nil {
 		return "", err
@@ -170,9 +194,9 @@ func CreateSubmissionDirectory(s *model.Job) (string, error) {
 	return dirPath, err
 }
 
-// CreateSubmissionFiles creates the iplant.cmd and iplant.sh files inside the
+// CreateSubmissionFiles creates the iplant.cmd file inside the
 // directory designated by 'dir'. The return values are the path to the iplant.cmd
-// file, the path to the iplant.sh file, and any errors, in that order.
+// file, and any errors, in that order.
 func CreateSubmissionFiles(dir string, s *model.Job) (string, string, string, error) {
 	cmdContents, err := GenerateCondorSubmit(s)
 	if err != nil {
@@ -236,10 +260,10 @@ func submit(cmdPath string, s *model.Job) (string, error) {
 		fmt.Sprintf("CONDOR_CONFIG=%s", condorCfg),
 	}
 	output, err := cmd.CombinedOutput()
+	logger.Printf("Output of condor_submit:\n%s\n", output)
 	if err != nil {
 		return "", err
 	}
-	logger.Printf("Output of condor_submit:\n%s\n", output)
 	logger.Printf("Extracted ID: %s\n", string(model.ExtractJobID(output)))
 	return string(model.ExtractJobID(output)), err
 }
@@ -350,20 +374,33 @@ func main() {
 			logger.Print(string(body[:]))
 			return
 		}
+		if req.Job.RequestDisk == "" {
+			req.Job.RequestDisk = "0"
+		}
 		switch req.Command {
 		case messaging.Launch:
 			jobID, err := launch(req.Job)
 			if err != nil {
 				logger.Print(err)
-			}
-			logger.Printf("Launched Condor ID %s", jobID)
+				err = client.PublishJobUpdate(&messaging.UpdateMessage{
+					Job:     req.Job,
+					State:   messaging.FailedState,
+					Message: fmt.Sprintf("condor-launcher failed to launch job:\n %s", err),
+				})
+				if err != nil {
+					logger.Print(err)
+				}
+			} else {
+				logger.Printf("Launched Condor ID %s", jobID)
 
-			err = client.PublishJobUpdate(&messaging.UpdateMessage{
-				Job:   req.Job,
-				State: messaging.SubmittedState,
-			})
-			if err != nil {
-				logger.Print(err)
+				err = client.PublishJobUpdate(&messaging.UpdateMessage{
+					Job:     req.Job,
+					State:   messaging.SubmittedState,
+					Message: fmt.Sprintf("Launched Condor ID %s", jobID),
+				})
+				if err != nil {
+					logger.Print(err)
+				}
 			}
 		}
 	})

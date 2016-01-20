@@ -4,6 +4,8 @@ amqp:
 condor:
   condor_config: /etc/condor/condor_config
   path_env_var: /opt/condor/bin/:/usr/bin/:/usr/local/bin/:/bin/
+  log_path: /tmp/
+  request_disk: 0
 
 db:
   uri: postgresql://{{db_user}}:{{db_password}}@{{db_host}}:{{db_port}}/{{db_name}}?sslmode=disable
@@ -16,3 +18,7 @@ irods:
   base: "{{irods.home}}"
   resc: "{{irods.default_resource}}"
   zone: "{{irods.zone}}"
+
+porklock:
+  image: discoenv/porklock
+  tag: "{{docker.tag}}"
