@@ -38,7 +38,7 @@
             :return PermissionWithDetailList
             :summary "Permissions Lookup"
             :description "This endpoint allows callers to look up all permission assignments for this attribute. Only permissions that are visible to the given user will be listed."
-            (ok (attributes/permission-assignment-search (assoc params :attribute_def_name attribute-name))))
+            (ok (attributes/permission-assignment-search (assoc params :attribute_def_names [attribute-name]))))
 
       (PUT* "/" []
             :query [params StandardUserQueryParams]
@@ -48,7 +48,7 @@
             :description "This endpoint allows callers to remove existing permission assignments for this attribute
             and replace them with a new set of permission assignments."
             (attributes/replace-permissions params body attribute-name)
-            (ok (attributes/permission-assignment-search (assoc params :attribute_def_name attribute-name))))
+            (ok (attributes/permission-assignment-search (assoc params :attribute_def_names [attribute-name]))))
 
       (context* "/roles/:role-name/:action-name" []
         :path-params [role-name   :- GroupNamePathParam
