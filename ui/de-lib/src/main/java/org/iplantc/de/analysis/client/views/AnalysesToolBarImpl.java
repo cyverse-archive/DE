@@ -75,8 +75,8 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
     @UiField TextButton showAllTb;
     @UiField AnalysisSearchField searchField;
     @UiField(provided = true) final AnalysesView.Appearance appearance;
-    @UiField
-    MenuItem shareMI;
+    // @UiField
+    // MenuItem shareMI;
     @Inject AsyncProvider<AnalysisParametersDialog> analysisParametersDialogAsyncProvider;
 
 
@@ -168,7 +168,14 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
         relaunchMI.setEnabled(relaunchEnabled);
         cancelMI.setEnabled(cancelEnabled);
         deleteMI.setEnabled(deleteEnabled);
-        shareMI.setEnabled(shareEnabled);
+        /**
+         * always disabled for now.
+         * 
+         */
+        // shareMI.setEnabled(shareEnabled);
+        /**
+         * uncomment when feature is needed.
+         */
         renameMI.setEnabled(renameEnabled);
         updateCommentsMI.setEnabled(updateCommentsEnabled);
     }
@@ -390,8 +397,8 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
     }
     //</editor-fold>
 
-    @UiHandler("shareMI")
-    void onShareSelected(SelectionEvent<Item> event) {
-        presenter.onShareSelected(currentSelection);
-    }
+    /**
+     * @UiHandler("shareMI") void onShareSelected(SelectionEvent<Item> event) {
+     *                       presenter.onShareSelected(currentSelection); }
+     **/
 }
