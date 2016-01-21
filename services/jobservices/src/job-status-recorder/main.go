@@ -49,26 +49,27 @@ func AppVersion() {
 
 func insert(state, invID, msg, host, ip string, sentOn time.Time) (sql.Result, error) {
 	insertStr := `
-INSERT INTO job_status_updates (
-  external_id,
-  message,
-  status,
-  sent_from,
-  sent_from_hostname,
-  sent_on
-) VALUES (
-  $1,
-  $2,
-  $3,
-  $4,
-  $5,
-  $6
-) RETURNING id`
+		INSERT INTO job_status_updates (
+			external_id,
+			message,
+			status,
+			sent_from,
+			sent_from_hostname,
+			sent_on
+		) VALUES (
+			$1,
+			$2,
+			$3,
+			$4,
+			$5,
+			$6
+		) RETURNING id`
 	return db.Exec(insertStr, invID, msg, state, ip, host, sentOn)
 }
 
 func msg(delivery amqp.Delivery) {
 	delivery.Ack(false)
+	logger.Println("Message received")
 	update := &messaging.UpdateMessage{}
 	err := json.Unmarshal(delivery.Body, update)
 	if err != nil {
@@ -79,15 +80,25 @@ func msg(delivery amqp.Delivery) {
 		logger.Println("State was unset, dropping update")
 		return
 	}
+	logger.Printf("State is %s\n", update.State)
 	if update.Job.InvocationID == "" {
 		logger.Println("InvocationID was unset, dropping update")
 	}
+	logger.Printf("InvocationID is %s\n", update.Job.InvocationID)
 	if update.Message == "" {
 		logger.Println("Message set to empty string, setting to UNKNOWN")
 		update.Message = "UNKNOWN"
 	}
+	logger.Printf("Message is: %s", update.Message)
 	var sentFromAddr string
-	if update.Sender != "" {
+	if update.Sender == "" {
+		logger.Println("Unknown sender, setting from address to 0.0.0.0")
+		update.Sender = "0.0.0.0"
+	}
+	parsedIP := net.ParseIP(update.Sender)
+	if parsedIP != nil {
+		sentFromAddr = update.Sender
+	} else {
 		ips, err := net.LookupIP(update.Sender)
 		if err != nil {
 			logger.Print(err)
@@ -97,6 +108,7 @@ func msg(delivery amqp.Delivery) {
 			}
 		}
 	}
+	logger.Printf("Sent from: %s", sentFromAddr)
 	result, err := insert(
 		string(update.State),
 		update.Job.InvocationID,
@@ -151,6 +163,7 @@ func main() {
 		logger.Fatal(err)
 	}
 	defer amqpClient.Close()
+	logger.Println("Connecting to the database...")
 	db, err = sql.Open("postgres", *dbURI)
 	if err != nil {
 		logger.Fatal(err)
@@ -159,6 +172,7 @@ func main() {
 	if err != nil {
 		logger.Fatal(err)
 	}
+	logger.Println("Connected to the database")
 	amqpClient.AddConsumer(messaging.JobsExchange, "job_status_recorder", messaging.UpdatesKey, msg)
 	amqpClient.Listen()
 }
