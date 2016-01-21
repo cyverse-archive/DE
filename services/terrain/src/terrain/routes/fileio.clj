@@ -14,7 +14,7 @@
       (util/controller req fio/download :params))
 
     (POST "/fileio/upload" [dest :as req]
-      (fio/upload (get-in req [:user-info :user]) dest req))
+      (util/controller req fio/upload :params req))
 
     (POST "/fileio/urlupload" [:as req]
       (util/controller req fio/urlupload :params :body))

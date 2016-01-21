@@ -46,7 +46,7 @@
      user - the who will own the data object being uploaded
      dest - the value of the dest query parameter
      req  - the ring request map"
-  [^String user ^String dest ^IPersistentMap req]
+  [{:keys [user dest]} ^IPersistentMap req]
   (let [store                   (partial store-from-form user dest)
         {{file "file"} :params} (multipart/multipart-params-request req {:store store})]
     (when-not file
@@ -54,7 +54,7 @@
     (success-response {:file (data/path-stat user file)})))
 
 (with-pre-hook! #'upload
-  (fn [user dest req]
+  (fn [{:keys [user dest]} req]
     (ccv/validate-field "dest" dest)))
 
 (defn- url-filename
