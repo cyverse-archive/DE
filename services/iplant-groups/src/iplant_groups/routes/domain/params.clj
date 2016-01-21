@@ -37,11 +37,11 @@
     (s/optional-key :attribute_def)
     (describe NonBlankString "The name of an attribute/permission definition to search with.")
 
-    (s/optional-key :attribute_def_name_id)
-    (describe NonBlankString "The id of an attribute name/permision resource to search with.")
+    (s/optional-key :attribute_def_name_ids)
+    (describe [NonBlankString] "The ids of attribute name/permision resources to search with.")
 
-    (s/optional-key :attribute_def_name)
-    (describe NonBlankString "The name of an attribute name/permission resource to search with.")
+    (s/optional-key :attribute_def_names)
+    (describe [NonBlankString] "The names of attribute name/permission resources to search with.")
 
     (s/optional-key :subject_id)
     (describe NonBlankString "The id of a subject to search with.")
