@@ -279,7 +279,14 @@ func Run(client *messaging.Client, dckr *Docker, exit chan messaging.StatusCode)
 			logger.Print(err)
 			running(client, job, fmt.Sprintf("Error uploading outputs to %s: %s", job.OutputDirectory(), err.Error()))
 		} else {
-			running(client, job, fmt.Sprintf("Transfer utility exited with a code of %d when uploading outputs to %s", exitCode, err.Error()))
+			if client == nil {
+				logger.Println("client is nil")
+			}
+			if job == nil {
+				logger.Println("job is nil")
+			}
+			od := job.OutputDirectory()
+			running(client, job, fmt.Sprintf("Transfer utility exited with a code of %d when uploading outputs to %s", exitCode, od))
 		}
 		status = messaging.StatusOutputFailed
 	}
