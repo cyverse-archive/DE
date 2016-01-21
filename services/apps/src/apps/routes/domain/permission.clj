@@ -8,7 +8,7 @@
 
 (defschema UserPermission
   {:user       (describe String "The user ID")
-   :permission (describe String "The permission level assigned to the user")})
+   :permission (describe (enum "read" "write" "own" "") "The permission level assigned to the user")})
 
 (defschema AppPermissions
   {:id          (describe String "The app ID")
