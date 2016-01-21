@@ -1,17 +1,17 @@
 (ns apps.routes.domain.permission
-  (:use [common-swagger-api.schema :only [describe]]
+  (:use [common-swagger-api.schema :only [describe NonBlankString]]
         [schema.core :only [defschema optional-key enum]])
   (:import [java.util UUID]))
 
 (defschema AppIdList
-  {:apps (describe [String] "A List of app identifiers")})
+  {:apps (describe [NonBlankString] "A List of app identifiers")})
 
 (defschema UserPermission
-  {:user       (describe String "The user ID")
+  {:user       (describe NonBlankString "The user ID")
    :permission (describe (enum "read" "write" "own" "") "The permission level assigned to the user")})
 
 (defschema AppPermissions
-  {:id          (describe String "The app ID")
+  {:id          (describe NonBlankString "The app ID")
    :permissions (describe [UserPermission] "The list of user permissions for the app")})
 
 (defschema AppPermissionListing
