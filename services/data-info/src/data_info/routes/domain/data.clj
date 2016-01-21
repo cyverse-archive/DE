@@ -9,6 +9,10 @@
         [heuristomancer.core :as info])
   (:require [schema.core :as s]))
 
+(s/defschema FileUploadQueryParams
+  (assoc StandardUserQueryParams
+         :dest (describe NonBlankString "The destination directory for the uploaded file.")))
+
 (s/defschema AVUMap
   {:attr  (describe String "The attribute name")
    :value (describe String "The value associated with this attribute")

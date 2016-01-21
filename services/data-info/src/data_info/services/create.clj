@@ -14,9 +14,7 @@
 
 (defn- sort-existing
   [cm path]
-  (when-not (validators/good-string? path)
-    (throw+ {:error_code ERR_BAD_OR_MISSING_FIELD
-             :path path}))
+  (validators/good-pathname path)
   (validators/path-not-exists cm path)
 
   (let [path-stack (take-while (complement nil?) (iterate ft/dirname path))

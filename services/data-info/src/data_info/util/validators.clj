@@ -28,6 +28,10 @@
     (let [chars-to-check (set (seq to-check))]
       (empty? (set/intersection (set bad-chars) chars-to-check)))))
 
+(defn good-pathname
+  [^String to-check]
+  (when-not (good-string? to-check)
+    (throw+ {:error_code error/ERR_BAD_OR_MISSING_FIELD :path to-check})))
 
 (defn valid-bool-param
   "Validates that a given value is a Boolean.

@@ -7,6 +7,7 @@
             [data-info.services.rename :as rename]
             [data-info.services.metadata :as meta]
             [data-info.services.entry :as entry]
+            [data-info.services.write :as write]
             [data-info.services.page-file :as page-file]
             [data-info.services.page-tabular :as page-tabular]
             [data-info.util.config :as cfg]
@@ -85,6 +86,17 @@
   "ERR_BAD_PATH_LENGTH, ERR_BAD_DIRNAME_LENGTH, ERR_BAD_BASENAME_LENGTH"
   "ERR_BAD_QUERY_PARAMETER, ERR_MISSING_QUERY_PARAMETER"))
       {:status 501})
+
+    (POST* "/" [:as {uri :uri}]
+      :query [params FileUploadQueryParams]
+      :multipart-params [file :- String]
+      :middlewares [write/wrap-multipart]
+      :return FileStat
+      :summary "Upload a file"
+      :description (str
+"Uploads a file into a directory as a user, given the directory exists and is writeable but the file does not exist."
+(get-error-code-block "ERR_NOT_A_USER, ERR_EXISTS, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE"))
+      (svc/trap uri write/do-upload params file))
 
     (POST* "/directories" [:as {uri :uri}]
       :tags ["bulk"]
