@@ -1,6 +1,7 @@
 (ns apps.service.util
   (:use [apps.transformers :only [string->long]]
-        [apps.util.conversions :only [remove-nil-vals]])
+        [apps.util.conversions :only [remove-nil-vals]]
+        [kameleon.uuids :only [uuidify]])
   (:require [clojure.string :as string])
   (:import [java.util UUID]))
 
@@ -36,6 +37,10 @@
   [s]
   (or (instance? UUID s)
       (re-find #"\A\p{XDigit}{8}(?:-\p{XDigit}{4}){3}-\p{XDigit}{12}\z" s)))
+
+(defn extract-uuids
+  [ids]
+  (seq (map uuidify (filter uuid? ids))))
 
 (defn default-search-params
   [params default-sort-field default-sort-dir]
