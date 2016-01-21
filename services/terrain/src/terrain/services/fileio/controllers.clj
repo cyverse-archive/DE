@@ -54,8 +54,8 @@
     (success-response {:file (data/path-stat user file)})))
 
 (with-pre-hook! #'upload
-  (fn [{:keys [user dest]} req]
-    (ccv/validate-field "dest" dest)))
+  (fn [params req]
+    (ccv/validate-map params {:user string? :dest string?})))
 
 (defn- url-filename
   [address]
