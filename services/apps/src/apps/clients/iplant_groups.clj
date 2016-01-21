@@ -29,25 +29,53 @@
   [& components]
   (str (apply curl/url (config/ipg-base) components)))
 
+(defn- id-from-resource
+  [resource]
+  (last (string/split resource #":")))
+
 (defn lookup-subject
   "Uses iplant-groups's subject lookup by ID endpoint to retrieve user details."
   [user short-username]
   (-> (http/get (grouper-url "subjects" short-username) {:query-params {:user user} :as :json})
       (:body)))
 
+(defn- retrieve-permissions
+  "Retrieves permission assignments from Grouper."
+  [role subject attribute-def attribute-def-names]
+  (->> {:user                grouper-user
+        :role                role
+        :attribute_def       attribute-def
+        :attribute_def_names attribute-def-names
+        :subject_id          subject}
+       (remove-vals nil?)
+       (hash-map :as :json :query-params)
+       (http/get (grouper-url "attributes" "permissions"))
+       :body
+       :assignments))
+
+(defn- retrieve-app-permissions
+  "Retrieves app permission assignments from Grouper."
+  ([subject app-ids]
+     (retrieve-app-permissions nil subject app-ids))
+  ([role subject app-ids]
+     (retrieve-permissions role subject (grouper-app-permission-def) (map grouper-app-resource-name app-ids))))
+
+(defn- group-app-permissions
+  "Groups app permissions by app ID."
+  [perms]
+  (group-by (comp uuidify id-from-resource :name :attribute_definition_name) perms))
+
 (defn load-app-permissions
-  "Loads app permissions from Grouper."
-  [user]
-  (let [id-from-resource #(last (string/split % #":"))]
-    (->> (http/get (grouper-url "attributes" "permissions")
-                   {:query-params {:user          grouper-user
-                                   :role          (grouper-user-group)
-                                   :attribute_def (grouper-app-permission-def)
-                                   :subject_id    user}
-                    :as           :json})
-         (:body)
-         (:assignments)
-         (group-by (comp uuidify id-from-resource :name :attribute_definition_name)))))
+  "Loads app permissions for a user from Grouper."
+  ([user]
+     (load-app-permissions user nil))
+  ([user app-ids]
+     (group-app-permissions (retrieve-app-permissions user app-ids))))
+
+(defn list-app-permissions
+  "Loads an app permission listing from Grouper."
+  [app-ids]
+  (group-app-permissions (retrieve-app-permissions nil app-ids)))
 
 (defn- create-resource
   "Creates a new permission name in grouper."

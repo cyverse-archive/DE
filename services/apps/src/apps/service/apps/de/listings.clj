@@ -14,6 +14,7 @@
         [apps.util.conversions :only [to-long remove-nil-vals]]
         [apps.workspace])
   (:require [apps.clients.iplant-groups :as iplant-groups]
+            [apps.service.apps.de.permissions :as perms]
             [cemerick.url :as curl]))
 
 (def my-public-apps-id (uuidify "00000000-0000-0000-0000-000000000000"))
@@ -22,8 +23,6 @@
 (def default-sort-params
   {:sort-field :lower_case_name
    :sort-dir   :ASC})
-
-(def permission-precedence (into {} (map-indexed (fn [i v] (vector v i)) ["own" "write" "read"])))
 
 (defn- fix-sort-params
   [params]
@@ -202,8 +201,7 @@
   For the time being we'll deal with that by defaulting the permission level to the empty string,
   indicating that the user has no explicit permissions on the app."
   [app perms]
-  (let [level (first (sort-by permission-precedence (map :action_name (perms (:id app)))))]
-    (assoc app :permission (or level ""))))
+  (assoc app :permission (or (perms/get-permission-level perms (:id app)) "")))
 
 (defn- format-app-listing
   "Formats certain app fields into types more suitable for the client."

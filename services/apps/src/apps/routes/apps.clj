@@ -7,7 +7,8 @@
         [apps.user :only [current-user]]
         [apps.util.coercions :only [coerce!]]
         [ring.util.http-response :only [ok]])
-  (:require [apps.service.apps :as apps]))
+  (:require [apps.routes.domain.permission :as perms]
+            [apps.service.apps :as apps]))
 
 (defroutes* apps
   (GET* "/" []
@@ -58,6 +59,16 @@
          App doesn't exist in the database at all, however, then that is treated as an error
          condition."
          (ok (apps/delete-apps current-user body)))
+
+  (POST* "/permission-lister" []
+        :query [params SecuredQueryParams]
+        :body [body (describe perms/AppIdList "The app permission listing request.")]
+        :return perms/AppPermissionListing
+        :summary "List permissions for one or more apps."
+        :description "This endpoint allows the caller to list the permissions for one or more apps. The
+        authenticated user must have ownership permission on every app in the request body for this
+        endpoint to succeed."
+        (ok (apps/list-app-permissions current-user (:apps body))))
 
   (GET* "/:app-id" []
         :path-params [app-id :- AppIdJobViewPathParam]
