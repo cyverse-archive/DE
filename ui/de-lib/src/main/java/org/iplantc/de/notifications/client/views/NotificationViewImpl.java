@@ -23,6 +23,7 @@ import com.sencha.gxt.widget.core.client.FramedPanel;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
+import com.sencha.gxt.widget.core.client.event.RefreshEvent;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.grid.GridSelectionModel;
@@ -78,6 +79,16 @@ public class NotificationViewImpl implements NotificationView {
         grid.setSelectionModel(sm);
         grid.getSelectionModel().setSelectionMode(SelectionMode.MULTI);
         addGridSelectionHandler();
+        addGridRefreshHandler();
+    }
+
+    private void addGridRefreshHandler() {
+        grid.addRefreshHandler(new RefreshEvent.RefreshHandler() {
+            @Override
+            public void onRefresh(RefreshEvent event) {
+                presenter.onGridRefresh();
+            }
+        });
     }
 
     private void addGridSelectionHandler() {

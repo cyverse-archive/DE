@@ -38,6 +38,8 @@ public interface NotificationView extends IsWidget {
         void setRefreshButton(TextButton refreshBtn);
 
         NotificationCategory getCurrentCategory();
+
+        void onGridRefresh();
     }
 
     /**
