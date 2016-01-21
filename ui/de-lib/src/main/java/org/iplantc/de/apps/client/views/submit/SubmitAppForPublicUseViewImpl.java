@@ -41,6 +41,7 @@ import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.button.ToolButton;
 import com.sencha.gxt.widget.core.client.container.HtmlLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
+import com.sencha.gxt.widget.core.client.event.CancelEditEvent;
 import com.sencha.gxt.widget.core.client.event.CompleteEditEvent;
 import com.sencha.gxt.widget.core.client.event.CompleteEditEvent.CompleteEditHandler;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
@@ -53,8 +54,10 @@ import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.grid.Grid.GridCell;
+import com.sencha.gxt.widget.core.client.grid.editing.AbstractGridEditing;
+import com.sencha.gxt.widget.core.client.grid.editing.ClicksToEdit;
 import com.sencha.gxt.widget.core.client.grid.editing.GridEditing;
-import com.sencha.gxt.widget.core.client.grid.editing.GridInlineEditing;
+import com.sencha.gxt.widget.core.client.grid.editing.GridRowEditing;
 import com.sencha.gxt.widget.core.client.selection.CellSelection;
 import com.sencha.gxt.widget.core.client.selection.CellSelectionChangedEvent;
 import com.sencha.gxt.widget.core.client.selection.CellSelectionChangedEvent.CellSelectionChangedHandler;
@@ -150,8 +153,19 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
         CellSelectionModel<AppRefLink> csm = buildRefCellSelectionModel();
         grid.setSelectionModel(csm);
         editing = createGridEditing();
+        ((AbstractGridEditing<AppRefLink>)editing).setClicksToEdit(ClicksToEdit.TWO);
         ColumnConfig<AppRefLink, String> cc = grid.getColumnModel().getColumn(0);
         final TextField editor = buildRefLinkEditor();
+        editing.addCancelEditHandler(new CancelEditEvent.CancelEditHandler<AppRefLink>() {
+            @Override
+            public void onCancelEdit(CancelEditEvent<AppRefLink> event) {
+                int editedRow = event.getEditCell().getRow();
+                AppRefLink refLink = listStore.get(editedRow);
+                if (refLink.getRefLink() == null) {
+                    listStore.remove(refLink);
+                }
+            }
+        });
         editing.addEditor(cc, editor);
         editing.addCompleteEditHandler(new CompleteEditHandler<AppRefLink>() {
 
@@ -164,6 +178,7 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
             }
         });
         grid.getView().setAutoExpandColumn(cc);
+        grid.setHeight(100);
     }
 
     private void addHelp() {
@@ -366,7 +381,7 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
     }
 
     private GridEditing<AppRefLink> createGridEditing() {
-        return new GridInlineEditing<>(grid);
+        return new GridRowEditing<>(grid);
     }
 
     @Override
