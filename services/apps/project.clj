@@ -31,7 +31,8 @@
                  [me.raynes/fs "1.4.6"]
                  [mvxcvi/clj-pgp "0.8.0"]]
   :plugins [[lein-ring "0.9.6"]
-            [lein-swank "1.4.4"]]
+            [lein-swank "1.4.4"]
+            [test2junit "1.1.3"]]
   :profiles {:dev {:resource-paths ["conf/test"]}}
   ;; compojure-api route macros should not be AOT compiled:
   ;; https://github.com/metosin/compojure-api/issues/135#issuecomment-121388539

@@ -60,6 +60,7 @@ public class NotificationToolbarViewImpl implements NotificationToolbarView {
         cboFilter.add(NotificationCategory.ANALYSIS);
         cboFilter.add(NotificationCategory.DATA);
         cboFilter.add(NotificationCategory.TOOLREQUEST);
+        cboFilter.add(NotificationCategory.PERMANENTIDREQUEST);
         cboFilter.setValue(NotificationCategory.ALL);
         cboFilter.addSelectionHandler(new SelectionHandler<NotificationCategory>() {
             @Override
@@ -79,6 +80,11 @@ public class NotificationToolbarViewImpl implements NotificationToolbarView {
     public void setDeleteButtonEnabled(boolean enabled) {
         btnDelete.setEnabled(enabled);
 
+    }
+
+    @Override
+    public void setDeleteAllButtonEnabled(boolean enabled) {
+        btnDeleteAll.setEnabled(enabled);
     }
 
     @UiHandler("btnDelete")

@@ -25,4 +25,5 @@
                  [medley "0.6.0"]
                  [compojure "1.3.4"]
                  [ring "1.4.0"]]
-  :plugins [[lein-ring "0.9.3"]])
+  :plugins [[lein-ring "0.9.3"]
+            [test2junit "1.1.3"]])

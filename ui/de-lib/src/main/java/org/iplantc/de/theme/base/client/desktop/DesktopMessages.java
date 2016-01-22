@@ -95,4 +95,6 @@ public interface DesktopMessages extends Messages {
 
     @Key("welcome")
     String welcome();
+
+    String requestHistoryError();
 }

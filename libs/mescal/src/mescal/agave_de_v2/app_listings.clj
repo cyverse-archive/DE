@@ -35,6 +35,7 @@
      :pipeline_eligibility {:is_valid true :reason ""}
      :rating               {:average 0.0 :total 0}
      :step_count           1
+     :permission           "read"
      :wiki_url             ""}))
 
 (defn list-apps

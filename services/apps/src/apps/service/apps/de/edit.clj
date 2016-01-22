@@ -13,6 +13,7 @@
         [apps.workspace :only [get-workspace]]
         [slingshot.slingshot :only [throw+]])
   (:require [clojure.set :as set]
+            [apps.clients.iplant-groups :as iplant-groups]
             [apps.persistence.app-metadata :as persistence]))
 
 (def ^:private copy-prefix "Copy of ")
@@ -391,6 +392,7 @@
       (when-not (empty? references)
         (persistence/set-app-references app-id references))
       (dorun (map-indexed (partial update-app-group task-id) groups))
+      (iplant-groups/register-private-app (:shortUsername user) app-id)
       (get-app-ui user app-id))))
 
 (defn- name-too-long?

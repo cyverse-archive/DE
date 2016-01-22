@@ -128,6 +128,9 @@
 (def not-unique-handler
   (default-error-handler resp/bad-request ec/ERR_NOT_UNIQUE))
 
+(def bad-request-handler
+  (default-error-handler resp/bad-request ec/ERR_BAD_REQUEST))
+
 (def request-failed-handler
   (default-error-handler resp/internal-server-error ec/ERR_REQUEST_FAILED))
 
@@ -207,6 +210,7 @@
     ::bad-request-field        bad-request-field-handler
     ::missing-query-params     missing-query-params-handler
     ::bad-query-params         bad-query-params-handler
+    ::bad-request              bad-request-handler
     ::request-failed           request-failed-handler
     ::temporary-redirect       temporary-redirect-handler
     ::unavailable              unavailable-handler

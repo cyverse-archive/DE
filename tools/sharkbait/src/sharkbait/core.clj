@@ -1,11 +1,16 @@
 (ns sharkbait.core
   (:gen-class)
-  (:require [common-cli.core :as cli]
+  (:require [clojure.java.jdbc :as jdbc]
+            [clojure.string :as string]
+            [common-cli.core :as cli]
+            [sharkbait.apps :as apps]
             [sharkbait.consts :as consts]
+            [sharkbait.db :as db]
             [sharkbait.folders :as folders]
-            [sharkbait.roles :as roles]
+            [sharkbait.permissions :as perms]
             [sharkbait.sessions :as sessions]
-            [sharkbait.subjects :as subjects]))
+            [sharkbait.subjects :as subjects]
+            [sharkbait.users :as users]))
 
 (def tool-info
   {:desc "Utility for initializing Grouper for use with the DE."
@@ -14,32 +19,72 @@
    :art-id "sharkbait"})
 
 (def cli-options
-  [["-h" "--help" "Show help." :default false]
-   ["-v" "--version" "Show the sharkbait version." :default false]])
-
-(def ^:private default-folder-names
-  [consts/de-users-folder])
+  [["-?" "--help" "Show help." :default false]
+   ["-h" "--host HOST" "The database hostname." :default "localhost"]
+   ["-p" "--port PORT" "The database port number." :default 5432 :parse-fn #(Integer/parseInt %)]
+   ["-d" "--database DATABASE" "The database name." :default "de"]
+   ["-U" "--user USER" "The database username." :default "de"]
+   ["-v" "--version" "Show the sharkbait version." :default false]
+   ["-e" "--environment ENVIRONMENT" "The name of the DE environment." :default "dev"]])
 
 (defn- perform-root-actions
   "Performs the actions that require superuser privileges."
-  []
+  [folder-names]
   (let [session (sessions/create-grouper-session)]
     (try
-      (-> (folders/find-folder session consts/de-folder)
+      (-> (folders/find-folder session (:de folder-names))
           (folders/grant-privs (subjects/find-subject consts/de-username true) #{:stem}))
       (finally (sessions/stop-grouper-session session)))))
 
+(defn- load-de-subjects
+  "Loads all subjects with entries in the DE database."
+  [db-spec session]
+  (println "Loading DE subjects...")
+  (->> (db/list-de-users db-spec)
+       (mapv #(string/replace (:username %) #"@.*$" ""))
+       (subjects/find-subjects)))
+
+(defn- register-de-users
+  "Adds all DE users to the de-users group."
+  [session folder-names subjects]
+  (println "Registering DE users...")
+  (users/register-de-users session (:de-users folder-names) subjects))
+
+(defn- create-permission-defs
+  "Creates the permission definitions used by the DE."
+  [session folder-names]
+  (println "Creating DE permission definitions...")
+  (perms/create-permission-def session (:de-apps folder-names) consts/app-permission-def-name)
+  (perms/create-permission-def session (:de-analyses folder-names) consts/analysis-permission-def-name))
+
+(defn- register-de-apps
+  [db-spec folder-names session subjects]
+  (println "Registering DE apps...")
+  (let [subjects (into {} (map (juxt #(.getId %) identity) subjects))]
+    (apps/register-de-apps db-spec session subjects folder-names consts/app-permission-def-name)))
+
+(defn- register-de-entities
+  "Registers DE entities in Grouper."
+  [db-spec folder-names session subjects]
+  (time (register-de-users session folder-names subjects))
+  (time (create-permission-defs session folder-names))
+  (time (register-de-apps db-spec folder-names session subjects)))
+
 (defn- perform-de-user-actions
   "Performs the actions that do not require superuser privileges."
-  []
+  [db-spec folder-names]
   (let [session (sessions/create-grouper-session consts/de-username)]
     (try
-      (dorun (map (partial folders/find-folder session) default-folder-names))
-      (roles/create-role session consts/de-users-folder consts/de-users-role-name)
+      (dorun (map (comp (partial folders/find-folder session) folder-names)
+                  [:de-users :de-apps :de-analyses]))
+      (register-de-entities db-spec folder-names session (time (load-de-subjects db-spec session)))
       (finally (sessions/stop-grouper-session session)))))
 
 (defn -main
   [& args]
-  (let [{:keys [options]} (cli/handle-args tool-info args (constantly cli-options))]
-    (perform-root-actions)
-    (perform-de-user-actions)))
+  (let [{:keys [options]} (cli/handle-args tool-info args (constantly cli-options))
+        folder-names      (folders/folder-names (:environment options))
+        db-spec           (db/build-spec options)]
+    (with-open [db-conn (jdbc/get-connection db-spec)]
+      (perform-root-actions folder-names)
+      (perform-de-user-actions (jdbc/add-connection db-spec db-conn) folder-names))))

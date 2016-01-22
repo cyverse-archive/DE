@@ -102,6 +102,9 @@
     (POST "/apps/shredder" [:as {:keys [body]}]
           (service/success-response (apps/delete-apps body)))
 
+    (POST "/apps/permission-lister" [:as {:keys [body]}]
+          (service/success-response (apps/list-permissions body)))
+
     (GET "/apps/:app-id" [app-id]
          (service/success-response (apps/get-app app-id)))
 

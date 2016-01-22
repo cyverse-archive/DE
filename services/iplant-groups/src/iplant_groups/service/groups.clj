@@ -8,19 +8,19 @@
   {:groups (mapv fmt/format-group (grouper/group-search user folder search))})
 
 (defn get-group
-  [group-id {:keys [user]}]
-  (if-let [group (grouper/get-group user group-id)]
+  [group-name {:keys [user]}]
+  (if-let [group (grouper/get-group user group-name)]
     (fmt/format-group-with-detail group)
-    (service/not-found "group" group-id)))
+    (service/not-found "group" group-name)))
 
 (defn get-group-members
-  [group-id {:keys [user]}]
-  (let [[subjects attribute-names] (grouper/get-group-members user group-id)]
+  [group-name {:keys [user]}]
+  (let [[subjects attribute-names] (grouper/get-group-members user group-name)]
     {:members (mapv #(fmt/format-subject attribute-names %) subjects)}))
 
 (defn get-group-privileges
-  [group-id {:keys [user]}]
-  (let [[privileges attribute-names] (grouper/get-group-privileges user group-id)]
+  [group-name {:keys [user]}]
+  (let [[privileges attribute-names] (grouper/get-group-privileges user group-name)]
     {:privileges (mapv #(fmt/format-privilege attribute-names %) privileges)}))
 
 (defn add-group
@@ -29,20 +29,20 @@
     (fmt/format-group-with-detail group)))
 
 (defn add-group-privilege
-  [group-id subject-id privilege-name {:keys [user]}]
-  (let [[privilege attribute-names] (grouper/add-group-privileges user group-id subject-id [privilege-name])]
+  [group-name subject-id privilege-name {:keys [user]}]
+  (let [[privilege attribute-names] (grouper/add-group-privileges user group-name subject-id [privilege-name])]
     (fmt/format-privilege attribute-names privilege :wsSubject)))
 
 (defn remove-group-privilege
-  [group-id subject-id privilege-name {:keys [user]}]
-  (let [[privilege attribute-names] (grouper/remove-group-privileges user group-id subject-id [privilege-name])]
+  [group-name subject-id privilege-name {:keys [user]}]
+  (let [[privilege attribute-names] (grouper/remove-group-privileges user group-name subject-id [privilege-name])]
     (fmt/format-privilege attribute-names privilege :wsSubject)))
 
 (defn update-group
-  [group-id {:keys [name description display_extension]} {:keys [user]}]
-  (let [group (grouper/update-group user group-id name display_extension description)]
+  [group-name {:keys [name description display_extension]} {:keys [user]}]
+  (let [group (grouper/update-group user group-name name display_extension description)]
     (fmt/format-group-with-detail group)))
 
 (defn delete-group
-  [group-id {:keys [user]}]
-  (fmt/format-group (grouper/delete-group user group-id)))
+  [group-name {:keys [user]}]
+  (fmt/format-group (grouper/delete-group user group-name)))

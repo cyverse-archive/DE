@@ -145,6 +145,16 @@
   [props config-valid configs app-routes-enabled]
   "terrain.email.tool-request-src")
 
+(cc/defprop-str permanent-id-request-dest-addr
+  "The destination email address for Permanent ID Request messages."
+  [props config-valid configs app-routes-enabled]
+  "terrain.email.perm-id-req.dest")
+
+(cc/defprop-str permanent-id-request-src-addr
+  "The source email address of Permanent ID Request messages."
+  [props config-valid configs app-routes-enabled]
+  "terrain.email.perm-id-req.src")
+
 (cc/defprop-str feedback-dest-addr
   "The destination email address for DE feedback messages."
   [props config-valid configs app-routes-enabled]
@@ -437,6 +447,46 @@
   "The default name of the default job output directory."
   [props config-valid configs]
   "terrain.job-exec.default-output-folder")
+
+(cc/defprop-str permanent-id-curators-group
+  "The data store group that manages permanent ID request data."
+  [props config-valid configs]
+  "terrain.permanent-id.curators-group")
+
+(cc/defprop-str permanent-id-staging-dir
+  "The data store directory where user folders are staged for permanent ID requests."
+  [props config-valid configs]
+  "terrain.permanent-id.staging-dir")
+
+(cc/defprop-str permanent-id-publish-dir
+  "The data store directory where curated folders with a permanent ID are published."
+  [props config-valid configs]
+  "terrain.permanent-id.publish-dir")
+
+(cc/defprop-str ezid-base-url
+  "The EZID API base URL."
+  [props config-valid configs]
+  "terrain.permanent-id.ezid.base-url")
+
+(cc/defprop-str ezid-username
+  "The EZID API account username."
+  [props config-valid configs]
+  "terrain.permanent-id.ezid.username")
+
+(cc/defprop-str ezid-password
+  "The EZID API account password."
+  [props config-valid configs]
+  "terrain.permanent-id.ezid.password")
+
+(cc/defprop-str ezid-shoulders-ark
+  "The EZID ARK shoulder or namespace."
+  [props config-valid configs]
+  "terrain.permanent-id.ezid.shoulders.ark")
+
+(cc/defprop-str ezid-shoulders-doi
+  "The EZID DOI shoulder or namespace."
+  [props config-valid configs]
+  "terrain.permanent-id.ezid.shoulders.doi")
 
 (cc/defprop-str prefs-base-url
   "The hostname of the user-preferences service"

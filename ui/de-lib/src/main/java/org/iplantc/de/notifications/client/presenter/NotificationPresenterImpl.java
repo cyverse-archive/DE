@@ -185,6 +185,15 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
     }
 
     @Override
+    public void onGridRefresh() {
+        if (view.getListStore().size() > 0) {
+            toolbar.setDeleteAllButtonEnabled(true);
+        } else {
+            toolbar.setDeleteAllButtonEnabled(false);
+        }
+    }
+
+    @Override
     public void go(HasOneWidget container) {
         container.setWidget(view.asWidget());
         view.setLoader(initProxyLoader());

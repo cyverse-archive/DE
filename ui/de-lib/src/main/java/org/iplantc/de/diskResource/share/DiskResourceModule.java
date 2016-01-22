@@ -74,6 +74,10 @@ public interface DiskResourceModule {
 
         String MENU_ITEM_IMPORT_FROM_COGE = ".CogeImport";
 
+        String MENU_ITEM_BULK_METADATA = ".bulkmetadata";
+
+        String MENU_ITEM_REQUEST_DOI = ".requestdoi";
+
     }
 
     interface MetadataIds {

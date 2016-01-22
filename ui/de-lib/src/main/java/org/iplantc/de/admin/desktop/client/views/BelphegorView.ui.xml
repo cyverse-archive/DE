@@ -48,6 +48,10 @@
              type="com.sencha.gxt.widget.core.client.TabItemConfig">
         <ui:attributes text="Metadata Templates"/>
     </ui:with>
+      <ui:with field="permIdConfig"
+             type="com.sencha.gxt.widget.core.client.TabItemConfig">
+        <ui:attributes text="Permanent Id Requests"/>
+    </ui:with>
     <con:Viewport>
         <con:BorderLayoutContainer>
             <con:north layoutData="{northData}">
@@ -70,6 +74,10 @@
                     </gxt:child>
                      <gxt:child config="{detemplateConfig}">
                         <con:SimpleContainer ui:field="metadataPanel">
+                        </con:SimpleContainer>
+                    </gxt:child>
+                       <gxt:child config="{permIdConfig}">
+                        <con:SimpleContainer ui:field="permIdPanel">
                         </con:SimpleContainer>
                     </gxt:child>
                 </gxt:TabPanel>

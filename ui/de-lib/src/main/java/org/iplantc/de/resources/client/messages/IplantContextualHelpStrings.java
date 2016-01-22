@@ -2,7 +2,7 @@ package org.iplantc.de.resources.client.messages;
 
 /**
  * Interface to represent the messages contained in resource bundle:
- * 	/Users/sriram/lib-workspace/ui-resources-module/src/main/resources/org/iplantc/core/resources/client/messages/IplantContextualHelpStrings.properties'.
+ * 
  */
 public interface IplantContextualHelpStrings extends com.google.gwt.i18n.client.Messages {
   

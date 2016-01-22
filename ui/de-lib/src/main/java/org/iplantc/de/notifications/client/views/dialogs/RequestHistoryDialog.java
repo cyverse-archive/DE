@@ -1,10 +1,10 @@
 package org.iplantc.de.notifications.client.views.dialogs;
 
-import org.iplantc.de.client.models.toolRequest.ToolRequestHistory;
+import org.iplantc.de.client.models.requestStatus.RequestHistory;
+import org.iplantc.de.client.models.requestStatus.RequestHistoryProperties;
 import org.iplantc.de.client.models.toolRequest.ToolRequestStatus;
 import org.iplantc.de.commons.client.widgets.ContextualHelpPopup;
-import org.iplantc.de.notifications.client.views.ToolRequestHistoryProperties;
-import org.iplantc.de.notifications.client.views.cells.ToolRequestStatusCell;
+import org.iplantc.de.notifications.client.views.cells.RequestStatusCell;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.ToolRequestStatusHelpStyle;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -47,15 +47,15 @@ import java.util.List;
  * @author psarando
  * 
  */
-public class ToolRequestHistoryDialog extends Dialog {
+public class RequestHistoryDialog extends Dialog {
 
     private static ToolRequestHistoryPanelUiBinder uiBinder = GWT
             .create(ToolRequestHistoryPanelUiBinder.class);
-    private static ToolRequestHistoryProperties historyProperties = GWT
-            .create(ToolRequestHistoryProperties.class);
+    private static RequestHistoryProperties historyProperties = GWT
+            .create(RequestHistoryProperties.class);
 
-    @UiTemplate("ToolRequestHistoryPanel.ui.xml")
-    interface ToolRequestHistoryPanelUiBinder extends UiBinder<Widget, ToolRequestHistoryDialog> {
+    @UiTemplate("RequestHistoryPanel.ui.xml")
+    interface ToolRequestHistoryPanelUiBinder extends UiBinder<Widget, RequestHistoryDialog> {
     }
 
     interface Templates extends SafeHtmlTemplates {
@@ -67,47 +67,47 @@ public class ToolRequestHistoryDialog extends Dialog {
     private static Templates templates = GWT.create(Templates.class);
 
     @UiField
-    Grid<ToolRequestHistory> grid;
+    Grid<RequestHistory> grid;
 
     @UiField
-    ColumnModel<ToolRequestHistory> cm;
+    ColumnModel<RequestHistory> cm;
 
     @UiField
-    ListStore<ToolRequestHistory> listStore;
+    ListStore<RequestHistory> listStore;
 
     @UiField
-    GridView<ToolRequestHistory> gridView;
+    GridView<RequestHistory> gridView;
 
     @UiFactory
-    ColumnModel<ToolRequestHistory> createColumnModel() {
-        List<ColumnConfig<ToolRequestHistory, ?>> list = Lists.newArrayList();
+    ColumnModel<RequestHistory> createColumnModel() {
+        List<ColumnConfig<RequestHistory, ?>> list = Lists.newArrayList();
 
-        ColumnConfig<ToolRequestHistory, String> status = new ColumnConfig<ToolRequestHistory, String>(
+        ColumnConfig<RequestHistory, String> status = new ColumnConfig<RequestHistory, String>(
                 historyProperties.status(), 50, I18N.DISPLAY.status());
-        status.setCell(new ToolRequestStatusCell());
+        status.setCell(new RequestStatusCell());
 
-        ColumnConfig<ToolRequestHistory, Date> statusDate = new ColumnConfig<ToolRequestHistory, Date>(
+        ColumnConfig<RequestHistory, Date> statusDate = new ColumnConfig<RequestHistory, Date>(
                 historyProperties.statusDate(), 100, I18N.DISPLAY.date());
         PredefinedFormat statusDateFormat = DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM;
         statusDate.setCell(new DateCell(DateTimeFormat.getFormat(statusDateFormat)));
 
-        ColumnConfig<ToolRequestHistory, String> comments = new ColumnConfig<ToolRequestHistory, String>(
+        ColumnConfig<RequestHistory, String> comments = new ColumnConfig<RequestHistory, String>(
                 historyProperties.comments(), 100, I18N.DISPLAY.comments());
 
         list.add(status);
         list.add(statusDate);
         list.add(comments);
 
-        return new ColumnModel<ToolRequestHistory>(list);
+        return new ColumnModel<RequestHistory>(list);
     }
 
     @UiFactory
-    ListStore<ToolRequestHistory> createListStore() {
-        ListStore<ToolRequestHistory> store = new ListStore<ToolRequestHistory>(
-                new ModelKeyProvider<ToolRequestHistory>() {
+    ListStore<RequestHistory> createListStore() {
+        ListStore<RequestHistory> store = new ListStore<RequestHistory>(
+                new ModelKeyProvider<RequestHistory>() {
 
                     @Override
-                    public String getKey(ToolRequestHistory item) {
+                    public String getKey(RequestHistory item) {
                         return item.getStatus().toString() + item.getStatusDate();
                     }
                 });
@@ -117,15 +117,15 @@ public class ToolRequestHistoryDialog extends Dialog {
 
     private ContextualHelpPopup helpPopup;
 
-    public ToolRequestHistoryDialog(String name, List<ToolRequestHistory> history) {
-        setHeadingText(name + " - " + I18N.DISPLAY.toolRequestStatus()); //$NON-NLS-1$
+    public RequestHistoryDialog(String name, List<RequestHistory> history) {
+        setHeadingText(name + " - " + I18N.DISPLAY.requestStatus()); //$NON-NLS-1$
         setSize("480", "320"); //$NON-NLS-1$ //$NON-NLS-2$
         setResizable(true);
         setHideOnButtonClick(true);
 
         add(uiBinder.createAndBindUi(this));
 
-        StoreSortInfo<ToolRequestHistory> sortInfo = new StoreSortInfo<ToolRequestHistory>(
+        StoreSortInfo<RequestHistory> sortInfo = new StoreSortInfo<RequestHistory>(
                 historyProperties.statusDate(), SortDir.DESC);
         grid.getStore().addSortInfo(sortInfo);
         grid.getStore().addAll(history);

@@ -1,13 +1,11 @@
 package org.iplantc.de.diskResource.client.views.metadata;
 
-import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateAttribute;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 import org.iplantc.de.client.models.diskResources.TemplateAttributeSelectionItem;
-import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.validators.UrlValidator;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.diskResource.client.MetadataView;
@@ -214,14 +212,13 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     private boolean valid;
     private MetadataView.Presenter presenter;
 
-    public DiskResourceMetadataViewImpl(final DiskResource dr,
-                                        final DiskResourceUtil diskResourceUtil) {
+    public DiskResourceMetadataViewImpl(boolean isEditable) {
 
         alc = new AccordionLayoutContainer();
         centerPanel = new VerticalLayoutContainer();
         timestampFormat = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT);
 
-        writable = diskResourceUtil.isWritable(dr);
+        writable = isEditable;
         valid = true;
         templateStore = new ListStore<>(new TemplateInfoModelKeyProvider());
 

@@ -6,7 +6,14 @@
         [clj-icat-direct.icat :as icat]
         [clojure-commons.error-codes]
         [slingshot.slingshot :only [try+ throw+]])
-  (:require [terrain.util.config :as cfg]))
+  (:require [terrain.services.filesystem.common-paths :as cp]
+            [terrain.util.config :as cfg]))
+
+(defn not-superuser
+  [user]
+  (when (cp/super-user? user)
+    (throw+ {:type :clojure-commons.exception/not-authorized
+             :user user})))
 
 (defn num-paths-okay?
   [path-count]

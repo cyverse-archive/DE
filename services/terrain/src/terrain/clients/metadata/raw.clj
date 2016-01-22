@@ -25,7 +25,9 @@
   ([params]
      {:query-params     (user-params params)
       :as               :stream
-      :follow-redirects false}))
+      :follow-redirects false})
+  ([params param-keys]
+    (get-options (user-params params param-keys))))
 
 (def delete-options get-options)
 
@@ -190,3 +192,43 @@
 (defn admin-delete-template
   [template-id]
   (http/delete (metadata-url "admin" "templates" template-id) (delete-options)))
+
+(defn list-permanent-id-requests
+  [params]
+  (http/get (metadata-url "permanent-id-requests") (get-options params [:statuses
+                                                                        :limit
+                                                                        :offset
+                                                                        :sort-field
+                                                                        :sort-dir])))
+
+(defn create-permanent-id-request
+  [request]
+  (http/post (metadata-url "permanent-id-requests") (post-options request)))
+
+(defn list-permanent-id-request-status-codes
+  []
+  (http/get (metadata-url "permanent-id-requests" "status-codes") (get-options)))
+
+(defn list-permanent-id-request-types
+  []
+  (http/get (metadata-url "permanent-id-requests" "types") (get-options)))
+
+(defn get-permanent-id-request
+  [request-id]
+  (http/get (metadata-url "permanent-id-requests" request-id) (get-options)))
+
+(defn admin-list-permanent-id-requests
+  [params]
+  (http/get (metadata-url "admin" "permanent-id-requests") (get-options params [:statuses
+                                                                                :limit
+                                                                                :offset
+                                                                                :sort-field
+                                                                                :sort-dir])))
+
+(defn admin-get-permanent-id-request
+  [request-id]
+  (http/get (metadata-url "admin" "permanent-id-requests" request-id) (get-options)))
+
+(defn update-permanent-id-request
+  [request-id request]
+  (http/post (metadata-url "admin" "permanent-id-requests" request-id "status") (post-options request)))

@@ -344,3 +344,7 @@
 (defn admin-add-app-docs
   [user app-id body]
   (.adminAddAppDocs (get-apps-client user) app-id body))
+
+(defn list-app-permissions
+  [user app-ids]
+  {:apps (.listAppPermissions (get-apps-client user) app-ids)})

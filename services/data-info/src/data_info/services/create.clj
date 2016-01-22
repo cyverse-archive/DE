@@ -10,8 +10,7 @@
             [clj-jargon.item-ops :as ops]
             [data-info.util.config :as cfg]
             [data-info.util.logging :as dul]
-            [data-info.util.validators :as validators]
-            [data-info.util.paths :as paths]))
+            [data-info.util.validators :as validators]))
 
 (defn- sort-existing
   [cm path]
@@ -63,8 +62,6 @@
 (with-pre-hook! #'do-create
   (fn [params body]
     (dul/log-call "do-create" params body)
-    (log/info "Body: " body)
-    (when (paths/super-user? (:user params))
-      (throw+ {:error_code ERR_NOT_AUTHORIZED :user (:user params)}))))
+    (log/info "Body: " body)))
 
 (with-post-hook! #'do-create (dul/log-func "do-create"))

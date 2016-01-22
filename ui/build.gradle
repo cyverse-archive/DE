@@ -50,6 +50,7 @@ subprojects {
         exclude '**/GwtTest**'
         // Disable the test report for the individual test task
         reports.html.enabled = false
+        jvmArgs += [ "-XX:MaxPermSize=256m" ]
     }
 }
 

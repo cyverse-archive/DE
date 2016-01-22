@@ -12,6 +12,7 @@
             [apps.service.apps.de.job-view :as job-view]
             [apps.service.apps.de.listings :as listings]
             [apps.service.apps.de.metadata :as app-metadata]
+            [apps.service.apps.de.permissions :as perms]
             [apps.service.apps.de.pipeline-edit :as pipeline-edit]
             [apps.service.apps.de.validation :as app-validation]
             [apps.service.apps.job-listings :as job-listings]
@@ -188,7 +189,7 @@
     (app-admin/update-app body))
 
   (getAdminAppCategories [_ params]
-    (listings/get-admin-app-groups params))
+    (listings/get-admin-app-groups user params))
 
   (adminAddCategory [_ body]
     (app-admin/add-category body))
@@ -220,4 +221,8 @@
 
   (adminAddAppDocs [_ app-id body]
     (when (util/uuid? app-id)
-      (docs/add-app-docs user (uuidify app-id) body))))
+      (docs/add-app-docs user (uuidify app-id) body)))
+
+  (listAppPermissions [_ app-ids]
+    (when-let [uuids (util/extract-uuids app-ids)]
+      (perms/list-app-permissions user uuids))))

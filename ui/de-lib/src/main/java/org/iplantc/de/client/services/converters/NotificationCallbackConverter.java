@@ -85,6 +85,10 @@ public class NotificationCallbackConverter extends AsyncCallbackConverter<String
                     GWT.log("SYSTEM  category");
                     break;
 
+                case PERMANENTIDREQUEST:
+                    GWT.log("Permanent Id request category");
+                    msg.setContext(payload.getPayload());
+                    break;
                 case TOOLREQUEST:
                     GWT.log("TOOLREQUEST  category");
                     msg.setContext(payload.getPayload());

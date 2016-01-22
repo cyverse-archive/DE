@@ -1,6 +1,7 @@
 package org.iplantc.de.client.services.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
+
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.UserInfo;
@@ -8,6 +9,7 @@ import org.iplantc.de.client.models.notifications.Counts;
 import org.iplantc.de.client.models.notifications.Notification;
 import org.iplantc.de.client.models.notifications.NotificationAutoBeanFactory;
 import org.iplantc.de.client.services.MessageServiceFacade;
+import org.iplantc.de.client.services.PermIdRequestUserServiceFacade;
 import org.iplantc.de.client.services.callbacks.NotificationCallback;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.services.converters.NotificationCallbackConverter;
@@ -156,6 +158,13 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
                                                             userInfo.getUsername());
 
         deServiceFacade.getServiceData(wrapper, new StringToVoidCallbackConverter(callback));
+    }
+
+    @Override
+    public void getPermanentIdRequestStatusHistory(String id, AsyncCallback<String> callback) {
+        String address = PermIdRequestUserServiceFacade.PERMID_REQUEST + "/" + id;
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
+        deServiceFacade.getServiceData(wrapper, callback);
     }
 
 }

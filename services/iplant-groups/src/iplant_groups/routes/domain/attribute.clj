@@ -64,7 +64,8 @@
    :attribute_definition_name (describe {:id String :name String} "This assignment's attribute-name information.")
    (s/optional-key :group) (describe {:id String :name String} "The group this was assigned to, if relevant.")
    (s/optional-key :membership) (describe {:id String} "The membership this was assigned to, if relevant.")
-   (s/optional-key :subject) (describe {:id String :source_id String} "The member/subject this was assigned to, if relevant.")})
+   (s/optional-key :subject) (describe {:id String :source_id String} "The member/subject this was assigned to, if relevant.")
+   (s/optional-key :permission_type) (describe String "The type of the permission assignment (e.g. role or role_subject)")})
 
 (s/defschema PermissionAssignment
   (dissoc AttributeAssignment
@@ -94,3 +95,19 @@
 
 (s/defschema PermissionAllowed
   {:allowed (describe Boolean "Whether this permission should be marked as allowed or disallowed (latter to override an inherited permission).")})
+
+(s/defschema RolePermission
+  {:role_name   (describe String "The full name of the role.")
+   :action_name (describe String "The name of the permission action (e.g. read, write or own).")})
+
+(s/defschema MembershipPermission
+  {:role_name      (describe String "The full name of the role.")
+   :subject_id     (describe String "The subject identifier.")
+   :action_name    (describe String "The name of the permission action (e.g. read, write or own).")})
+
+(s/defschema PermissionReplacement
+  {(s/optional-key :role_permissions)
+   (describe [RolePermission] "The new list of role permissions.")
+
+   (s/optional-key :membership_permissions)
+   (describe [MembershipPermission] "The new list of membership permissions.")})

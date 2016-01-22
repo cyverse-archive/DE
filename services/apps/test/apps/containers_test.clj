@@ -21,6 +21,12 @@
 
 (def image-info-map (add-image-info {:name "discoenv/de-db" :tag "latest" :url "https://www.google.com"}))
 
+(def data-container-map
+  (add-data-container {:name        "discoenv/foo"
+                       :tag         "latest"
+                       :url         "https://www.google.com"
+                       :name_prefix "foo"
+                       :read_only   true}))
 
 (deftest image-tests []
   (is (not (image? {:name "test" :tag "test"})))
@@ -86,7 +92,7 @@
 
   (is (settings-has-volume? (:id settings-map) (:id volume-map))))
 
-(def volumes-from-map (add-volumes-from (:id settings-map) "test-name"))
+(def volumes-from-map (add-volumes-from (:id settings-map) (:id data-container-map)))
 
 (defn volumes-from-test []
   (is (not (nil? (:id volumes-from-map))))
@@ -96,7 +102,7 @@
 
   (is (volumes-from? (:id volumes-from-map)))
 
-  (is (volumes-from-mapping? (:id settings-map) "test-name"))
+  (is (volumes-from-mapping? (:id settings-map) (:id data-container-map)))
 
   (is (settings-has-volumes-from? (:id settings-map) (:id volumes-from-map))))
 

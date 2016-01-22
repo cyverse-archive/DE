@@ -6,20 +6,24 @@ set -x
 CMD=$1
 
 if [ -z $CMD ]; then
-    CMD=test
+    CMD=test2junit
 fi
 
 OS=$(uname)
+DBCONTAINER=apps-de-db
 
-if [ $(docker ps | grep de-db | wc -l) -gt 0 ]; then
-    docker kill de-db
+if [ $(docker ps -qf "name=$DBCONTAINER" | wc -l) -gt 0 ]; then
+    docker kill $DBCONTAINER
 fi
 
-if [ $(docker ps -a | grep de-db | wc -l) -gt 0 ]; then
-    docker rm de-db
+if [ $(docker ps -aqf "name=$DBCONTAINER" | wc -l) -gt 0 ]; then
+    docker rm $DBCONTAINER
 fi
 
-docker run --name de-db -e POSTGRES_PASSWORD=notprod -d -p 5432:5432 discoenv/de-db
-sleep 5
-docker run --rm --link de-db:postgres discoenv/de-db-loader:dev
-docker run -i -t --rm -v $(pwd):/build -v ~/.m2:/root/.m2 -w /build --link de-db:postgres clojure lein $CMD
+docker pull discoenv/de-db
+docker run --name $DBCONTAINER -e POSTGRES_PASSWORD=notprod -d -p 35432:5432 discoenv/de-db
+sleep 10
+docker pull discoenv/de-db-loader:dev
+docker run --rm --link $DBCONTAINER:postgres discoenv/de-db-loader:dev
+docker pull discoenv/buildenv
+docker run --rm -v $(pwd):/build -w /build --link $DBCONTAINER:postgres discoenv/buildenv lein $CMD

@@ -14,6 +14,10 @@
   []
   (service/bad-request "Cannot edit documentation for HPC apps with this service"))
 
+(defn- reject-app-permission-request
+  []
+  (service/bad-request "Cannot list or modify the permissions of HPC apps with this service"))
+
 (deftype AgaveApps [agave user-has-access-token? user]
   apps.protocols.Apps
 
@@ -131,4 +135,9 @@
 
   (adminAddAppDocs [_ app-id _]
     (when-not (util/uuid? app-id)
-      (reject-app-documentation-edit-request))))
+      (reject-app-documentation-edit-request)))
+
+  (listAppPermissions [_ app-ids]
+    (when (and (user-has-access-token?)
+               (some (complement util/uuid?) app-ids))
+      (reject-app-permission-request))))

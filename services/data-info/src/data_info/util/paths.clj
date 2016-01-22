@@ -8,10 +8,6 @@
 (def IPCSYSTEM "ipc-system-avu")
 
 
-(defn ^Boolean super-user?
-  [^String username]
-  (.equals username (cfg/irods-user)))
-
 (defn ^String user-home-dir
   [^String user]
   (ft/path-join (cfg/irods-home) user))

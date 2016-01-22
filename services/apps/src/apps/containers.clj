@@ -270,7 +270,7 @@
                       (fields :id :name_prefix :read_only)
                       (with container-images (fields :name :tag :url)))})
 
-(defn- add-data-container
+(defn add-data-container
   [data-container-info]
   (let [image-uuid (find-or-add-image-id data-container-info)
         insert-values (assoc (select-keys data-container-info [:name_prefix :read_only])
@@ -314,7 +314,7 @@
   (pos? (count (select container-volumes-from
                        (where {:id (uuidify volumes-from-uuid)})))))
 
-(defn- volumes-from-mapping?
+(defn volumes-from-mapping?
   "Returns true if the combination of the container_settings UUID and container
    already exists in the container_volumes_from table."
   [settings-uuid data-container-uuid]
@@ -339,13 +339,13 @@
                        (where {:container_settings_id (uuidify settings-uuid)
                                :id                    (uuidify volumes-from-uuid)})))))
 
-(defn- add-volumes-from
+(defn add-volumes-from
   "Adds a record to container_volumes_from associated with the given
    container_settings UUID."
   [settings-uuid data-container-uuid]
   (insert container-volumes-from
           (values {:container_settings_id (uuidify settings-uuid)
-                   :data_containers_id     (uuidify data-container-uuid)})))
+                   :data_containers_id    (uuidify data-container-uuid)})))
 
 (defn delete-volumes-from
   "Deletes a record from container_volumes_from."

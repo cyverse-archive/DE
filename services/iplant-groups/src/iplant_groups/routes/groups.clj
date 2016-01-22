@@ -25,8 +25,8 @@
         :description "This endpoint allows adding a new group."
         (ok (groups/add-group body params)))
 
-  (context* "/:group-id" []
-    :path-params [group-id :- GroupIdPathParam]
+  (context* "/:group-name" []
+    :path-params [group-name :- GroupNamePathParam]
 
     (GET* "/" []
           :query       [params StandardUserQueryParams]
@@ -34,7 +34,7 @@
           :summary     "Get Group Information"
           :description "This endpoint allows callers to get detailed information about a single
           group."
-          (ok (groups/get-group group-id params)))
+          (ok (groups/get-group group-name params)))
 
     (PUT* "/" []
           :return      GroupWithDetail
@@ -42,22 +42,23 @@
           :body        [body (describe GroupUpdate "The group information to update.")]
           :summary     "Update Group"
           :description "This endpoint allows callers to update group information."
-          (ok (groups/update-group group-id body params)))
+          (ok (groups/update-group group-name body params)))
 
     (DELETE* "/" []
           :query       [params StandardUserQueryParams]
           :return      GroupStub
           :summary     "Delete Group"
           :description "This endpoint allows deleting a group if the current user has permissions to do so."
-          (ok (groups/delete-group group-id params)))
+          (ok (groups/delete-group group-name params)))
 
     (context* "/privileges" []
       (GET* "/" []
             :query       [params StandardUserQueryParams]
             :return      GroupPrivileges
             :summary     "List Group Privileges"
-            :description "This endpoint allows callers to list the privileges visible to the current user of a single group."
-            (ok (groups/get-group-privileges group-id params)))
+            :description "This endpoint allows callers to list the privileges visible to the current user of a single
+            group."
+            (ok (groups/get-group-privileges group-name params)))
 
       (context* "/:subject-id/:privilege-name" []
         :path-params [subject-id :- SubjectIdPathParam
@@ -67,19 +68,21 @@
               :query       [params StandardUserQueryParams]
               :return      Privilege
               :summary     "Add Group Privilege"
-              :description "This endpoint allows callers to add a specific privilege for a specific subject to a specific group."
-              (ok (groups/add-group-privilege group-id subject-id privilege-name params)))
+              :description "This endpoint allows callers to add a specific privilege for a specific subject to a
+              specific group."
+              (ok (groups/add-group-privilege group-name subject-id privilege-name params)))
 
         (DELETE* "/" []
               :query       [params StandardUserQueryParams]
               :return      Privilege
               :summary     "Remove Group Privilege"
-              :description "This endpoint allows callers to remove a specific privilege for a specific subject to a specific group."
-              (ok (groups/remove-group-privilege group-id subject-id privilege-name params)))))
+              :description "This endpoint allows callers to remove a specific privilege for a specific subject to a
+              specific group."
+              (ok (groups/remove-group-privilege group-name subject-id privilege-name params)))))
 
     (GET* "/members" []
           :query       [params StandardUserQueryParams]
           :return      GroupMembers
           :summary     "List Group Members"
           :description "This endpoint allows callers to list the members of a single group."
-          (ok (groups/get-group-members group-id params)))))
+          (ok (groups/get-group-members group-name params)))))

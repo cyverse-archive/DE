@@ -24,6 +24,8 @@ terrain.base-url = {{ terrain.base }}
 terrain.email.base-url          = {{ iplant_email.base }}
 terrain.email.tool-request-dest = {{ de_mail_to_addr }}
 terrain.email.tool-request-src  = {{ de_mail_from_addr }}
+terrain.email.perm-id-req.dest  = {{ permanent_id.admin_email_addr }}
+terrain.email.perm-id-req.src   = {{ permanent_id.email_from_addr }}
 terrain.email.feedback-dest     = {{ de_feedback_to_addr }}
 
 # Apps connection settings
@@ -131,3 +133,12 @@ terrain.saved-searches.host = http://{{ saved_searches.host }}:{{ saved_searches
 
 # Tree URLs Settings
 terrain.tree-urls.host = http://{{ tree_urls.host }}:{{ tree_urls.port }}
+
+terrain.permanent-id.curators-group     = {{ irods.data_curators_group }}
+terrain.permanent-id.staging-dir        = /iplant/home/shared/data_commons/staging
+terrain.permanent-id.publish-dir        = /iplant/home/shared/data_commons/curated
+terrain.permanent-id.ezid.base-url      = https://ezid.cdlib.org
+terrain.permanent-id.ezid.username      = {{ permanent_id.ezid.username }}
+terrain.permanent-id.ezid.password      = {{ permanent_id.ezid.password }}
+terrain.permanent-id.ezid.shoulders.ark = {{ permanent_id.ezid.shoulders.ark }}
+terrain.permanent-id.ezid.shoulders.doi = {{ permanent_id.ezid.shoulders.doi }}

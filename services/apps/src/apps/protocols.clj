@@ -60,4 +60,5 @@
   (ownerEditAppDocs [_ app-id body])
   (ownerAddAppDocs [_ app-id body])
   (adminEditAppDocs [_ app-id body])
-  (adminAddAppDocs [_ app-id body]))
+  (adminAddAppDocs [_ app-id body])
+  (listAppPermissions [_ app-ids]))
