@@ -22,11 +22,6 @@ public class PermanentIdRequestAdminServiceFacadeImpl implements PermanentIdRequ
     @Inject
     private DiscEnvApiService deService;
 
-    @Inject
-    public PermanentIdRequestAdminServiceFacadeImpl() {
-
-    }
-
     @Override
     public void getPermanentIdRequests(AsyncCallback<String> callback) {
         String address = PERMID_ADMIN_REQUEST;

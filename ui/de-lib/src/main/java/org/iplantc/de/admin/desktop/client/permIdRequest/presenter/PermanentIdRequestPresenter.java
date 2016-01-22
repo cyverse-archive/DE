@@ -1,5 +1,10 @@
 package org.iplantc.de.admin.desktop.client.permIdRequest.presenter;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HasOneWidget;
+import com.google.inject.Inject;
+import com.google.web.bindery.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import org.iplantc.de.admin.desktop.client.permIdRequest.service.PermanentIdRequestAdminServiceFacade;
 import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView;
 import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView.PermanentIdRequestPresenterAppearance;
@@ -9,17 +14,11 @@ import org.iplantc.de.client.models.identifiers.PermanentIdRequestAutoBeanFactor
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestList;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestUpdate;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
+import org.iplantc.de.commons.client.views.dialogs.IplantErrorDialog;
 import org.iplantc.de.resources.client.messages.I18N;
-
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HasOneWidget;
-import com.google.inject.Inject;
-import com.google.web.bindery.autobean.shared.AutoBean;
-import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 /**
  * 
@@ -36,8 +35,6 @@ public class PermanentIdRequestPresenter implements Presenter {
     final PermanentIdRequestAdminServiceFacade prsvc;
 
     private PermanentIdRequest selectedRequest;
-
-    final DiskResourceUtil diskResourceUtil = DiskResourceUtil.getInstance();
 
     private final PermanentIdRequestAutoBeanFactory factory;
 
@@ -103,8 +100,8 @@ public class PermanentIdRequestPresenter implements Presenter {
 
     @Override
     public void updateRequest(final PermanentIdRequestUpdate update) {
-        view.mask(I18N.DISPLAY.loadingMask());
         if (selectedRequest != null && update != null) {
+            view.mask(I18N.DISPLAY.loadingMask());
             prsvc.updatePermanentIdRequestStatus(selectedRequest.getId(),
                                                  update,
                                                  new AsyncCallback<String>() {
@@ -131,8 +128,8 @@ public class PermanentIdRequestPresenter implements Presenter {
 
     @Override
     public void createPermanentId() {
-        view.mask(I18N.DISPLAY.loadingMask());
         if (selectedRequest != null) {
+            view.mask(I18N.DISPLAY.loadingMask());
             prsvc.createPermanentId(selectedRequest.getId(), new AsyncCallback<String>() {
 
                 @Override
@@ -140,6 +137,8 @@ public class PermanentIdRequestPresenter implements Presenter {
                     view.unmask();
                     IplantAnnouncer.getInstance()
                                    .schedule(new ErrorAnnouncementConfig(appearance.createPermIdFailure()));
+                    IplantErrorDialog ied = new IplantErrorDialog(I18N.DISPLAY.error(), caught.getMessage());
+                    ied.show();
                 }
 
                 @Override

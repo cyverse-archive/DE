@@ -140,12 +140,18 @@ public class PermanentIdRequestViewImpl extends Composite implements PermanentId
             public void onDialogHide(DialogHideEvent event) {
 
                 switch (event.getHideButton()) {
+                    case OK:
+                        break;
+                    case CANCEL:
+                        break;
+                    case CLOSE:
+                        break;
                     case YES:
                         presenter.createPermanentId();
                         break;
                     case NO:
                         break;
-                    case CANCEL:
+                    default:
                         break;
                 }
             }
