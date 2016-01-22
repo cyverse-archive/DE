@@ -5,11 +5,6 @@
   name: gpstathis.elasticsearch
 
 # Temporarily use iPlant's fork
-#- src: Rackspace_Automation.epel
-- src: https://github.com/iPlantCollaborativeOpenSource/epel
-  name: Rackspace_Automation.epel
-
-# Temporarily use iPlant's fork
 #- src: Rackspace_Automation.rabbitmq
 - src: https://github.com/iPlantCollaborativeOpenSource/rabbitmq
   name: Rackspace_Automation.rabbitmq
