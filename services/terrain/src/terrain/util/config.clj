@@ -145,6 +145,16 @@
   [props config-valid configs app-routes-enabled]
   "terrain.email.tool-request-src")
 
+(cc/defprop-str permanent-id-request-dest-addr
+  "The destination email address for Permanent ID Request messages."
+  [props config-valid configs app-routes-enabled]
+  "terrain.email.perm-id-req.dest")
+
+(cc/defprop-str permanent-id-request-src-addr
+  "The source email address of Permanent ID Request messages."
+  [props config-valid configs app-routes-enabled]
+  "terrain.email.perm-id-req.src")
+
 (cc/defprop-str feedback-dest-addr
   "The destination email address for DE feedback messages."
   [props config-valid configs app-routes-enabled]
