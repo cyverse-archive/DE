@@ -483,4 +483,19 @@ public class ToolbarViewDefaultAppearance implements ToolbarView.Appearance {
     public String selectMetadata() {
         return displayMessages.selectMetadataFile();
     }
+
+    @Override
+    public String requestDOI() {
+        return displayMessages.requestDOI();
+    }
+
+    @Override
+    public String doiLinkMsg() {
+        return displayMessages.doiLinkMsg();
+    }
+
+    @Override
+    public String needDOI() {
+        return displayMessages.needDOI();
+    }
 }

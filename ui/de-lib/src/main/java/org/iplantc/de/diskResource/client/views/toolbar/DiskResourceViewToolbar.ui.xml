@@ -139,6 +139,10 @@
 										text="{appearance.saveMetadataMenuItem}" icon="{appearance.metadataIcon}"
 										enabled="false" />
 
+									<menu:MenuItem ui:field="doiMi"
+                                        text="{appearance.requestDOI}" icon="{appearance.metadataIcon}"
+                                        enabled="false" />
+
 								</menu:Menu>
 							</menu:submenu>
 						</menu:MenuItem>

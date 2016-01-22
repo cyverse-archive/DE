@@ -374,4 +374,11 @@ public interface DiskResourceServiceFacade {
                                  String destFolder,
                                  boolean force,
                                  AsyncCallback<String> callback);
+
+    /**
+     * @param uuid
+     * @param path
+     * @param callback
+     */
+    void requestIdentifier(String uuid, String path, AsyncCallback<String> callback);
 }
