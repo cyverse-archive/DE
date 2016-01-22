@@ -52,4 +52,13 @@
      <replace-with class="org.iplantc.de.theme.base.client.admin.metadata.DefaultEditMetadataTemplateViewAppearance">
         <when-type-is class="org.iplantc.de.admin.desktop.client.metadata.view.EditMetadataTemplateView.EditMetadataTemplateViewAppearance" />
     </replace-with>
+    
+    <replace-with class="org.iplantc.de.theme.base.client.admin.permIdRequest.PermanentIdRequestViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView.PermanentIdRequestViewAppearance"></when-type-is>
+    </replace-with>
+    
+     <replace-with class="org.iplantc.de.theme.base.client.admin.permIdRequest.PermanentIdRequestPresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView.PermanentIdRequestPresenterAppearance"></when-type-is>
+    </replace-with>
 </module>
+

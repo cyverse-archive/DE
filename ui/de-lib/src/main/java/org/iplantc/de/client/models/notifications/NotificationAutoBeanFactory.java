@@ -3,7 +3,7 @@ package org.iplantc.de.client.models.notifications;
 
 import org.iplantc.de.client.models.notifications.payload.PayloadAnalysis;
 import org.iplantc.de.client.models.notifications.payload.PayloadData;
-import org.iplantc.de.client.models.notifications.payload.PayloadToolRequest;
+import org.iplantc.de.client.models.notifications.payload.PayloadRequest;
 
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanFactory;
@@ -28,5 +28,5 @@ public interface NotificationAutoBeanFactory extends AutoBeanFactory {
 
     AutoBean<PayloadData> getNotificationPayloadData();
 
-    AutoBean<PayloadToolRequest> getNotificationToolRequestContext();
+    AutoBean<PayloadRequest> getNotificationToolRequestContext();
 }

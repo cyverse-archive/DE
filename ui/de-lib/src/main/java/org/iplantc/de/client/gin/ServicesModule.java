@@ -36,7 +36,7 @@ final class ServicesModule extends AbstractGinModule {
         bind(TagsServiceFacade.class).to(TagsServiceFacadeImpl.class);
         bind(FileSystemMetadataServiceFacade.class).to(FileSystemMetadataServiceFacadeImpl.class);
         bind(AppMetadataServiceFacade.class).to(AppMetadataServiceFacadeImpl.class);
-
+        bind(PermIdRequestUserServiceFacade.class).to(PermIdRequestUserServiceFacadeImpl.class);
         bind(DiscEnvApiService.class).in(Singleton.class);
     }
 

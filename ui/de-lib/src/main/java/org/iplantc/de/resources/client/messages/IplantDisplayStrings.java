@@ -2617,9 +2617,9 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
      *
      * @return translated "Tool Request Status"
      */
-    @DefaultMessage("Tool Request Status")
-    @Key("toolRequestStatus")
-    String toolRequestStatus();
+    @DefaultMessage("Request Status")
+    @Key("requestStatus")
+    String requestStatus();
     
     /**
      * Translated "tool Request Form Intro".

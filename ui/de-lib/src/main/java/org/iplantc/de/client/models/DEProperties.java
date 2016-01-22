@@ -21,6 +21,14 @@ public class DEProperties {
      */
     private static final String DATA_MGMT_BASE_URL = "org.iplantc.services.de-data-mgmt.base";
 
+    private static final String PERM_ID_BASE_URL = "org.iplantc.services.permIdRequests";
+
+    /**
+     * Perm Id request
+     * 
+     */
+    private static final String PERM_REQUEST_BASE_URL = "org.iplantc.services.permIdRequests";
+
     private static final String DATA_MGMT_ADMIN_BASE_URL = "org.iplantc.services.admin.de-data-mgmt.base";
 
     /**
@@ -95,6 +103,11 @@ public class DEProperties {
     private String dataMgmtBaseUrl;
 
     /**
+     * The base URL of the perm id services
+     */
+    private String permIdBaseUrl;
+
+    /**
      * The base URL of the file I/O services.
      */
     private String fileIoBaseUrl;
@@ -128,6 +141,7 @@ public class DEProperties {
     private String defaultTrashCategoryId;
 
     private String pathListFileIdentifier;
+
 
     public String getPathListFileIdentifier() {
         return pathListFileIdentifier;
@@ -215,6 +229,7 @@ public class DEProperties {
         keepaliveInterval = getInt(properties, KEEPALIVE_INTERVAL, -1);
         pathListFileIdentifier = properties.get(PATH_LIST_FILE_IDENTIFIER);
         communityDataPath = properties.get(COMMUNITY_DATA_PATH);
+        permIdBaseUrl = properties.get(PERM_ID_BASE_URL);
     }
 
     /**
@@ -334,6 +349,15 @@ public class DEProperties {
 
     public String getCommunityDataPath() {
         return communityDataPath;
+    }
+
+    /**
+     * 
+     * 
+     * @return
+     */
+    public String getPermIdBaseUrl() {
+        return permIdBaseUrl;
     }
 
 }

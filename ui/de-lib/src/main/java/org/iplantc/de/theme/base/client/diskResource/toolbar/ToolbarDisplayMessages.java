@@ -128,4 +128,10 @@ public interface ToolbarDisplayMessages extends Messages {
 
     String applyBulkMetadata();
 
+    String requestDOI();
+
+    String doiLinkMsg();
+
+    String needDOI();
+
 }

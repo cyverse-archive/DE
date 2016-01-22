@@ -56,5 +56,7 @@ public interface MessageServiceFacade {
     void deleteAll(AsyncCallback<String> callback);
 
     void markAllNotificationsSeen(AsyncCallback<Void> callback);
+    
+    void getPermanentIdRequestStatusHistory(String id, AsyncCallback<String> callback);
 
 }
