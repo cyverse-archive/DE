@@ -6,6 +6,7 @@
         [common-swagger-api.schema])
   (:require [metadata.routes.avus :as avu-routes]
             [metadata.routes.comments :as comment-routes]
+            [metadata.routes.permanent-id-requests :as perm-id-routes]
             [metadata.routes.favorites :as favorites-routes]
             [metadata.routes.status :as status-routes]
             [metadata.routes.tags :as tag-routes]
@@ -24,6 +25,8 @@
             :version "2.0.0"}
      :tags [{:name "service-info", :description "Service Information"}
             {:name "avus", :description "Attribute/Value/Unit Management"}
+            {:name "permanent-id-requests", :description "Permanent ID Request Management"}
+            {:name "admin-permanent-id-requests", :description "Admin Permanent ID Request Mgmt"}
             {:name "data-comments", :description "Comments on Data Items"}
             {:name "app-comments", :description "Comments on Apps"}
             {:name "favorites", :description "Favorite Resources"}
@@ -41,6 +44,8 @@
      wrap-logging]
     status-routes/status
     avu-routes/avus
+    perm-id-routes/permanent-id-request-routes
+    perm-id-routes/admin-permanent-id-request-routes
     comment-routes/data-comment-routes
     comment-routes/app-comment-routes
     comment-routes/admin-data-comment-routes

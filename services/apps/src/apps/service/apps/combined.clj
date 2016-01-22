@@ -207,4 +207,7 @@
   (adminAddAppDocs [_ app-id body]
     (->> (map #(.adminAddAppDocs % app-id body) clients)
          (remove nil?)
-         (first))))
+         (first)))
+
+  (listAppPermissions [_ app-ids]
+    (mapcat #(.listAppPermissions % app-ids) clients)))

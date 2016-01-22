@@ -18,6 +18,7 @@
             [terrain.services.filesystem.stat :as st]
             [terrain.services.filesystem.users :as users]
             [terrain.services.filesystem.uuids :as uuids]
+            [terrain.services.filesystem.validators :as validators]
             [terrain.util.config :as cfg]
             [terrain.util.service :as svc])
   (:import [clojure.lang IPersistentMap ISeq Keyword]
@@ -91,8 +92,9 @@
     (raw/read-tabular-chunk (:user params) path-uuid (:separator body) (:page body) (:chunk-size body))))
 
 (defn create-dirs
-  [params body]
-  (raw/create-dirs (:user params) (:paths body)))
+  [{:keys [user]} {:keys [paths]}]
+  (validators/not-superuser user)
+  (raw/create-dirs user paths))
 
 (defn create-dir
   [params {:keys [path]}]
@@ -148,11 +150,12 @@
 
 (defn rename
   "Uses the data-info set-name endpoint to rename a file within the same directory."
-  [params body]
-  (assertions/assert-valid (= (ft/dirname (:dest body)) (ft/dirname (:source body)))
+  [{:keys [user]} {:keys [source dest]}]
+  (validators/not-superuser user)
+  (assertions/assert-valid (= (ft/dirname dest) (ft/dirname source))
       "The directory names of the source and destination must match for this endpoint.")
-  (let [path-uuid (uuid-for-path (:user params) (:source body))]
-    (raw/rename (:user params) path-uuid (ft/basename (:dest body)))))
+  (let [path-uuid (uuid-for-path user source)]
+    (raw/rename user path-uuid (ft/basename dest))))
 
 (defn- move-single
   "Uses the data-info single-item directory change endpoint to move an item to a different directory."
@@ -162,28 +165,32 @@
 
 (defn move
   "Uses the data-info single and bulk mover endpoints to move an item or many items into a new directory."
-  [params body]
-  (if (= 1 (count (:sources body)))
-    (move-single (:user params) (first (:sources body)) (:dest body))
-    (raw/move-multi (:user params) (:sources body) (:dest body))))
+  [{:keys [user]} {:keys [sources dest]}]
+  (validators/not-superuser user)
+  (if (= 1 (count sources))
+    (move-single user (first sources) dest)
+    (raw/move-multi user sources dest)))
 
 (defn move-contents
   "Uses the data-info set-children-directory-name endpoint to move the contents of one directory
    into another directory."
-  [params body]
-  (let [path-uuid (uuid-for-path (:user params) (:source body))]
-    (raw/move-contents (:user params) path-uuid (:dest body))))
+  [{:keys [user]} {:keys [source dest]}]
+  (validators/not-superuser user)
+  (let [path-uuid (uuid-for-path user source)]
+    (raw/move-contents user path-uuid dest)))
 
 (defn delete-paths
     "Uses the data-info deleter endpoint to delete many paths."
-    [params body]
-    (raw/delete-paths (:user params) (:paths body)))
+    [{:keys [user]} {:keys [paths]}]
+    (validators/not-superuser user)
+    (raw/delete-paths user paths))
 
 (defn delete-contents
     "Uses the data-info delete-children endpoint to delete the contents of a directory."
-    [params body]
-    (let [path-uuid (uuid-for-path (:user params) (:path body))]
-      (raw/delete-contents (:user params) path-uuid)))
+    [{:keys [user]} {:keys [path]}]
+    (validators/not-superuser user)
+    (let [path-uuid (uuid-for-path user path)]
+      (raw/delete-contents user path-uuid)))
 
 (defn delete-trash
     "Uses the data-info trash endpoint to empty the trash of a user."

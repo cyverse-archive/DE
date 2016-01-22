@@ -5,10 +5,11 @@
 
 (def TargetIdPathParam (describe UUID "The target item's UUID"))
 (def DataTypeEnum (s/enum "file" "folder"))
+(def DataTypeParam (describe DataTypeEnum "The type of the requested data item."))
 
 (s/defschema StandardDataItemQueryParams
   (assoc StandardUserQueryParams
-    :data-type (describe DataTypeEnum "The type of the requested data item.")))
+    :data-type DataTypeParam))
 
 (s/defschema DataIdList
   {:filesystem (describe [UUID] "A list of UUIDs, each for a file or folder")})
