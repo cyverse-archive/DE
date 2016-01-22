@@ -9,7 +9,6 @@ infosquito
 iplant-email
 iplant-groups
 jex
-jex-events
 kifshare
 apps
 metadata
