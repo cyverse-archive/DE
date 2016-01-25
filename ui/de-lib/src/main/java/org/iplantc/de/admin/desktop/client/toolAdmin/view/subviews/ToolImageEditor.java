@@ -3,11 +3,10 @@ package org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews;
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
 import org.iplantc.de.client.models.tool.ToolImage;
 import org.iplantc.de.commons.client.validators.UrlValidator;
+import org.iplantc.de.commons.client.widgets.EmptyStringValueChangeHandler;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
@@ -22,23 +21,6 @@ public class ToolImageEditor extends Composite implements Editor<ToolImage> {
     private static ToolImageEditorBinder uiBinder = GWT.create(ToolImageEditorBinder.class);
 
     interface ToolImageEditorBinder extends UiBinder<Widget, ToolImageEditor> {
-    }
-
-    private static class StringValueChangeHandler implements ValueChangeHandler<String> {
-
-        TextField field;
-
-        public StringValueChangeHandler(TextField field) {
-            this.field = field;
-        }
-
-        @Override
-        public void onValueChange(ValueChangeEvent<String> event) {
-            String value = event.getValue();
-            if (value != null && value.isEmpty()) {
-                field.setValue(null);
-            }
-        }
     }
 
     @Ignore
@@ -59,8 +41,8 @@ public class ToolImageEditor extends Composite implements Editor<ToolImage> {
         nameLabel.setHTML(appearance.containerImageNameLabel());
         urlEditor.addValidator(new UrlValidator());
 
-        tagEditor.addValueChangeHandler(new StringValueChangeHandler(tagEditor));
-        urlEditor.addValueChangeHandler(new StringValueChangeHandler(urlEditor));
+        tagEditor.addValueChangeHandler(new EmptyStringValueChangeHandler(tagEditor));
+        urlEditor.addValueChangeHandler(new EmptyStringValueChangeHandler(urlEditor));
     }
 
     public boolean isValid(){

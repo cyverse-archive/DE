@@ -2,11 +2,10 @@ package org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews;
 
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
 import org.iplantc.de.client.models.tool.ToolContainer;
+import org.iplantc.de.commons.client.widgets.EmptyStringValueChangeHandler;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -29,24 +28,6 @@ public class ToolContainerEditor extends Composite implements Editor<ToolContain
     }
 
     private static ToolContainerEditorBinder uiBinder = GWT.create(ToolContainerEditorBinder.class);
-
-
-    private static class StringValueChangeHandler implements ValueChangeHandler<String> {
-
-        TextField field;
-
-        public StringValueChangeHandler(TextField field) {
-            this.field = field;
-        }
-
-        @Override
-        public void onValueChange(ValueChangeEvent<String> event) {
-            String value = event.getValue();
-            if (value != null && value.isEmpty()) {
-                field.setValue(null);
-            }
-        }
-    }
 
     @UiField TextField nameEditor;
     @UiField TextField workingDirectoryEditor;
@@ -104,10 +85,10 @@ public class ToolContainerEditor extends Composite implements Editor<ToolContain
         containerVolumesLabel.setHTML(appearance.containerVolumesLabel());
         containerVolumesFromLabel.setHTML(appearance.containerVolumesFromLabel());
 
-        nameEditor.addValueChangeHandler(new StringValueChangeHandler(nameEditor));
-        entryPointEditor.addValueChangeHandler(new StringValueChangeHandler(entryPointEditor));
-        networkModeEditor.addValueChangeHandler(new StringValueChangeHandler(networkModeEditor));
-        workingDirectoryEditor.addValueChangeHandler(new StringValueChangeHandler(workingDirectoryEditor));
+        nameEditor.addValueChangeHandler(new EmptyStringValueChangeHandler(nameEditor));
+        entryPointEditor.addValueChangeHandler(new EmptyStringValueChangeHandler(entryPointEditor));
+        networkModeEditor.addValueChangeHandler(new EmptyStringValueChangeHandler(networkModeEditor));
+        workingDirectoryEditor.addValueChangeHandler(new EmptyStringValueChangeHandler(workingDirectoryEditor));
 
         setUpLabelToolTips();
     }
