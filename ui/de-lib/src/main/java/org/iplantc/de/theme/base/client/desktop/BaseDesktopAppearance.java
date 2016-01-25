@@ -126,8 +126,8 @@ public class BaseDesktopAppearance implements DesktopView.DesktopAppearance {
     }
 
     @Override
-    public String publicSubmitTip() {
-        return displayStrings.publicSubmitTip();
+    public String completeRequiredFieldsError() {
+        return displayStrings.completeRequiredFieldsError();
     }
 
     @Override

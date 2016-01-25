@@ -90,7 +90,7 @@ public interface DesktopView extends IsWidget {
 
         IconButton.IconConfig notificationsConfig();
 
-        String publicSubmitTip();
+        String completeRequiredFieldsError();
 
         String rootApplicationTitle(int count);
 

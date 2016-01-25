@@ -62,6 +62,8 @@ public class BelphegorAppsGinModule extends AbstractGinModule {
         bind(ToolRequestView.Presenter.class).to(ToolRequestPresenterImpl.class);
         bind(ToolRequestServiceFacade.class).to(ToolRequestServiceFacadeImpl.class);
 
+
+
         bind(SystemMessageView.class).to(SystemMessageViewImpl.class);
         bind(SystemMessageView.Presenter.class).to(SystemMessagePresenterImpl.class);
         bind(SystemMessageServiceFacade.class).to(SystemMessageServiceFacadeImpl.class);
