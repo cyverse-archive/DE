@@ -24,12 +24,13 @@
       (cxu/forbidden (str "insufficient privileges for apps: " (string/join ", " forbidden-apps))))))
 
 (defn- format-app-permissions
-  [perms app-id]
+  [user perms app-id]
   (->> (group-by (comp string/lower-case :id :subject) (perms app-id))
        (map (fn [[subject subject-perms]] {:user subject :permission (get-permission-level subject-perms)}))
+       (remove (comp (partial = user) :user))
        (hash-map :id (str app-id) :permissions)))
 
 (defn list-app-permissions
   [{user :shortUsername} app-ids]
   (check-app-permissions user "read" app-ids)
-  (map (partial format-app-permissions (iplant-groups/list-app-permissions app-ids)) app-ids))
+  (map (partial format-app-permissions user (iplant-groups/list-app-permissions app-ids)) app-ids))
