@@ -131,9 +131,9 @@
     top: 40px;
 }
 
-@def winBtnHeight 68px;
-@def winBtnWidth 68px;
-@def winBtnMarginTop 5px;
+@def winBtnHeight 72px;
+@def winBtnWidth 72px;
+@def winBtnMarginTop 10px;
 
 @sprite .analyses {
     gwt-image: 'analysisBtn';

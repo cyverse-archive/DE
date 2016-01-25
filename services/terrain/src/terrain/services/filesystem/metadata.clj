@@ -42,7 +42,7 @@
      :metadata {:template_id UUID :avus [{:attr string :value string :unit string}]}
    }"
   [data-id user {:keys [irods-avus metadata]}]
-  (let [modification-data (data-raw/set-avus user data-id irods-avus)
+  (let [modification-data (service-response->json (data-raw/set-avus user data-id irods-avus))
         data-type (metadata-client/resolve-data-type (:type modification-data))]
     (metadata-client/set-metadata-template-avus data-id data-type (or metadata {}))
     (select-keys modification-data [:user :path])))

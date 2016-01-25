@@ -211,7 +211,7 @@ db_driver: org.postgresql.Driver
 db_user:
 db_password:
 db_host: "{{ groups['db'][0] }}"
-db_name:
+db_name: de
 db_port: 5432
 db_admin: postgres
 db_admin_password:
