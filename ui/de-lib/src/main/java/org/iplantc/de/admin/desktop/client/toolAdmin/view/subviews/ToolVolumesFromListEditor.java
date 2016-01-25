@@ -21,7 +21,7 @@ import com.sencha.gxt.data.client.editor.ListStoreEditor;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.widget.core.client.Composite;
-import com.sencha.gxt.widget.core.client.event.CompleteEditEvent;
+import com.sencha.gxt.widget.core.client.event.CancelEditEvent;
 import com.sencha.gxt.widget.core.client.form.CheckBox;
 import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
@@ -111,9 +111,23 @@ public class ToolVolumesFromListEditor extends Composite
 
         editing = new GridRowEditing<>(grid);
         enableGridEditing(name, namePrefix, tag, url, readOnly);
+        editing.addCancelEditHandler(getCancelHandler());
         ((AbstractGridEditing<ToolVolumesFrom>)editing).setClicksToEdit(ClicksToEdit.TWO);
 
         initWidget(grid);
+    }
+
+    private CancelEditEvent.CancelEditHandler<ToolVolumesFrom> getCancelHandler() {
+        return new CancelEditEvent.CancelEditHandler<ToolVolumesFrom>() {
+            @Override
+            public void onCancelEdit(CancelEditEvent<ToolVolumesFrom> event) {
+                int cancelRow = event.getEditCell().getRow();
+                if (listStore.get(cancelRow).getName() == null &&
+                    listStore.get(cancelRow).getNamePrefix() == null) {
+                    listStore.remove(cancelRow);
+                }
+            }
+        };
     }
 
     private void enableGridEditing(ColumnConfig<ToolVolumesFrom, String> name,
@@ -140,24 +154,6 @@ public class ToolVolumesFromListEditor extends Composite
 
         final CheckBox readOnlyCheckBox = new CheckBox();
         editing.addEditor(readOnly, readOnlyCheckBox);
-
-        editing.addCompleteEditHandler(new CompleteEditEvent.CompleteEditHandler<ToolVolumesFrom>() {
-            @Override
-            public void onCompleteEdit(CompleteEditEvent<ToolVolumesFrom> event) {
-                String name = nameTextField.getCurrentValue();
-                String namePrefix = namePrefixTextfield.getCurrentValue();
-                String tag = tagTextField.getCurrentValue();
-                String url = urlTextField.getCurrentValue();
-                Boolean readOnly = readOnlyCheckBox.getValue();
-                ToolVolumesFrom volumesFrom = listStore.get(0);
-                volumesFrom.setName(name);
-                volumesFrom.setNamePrefix(namePrefix);
-                volumesFrom.setTag(tag);
-                volumesFrom.setUrl(url);
-                volumesFrom.setReadOnly(readOnly);
-                listStore.update(volumesFrom);
-            }
-        });
     }
 
     @Override

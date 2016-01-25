@@ -5,6 +5,7 @@ import org.iplantc.de.admin.desktop.client.toolAdmin.model.ToolDeviceProperties;
 import org.iplantc.de.client.models.tool.ToolAutoBeanFactory;
 import org.iplantc.de.client.models.tool.ToolDevice;
 
+import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.IsEditor;
@@ -17,6 +18,7 @@ import com.sencha.gxt.data.client.editor.ListStoreEditor;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.widget.core.client.Composite;
+import com.sencha.gxt.widget.core.client.event.CancelEditEvent;
 import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
@@ -70,11 +72,35 @@ public class ToolDeviceListEditor extends Composite implements IsEditor<Editor<L
         grid.setHeight(100);
 
         editing = new GridRowEditing<>(grid);
-        editing.addEditor(hostPath, new TextField());
-        editing.addEditor(containerPath, new TextField());
+        enableGridEditing(hostPath, containerPath);
+        editing.addCancelEditHandler(getCancelHandler());
         ((AbstractGridEditing<ToolDevice>)editing).setClicksToEdit(ClicksToEdit.TWO);
-
         initWidget(grid);
+    }
+
+    private void enableGridEditing(ColumnConfig<ToolDevice, String> hostPath,
+                                   ColumnConfig<ToolDevice, String> containerPath) {
+
+        TextField hostPathField = new TextField();
+        hostPathField.setAllowBlank(false);
+        editing.addEditor(hostPath, hostPathField);
+
+        TextField containerPathField = new TextField();
+        containerPathField.setAllowBlank(false);
+        editing.addEditor(containerPath, containerPathField);
+    }
+
+    private CancelEditEvent.CancelEditHandler<ToolDevice> getCancelHandler() {
+        return new CancelEditEvent.CancelEditHandler<ToolDevice>() {
+            @Override
+            public void onCancelEdit(CancelEditEvent<ToolDevice> event) {
+                int cancelRow = event.getEditCell().getRow();
+                if (listStore.get(cancelRow).getHostPath() == null &&
+                        listStore.get(cancelRow).getContainerPath() == null) {
+                    listStore.remove(cancelRow);
+                }
+            }
+        };
     }
 
     @Override
@@ -110,5 +136,14 @@ public class ToolDeviceListEditor extends Composite implements IsEditor<Editor<L
         if (deleteDevice != null){
             listStore.remove(listStore.findModelWithKey(getDeviceTag(deleteDevice)));
         }
+    }
+
+    public boolean isValid() {
+        for (ToolDevice toolDevice : listStore.getAll()) {
+            if (Strings.isNullOrEmpty(toolDevice.getHostPath()) || Strings.isNullOrEmpty(toolDevice.getContainerPath())){
+                return false;
+            }
+        }
+        return true;
     }
 }
