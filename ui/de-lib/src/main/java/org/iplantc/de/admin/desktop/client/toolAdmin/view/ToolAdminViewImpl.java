@@ -58,7 +58,7 @@ public class ToolAdminViewImpl extends Composite implements ToolAdminView {
 
         @Override
         public boolean select(Store<Tool> store, Tool parent, Tool item) {
-            return !Strings.nullToEmpty(filterText).isEmpty() && item.getName()
+            return !Strings.isNullOrEmpty(filterText) && item.getName()
                                                                      .toLowerCase()
                                                                      .contains(filterText.toLowerCase());
         }
