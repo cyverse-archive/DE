@@ -303,7 +303,7 @@ func (s *Job) AddRequiredMetadata() {
 // porklock for the final output operation, which transfers all files back into
 // iRODS.
 func (s *Job) FinalOutputArguments() []string {
-	dest := quote(s.OutputDirectory())
+	dest := s.OutputDirectory()
 	retval := []string{
 		"put",
 		"--user", s.Submitter,

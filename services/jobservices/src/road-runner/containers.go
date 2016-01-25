@@ -251,6 +251,10 @@ func (d *Docker) CreateContainerFromStep(step *model.Step, invID string) (*docke
 			RW:          !vol.ReadOnly,
 		}
 		createConfig.Mounts = append(createConfig.Mounts, mount)
+		createHostConfig.Binds = append(
+			createHostConfig.Binds,
+			fmt.Sprintf("%s:%s", vol.HostPath, vol.ContainerPath),
+		)
 	}
 	wd, err := os.Getwd()
 	if err != nil {
@@ -262,6 +266,9 @@ func (d *Docker) CreateContainerFromStep(step *model.Step, invID string) (*docke
 		RW:          true,
 	}
 	createConfig.Mounts = append(createConfig.Mounts, localMount)
+	createHostConfig.Binds = []string{
+		fmt.Sprintf("%s:%s", wd, step.Component.Container.WorkingDirectory()),
+	}
 
 	for _, dev := range step.Component.Container.Devices {
 		device := docker.Device{
@@ -395,6 +402,10 @@ func (d *Docker) CreateDownloadContainer(job *model.Job, input *model.StepInput,
 		Destination: WORKDIR,
 		RW:          true,
 	})
+	opts.HostConfig.Binds = append(
+		opts.HostConfig.Binds,
+		fmt.Sprintf("%s:%s", wd, WORKDIR),
+	)
 	opts.Config.Labels = make(map[string]string)
 	opts.Config.Labels[model.DockerLabelKey] = invID
 	opts.Config.Labels[typeLabel] = strconv.Itoa(inputContainer)
@@ -456,6 +467,10 @@ func (d *Docker) CreateUploadContainer(job *model.Job) (*docker.Container, *dock
 		Destination: WORKDIR,
 		RW:          true,
 	})
+	opts.HostConfig.Binds = append(
+		opts.HostConfig.Binds,
+		fmt.Sprintf("%s:%s", wd, WORKDIR),
+	)
 	opts.Config.Labels = make(map[string]string)
 	opts.Config.Labels[model.DockerLabelKey] = job.InvocationID
 	opts.Config.Labels[typeLabel] = strconv.Itoa(outputContainer)

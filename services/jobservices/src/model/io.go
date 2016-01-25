@@ -65,7 +65,7 @@ func (i *StepInput) Source() string {
 
 // Arguments returns the porklock settings needed for the input operation.
 func (i *StepInput) Arguments(username string, metadata []FileMetadata) []string {
-	path := quote(i.IRODSPath())
+	path := i.IRODSPath()
 	args := []string{
 		"get",
 		"--user", username,
@@ -119,8 +119,8 @@ func (o *StepOutput) Arguments(username, dest string) string {
 	if err != nil {
 		tag = ""
 	}
-	src := quote(o.Name)
-	d := quote(dest)
+	src := o.Name
+	d := dest
 	return fmt.Sprintf(args, tag, username, src, d)
 }
 

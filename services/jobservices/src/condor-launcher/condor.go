@@ -165,6 +165,10 @@ porklock.irods-resc = {{.IRODSResc}}
 	if err != nil {
 		return "", err
 	}
+	irodsZone, err := configurate.C.String("irods.zone")
+	if err != nil {
+		return "", err
+	}
 	c := &irodsconfig{
 		IRODSHost: irodsHost,
 		IRODSPort: irodsPort,
@@ -172,6 +176,7 @@ porklock.irods-resc = {{.IRODSResc}}
 		IRODSPass: irodsPass,
 		IRODSBase: irodsBase,
 		IRODSResc: irodsResc,
+		IRODSZone: irodsZone,
 	}
 	var buffer bytes.Buffer
 	err = t.Execute(&buffer, c)
