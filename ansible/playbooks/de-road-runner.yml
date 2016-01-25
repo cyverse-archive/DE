@@ -1,5 +1,5 @@
 - name: Configure road-runner
-  hosts: condor
+  hosts: condor:services
   sudo: yes
   tags:
       - road-runner
