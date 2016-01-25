@@ -89,8 +89,10 @@ public class ToolContainerEditorTest {
     }
 
     @Test
-    public void testIsValid_bothValid() {
+    public void testIsValid_allValid() {
         when(toolImageEditorMock.isValid()).thenReturn(true);
+        when(toolDeviceListEditorMock.isValid()).thenReturn(true);
+        when(toolVolumeListEditorMock.isValid()).thenReturn(true);
         when(toolVolumesFromListEditorMock.isValid()).thenReturn(true);
         assertEquals(true, uut.isValid());
     }
@@ -98,6 +100,26 @@ public class ToolContainerEditorTest {
     @Test
     public void testIsValid_imageValid() {
         when(toolImageEditorMock.isValid()).thenReturn(true);
+        when(toolDeviceListEditorMock.isValid()).thenReturn(false);
+        when(toolVolumeListEditorMock.isValid()).thenReturn(false);
+        when(toolVolumesFromListEditorMock.isValid()).thenReturn(false);
+        assertEquals(false, uut.isValid());
+    }
+
+    @Test
+    public void testIsValid_devicesValid() {
+        when(toolImageEditorMock.isValid()).thenReturn(false);
+        when(toolDeviceListEditorMock.isValid()).thenReturn(true);
+        when(toolVolumeListEditorMock.isValid()).thenReturn(false);
+        when(toolVolumesFromListEditorMock.isValid()).thenReturn(false);
+        assertEquals(false, uut.isValid());
+    }
+
+    @Test
+    public void testIsValid_volumesValid() {
+        when(toolImageEditorMock.isValid()).thenReturn(false);
+        when(toolDeviceListEditorMock.isValid()).thenReturn(false);
+        when(toolVolumeListEditorMock.isValid()).thenReturn(true);
         when(toolVolumesFromListEditorMock.isValid()).thenReturn(false);
         assertEquals(false, uut.isValid());
     }
@@ -105,13 +127,17 @@ public class ToolContainerEditorTest {
     @Test
     public void testIsValid_volumesFromValid() {
         when(toolImageEditorMock.isValid()).thenReturn(false);
+        when(toolDeviceListEditorMock.isValid()).thenReturn(false);
+        when(toolVolumeListEditorMock.isValid()).thenReturn(false);
         when(toolVolumesFromListEditorMock.isValid()).thenReturn(true);
         assertEquals(false, uut.isValid());
     }
 
     @Test
-    public void testIsValid_bothInvalid() {
+    public void testIsValid_allInvalid() {
         when(toolImageEditorMock.isValid()).thenReturn(false);
+        when(toolDeviceListEditorMock.isValid()).thenReturn(false);
+        when(toolVolumeListEditorMock.isValid()).thenReturn(false);
         when(toolVolumesFromListEditorMock.isValid()).thenReturn(false);
         assertEquals(false, uut.isValid());
     }

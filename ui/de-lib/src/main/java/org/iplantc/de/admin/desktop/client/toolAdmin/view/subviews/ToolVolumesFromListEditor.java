@@ -10,6 +10,8 @@ import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.IsEditor;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
@@ -36,6 +38,23 @@ import java.util.List;
 
 public class ToolVolumesFromListEditor extends Composite
         implements IsEditor<Editor<List<ToolVolumesFrom>>> {
+
+    private static class StringValueChangeHandler implements ValueChangeHandler<String> {
+
+        TextField field;
+
+        public StringValueChangeHandler(TextField field) {
+            this.field = field;
+        }
+
+        @Override
+        public void onValueChange(ValueChangeEvent<String> event) {
+            String value = event.getValue();
+            if (value != null && value.isEmpty()) {
+                field.setValue(null);
+            }
+        }
+    }
 
     private GridEditing<ToolVolumesFrom> editing;
     private Grid<ToolVolumesFrom> grid;
@@ -111,10 +130,12 @@ public class ToolVolumesFromListEditor extends Composite
         editing.addEditor(namePrefix, namePrefixTextfield);
 
         final TextField tagTextField = new TextField();
+        tagTextField.addValueChangeHandler(new StringValueChangeHandler(tagTextField));
         editing.addEditor(tag, tagTextField);
 
         final TextField urlTextField = new TextField();
         urlTextField.addValidator(new UrlValidator());
+        urlTextField.addValueChangeHandler(new StringValueChangeHandler(urlTextField));
         editing.addEditor(url, urlTextField);
 
         final CheckBox readOnlyCheckBox = new CheckBox();
