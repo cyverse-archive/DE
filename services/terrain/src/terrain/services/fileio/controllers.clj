@@ -19,7 +19,7 @@
             [terrain.util.validators :as valid]
             [terrain.services.filesystem.icat :as icat])
   (:import [clojure.lang IPersistentMap]
-           [java.io IOException]))
+           [java.io IOException ByteArrayInputStream]))
 
 
 (defn download
@@ -50,6 +50,23 @@
 (with-pre-hook! #'upload
   (fn [params req]
     (ccv/validate-map params {:user string? :dest string?})))
+
+(defn saveas
+  "Save a file to a location given the content in a (utf-8) string.
+
+   This reuses the upload endpoint logic by converting the string into an input stream to be sent to data-info."
+  [{:keys [user]} {:keys [dest content]}]
+  (let [dest (string/trim dest)
+        dir  (ft/dirname dest)
+        file (ft/basename dest)
+        istream (ByteArrayInputStream. (.getBytes content "UTF-8"))
+        info (data-raw/upload-file user dir file "application/octet-stream" istream)]
+    (success-response info)))
+
+(with-pre-hook! #'saveas
+  (fn [params body]
+    (ccv/validate-map params {:user string?})
+    (ccv/validate-map body {:dest string? :content string?})))
 
 (defn- url-filename
   [address]
@@ -107,25 +124,6 @@
     (success-response {:file (data/path-stat user dest)})))
 
 (with-pre-hook! #'save
-  (fn [params body]
-    (ccv/validate-map params {:user string?})
-    (ccv/validate-map body {:dest string? :content string?})))
-
-(defn saveas
-  [params body]
-  (let [user (:user params)
-        dest (string/trim (:dest body))
-        cont (:content body)]
-    (with-jargon (icat/jargon-cfg) :client-user user [cm]
-      (when-not (info/exists? cm (ft/dirname dest))
-        (throw+ {:error_code ERR_DOES_NOT_EXIST :path (ft/dirname dest)}))
-      (when (info/exists? cm dest)
-        (throw+ {:error_code ERR_EXISTS :path dest}))
-      (with-in-str cont
-        (actions/store cm *in* user dest)))
-    (success-response {:file (data/path-stat user dest)})))
-
-(with-pre-hook! #'saveas
   (fn [params body]
     (ccv/validate-map params {:user string?})
     (ccv/validate-map body {:dest string? :content string?})))

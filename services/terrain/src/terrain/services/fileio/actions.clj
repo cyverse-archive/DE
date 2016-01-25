@@ -29,18 +29,6 @@
     (log/info "save function after copy.")
     dest-path))
 
-(defn store
-  [cm istream user dest-path]
-  (log/info "In store function for " user dest-path)
-  (let [ddir (ft/dirname dest-path)]
-    (when-not (perm/is-writeable? cm user ddir)
-      (log/error (str "Directory " ddir " is not writeable by " user))
-      (throw+ {:error_code ERR_NOT_WRITEABLE
-               :path ddir} )))
-
-  (save cm istream user dest-path)
-  dest-path)
-
 
 (defn- url-encoded?
   [string-to-check]
