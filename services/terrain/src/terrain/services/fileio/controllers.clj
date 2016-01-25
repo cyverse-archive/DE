@@ -14,6 +14,7 @@
             [clj-jargon.permissions :as perm]
             [clojure-commons.validators :as ccv]
             [terrain.clients.data-info :as data]
+            [terrain.clients.data-info.raw :as data-raw]
             [terrain.util.config :as cfg]
             [terrain.util.validators :as valid]
             [terrain.services.filesystem.icat :as icat])
@@ -31,13 +32,8 @@
 
 
 (defn- store-from-form
-  [user dest-dir {istream :stream filename :filename}]
-  (when-not (valid/good-string? filename)
-    (throw+ {:error_code ERR_BAD_OR_MISSING_FIELD :path filename}))
-  (let [dest-path (ft/path-join dest-dir filename)]
-    (actions/upload (icat/jargon-cfg) user dest-path istream)
-    dest-path))
-
+  [user dest-dir {istream :stream filename :filename content-type :content-type}]
+  (data-raw/upload-file user dest-dir filename content-type istream))
 
 (defn upload
   "This is the business logic of behind the POST /secured/fileio/upload endpoint.
@@ -48,10 +44,8 @@
      req  - the ring request map"
   [{:keys [user dest]} ^IPersistentMap req]
   (let [store                   (partial store-from-form user dest)
-        {{file "file"} :params} (multipart/multipart-params-request req {:store store})]
-    (when-not file
-      (throw+ {:error_code ERR_MISSING_FORM_FIELD :field "file"}))
-    (success-response {:file (data/path-stat user file)})))
+        {{file-info "file"} :params} (multipart/multipart-params-request req {:store store})]
+    (success-response file-info)))
 
 (with-pre-hook! #'upload
   (fn [params req]
