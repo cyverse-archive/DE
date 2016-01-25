@@ -6,6 +6,7 @@
             [clj-jargon.item-ops :as ops]
             [ring.middleware.multipart-params :as multipart]
             [data-info.services.stat :as stat]
+            [data-info.services.uuids :as uuids]
             [data-info.util.config :as cfg]
             [data-info.util.validators :as validators]))
 
@@ -34,10 +35,11 @@
   [cm istream user dest-path]
   (validators/user-exists cm user)
   (validators/path-exists cm dest-path)
+  (validators/path-is-file cm dest-path)
   (validators/path-writeable cm user dest-path)
   (save-file-contents cm istream user dest-path))
 
-(defn- multipart-handler
+(defn- multipart-create-handler
   "When partially applied, creates a storage handler for
    ring.middleware.multipart-params/multipart-params-request which stores the file in iRODS."
   [user dest-dir {istream :stream filename :filename}]
@@ -46,14 +48,28 @@
     (let [dest-path (ft/path-join dest-dir filename)]
       (create-at-path cm istream user dest-path))))
 
-(defn wrap-multipart
-  "Middleware which saves a file from a multipart request."
+(defn wrap-multipart-create
+  "Middleware which saves a new file from a multipart request."
   [handler]
   (fn [{{:keys [user dest]} :params :as request}]
-    (handler (multipart/multipart-params-request request {:store (partial multipart-handler user dest)}))))
+    (handler (multipart/multipart-params-request request {:store (partial multipart-create-handler user dest)}))))
+
+(defn- multipart-overwrite-handler
+  "When partially applied, creates a storage handler for
+   ring.middleware.multipart-params/multipart-params-request which overwrites the file in iRODS."
+  [user data-id {istream :stream}]
+  (with-jargon (cfg/jargon-cfg) [cm]
+    (let [path (ft/rm-last-slash (:path (uuids/path-for-uuid user data-id)))]
+      (overwrite-path cm istream user path))))
+
+(defn wrap-multipart-overwrite
+  "Middleware which overwrites a file's contents from a multipart request."
+  [handler]
+  (fn [{{:keys [user data-id]} :params :as request}]
+    (handler (multipart/multipart-params-request request {:store (partial multipart-overwrite-handler user data-id)}))))
 
 (defn do-upload
-  "Returns a path stat after a file has been uploaded. Intended to only be used with wrap-multipart."
+  "Returns a path stat after a file has been uploaded. Intended to only be used with wrap-multipart-* middlewares."
   [{:keys [user]} file]
   (with-jargon (cfg/jargon-cfg) [cm]
     {:file (stat/path-stat cm user file)}))

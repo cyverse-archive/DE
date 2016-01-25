@@ -90,7 +90,7 @@
     (POST* "/" [:as {uri :uri}]
       :query [params FileUploadQueryParams]
       :multipart-params [file :- String]
-      :middlewares [write/wrap-multipart]
+      :middlewares [write/wrap-multipart-create]
       :return FileStat
       :summary "Upload a file"
       :description (str
@@ -128,6 +128,17 @@ with characters in a runtime-configurable parameter. Currently, this parameter l
         :summary "Data Item Meta-Status"
         :description "Returns an HTTP status according to the user's access level to the data item."
         (ce/trap uri entry/id-entry data-id user))
+
+      (PUT* "/" [:as {uri :uri}]
+        :query [params StandardUserQueryParams]
+        :multipart-params [file :- String]
+        :middlewares [write/wrap-multipart-overwrite]
+        :return FileStat
+        :summary "Overwrite Contents"
+        :description (str
+"Overwrites a file as a user, given the user can write to it and the file already exists."
+(get-error-code-block "ERR_NOT_A_USER, ERR_DOES_NOT_EXIST, ERR_NOT_A_FILE, ERR_NOT_WRITEABLE"))
+        (svc/trap uri write/do-upload params file))
 
       (GET* "/avus" [:as {uri :uri}]
         :query [{:keys [user]} StandardUserQueryParams]
