@@ -18,7 +18,7 @@ import com.sencha.gxt.widget.core.client.container.FlowLayoutContainer;
 /**
  * @author aramsey
  */
-public class DeleteAppDialog extends IPlantDialog implements IsHideable {
+public class OverwriteToolDialog extends IPlantDialog implements IsHideable {
 
     private AppAutoBeanFactory appAutoBeanFactory = GWT.create(AppAutoBeanFactory.class);
     private FlowLayoutContainer container;
@@ -26,7 +26,8 @@ public class DeleteAppDialog extends IPlantDialog implements IsHideable {
     @Inject ToolAdminView.ToolAdminViewAppearance appearance;
 
     @Inject
-    public DeleteAppDialog(ToolAdminView.ToolAdminViewAppearance appearance, ToolPublicAppListWindow publicAppListWindow) {
+    public OverwriteToolDialog(ToolAdminView.ToolAdminViewAppearance appearance,
+                               ToolPublicAppListWindow publicAppListWindow) {
         this.appearance = appearance;
         this.publicAppListWindow = publicAppListWindow;
         setResizable(true);
@@ -39,15 +40,17 @@ public class DeleteAppDialog extends IPlantDialog implements IsHideable {
     public void setText(Throwable caught) {
         AppList appList =
                 AutoBeanCodex.decode(appAutoBeanFactory, AppList.class, caught.getMessage()).as();
-        setHeadingText(appearance.deletePublicToolTitle());
+        setHeadingText(appearance.confirmOverwriteTitle());
 
         HTML bodyBeforeApps = new HTML();
-        bodyBeforeApps.setHTML(appearance.deletePublicToolBody());
+        bodyBeforeApps.setHTML(appearance.confirmOverwriteDangerZone());
+        HTML bodyAfterApps = new HTML();
+        bodyAfterApps.setHTML(appearance.confirmOverwriteBody());
 
         publicAppListWindow.addApps(appList.getApps());
         container.add(bodyBeforeApps);
         container.add(publicAppListWindow);
-
+        container.add(bodyAfterApps);
     }
 
     private FlowLayoutContainer addScrollSupport() {

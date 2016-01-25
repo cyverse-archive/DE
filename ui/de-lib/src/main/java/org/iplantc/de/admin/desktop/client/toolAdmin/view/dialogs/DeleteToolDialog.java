@@ -18,7 +18,7 @@ import com.sencha.gxt.widget.core.client.container.FlowLayoutContainer;
 /**
  * @author aramsey
  */
-public class OverwriteAppDialog extends IPlantDialog implements IsHideable {
+public class DeleteToolDialog extends IPlantDialog implements IsHideable {
 
     private AppAutoBeanFactory appAutoBeanFactory = GWT.create(AppAutoBeanFactory.class);
     private FlowLayoutContainer container;
@@ -26,12 +26,14 @@ public class OverwriteAppDialog extends IPlantDialog implements IsHideable {
     @Inject ToolAdminView.ToolAdminViewAppearance appearance;
 
     @Inject
-    public OverwriteAppDialog(ToolAdminView.ToolAdminViewAppearance appearance,
-                              ToolPublicAppListWindow publicAppListWindow) {
+    public DeleteToolDialog(ToolAdminView.ToolAdminViewAppearance appearance,
+                            ToolPublicAppListWindow publicAppListWindow) {
         this.appearance = appearance;
         this.publicAppListWindow = publicAppListWindow;
         setResizable(true);
         setMinHeight(200);
+
+        setPredefinedButtons(PredefinedButton.OK);
 
         container = addScrollSupport();
         add(container);
@@ -40,17 +42,15 @@ public class OverwriteAppDialog extends IPlantDialog implements IsHideable {
     public void setText(Throwable caught) {
         AppList appList =
                 AutoBeanCodex.decode(appAutoBeanFactory, AppList.class, caught.getMessage()).as();
-        setHeadingText(appearance.confirmOverwriteTitle());
+        setHeadingText(appearance.deletePublicToolTitle());
 
         HTML bodyBeforeApps = new HTML();
-        bodyBeforeApps.setHTML(appearance.confirmOverwriteDangerZone());
-        HTML bodyAfterApps = new HTML();
-        bodyAfterApps.setHTML(appearance.confirmOverwriteBody());
+        bodyBeforeApps.setHTML(appearance.deletePublicToolBody());
 
         publicAppListWindow.addApps(appList.getApps());
         container.add(bodyBeforeApps);
         container.add(publicAppListWindow);
-        container.add(bodyAfterApps);
+
     }
 
     private FlowLayoutContainer addScrollSupport() {

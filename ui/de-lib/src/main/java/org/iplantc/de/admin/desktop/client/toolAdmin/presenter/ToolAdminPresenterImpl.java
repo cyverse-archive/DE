@@ -8,8 +8,8 @@ import org.iplantc.de.admin.desktop.client.toolAdmin.events.ToolSelectedEvent;
 import org.iplantc.de.admin.desktop.client.toolAdmin.gin.factory.ToolAdminViewFactory;
 import org.iplantc.de.admin.desktop.client.toolAdmin.model.ToolProperties;
 import org.iplantc.de.admin.desktop.client.toolAdmin.service.ToolAdminServiceFacade;
-import org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs.DeleteAppDialog;
-import org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs.OverwriteAppDialog;
+import org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs.DeleteToolDialog;
+import org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs.OverwriteToolDialog;
 import org.iplantc.de.client.models.errorHandling.ServiceErrorCode;
 import org.iplantc.de.client.models.errorHandling.SimpleServiceError;
 import org.iplantc.de.client.models.tool.Tool;
@@ -46,8 +46,8 @@ public class ToolAdminPresenterImpl implements ToolAdminView.Presenter,
     private final ToolAdminView.ToolAdminViewAppearance appearance;
     private final ListStore<Tool> listStore;
     @Inject IplantAnnouncer announcer;
-    @Inject AsyncProvider<OverwriteAppDialog> overwriteAppDialog;
-    @Inject AsyncProvider<DeleteAppDialog> deleteAppDialog;
+    @Inject AsyncProvider<OverwriteToolDialog> overwriteAppDialog;
+    @Inject AsyncProvider<DeleteToolDialog> deleteAppDialog;
 
     @Inject
     public ToolAdminPresenterImpl(final ToolAdminViewFactory viewFactory,
@@ -111,14 +111,14 @@ public class ToolAdminPresenterImpl implements ToolAdminView.Presenter,
             public void onFailure(final Throwable caught) {
                 String serviceError = getServiceError(caught);
                 if (serviceError.equals(ServiceErrorCode.ERR_NOT_WRITEABLE.toString())) {
-                    deleteAppDialog.get(new AsyncCallback<DeleteAppDialog>() {
+                    deleteAppDialog.get(new AsyncCallback<DeleteToolDialog>() {
                         @Override
                         public void onFailure(Throwable caught) {
                             ErrorHandler.post(caught);
                         }
 
                         @Override
-                        public void onSuccess(DeleteAppDialog result) {
+                        public void onSuccess(DeleteToolDialog result) {
                             result.setText(caught);
                             result.show();
                         }
@@ -162,14 +162,14 @@ public class ToolAdminPresenterImpl implements ToolAdminView.Presenter,
             public void onFailure(final Throwable caught) {
                 String serviceError = getServiceError(caught);
                 if (ServiceErrorCode.ERR_NOT_WRITEABLE.toString().equals(serviceError)) {
-                    overwriteAppDialog.get(new AsyncCallback<OverwriteAppDialog>() {
+                    overwriteAppDialog.get(new AsyncCallback<OverwriteToolDialog>() {
                         @Override
                         public void onFailure(Throwable caught) {
                             ErrorHandler.post(caught);
                         }
 
                         @Override
-                        public void onSuccess(OverwriteAppDialog result) {
+                        public void onSuccess(OverwriteToolDialog result) {
                             result.setText(caught);
                             result.show();
                             result.addOkButtonSelectHandler(new SelectEvent.SelectHandler() {

@@ -7,8 +7,8 @@ import org.iplantc.de.admin.desktop.client.toolAdmin.service.ToolAdminServiceFac
 import org.iplantc.de.admin.desktop.client.toolAdmin.service.impl.ToolAdminServiceFacadeImpl;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.ToolAdminDetailsView;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.ToolAdminViewImpl;
-import org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs.DeleteAppDialog;
-import org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs.OverwriteAppDialog;
+import org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs.DeleteToolDialog;
+import org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs.OverwriteToolDialog;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs.ToolAdminDetailsDialog;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews.ToolContainerEditor;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews.ToolDeviceListEditor;
@@ -37,8 +37,8 @@ public class ToolAdminGinModule extends AbstractGinModule {
         bind(ToolImplementationEditor.class);
         bind(ToolTestDataEditor.class);
         bind(ToolPublicAppListWindow.class);
-        bind(OverwriteAppDialog.class);
-        bind(DeleteAppDialog.class);
+        bind(OverwriteToolDialog.class);
+        bind(DeleteToolDialog.class);
         bind(ToolTestDataInputFilesListEditor.class);
         bind(ToolTestDataOutputFilesListEditor.class);
         bind(ToolContainerEditor.class);

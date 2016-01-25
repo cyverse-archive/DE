@@ -18,8 +18,8 @@ import org.iplantc.de.admin.desktop.client.toolAdmin.events.ToolSelectedEvent;
 import org.iplantc.de.admin.desktop.client.toolAdmin.gin.factory.ToolAdminViewFactory;
 import org.iplantc.de.admin.desktop.client.toolAdmin.model.ToolProperties;
 import org.iplantc.de.admin.desktop.client.toolAdmin.service.ToolAdminServiceFacade;
-import org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs.DeleteAppDialog;
-import org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs.OverwriteAppDialog;
+import org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs.DeleteToolDialog;
+import org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs.OverwriteToolDialog;
 import org.iplantc.de.client.models.errorHandling.ServiceErrorCode;
 import org.iplantc.de.client.models.errorHandling.SimpleServiceError;
 import org.iplantc.de.client.models.tool.Tool;
@@ -64,14 +64,14 @@ public class ToolAdminPresenterImplTest {
     @Mock List<Tool> listToolMock;
     @Mock ListStore<Tool> listStoreToolMock;
     @Mock IplantAnnouncer iplantAnnouncerMock;
-    @Mock AsyncProvider<OverwriteAppDialog> overwriteAppDialogMock;
-    @Mock AsyncProvider<DeleteAppDialog> deleteAppDialogMock;
+    @Mock AsyncProvider<OverwriteToolDialog> overwriteAppDialogMock;
+    @Mock AsyncProvider<DeleteToolDialog> deleteAppDialogMock;
 
     @Captor ArgumentCaptor<AsyncCallback<Tool>> asyncCallbackToolCaptor;
     @Captor ArgumentCaptor<AsyncCallback<List<Tool>>> asyncCallbackToolListCaptor;
     @Captor ArgumentCaptor<AsyncCallback<Void>> asyncCallbackVoidCaptor;
-    @Captor ArgumentCaptor<AsyncCallback<OverwriteAppDialog>> asyncCallbackOverwriteDlgCaptor;
-    @Captor ArgumentCaptor<AsyncCallback<DeleteAppDialog>> asyncCallbackDeleteDlgCaptor;
+    @Captor ArgumentCaptor<AsyncCallback<OverwriteToolDialog>> asyncCallbackOverwriteDlgCaptor;
+    @Captor ArgumentCaptor<AsyncCallback<DeleteToolDialog>> asyncCallbackDeleteDlgCaptor;
     @Captor ArgumentCaptor<SelectEvent.SelectHandler> selectHandlerArgumentCaptor;
 
     private ToolAdminPresenterImpl uut;
@@ -202,7 +202,7 @@ public class ToolAdminPresenterImplTest {
         assertEquals(serviceError, ServiceErrorCode.ERR_NOT_WRITEABLE.toString());
         verify(deleteAppDialogMock).get(asyncCallbackDeleteDlgCaptor.capture());
 
-        DeleteAppDialog dialog = mock(DeleteAppDialog.class);
+        DeleteToolDialog dialog = mock(DeleteToolDialog.class);
 
         /** CALL METHOD UNDER TEST **/
         asyncCallbackDeleteDlgCaptor.getValue().onSuccess(dialog);
@@ -313,7 +313,7 @@ public class ToolAdminPresenterImplTest {
         assertEquals(serviceError, ServiceErrorCode.ERR_NOT_WRITEABLE.toString());
         verify(overwriteAppDialogMock).get(asyncCallbackOverwriteDlgCaptor.capture());
 
-        OverwriteAppDialog dialog = mock(OverwriteAppDialog.class);
+        OverwriteToolDialog dialog = mock(OverwriteToolDialog.class);
 
         /** CALL METHOD UNDER TEST **/
         asyncCallbackOverwriteDlgCaptor.getValue().onSuccess(dialog);
