@@ -78,19 +78,30 @@ func AppVersion() {
 	}
 }
 
+func hostname() string {
+	h, err := os.Hostname()
+	if err != nil {
+		logger.Printf("Couldn't get the hostname: %s", err.Error())
+		return ""
+	}
+	return h
+}
+
 func fail(client *messaging.Client, job *model.Job, msg string) error {
 	logger.Print(msg)
 	return client.PublishJobUpdate(&messaging.UpdateMessage{
 		Job:     job,
 		State:   messaging.FailedState,
 		Message: msg,
+		Sender:  hostname(),
 	})
 }
 
 func success(client *messaging.Client, job *model.Job) error {
 	return client.PublishJobUpdate(&messaging.UpdateMessage{
-		Job:   job,
-		State: messaging.SucceededState,
+		Job:    job,
+		State:  messaging.SucceededState,
+		Sender: hostname(),
 	})
 }
 
@@ -99,6 +110,7 @@ func running(client *messaging.Client, job *model.Job, msg string) {
 		Job:     job,
 		State:   messaging.RunningState,
 		Message: msg,
+		Sender:  hostname(),
 	})
 	if err != nil {
 		logger.Print(err)
