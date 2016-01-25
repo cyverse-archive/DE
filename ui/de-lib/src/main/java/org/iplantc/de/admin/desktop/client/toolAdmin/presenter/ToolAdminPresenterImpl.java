@@ -161,7 +161,7 @@ public class ToolAdminPresenterImpl implements ToolAdminView.Presenter,
             @Override
             public void onFailure(final Throwable caught) {
                 String serviceError = getServiceError(caught);
-                if (serviceError.equals(ServiceErrorCode.ERR_NOT_WRITEABLE.toString())) {
+                if (ServiceErrorCode.ERR_NOT_WRITEABLE.toString().equals(serviceError)) {
                     overwriteAppDialog.get(new AsyncCallback<OverwriteAppDialog>() {
                         @Override
                         public void onFailure(Throwable caught) {
@@ -195,9 +195,14 @@ public class ToolAdminPresenterImpl implements ToolAdminView.Presenter,
     }
 
     String getServiceError(Throwable caught) {
-        SimpleServiceError simpleServiceError =  AutoBeanCodex.decode(factory, SimpleServiceError.class, caught.getMessage())
-                     .as();
-        return simpleServiceError.getErrorCode();
+        try {
+            SimpleServiceError simpleServiceError =
+                    AutoBeanCodex.decode(factory, SimpleServiceError.class, caught.getMessage()).as();
+            return simpleServiceError.getErrorCode();
+        }
+        catch (Exception e) {
+            return null;
+        }
     }
 
     void updateView() {
