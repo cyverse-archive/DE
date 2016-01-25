@@ -332,15 +332,13 @@ public class DataSharingPresenterImpl implements SharingPresenter {
     }
 
     private void share(JSONObject requestBody) {
-
-        if (requestBody != null) {
+      if (requestBody != null) {
             callSharingService(requestBody);
         }
 
     }
 
     private void unshare(JSONObject unshareRequestBody) {
-
         if (unshareRequestBody != null) {
             callUnshareService(unshareRequestBody);
         }

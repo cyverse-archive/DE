@@ -88,4 +88,6 @@ public interface AppUserServiceFacade extends AppServiceFacade {
     void shareApp(List<App> apps, List<String> users, String permission, AsyncCallback<String> callback);
     
     void unshareApp(List<App> apps, List<String> users, AsyncCallback<String> callback);
+
+
 }
