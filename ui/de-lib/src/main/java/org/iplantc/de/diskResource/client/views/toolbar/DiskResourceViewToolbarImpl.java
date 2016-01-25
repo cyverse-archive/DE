@@ -34,6 +34,7 @@ import org.iplantc.de.diskResource.client.views.dialogs.BulkMetadataDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.GenomeSearchDialog;
 import org.iplantc.de.diskResource.client.views.search.DiskResourceSearchField;
 import org.iplantc.de.diskResource.share.DiskResourceModule.Ids;
+import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -606,11 +607,17 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
                                                            appearance.doiLinkMsg());
 
         mb.getButton(PredefinedButton.YES).setText(appearance.needDOI());
-        mb.getButton(PredefinedButton.NO).setText(PredefinedButton.CANCEL.toString());
+        mb.getButton(PredefinedButton.NO).setText(I18N.DISPLAY.cancel());
         mb.addDialogHideHandler(new DialogHideHandler() {
             @Override
             public void onDialogHide(DialogHideEvent event) {
                 switch (event.getHideButton()) {
+                    case OK:
+                        break;
+                    case CANCEL:
+                        break;
+                    case CLOSE:
+                        break;
                     case YES:
                         presenter.onDoiRequest(selectedDiskResources.get(0).getId());
                         break;
