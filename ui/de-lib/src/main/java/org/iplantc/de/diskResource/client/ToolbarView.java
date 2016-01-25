@@ -270,6 +270,10 @@ public interface ToolbarView extends IsWidget,
             String applyBulkMetadata();
 
             String overWiteMetadata();
+
+            String doiRequestFail();
+
+            String doiRequestSuccess();
         }
 
         ToolbarView getView();

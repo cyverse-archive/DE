@@ -113,6 +113,16 @@ public class ToolbarViewPresenterDefaultAppearance implements ToolbarView.Presen
         return diskResourceMessages.overWiteMetadata();
     }
 
+    @Override
+    public String doiRequestFail() {
+        return diskResourceMessages.doiRequestFail();
+    }
+
+    @Override
+    public String doiRequestSuccess() {
+        return diskResourceMessages.doiRequestSuccess();
+    }
+
     public String applyBulkMetadata() {
         return diskResourceMessages.applyBulkMetadata();
     }
