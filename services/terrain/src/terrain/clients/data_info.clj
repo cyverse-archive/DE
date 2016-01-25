@@ -148,6 +148,12 @@
   (log/warn "checking to see if" path "can be created")
   (st/can-create-dir? user path))
 
+(defn overwrite-file
+  "Overwrite a file with a new file by path."
+  [user dest istream]
+  (let [path-uuid (uuid-for-path user dest)]
+    (raw/overwrite-file user path-uuid istream)))
+
 (defn rename
   "Uses the data-info set-name endpoint to rename a file within the same directory."
   [{:keys [user]} {:keys [source dest]}]
