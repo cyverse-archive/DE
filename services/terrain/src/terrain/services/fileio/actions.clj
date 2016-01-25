@@ -42,27 +42,6 @@
   dest-path)
 
 
-(defn upload
-  "This function uploads the contents of a stream to a data object in iRODS. If the data object
-   exists, it will first be moved to the trash. The parent collection must exist and must be
-   writeable by the user.
-
-   Params:
-     irods-cfg - the irods configuration parameter map
-     user      - the who will own the data object being uploaded
-     dest-path - the absolute path to the data object after it has been uploaded
-     istream   - an input stream containing the contents of the data object."
-  [^IPersistentMap irods-cfg ^String user ^String dest-path ^InputStream istream]
-  (with-jargon irods-cfg :client-user user [cm]
-    (let [dest-dir (ft/dirname dest-path)]
-      (when-not (info/exists? cm dest-dir)
-        (throw+ {:error_code ERR_DOES_NOT_EXIST :path dest-dir}))
-      (if (info/exists? cm dest-path)
-        (ops/delete cm dest-path))
-      (store cm istream user dest-path)
-      nil)))
-
-
 (defn- url-encoded?
   [string-to-check]
   (re-seq #"\%[A-Fa-f0-9]{2}" string-to-check))
