@@ -118,7 +118,7 @@ de:
     service_name_short: de-ui-nginx
     compose_service: de_ui_nginx
     service_description: DE UI nginx
-    image_name: nginx-ssl
+    image_name: nginx
     container_name: de_ui_nginx
     log_driver: "{{ docker.log_driver }}"
     log_file: nginx-de-ui.log
