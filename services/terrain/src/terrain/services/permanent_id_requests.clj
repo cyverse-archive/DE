@@ -19,6 +19,10 @@
 (def ^:private status-code-completion "Completion")
 (def ^:private status-code-failed "Failed")
 
+(defn- parse-service-json
+  [response]
+  (-> response :body service/decode-json))
+
 (defn- validate-request-target-type
   [{target-type :type :as folder}]
   (let [target-type (metadata/resolve-data-type target-type)]
@@ -37,30 +41,41 @@
              :folder-id id}))
   data-item)
 
-(defn- validate-staging-dest
-  [{:keys [path] :as data-item}]
-  (let [staging-dest (ft/path-join (config/permanent-id-staging-dir) (ft/basename path))]
-    (when (data-info/path-exists? (config/irods-user) staging-dest)
+(defn- validate-staging-dest-exists
+  [{:keys [paths]} staging-dest]
+  (let [path-exists? (get paths (keyword staging-dest))]
+    (when path-exists?
     (throw+ {:type :clojure-commons.exception/exists
              :error "A folder with this name has already been submitted for a Permanent ID request."
-             :path staging-dest})))
-  data-item)
+             :path staging-dest}))))
+
+(defn- validate-publish-dest-exists
+  [{:keys [paths]} publish-dest]
+  (let [path-exists? (get paths (keyword publish-dest))]
+    (when path-exists?
+      (throw+ {:type :clojure-commons.exception/exists
+               :error "A folder with this name has already been published."
+               :path publish-dest}))))
 
 (defn- validate-publish-dest
   [{:keys [path] :as data-item}]
-  (let [publish-dest (ft/path-join (config/permanent-id-publish-dir) (ft/basename path))]
-    (when (data-info/path-exists? (config/irods-user) publish-dest)
-      (throw+ {:type :clojure-commons.exception/exists
-               :error "A folder with this name has already been published."
-               :path publish-dest})))
+  (let [publish-dest (ft/path-join (config/permanent-id-publish-dir) (ft/basename path))
+        paths-exist (parse-service-json (data-info/check-existence {:user (config/irods-user)}
+                                                                   {:paths [publish-dest]}))]
+    (validate-publish-dest-exists paths-exist publish-dest))
   data-item)
 
 (defn- validate-data-item
-  [user data-item]
-  (->> data-item
-       (validate-owner user)
-       validate-staging-dest
-       validate-publish-dest))
+  [user {:keys [path] :as data-item}]
+  (validate-owner user data-item)
+  (let [staging-dest (ft/path-join (config/permanent-id-staging-dir) (ft/basename path))
+        publish-dest (ft/path-join (config/permanent-id-publish-dir) (ft/basename path))
+        paths-exist  (parse-service-json (data-info/check-existence {:user (config/irods-user)}
+                                                                    {:paths [staging-dest
+                                                                             publish-dest]}))]
+    (validate-staging-dest-exists (log/spy paths-exist) staging-dest)
+    (validate-publish-dest-exists paths-exist publish-dest))
+  data-item)
 
 (defn- get-requested-data-item
   "Gets data-info stat for the given ID and checks if the data item is valid for a Permanent ID request."
@@ -68,10 +83,6 @@
   (->> data-id
        (data-info/stat-by-uuid user)
        (validate-data-item user)))
-
-(defn- parse-service-json
-  [response]
-  (-> response :body service/decode-json))
 
 (defn- submit-permanent-id-request
   "Submits the request to the metadata create-permanent-id-request endpoint."
