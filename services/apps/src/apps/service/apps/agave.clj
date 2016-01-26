@@ -6,6 +6,7 @@
             [apps.service.apps.agave.pipelines :as pipelines]
             [apps.service.apps.agave.jobs :as agave-jobs]
             [apps.service.apps.job-listings :as job-listings]
+            [apps.service.apps.permissions :as app-permissions]
             [apps.service.apps.util :as apps-util]
             [apps.service.util :as util]
             [apps.util.service :as service]))
@@ -14,9 +15,11 @@
   []
   (service/bad-request "Cannot edit documentation for HPC apps with this service"))
 
+(def app-permission-rejection "Cannot list or modify the permissions of HPC apps with this service")
+
 (defn- reject-app-permission-request
   []
-  (service/bad-request "Cannot list or modify the permissions of HPC apps with this service"))
+  (service/bad-request app-permission-rejection))
 
 (deftype AgaveApps [agave user-has-access-token? user]
   apps.protocols.Apps
@@ -140,4 +143,15 @@
   (listAppPermissions [_ app-ids]
     (when (and (user-has-access-token?)
                (some (complement util/uuid?) app-ids))
-      (reject-app-permission-request))))
+      (reject-app-permission-request)))
+
+  (shareApps [self sharing-requests]
+    (app-permissions/process-app-sharing-requests self sharing-requests))
+
+  (shareAppsWithUser [self sharee user-app-sharing-requests]
+    (app-permissions/process-user-app-sharing-requests self sharee user-app-sharing-requests))
+
+  (shareAppWithUser [_ _ app-id level]
+    (when (and (user-has-access-token?)
+               (not (util/uuid? app-id)))
+      (app-permissions/app-sharing-failure app-id level app-permission-rejection))))

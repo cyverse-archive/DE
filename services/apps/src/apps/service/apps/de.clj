@@ -16,6 +16,7 @@
             [apps.service.apps.de.pipeline-edit :as pipeline-edit]
             [apps.service.apps.de.validation :as app-validation]
             [apps.service.apps.job-listings :as job-listings]
+            [apps.service.apps.permissions :as app-permissions]
             [apps.service.apps.util :as apps-util]
             [apps.service.util :as util]))
 
@@ -225,4 +226,16 @@
 
   (listAppPermissions [_ app-ids]
     (when-let [uuids (util/extract-uuids app-ids)]
-      (perms/list-app-permissions user uuids))))
+      (perms/list-app-permissions user uuids)))
+
+  (shareApps [self sharing-requests]
+    (app-permissions/process-app-sharing-requests self sharing-requests))
+
+  (shareAppsWithUser [self sharee user-app-sharing-requests]
+    (app-permissions/process-user-app-sharing-requests self sharee user-app-sharing-requests))
+
+  (shareAppWithUser [_ sharee app-id level]
+    (when (util/uuid? app-id)
+      (if-let [failure-reason (perms/share-app-with-user user sharee (uuidify app-id) level)]
+        (app-permissions/app-sharing-failure app-id level failure-reason)
+        (app-permissions/app-sharing-success app-id level)))))

@@ -1,10 +1,12 @@
 (ns apps.clients.iplant-groups
   (:use [medley.core :only [remove-vals]]
-        [slingshot.slingshot :only [throw+]])
+        [slingshot.slingshot :only [try+]])
   (:require [apps.util.config :as config]
+            [apps.util.service :as service]
             [cemerick.url :as curl]
             [clj-http.client :as http]
             [clojure.string :as string]
+            [clojure.tools.logging :as log]
             [clojure-commons.exception :as cx]
             [kameleon.uuids :refer [uuidify]]))
 
@@ -136,3 +138,25 @@
                     :form-params  (public-permission-update-body)
                     :content-type :json
                     :as           :json})))
+
+(defn- share-app*
+  "Shares an app with a user."
+  [app-id subject-id level]
+  (let [resource-name (grouper-app-resource-name app-id)
+        role-name     (grouper-user-group)]
+    (http/put (grouper-url "attributes" resource-name "permissions" "memberships" role-name subject-id level)
+              {:query-params {:user grouper-user}
+               :form-params  {:allowed true}
+               :content-type :json
+               :as           :json}))
+  nil)
+
+(defn share-app
+  "Shares an app with a user."
+  [app-id subject-id level]
+  (try+
+   (share-app* app-id subject-id level)
+   (catch :status {:keys [body]}
+     (let [reason (:grouper_result_message (service/parse-json body))]
+       (log/error (str "unable to share " app-id " with " subject-id ": " reason)))
+     "the app sharing request failed")))
