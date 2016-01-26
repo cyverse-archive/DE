@@ -333,7 +333,7 @@ type FileMetadata struct {
 // Argument returns a string containing the command-line settings for the
 // file transfer tool.
 func (m *FileMetadata) Argument() []string {
-	return []string{"-m", fmt.Sprintf("'%s,%s,%s'", m.Attribute, m.Value, m.Unit)}
+	return []string{"-m", fmt.Sprintf("%s,%s,%s", m.Attribute, m.Value, m.Unit)}
 }
 
 // MetadataArgs is a list of FileMetadata
