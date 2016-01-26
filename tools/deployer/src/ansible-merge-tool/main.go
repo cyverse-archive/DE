@@ -401,15 +401,4 @@ func main() {
 		log.Fatal(err)
 	}
 
-	reminder := `Don't forget to run:
-  cd %s
-  export ANSIBLE_ROLES_PATH=%s:%s
-  export ANSIBLE_HASH_BEHAVIOUR=merge
-  ansible-galaxy install --force -r requirements.yaml
-`
-	fmt.Printf(reminder, externalPath, path.Join(externalPath, "roles"), path.Join(internalPath, "roles"))
-	// if err = LaunchDocker(*imageName, deAnsiblePath); err != nil {
-	// 	log.Fatal(err)
-	// }
-
 }
