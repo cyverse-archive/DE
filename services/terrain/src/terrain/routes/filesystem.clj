@@ -62,12 +62,6 @@
     (GET "/filesystem/file/manifest" [:as req]
       (controller req manifest/do-manifest :params))
 
-    (POST "/filesystem/share" [:as req]
-      (controller req sharing/do-share :params :body))
-
-    (POST "/filesystem/unshare" [:as req]
-      (controller req sharing/do-unshare :params :body))
-
     (POST "/filesystem/user-permissions" [:as req]
       (controller req data/collect-permissions :params :body))
 

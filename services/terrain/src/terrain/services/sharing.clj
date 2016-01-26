@@ -21,20 +21,6 @@
   [path-list]
   (join ", " (map basename path-list)))
 
-(defn- build-data-info-share-req
-  "Builds a data-info request object from a username and a client share
-   request."
-  [user share]
-  {:paths (list (:path share)),
-   :users (list user),
-   :permissions (:permissions share)})
-
-(defn- build-data-info-unshare-req
-  "Builds a data-info unshare request object from a username and a path."
-  [user path]
-  {:paths (list path),
-   :users (list user)})
-
 (defn- forward-data-info-share
   "Forwards a data-info share request."
   [user share]
