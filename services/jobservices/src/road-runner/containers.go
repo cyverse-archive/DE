@@ -22,6 +22,15 @@ type Docker struct {
 // that are run as part of a job.
 const WORKDIR = "/de-app-work"
 
+// USRLOCAL is the path to a directory on the host system that may contain tools.
+const USRLOCAL = "/usr/local"
+
+// USRLOCAL2 is the path to a directory on the host system that may contain tools.
+const USRLOCAL2 = "/usr/local2"
+
+// USRLOCAL3 is the path to a directory on the host system that may contain tools.
+const USRLOCAL3 = "/usr/local3"
+
 const (
 	typeLabel      = "org.iplantc.containertype"
 	inputContainer = iota
@@ -180,6 +189,17 @@ func (d *Docker) Pull(name, tag string) error {
 	return d.Client.PullImage(opts, auth)
 }
 
+func pathExists(p string) (bool, error) {
+	_, err := os.Stat(p)
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return true, err
+}
+
 // CreateContainerFromStep creates a container from a step in the a job.
 func (d *Docker) CreateContainerFromStep(step *model.Step, invID string) (*docker.Container, *docker.CreateContainerOptions, error) {
 	createOpts := docker.CreateContainerOptions{}
@@ -260,15 +280,41 @@ func (d *Docker) CreateContainerFromStep(step *model.Step, invID string) (*docke
 	if err != nil {
 		return nil, nil, err
 	}
-	localMount := docker.Mount{
-		Source:      wd,
-		Destination: step.Component.Container.WorkingDirectory(),
-		RW:          true,
+	localMounts := []docker.Mount{
+		docker.Mount{
+			Source:      wd,
+			Destination: step.Component.Container.WorkingDirectory(),
+			RW:          true,
+		},
+		docker.Mount{
+			Source:      USRLOCAL,
+			Destination: USRLOCAL,
+			RW:          true,
+		},
+		docker.Mount{
+			Source:      USRLOCAL2,
+			Destination: USRLOCAL2,
+			RW:          true,
+		},
+		docker.Mount{
+			Source:      USRLOCAL3,
+			Destination: USRLOCAL3,
+			RW:          true,
+		},
 	}
-	createConfig.Mounts = append(createConfig.Mounts, localMount)
-	createHostConfig.Binds = []string{
-		fmt.Sprintf("%s:%s", wd, step.Component.Container.WorkingDirectory()),
+	for _, lm := range localMounts {
+		e, err := pathExists(lm.Source)
+		if err != nil || !e {
+			continue
+		}
+		createConfig.Mounts = append(createConfig.Mounts, lm)
+		createHostConfig.Binds = append(
+			createHostConfig.Binds,
+			fmt.Sprintf("%s:%s", lm.Source, lm.Destination),
+		)
 	}
+	logger.Printf("Mounts: %#v\n", createConfig.Mounts)
+	logger.Printf("Binds: %#v\n", createHostConfig.Binds)
 
 	for _, dev := range step.Component.Container.Devices {
 		device := docker.Device{
