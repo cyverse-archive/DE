@@ -230,19 +230,16 @@
     (send-update-notification response)
     response))
 
-(defn create-permanent-id
-  [request-id params body]
+(defn- complete-permanent-id-request
+  [user {request-id :id :keys [folder type] :as request}]
   (try+
-    (create-publish-dir)
-    (let [user                              (:shortUsername current-user)
-          {:keys [folder type] :as request} (admin-get-permanent-id-request request-id nil)
-          shoulder                          (request-type->shoulder type)
-          folder                            (validate-publish-dest folder)
-          folder-id                         (uuidify (:id folder))
-          {:keys [irods-avus metadata]}     (metadata-get user folder-id)
-          template-id                       (-> metadata :templates first :template_id)
-          ezid-metadata                     (parse-ezid-metadata irods-avus metadata)
-          response                          (ezid/mint-id shoulder ezid-metadata)]
+    (let [shoulder                      (request-type->shoulder type)
+          folder                        (validate-publish-dest folder)
+          folder-id                     (uuidify (:id folder))
+          {:keys [irods-avus metadata]} (metadata-get user folder-id)
+          template-id                   (-> metadata :templates first :template_id)
+          ezid-metadata                 (parse-ezid-metadata irods-avus metadata)
+          response                      (ezid/mint-id shoulder ezid-metadata)]
       (data-info-client/admin-add-avus user folder-id (ezid-response->avus response))
       (data-info-client/move-single (config/irods-user) folder-id (config/permanent-id-publish-dir))
       (send-request-complete-email type folder))
@@ -251,3 +248,9 @@
       (update-permanent-id-request request-id nil (json/encode {:status status-code-failed}))
       (throw+ e)))
   (update-permanent-id-request request-id nil (json/encode {:status status-code-completion})))
+
+(defn create-permanent-id
+  [request-id params body]
+  (create-publish-dir)
+  (complete-permanent-id-request (:shortUsername current-user)
+                                 (admin-get-permanent-id-request request-id nil)))
