@@ -2,6 +2,9 @@
 - name: pull jobservices image
   shell: docker pull discoenv/jobservices:{{docker.tag}}
 
+- name: pull config image
+  shell: docker pull gims.iplantcollaborative.org:5000/de-configs-{{environment_name}}:{{docker.tag}}
+
 - name: install road-runner
   shell: docker run --rm -v /usr/local/bin:/road-runner --entrypoint "cp" discoenv/jobservices:{{docker.tag}} /bin/road-runner /road-runner/road-runner
 
