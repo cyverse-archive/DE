@@ -90,3 +90,7 @@
    :description (describe NonBlankString "The service description")
    :version     (describe NonBlankString "The service version")
    :docs-url    (describe NonBlankString "The service API docs")})
+
+(s/defschema ErrorResponse
+  {:error_code              (describe NonBlankString "The code identifying the type of error")
+   (s/optional-key :reason) (describe NonBlankString "A brief description of the reason for the error")})
