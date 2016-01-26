@@ -50,10 +50,11 @@ __Curl Command__:
 
 This will result is the file contents being printed out to stdout. Redirect to a file to actually get the file.
 
+This endpoint delegates to data-info's GET /data/path/:zone/:path endpoint, with some processing.
 
 ## Uploading
 
-__URL Path__: /secured//fileio/upload
+__URL Path__: /secured/fileio/upload
 
 __HTTP Method__: POST
 
@@ -99,6 +100,7 @@ Uploading is handled through multipart requests:
 
 Notice that the `dest` value points to a directory and not a file.
 
+This endpoint delegates to data-info's POST /data endpoint.
 
 ## URL Uploads
 
@@ -156,11 +158,6 @@ __Curl Command__:
     curl -H "$AUTH_HEADER" -d '{"dest" : "/iplant/home/testuser/", "address" : "http://www.google.com/index.html"}' http://127.0.0.1:31370/secured/fileio/urlupload
 
 The 'dest' value in the JSON refers to the path to the directory in iRODS that the file will be saved off to. The filename of the file will be extracted from the path portion of the URL.
-
-
-## Note on Uploads
-
-Uploads are staged in a temporary directory in iRODS before being moved to their final location.
 
 
 ## Save
@@ -251,3 +248,5 @@ __Response Body__:
 __Curl Command__:
 
     curl -H "$AUTH_HEADER" -d '{"content" : "This is the content for the file.", "dest" : "/iplant/home/testuser/savedfile.txt"}' 'http://127.0.0.1:31370/secured/fileio/saveas'
+
+This endpoint delegates to data-info's POST /data endpoint, similarly to the upload endpoint, with some processing.
