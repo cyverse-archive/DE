@@ -1,6 +1,6 @@
 ---
 - name: Configure JEX
-  hosts: jex
+  hosts: jex:&systems
   sudo: yes
   tags:
       - jex
