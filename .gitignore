@@ -1,3 +1,6 @@
 _site/
 .idea
 *.iml
+ansible/group_vars
+ansible/inventories
+ui/.gradle
