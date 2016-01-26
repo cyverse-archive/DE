@@ -368,7 +368,6 @@ grouper:
   service_description: Grouper UI and Web Services
   image_name: iplant-grouper
   init_image: sharkbait
-  container_name: iplant-grouper
   log_driver: "{{ docker.log_driver }}"
   max_heap_size: 2048M
   max_perm_size: 256M
