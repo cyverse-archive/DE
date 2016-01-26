@@ -593,14 +593,14 @@
 
 (defn permission-assignment-search*
   [request-body]
-  (-> (grouper-post request-body "permissionAssignments")
-      :WsGetPermissionAssignmentsResults
-      :wsPermissionAssigns))
+  (with-trap [default-error-handler]
+    (-> (grouper-post request-body "permissionAssignments")
+        :WsGetPermissionAssignmentsResults
+        :wsPermissionAssigns)))
 
 (defn permission-assignment-search
   [username params]
-  (with-trap [default-error-handler]
-    (permission-assignment-search* (format-permission-search-request username params))))
+  (permission-assignment-search* (format-permission-search-request username params)))
 
 ;; assign/remove
 (defn- format-permission-assign-remove-request
@@ -681,41 +681,18 @@
         :wsAttributeAssigns
         first)))
 
-(defn assign-role-permission
-  [username attribute-def-name role-name allowed? action-names]
-  (assign-remove-permission
-    (format-role-permission-assign-request
-      username attribute-def-name role-name allowed? action-names)))
-
-(defn remove-role-permission
-  [username attribute-def-name role-name action-names]
-  (assign-remove-permission
-    (format-role-permission-remove-request
-      username attribute-def-name role-name action-names)))
-
-(defn assign-membership-permission
-  [username attribute-def-name role-name subject-id allowed? action-names]
-  (assign-remove-permission
-    (format-membership-permission-assign-request
-      username attribute-def-name role-name subject-id allowed? action-names)))
-
-(defn remove-membership-permission
-  [username attribute-def-name role-name subject-id action-names]
-  (assign-remove-permission
-    (format-membership-permission-remove-request
-      username attribute-def-name role-name subject-id action-names)))
-
-(defn- format-all-permission-search-request
-  [username attribute-def-name role subject-id]
+(defn- format-permission-id-search-request
+  [username attribute-def-name role subject-id permission-type]
   {:WsRestGetPermissionAssignmentsRequest
    (remove-vals nil? {:actAsSubjectLookup (act-as-subject-lookup username)
                       :wsAttributeDefNameLookups (name-lookups [attribute-def-name])
                       :roleLookups (role-lookups [role])
-                      :subjectLookups (subject-lookups [subject-id])})})
+                      :wsSubjectLookups (subject-lookups [subject-id])
+                      :permissionType permission-type})})
 
 (defn- get-permission-assign-ids
-  [username attribute-def-name & {:keys [role subject-id]}]
-  (->> (format-all-permission-search-request username attribute-def-name role subject-id)
+  [username attribute-def-name & [{:keys [role subject-id permission-type]}]]
+  (->> (format-permission-id-search-request username attribute-def-name role subject-id permission-type)
        (permission-assignment-search*)
        (distinct-by :attributeAssignId)
        (group-by :permissionType)
@@ -735,10 +712,23 @@
        (assign-remove-permission)))
 
 (defn- remove-existing-permissions
-  [username attribute-def-name]
-  (->> (get-permission-assign-ids username attribute-def-name)
+  [username attribute-def-name & [params]]
+  (->> (get-permission-assign-ids username attribute-def-name params)
        (map (fn [[permission-type ids]] (remove-permission-assign-ids username permission-type ids)))
        dorun))
+
+(defn- remove-existing-role-permissions
+  [username attribute-def-name role-name]
+  (remove-existing-permissions username attribute-def-name
+                               {:role role-name
+                                :permission-type "role"}))
+
+(defn- remove-existing-membership-permissions
+  [username attribute-def-name role-name subject-id]
+  (remove-existing-permissions username attribute-def-name
+                               {:role role-name
+                                :subject-id subject-id
+                                :permission-type "role_subject"}))
 
 (defn- assign-role-permissions
   [username attribute-def-name new-role-permissions]
@@ -761,3 +751,29 @@
   (remove-existing-permissions username attribute-def-name)
   (assign-role-permissions username attribute-def-name new-role-permissions)
   (assign-membership-permissions username attribute-def-name new-membership-permissions))
+
+(defn assign-role-permission
+  [username attribute-def-name role-name allowed? action-names]
+  (remove-existing-role-permissions username attribute-def-name role-name)
+  (assign-remove-permission
+   (format-role-permission-assign-request
+    username attribute-def-name role-name allowed? action-names)))
+
+(defn remove-role-permission
+  [username attribute-def-name role-name action-names]
+  (assign-remove-permission
+   (format-role-permission-remove-request
+    username attribute-def-name role-name action-names)))
+
+(defn assign-membership-permission
+  [username attribute-def-name role-name subject-id allowed? action-names]
+  (remove-existing-membership-permissions username attribute-def-name role-name subject-id)
+  (assign-remove-permission
+   (format-membership-permission-assign-request
+    username attribute-def-name role-name subject-id allowed? action-names)))
+
+(defn remove-membership-permission
+  [username attribute-def-name role-name subject-id action-names]
+  (assign-remove-permission
+   (format-membership-permission-remove-request
+    username attribute-def-name role-name subject-id action-names)))
