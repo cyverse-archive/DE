@@ -104,7 +104,9 @@ irods:
   base: "{{.String "irods.base"}}"
 porklock:
   image: "{{.String "porklock.image"}}"
-  tag: "{{.String "porklock.tag"}}"`
+  tag: "{{.String "porklock.tag"}}"
+condor:
+  filter_files: "{{.String "condor.filter_files"}}"`
 	t, err := template.New("job_config").Parse(tmpl)
 	if err != nil {
 		return "", err
