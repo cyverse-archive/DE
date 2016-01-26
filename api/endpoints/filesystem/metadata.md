@@ -8,42 +8,6 @@ Metadata
 
 The following commands allow the caller to set and get attributes on files and directories in iRODS. iRODS attributes take the form of Attribute Value Unit triples associated with directories and files. iRODS AVUs are only unique on the full triple, so duplicate AVUs may exist. DE tools do not, in general, use the unit field.
 
-
-Adding Metadata
-------------------------------------
-
-Note the single-quotes around the request URL in the curl command.
-
-__URL Path__: /secured/filesystem/metadata
-
-__HTTP Method__: POST
-
-__Error codes__: ERR_INVALID_JSON, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_A_USER
-
-__Request Query Parameters__:
-
-* path - The iRODS path to the file or directory that the metadata is associated with.
-
-__Request Body__:
-
-    {
-        "attr"  : "avu_name",
-        "value" : "avu_value",
-        "unit"  : "avu_unit"
-    }
-
-__Response__:
-
-    {
-        "path"   : "\/iplant\/home\/johnw\/LICENSE.txt",
-        "user"   : "johnw"
-    }
-
-__Curl Command__:
-
-    curl -H "$AUTH_HEADER" -d '{"attr" : "avu_name", "value" : "avu_value", "unit" : "avu_unit"}' 'http://127.0.0.1:3000/secured/filesystem/metadata?path=/iplant/home/johnw/LICENSE.txt'
-
-
 Getting Metadata
 ------------------------------------
 
@@ -73,6 +37,8 @@ __Response__:
 ```
 
 This `metadata` value is set with the response from the corresponding metadata service endpoint. Please see the metadata documentation for more information on the format of this object.
+
+The `irods-avus` value is pulled from data-info.
 
 __Curl Command__:
 
@@ -119,6 +85,8 @@ __Request Body__:
 
 This endpoint forwards the `metadata` value of the request to the corresponding metadata service endpoint. Please see the metadata documentation for more information on the format of this object. If the `metadata` key is omitted or set with an empty value, then an empty JSON body `{}` will be submitted to the corresponding metadata service endpoint.
 
+This endpoint forwards the `irods-avus` value to a corresponding data-info service endpoint.
+
 __Response__:
 
 ```json
@@ -130,31 +98,6 @@ __Response__:
 __Curl Command__:
 
     curl -H "$AUTH_HEADER" -d '{"irods-avus" : [{"attr" : "attr", "value" : "value", "unit" : "unit"}], "metadata": {...}' 'http://127.0.0.1:3000/secured/filesystem/$data_id/metadata'
-
-Deleting File and Directory Metadata
-------------------------------------
-
-__URL Path__: /secured/filesystem/metadata
-
-__HTTP Method__: DELETE
-
-__Error Codes__: ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_A_USER
-
-__Request Query Parameters__:
-
-* path - The path to the file or directory being operated on.
-
-__Response__:
-
-    {
-        "path":"\/iplant\/home\/johnw\/LICENSE.txt",
-        "user":"johnw"
-    }
-
-__Curl Command__:
-
-    curl -X DELETE -H "$AUTH_HEADER" 'http://127.0.0.1:3000/secured/filesystem/metadata?path=/iplant/home/johnw/LICENSE.txt&attr=avu_name'
-
 
 Listing Metadata Templates
 --------------------------
