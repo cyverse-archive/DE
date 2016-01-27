@@ -61,8 +61,7 @@
         (create-ticket cm (:username cm) path uuid)
         (when public?
           (log/warn "[add-tickets] making ticket" uuid "public")
-          (doto (ticket-admin-service cm (:username cm))
-            (.addTicketGroupRestriction uuid "public"))))
+          (publicize-ticket cm uuid)))
       {:user    user
        :tickets (mapv (partial returnable-ticket-map cm) new-uuids)})))
 
