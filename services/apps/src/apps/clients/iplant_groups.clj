@@ -1,5 +1,5 @@
 (ns apps.clients.iplant-groups
-  (:use [clojure-commons.error-codes :only clj-http-error?]
+  (:use [clojure-commons.error-codes :only [clj-http-error?]]
         [medley.core :only [remove-vals]]
         [slingshot.slingshot :only [try+]])
   (:require [apps.util.config :as config]
@@ -152,12 +152,20 @@
                :as           :json}))
   nil)
 
+(defn- get-error-reason
+  "Attempts to extract the reason for an error from an iplant-groups response body."
+  [body status]
+  (let [status-msg (str "HTTP status: " status)]
+    (try+
+      (or (:grouper_result_message (service/parse-json body)) status-msg)
+      (catch Object _ status-msg))))
+
 (defn share-app
   "Shares an app with a user."
   [app-id subject-id level]
   (try+
    (share-app* app-id subject-id level)
-   (catch clj-http-error? {:keys [body]}
-     (let [reason (:grouper_result_message (service/parse-json body))]
+   (catch clj-http-error? {:keys [status body]}
+     (let [reason (get-error-reason body)]
        (log/error (str "unable to share " app-id " with " subject-id ": " reason)))
      "the app sharing request failed")))
