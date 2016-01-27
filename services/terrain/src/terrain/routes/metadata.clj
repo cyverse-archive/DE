@@ -105,6 +105,9 @@
     (POST "/apps/permission-lister" [:as {:keys [body]}]
           (service/success-response (apps/list-permissions body)))
 
+    (POST "/apps/sharing" [:as {:keys [body]}]
+          (service/success-response (apps/share body)))
+
     (GET "/apps/:app-id" [app-id]
          (service/success-response (apps/get-app app-id)))
 

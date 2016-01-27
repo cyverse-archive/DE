@@ -61,4 +61,7 @@
   (ownerAddAppDocs [_ app-id body])
   (adminEditAppDocs [_ app-id body])
   (adminAddAppDocs [_ app-id body])
-  (listAppPermissions [_ app-ids]))
+  (listAppPermissions [_ app-ids])
+  (shareApps [_ sharing-requests])
+  (shareAppsWithUser [_ sharee user-app-sharing-requests])
+  (shareAppWithUser [_ sharee app-id level]))

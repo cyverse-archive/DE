@@ -70,6 +70,21 @@
         endpoint to succeed."
         (ok (apps/list-app-permissions current-user (:apps body))))
 
+  (POST* "/sharing" []
+         :query [params SecuredQueryParams]
+         :body [body (describe perms/AppSharingRequest "The app sharing request.")]
+         :return perms/AppSharingResponse
+         :summary "Share one or more apps with one or more users."
+         :description "This endpoint allows the caller to share multiple apps with multiple users. The
+         authenticated user must have ownership permission to every app in the request body for this
+         endpoint to succeed. Note: this is a potentially slow operation and the response is returned
+         synchronously. The DE UI handles this by allowing the user to continue working while the request
+         is being processed. When calling this endpoint, please be sure that the response timeout is long
+         enough. Using a response timeout that is too short will result in an exception on the client side.
+         On the server side, the result of the sharing operation when a connection is lost is undefined. It
+         may be worthwhile to repeat failed or timed out calls to this endpoint."
+         (ok (apps/share-apps current-user (:sharing body))))
+
   (GET* "/:app-id" []
         :path-params [app-id :- AppIdJobViewPathParam]
         :query [params SecuredQueryParams]

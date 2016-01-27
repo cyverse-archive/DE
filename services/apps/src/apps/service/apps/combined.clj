@@ -8,7 +8,8 @@
             [apps.service.apps.job-listings :as job-listings]
             [apps.service.apps.combined.job-view :as job-view]
             [apps.service.apps.combined.jobs :as combined-jobs]
-            [apps.service.apps.combined.util :as util]))
+            [apps.service.apps.combined.util :as util]
+            [apps.service.apps.permissions :as app-permissions]))
 
 (deftype CombinedApps [clients user]
   apps.protocols.Apps
@@ -210,4 +211,13 @@
          (first)))
 
   (listAppPermissions [_ app-ids]
-    (mapcat #(.listAppPermissions % app-ids) clients)))
+    (mapcat #(.listAppPermissions % app-ids) clients))
+
+  (shareApps [self sharing-requests]
+    (app-permissions/process-app-sharing-requests self sharing-requests))
+
+  (shareAppsWithUser [self sharee user-app-sharing-requests]
+    (app-permissions/process-user-app-sharing-requests self sharee user-app-sharing-requests))
+
+  (shareAppWithUser [_ sharee app-id level]
+    (first (remove nil? (map #(.shareAppWithUser % sharee app-id level) clients)))))

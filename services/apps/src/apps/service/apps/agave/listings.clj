@@ -2,7 +2,7 @@
   (:use [apps.service.util :only [sort-apps apply-offset apply-limit uuid?]]
         [slingshot.slingshot :only [try+]])
   (:require [clojure.tools.logging :as log]
-            [clojure-commons.error-codes :as ce]
+            [clojure-commons.error-codes :as ce :refer [clj-http-error?]]
             [apps.persistence.app-metadata :as ap]))
 
 (defn list-apps
@@ -22,7 +22,7 @@
    (catch [:error_code ce/ERR_UNAVAILABLE] _
      (log/error (:throwable &throw-context) "Agave app search timed out")
      nil)
-   (catch :status _
+   (catch clj-http-error? _
      (log/error (:throwable &throw-context) "HTTP error returned by Agave")
      nil)))
 
@@ -37,7 +37,7 @@
    (catch [:type :clojure-commons.exception/unavailable] _
      (log/warn (:throwable &throw-context) "Agave app table retrieval timed out")
      [])
-   (catch :status _
+   (catch clj-http-error? _
      (log/error (:throwable &throw-context) "HTTP error returned by Agave")
      [])))
 
