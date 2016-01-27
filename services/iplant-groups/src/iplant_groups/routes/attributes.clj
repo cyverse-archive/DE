@@ -82,6 +82,15 @@
         :path-params [role-name  :- GroupNamePathParam
                       subject-id :- SubjectIdPathParam]
 
+        (DELETE* "/" []
+                 :return AttributeAssignmentList
+                 :query [params StandardUserQueryParams]
+                 :summary "Remove Membership Permissions"
+                 :description "This endpoint deletes all permissions for an attribute name, role name, and subject ID.
+                 It is not necessary to know which permissions, if any, have been assigned to the user before calling
+                 this endpoint."
+                 (ok (attributes/remove-existing-membership-permissions params attribute-name role-name subject-id)))
+
         (context* "/:action-name" []
           :path-params [action-name :- NonBlankString]
 
