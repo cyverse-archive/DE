@@ -80,7 +80,9 @@
          endpoint to succeed. Note: this is a potentially slow operation and the response is returned
          synchronously. The DE UI handles this by allowing the user to continue working while the request
          is being processed. When calling this endpoint, please be sure that the response timeout is long
-         enough."
+         enough. Using a response timeout that is too short will result in an exception on the client side.
+         On the server side, the result of the sharing operation when a connection is lost is undefined. It
+         may be worthwhile to repeat failed or timed out calls to this endpoint."
          (ok (apps/share-apps current-user (:sharing body))))
 
   (GET* "/:app-id" []
