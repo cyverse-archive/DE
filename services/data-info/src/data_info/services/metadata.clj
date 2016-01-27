@@ -4,7 +4,6 @@
         [clj-jargon.init :only [with-jargon]]
         [clj-jargon.item-ops :only [copy-stream]]
         [clj-jargon.metadata]
-        [clj-jargon.validations :only [validate-path-lengths]]
         [kameleon.uuids :only [uuidify]]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [clojure.tools.logging :as log]
@@ -257,7 +256,6 @@
       (validators/path-exists cm dest-dir)
       (validators/path-writeable cm user dest-dir)
       (validators/path-not-exists cm dest)
-      (validate-path-lengths dest)
       (when recursive?
         (validators/validate-num-paths-under-folder user src-path))
 

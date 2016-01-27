@@ -1,6 +1,6 @@
 ---
 - name: Start anon-files
-  hosts: anon-files
+  hosts: anon-files:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -12,7 +12,7 @@
       service_name_short: "{{anon_files.service_name_short}}"
 
 - name: Start apps
-  hosts: apps
+  hosts: apps:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -24,7 +24,7 @@
       service_name_short: "{{apps.service_name_short}}"
 
 - name: Start clockwork
-  hosts: clockwork
+  hosts: clockwork:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -36,7 +36,7 @@
       service_name_short: "{{clockwork.service_name_short}}"
 
 - name: Start data-info
-  hosts: data-info
+  hosts: data-info:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -48,7 +48,7 @@
       service_name_short: "{{data_info.service_name_short}}"
 
 - name: Start dewey
-  hosts: dewey
+  hosts: dewey:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -61,7 +61,7 @@
       service_name_short: "{{dewey.service_name_short}}"
 
 - name: Start de-ui
-  hosts: ui
+  hosts: ui:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -72,7 +72,7 @@
       service_name_short: "{{de.service_name_short}}"
 
 - name: Start de-ui-nginx
-  hosts: ui
+  hosts: ui:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -84,7 +84,7 @@
       service_name_short: "{{de.http_server.service_name_short}}"
 
 - name: Start exim-sender
-  hosts: exim-sender
+  hosts: exim-sender:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -96,7 +96,7 @@
       service_name_short: "{{exim.service_name_short}}"
 
 - name: Start info-typer
-  hosts: info-typer
+  hosts: info-typer:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -109,7 +109,7 @@
       service_name_short: "{{info_typer.service_name_short}}"
 
 - name: Start infosquito
-  hosts: infosquito
+  hosts: infosquito:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -122,7 +122,7 @@
       service_name_short: "{{infosquito.service_name_short}}"
 
 - name: Start iplant-email
-  hosts: iplant-email
+  hosts: iplant-email:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -134,7 +134,7 @@
       service_name_short: "{{iplant_email.service_name_short}}"
 
 - name: Start iplant-groups
-  hosts: iplant-groups
+  hosts: iplant-groups:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -170,7 +170,7 @@
       service_name_short: job_status_recorder
 
 - name: Start kifshare
-  hosts: kifshare
+  hosts: kifshare:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -182,7 +182,7 @@
       service_name_short: "{{kifshare.service_name_short}}"
 
 - name: Start metadata
-  hosts: metadata
+  hosts: metadata:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -194,7 +194,7 @@
       service_name_short: "{{metadata.service_name_short}}"
 
 - name: Start monkey
-  hosts: monkey
+  hosts: monkey:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -207,7 +207,7 @@
       service_name_short: "{{monkey.service_name_short}}"
 
 - name: Start notification-agent
-  hosts: notificationagent
+  hosts: notificationagent:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -219,7 +219,7 @@
       service_name_short: "{{notificationagent.service_name_short}}"
 
 - name: Start saved-searches
-  hosts: saved-searches
+  hosts: saved-searches:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -231,7 +231,7 @@
       service_name_short: "{{saved_searches.service_name_short}}"
 
 - name: Start terrain
-  hosts: terrain
+  hosts: terrain:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -243,7 +243,7 @@
       service_name_short: "{{terrain.service_name_short}}"
 
 - name: Start tree-urls
-  hosts: tree-urls
+  hosts: tree-urls:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -255,7 +255,7 @@
       service_name_short: "{{tree_urls.service_name_short}}"
 
 - name: Start user-preferences
-  hosts: user-preferences
+  hosts: user-preferences:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -267,7 +267,7 @@
       service_name_short: "{{user_preferences.service_name_short}}"
 
 - name: Start user-sessions
-  hosts: user-sessions
+  hosts: user-sessions:&systems
   sudo: true
   gather_facts: false
   tags:

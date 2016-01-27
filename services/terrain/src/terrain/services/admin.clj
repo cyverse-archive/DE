@@ -76,7 +76,7 @@
       (log/error (ce/format-exception e))
       false)))
 
-(defn perform-ezid-check
+(defn- perform-ezid-check
   []
   (try
     (let [ezid-status-url (str (url/url (config/ezid-base-url) "status"))
@@ -113,7 +113,7 @@
     (merge status {:notificationagent (perform-notificationagent-check)})
     status))
 
-(defn status-ezid
+(defn- status-ezid
   [status]
   (merge status {:ezid (perform-ezid-check)}))
 

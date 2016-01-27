@@ -97,6 +97,15 @@
 
 ;; CREATE
 
+(defn upload-file
+  [user dest-path filename content-type istream]
+  (http/post (str (url/url (cfg/data-info-base) "data"))
+             {:query-params {:user user
+                             :dest dest-path}
+              :multipart [{:part-name "file"
+                           :name filename
+                           :mime-type content-type
+                           :content istream}]}))
 (defn create-dirs
   "Uses the data-info directories endpoint to create several directories."
   [user paths]

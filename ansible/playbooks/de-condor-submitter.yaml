@@ -1,4 +1,4 @@
-- hosts: condor-submission
+- hosts: condor-submission:&systems
   sudo: True
   roles:
       - de-condor-submitter

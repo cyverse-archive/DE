@@ -1,6 +1,6 @@
 ---
 - name: Deploy porklock
-  hosts: condor
+  hosts: condor:&systems
   sudo: True
   gather_facts: false
   tags:

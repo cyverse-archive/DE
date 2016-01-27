@@ -111,6 +111,11 @@ public class BelphegorViewDefaultAppearance implements BelphegorView.BelphegorVi
     }
 
     @Override
+    public String toolAdmin(){
+        return belphegorDisplayStrings.toolAdmin();
+    }
+
+    @Override
     public String systemMessages() {
         return belphegorDisplayStrings.systemMessages();
     }

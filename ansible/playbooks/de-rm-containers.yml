@@ -1,6 +1,6 @@
 ---
 # - name: Remove iplant-data
-#   hosts: docker-ready
+#   hosts: docker-ready:&systems
 #   sudo: true
 #   gather_facts: false
 #   tags:
@@ -13,7 +13,7 @@
 #       service_name_short: "{{data_container.service_name_short}}"
 
 - name: Remove anon-files
-  hosts: anon-files
+  hosts: anon-files:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -35,7 +35,7 @@
       shell: docker rm -v {{anon_files.service_name_short}}
 
 - name: Remove apps
-  hosts: apps
+  hosts: apps:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -61,7 +61,7 @@
       shell: docker rm -v {{apps.service_name_short}}
 
 - name: Remove clockwork
-  hosts: clockwork
+  hosts: clockwork:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -83,7 +83,7 @@
       shell: docker rm -v {{clockwork.service_name_short}}
 
 - name: Remove clm
-  hosts: condor-log-monitor
+  hosts: condor-log-monitor:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -104,7 +104,7 @@
       shell: docker rm -v config_clm
 
 - name: Remove data-info
-  hosts: data-info
+  hosts: data-info:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -126,7 +126,7 @@
       shell: docker rm -v {{data_info.service_name_short}}
 
 - name: Remove dewey
-  hosts: dewey
+  hosts: dewey:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -148,7 +148,7 @@
       shell: docker rm -v {{dewey.service_name_short}}
 
 - name: Remove de-ui
-  hosts: ui
+  hosts: ui:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -173,7 +173,7 @@
       shell: docker rm -v {{de.service_name_short}}
 
 - name: Remove de-ui-nginx
-  hosts: ui
+  hosts: ui:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -199,7 +199,7 @@
       shell: docker rm -v {{de.http_server.service_name_short}}
 
 - name: Remove exim-sender
-  hosts: exim-sender
+  hosts: exim-sender:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -221,7 +221,7 @@
       shell: docker rm -v exim
 
 - name: Remove info-typer
-  hosts: info-typer
+  hosts: info-typer:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -243,7 +243,7 @@
       shell: docker rm -v {{info_typer.service_name_short}}
 
 - name: Remove infosquito
-  hosts: infosquito
+  hosts: infosquito:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -265,7 +265,7 @@
       shell: docker rm -v {{infosquito.service_name_short}}
 
 - name: Remove iplant-email
-  hosts: iplant-email
+  hosts: iplant-email:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -287,7 +287,7 @@
       shell: docker rm -v {{iplant_email.service_name_short}}
 
 - name: Remove iplant-groups
-  hosts: iplant-groups
+  hosts: iplant-groups:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -309,7 +309,7 @@
       shell: docker rm -v {{iplant_groups.service_name_short}}
 
 - name: Remove jex-events
-  hosts: jexevents
+  hosts: jexevents:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -334,7 +334,7 @@
       shell: docker rm -v config_jexevents
 
 - name: Remove kifshare
-  hosts: kifshare
+  hosts: kifshare:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -356,7 +356,7 @@
       shell: docker rm -v {{kifshare.service_name_short}}
 
 - name: Remove metadata
-  hosts: metadata
+  hosts: metadata:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -378,7 +378,7 @@
       shell: docker rm -v {{metadata.service_name_short}}
 
 - name: Remove monkey
-  hosts: monkey
+  hosts: monkey:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -400,7 +400,7 @@
       shell: docker rm -v {{monkey.service_name_short}}
 
 - name: Remove notification-agent
-  hosts: notificationagent
+  hosts: notificationagent:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -422,7 +422,7 @@
       shell: docker rm -v {{notificationagent.service_name_short}}
 
 - name: Remove saved-searches
-  hosts: saved-searches
+  hosts: saved-searches:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -444,7 +444,7 @@
       shell: docker rm -v {{saved_searches.service_name_short}}
 
 - name: Remove terrain
-  hosts: terrain
+  hosts: terrain:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -470,7 +470,7 @@
       shell: docker rm -v {{terrain.service_name_short}}
 
 - name: Remove tree-urls
-  hosts: tree-urls
+  hosts: tree-urls:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -492,7 +492,7 @@
       shell: docker rm -v {{tree_urls.service_name_short}}
 
 - name: Remove user-preferences
-  hosts: user-preferences
+  hosts: user-preferences:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -514,7 +514,7 @@
       shell: docker rm -v {{user_preferences.service_name_short}}
 
 - name: Remove user-sessions
-  hosts: user-sessions
+  hosts: user-sessions:&systems
   sudo: true
   gather_facts: false
   tags:

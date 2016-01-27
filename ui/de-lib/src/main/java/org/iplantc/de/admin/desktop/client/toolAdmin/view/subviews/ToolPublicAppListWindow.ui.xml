@@ -1,0 +1,33 @@
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid">
+
+    <ui:with field="appearance"
+             type="org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView.ToolAdminViewAppearance"/>
+
+    <ui:with field="margins"
+             type="com.sencha.gxt.core.client.util.Margins">
+        <ui:attributes top="0" right="5" bottom="0" left="5"/>
+    </ui:with>
+    <ui:with field="layoutData"
+             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+        <ui:attributes width="1" height="-1" margins="{margins}"/>
+    </ui:with>
+    <ui:with type="com.sencha.gxt.widget.core.client.grid.ColumnModel"
+             field="cm"/>
+    <ui:with type="com.sencha.gxt.data.shared.ListStore"
+             field="listStore"/>
+    <ui:with type="com.sencha.gxt.widget.core.client.grid.GridView"
+             field="view">
+        <ui:attributes stripeRows="true" forceFit="true" autoFill="true"/>
+    </ui:with>
+
+    <container:VerticalLayoutContainer ui:field="layoutContainer">
+        <container:child layoutData="{layoutData}">
+            <grid:Grid ui:field="grid"
+                       cm="{cm}"
+                       store="{listStore}"
+                       view="{view}"/>
+        </container:child>
+    </container:VerticalLayoutContainer>
+</ui:UiBinder> 

@@ -2005,8 +2005,8 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
      * @return translated "Please complete required fields to submit."
      */
     @DefaultMessage("Please complete all required fields.")
-    @Key("publicSubmitTip")
-    String publicSubmitTip();
+    @Key("completeRequiredFieldsError")
+    String completeRequiredFieldsError();
 
     /**
      * Translated "Quick Tips".

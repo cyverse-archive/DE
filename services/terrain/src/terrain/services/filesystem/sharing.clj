@@ -186,44 +186,6 @@
        :path fpaths
        :skipped (map #(dissoc % :skipped) (:skipped unshare-recs))})))
 
-(defn- fix-username
-  [username]
-  (if (re-seq #"@" username)
-    (subs username 0 (.indexOf username "@"))
-    username))
-
-(defn do-share
-  [{user :user} {users :users paths :paths permission :permission}]
-  (let [user        (fix-username user)
-        share-withs (map fix-username users)]
-    (share user share-withs paths permission)))
-
-(with-post-hook! #'do-share (paths/log-func "do-share"))
-
-(with-pre-hook! #'do-share
-  (fn [params body]
-    (paths/log-call "do-share" params body)
-    (validate-map params {:user string?})
-    (validate-map body {:paths sequential? :users sequential? :permission string?})
-    (validators/validate-num-paths (:paths body))))
-
-
-(defn do-unshare
-  [{user :user} {users :users paths :paths}]
-  (let [user        (fix-username user)
-        share-withs (map fix-username users)
-        fpaths      paths]
-    (unshare user share-withs fpaths)))
-
-(with-pre-hook! #'do-unshare
-  (fn [params body]
-    (paths/log-call "do-unshare" params body)
-    (validate-map params {:user string?})
-    (validate-map body {:paths sequential? :users sequential?})
-    (validators/validate-num-paths (:paths body))))
-
-(with-post-hook! #'do-unshare (paths/log-func "do-unshare"))
-
 (defn anon-readable?
   [cm p]
   (is-readable? cm (cfg/fs-anon-user) p))

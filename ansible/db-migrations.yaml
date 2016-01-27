@@ -1,6 +1,6 @@
 ---
 - name: Database migrations
-  hosts: db-proxy
+  hosts: db-proxy:&systems
   tags:
       - databases
   sudo: False

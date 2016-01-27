@@ -1,6 +1,6 @@
 ---
 - name: Configure UI
-  hosts: ui
+  hosts: ui:&systems
   sudo: yes
   gather_facts: false
   tags: 

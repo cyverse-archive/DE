@@ -19,6 +19,17 @@
 (def ^:private status-code-completion "Completion")
 (def ^:private status-code-failed "Failed")
 
+(defn- parse-service-json
+  [response]
+  (-> response :body service/decode-json))
+
+(defn- validate-ezid-metadata
+  [ezid-metadata]
+  (when (empty? ezid-metadata)
+    (throw+ {:type :clojure-commons.exception/bad-request
+             :error "No metadata found for Permanent ID Request."}))
+  ezid-metadata)
+
 (defn- validate-request-target-type
   [{target-type :type :as folder}]
   (let [target-type (metadata/resolve-data-type target-type)]
@@ -37,41 +48,41 @@
              :folder-id id}))
   data-item)
 
-(defn- validate-staging-dest
-  [{:keys [path] :as data-item}]
-  (let [staging-dest (ft/path-join (config/permanent-id-staging-dir) (ft/basename path))]
-    (when (data-info/path-exists? (config/irods-user) staging-dest)
+(defn- validate-staging-dest-exists
+  [{:keys [paths]} staging-dest]
+  (let [path-exists? (get paths (keyword staging-dest))]
+    (when path-exists?
     (throw+ {:type :clojure-commons.exception/exists
              :error "A folder with this name has already been submitted for a Permanent ID request."
-             :path staging-dest})))
-  data-item)
+             :path staging-dest}))))
+
+(defn- validate-publish-dest-exists
+  [{:keys [paths]} publish-dest]
+  (let [path-exists? (get paths (keyword publish-dest))]
+    (when path-exists?
+      (throw+ {:type :clojure-commons.exception/exists
+               :error "A folder with this name has already been published."
+               :path publish-dest}))))
 
 (defn- validate-publish-dest
   [{:keys [path] :as data-item}]
-  (let [publish-dest (ft/path-join (config/permanent-id-publish-dir) (ft/basename path))]
-    (when (data-info/path-exists? (config/irods-user) publish-dest)
-      (throw+ {:type :clojure-commons.exception/exists
-               :error "A folder with this name has already been published."
-               :path publish-dest})))
+  (let [publish-dest (ft/path-join (config/permanent-id-publish-dir) (ft/basename path))
+        paths-exist (parse-service-json (data-info/check-existence {:user (config/irods-user)}
+                                                                   {:paths [publish-dest]}))]
+    (validate-publish-dest-exists paths-exist publish-dest))
   data-item)
 
 (defn- validate-data-item
-  [user data-item]
-  (->> data-item
-       (validate-owner user)
-       validate-staging-dest
-       validate-publish-dest))
-
-(defn- get-requested-data-item
-  "Gets data-info stat for the given ID and checks if the data item is valid for a Permanent ID request."
-  [user data-id]
-  (->> data-id
-       (data-info/stat-by-uuid user)
-       (validate-data-item user)))
-
-(defn- parse-service-json
-  [response]
-  (-> response :body service/decode-json))
+  [user {:keys [path] :as data-item}]
+  (validate-owner user data-item)
+  (let [staging-dest (ft/path-join (config/permanent-id-staging-dir) (ft/basename path))
+        publish-dest (ft/path-join (config/permanent-id-publish-dir) (ft/basename path))
+        paths-exist  (parse-service-json (data-info/check-existence {:user (config/irods-user)}
+                                                                    {:paths [staging-dest
+                                                                             publish-dest]}))]
+    (validate-staging-dest-exists paths-exist staging-dest)
+    (validate-publish-dest-exists paths-exist publish-dest))
+  data-item)
 
 (defn- submit-permanent-id-request
   "Submits the request to the metadata create-permanent-id-request endpoint."
@@ -143,11 +154,22 @@
              :error "No EZID shoulder defined for this Permanent ID Request type."
              :request-type type})))
 
-(defn- parse-ezid-metadata
+(defn- parse-valid-ezid-metadata
   [irods-avus metadata]
   (let [metadata (mapcat :avus (:templates metadata))
-        format-avus #(vector (:attr %) (:value %))]
-    (into {} (concat (map format-avus irods-avus) (map format-avus metadata)))))
+        format-avus #(vector (:attr %) (:value %))
+        ezid-metadata (into {} (concat (map format-avus irods-avus) (map format-avus metadata)))]
+    (validate-ezid-metadata ezid-metadata)
+    ezid-metadata))
+
+(defn- get-validated-data-item
+  "Gets data-info stat for the given ID and checks if the data item is valid for a Permanent ID request."
+  [user data-id]
+  (let [{:keys [irods-avus metadata]} (metadata-get user data-id)]
+    (parse-valid-ezid-metadata irods-avus metadata))
+  (->> data-id
+       (data-info/stat-by-uuid user)
+       (validate-data-item user)))
 
 (defn- ezid-response->avus
   [response]
@@ -177,7 +199,7 @@
   (let [{type :type folder-id :folder} (service/decode-json body)
         folder-id                      (uuidify folder-id)
         user                           (:shortUsername current-user)
-        {:keys [path] :as folder}      (get-requested-data-item user folder-id)
+        {:keys [path] :as folder}      (get-validated-data-item user folder-id)
         target-type                    (validate-request-target-type folder)
         {request-id :id :as response}  (submit-permanent-id-request type folder-id target-type path)]
     (stage-data-item user folder)
@@ -219,19 +241,15 @@
     (send-update-notification response)
     response))
 
-(defn create-permanent-id
-  [request-id params body]
+(defn- complete-permanent-id-request
+  [user {request-id :id :keys [folder type] :as request}]
   (try+
-    (create-publish-dir)
-    (let [user                              (:shortUsername current-user)
-          {:keys [folder type] :as request} (admin-get-permanent-id-request request-id nil)
-          shoulder                          (request-type->shoulder type)
-          folder                            (validate-publish-dest folder)
-          folder-id                         (uuidify (:id folder))
-          {:keys [irods-avus metadata]}     (metadata-get user folder-id)
-          template-id                       (-> metadata :templates first :template_id)
-          ezid-metadata                     (parse-ezid-metadata irods-avus metadata)
-          response                          (ezid/mint-id shoulder ezid-metadata)]
+    (let [shoulder                      (request-type->shoulder type)
+          folder                        (validate-publish-dest folder)
+          folder-id                     (uuidify (:id folder))
+          {:keys [irods-avus metadata]} (metadata-get user folder-id)
+          ezid-metadata                 (parse-valid-ezid-metadata irods-avus metadata)
+          response                      (ezid/mint-id shoulder ezid-metadata)]
       (data-info-client/admin-add-avus user folder-id (ezid-response->avus response))
       (data-info-client/move-single (config/irods-user) folder-id (config/permanent-id-publish-dir))
       (send-request-complete-email type folder))
@@ -240,3 +258,9 @@
       (update-permanent-id-request request-id nil (json/encode {:status status-code-failed}))
       (throw+ e)))
   (update-permanent-id-request request-id nil (json/encode {:status status-code-completion})))
+
+(defn create-permanent-id
+  [request-id params body]
+  (create-publish-dir)
+  (complete-permanent-id-request (:shortUsername current-user)
+                                 (admin-get-permanent-id-request request-id nil)))

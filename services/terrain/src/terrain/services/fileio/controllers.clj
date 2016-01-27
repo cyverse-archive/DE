@@ -14,11 +14,12 @@
             [clj-jargon.permissions :as perm]
             [clojure-commons.validators :as ccv]
             [terrain.clients.data-info :as data]
+            [terrain.clients.data-info.raw :as data-raw]
             [terrain.util.config :as cfg]
             [terrain.util.validators :as valid]
             [terrain.services.filesystem.icat :as icat])
   (:import [clojure.lang IPersistentMap]
-           [java.io IOException]))
+           [java.io IOException ByteArrayInputStream]))
 
 
 (defn download
@@ -31,13 +32,8 @@
 
 
 (defn- store-from-form
-  [user dest-dir {istream :stream filename :filename}]
-  (when-not (valid/good-string? filename)
-    (throw+ {:error_code ERR_BAD_OR_MISSING_FIELD :path filename}))
-  (let [dest-path (ft/path-join dest-dir filename)]
-    (actions/upload (icat/jargon-cfg) user dest-path istream)
-    dest-path))
-
+  [user dest-dir {istream :stream filename :filename content-type :content-type}]
+  (data-raw/upload-file user dest-dir filename content-type istream))
 
 (defn upload
   "This is the business logic of behind the POST /secured/fileio/upload endpoint.
@@ -48,14 +44,29 @@
      req  - the ring request map"
   [{:keys [user dest]} ^IPersistentMap req]
   (let [store                   (partial store-from-form user dest)
-        {{file "file"} :params} (multipart/multipart-params-request req {:store store})]
-    (when-not file
-      (throw+ {:error_code ERR_MISSING_FORM_FIELD :field "file"}))
-    (success-response {:file (data/path-stat user file)})))
+        {{file-info "file"} :params} (multipart/multipart-params-request req {:store store})]
+    (success-response file-info)))
 
 (with-pre-hook! #'upload
   (fn [params req]
     (ccv/validate-map params {:user string? :dest string?})))
+
+(defn saveas
+  "Save a file to a location given the content in a (utf-8) string.
+
+   This reuses the upload endpoint logic by converting the string into an input stream to be sent to data-info."
+  [{:keys [user]} {:keys [dest content]}]
+  (let [dest (string/trim dest)
+        dir  (ft/dirname dest)
+        file (ft/basename dest)
+        istream (ByteArrayInputStream. (.getBytes content "UTF-8"))
+        info (data-raw/upload-file user dir file "application/octet-stream" istream)]
+    (success-response info)))
+
+(with-pre-hook! #'saveas
+  (fn [params body]
+    (ccv/validate-map params {:user string?})
+    (ccv/validate-map body {:dest string? :content string?})))
 
 (defn- url-filename
   [address]
@@ -113,25 +124,6 @@
     (success-response {:file (data/path-stat user dest)})))
 
 (with-pre-hook! #'save
-  (fn [params body]
-    (ccv/validate-map params {:user string?})
-    (ccv/validate-map body {:dest string? :content string?})))
-
-(defn saveas
-  [params body]
-  (let [user (:user params)
-        dest (string/trim (:dest body))
-        cont (:content body)]
-    (with-jargon (icat/jargon-cfg) :client-user user [cm]
-      (when-not (info/exists? cm (ft/dirname dest))
-        (throw+ {:error_code ERR_DOES_NOT_EXIST :path (ft/dirname dest)}))
-      (when (info/exists? cm dest)
-        (throw+ {:error_code ERR_EXISTS :path dest}))
-      (with-in-str cont
-        (actions/store cm *in* user dest)))
-    (success-response {:file (data/path-stat user dest)})))
-
-(with-pre-hook! #'saveas
   (fn [params body]
     (ccv/validate-map params {:user string?})
     (ccv/validate-map body {:dest string? :content string?})))

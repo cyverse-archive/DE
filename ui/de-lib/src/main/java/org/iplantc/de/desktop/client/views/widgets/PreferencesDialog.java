@@ -58,7 +58,7 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
 
         String notifyEmail();
 
-        String publicSubmitTip();
+        String completeRequiredFieldsError();
 
         String rememberFileSectorPath();
 
@@ -226,7 +226,7 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
                 super.onButtonPressed(button);
             } else {
                 IplantAnnouncer.getInstance()
-                               .schedule(new ErrorAnnouncementConfig(appearance.publicSubmitTip()));
+                               .schedule(new ErrorAnnouncementConfig(appearance.completeRequiredFieldsError()));
             }
 
 

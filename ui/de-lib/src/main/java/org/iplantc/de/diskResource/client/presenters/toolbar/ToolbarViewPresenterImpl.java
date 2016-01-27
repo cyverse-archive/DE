@@ -1,23 +1,16 @@
 package org.iplantc.de.diskResource.client.presenters.toolbar;
 
-import com.google.common.base.Preconditions;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-import com.google.web.bindery.autobean.shared.AutoBean;
-import com.google.web.bindery.autobean.shared.AutoBeanCodex;
-import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
-import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
-import com.sencha.gxt.widget.core.client.box.MessageBox;
-import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
-import com.sencha.gxt.widget.core.client.event.DialogHideEvent.DialogHideHandler;
-import com.sencha.gxt.widget.core.client.event.SelectEvent;
-import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
+import static com.sencha.gxt.widget.core.client.Dialog.PredefinedButton.CANCEL;
+import static com.sencha.gxt.widget.core.client.Dialog.PredefinedButton.OK;
+
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.diskResources.OpenFolderEvent;
 import org.iplantc.de.client.gin.ServicesInjector;
-import org.iplantc.de.client.models.diskResources.*;
+import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
+import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.errorHandling.ServiceErrorCode;
 import org.iplantc.de.client.models.errors.diskResources.DiskResourceErrorAutoBeanFactory;
 import org.iplantc.de.client.models.errors.diskResources.ErrorDiskResource;
@@ -56,17 +49,29 @@ import org.iplantc.de.diskResource.client.views.dialogs.GenomeSearchDialog;
 import org.iplantc.de.diskResource.client.views.toolbar.dialogs.TabFileConfigDialog;
 import org.iplantc.de.resources.client.messages.I18N;
 
+import com.google.common.base.Preconditions;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import com.google.web.bindery.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+
+import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
+import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
+import com.sencha.gxt.widget.core.client.box.MessageBox;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent.DialogHideHandler;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
+
 import java.util.List;
 import java.util.logging.Logger;
-
-import static com.sencha.gxt.widget.core.client.Dialog.PredefinedButton.CANCEL;
-import static com.sencha.gxt.widget.core.client.Dialog.PredefinedButton.OK;
 
 /**
  * @author jstroot
  */
-public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
-                                                 SimpleDownloadSelectedHandler {
+public class ToolbarViewPresenterImpl implements ToolbarView.Presenter, SimpleDownloadSelectedHandler {
 
 
     private final class BulkMetadataCallback implements AsyncCallback<String> {
@@ -85,9 +90,8 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
         @Override
         public void onFailure(Throwable caught) {
 
-            AutoBean<ErrorDiskResource> ab = AutoBeanCodex.decode(drFactory,
-                                                                  ErrorDiskResource.class,
-                                                                  caught.getMessage());
+            AutoBean<ErrorDiskResource> ab =
+                    AutoBeanCodex.decode(drFactory, ErrorDiskResource.class, caught.getMessage());
             if (ab.as().getErrorCode().equals(ServiceErrorCode.ERR_NOT_UNIQUE.toString())) {
                 ConfirmMessageBox cmb = new ConfirmMessageBox(appearance.applyBulkMetadata(),
                                                               appearance.overWiteMetadata());
@@ -119,15 +123,19 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
         }
     }
 
-    @Inject ToolbarView.Presenter.Appearance appearance;
-    @Inject DataLinkPresenterFactory dataLinkPresenterFactory;
+    @Inject
+    ToolbarView.Presenter.Appearance appearance;
+    @Inject
+    DataLinkPresenterFactory dataLinkPresenterFactory;
     @Inject
     DiskResourceSelectorFieldFactory drSelectorFactory;
-    @Inject EventBus eventBus;
+    @Inject
+    EventBus eventBus;
     @Inject
     DiskResourceServiceFacade drFacade;
 
-    PermIdRequestUserServiceFacade prFacade = ServicesInjector.INSTANCE.getPermIdRequestUserServiceFacade();
+    PermIdRequestUserServiceFacade prFacade =
+            ServicesInjector.INSTANCE.getPermIdRequestUserServiceFacade();
 
     @Inject
     DiskResourceErrorAutoBeanFactory drFactory;
@@ -211,7 +219,8 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
     @Override
     public void onCreateNcbiSraFolderStructure(final Folder selectedFolder) {
         // FIXME Do not fire dialog from presenter. Do so from the view.
-        final CreateNcbiSraFolderStructureDialog dialog = new CreateNcbiSraFolderStructureDialog(selectedFolder);
+        final CreateNcbiSraFolderStructureDialog dialog =
+                new CreateNcbiSraFolderStructureDialog(selectedFolder);
         dialog.setHideOnButtonClick(false);
         dialog.addOkButtonSelectHandler(new SelectHandler() {
 
@@ -253,7 +262,8 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
         dlg.setWidth(appearance.manageDataLinksDialogWidth());
         dlg.setHeight(appearance.manageDataLinksDialogHeight());
         dlg.setOkButtonText(appearance.done());
-        DataLinkView.Presenter dlPresenter = dataLinkPresenterFactory.createDataLinkPresenter(selectedDiskResources);
+        DataLinkView.Presenter dlPresenter =
+                dataLinkPresenterFactory.createDataLinkPresenter(selectedDiskResources);
         dlPresenter.go(dlg);
         dlg.addHelp(new HTML(appearance.manageDataLinksHelp()));
         dlg.show();
@@ -262,13 +272,15 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
     @Override
     public void onEditFileSelected(final List<DiskResource> selectedDiskResources) {
         Preconditions.checkState(selectedDiskResources.size() == 1,
-                                 "Only one file should be selected, but there are %i", selectedDiskResources.size());
+                                 "Only one file should be selected, but there are %i",
+                                 selectedDiskResources.size());
         final DiskResource next = selectedDiskResources.iterator().next();
         Preconditions.checkState(next instanceof File, "Selected item should be a file, but is not.");
         Preconditions.checkState(PermissionValue.own.equals(next.getPermission())
-                                     || PermissionValue.write.equals(next.getPermission()), "User should have either own or write permissions for the selected item");
+                                 || PermissionValue.write.equals(next.getPermission()),
+                                 "User should have either own or write permissions for the selected item");
 
-        eventBus.fireEvent(new ShowFilePreviewEvent((File) next, null));
+        eventBus.fireEvent(new ShowFilePreviewEvent((File)next, null));
     }
 
     @Override
@@ -307,7 +319,8 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
 
             @Override
             public void onSuccess(String result) {
-                AutoBean<GenomeList> genomesBean = AutoBeanCodex.decode(gFactory, GenomeList.class, result);
+                AutoBean<GenomeList> genomesBean =
+                        AutoBeanCodex.decode(gFactory, GenomeList.class, result);
                 GenomeList list = genomesBean.as();
                 genomeSearchView.loadResults(list.getGenomes());
             }
@@ -335,8 +348,8 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
 
             @Override
             public void onSuccess(String result) {
-                MessageBox amb = new MessageBox(appearance.importFromCoge(),
-                                                          appearance.cogeImportGenomeSucess());
+                MessageBox amb =
+                        new MessageBox(appearance.importFromCoge(), appearance.cogeImportGenomeSucess());
                 amb.setIcon(MessageBox.ICONS.info());
                 amb.show();
             }
@@ -391,15 +404,16 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
             @Override
             public void onFailure(Throwable caught) {
                 IplantAnnouncer.getInstance()
-                               .schedule(new ErrorAnnouncementConfig("DOI request failed!"));
-                 IplantErrorDialog iplantErrorDialog = new IplantErrorDialog(I18N.DISPLAY.error(), caught.getMessage());
+                               .schedule(new ErrorAnnouncementConfig(appearance.doiRequestFail()));
+                IplantErrorDialog iplantErrorDialog =
+                        new IplantErrorDialog(I18N.DISPLAY.error(), caught.getMessage());
                 iplantErrorDialog.show();
             }
 
             @Override
             public void onSuccess(String result) {
                 IplantAnnouncer.getInstance()
-                               .schedule(new SuccessAnnouncementConfig("Your request for DOI has been submitted! You will receive notification when there are updates to this request."));
+                               .schedule(new SuccessAnnouncementConfig(appearance.doiRequestSuccess()));
 
             }
         });

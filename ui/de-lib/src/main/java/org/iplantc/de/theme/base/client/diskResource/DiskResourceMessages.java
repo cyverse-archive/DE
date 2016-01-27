@@ -199,4 +199,8 @@ public interface DiskResourceMessages extends Messages {
 
     String norecords();
 
+    String doiRequestFail();
+
+    String doiRequestSuccess();
+
 }

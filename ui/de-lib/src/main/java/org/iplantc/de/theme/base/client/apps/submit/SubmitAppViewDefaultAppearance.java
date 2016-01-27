@@ -98,8 +98,8 @@ public class SubmitAppViewDefaultAppearance implements SubmitAppForPublicUseView
     }
 
     @Override
-    public String publicSubmitTip() {
-        return iplantDisplayStrings.publicSubmitTip();
+    public String completeRequiredFieldsError() {
+        return iplantDisplayStrings.completeRequiredFieldsError();
     }
 
     @Override

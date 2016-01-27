@@ -99,7 +99,7 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
             publishApp(view.toJson());
         } else {
             AlertMessageBox amb = new AlertMessageBox(appearance.warning(),
-                                                      appearance.publicSubmitTip());
+                                                      appearance.completeRequiredFieldsError());
             amb.show();
         }
     }
