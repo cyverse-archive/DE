@@ -166,6 +166,6 @@
   (try+
    (share-app* app-id subject-id level)
    (catch clj-http-error? {:keys [status body]}
-     (let [reason (get-error-reason body)]
+     (let [reason (get-error-reason body status)]
        (log/error (str "unable to share " app-id " with " subject-id ": " reason)))
      "the app sharing request failed")))
