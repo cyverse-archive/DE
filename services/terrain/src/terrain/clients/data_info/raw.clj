@@ -112,6 +112,15 @@
   (request :post ["data" "directories"]
            (mk-req-map user (json/encode {:paths paths}))))
 
+;; MODIFY
+
+(defn overwrite-file
+  [user path-uuid istream]
+  (http/put (str (url/url (cfg/data-info-base) "data" path-uuid))
+            {:query-params {:user user}
+             :multipart [{:name "file"
+                          :content istream}]}))
+
 ;; MOVE AND RENAME
 
 (defn rename

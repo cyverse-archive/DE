@@ -303,11 +303,6 @@
   "The identifier of the internal app used for URL imports."
   [props config-valid configs fileio-routes-enabled]
   "terrain.fileio.url-import-app")
-
-(cc/defprop-int fileio-max-edit-file-size
-  "The old service name for fileio"
-  [props config-valid configs fileio-routes-enabled]
-  "terrain.fileio.max-edit-file-size")
 ;;; End File IO configuration
 
 ;;; Filesystem configuration (a.k.a. data-info).

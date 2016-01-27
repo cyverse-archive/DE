@@ -1,6 +1,5 @@
 (ns terrain.services.fileio.controllers
-  (:use [clj-jargon.init :only [with-jargon]]
-        [clojure-commons.error-codes]
+  (:use [clojure-commons.error-codes]
         [terrain.util.service :only [success-response]]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [terrain.services.fileio.actions :as actions]
@@ -10,14 +9,9 @@
             [cemerick.url :as url-parser]
             [dire.core :refer [with-pre-hook!]]
             [ring.middleware.multipart-params :as multipart]
-            [clj-jargon.item-info :as info]
-            [clj-jargon.permissions :as perm]
             [clojure-commons.validators :as ccv]
             [terrain.clients.data-info :as data]
-            [terrain.clients.data-info.raw :as data-raw]
-            [terrain.util.config :as cfg]
-            [terrain.util.validators :as valid]
-            [terrain.services.filesystem.icat :as icat])
+            [terrain.clients.data-info.raw :as data-raw])
   (:import [clojure.lang IPersistentMap]
            [java.io IOException ByteArrayInputStream]))
 
@@ -68,6 +62,18 @@
     (ccv/validate-map params {:user string?})
     (ccv/validate-map body {:dest string? :content string?})))
 
+(defn save
+  [{:keys [user]} {:keys [dest content]}]
+  (let [dest      (string/trim dest)
+        istream   (ByteArrayInputStream. (.getBytes content "UTF-8"))
+        info      (data/overwrite-file user dest istream)]
+    (success-response info)))
+
+(with-pre-hook! #'save
+  (fn [params body]
+    (ccv/validate-map params {:user string?})
+    (ccv/validate-map body {:dest string? :content string?})))
+
 (defn- url-filename
   [address]
   (let [parsed-url (url-parser/url address)]
@@ -99,32 +105,3 @@
   (fn [params body]
     (ccv/validate-map params {:user string?})
     (ccv/validate-map body {:dest string? :address string?})))
-
-(defn save
-  [params body]
-  (let [user      (:user params)
-        dest      (string/trim (:dest body))
-        content   (:content body)
-        file-size (count (.getBytes content "UTF-8"))]
-    (with-jargon (icat/jargon-cfg) :client-user user [cm]
-      (when-not (info/exists? cm dest)
-        (throw+ {:error_code ERR_DOES_NOT_EXIST :path dest}))
-      (when-not (perm/is-writeable? cm user dest)
-        (throw+ {:error_code ERR_NOT_WRITEABLE :path dest}))
-      (when (> file-size (cfg/fileio-max-edit-file-size))
-        (throw+ {:error_code "ERR_FILE_SIZE_TOO_LARGE"
-                 :path       dest
-                 :size       file-size}))
-      (try+
-        (with-in-str content
-          (actions/save cm *in* user dest))
-        (catch Object e
-          (log/warn e)
-          (throw+))))
-    (success-response {:file (data/path-stat user dest)})))
-
-(with-pre-hook! #'save
-  (fn [params body]
-    (ccv/validate-map params {:user string?})
-    (ccv/validate-map body {:dest string? :content string?})))
-
