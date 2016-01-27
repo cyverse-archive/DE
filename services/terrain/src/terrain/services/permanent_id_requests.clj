@@ -23,6 +23,13 @@
   [response]
   (-> response :body service/decode-json))
 
+(defn- validate-ezid-metadata
+  [ezid-metadata]
+  (when (empty? ezid-metadata)
+    (throw+ {:type :clojure-commons.exception/bad-request
+             :error "No metadata found for Permanent ID Request."}))
+  ezid-metadata)
+
 (defn- validate-request-target-type
   [{target-type :type :as folder}]
   (let [target-type (metadata/resolve-data-type target-type)]
@@ -76,13 +83,6 @@
     (validate-staging-dest-exists (log/spy paths-exist) staging-dest)
     (validate-publish-dest-exists paths-exist publish-dest))
   data-item)
-
-(defn- get-requested-data-item
-  "Gets data-info stat for the given ID and checks if the data item is valid for a Permanent ID request."
-  [user data-id]
-  (->> data-id
-       (data-info/stat-by-uuid user)
-       (validate-data-item user)))
 
 (defn- submit-permanent-id-request
   "Submits the request to the metadata create-permanent-id-request endpoint."
@@ -154,11 +154,22 @@
              :error "No EZID shoulder defined for this Permanent ID Request type."
              :request-type type})))
 
-(defn- parse-ezid-metadata
+(defn- parse-valid-ezid-metadata
   [irods-avus metadata]
   (let [metadata (mapcat :avus (:templates metadata))
-        format-avus #(vector (:attr %) (:value %))]
-    (into {} (concat (map format-avus irods-avus) (map format-avus metadata)))))
+        format-avus #(vector (:attr %) (:value %))
+        ezid-metadata (into {} (concat (map format-avus irods-avus) (map format-avus metadata)))]
+    (validate-ezid-metadata ezid-metadata)
+    ezid-metadata))
+
+(defn- get-validated-data-item
+  "Gets data-info stat for the given ID and checks if the data item is valid for a Permanent ID request."
+  [user data-id]
+  (let [{:keys [irods-avus metadata]} (metadata-get user data-id)]
+    (parse-valid-ezid-metadata irods-avus metadata))
+  (->> data-id
+       (data-info/stat-by-uuid user)
+       (validate-data-item user)))
 
 (defn- ezid-response->avus
   [response]
@@ -188,7 +199,7 @@
   (let [{type :type folder-id :folder} (service/decode-json body)
         folder-id                      (uuidify folder-id)
         user                           (:shortUsername current-user)
-        {:keys [path] :as folder}      (get-requested-data-item user folder-id)
+        {:keys [path] :as folder}      (get-validated-data-item user folder-id)
         target-type                    (validate-request-target-type folder)
         {request-id :id :as response}  (submit-permanent-id-request type folder-id target-type path)]
     (stage-data-item user folder)
@@ -237,8 +248,7 @@
           folder                        (validate-publish-dest folder)
           folder-id                     (uuidify (:id folder))
           {:keys [irods-avus metadata]} (metadata-get user folder-id)
-          template-id                   (-> metadata :templates first :template_id)
-          ezid-metadata                 (parse-ezid-metadata irods-avus metadata)
+          ezid-metadata                 (parse-valid-ezid-metadata irods-avus metadata)
           response                      (ezid/mint-id shoulder ezid-metadata)]
       (data-info-client/admin-add-avus user folder-id (ezid-response->avus response))
       (data-info-client/move-single (config/irods-user) folder-id (config/permanent-id-publish-dir))
