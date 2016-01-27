@@ -110,46 +110,55 @@
       (throw+ es-uninitialized))))
 
 
-(defn- tags-access-filter
-  [tags memberships]
-  (letfn [(tag-filter [tag] (query/term :id {:type  "tag"
-                                             :id    tag
-                                             :path  "targets.id"
-                                             :cache false}))]
-    (query/bool :must   (query/nested :path   "userPermissions"
-                                      :filter (query/term "userPermissions.user" memberships))
-                :should (map tag-filter tags))))
+(defn- mk-filter
+  [in-folders tags memberships]
+  (let [filter-path (fn [path] (query/prefix "path" (if (= \/ (last path))
+                                                      path
+                                                      (str path \/))))
+        filter-tag  (fn [tag] (query/term :id {:type  "tag"
+                                               :id    tag
+                                               :path  "targets.id"
+                                               :cache false}))
+        perm-filter (query/nested :path   "userPermissions"
+                                  :filter (query/term "userPermissions.user" memberships))]
+    (query/bool :must   (query/bool :must perm-filter :should (map filter-path in-folders))
+                :should (map filter-tag tags))))
 
 
 (defn ^IPersistentMap mk-data-query
   "Builds a search query for finding all of the data entries that match a given query that are
-   visible to at least one of the provided user or group names. If tags are provided, the results
-   will have at least one of the tags.
+   visible to at least one of the provided user or group names. If folders are provided, the results
+   must be from at least one of the folders. If tags are provided, the results will have at least
+   one of the tags.
 
    Parameters:
      query       - the elastisch formated query to execute.
+     in-folders  - a list of folders the results must be from. Each entry should be an absolute path
+                   to a folder.
      tags        - a list of tags that may be matched.
      memberships - the set of iRODS zone qualified usernames used to filter the query.
 
    Returns:
      It returns the elastisch formatted query filtered for tags and user access."
-  [^IPersistentMap query ^ISeq tags ^ISeq memberships]
-  (query/filtered :query query :filter (tags-access-filter tags memberships)))
+  [^IPersistentMap query ^ISeq in-folders ^ISeq tags ^ISeq memberships]
+  (query/filtered :query query :filter (mk-filter in-folders tags memberships)))
 
 
 (defn ^IPersistentMap mk-data-tags-filter
   "Builds a search filter for finding all of the data entries that are visible to at least one of
-   the provided user or group names. If tags are provided, the results will have at least one of the
-   tags.
+   the provided user or group names.  If folders are provided, the results must be from at least one
+   of the folders. If tags are provided, the results will have at least one of the tags.
 
    Parameters:
+     in-folders  - a list of folders the results must be from. Each entry should be an absolute path
+                   to a folder.
      tags        - a list of tags that may be matched.
      memberships - the set of iRODS zone qualified usernames used to filter the query.
 
    Returns:
      It returns the elastisch formatted filter for tags and user access."
-  [^ISeq tags ^ISeq memberships]
-  (query/filtered :filter (tags-access-filter tags memberships)))
+  [^ISeq in-folders ^ISeq tags ^ISeq memberships]
+  (query/filtered :filter (mk-filter in-folders tags memberships)))
 
 
 (defn- format-response

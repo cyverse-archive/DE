@@ -16,5 +16,5 @@
 
     (GET "/filesystem/index" [q tags & opts]
       (if (or q tags)
-        (search/search (search/qualify-name (:shortUsername user/current-user)) q tags opts)
+        (search/search (:shortUsername user/current-user) q tags opts)
         (missing-arg-response "`q` or `tags`")))))
