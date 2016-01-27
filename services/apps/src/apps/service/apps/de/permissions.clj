@@ -1,5 +1,6 @@
 (ns apps.service.apps.de.permissions
-  (:use [slingshot.slingshot :only [try+]])
+  (:use [clojure-commons.error-codes :only [clj-http-error?]]
+        [slingshot.slingshot :only [try+]])
   (:require [apps.clients.iplant-groups :as iplant-groups]
             [apps.util.service :as service]
             [clojure.string :as string]
@@ -31,7 +32,7 @@
    (let [perms (iplant-groups/load-app-permissions user [app-id])]
      (when (lacks-permission-level perms required-level app-id)
        (str "insufficient privileges for app: " (str app-id))))
-   (catch :status {:keys [body]}
+   (catch clj-http-error? {:keys [body]}
      (let [reason (:grouper_result_message (service/parse-json body))]
        (str "unable to load permissions for " app-id ": " reason)))))
 

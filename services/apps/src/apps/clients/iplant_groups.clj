@@ -1,5 +1,6 @@
 (ns apps.clients.iplant-groups
-  (:use [medley.core :only [remove-vals]]
+  (:use [clojure-commons.error-codes :only clj-http-error?]
+        [medley.core :only [remove-vals]]
         [slingshot.slingshot :only [try+]])
   (:require [apps.util.config :as config]
             [apps.util.service :as service]
@@ -156,7 +157,7 @@
   [app-id subject-id level]
   (try+
    (share-app* app-id subject-id level)
-   (catch :status {:keys [body]}
+   (catch clj-http-error? {:keys [body]}
      (let [reason (:grouper_result_message (service/parse-json body))]
        (log/error (str "unable to share " app-id " with " subject-id ": " reason)))
      "the app sharing request failed")))
