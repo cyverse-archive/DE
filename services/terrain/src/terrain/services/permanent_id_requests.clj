@@ -80,7 +80,7 @@
         paths-exist  (parse-service-json (data-info/check-existence {:user (config/irods-user)}
                                                                     {:paths [staging-dest
                                                                              publish-dest]}))]
-    (validate-staging-dest-exists (log/spy paths-exist) staging-dest)
+    (validate-staging-dest-exists paths-exist staging-dest)
     (validate-publish-dest-exists paths-exist publish-dest))
   data-item)
 
