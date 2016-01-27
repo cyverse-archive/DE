@@ -9,6 +9,17 @@
     right: 0;
     left: 0;
 }
+
+@font-face {
+    font-family: TextaRegular;
+    src: url(Texta_Font/Texta-Regular.otf);
+}
+
+@font-face {
+    font-family: TextaBold;
+    src: url(Texta_Font/Texta-Bold.otf);
+}
+
 @sprite .iplantHeader {
     gwt-image: 'headerBg';
     background-color: #0971AB;
@@ -200,6 +211,7 @@
     border: solid #0971AB;
     padding: 1px;
     margin-top: 5px;
+    font-family: TextaBold; /* TextaRegular a little hard to read on the menu items*/
 }
 
 .notificationCount {
@@ -214,7 +226,7 @@
 }
 
 html,body {
-    font-family: Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro",
+    font-family: TextaRegular, Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro",
     Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L",
     Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial,
     sans-serif !important;

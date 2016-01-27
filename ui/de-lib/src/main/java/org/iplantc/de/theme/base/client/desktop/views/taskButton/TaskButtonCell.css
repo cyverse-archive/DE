@@ -5,6 +5,11 @@
  *
  * http://www.sencha.com/products/gxt/license/
  */
+@font-face {
+  font-family: TextaRegular;
+  src: url(../../Texta_Font/Texta-Regular.otf);
+}
+
 .mainTable {
   height: 29px;
 }
@@ -12,4 +17,6 @@
 .text {
   color: white;
   height: auto;
+  font-family: TextaRegular;
+  font-size: 12px;
 }

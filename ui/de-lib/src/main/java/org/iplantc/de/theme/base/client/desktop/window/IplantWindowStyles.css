@@ -1,3 +1,8 @@
+@font-face {
+    font-family: TextaBold;
+    src: url(../Texta_Font/Texta-Bold.otf);
+}
+
 @sprite .restoreBtn {
     gwt-image: 'restoreBtnImage';
     height: 15px;
@@ -62,4 +67,6 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    font-family: TextaBold;
+    font-size: 13px;
 }

@@ -3,8 +3,19 @@
 <head>
 
 <style>
+
+    @font-face {
+        font-family: TextaRegular;
+        src: url(../../Texta_Font/Texta-Regular.otf);
+    }
+
+    @font-face {
+        font-family: TextaBlack;
+        src: url(../../Texta_Font/Texta-Black.otf);
+    }
+
 body {
-    font-family: Univers,Calibri,"Gill Sans","Gill Sans MT","Myriad Pro",Myriad,"DejaVu Sans Condensed","Liberation Sans","Nimbus Sans L",Tahoma,Geneva,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-family: TextaRegular, Univers,Calibri,"Gill Sans","Gill Sans MT","Myriad Pro",Myriad,"DejaVu Sans Condensed","Liberation Sans","Nimbus Sans L",Tahoma,Geneva,"Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 0.9em;
     background-color: #e2e2e2;
     background-image: linear-gradient( 180deg, #FFF,#e2e2e2);
@@ -14,6 +25,7 @@ h1 {
     color: #0971AB;
     font-size: 1.5em;
     line-height: .5em;
+    font-family: TextaBlack;
 }
 a {
     color: #0971AB;
