@@ -65,6 +65,21 @@
       "permanent_id_request_complete"
       template-values)))
 
+(defn send-permanent-id-request-submitted
+  "Sends an email message to the user requesting a new Permanent ID Request."
+  [request-type path {:keys [commonName email]}]
+  (let [template-values {:username     commonName
+                         :environment  (config/environment-name)
+                         :request_type request-type
+                         :path         path}
+        subject         (str request-type " Permanent ID Request Submitted")]
+    (send-email
+      :to        email
+      :from-addr (config/permanent-id-request-src-addr)
+      :subject   subject
+      :template  "permanent_id_request_submitted"
+      :values    template-values)))
+
 (defn- format-question
   "Formats a question and answer for a user feedback submission."
   [[q a]]

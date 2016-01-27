@@ -118,7 +118,8 @@
         curators    (config/permanent-id-curators-group)]
     (data-info-client/move-single (config/irods-user) id (config/permanent-id-staging-dir))
     (data-info/share (config/irods-user) [user] [staged-path] "write")
-    (data-info/share (config/irods-user) [curators] [staged-path] "own")))
+    (data-info/share (config/irods-user) [curators] [staged-path] "own")
+    staged-path))
 
 (defn- send-notification
   [user subject request-id]
@@ -201,10 +202,11 @@
         user                           (:shortUsername current-user)
         {:keys [path] :as folder}      (get-validated-data-item user folder-id)
         target-type                    (validate-request-target-type folder)
-        {request-id :id :as response}  (submit-permanent-id-request type folder-id target-type path)]
-    (stage-data-item user folder)
+        {request-id :id :as response}  (submit-permanent-id-request type folder-id target-type path)
+        staged-path                    (stage-data-item user folder)]
     (send-notification user (str type " Request Submitted for " (ft/basename path)) request-id)
-    (email/send-permanent-id-request-new type path current-user)
+    (email/send-permanent-id-request-new type staged-path current-user)
+    (email/send-permanent-id-request-submitted type staged-path current-user)
     (format-perm-id-req-response user response)))
 
 (defn list-permanent-id-request-status-codes
