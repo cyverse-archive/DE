@@ -69,22 +69,24 @@
                  :description "This endpoint allows removing a permission to a role (group). The permission corresponding to this attribute, group, action, and allowed/disallowed value is removed, if it exists."
                  (ok (attributes/remove-role-permission params attribute-name role-name action-name))))
 
-      (context* "/memberships/:role-name/:subject-id/:action-name" []
-        :path-params [role-name   :- GroupNamePathParam
-                      subject-id  :- SubjectIdPathParam
-                      action-name :- NonBlankString]
+      (context* "/memberships/:role-name/:subject-id" []
+        :path-params [role-name  :- GroupNamePathParam
+                      subject-id :- SubjectIdPathParam]
 
-        (PUT* "/" []
-              :return AttributeAssignment
-              :body [body PermissionAllowed]
-              :query  [params StandardUserQueryParams]
-              :summary "Assign Membership Permission"
-              :description "This endpoint allows assigning a permission to a membership (i.e., a subject in the context of a group). The provided membership is assigned a permission corresponding to the action-name on the resource defined by this attribute. The 'allowed' query parameter specifies whether the permission assignment is granting the permission or denying the permission (the latter is useful if the role has an inherited permission)."
-              (ok (attributes/assign-membership-permission params body attribute-name role-name subject-id action-name)))
+        (context* "/:action-name" []
+          :path-params [action-name :- NonBlankString]
 
-        (DELETE* "/" []
-                 :return AttributeAssignment
-                 :query  [params StandardUserQueryParams]
-                 :summary "Remove Membership Permission"
-                 :description "This endpoint allows removing a permission to a membership (i.e., a subject in the context of a group). The permission corresponding to this attribute, membership, action, and allowed/disallowed value is removed, if it exists."
-                 (ok (attributes/remove-membership-permission params attribute-name role-name subject-id action-name)))))))
+          (PUT* "/" []
+                :return AttributeAssignment
+                :body [body PermissionAllowed]
+                :query  [params StandardUserQueryParams]
+                :summary "Assign Membership Permission"
+                :description "This endpoint allows assigning a permission to a membership (i.e., a subject in the context of a group). The provided membership is assigned a permission corresponding to the action-name on the resource defined by this attribute. The 'allowed' query parameter specifies whether the permission assignment is granting the permission or denying the permission (the latter is useful if the role has an inherited permission)."
+                (ok (attributes/assign-membership-permission params body attribute-name role-name subject-id action-name)))
+
+          (DELETE* "/" []
+                   :return AttributeAssignment
+                   :query  [params StandardUserQueryParams]
+                   :summary "Remove Membership Permission"
+                   :description "This endpoint allows removing a permission to a membership (i.e., a subject in the context of a group). The permission corresponding to this attribute, membership, action, and allowed/disallowed value is removed, if it exists."
+                   (ok (attributes/remove-membership-permission params attribute-name role-name subject-id action-name))))))))
