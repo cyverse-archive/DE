@@ -26,6 +26,12 @@
   (let [attribute-assign (grouper/remove-role-permission user attribute-name role-name [action-name])]
     (fmt/format-attribute-assign attribute-assign)))
 
+(defn remove-existing-membership-permissions
+  [{:keys [user]} attribute-name role-name subject-id]
+  {:assignments
+   (mapv fmt/format-attribute-assign
+         (grouper/remove-existing-membership-permissions user attribute-name role-name subject-id))})
+
 (defn assign-membership-permission
   [{:keys [user]} {:keys [allowed]} attribute-name role-name subject-id action-name]
   (fmt/format-attribute-assign

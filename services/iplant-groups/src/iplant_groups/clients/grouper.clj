@@ -714,16 +714,15 @@
 (defn- remove-existing-permissions
   [username attribute-def-name & [params]]
   (->> (get-permission-assign-ids username attribute-def-name params)
-       (map (fn [[permission-type ids]] (remove-permission-assign-ids username permission-type ids)))
-       dorun))
+       (mapv (fn [[permission-type ids]] (remove-permission-assign-ids username permission-type ids)))))
 
-(defn- remove-existing-role-permissions
+(defn remove-existing-role-permissions
   [username attribute-def-name role-name]
   (remove-existing-permissions username attribute-def-name
                                {:role role-name
                                 :permission-type "role"}))
 
-(defn- remove-existing-membership-permissions
+(defn remove-existing-membership-permissions
   [username attribute-def-name role-name subject-id]
   (remove-existing-permissions username attribute-def-name
                                {:role role-name

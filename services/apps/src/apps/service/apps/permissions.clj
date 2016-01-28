@@ -1,6 +1,5 @@
 (ns apps.service.apps.permissions
-  (:require [clojure.tools.logging :as log]
-            [clojure-commons.error-codes :as ce]))
+  (:require [clojure-commons.error-codes :as ce]))
 
 (defn process-app-sharing-requests
   [apps-client app-sharing-requests]
@@ -10,9 +9,8 @@
 
 (defn process-user-app-sharing-requests
   [apps-client sharee user-app-sharing-requests]
-  (for [{app-id :app_id level :permission :as request} user-app-sharing-requests]
-    (do (log/spy :warn request)
-        (.shareAppWithUser apps-client sharee app-id level))))
+  (for [{app-id :app_id level :permission} user-app-sharing-requests]
+    (.shareAppWithUser apps-client sharee app-id level)))
 
 (defn app-sharing-success
   [app-id level]
@@ -27,3 +25,26 @@
    :success    false
    :error      {:error_code ce/ERR_BAD_REQUEST
                 :reason     reason}})
+
+(defn process-app-unsharing-requests
+  [apps-client app-unsharing-requests]
+  (for [{sharee :user app-ids :apps} app-unsharing-requests]
+    {:user sharee
+     :apps (.unshareAppsWithUser apps-client sharee app-ids)}))
+
+(defn process-user-app-unsharing-requests
+  [apps-client sharee app-ids]
+  (for [app-id app-ids]
+    (.unshareAppWithUser apps-client sharee app-id)))
+
+(defn app-unsharing-success
+  [app-id]
+  {:app_id  app-id
+   :success true})
+
+(defn app-unsharing-failure
+  [app-id reason]
+  {:app_id  app-id
+   :success false
+   :error   {:error_code ce/ERR_BAD_REQUEST
+             :reason     reason}})

@@ -152,6 +152,16 @@
                :as           :json}))
   nil)
 
+(defn- unshare-app*
+  "Unshares an app with a user."
+  [app-id subject-id]
+  (let [resource-name (grouper-app-resource-name app-id)
+        role-name     (grouper-user-group)]
+    (http/delete (grouper-url "attributes" resource-name "permissions" "memberships" role-name subject-id)
+                 {:query-params {:user grouper-user}
+                  :as           :json}))
+  nil)
+
 (defn- get-error-reason
   "Attempts to extract the reason for an error from an iplant-groups response body."
   [body status]
@@ -169,3 +179,13 @@
      (let [reason (get-error-reason body status)]
        (log/error (str "unable to share " app-id " with " subject-id ": " reason)))
      "the app sharing request failed")))
+
+(defn unshare-app
+  "Unshares an app with a user."
+  [app-id subject-id]
+  (try+
+   (unshare-app* app-id subject-id)
+   (catch clj-http-error? {:keys [status body]}
+     (let [reason (get-error-reason body status)]
+       (log/error (str "unable to unshare " app-id " with " subject-id ": " reason)))
+     "the app unsharing request failed")))

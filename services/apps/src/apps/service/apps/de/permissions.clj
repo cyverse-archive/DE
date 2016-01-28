@@ -53,3 +53,9 @@
   (if-let [permission-error (get-permission-error user "own" app-id)]
     permission-error
     (iplant-groups/share-app app-id sharee level)))
+
+(defn unshare-app-with-user
+  [{user :shortUsername} sharee app-id]
+  (if-let [permission-error (get-permission-error user "own" app-id)]
+    permission-error
+    (iplant-groups/unshare-app app-id sharee)))

@@ -67,6 +67,9 @@
    (s/optional-key :subject) (describe {:id String :source_id String} "The member/subject this was assigned to, if relevant.")
    (s/optional-key :permission_type) (describe String "The type of the permission assignment (e.g. role or role_subject)")})
 
+(s/defschema AttributeAssignmentList
+  {:assignments (describe [AttributeAssignment] "The list of attribute assignments.")})
+
 (s/defschema PermissionAssignment
   (dissoc AttributeAssignment
           :created_at :modified_at :action_type :assign_type))

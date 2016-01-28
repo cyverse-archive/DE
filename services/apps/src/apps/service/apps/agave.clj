@@ -154,4 +154,15 @@
   (shareAppWithUser [_ _ app-id level]
     (when (and (user-has-access-token?)
                (not (util/uuid? app-id)))
-      (app-permissions/app-sharing-failure app-id level app-permission-rejection))))
+      (app-permissions/app-sharing-failure app-id level app-permission-rejection)))
+
+  (unshareApps [self unsharing-requests]
+    (app-permissions/process-app-unsharing-requests self unsharing-requests))
+
+  (unshareAppsWithUser [self sharee app-ids]
+    (app-permissions/process-user-app-unsharing-requests self sharee app-ids))
+
+  (unshareAppWithUser [self sharee app-id]
+    (when (and (user-has-access-token?)
+               (not (util/uuid? app-id)))
+      (app-permissions/app-unsharing-failure app-id app-permission-rejection))))

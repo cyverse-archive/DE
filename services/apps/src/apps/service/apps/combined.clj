@@ -220,4 +220,13 @@
     (app-permissions/process-user-app-sharing-requests self sharee user-app-sharing-requests))
 
   (shareAppWithUser [_ sharee app-id level]
-    (first (remove nil? (map #(.shareAppWithUser % sharee app-id level) clients)))))
+    (first (remove nil? (map #(.shareAppWithUser % sharee app-id level) clients))))
+
+  (unshareApps [self unsharing-requests]
+    (app-permissions/process-app-unsharing-requests self unsharing-requests))
+
+  (unshareAppsWithUser [self sharee app-ids]
+    (app-permissions/process-user-app-unsharing-requests self sharee app-ids))
+
+  (unshareAppWithUser [self sharee app-id]
+    (first (remove nil? (map #(.unshareAppWithUser % sharee app-id) clients)))))
