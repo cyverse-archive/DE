@@ -76,7 +76,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	appsURI, err := configurate.C.String("apps.callback_uri")
+	appsURI, err := configurate.C.String("apps.callbacks_uri")
 	if err != nil {
 		log.Fatal(err)
 	}
