@@ -165,9 +165,9 @@
     - services
     - job-status-to-apps-adapter
   roles:
-    role: util-cfg-docker-up
-    service_name: job_status_to_apps_adapter
-    service_name_short: job_status_to_apps_adapter
+    - role: util-cfg-docker-up
+      service_name: job_status_to_apps_adapter
+      service_name_short: job_status_to_apps_adapter
 
 - name: Start job-status-recorder
   hosts: jexevents
