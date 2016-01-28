@@ -67,7 +67,7 @@
 (defn- validate-publish-dest
   [{:keys [path] :as data-item}]
   (let [publish-dest (ft/path-join (config/permanent-id-publish-dir) (ft/basename path))
-        paths-exist (parse-service-json (data-info/check-existence {:user (config/irods-user)}
+        paths-exist (parse-service-json (data-info/check-existence {:user (config/permanent-id-curators-group)}
                                                                    {:paths [publish-dest]}))]
     (validate-publish-dest-exists paths-exist publish-dest))
   data-item)
@@ -77,7 +77,7 @@
   (validate-owner user data-item)
   (let [staging-dest (ft/path-join (config/permanent-id-staging-dir) (ft/basename path))
         publish-dest (ft/path-join (config/permanent-id-publish-dir) (ft/basename path))
-        paths-exist  (parse-service-json (data-info/check-existence {:user (config/irods-user)}
+        paths-exist  (parse-service-json (data-info/check-existence {:user (config/permanent-id-curators-group)}
                                                                     {:paths [staging-dest
                                                                              publish-dest]}))]
     (validate-staging-dest-exists paths-exist staging-dest)
@@ -128,7 +128,7 @@
   (let [publish-path (ft/path-join (config/permanent-id-publish-dir) (ft/basename path))
         curators     (config/permanent-id-curators-group)]
     (data-info-client/admin-add-avus user id publish-avus)
-    (data-info-client/move-single (config/irods-user) id (config/permanent-id-publish-dir))
+    (data-info-client/move-single curators id (config/permanent-id-publish-dir))
     (data-info/share (config/irods-user) [curators] [publish-path] "write")
     publish-path))
 
