@@ -238,4 +238,16 @@
     (when (util/uuid? app-id)
       (if-let [failure-reason (perms/share-app-with-user user sharee (uuidify app-id) level)]
         (app-permissions/app-sharing-failure app-id level failure-reason)
-        (app-permissions/app-sharing-success app-id level)))))
+        (app-permissions/app-sharing-success app-id level))))
+
+  (unshareApps [self unsharing-requests]
+    (app-permissions/process-app-unsharing-requests self unsharing-requests))
+
+  (unshareAppsWithUser [self sharee app-ids]
+    (app-permissions/process-user-app-unsharing-requests self sharee app-ids))
+
+  (unshareAppWithUser [self sharee app-id]
+    (when (util/uuid? app-id)
+      (if-let [failure-reason (perms/unshare-app-with-user user sharee (uuidify app-id))]
+        (app-permissions/app-unsharing-failure app-id failure-reason)
+        (app-permissions/app-unsharing-success app-id)))))

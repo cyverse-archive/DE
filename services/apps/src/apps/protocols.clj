@@ -64,4 +64,7 @@
   (listAppPermissions [_ app-ids])
   (shareApps [_ sharing-requests])
   (shareAppsWithUser [_ sharee user-app-sharing-requests])
-  (shareAppWithUser [_ sharee app-id level]))
+  (shareAppWithUser [_ sharee app-id level])
+  (unshareApps [_ unsharing-requests])
+  (unshareAppsWithUser [_ sharee app-ids])
+  (unshareAppWithUser [_ sharee app-id]))

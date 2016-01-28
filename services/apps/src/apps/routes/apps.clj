@@ -64,7 +64,7 @@
         :query [params SecuredQueryParams]
         :body [body (describe perms/AppIdList "The app permission listing request.")]
         :return perms/AppPermissionListing
-        :summary "List permissions for one or more apps."
+        :summary "List App Permissions"
         :description "This endpoint allows the caller to list the permissions for one or more apps. The
         authenticated user must have ownership permission on every app in the request body for this
         endpoint to succeed."
@@ -74,16 +74,27 @@
          :query [params SecuredQueryParams]
          :body [body (describe perms/AppSharingRequest "The app sharing request.")]
          :return perms/AppSharingResponse
-         :summary "Share one or more apps with one or more users."
+         :summary "Add App Permissions"
          :description "This endpoint allows the caller to share multiple apps with multiple users. The
-         authenticated user must have ownership permission to every app in the request body for this
-         endpoint to succeed. Note: this is a potentially slow operation and the response is returned
-         synchronously. The DE UI handles this by allowing the user to continue working while the request
-         is being processed. When calling this endpoint, please be sure that the response timeout is long
+         authenticated user must have ownership permission to every app in the request body for this endpoint
+         to fully succeed. Note: this is a potentially slow operation and the response is returned
+         synchronously. The DE UI handles this by allowing the user to continue working while the request is
+         being processed. When calling this endpoint, please be sure that the response timeout is long
          enough. Using a response timeout that is too short will result in an exception on the client side.
          On the server side, the result of the sharing operation when a connection is lost is undefined. It
          may be worthwhile to repeat failed or timed out calls to this endpoint."
          (ok (apps/share-apps current-user (:sharing body))))
+
+  (POST* "/unsharing" []
+         :query [params SecuredQueryParams]
+         :body [body (describe perms/AppUnsharingRequest "The app unsharing request.")]
+         :return perms/AppUnsharingResponse
+         :summary "Revoke App Permissions"
+         :description "This endpoint allows the caller to revoke permission to access one or more apps from
+         one or more users. The authenticate user must have ownership permission to every app in the request
+         body for this endoint to fully succeed. Note: like app sharing, this is a potentially slow
+         operation."
+         (ok (apps/unshare-apps current-user (:unsharing body))))
 
   (GET* "/:app-id" []
         :path-params [app-id :- AppIdJobViewPathParam]

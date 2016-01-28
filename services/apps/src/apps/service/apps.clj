@@ -352,3 +352,7 @@
 (defn share-apps
   [user sharing-requests]
   {:sharing (.shareApps (get-apps-client user) sharing-requests)})
+
+(defn unshare-apps
+  [user unsharing-requests]
+  {:unsharing (.unshareApps (get-apps-client user) unsharing-requests)})
