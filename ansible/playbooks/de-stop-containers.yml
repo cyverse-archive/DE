@@ -167,6 +167,32 @@
       service_name: "{{iplant_groups.compose_service}}"
       service_name_short: "{{iplant_groups.service_name_short}}"
 
+- name: Stop job-status-to-apps-adapter
+  hosts: jexevents:&systems
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - job-status-to-apps-adapter
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: job_status_to_apps_adapter
+      service_name_short: job_status_to_apps_adapter
+
+- name: Stop job-status-recorder
+  hosts: jexevents:&systems
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - job-status-recorder
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: job_status_recorder
+      service_name_short: job_status_recorder
+
 - name: Stop jex-events
   hosts: jexevents:&systems
   sudo: true

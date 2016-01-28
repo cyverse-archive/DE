@@ -245,6 +245,21 @@
       service_name: jex_adapter
       service_name_short: jex_adapter
 
+- name: Update job-status-to-apps-adapter
+  hosts: jexevents
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - job-status-to-apps-adapter
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: job_status_to_apps_adapter
+      service_name_short: job_status_to_apps_adapter
+    - role: util-cfg-docker-pull
+      service_name: job_status_to_apps_adapter
+      service_name_short: job_status_to_apps_adapter
+
 - name: Update job-status-recorder
   hosts: jexevents
   sudo: true

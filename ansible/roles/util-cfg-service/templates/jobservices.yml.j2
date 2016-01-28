@@ -1,6 +1,9 @@
 amqp:
   uri: amqp://{{amqp_user}}:{{amqp_password}}@{{amqp_broker.host}}:{{amqp_broker.port}}/de
 
+apps:
+  callbacks_uri: "{{apps.base}}/callbacks/de-job"
+
 condor:
   condor_config: /etc/condor/condor_config
   path_env_var: /opt/condor/bin/:/usr/bin/:/usr/local/bin/:/bin/
