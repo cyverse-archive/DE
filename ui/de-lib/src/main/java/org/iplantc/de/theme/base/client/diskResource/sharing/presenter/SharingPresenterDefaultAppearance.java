@@ -8,14 +8,14 @@ import com.google.gwt.core.client.GWT;
 /**
  * @author jstroot
  */
-public class DataSharingPresenterDefaultAppearance implements SharingPresenter.Appearance {
+public class SharingPresenterDefaultAppearance implements SharingPresenter.Appearance {
     private final SharingMessages sharingMessages;
 
-    public DataSharingPresenterDefaultAppearance() {
+    public SharingPresenterDefaultAppearance() {
         this(GWT.<SharingMessages> create(SharingMessages.class));
     }
 
-    DataSharingPresenterDefaultAppearance(final SharingMessages sharingMessages) {
+    SharingPresenterDefaultAppearance(final SharingMessages sharingMessages) {
         this.sharingMessages = sharingMessages;
     }
 

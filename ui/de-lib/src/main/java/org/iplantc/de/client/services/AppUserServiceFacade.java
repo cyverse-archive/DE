@@ -85,9 +85,9 @@ public interface AppUserServiceFacade extends AppServiceFacade {
 
     void getPermissions(List<App> apps, AsyncCallback<String> callback);
 
-    void shareApp(List<App> apps, List<String> users, String permission, AsyncCallback<String> callback);
+    void shareApp(JSONObject request, AsyncCallback<String> callback);
     
-    void unshareApp(List<App> apps, List<String> users, AsyncCallback<String> callback);
+    void unshareApp(JSONObject request, AsyncCallback<String> callback);
 
 
 }

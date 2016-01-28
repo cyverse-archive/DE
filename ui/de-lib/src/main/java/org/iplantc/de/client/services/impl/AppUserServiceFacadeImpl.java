@@ -1,16 +1,16 @@
 package org.iplantc.de.client.services.impl;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.gwt.http.client.URL;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.inject.Inject;
-import com.google.web.bindery.autobean.shared.*;
-import com.google.web.bindery.autobean.shared.impl.StringQuoter;
-import com.sencha.gxt.data.shared.SortDir;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.DELETE;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PATCH;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
+
 import org.iplantc.de.client.models.HasId;
-import org.iplantc.de.client.models.apps.*;
+import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.apps.AppCategory;
+import org.iplantc.de.client.models.apps.AppDoc;
+import org.iplantc.de.client.models.apps.AppFeedback;
+import org.iplantc.de.client.models.apps.AppList;
 import org.iplantc.de.client.models.apps.integration.AppTemplate;
 import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
 import org.iplantc.de.client.models.apps.proxy.AppListLoadResult;
@@ -27,9 +27,22 @@ import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.EmailServiceAsync;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
-import java.util.List;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.inject.Inject;
+import com.google.web.bindery.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+import com.google.web.bindery.autobean.shared.AutoBeanFactory;
+import com.google.web.bindery.autobean.shared.AutoBeanUtils;
+import com.google.web.bindery.autobean.shared.Splittable;
+import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
+import com.sencha.gxt.data.shared.SortDir;
+
+import java.util.List;
 
 /**
  * Provides access to remote services for operations related to analysis submission templates.
@@ -364,16 +377,16 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
      }
 
     @Override
-    public void shareApp(List<App> apps,
-                         List<String> users,
-                         String permission,
+    public void shareApp(JSONObject request,
                          AsyncCallback<String> callback) {
-        // TODO Auto-generated method stub
+        String address = APPS + "/" +  "sharing";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, request.toString());
+        deServiceFacade.getServiceData(wrapper,callback);
 
     }
 
     @Override
-    public void unshareApp(List<App> apps, List<String> users, AsyncCallback<String> callback) {
+    public void unshareApp(JSONObject request, AsyncCallback<String> callback) {
         // TODO Auto-generated method stub
 
     }

@@ -120,7 +120,7 @@
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.sharing.DataSharingViewDefaultAppearance">
         <when-type-is class="org.iplantc.de.client.sharing.SharingAppearance" />
     </replace-with>
-    <replace-with class="org.iplantc.de.theme.base.client.diskResource.sharing.presenter.DataSharingPresenterDefaultAppearance">
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.sharing.presenter.SharingPresenterDefaultAppearance">
         <when-type-is class="org.iplantc.de.client.sharing.SharingPresenter.Appearance" />
     </replace-with>
 

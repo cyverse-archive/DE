@@ -3,9 +3,9 @@
  */
 package org.iplantc.de.apps.client.presenter.sharing;
 
-import org.iplantc.de.client.models.collaborators.Collaborator;
 import org.iplantc.de.apps.client.views.sharing.AppSharingView;
 import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.collaborators.Collaborator;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.sharing.SharedResource;
 import org.iplantc.de.client.models.sharing.Sharing;
@@ -16,10 +16,13 @@ import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.collaborators.client.util.CollaboratorsUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
+import org.iplantc.de.commons.client.info.IplantAnnouncer;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 
@@ -80,7 +83,8 @@ public class AppSharingPresenter implements SharingPresenter {
 
         @Override
         public void onSuccess(String result) {
-            JSONArray permissionsArray = jsonUtil.getArray(jsonUtil.getObject(result), "apps"); //$NON-NLS-1$
+            JSONArray permissionsArray =
+                    jsonUtil.getArray(jsonUtil.getObject(result), "apps"); //$NON-NLS-1$
             if (permissionsArray != null) {
                 sharingList = new FastMap<>();
                 for (int i = 0; i < permissionsArray.size(); i++) {
@@ -90,7 +94,7 @@ public class AppSharingPresenter implements SharingPresenter {
                     loadPermissions(path, user_arr);
                 }
 
-               final List<String> usernames = new ArrayList<>();
+                final List<String> usernames = new ArrayList<>();
                 usernames.addAll(sharingList.keySet());
                 collaboratorsUtil.getUserInfo(usernames, new GetUserInfoCallback(usernames));
             }
@@ -107,27 +111,43 @@ public class AppSharingPresenter implements SharingPresenter {
     private final JsonUtil jsonUtil;
     private final CollaboratorsUtil collaboratorsUtil;
 
+
     public AppSharingPresenter(final AppUserServiceFacade appService,
                                final List<App> selectedApps,
                                final AppSharingView view,
                                final CollaboratorsUtil collaboratorsUtil,
                                final JsonUtil jsonUtil) {
+        this(appService,
+             selectedApps,
+             view,
+             collaboratorsUtil,
+             jsonUtil,
+             GWT.<SharingPresenter.Appearance>create(SharingPresenter.Appearance.class));
+    }
+
+    public AppSharingPresenter(final AppUserServiceFacade appService,
+                               final List<App> selectedApps,
+                               final AppSharingView view,
+                               final CollaboratorsUtil collaboratorsUtil,
+                               final JsonUtil jsonUtil,
+                               Appearance appearance) {
 
         this.view = view;
+        this.appearance = appearance;
         this.appService = appService;
         view.setPresenter(this);
         this.jsonUtil = jsonUtil;
         this.collaboratorsUtil = collaboratorsUtil;
         this.selectedApps = selectedApps;
         this.permissionsPanel =
-                new SharingPermissionsPanel(this, getSelectedResourcesAsMap(selectedApps));
+                new SharingPermissionsPanel(this, getSelectedApps(selectedApps));
         view.addShareWidget(permissionsPanel.asWidget());
         loadResources();
         loadPermissions();
 
     }
 
-    private FastMap<SharedResource> getSelectedResourcesAsMap(List<App> selectedResources) {
+    private FastMap<SharedResource> getSelectedApps(List<App> selectedResources) {
         FastMap<SharedResource> resourcesMap = new FastMap<>();
         for (App sr : selectedResources) {
             resourcesMap.put(sr.getId(), new SharedResource(sr.getId(), sr.getName()));
@@ -160,8 +180,89 @@ public class AppSharingPresenter implements SharingPresenter {
 
     @Override
     public void processRequest() {
-        // TODO Auto-generated method stub
+        JSONObject requestBody = buildSharingJson();
+        JSONObject unshareRequestBody = buildUnSharingJson();
+        if (requestBody != null) {
+            share(requestBody);
+        }
 
+        if (unshareRequestBody != null) {
+            //        unshare(unshareRequestBody);
+        }
+
+        if (requestBody != null || unshareRequestBody != null) {
+            IplantAnnouncer.getInstance().schedule(appearance.sharingCompleteMsg());
+        }
+
+    }
+
+    private JSONObject buildSharingJson() {
+        JSONObject sharingObj = new JSONObject();
+        FastMap<List<Sharing>> sharingMap = permissionsPanel.getSharingMap();
+
+        if (sharingMap != null && sharingMap.size() > 0) {
+            JSONArray sharingArr = new JSONArray();
+            int index = 0;
+            for (String userName : sharingMap.keySet()) {
+                List<Sharing> shareList = sharingMap.get(userName);
+                JSONObject userObj = new JSONObject();
+                userObj.put("user", new JSONString(userName));
+                userObj.put("apps", buildPathArrWithPermissions(shareList));
+                sharingArr.set(index++, userObj);
+            }
+
+            sharingObj.put("sharing", sharingArr);
+            return sharingObj;
+        } else {
+            return null;
+        }
+    }
+
+    private JSONObject buildUnSharingJson() {
+        return null;
+    }
+
+    private JSONArray buildPathArrWithPermissions(List<Sharing> shareList) {
+        JSONArray pathArr = new JSONArray();
+        int index = 0;
+        JSONObject obj;
+        for (Sharing s : shareList) {
+            obj = new JSONObject();
+            obj.put("app_id", new JSONString(s.getId()));
+            obj.put("permission", buildSharingPermissionsAsJson(s));
+            pathArr.set(index++, obj);
+        }
+
+        return pathArr;
+    }
+
+    private JSONValue buildSharingPermissionsAsJson(Sharing sh) {
+        return new JSONString(sh.getPermission().toString());
+    }
+
+
+    private void share(JSONObject requestBody) {
+        if (requestBody != null) {
+            callSharingService(requestBody);
+        }
+
+    }
+
+    private void callSharingService(JSONObject obj) {
+        GWT.log("app sharing request:" + obj.toString());
+        appService.shareApp(obj, new AsyncCallback<String>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                // do nothing intentionally
+            }
+        });
     }
 
     private PermissionValue buildPermissionFromJson(JSONObject perm) {
