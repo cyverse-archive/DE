@@ -72,4 +72,9 @@ public class AppCategoriesViewDefaultAppearance implements AppCategoriesView.App
         style.setNodeOpenIcon(resources.categoryOpen());
         style.setLeafIcon(resources.subCategory());
     }
+
+    @Override
+    public String copyAppSuccessMessage(String appName) {
+        return appsMessages.copyAppSuccessMessage(appName);
+    }
 }

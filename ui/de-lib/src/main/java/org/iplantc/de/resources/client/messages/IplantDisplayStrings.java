@@ -2967,4 +2967,7 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
 
     String removeFromFavorites(String resource_name);
 
+    @DefaultMessage("Agave Redirect")
+    @Key("agaveAuthRequiredTitle")
+    String agaveAuthRequiredTitle();
 }
