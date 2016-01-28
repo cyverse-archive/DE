@@ -716,7 +716,7 @@
   (->> (get-permission-assign-ids username attribute-def-name params)
        (mapv (fn [[permission-type ids]] (remove-permission-assign-ids username permission-type ids)))))
 
-(defn remove-existing-role-permissions
+(defn- remove-existing-role-permissions
   [username attribute-def-name role-name]
   (remove-existing-permissions username attribute-def-name
                                {:role role-name

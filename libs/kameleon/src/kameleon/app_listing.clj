@@ -2,6 +2,7 @@
   (:use [korma.core :exclude [update]]
         [kameleon.entities]
         [kameleon.queries]
+        [kameleon.util :only [query-spy]]
         [kameleon.util.search]
         [kameleon.app-groups :only [get-visible-root-app-group-ids]])
   (:require [clojure.tools.logging :as log]
@@ -217,56 +218,51 @@
             (where {(sqlfn lower :tool_listing.name)
                     [like (sqlfn lower search_term)]}))))
 
-(defn- add-search-where-clauses
-  "Adds where clauses to a base App search query to restrict results to Apps
-   that contain search_term in their name or description, in all public groups
-   and groups under the given workspace_id."
-  [base_search_query search_term workspace_id]
-  (let [search_term (format-query-wildcards search_term)
-        search_term (str "%" search_term "%")
-        sql-lower #(sqlfn lower %)]
-    (->
-      base_search_query
-      (join :app_category_app
-            (= :app_category_app.app_id
-               :app_listing.id))
-      (where {:app_category_app.app_category_id
-              [in (get-public-group-ids-subselect workspace_id)]})
-      (where
-        (or
-          {(sql-lower :name) [like (sql-lower search_term)]}
-          {(sql-lower :description) [like (sql-lower search_term)]}
-          {(sql-lower :integrator_name) [like (sql-lower search_term)]}
-          (get-deployed-component-search-subselect search_term))))))
+(defn- add-search-term-where-clauses
+  "Adds where clauses to a base App search query to restrict results to apps that
+   contain search_term in the app name, app description, app integrator name, or
+   the tool name."
+  [base_search_query search_term]
+  (let [search_term (str "%" (format-query-wildcards search_term) "%")]
+    (where base_search_query
+           (or {(sqlfn lower :name) [like (sqlfn lower search_term)]}
+               {(sqlfn lower :description) [like (sqlfn lower search_term)]}
+               {(sqlfn lower :integrator_name) [like (sqlfn lower search_term)]}
+               (get-deployed-component-search-subselect search_term)))))
+
+(defn- add-search-category-where-clauses
+  "Adds where clauses to a base App search query to restrict results to apps
+   in all public groups and groups under the given workspace_id."
+  [base_search_query workspace_id {:keys [app-ids]}]
+  (if-not (seq app-ids)
+    (-> base_search_query
+        (join :app_category_app {:app_category_app.app_id :app_listing.id})
+        (where {:app_category_app.app_category_id
+                [in (get-public-group-ids-subselect workspace_id)]}))
+    base_search_query))
 
 (defn count-search-apps-for-user
   "Counts App search results that contain search_term in their name or
    description, in all public groups and groups under the given workspace_id."
   [search_term workspace_id params]
-  (let [count_query (add-search-where-clauses
-                      (get-app-count-base-query params)
-                      search_term
-                      workspace_id)]
-    (:total (first (select count_query)))))
+  (-> (get-app-count-base-query params)
+      (add-search-term-where-clauses search_term)
+      (add-search-category-where-clauses workspace_id params)
+      select
+      first
+      :total))
 
 (defn search-apps-for-user
   "Searches Apps that contain search_term in their name or description, in all
    public groups and groups in workspace (as returned by
    fetch-workspace-by-user-id), marking whether each app is a favorite and
    including the user's rating in each app by the user_id found in workspace."
-  [search_term workspace favorites_group_index query_opts]
-  (let [search_query (get-app-listing-base-query
-                       workspace
-                       favorites_group_index
-                       query_opts)
-        search_query (add-search-where-clauses
-                        search_query
-                        search_term
-                        (:id workspace))]
-    ;; Excecute the query and return the results
-    (log/debug "search-apps-for-user::search_query:"
-               (sql-only (select search_query)))
-    (select search_query)))
+  [search_term {workspace_id :id :as workspace} favorites_group_index query_opts]
+  (-> (get-app-listing-base-query workspace favorites_group_index query_opts)
+      (add-search-term-where-clauses search_term)
+      (add-search-category-where-clauses workspace_id query_opts)
+      ((partial query-spy "search-apps-for-user::search_query:"))
+      select))
 
 (defn- add-deleted-and-orphaned-where-clause
   [query]
