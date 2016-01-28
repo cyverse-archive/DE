@@ -8,6 +8,7 @@ LABEL org.iplantc.de.jobservices.git-ref="$git_commit" \
 COPY ./bin/road-runner-linux-amd64 /bin/road-runner
 COPY ./bin/condor-launcher-linux-amd64 /bin/condor-launcher
 COPY ./bin/job-status-recorder-linux-amd64 /bin/job-status-recorder
+COPY ./bin/job-status-to-apps-adapter-linux-amd64 /bin/job-status-to-apps-adapter
 COPY ./bin/jex-adapter-linux-amd64 /bin/jex-adapter
 COPY restart /bin/restart
 ENTRYPOINT ["restart"]
