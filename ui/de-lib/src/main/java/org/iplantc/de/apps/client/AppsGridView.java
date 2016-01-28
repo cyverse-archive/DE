@@ -58,6 +58,10 @@ public interface AppsGridView extends IsWidget,
         String ratingColumnLabel();
 
         String searchAppResultsHeader(String searchText, int total);
+
+        String agaveAuthRequiredTitle();
+
+        String agaveAuthRequiredMsg();
     }
 
     /**

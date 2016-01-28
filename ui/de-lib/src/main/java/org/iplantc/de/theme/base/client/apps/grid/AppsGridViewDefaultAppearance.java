@@ -68,4 +68,14 @@ public class AppsGridViewDefaultAppearance implements AppsGridView.AppsGridAppea
     public String searchAppResultsHeader(String searchText, int total) {
         return appsMessages.searchAppResultsHeader(searchText, total);
     }
+
+    @Override
+    public String agaveAuthRequiredTitle() {
+        return iplantDisplayStrings.agaveAuthRequiredTitle();
+    }
+
+    @Override
+    public String agaveAuthRequiredMsg() {
+        return iplantDisplayStrings.agaveAuthRequiredMsg();
+    }
 }
