@@ -1,6 +1,7 @@
 (ns apps.service.apps.agave.jobs
   (:use [apps.util.conversions :only [remove-nil-vals]]
-        [slingshot.slingshot :only [try+ throw+]])
+        [slingshot.slingshot :only [try+ throw+]]
+        [common-swagger-api.schema :only [NonBlankString]])
   (:require [cemerick.url :as curl]
             [cheshire.core :as cheshire]
             [clojure.string :as string]
@@ -35,9 +36,6 @@
                           (ft/build-result-folder-path submission)
                           submission)
        (.prepareJobSubmission agave)))
-
-(def NonBlankString
-  (s/both s/Str (s/pred (complement string/blank?) 'non-blank?)))
 
 (def JobInfo
   "A schema used to validate job information."
