@@ -6,13 +6,18 @@
             [clojure.string :as string]
             [clojure-commons.exception-util :as cxu]))
 
-(def permission-precedence (into {} (map-indexed (fn [i v] (vector v i)) ["own" "write" "read"])))
+(def permission-precedence (into {} (map-indexed (fn [i v] (vector v i)) ["originator" "own" "write" "read"])))
+
+(def top-permission-precedence (permission-precedence "own"))
 
 (defn get-permission-level
   ([perms app-id]
      (get-permission-level (perms app-id)))
   ([perms]
-     (first (sort-by permission-precedence (map :action_name perms)))))
+     (->> (map :action_name perms)
+          (sort-by permission-precedence)
+          (remove (fn [level] (< (permission-precedence level) top-permission-precedence)))
+          first)))
 
 (defn has-permission-level
   [perms required-level app-id]
