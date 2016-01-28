@@ -1,5 +1,6 @@
 package org.iplantc.de.notifications.client.views.cells;
 
+import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.client.models.toolRequest.ToolRequestStatus;
 
 import com.google.gwt.cell.client.AbstractCell;
@@ -25,7 +26,10 @@ public class RequestStatusCell extends AbstractCell<String> {
                 || value.equalsIgnoreCase(ToolRequestStatus.Validation.toString())) ) {
             qtip = Format.substitute("qtip=\"{0}\"", ToolRequestStatus.valueOf(value).getHelpText()); //$NON-NLS-1$
             sb.appendHtmlConstant(Format.substitute("<div {0}>{1}</div>", qtip, value));
-        } else {
+        } else if (value != null) {
+            qtip = Format.substitute("qtip=\"{0}\"", ToolRequestStatus.valueOf(ToolRequestStatus.Other.toString()).getHelpText()); //$NON-NLS-1$
+            sb.appendHtmlConstant(Format.substitute("<div {0}>{1}</div>", qtip, value));
+        } else{
             sb.appendHtmlConstant(Format.substitute("<div>{0}</div>", value));
         }
 

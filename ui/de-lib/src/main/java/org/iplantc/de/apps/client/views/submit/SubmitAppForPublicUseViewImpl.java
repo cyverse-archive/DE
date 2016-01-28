@@ -13,6 +13,8 @@ import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorFieldF
 import org.iplantc.de.diskResource.client.views.widgets.FolderSelectorField;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.json.client.JSONArray;
@@ -265,6 +267,21 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
         tree.setCheckable(true);
         tree.setCheckStyle(CheckCascade.CHILDREN);
         tree.setCheckNodes(CheckNodes.LEAF);
+        tree.getSelectionModel().addSelectionHandler(new SelectionHandler<AppCategory>() {
+            @Override
+            public void onSelection(SelectionEvent<AppCategory> event) {
+                AppCategory selectedItem = event.getSelectedItem();
+                // Have to deselect after un/checking the item, or else a second
+                // SelectionEvent gets fired and reverts the check
+                if (tree.isChecked(selectedItem)) {
+                    tree.setChecked(selectedItem, Tree.CheckState.UNCHECKED);
+                    tree.getSelectionModel().deselect(selectedItem);
+                } else {
+                    tree.setChecked(selectedItem, Tree.CheckState.CHECKED);
+                    tree.getSelectionModel().deselect(selectedItem);
+                }
+            }
+        });
     }
 
     private void initTreeStoreSorter() {

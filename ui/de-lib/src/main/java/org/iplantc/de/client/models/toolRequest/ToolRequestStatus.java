@@ -13,7 +13,7 @@ import com.google.common.base.Strings;
 public enum ToolRequestStatus {
     Submitted("Submitted", I18N.HELP.toolRequestStatusSubmittedHelp()), Pending("Pending", I18N.HELP.toolRequestStatusPendingHelp()), Evaluation("Evaluation", I18N.HELP
             .toolRequestStatusEvaluationHelp()), Installation("Installation", I18N.HELP.toolRequestStatusInstallationHelp()), Validation("Validation", I18N.HELP.toolRequestStatusValidationHelp()), Completion(
-            "Completion", I18N.HELP.toolRequestStatusCompleteHelp()), Failed("Failed", I18N.HELP.toolRequestStatusFailedHelp());
+            "Completion", I18N.HELP.toolRequestStatusCompleteHelp()), Failed("Failed", I18N.HELP.toolRequestStatusFailedHelp()), Other("Other", I18N.HELP.toolRequestStatusOtherHelp());
 
     private String helpText;
     private String displayText;
