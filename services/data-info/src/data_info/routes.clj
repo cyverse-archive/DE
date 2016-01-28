@@ -14,6 +14,7 @@
             [data-info.routes.users :as users-routes]
             [data-info.routes.navigation :as navigation-routes]
             [data-info.routes.rename :as rename-routes]
+            [data-info.routes.sharing :as sharing-routes]
             [data-info.routes.status :as status-routes]
             [data-info.routes.stats :as stat-routes]
             [data-info.routes.trash :as trash-routes]
@@ -53,5 +54,6 @@
     users-routes/permissions-gatherer
     navigation-routes/navigation
     stat-routes/stat-gatherer
+    sharing-routes/sharing-routes
     trash-routes/trash
     (route/not-found (svc/unrecognized-path-response))))
