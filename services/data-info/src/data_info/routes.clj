@@ -7,6 +7,7 @@
         [ring.util.response :only [redirect]])
   (:require [compojure.route :as route]
             [clojure-commons.exception :as cx]
+            [data-info.routes.avus :as avus-routes]
             [data-info.routes.data :as data-routes]
             [data-info.routes.exists :as exists-routes]
             [data-info.routes.filetypes :as filetypes-routes]
@@ -44,6 +45,7 @@
      log-validation-errors]
     status-routes/status
     data-routes/data-operations
+    avus-routes/avus-routes
     exists-routes/existence-marker
     filetypes-routes/filetypes-operations
     users-routes/permissions-gatherer

@@ -28,38 +28,6 @@
 (get-error-code-block "ERR_NOT_A_FOLDER, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_EXISTS, ERR_TOO_MANY_PATHS, ERR_NOT_A_USER"))
     (svc/trap uri rename/do-move params body))
 
-  (context* "/admin/data" []
-    :tags ["data"]
-
-    (context* "/:data-id" []
-      :path-params [data-id :- DataIdPathParam]
-      :tags ["data-by-id"]
-
-      (GET* "/avus" [:as {uri :uri}]
-        :query [{:keys [user]} StandardUserQueryParams]
-        :return AVUGetResult
-        :summary "List AVUs (administrative)"
-        :description (str "List iRODS AVUs associated with a data item. Include administrative/system AVUs."
-(get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE"))
-        (svc/trap uri meta/admin-metadata-get data-id))
-
-      (POST* "/avus" [:as {uri :uri}]
-        :query [{:keys [user]} StandardUserQueryParams]
-        :body [{:keys [irods-avus]} (describe AVUListing "An list of AVUs to add")]
-        :return AVUChangeResult
-        :summary "Add AVUs (administrative)"
-        :description (str "Associate AVUs with a data item. Allow adding any AVU."
-(get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_AUTHORIZED"))
-        (svc/trap uri meta/admin-metadata-add data-id irods-avus))
-
-      (DELETE* "/avus" [:as {uri :uri}]
-        :query [{:keys [user attr value]} AVUDeleteParams]
-        :return AVUChangeResult
-        :summary "Delete AVU (administrative)"
-        :description (str "Delete a single AVU from a data item. Allows deleting any AVU."
-(get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_AUTHORIZED"))
-        (svc/trap uri meta/admin-metadata-delete data-id [{:attr attr :value value}]))))
-
   (context* "/data" []
     :tags ["data"]
 
@@ -139,32 +107,6 @@ with characters in a runtime-configurable parameter. Currently, this parameter l
 "Overwrites a file as a user, given the user can write to it and the file already exists."
 (get-error-code-block "ERR_NOT_A_USER, ERR_DOES_NOT_EXIST, ERR_NOT_A_FILE, ERR_NOT_WRITEABLE"))
         (svc/trap uri write/do-upload params file))
-
-      (GET* "/avus" [:as {uri :uri}]
-        :query [{:keys [user]} StandardUserQueryParams]
-        :return AVUGetResult
-        :summary "List AVUs"
-        :description (str "List iRODS AVUs associated with a data item."
-(get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE"))
-        (svc/trap uri meta/metadata-get user data-id :system false))
-
-      (POST* "/avus" [:as {uri :uri}]
-        :query [{:keys [user]} StandardUserQueryParams]
-        :body [{:keys [irods-avus]} (describe AVUListing "An list of AVUs to add")]
-        :return AVUChangeResult
-        :summary "Add AVUs"
-        :description (str "Associate AVUs with a data item. Administrative AVUs may not be added with this endpoint."
-(get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_AUTHORIZED"))
-        (svc/trap uri meta/metadata-add user data-id irods-avus))
-
-      (PUT* "/avus" [:as {uri :uri}]
-        :query [{:keys [user]} StandardUserQueryParams]
-        :body [{:keys [irods-avus]} (describe AVUListing "A list of AVUs to set for this file. May not include administrative AVUs, and will not delete them.")]
-        :return AVUSetResult
-        :summary "Set AVUs"
-        :description (str "Set the iRODS AVUS for a data item to a provided set. This set may not include administrative AVUs, and similarly will not remove administrative AVUs."
-(get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_AUTHORIZED"))
-        (svc/trap uri meta/metadata-set user data-id irods-avus))
 
       (PUT* "/name" [:as {uri :uri}]
         :query [params StandardUserQueryParams]
