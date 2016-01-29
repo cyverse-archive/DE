@@ -187,7 +187,7 @@ public class AppSharingPresenter implements SharingPresenter {
         }
 
         if (unshareRequestBody != null) {
-            //        unshare(unshareRequestBody);
+            unshare(unshareRequestBody);
         }
 
         if (requestBody != null || unshareRequestBody != null) {
@@ -219,7 +219,33 @@ public class AppSharingPresenter implements SharingPresenter {
     }
 
     private JSONObject buildUnSharingJson() {
-        return null;
+        JSONObject unsharingObj = new JSONObject();
+        FastMap<List<Sharing>> unSharingMap = permissionsPanel.getUnshareList();
+
+        if (unSharingMap != null && unSharingMap.size() > 0) {
+            JSONArray unsharingArr = new JSONArray();
+            int index = 0;
+            for (String userName : unSharingMap.keySet()) {
+                List<Sharing> shareList = unSharingMap.get(userName);
+                JSONObject userObj = new JSONObject();
+                userObj.put("user", new JSONString(userName));
+                userObj.put("apps", buildPathArr(shareList));
+                unsharingArr.set(index++, userObj);
+            }
+            unsharingObj.put("unshare", unsharingArr);
+            return unsharingObj;
+        } else {
+            return null;
+        }
+    }
+
+    private JSONArray buildPathArr(List<Sharing> shareList) {
+        JSONArray pathArr = new JSONArray();
+        int index = 0;
+        for (Sharing s : shareList) {
+            pathArr.set(index++, new JSONString(s.getId()));
+        }
+        return pathArr;
     }
 
     private JSONArray buildPathArrWithPermissions(List<Sharing> shareList) {
@@ -265,6 +291,23 @@ public class AppSharingPresenter implements SharingPresenter {
         });
     }
 
+    private void callUnshareService(JSONObject obj) {
+        GWT.log("app un-sharing request:" + obj.toString());
+        appService.unshareApp(obj, new AsyncCallback<String>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                // do nothing
+            }
+        });
+    }
+
     private PermissionValue buildPermissionFromJson(JSONObject perm) {
         return PermissionValue.valueOf(jsonUtil.getString(perm, "permission"));
     }
@@ -284,6 +327,13 @@ public class AppSharingPresenter implements SharingPresenter {
             perm.put("permission", new JSONString(permVal));
             perm.put("path", new JSONString(path)); //$NON-NLS-1$
             shareList.add(perm);
+        }
+
+    }
+
+    private void unshare(JSONObject unshareRequestBody) {
+        if (unshareRequestBody != null) {
+            callUnshareService(unshareRequestBody);
         }
 
     }
