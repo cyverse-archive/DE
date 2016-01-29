@@ -320,7 +320,7 @@
 
 (defn list-shared-apps
   "Lists apps that have been shared with a user. For the time being, this works by listing all apps
-  in th :app-ids parametr that are not in one of the categories that the user can access. When the
+  in the :app-ids parameter that are not in one of the categories that the user can access. When the
   category system changes, this query will also have to change."
   [workspace favorites-group-index params]
   (-> (get-app-listing-base-query workspace favorites-group-index params)
