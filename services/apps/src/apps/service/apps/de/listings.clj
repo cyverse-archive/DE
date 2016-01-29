@@ -70,10 +70,10 @@
    params))
 
 (def ^:private virtual-group-fns
-  {(keyword (str my-public-apps-id)) {:format-group   format-my-public-apps-group
-                                      :format-listing list-my-public-apps}
-   (keyword (str trash-category-id)) {:format-group   format-trash-category
-                                      :format-listing list-trashed-apps}})
+  {my-public-apps-id {:format-group   format-my-public-apps-group
+                      :format-listing list-my-public-apps}
+   trash-category-id {:format-group   format-trash-category
+                      :format-listing list-trashed-apps}})
 
 (defn- format-private-virtual-groups
   "Formats any virtual groups that should appear in a user's workspace."
@@ -217,11 +217,10 @@
 (defn- list-apps-in-virtual-group
   "Formats a listing for a virtual group."
   [user workspace group-id perms params]
-  (let [group-key (keyword (str group-id))]
-    (when-let [format-fns (virtual-group-fns group-key)]
-      (-> ((:format-group format-fns) user (:id workspace) params)
-          (assoc :apps (->> ((:format-listing format-fns) user workspace params)
-                            (map (partial format-app-listing perms))))))))
+  (when-let [format-fns (virtual-group-fns group-id)]
+    (-> ((:format-group format-fns) user (:id workspace) params)
+        (assoc :apps (->> ((:format-listing format-fns) user workspace params)
+                          (map (partial format-app-listing perms)))))))
 
 (defn- count-apps-in-group
   "Counts the number of apps in an app group, including virtual app groups that may be included."
