@@ -309,3 +309,39 @@
   (-> (get-app-listing-base-query workspace favorites-group-index query-opts)
       (add-public-apps-by-user-where-clause email)
       (select)))
+
+(defn visible-app-group-id-subselect
+  [workspace-id]
+  (subselect [:app_category_listing :c]
+             (fields :id)
+             (where (or {:is_public true}
+                        {:workspace_id workspace-id}))))
+
+(defn- is-visible-app-subselect
+  [{workspace-id :id root-category-id :root_category_id} favorites-group-index app-id-keyword]
+  (subselect [:app_category_app :aca]
+             (join [:app_category_listing :ac] {:aca.app_category_id :ac.id})
+             (where {:aca.app_id app-id-keyword})
+             (where {:ac.id [not= (get-fav-group-id-subselect root-category-id favorites-group-index)]})
+             (where (or :ac.is_public {:ac.workspace_id workspace-id}))))
+
+(defn list-shared-apps
+  "Lists apps that have been shared with a user. For the time being, this works by listing all apps
+  in th :app-ids parametr that are not in one of the categories that the user can access. When the
+  category system changes, this query will also have to change."
+  [workspace favorites-group-index params]
+  (-> (get-app-listing-base-query workspace favorites-group-index params)
+      (where (not (exists (is-visible-app-subselect workspace favorites-group-index :app_listing.id))))
+      select))
+
+(defn count-shared-apps
+  "Counts the number of apps that have been shared with a user. For the time being, this works by
+  counting all apps in the :app-ids parameter that are not in one of the categories that the user
+  can access. When the category system changes, this query will also have to change."
+  [workspace favorites-group-index params]
+  (-> (select* [:app_listing :l])
+      (aggregate (count :*) :count)
+      (where {:deleted false})
+      (where (not (exists (is-visible-app-subselect workspace favorites-group-index :l.id))))
+      (add-app-id-where-clause params)
+      select first :count))
