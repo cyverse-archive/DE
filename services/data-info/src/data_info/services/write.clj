@@ -12,8 +12,8 @@
 
 (defn- save-file-contents
   "Save an istream to a destination. Relies on upstream functions to validate."
-  [cm istream user dest-path]
-  (ops/copy-stream cm istream user dest-path)
+  [cm istream user dest-path set-owner?]
+  (ops/copy-stream cm istream user dest-path :set-owner? set-owner?)
   dest-path)
 
 (defn- create-at-path
@@ -26,7 +26,7 @@
     (validators/path-not-exists cm dest-path)
     (validators/path-exists cm dest-dir)
     (validators/path-writeable cm user dest-dir)
-    (save-file-contents cm istream user dest-path)))
+    (save-file-contents cm istream user dest-path true)))
 
 (defn- overwrite-path
   "Save new contents for the file at dest-path from istream.
@@ -37,7 +37,7 @@
   (validators/path-exists cm dest-path)
   (validators/path-is-file cm dest-path)
   (validators/path-writeable cm user dest-path)
-  (save-file-contents cm istream user dest-path))
+  (save-file-contents cm istream user dest-path false))
 
 (defn- multipart-create-handler
   "When partially applied, creates a storage handler for
