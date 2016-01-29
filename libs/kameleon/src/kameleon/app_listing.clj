@@ -310,13 +310,6 @@
       (add-public-apps-by-user-where-clause email)
       (select)))
 
-(defn visible-app-group-id-subselect
-  [workspace-id]
-  (subselect [:app_category_listing :c]
-             (fields :id)
-             (where (or {:is_public true}
-                        {:workspace_id workspace-id}))))
-
 (defn- is-visible-app-subselect
   [{workspace-id :id root-category-id :root_category_id} favorites-group-index app-id-keyword]
   (subselect [:app_category_app :aca]
