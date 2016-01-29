@@ -101,8 +101,9 @@
   (let [publish-path (config/permanent-id-publish-dir)
         curators     (config/permanent-id-curators-group)]
     (when-not (data-info/path-exists? (config/irods-user) publish-path)
+      (log/warn "creating" publish-path "for:" curators)
       (data-info-client/create-dirs (config/irods-user) [publish-path])
-      (data-info/share (config/irods-user) [curators] [publish-path] "write"))))
+      (data-info/share (config/irods-user) [curators] [publish-path] "own"))))
 
 (defn- create-staging-dir
   "Creates the Permanent ID Requests staging directory, if it doesn't already exist."
@@ -129,7 +130,7 @@
         curators     (config/permanent-id-curators-group)]
     (data-info-client/admin-add-avus user id publish-avus)
     (data-info-client/move-single curators id (config/permanent-id-publish-dir))
-    (data-info/share (config/irods-user) [curators] [publish-path] "write")
+    (data-info/share (config/irods-user) [curators] [publish-path] "own")
     publish-path))
 
 (defn- send-notification
