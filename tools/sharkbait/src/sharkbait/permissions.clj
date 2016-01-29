@@ -5,7 +5,6 @@
            [edu.internet2.middleware.grouper.misc SaveMode]
            [edu.internet2.middleware.grouper.permissions PermissionFinder]))
 
-(def originator "originator")
 (def read  "read")
 (def write "write")
 (def own   "own")
@@ -22,10 +21,9 @@
   "Sets the allowed actions for a permission definition."
   [permission-def]
   (let [delegate (.getAttributeDefActionDelegate permission-def)]
-    (.configureActionList delegate [read write own originator])
-    (add-implied-action delegate originator own)
-    (add-implied-action delegate own write)
-    (add-implied-action delegate write read))
+    (.configureActionList delegate ["read" "write" "own"])
+    (add-implied-action delegate "own" "write")
+    (add-implied-action delegate "write" "read"))
   (.store permission-def))
 
 (defn create-permission-def

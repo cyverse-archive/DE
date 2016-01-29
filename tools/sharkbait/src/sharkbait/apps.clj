@@ -7,28 +7,28 @@
             [sharkbait.roles :as roles]))
 
 (defn- extract-username
-  "Extracts the username of an originator from an app."
+  "Extracts the username of an owner from an app."
   [app]
   (->> (into [] (.getArray (:users app)))
        (filter (partial re-find #"@iplantcollaborative.org$"))
        (first)))
 
-(defn- find-app-originator-subject
-  "Finds the subject corresponding to the originator of an app."
+(defn- find-app-owner-subject
+  "Finds the subject corresponding to the owner of an app."
   [subjects app]
   (when-let [username (extract-username app)]
     (subjects (string/replace username #"@iplantcollaborative.org$" ""))))
 
-(defn- find-app-originator-member
+(defn- find-app-owner-member
   [session subjects app]
-  (when-let [subject (find-app-originator-subject subjects app)]
+  (when-let [subject (find-app-owner-subject subjects app)]
     (members/find-subject-member session subject true)))
 
-(defn- grant-originator-permission
-  "Grants originatorship permission to an app."
+(defn- grant-owner-permission
+  "Grants ownership permission to an app."
   [session subjects de-users-role app-resource app]
-  (when-let [member (find-app-originator-member session subjects app)]
-    (perms/grant-role-membership-permission de-users-role member perms/originator app-resource)))
+  (when-let [member (find-app-owner-member session subjects app)]
+    (perms/grant-role-membership-permission de-users-role member perms/own app-resource)))
 
 (defn- register-app
   "Registers an app in Grouper."
@@ -36,7 +36,7 @@
   (let [app-resource (perms/create-permission-resource session permission-def folder-name (:id app))]
     (if (:is_public app)
       (perms/grant-role-permission de-users-role perms/read app-resource)
-      (grant-originator-permission session subjects de-users-role app-resource app))))
+      (grant-owner-permission session subjects de-users-role app-resource app))))
 
 (defn register-de-apps
   "Registers all DE apps in Grouper. This function assumes that the permission assignments for an app
