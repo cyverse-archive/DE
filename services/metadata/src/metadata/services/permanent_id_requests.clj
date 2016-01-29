@@ -37,6 +37,13 @@
              :id request-id}))
   status)
 
+(defn- assert-request-identifier-not-found
+  [identifier]
+  (when identifier
+    (throw+ {:type       :clojure-commons.exception/exists
+             :error      "This Permanent ID Request already has an associated identifier."
+             :identifier identifier})))
+
 (defn- format-listing-params
   [params]
   (if (:sort-field params)
@@ -88,14 +95,19 @@
     (add-request-history request)))
 
 (defn update-permanent-id-request
-  [request-id user {:keys [status comments] :as body}]
+  [request-id user {:keys [status comments permanent_id] :as body}]
   (transaction
     (let [status-update (assoc body :user user)
-          prev-status   (assert-status-found request-id
-                          (db/get-most-recent-status request-id))
+          request       (-> (db/get-permanent-id-request nil request-id)
+                            (assert-request-found request-id))
+          prev-status   (->> (db/get-most-recent-status request-id)
+                             (assert-status-found request-id))
           status        (or status prev-status)
           status-id     (:id (db/get-or-create-status-code status))
           comments      (when-not (string/blank? comments) comments)]
+      (when permanent_id
+        (assert-request-identifier-not-found (:permanent_id request))
+        (db/update-permanent-id-request request-id permanent_id))
       (db/add-request-status-update {:permanent_id_request             request-id
                                      :permanent_id_request_status_code status-id
                                      :updated_by                       user

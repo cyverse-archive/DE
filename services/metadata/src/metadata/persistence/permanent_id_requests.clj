@@ -4,7 +4,8 @@
         [kameleon.queries :only [add-query-limit add-query-offset add-query-sorting]]
         [korma.core :exclude [update]]
         [korma.db :only [transaction]])
-  (:require [kameleon.db :as db]))
+  (:require [kameleon.db :as db]
+            [korma.core :as sql]))
 
 (def ^:private initial-status-code "Submitted")
 
@@ -72,13 +73,15 @@
   "Gets Permanent ID Request details. If the given user is not nil, only fetches details if the request
   was submitted by the given user."
   [user request-id]
-  (first
+  ((comp remove-nil-values first)
     (select [:permanent_id_requests :r]
       (fields :r.id
               :types.type
               :target_id
               :target_type
-              :requested_by)
+              :requested_by
+              :original_path
+              :permanent_id)
       (join [:permanent_id_request_types :types] {:types.id :r.type})
       (where-if-defined {:r.id request-id
                          :requested_by user}))))
@@ -190,6 +193,13 @@
                  :permanent_id_request_status_code (status-code-subselect initial-status-code)
                  :updated_by                       user}))
       new-request)))
+
+(defn update-permanent-id-request
+  "Records the Permanent ID for a given Request."
+  [request-id permanent-id]
+  (sql/update :permanent_id_requests
+    (set-fields {:permanent_id permanent-id})
+    (where {:id request-id})))
 
 (defn list-permanent-id-request-status-codes
   []

@@ -259,16 +259,21 @@
           {:keys [irods-avus metadata]} (metadata-get user folder-id)
           ezid-metadata                 (parse-valid-ezid-metadata irods-avus metadata)
           ezid-response                 (ezid/mint-id shoulder ezid-metadata)
+          identifier                    (get ezid-response (keyword type))
           publish-path                  (publish-data-item user folder (ezid-response->avus ezid-response))]
-      (email/send-permanent-id-request-complete type publish-path))
+      (email/send-permanent-id-request-complete type
+                                                publish-path
+                                                (json/encode ezid-response {:pretty true}))
+      identifier)
     (catch Object e
       (log/error e)
       (update-permanent-id-request request-id nil (json/encode {:status status-code-failed}))
-      (throw+ e)))
-  (update-permanent-id-request request-id nil (json/encode {:status status-code-completion})))
+      (throw+ e))))
 
 (defn create-permanent-id
   [request-id params body]
   (create-publish-dir)
-  (complete-permanent-id-request (:shortUsername current-user)
-                                 (admin-get-permanent-id-request request-id nil)))
+  (let [identifier (complete-permanent-id-request (:shortUsername current-user)
+                                                  (admin-get-permanent-id-request request-id nil))]
+    (update-permanent-id-request request-id nil (json/encode {:status       status-code-completion
+                                                              :permanent_id identifier}))))
