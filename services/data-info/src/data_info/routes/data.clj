@@ -116,6 +116,7 @@ with characters in a runtime-configurable parameter. Currently, this parameter l
     "ERR_DOES_NOT_EXIST, ERR_NOT_A_FILE, ERR_NOT_READABLE, ERR_NOT_A_USER, ERR_INVALID_PAGE, ERR_PAGE_NOT_POS, ERR_CHUNK_TOO_SMALL"))
         (svc/trap uri page-tabular/do-read-csv-chunk params data-id))
 
+      ;; XXX: The logic coordinating this with the metadata service should be migrated up into terrain; it should just use POST /data
       (POST* "/metadata/save" [:as {uri :uri}]
         :query [params StandardUserQueryParams]
         :body [body (describe MetadataSaveRequest "The metadata save request.")]
