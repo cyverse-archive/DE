@@ -67,7 +67,7 @@
 (defn- validate-publish-dest
   [{:keys [path] :as data-item}]
   (let [publish-dest (ft/path-join (config/permanent-id-publish-dir) (ft/basename path))
-        paths-exist (parse-service-json (data-info/check-existence {:user (config/irods-user)}
+        paths-exist (parse-service-json (data-info/check-existence {:user (config/permanent-id-curators-group)}
                                                                    {:paths [publish-dest]}))]
     (validate-publish-dest-exists paths-exist publish-dest))
   data-item)
@@ -77,7 +77,7 @@
   (validate-owner user data-item)
   (let [staging-dest (ft/path-join (config/permanent-id-staging-dir) (ft/basename path))
         publish-dest (ft/path-join (config/permanent-id-publish-dir) (ft/basename path))
-        paths-exist  (parse-service-json (data-info/check-existence {:user (config/irods-user)}
+        paths-exist  (parse-service-json (data-info/check-existence {:user (config/permanent-id-curators-group)}
                                                                     {:paths [staging-dest
                                                                              publish-dest]}))]
     (validate-staging-dest-exists paths-exist staging-dest)
@@ -98,9 +98,12 @@
 (defn- create-publish-dir
   "Creates the Permanent ID Requests publish directory, if it doesn't already exist."
   []
-  (let [publish-path (config/permanent-id-publish-dir)]
+  (let [publish-path (config/permanent-id-publish-dir)
+        curators     (config/permanent-id-curators-group)]
     (when-not (data-info/path-exists? (config/irods-user) publish-path)
-      (data-info-client/create-dirs (config/irods-user) [publish-path]))))
+      (log/warn "creating" publish-path "for:" curators)
+      (data-info-client/create-dirs (config/irods-user) [publish-path])
+      (data-info/share (config/irods-user) [curators] [publish-path] "own"))))
 
 (defn- create-staging-dir
   "Creates the Permanent ID Requests staging directory, if it doesn't already exist."
@@ -121,6 +124,15 @@
     (data-info/share (config/irods-user) [curators] [staged-path] "own")
     staged-path))
 
+(defn- publish-data-item
+  [user {:keys [id path] :as data-item} publish-avus]
+  (let [publish-path (ft/path-join (config/permanent-id-publish-dir) (ft/basename path))
+        curators     (config/permanent-id-curators-group)]
+    (data-info-client/admin-add-avus user id publish-avus)
+    (data-info-client/move-single curators id (config/permanent-id-publish-dir))
+    (data-info/share (config/irods-user) [curators] [publish-path] "own")
+    publish-path))
+
 (defn- send-notification
   [user subject request-id]
   (log/debug "sending permanent_id_request notification to" user ":" subject)
@@ -140,11 +152,6 @@
     requested_by
     (str type " Request for " (ft/basename (:path folder)) " Status Changed to " (:status (last history)))
     id))
-
-(defn- send-request-complete-email
-  [request-type {:keys [path]}]
-  (let [publish-dest (ft/path-join (config/permanent-id-publish-dir) (ft/basename path))]
-    (email/send-permanent-id-request-complete request-type publish-dest)))
 
 (defn- request-type->shoulder
   [type]
@@ -251,10 +258,9 @@
           folder-id                     (uuidify (:id folder))
           {:keys [irods-avus metadata]} (metadata-get user folder-id)
           ezid-metadata                 (parse-valid-ezid-metadata irods-avus metadata)
-          response                      (ezid/mint-id shoulder ezid-metadata)]
-      (data-info-client/admin-add-avus user folder-id (ezid-response->avus response))
-      (data-info-client/move-single (config/irods-user) folder-id (config/permanent-id-publish-dir))
-      (send-request-complete-email type folder))
+          ezid-response                 (ezid/mint-id shoulder ezid-metadata)
+          publish-path                  (publish-data-item user folder (ezid-response->avus ezid-response))]
+      (email/send-permanent-id-request-complete type publish-path))
     (catch Object e
       (log/error e)
       (update-permanent-id-request request-id nil (json/encode {:status status-code-failed}))
