@@ -4,10 +4,10 @@
 
 (defn unauthorized
   "Throws an error indicating that the request is unauthorized."
-  [reason]
+  [reason & {:as ex-info}]
   (throw+ {:type ::cx/authentication-not-found :error reason}))
 
 (defn forbidden
   "Throws an error indicating that the request is forbidden."
-  [reason]
+  [reason & {:as ex-info}]
   (throw+ {:type ::cx/forbidden :error reason}))
