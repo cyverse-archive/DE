@@ -100,17 +100,6 @@
            (icat/paged-uuid-listing user zone sort-col sort-order limit offset uuids info-types)))))
 
 
-(defn uuid-for-path
-  [cm user path]
-  (let [attrs (get-attribute cm path uuid-attr)]
-    (when-not (pos? (count attrs))
-      (log/warn "Missing UUID for" path)
-      (throw+ {:error_code error/ERR_NOT_FOUND :path path}))
-    (if (pos? (count attrs))
-      (merge {:uuid (:value (first attrs))}
-             (stat/path-stat cm user path)))))
-
-
 (defn ^Boolean uuid-accessible?
   "Indicates if a data item is readable by a given user.
 
