@@ -232,7 +232,7 @@ public class AppSharingPresenter implements SharingPresenter {
                 userObj.put("apps", buildPathArr(shareList));
                 unsharingArr.set(index++, userObj);
             }
-            unsharingObj.put("unshare", unsharingArr);
+            unsharingObj.put("unsharing", unsharingArr);
             return unsharingObj;
         } else {
             return null;

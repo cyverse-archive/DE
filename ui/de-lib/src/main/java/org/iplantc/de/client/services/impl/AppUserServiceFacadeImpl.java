@@ -387,7 +387,9 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
 
     @Override
     public void unshareApp(JSONObject request, AsyncCallback<String> callback) {
-        // TODO Auto-generated method stub
+        String address = APPS + "/" +  "unsharing";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, request.toString());
+        deServiceFacade.getServiceData(wrapper,callback);
 
     }
 }
