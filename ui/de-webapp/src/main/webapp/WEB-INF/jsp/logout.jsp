@@ -6,21 +6,22 @@
 body {
     font-family: Univers,Calibri,"Gill Sans","Gill Sans MT","Myriad Pro",Myriad,"DejaVu Sans Condensed","Liberation Sans","Nimbus Sans L",Tahoma,Geneva,"Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 0.9em;
-    background-image: url(http://de.iplantcollaborative.org/de/images/background.png);
+    background-color: #e2e2e2;
+    background-image: linear-gradient( 180deg, #FFF,#e2e2e2);
     background-repeat: repeat-x;
 }
 h1 {
-    color: #0098aa;
+    color: #0971AB;
     font-size: 1.5em;
     line-height: .5em;
 }
 a {
-    color: #0098aa;
+    color: #0971AB;
     text-decoration: none;
 }
 a:hover {
     text-decoration: none;
-    border-bottom: 1px dotted #0098aa;
+    border-bottom: 1px dotted #0971AB;
 }
 .container {
     position: relative;
@@ -33,69 +34,69 @@ a:hover {
     border-radius: 5px;
     border: 1px solid #BBB;
     background-color: #FFF;
-    background-image: linear-gradient(bottom, #EEE 0%, #FFF 100%);
-    background-image: -o-linear-gradient(bottom, #EEE 0%, #FFF 100%);
-    background-image: -moz-linear-gradient(bottom, #EEE 0%, #FFF 100%);
-    background-image: -webkit-linear-gradient(bottom, #EEE 0%, #FFF 100%);
-    background-image: -ms-linear-gradient(bottom, #EEE 0%, #FFF 100%);
+    background-image: linear-gradient(bottom, #E2E2E2 0%, #FFF 100%);
+    background-image: -o-linear-gradient(bottom, #E2E2E2 0%, #FFF 100%);
+    background-image: -moz-linear-gradient(bottom, #E2E2E2 0%, #FFF 100%);
+    background-image: -webkit-linear-gradient(bottom, #E2E2E2 0%, #FFF 100%);
+    background-image: -ms-linear-gradient(bottom, #E2E2E2 0%, #FFF 100%);
     background-image: -webkit-gradient(
         linear,
         left bottom,
         left top,
-        color-stop(0, #EEE),
+        color-stop(0, #E2E2E2),
         color-stop(1, #FFF)
     );;
 }
 .darkBlueButton {
     color: #FFF;
-    background-color: #0098aa;
+    background-color: #185DA2;
     cursor: pointer;
     padding: 10px 30px;
     border-radius: 5px;
     border: 1px solid #424142;
-    background-image: linear-gradient(bottom, #0098AA 0%, #73CBD5 100%);
-    background-image: -o-linear-gradient(bottom, #0098AA 0%, #73CBD5 100%);
-    background-image: -moz-linear-gradient(bottom, #0098AA 0%, #73CBD5 100%);
-    background-image: -webkit-linear-gradient(bottom, #0098AA 0%, #73CBD5 100%);
-    background-image: -ms-linear-gradient(bottom, #0098AA 0%, #73CBD5 100%);
+    background-image: linear-gradient(bottom, #185DA2 0%, #2989E6 100%);
+    background-image: -o-linear-gradient(bottom, #185DA2 0%, #2989E6 100%);
+    background-image: -moz-linear-gradient(bottom, #185DA2 0%, #2989E6 100%);
+    background-image: -webkit-linear-gradient(bottom, #185DA2 0%, #2989E6 100%);
+    background-image: -ms-linear-gradient(bottom, #185DA2 0%, #2989E6 100%);
     font-family: Verdana;
     font-size: 11px;
     background-image: -webkit-gradient(
         linear,
         left bottom,
         left top,
-        color-stop(0, #0099AA),
-        color-stop(1, #73CBD5)
+        color-stop(0, #185DA2),
+        color-stop(1, #2989E6)
     );
     text-decoration: none;
 }
 .darkBlueButton:hover {
-    background-image: linear-gradient(bottom, #73CBD5 0%, #0098AA 100%);
-    background-image: -o-linear-gradient(bottom, #73CBD5 0%, #0098AA 100%);
-    background-image: -moz-linear-gradient(bottom, #73CBD5 0%, #0098AA 100%);
-    background-image: -webkit-linear-gradient(bottom, #73CBD5 0%, #0098AA 100%);
-    background-image: -ms-linear-gradient(bottom, #73CBD5 0%, #0098AA 100%);
+    background-image: linear-gradient(bottom, #2989E6 0%, #185DA2 100%);
+    background-image: -o-linear-gradient(bottom, #2989E6 0%, #185DA2 100%);
+    background-image: -moz-linear-gradient(bottom, #2989E6 0%, #185DA2 100%);
+    background-image: -webkit-linear-gradient(bottom, #2989E6 0%, #185DA2 100%);
+    background-image: -ms-linear-gradient(bottom, #2989E6 0%, #185DA2 100%);
     background-image: -webkit-gradient(
         linear,
         left bottom,
         left top,
-        color-stop(0, #73CBD5),
-        color-stop(1, #0098aa)
+        color-stop(0, #2989E6),
+        color-stop(1, #185DA2)
     );
 }
 .darkBlueButton:active {
-    background-image: linear-gradient(bottom, #73CBD5 0%, #0098aa 87%, #04767F 100%);
-    background-image: -o-linear-gradient(bottom, #73CBD5 0%, #0098aa 87%, #04767F 100%);
-    background-image: -moz-linear-gradient(bottom, #73CBD5 0%, #0098aa 87%, #04767F 100%);
-    background-image: -webkit-linear-gradient(bottom, #73CBD5 0%, #0098aa 87%, #04767F 100%);
-    background-image: -ms-linear-gradient(bottom, #73CBD5 0%, #0098aa 87%, #04767F 100%);
+    background-image: linear-gradient(bottom, #2989E6 0%, #246EBE 87%, #185DA2 100%);
+    background-image: -o-linear-gradient(bottom, #2989E6 0%, #246EBE 87%, #185DA2 100%);
+    background-image: -moz-linear-gradient(bottom, #2989E6 0%, #246EBE 87%, #185DA2 100%);
+    background-image: -webkit-linear-gradient(bottom, #2989E6 0%, #246EBE 87%, #185DA2 100%);
+    background-image: -ms-linear-gradient(bottom, #2989E6 0%, #246EBE 87%, #185DA2 100%);
     background-image: -webkit-gradient(
-        linear,
-        left bottom,
-        left top,
-        color-stop(0, #73CBD5),
-        color-stop(0.87, #0098aa),
-        color-stop(1, #04767F)
+            linear,
+            left bottom,
+            left top,
+            color-stop(0, #2989E6),
+            color-stop(0.87, #246EBE),
+            color-stop(1, #185DA2)
     );
 }
 .defaultButton {
@@ -155,7 +156,7 @@ a:hover {
 </head>
 <body>
 
-<img src="http://www.iplantcollaborative.org/sites/all/themes/iplant/images/iplant_logo.png" />
+<img src="../cyverse_logo.png" height="107px" width="500px"/>
 
     <div class="container">
     
@@ -246,7 +247,7 @@ tC8T1HeKvFu7Tr8vjoehfR0XRHk3c51+b4ioF0QiesdkFMKFXAK4G9A6ct53a9+b
     <hr />
 
     <div style="float: left"><a href="${login_url}">Go back to ${app_name}</a></div>
-    <div style="float: right"><a href="http://www.iplantcollaborative.org">iPlant Home Page</a></div>
+    <div style="float: right"><a href="http://www.cyverse.org">CyVerse Home Page</a></div>
 
     </div>
 
