@@ -25,11 +25,11 @@ public interface IplantNewUserTourStrings extends com.google.gwt.i18n.client.Mes
   String introAppsWindow();
 
   /**
-   * Translated "<p>The Data window gives you access to the iPlant Data Store, a cloud-based central repository from which data is accessed by all iPlant technologies.</p><p>In the Data window you can:<br><li>Access data you own, as well as data that has been shared with you.</li><li>View output data from your completed analyses.</li><li>Use Community Data others have made publicly available.</li><li>Share your own data within the DE or outside of iPlant via a URL.</li></p>".
+   * Translated "<p>The Data window gives you access to the CyVerse Data Store, a cloud-based central repository from which data is accessed by all CyVerse technologies.</p><p>In the Data window you can:<br><li>Access data you own, as well as data that has been shared with you.</li><li>View output data from your completed analyses.</li><li>Use Community Data others have made publicly available.</li><li>Share your own data within the DE or outside of CyVerse via a URL.</li></p>".
    * 
-   * @return translated "<p>The Data window gives you access to the iPlant Data Store, a cloud-based central repository from which data is accessed by all iPlant technologies.</p><p>In the Data window you can:<br><li>Access data you own, as well as data that has been shared with you.</li><li>View output data from your completed analyses.</li><li>Use Community Data others have made publicly available.</li><li>Share your own data within the DE or outside of iPlant via a URL.</li></p>"
+   * @return translated "<p>The Data window gives you access to the CyVerse Data Store, a cloud-based central repository from which data is accessed by all CyVerse technologies.</p><p>In the Data window you can:<br><li>Access data you own, as well as data that has been shared with you.</li><li>View output data from your completed analyses.</li><li>Use Community Data others have made publicly available.</li><li>Share your own data within the DE or outside of CyVerse via a URL.</li></p>"
    */
-  @DefaultMessage("<p>The Data window gives you access to the iPlant Data Store, a cloud-based central repository from which data is accessed by all iPlant technologies.</p><p>In the Data window you can:<br><li>Access data you own, as well as data that has been shared with you.</li><li>View output data from your completed analyses.</li><li>Use Community Data others have made publicly available.</li><li>Share your own data within the DE or outside of iPlant via a URL.</li></p>")
+  @DefaultMessage("<p>The Data window gives you access to the CyVerse Data Store, a cloud-based central repository from which data is accessed by all CyVerse technologies.</p><p>In the Data window you can:<br><li>Access data you own, as well as data that has been shared with you.</li><li>View output data from your completed analyses.</li><li>Use Community Data others have made publicly available.</li><li>Share your own data within the DE or outside of CyVerse via a URL.</li></p>")
   @Key("introDataWindow")
   String introDataWindow();
 
@@ -52,11 +52,11 @@ public interface IplantNewUserTourStrings extends com.google.gwt.i18n.client.Mes
   String introNotifications();
 
   /**
-   * Translated "<p>The Settings drop-down is where you can log out, access additional help resources, and modify settings to customize your DE experience. This includes:</p><p><li>Preferences window for changing settings and modifying keyboard shortcuts.</li><li>Collaborators window where you may add iPlant users who you frequently interact with for easy sharing.</li><li>System Messages window which contains any global DE announcements.</li></p>".
+   * Translated "<p>The Settings drop-down is where you can log out, access additional help resources, and modify settings to customize your DE experience. This includes:</p><p><li>Preferences window for changing settings and modifying keyboard shortcuts.</li><li>Collaborators window where you may add CyVerse users who you frequently interact with for easy sharing.</li><li>System Messages window which contains any global DE announcements.</li></p>".
    * 
-   * @return translated "<p>The Settings drop-down is where you can log out, access additional help resources, and modify settings to customize your DE experience. This includes:</p><p><li>Preferences window for changing settings and modifying keyboard shortcuts.</li><li>Collaborators window where you may add iPlant users who you frequently interact with for easy sharing.</li><li>System Messages window which contains any global DE announcements.</li></p>"
+   * @return translated "<p>The Settings drop-down is where you can log out, access additional help resources, and modify settings to customize your DE experience. This includes:</p><p><li>Preferences window for changing settings and modifying keyboard shortcuts.</li><li>Collaborators window where you may add CyVerse users who you frequently interact with for easy sharing.</li><li>System Messages window which contains any global DE announcements.</li></p>"
    */
-  @DefaultMessage("<p>The Settings drop-down is where you can log out, access additional help resources, and modify settings to customize your DE experience. This includes:</p><p><li>Preferences window for changing settings and modifying keyboard shortcuts.</li><li>Collaborators window where you may add iPlant users who you frequently interact with for easy sharing.</li><li>System Messages window which contains any global DE announcements.</li></p>")
+  @DefaultMessage("<p>The Settings drop-down is where you can log out, access additional help resources, and modify settings to customize your DE experience. This includes:</p><p><li>Preferences window for changing settings and modifying keyboard shortcuts.</li><li>Collaborators window where you may add CyVerse users who you frequently interact with for easy sharing.</li><li>System Messages window which contains any global DE announcements.</li></p>")
   @Key("introSettings")
   String introSettings();
 
@@ -69,7 +69,7 @@ public interface IplantNewUserTourStrings extends com.google.gwt.i18n.client.Mes
   @Key("introWelcome")
   String introWelcome();
   
-  @DefaultMessage("<p>The Ask icon opens Ask iPlant, the iPlant community's question and answer forum.</p><br/><p>Both iPlant staff and community members alike come together and help each other get the answers they need.</p><br/><p>Look here first for any questions you may have, or ask a new question.</p>\n")
+  @DefaultMessage("<p>The Ask icon opens Ask CyVerse, the CyVerse community's question and answer forum.</p><br/><p>Both CyVerse staff and community members alike come together and help each other get the answers they need.</p><br/><p>Look here first for any questions you may have, or ask a new question.</p>\n")
   @Key("introAsk")
   String introAsk();
 }

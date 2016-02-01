@@ -1585,13 +1585,13 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
 
     /**
      * Translated
-     * "An error occurred while processing your request. Please contact iPlant support at support@iplantcollaborative.org."
+     * "An error occurred while processing your request. Please contact CyVerse support at support@cyverse.org."
      * .
      *
      * @return translated
-     *         "An error occurred while processing your request. Please contact iPlant support at support@iplantcollaborative.org."
+     *         "An error occurred while processing your request. Please contact CyVerse support at support@cyverse.org."
      */
-    @DefaultMessage("An error occurred while processing your request. Please contact iPlant support at support@iplantcollaborative.org.")
+    @DefaultMessage("An error occurred while processing your request. Please contact CyVerse support at support@cyverse.org.")
     @Key("newToolRequestError")
     String newToolRequestError();
 
@@ -1657,11 +1657,11 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
 	String noSystemMessages();
 
     /**
-     * Translated "must be a valid iPlant Wiki Documentation URL".
+     * Translated "must be a valid CyVerse Wiki Documentation URL".
      *
-     * @return translated "must be a valid iPlant Wiki Documentation URL"
+     * @return translated "must be a valid CyVerse Wiki Documentation URL"
      */
-    @DefaultMessage("must be a valid iPlant Wiki Documentation URL")
+    @DefaultMessage("must be a valid CyVerse Wiki Documentation URL")
     @Key("notValidAppWikiUrl")
     String notValidAppWikiUrl();
 
@@ -1681,7 +1681,7 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
      * failed, etc.).
      * </p>
      * <p>
-     * It will be sent to the email address you used to register for your iPlant account.
+     * It will be sent to the email address you used to register for your CyVerse account.
      * </p>
      * <br/>
      * <p>
@@ -1696,7 +1696,7 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
      *         completed, failed, etc.).
      *         </p>
      *         <p>
-     *         It will be sent to the email address you used to register for your iPlant account.
+     *         It will be sent to the email address you used to register for your CyVerse account.
      *         </p>
      * <br/>
      *         <p>
@@ -1705,19 +1705,19 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
      *         </p>
      *         "
      */
-    @DefaultMessage("<p>This option will send you an email when the status of your analysis changes (running, completed, failed, etc.).</p> <p> It will be sent to the email address you used to register for your iPlant account.</p> <br/><p> This option is helpful if you would like to track your analysis status while outside of the Discovery Environment.</p>")
+    @DefaultMessage("<p>This option will send you an email when the status of your analysis changes (running, completed, failed, etc.).</p> <p> It will be sent to the email address you used to register for your CyVerse account.</p> <br/><p> This option is helpful if you would like to track your analysis status while outside of the Discovery Environment.</p>")
     @Key("notifyemailHelp")
     String notifyemailHelp();
 
     /**
      * Translated
-     * "The iPlant Collaborative is funded by a grant from the National Science Foundation Plant Science Cyberinfrastructure Collaborative (#DBI-0735191)."
+     * "CyVerse is funded by a grant from the National Science Foundation Plant Science Cyberinfrastructure Collaborative (#DBI-0735191)."
      * .
      *
      * @return translated
-     *         "The iPlant Collaborative is funded by a grant from the National Science Foundation Plant Science Cyberinfrastructure Collaborative (#DBI-0735191)."
+     *         "CyVerse is funded by a grant from the National Science Foundation Plant Science Cyberinfrastructure Collaborative (#DBI-0735191)."
      */
-    @DefaultMessage("The iPlant Collaborative is funded by a grant from the National Science Foundation Plant Science Cyberinfrastructure Collaborative (#DBI-0735191).")
+    @DefaultMessage("CyVerse is funded by a grant from the National Science Foundation Plant Science Cyberinfrastructure Collaborative (#DBI-0735191).")
     @Key("nsfProjectText")
     SafeHtml nsfProjectText();
 
@@ -1888,11 +1888,11 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String progress();
 
     /**
-     * Translated "&copy;2012 iPlant Collaborative".
+     * Translated "&copy;2016 CyVerse Collaborative".
      *
-     * @return translated "&copy;2012 iPlant Collaborative"
+     * @return translated "&copy;2016 CyVerse Collaborative"
      */
-    @DefaultMessage("&copy;2012 iPlant Collaborative")
+    @DefaultMessage("&copy;2016 CyVerse Collaborative")
     @Key("projectCopyrightStatement")
     SafeHtml projectCopyrightStatement();
 
@@ -2879,13 +2879,13 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
 
     /**
      * Translated
-     * "Enter the URL for the iPlant wiki documentation, created using <a href=\"{0}\" target=\"_blank\">these instructions</a>"
+     * "Enter the URL for the CyVerse wiki documentation, created using <a href=\"{0}\" target=\"_blank\">these instructions</a>"
      * .
      *
      * @return translated
-     *         "Enter the URL for the iPlant wiki documentation, created using <a href=\"{0}\" target=\"_blank\">these instructions</a>"
+     *         "Enter the URL for the CyVerse wiki documentation, created using <a href=\"{0}\" target=\"_blank\">these instructions</a>"
      */
-    @DefaultMessage("Enter the URL for the iPlant wiki documentation, created using <a href=\"{0}\" target=\"_blank\">these instructions</a>")
+    @DefaultMessage("Enter the URL for the CyVerse wiki documentation, created using <a href=\"{0}\" target=\"_blank\">these instructions</a>")
     @Key("wikiUrlLabel")
     String wikiUrlLabel(String arg0);
 

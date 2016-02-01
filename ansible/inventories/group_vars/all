@@ -107,7 +107,7 @@ de:
   log_driver: "{{ docker.log_driver }}"
   log_file: de-ui.log
   context_menu_enabled: false
-  description: the iPlant Discovery Environment
+  description: the CyVerse Discovery Environment
   empty_url: empty
   app_name: de
   rpc_name: discoveryenvironment
@@ -148,7 +148,7 @@ cas_group_attribute: entitlement
 cas_uid_domain:
 
 cas_no_logout_url: http://user.iplantcollaborative.org
-cas_app_list: all iPlant applications
+cas_app_list: all CyVerse applications
 
 chat_room_url:
 

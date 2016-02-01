@@ -603,13 +603,13 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
 
     /**
      * Translated
-     * "An error occurred while processing your request. Please contact iPlant support at support@iplantcollaborative.org."
+     * "An error occurred while processing your request. Please contact CyVerse support at support@cyverse.org"
      * .
      * 
      * @return translated
-     *         "An error occurred while processing your request. Please contact iPlant support at support@iplantcollaborative.org."
+     *         "An error occurred while processing your request. Please contact CyVerse support at support@cyverse.org"
      */
-    @DefaultMessage("An error occurred while processing your request. Please contact iPlant support at support@iplantcollaborative.org.")
+    @DefaultMessage("An error occurred while processing your request. Please contact CyVerse support at support@cyverse.org.")
     @Key("newToolRequestError")
     String newToolRequestError();
 
