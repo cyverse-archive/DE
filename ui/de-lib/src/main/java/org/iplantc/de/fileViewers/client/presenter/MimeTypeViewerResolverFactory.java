@@ -3,8 +3,11 @@
  */
 package org.iplantc.de.fileViewers.client.presenter;
 
+import static org.iplantc.de.client.models.viewer.InfoType.BED;
+import static org.iplantc.de.client.models.viewer.InfoType.BOWTIE;
 import static org.iplantc.de.client.models.viewer.InfoType.CSV;
 import static org.iplantc.de.client.models.viewer.InfoType.GFF;
+import static org.iplantc.de.client.models.viewer.InfoType.GTF;
 import static org.iplantc.de.client.models.viewer.InfoType.HT_ANALYSIS_PATH_LIST;
 import static org.iplantc.de.client.models.viewer.InfoType.TSV;
 import static org.iplantc.de.client.models.viewer.InfoType.VCF;
@@ -148,7 +151,10 @@ public class MimeTypeViewerResolverFactory {
                 if(CSV.toString().equals(infoType)
                     || TSV.toString().equals(infoType)
                     || VCF.toString().equals(infoType)
-                    || GFF.toString().equals(infoType)){
+                    || GFF.toString().equals(infoType)
+                    || GTF.toString().equals(infoType)
+                    || BED.toString().equals(infoType)
+                    || BOWTIE.toString().equals(infoType)){
                     StructuredTextViewer structuredTextViewer = new StructuredTextViewer(file,
                                                                                          infoType,
                                                                                          editing,
