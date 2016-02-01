@@ -82,7 +82,7 @@ public class BelphegorViewDefaultAppearance implements BelphegorView.BelphegorVi
 
     @Override
     public SafeHtml renderNorthContainer() {
-        return template.getTemplate(style(), UriUtils.fromSafeConstant(constants.iplantHome()));
+        return template.getTemplate(style(), UriUtils.fromSafeConstant(constants.cyverseHome()));
     }
 
     @Override

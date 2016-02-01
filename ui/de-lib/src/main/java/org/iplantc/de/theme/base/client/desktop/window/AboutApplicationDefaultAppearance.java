@@ -28,8 +28,8 @@ public class AboutApplicationDefaultAppearance implements AboutApplicationWindow
         @Source("org/iplantc/de/theme/base/client/desktop/window/AboutApplicationWindowStyles.css")
         AboutApplicationWindowStyles css();
 
-        @Source("org/iplantc/de/theme/base/client/desktop/window/iplant_about.png")
-        ImageResource iplantAbout();
+        @Source("org/iplantc/de/theme/base/client/desktop/window/cyverse_about.png")
+        ImageResource cyverseAbout();
     }
 
     interface Templates extends SafeHtmlTemplates {
@@ -73,7 +73,7 @@ public class AboutApplicationDefaultAppearance implements AboutApplicationWindow
 
     @Override
     public ImageResource iplantAbout() {
-        return resources.iplantAbout();
+        return resources.cyverseAbout();
     }
 
     @Override

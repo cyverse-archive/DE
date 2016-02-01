@@ -20,7 +20,7 @@ public interface CommonUiConstants extends Constants {
      * 
      * @return a string representing the URL.
      */
-    String iplantHome();
+    String cyverseHome();
 
     /**
      * URL to iplant services

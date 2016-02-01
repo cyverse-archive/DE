@@ -2,7 +2,7 @@
 <project name="Discovery Environment">
   <bannerLeft>
     <name>Discovery Environment</name>
-    <src>./images/iplant_logo.png</src>
+    <src>./images/cyverse_logo.png</src>
     <href>http://projects.iplantcollaborative.org/</href>
   </bannerLeft>
   <!--
