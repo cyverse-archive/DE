@@ -36,6 +36,7 @@
  [:mega      "ebnf/mega.ebnf"]
  [:msf       "ebnf/msf.ebnf"]
  [:rsf       "ebnf/rsf.ebnf"]
+ [:sff       "ebnf/sff.ebnf"]
  [:stockholm "ebnf/stockholm.ebnf"]
  [:swiss     "ebnf/swiss.ebnf"]
  [:prodom    "ebnf/prodom.ebnf"]

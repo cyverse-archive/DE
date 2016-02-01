@@ -44,6 +44,7 @@ public enum InfoType {
     RAW("raw"),
     RSF("rsf"),
     SELEX("selex"),
+    SFF("sff"),
     SH("sh"),
     STOCKHOLM("stockholm"),
     SWISS("swiss"),
