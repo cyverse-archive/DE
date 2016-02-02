@@ -185,10 +185,10 @@
 (defn- get-integration-data-by-tool-id
   [tool-id]
   (first
-   (select integration_data
-           (fields :integrator_name :integrator_email)
-           (join tools)
-           (where {:tools.id tool-id}))))
+    (select integration_data
+            (fields :integrator_name :integrator_email)
+            (join tools)
+            (where {:tools.id tool-id}))))
 
 (defn get-tool-implementation-details
   "Fetches a tool's implementation details."
@@ -387,8 +387,8 @@
   "Updates an App group in the database."
   [{group-id :id :as group}]
   (sql/update parameter_groups
-              (set-fields (filter-valid-app-group-values group))
-              (where {:id group-id})))
+    (set-fields (filter-valid-app-group-values group))
+    (where {:id group-id})))
 
 (defn remove-app-group-orphans
   "Removes groups associated with the given task ID, but not in the given group-ids list."
@@ -446,10 +446,10 @@
   "Updates a parameter in the parameters table."
   [{parameter-id :id param-type :type :as parameter}]
   (sql/update parameters
-              (set-fields (filter-valid-app-parameter-values
-                           (assoc parameter
-                             :parameter_type (get-parameter-type-id param-type))))
-              (where {:id parameter-id})))
+    (set-fields (filter-valid-app-parameter-values
+                  (assoc parameter
+                    :parameter_type (get-parameter-type-id param-type))))
+    (where {:id parameter-id})))
 
 (defn remove-parameter-orphans
   "Removes parameters associated with the given group ID, but not in the given parameter-ids list."
@@ -567,9 +567,9 @@
   (let [rating (first (select ratings (where {:app_id app-id, :user_id user-id})))]
     (if rating
       (sql/update ratings
-                  (set-fields (remove-nil-vals request))
-                  (where {:app_id app-id
-                          :user_id user-id}))
+        (set-fields (remove-nil-vals request))
+        (where {:app_id app-id
+                :user_id user-id}))
       (insert ratings
               (values (assoc (remove-nil-vals request) :app_id app-id, :user_id user-id))))))
 
