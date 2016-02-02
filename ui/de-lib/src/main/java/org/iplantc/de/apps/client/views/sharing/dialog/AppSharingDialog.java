@@ -1,5 +1,4 @@
 /**
- * 
  * @author sriram
  */
 
@@ -41,17 +40,19 @@ public class AppSharingDialog extends IPlantDialog implements SelectHandler {
 
     @Inject
     AppSharingDialog(final AppUserServiceFacade appService) {
-        super(true);
+        super(false);
         this.appService = appService;
         setPixelSize(600, 500);
         setHideOnButtonClick(true);
         setModal(true);
         setResizable(false);
-        // addHelp(new HTML(appearance.sharePermissionsHelp()));
+        /*
+        TODO: Add contextual help
+        addHelp(new HTML(appearance.sharePermissionsHelp()));
+        */
         setHeadingText("Manage Sharing");
         setOkButtonText("Done");
         addOkButtonSelectHandler(this);
-
     }
 
     @Override
@@ -70,11 +71,8 @@ public class AppSharingDialog extends IPlantDialog implements SelectHandler {
         });
         AppSharingView view = new AppSharingViewImpl(buildAppColumnModel(), appStore);
         view.setSelectedApps(resourcesToShare);
-        sharingPresenter = new AppSharingPresenter(appService,
-                                                   resourcesToShare,
-                                                   view,
-                                                   collaboratorsUtil,
-                                                   jsonUtil);
+        sharingPresenter =
+                new AppSharingPresenter(appService, resourcesToShare, view, collaboratorsUtil, jsonUtil);
         sharingPresenter.go(this);
         super.show();
     }

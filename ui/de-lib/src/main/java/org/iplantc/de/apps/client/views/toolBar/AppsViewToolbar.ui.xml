@@ -72,7 +72,7 @@
                    <menu:Menu ui:field="sharingMenu">
                                 <menu:MenuItem ui:field="shareCollab" enabled="false"
                                     text="{appearance.shareCollab}" icon="{appearance.shareAppIcon}"
-                                    toolTipConfig="{submitToolTip}" />
+                                    />
                                 <menu:MenuItem ui:field="sharePublic" enabled="false"
                                     text="{appearance.sharePublic}" icon="{appearance.submitForPublicIcon}"
                                     toolTipConfig="{submitToolTip}" />
