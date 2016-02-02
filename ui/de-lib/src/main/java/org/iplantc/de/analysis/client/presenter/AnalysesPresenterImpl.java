@@ -175,7 +175,7 @@ public class AnalysesPresenterImpl implements
     @Inject
     AnalysisStepsView analysisStepView;
     @Inject
-    Provider<AnalysisSharingDialog> aSharingDialgoProvider;
+    Provider<AnalysisSharingDialog> aSharingDialogProvider;
 
     private final ListStore<Analysis> listStore;
 
@@ -296,7 +296,7 @@ public class AnalysesPresenterImpl implements
 
     @Override
     public void onShareSelected(List<Analysis> selected) {
-        aSharingDialgoProvider.get().show(selected);
+        aSharingDialogProvider.get().show(selected);
     }
 
     @Override
