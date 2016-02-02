@@ -2,6 +2,7 @@
   (:use [clojure-commons.error-codes :only [clj-http-error?]]
         [slingshot.slingshot :only [try+]])
   (:require [apps.clients.iplant-groups :as iplant-groups]
+            [apps.persistence.app-metadata :as amp]
             [apps.util.service :as service]
             [clojure.string :as string]
             [clojure-commons.exception-util :as cxu]))
@@ -37,16 +38,18 @@
        (str "unable to load permissions for " app-id ": " reason)))))
 
 (defn- format-app-permissions
-  [user perms app-id]
+  [user perms app-names app-id]
   (->> (group-by (comp string/lower-case :id :subject) (perms app-id))
        (map (fn [[subject subject-perms]] {:user subject :permission (get-permission-level subject-perms)}))
        (remove (comp (partial = user) :user))
-       (hash-map :id (str app-id) :permissions)))
+       (hash-map :id (str app-id) :name (app-names app-id "") :permissions)))
 
 (defn list-app-permissions
   [{user :shortUsername} app-ids]
   (check-app-permissions user "read" app-ids)
-  (map (partial format-app-permissions user (iplant-groups/list-app-permissions app-ids)) app-ids))
+  (let [app-perms (iplant-groups/list-app-permissions app-ids)
+        app-names (amp/get-app-names app-ids)]
+    (map (partial format-app-permissions user app-perms app-names) app-ids)))
 
 (defn share-app-with-user
   [{user :shortUsername} sharee app-id level]
