@@ -28,7 +28,7 @@
   (get-app-docs app-id))
 
 (defn owner-edit-app-docs
-  "Updates an app's documentation in the database if the user has permisison to edit the app."
+  "Updates an app's documentation in the database if the user has permission to edit the app."
   [user app-id docs]
   (let [app (ap/get-app app-id)]
     (when-not (cv/user-owns-app? user app)

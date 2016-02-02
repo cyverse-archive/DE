@@ -125,14 +125,8 @@
     (throw+ {:type  :clojure-commons.exception/not-writeable
              :error (str "Workflow, " (:id app) ", is public and may not be edited")})))
 
-(defn verify-app-permission
-  "Verifies that a user has the appropriate permission level for an app."
-  [{user :shortUsername} {app-id :id} level]
-  (when-not (perms/check-app-permissions user app-id level)
-    (forbidden (str user " has insufficient privileges for app " app-id) :username user)))
-
 (defn verify-app-editable
   "Verifies that the app is allowed to be edited by the current user."
   [user app]
-  (verify-app-permission user app "write")
+  (perms/check-app-permissions (:shortUsername user) (:id app) "write")
   (verify-app-not-public app))
