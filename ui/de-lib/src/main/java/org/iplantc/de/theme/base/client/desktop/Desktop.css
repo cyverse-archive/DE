@@ -9,9 +9,20 @@
     right: 0;
     left: 0;
 }
+
+@font-face {
+    font-family: TextaRegular;
+    src: url(Texta_Font/Texta-Regular.otf);
+}
+
+@font-face {
+    font-family: TextaBold;
+    src: url(Texta_Font/Texta-Bold.otf);
+}
+
 @sprite .iplantHeader {
     gwt-image: 'headerBg';
-    background-color: #009bad;
+    background-color: #0971AB;
     position: absolute;
     height: headerHeight;
     z-index: 1;
@@ -28,7 +39,6 @@
 .logoContainer a {
     overflow: auto;
     color: transparent;
-    background: transparent;
 }
 
 .logoContainer span {
@@ -37,17 +47,20 @@
     text-align: right;
     font-style: normal;
     display: inline-block;
-    margin-top: 12px;
+    margin-top: 10px;
     vertical-align: top;
 }
 
 @sprite .logo {
-    gwt-image: 'iplantLogo';
+    gwt-image: 'cyverseLogo';
     display: inline-block;
     height: 28px;
+    width: 28px;
     margin-top: 5px;
     margin-left: 5px;
     margin-right: 3px;
+    background-color: white;
+    background-size: contain;
 }
 
 .logoText {
@@ -63,6 +76,8 @@
     top: headerHeight;
     background-position: top center;
     bottom: footerHeight;
+    background-size: contain;
+    background-color: #8B9BB3;
 }
 
 @sprite .desktopBackgroundRepeat {
@@ -95,6 +110,7 @@
     padding-right: userMenuIconPaddingRight;
     opacity: userMenuIconOpacity;
     position: relative;
+    background-size: contain;
 }
 @sprite .userPrefs {
     gwt-image: 'userPrefImg';
@@ -104,6 +120,7 @@
     padding-right: userMenuIconPaddingRight;
     opacity: userMenuIconOpacity;
     position: relative;
+    background-size: contain;
 }
 @sprite .notification {
     gwt-image: 'notificationsImg';
@@ -113,6 +130,7 @@
     padding-right: userMenuIconPaddingRight;
     opacity: userMenuIconOpacity;
     position: relative;
+    background-size: contain;
 }
 
 .forums:hover {
@@ -140,28 +158,34 @@
     height: winBtnHeight !important;
     width: winBtnWidth !important;
     margin-top: winBtnMarginTop;
+    background-size: contain;
 }
 @sprite .apps {
     gwt-image: 'appBtn';
     height: winBtnHeight !important;
     width: winBtnWidth !important;
     margin-top: winBtnMarginTop;
+    background-size: contain;
 }
 @sprite .data {
     gwt-image: 'dataBtn';
     height: winBtnHeight !important;
     width: winBtnWidth !important;
     margin-top: winBtnMarginTop;
+    background-size: contain;
 }
 
 @sprite .analyses:hover {
     gwt-image: 'analysisBtnHover';
+    background-size: contain;
 }
 @sprite .apps:hover {
     gwt-image: 'appBtnHover';
+    background-size: contain;
 }
 @sprite .data:hover {
     gwt-image: 'dataBtnHover';
+    background-size: contain;
 }
 
 @sprite .feedback {
@@ -171,6 +195,7 @@
     right: 100px;
     height: 37px !important;
     width: 115px !important;
+    background-size: contain;
 }
 
 .taskBarLayout {
@@ -183,9 +208,13 @@
 .userContextMenu {
     background-color: white;
     outline: none;
-    border: solid #0098AA;
+    border: solid #0971AB;
     padding: 1px;
     margin-top: 5px;
+    font-family: TextaBold, Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro",
+    Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L",
+    Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial,
+    sans-serif !important; /* TextaRegular a little hard to read on the menu items*/
 }
 
 .notificationCount {
@@ -200,7 +229,7 @@
 }
 
 html,body {
-    font-family: Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro",
+    font-family: TextaRegular, Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro",
     Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L",
     Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial,
     sans-serif !important;

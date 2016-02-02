@@ -8,11 +8,11 @@
       ""))
 
 (defproject org.iplantc/kifshare "5.2.4.0"
-  :description "iPlant Quickshare for iRODS"
-  :url "https://github.com/iPlantCollaborativeOpenSource/DE"
+  :description "CyVerse Quickshare for iRODS"
+  :url "https://github.com/cyverse/DE"
 
   :license {:name "BSD"
-            :url "http://iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
+            :url "http://cyverse.org/sites/default/files/iPLANT-LICENSE.txt"}
 
   :manifest {"Git-Ref" ~(git-ref)}
   :uberjar-name "kifshare-standalone.jar"

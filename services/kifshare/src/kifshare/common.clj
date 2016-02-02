@@ -19,7 +19,7 @@
 (defn html-head []
   (html
    [:head
-    [:title "iPlant Public Downloads"]
+    [:title "CyVerse Public Downloads"]
     (map include-css (cfg/css-files))
     (map include-js (cfg/javascript-files))]))
 

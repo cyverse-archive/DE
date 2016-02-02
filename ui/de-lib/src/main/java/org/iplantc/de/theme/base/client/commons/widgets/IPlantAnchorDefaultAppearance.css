@@ -8,7 +8,7 @@
 }
 
 .anchor, .inlineAnchor {
-	color:#0098AA;
+	color:#0971AB;
 	cursor: pointer;
 	text-align: left;
 	text-decoration: none;
@@ -22,7 +22,7 @@
 
 /* DEPRECATED - This is redundant */
 .anchor .anchorText {
-	color:#0098AA;
+	color:#0971AB;
 	cursor: pointer;
 }
 

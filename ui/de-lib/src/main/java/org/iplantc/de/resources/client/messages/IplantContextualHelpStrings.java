@@ -7,11 +7,11 @@ package org.iplantc.de.resources.client.messages;
 public interface IplantContextualHelpStrings extends com.google.gwt.i18n.client.Messages {
   
   /**
-   * Translated "<p>The Collaborators window allows you to quickly find, add, and remove iPlant users within your Collaborators list.</p><br/><p>Adding someone as your collaborator enhances the sharing feature, making it even easier to share data with one, a few, or all of your collaborators.</p><br/><p>To add a collaborator, begin typing their name or iPlant username in the search field and a results drop-down will appear. Select your desired name to add them to your list of collaborators. You can also easily access this list when sharing.</p>".
+   * Translated "<p>The Collaborators window allows you to quickly find, add, and remove CyVerse users within your Collaborators list.</p><br/><p>Adding someone as your collaborator enhances the sharing feature, making it even easier to share data with one, a few, or all of your collaborators.</p><br/><p>To add a collaborator, begin typing their name or CyVerse username in the search field and a results drop-down will appear. Select your desired name to add them to your list of collaborators. You can also easily access this list when sharing.</p>".
    * 
-   * @return translated "<p>The Collaborators window allows you to quickly find, add, and remove iPlant users within your Collaborators list.</p><br/><p>Adding someone as your collaborator enhances the sharing feature, making it even easier to share data with one, a few, or all of your collaborators.</p><br/><p>To add a collaborator, begin typing their name or iPlant username in the search field and a results drop-down will appear. Select your desired name to add them to your list of collaborators. You can also easily access this list when sharing.</p>"
+   * @return translated "<p>The Collaborators window allows you to quickly find, add, and remove CyVerse users within your Collaborators list.</p><br/><p>Adding someone as your collaborator enhances the sharing feature, making it even easier to share data with one, a few, or all of your collaborators.</p><br/><p>To add a collaborator, begin typing their name or CyVerse username in the search field and a results drop-down will appear. Select your desired name to add them to your list of collaborators. You can also easily access this list when sharing.</p>"
    */
-  @DefaultMessage("<p>The Collaborators window allows you to quickly find, add, and remove iPlant users within your Collaborators list.</p><br/><p>Adding someone as your collaborator enhances the sharing feature, making it even easier to share data with one, a few, or all of your collaborators.</p><br/><p>To add a collaborator, begin typing their name or iPlant username in the search field and a results drop-down will appear. Select your desired name to add them to your list of collaborators. You can also easily access this list when sharing.</p>")
+  @DefaultMessage("<p>The Collaborators window allows you to quickly find, add, and remove CyVerse users within your Collaborators list.</p><br/><p>Adding someone as your collaborator enhances the sharing feature, making it even easier to share data with one, a few, or all of your collaborators.</p><br/><p>To add a collaborator, begin typing their name or CyVerse username in the search field and a results drop-down will appear. Select your desired name to add them to your list of collaborators. You can also easily access this list when sharing.</p>")
   @Key("collaboratorsHelp")
   String collaboratorsHelp();
 
@@ -52,20 +52,20 @@ public interface IplantContextualHelpStrings extends com.google.gwt.i18n.client.
   String toolRequestStatusHelp();
 
   /**
-   * Translated "The iPlant team is currently installing your requested tool. You will receive updates in the Discovery Environment as the process proceeds. Please see the Status Comments for more information.".
+   * Translated "The CyVerse team is currently installing your requested tool. You will receive updates in the Discovery Environment as the process proceeds. Please see the Status Comments for more information.".
    * 
-   * @return translated "The iPlant team is currently installing your requested tool. You will receive updates in the Discovery Environment as the process proceeds. Please see the Status Comments for more information."
+   * @return translated "The CyVerse team is currently installing your requested tool. You will receive updates in the Discovery Environment as the process proceeds. Please see the Status Comments for more information."
    */
-  @DefaultMessage("The iPlant team is currently installing your requested tool. You will receive updates in the Discovery Environment as the process proceeds. Please see the Status Comments for more information.")
+  @DefaultMessage("The CyVerse team is currently installing your requested tool. You will receive updates in the Discovery Environment as the process proceeds. Please see the Status Comments for more information.")
   @Key("toolRequestStatusInstallationHelp")
   String toolRequestStatusInstallationHelp();
 
   /**
-   * Translated "The iPlant team is waiting for more information regarding your tool request. Please see the Status Comments for more information.".
+   * Translated "The CyVerse team is waiting for more information regarding your tool request. Please see the Status Comments for more information.".
    * 
-   * @return translated "The iPlant team is waiting for more information regarding your tool request. Please see the Status Comments for more information."
+   * @return translated "The CyVerse team is waiting for more information regarding your tool request. Please see the Status Comments for more information."
    */
-  @DefaultMessage("The iPlant team is waiting for more information regarding your tool request. Please see the Status Comments for more information.")
+  @DefaultMessage("The CyVerse team is waiting for more information regarding your tool request. Please see the Status Comments for more information.")
   @Key("toolRequestStatusPendingHelp")
   String toolRequestStatusPendingHelp();
 
@@ -79,11 +79,11 @@ public interface IplantContextualHelpStrings extends com.google.gwt.i18n.client.
   String toolRequestStatusSubmittedHelp();
 
   /**
-   * Translated "The iPlant team is currently validating your requested tool. You will receive notifications in the Discovery Environment as the process proceeds. Please see the Status Comments for more information.".
+   * Translated "The CyVerse team is currently validating your requested tool. You will receive notifications in the Discovery Environment as the process proceeds. Please see the Status Comments for more information.".
    * 
-   * @return translated "The iPlant team is currently validating your requested tool. You will receive notifications in the Discovery Environment as the process proceeds. Please see the Status Comments for more information."
+   * @return translated "The CyVerse team is currently validating your requested tool. You will receive notifications in the Discovery Environment as the process proceeds. Please see the Status Comments for more information."
    */
-  @DefaultMessage("The iPlant team is currently validating your requested tool. You will receive notifications in the Discovery Environment as the process proceeds. Please see the Status Comments for more information.")
+  @DefaultMessage("The CyVerse team is currently validating your requested tool. You will receive notifications in the Discovery Environment as the process proceeds. Please see the Status Comments for more information.")
   @Key("toolRequestStatusValidationHelp")
   String toolRequestStatusValidationHelp();
 

@@ -19,6 +19,7 @@
   gwt-image: 'background';	
   height: 28px;
   width: 100%;
+  background-size: cover;
 }
 
 @sprite .topLeft {
