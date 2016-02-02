@@ -133,9 +133,18 @@ terrain.saved-searches.host = http://{{ saved_searches.host }}:{{ saved_searches
 # Tree URLs Settings
 terrain.tree-urls.host = http://{{ tree_urls.host }}:{{ tree_urls.port }}
 
-terrain.permanent-id.curators-group     = {{ irods.data_curators_group }}
-terrain.permanent-id.staging-dir        = /iplant/home/shared/data_commons/staging
-terrain.permanent-id.publish-dir        = /iplant/home/shared/data_commons/curated
+# Permanent ID Request Settings
+terrain.permanent-id.curators-group = {{ irods.data_curators_group }}
+terrain.permanent-id.staging-dir    = /iplant/home/shared/data_commons/staging
+terrain.permanent-id.publish-dir    = /iplant/home/shared/data_commons/curated
+
+# Permanent ID Request Metadata Attribute Settings
+terrain.permanent-id.attr.identifier          = Identifier
+terrain.permanent-id.attr.alt-identifier      = AlternateIdentifier
+terrain.permanent-id.attr.alt-identifier-type = alternateIdentifierType
+terrain.permanent-id.attr.publication-year    = publicationYear
+
+# Permanent ID Request EZID API Settings
 terrain.permanent-id.ezid.base-url      = https://ezid.cdlib.org
 terrain.permanent-id.ezid.username      = {{ permanent_id.ezid.username }}
 terrain.permanent-id.ezid.password      = {{ permanent_id.ezid.password }}
