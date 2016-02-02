@@ -28,7 +28,8 @@ public interface AppsToolbarView extends IsWidget,
                                          DeleteAppsSelected.HasDeleteAppsSelectedHandlers,
                                          EditAppSelected.HasEditAppSelectedHandlers,
                                          EditWorkflowSelected.HasEditWorkflowSelectedHandlers,
-                                         RequestToolSelected.HasRequestToolSelectedHandlers {
+                                RequestToolSelected.HasRequestToolSelectedHandlers,
+                                ShareAppsSelected.HasShareAppSelectedHandlers {
 
     interface AppsToolbarAppearance {
 
@@ -73,6 +74,14 @@ public interface AppsToolbarView extends IsWidget,
         String useWf();
 
         String searchApps();
+
+        String sharePublic();
+
+        String shareCollab();
+
+        String share();
+
+        ImageResource shareAppIcon();
     }
 
     interface Presenter extends BeforeLoadEvent.HasBeforeLoadHandlers<FilterPagingLoadConfig>,

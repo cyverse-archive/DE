@@ -1,6 +1,10 @@
 package org.iplantc.de.client.services.impl;
 
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.DELETE;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PATCH;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
+
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
@@ -353,6 +357,39 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         StringQuoter.create(doc).assign(payload, "documentation");
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address, payload.getPayload());
         deServiceFacade.getServiceData(wrapper, new AppDocCallbackConverter(callback));
+
+    }
+
+    @Override
+    public void getPermissions(List<App> apps, AsyncCallback<String> callback) {
+        Splittable appsObj = StringQuoter.createSplittable();
+        Splittable idArr = StringQuoter.createIndexed();
+
+        for(App a : apps) {
+            Splittable item = StringQuoter.create(a.getId());
+            item.assign(idArr, idArr.size());
+        }
+
+        idArr.assign(appsObj, "apps");
+        String address = APPS + "/" + "permission-lister";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.POST, address, appsObj.getPayload());
+        deServiceFacade.getServiceData(wrapper, callback);
+     }
+
+    @Override
+    public void shareApp(JSONObject request,
+                         AsyncCallback<String> callback) {
+        String address = APPS + "/" +  "sharing";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, request.toString());
+        deServiceFacade.getServiceData(wrapper,callback);
+
+    }
+
+    @Override
+    public void unshareApp(JSONObject request, AsyncCallback<String> callback) {
+        String address = APPS + "/" +  "unsharing";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, request.toString());
+        deServiceFacade.getServiceData(wrapper,callback);
 
     }
 }

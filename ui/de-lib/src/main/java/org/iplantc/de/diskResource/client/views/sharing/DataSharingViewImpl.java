@@ -1,6 +1,7 @@
 package org.iplantc.de.diskResource.client.views.sharing;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.client.sharing.SharingPresenter;
 import org.iplantc.de.diskResource.client.DataSharingView;
 
 import com.google.gwt.core.client.GWT;
@@ -32,7 +33,7 @@ public class DataSharingViewImpl implements DataSharingView {
     @UiField FramedPanel diskResourceListPnl;
     @UiField Grid<DiskResource> diskResourcesGrid;
 
-    DataSharingView.Presenter presenter;
+    SharingPresenter presenter;
 
     private static final MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
@@ -54,7 +55,7 @@ public class DataSharingViewImpl implements DataSharingView {
     }
 
     @Override
-    public void setPresenter(Presenter dataSharingPresenter) {
+    public void setPresenter(SharingPresenter dataSharingPresenter) {
         this.presenter = dataSharingPresenter;
     }
 

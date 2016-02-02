@@ -118,10 +118,10 @@
 
     <!-- Sharing -->
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.sharing.DataSharingViewDefaultAppearance">
-        <when-type-is class="org.iplantc.de.diskResource.client.DataSharingView.Appearance" />
+        <when-type-is class="org.iplantc.de.client.sharing.SharingAppearance" />
     </replace-with>
-    <replace-with class="org.iplantc.de.theme.base.client.diskResource.sharing.presenter.DataSharingPresenterDefaultAppearance">
-        <when-type-is class="org.iplantc.de.diskResource.client.DataSharingView.Presenter.Appearance" />
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.sharing.presenter.SharingPresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.client.sharing.SharingPresenter.Appearance" />
     </replace-with>
 
     <!-- Search -->

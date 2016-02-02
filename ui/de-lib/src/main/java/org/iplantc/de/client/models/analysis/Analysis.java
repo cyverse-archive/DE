@@ -78,4 +78,7 @@ public interface Analysis extends HasId, HasName {
 
     @PropertyName("batch_status")
     void setBatchStatus(BatchStatus status);
+
+    @PropertyName("username")
+    String getUserName();
 }

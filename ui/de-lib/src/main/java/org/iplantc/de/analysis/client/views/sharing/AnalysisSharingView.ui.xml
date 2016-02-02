@@ -2,40 +2,35 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
              xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
-             xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
-             xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar">
+             xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid">
 
-    <ui:with field="appearance"
-             type="org.iplantc.de.diskResource.client.DataSharingView.Appearance"/>
-    <ui:with field="listStore"
+
+    <ui:with field="analysisListStore"
              type="com.sencha.gxt.data.shared.ListStore"/>
-    <ui:with field="cm"
+    <ui:with field="analysisColumnModel"
              type="com.sencha.gxt.widget.core.client.grid.ColumnModel"/>
-    <ui:with field="view"
+    <ui:with field="analysisGridView"
              type="com.sencha.gxt.widget.core.client.grid.GridView">
-        <ui:attributes forceFit="true" autoFill="true"/>
+        <ui:attributes forceFit="true"
+                       autoFill="true"/>
     </ui:with>
 
-    <container:VerticalLayoutContainer ui:field="container">
 
+    <container:VerticalLayoutContainer ui:field="container">
         <container:child>
-            <gxt:FramedPanel ui:field="permPanel"
+            <gxt:FramedPanel ui:field="analysisListPnl"
                              collapsible="false"
                              headerVisible="true"
-                             headingText="{appearance.whoHasAccess}"
+                             headingText="Selected Analyses"
                              height="200px">
                 <grid:Grid ui:field="grid"
-                           cm="{cm}"
-                           store="{listStore}"
-                           view="{view}"
+                           cm="{analysisColumnModel}"
+                           store="{analysisListStore}"
+                           view="{analysisGridView}"
                            loadMask="true"
                            columnReordering="true"
                            borders="false"/>
             </gxt:FramedPanel>
-        </container:child>
-        <container:child>
-            <toolbar:ToolBar ui:field="toolbar"
-                             height="30"/>
         </container:child>
 
     </container:VerticalLayoutContainer>

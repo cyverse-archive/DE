@@ -1,19 +1,21 @@
-package org.iplantc.de.diskResource.client.presenters.sharing;
+/**
+ * @author sriram
+ */
+package org.iplantc.de.apps.client.presenter.sharing;
 
+import org.iplantc.de.apps.client.views.sharing.AppSharingView;
+import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.collaborators.Collaborator;
-import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.sharing.SharedResource;
 import org.iplantc.de.client.models.sharing.Sharing;
-import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.sharing.SharingPermissionsPanel;
 import org.iplantc.de.client.sharing.SharingPresenter;
-import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.collaborators.client.util.CollaboratorsUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.diskResource.client.DataSharingView;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONArray;
@@ -28,12 +30,7 @@ import com.sencha.gxt.core.shared.FastMap;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * FIXME Refactor to use injection
- * FIXME Tighten contract with data sharing service. Should not have to manually construct the json here.
- * @author sriram, jstroot
- */
-public class DataSharingPresenterImpl implements SharingPresenter {
+public class AppSharingPresenter implements SharingPresenter {
 
     private final class LoadPermissionsCallback implements AsyncCallback<String> {
         private final class GetUserInfoCallback implements AsyncCallback<FastMap<Collaborator>> {
@@ -50,29 +47,29 @@ public class DataSharingPresenterImpl implements SharingPresenter {
 
             @Override
             public void onSuccess(FastMap<Collaborator> results) {
-                dataSharingMap = new FastMap<>();
+                sharingMap = new FastMap<>();
                 for (String userName : usernames) {
                     Collaborator user = results.get(userName);
                     if (user == null) {
                         user = collaboratorsUtil.getDummyCollaborator(userName);
                     }
 
-                    List<Sharing> dataShares = new ArrayList<>();
+                    List<Sharing> shares = new ArrayList<>();
 
-                    dataSharingMap.put(userName, dataShares);
+                    sharingMap.put(userName, shares);
 
                     for (JSONObject share : sharingList.get(userName)) {
-                        String path = jsonUtil.getString(share, "path"); //$NON-NLS-1$
-                        Sharing dataSharing = new Sharing(user,
-                                                                  buildPermissionFromJson(share),
-                                                                  path,
-                                                                  DiskResourceUtil.getInstance()
-                                                                                  .parseNameFromPath(path));
-                        dataShares.add(dataSharing);
+                        String id = jsonUtil.getString(share, "id"); //$NON-NLS-1$
+                        String name = jsonUtil.getString(share,"name");
+                        Sharing sharing = new Sharing(user,
+                                                          buildPermissionFromJson(share),
+                                                          id,
+                                                         name);
+                        shares.add(sharing);
                     }
                 }
 
-                permissionsPanel.loadSharingData(dataSharingMap);
+                permissionsPanel.loadSharingData(sharingMap);
                 permissionsPanel.unmask();
             }
         }
@@ -85,14 +82,17 @@ public class DataSharingPresenterImpl implements SharingPresenter {
 
         @Override
         public void onSuccess(String result) {
-            JSONArray permissionsArray = jsonUtil.getArray(jsonUtil.getObject(result), "paths"); //$NON-NLS-1$
+            JSONArray permissionsArray =
+                    jsonUtil.getArray(jsonUtil.getObject(result), "apps"); //$NON-NLS-1$
             if (permissionsArray != null) {
                 sharingList = new FastMap<>();
                 for (int i = 0; i < permissionsArray.size(); i++) {
                     JSONObject user_perm_obj = permissionsArray.get(i).isObject();
-                    String path = jsonUtil.getString(user_perm_obj, "path"); //$NON-NLS-1$
-                    JSONArray user_arr = jsonUtil.getArray(user_perm_obj, "user-permissions"); //$NON-NLS-1$
-                    loadPermissions(path, user_arr);
+                    String id = jsonUtil.getString(user_perm_obj, "id"); //$NON-NLS-1$
+                    String appName = jsonUtil.getString(user_perm_obj,"name");
+                    JSONArray user_arr = jsonUtil.getArray(user_perm_obj, "permissions"); //$NON-NLS-1$
+
+                    loadPermissions(id,appName, user_arr);
                 }
 
                 final List<String> usernames = new ArrayList<>();
@@ -102,68 +102,81 @@ public class DataSharingPresenterImpl implements SharingPresenter {
         }
     }
 
-    final DataSharingView view;
-    private final DiskResourceServiceFacade diskResourceService;
+    final AppSharingView view;
     private final SharingPermissionsPanel permissionsPanel;
-    private final List<DiskResource> selectedResources;
-    private final Appearance appearance;
-    private FastMap<List<Sharing>> dataSharingMap;
+    private final List<App> selectedApps;
+    private final AppUserServiceFacade appService;
+    private Appearance appearance;
+    private FastMap<List<Sharing>> sharingMap;
     private FastMap<List<JSONObject>> sharingList;
     private final JsonUtil jsonUtil;
     private final CollaboratorsUtil collaboratorsUtil;
 
 
-    public DataSharingPresenterImpl(final DiskResourceServiceFacade diskResourceService,
-                                    final List<DiskResource> selectedResources,
-                                    final DataSharingView view,
-                                    final CollaboratorsUtil collaboratorsUtil,
-                                    final JsonUtil jsonUtil) {
-        this(diskResourceService,
-             selectedResources,
+    public AppSharingPresenter(final AppUserServiceFacade appService,
+                               final List<App> selectedApps,
+                               final AppSharingView view,
+                               final CollaboratorsUtil collaboratorsUtil,
+                               final JsonUtil jsonUtil) {
+        this(appService,
+             selectedApps,
              view,
              collaboratorsUtil,
              jsonUtil,
-             GWT.<SharingPresenter.Appearance> create(SharingPresenter.Appearance.class));
+             GWT.<SharingPresenter.Appearance>create(SharingPresenter.Appearance.class));
     }
 
-    DataSharingPresenterImpl(final DiskResourceServiceFacade diskResourceService,
-                             final List<DiskResource> selectedResources,
-                             final DataSharingView view,
-                             final CollaboratorsUtil collaboratorsUtil,
-                             final JsonUtil jsonUtil,
-                             final SharingPresenter.Appearance appearance) {
-        this.diskResourceService = diskResourceService;
+    public AppSharingPresenter(final AppUserServiceFacade appService,
+                               final List<App> selectedApps,
+                               final AppSharingView view,
+                               final CollaboratorsUtil collaboratorsUtil,
+                               final JsonUtil jsonUtil,
+                               Appearance appearance) {
+
         this.view = view;
-        this.selectedResources = selectedResources;
-        this.collaboratorsUtil = collaboratorsUtil;
-        this.jsonUtil = jsonUtil;
         this.appearance = appearance;
+        this.appService = appService;
         view.setPresenter(this);
-        permissionsPanel = new SharingPermissionsPanel(this, getSelectedResourcesAsMap(selectedResources));
+        this.jsonUtil = jsonUtil;
+        this.collaboratorsUtil = collaboratorsUtil;
+        this.selectedApps = selectedApps;
+        this.permissionsPanel =
+                new SharingPermissionsPanel(this, getSelectedApps(selectedApps));
         view.addShareWidget(permissionsPanel.asWidget());
         loadResources();
         loadPermissions();
+
     }
 
-    @Override
-    public PermissionValue getDefaultPermissions() {
-        return PermissionValue.read;
+    private FastMap<SharedResource> getSelectedApps(List<App> selectedResources) {
+        FastMap<SharedResource> resourcesMap = new FastMap<>();
+        for (App sr : selectedResources) {
+            resourcesMap.put(sr.getId(), new SharedResource(sr.getId(), sr.getName()));
+        }
+        return resourcesMap;
     }
 
     @Override
     public void go(HasOneWidget container) {
         container.setWidget(view.asWidget());
+
     }
 
     @Override
     public void loadResources() {
-        view.setSelectedDiskResources(selectedResources);
+        view.setSelectedApps(selectedApps);
+
     }
 
     @Override
     public void loadPermissions() {
         permissionsPanel.mask();
-        diskResourceService.getPermissions(buildPermissionsRequestBody(), new LoadPermissionsCallback());
+        appService.getPermissions(selectedApps, new LoadPermissionsCallback());
+    }
+
+    @Override
+    public PermissionValue getDefaultPermissions() {
+        return PermissionValue.read;
     }
 
     @Override
@@ -184,6 +197,49 @@ public class DataSharingPresenterImpl implements SharingPresenter {
 
     }
 
+    private JSONObject buildSharingJson() {
+        JSONObject sharingObj = new JSONObject();
+        FastMap<List<Sharing>> sharingMap = permissionsPanel.getSharingMap();
+
+        if (sharingMap != null && sharingMap.size() > 0) {
+            JSONArray sharingArr = new JSONArray();
+            int index = 0;
+            for (String userName : sharingMap.keySet()) {
+                List<Sharing> shareList = sharingMap.get(userName);
+                JSONObject userObj = new JSONObject();
+                userObj.put("user", new JSONString(userName));
+                userObj.put("apps", buildPathArrWithPermissions(shareList));
+                sharingArr.set(index++, userObj);
+            }
+
+            sharingObj.put("sharing", sharingArr);
+            return sharingObj;
+        } else {
+            return null;
+        }
+    }
+
+    private JSONObject buildUnSharingJson() {
+        JSONObject unsharingObj = new JSONObject();
+        FastMap<List<Sharing>> unSharingMap = permissionsPanel.getUnshareList();
+
+        if (unSharingMap != null && unSharingMap.size() > 0) {
+            JSONArray unsharingArr = new JSONArray();
+            int index = 0;
+            for (String userName : unSharingMap.keySet()) {
+                List<Sharing> shareList = unSharingMap.get(userName);
+                JSONObject userObj = new JSONObject();
+                userObj.put("user", new JSONString(userName));
+                userObj.put("apps", buildPathArr(shareList));
+                unsharingArr.set(index++, userObj);
+            }
+            unsharingObj.put("unsharing", unsharingArr);
+            return unsharingObj;
+        } else {
+            return null;
+        }
+    }
+
     private JSONArray buildPathArr(List<Sharing> shareList) {
         JSONArray pathArr = new JSONArray();
         int index = 0;
@@ -199,7 +255,7 @@ public class DataSharingPresenterImpl implements SharingPresenter {
         JSONObject obj;
         for (Sharing s : shareList) {
             obj = new JSONObject();
-            obj.put("path", new JSONString(s.getId()));
+            obj.put("app_id", new JSONString(s.getId()));
             obj.put("permission", buildSharingPermissionsAsJson(s));
             pathArr.set(index++, obj);
         }
@@ -207,70 +263,21 @@ public class DataSharingPresenterImpl implements SharingPresenter {
         return pathArr;
     }
 
-    private PermissionValue buildPermissionFromJson(JSONObject perm) {
-        return PermissionValue.valueOf(jsonUtil.getString(perm, "permission"));
-    }
-
-    private JSONObject buildPermissionsRequestBody() {
-        JSONObject obj = new JSONObject();
-        JSONArray ids = new JSONArray();
-        for (int i = 0; i < selectedResources.size(); i++) {
-            ids.set(i, new JSONString(selectedResources.get(i).getPath()));
-        }
-        obj.put("paths", ids);
-        return obj;
-    }
-
-    private JSONObject buildSharingJson() {
-        JSONObject sharingObj = new JSONObject();
-        FastMap<List<Sharing>> sharingMap = permissionsPanel.getSharingMap();
-
-        if (sharingMap != null && sharingMap.size() > 0) {
-            JSONArray sharingArr = new JSONArray();
-            int index = 0;
-            for (String userName : sharingMap.keySet()) {
-                List<Sharing> shareList = sharingMap.get(userName);
-                JSONObject userObj = new JSONObject();
-                userObj.put("user", new JSONString(userName));
-                userObj.put("paths", buildPathArrWithPermissions(shareList));
-                sharingArr.set(index++, userObj);
-            }
-
-            sharingObj.put("sharing", sharingArr);
-            return sharingObj;
-        } else {
-            return null;
-        }
-    }
-
     private JSONValue buildSharingPermissionsAsJson(Sharing sh) {
         return new JSONString(sh.getPermission().toString());
     }
 
-    private JSONObject buildUnSharingJson() {
-        JSONObject unsharingObj = new JSONObject();
-        FastMap<List<Sharing>> unSharingMap = permissionsPanel.getUnshareList();
 
-        if (unSharingMap != null && unSharingMap.size() > 0) {
-            JSONArray unsharingArr = new JSONArray();
-            int index = 0;
-            for (String userName : unSharingMap.keySet()) {
-                List<Sharing> shareList = unSharingMap.get(userName);
-                JSONObject userObj = new JSONObject();
-                userObj.put("user", new JSONString(userName));
-                userObj.put("paths", buildPathArr(shareList));
-                unsharingArr.set(index++, userObj);
-            }
-            unsharingObj.put("unshare", unsharingArr);
-            return unsharingObj;
-        } else {
-            return null;
+    private void share(JSONObject requestBody) {
+        if (requestBody != null) {
+            callSharingService(requestBody);
         }
 
     }
 
     private void callSharingService(JSONObject obj) {
-        diskResourceService.shareDiskResource(obj, new AsyncCallback<String>() {
+        GWT.log("app sharing request:" + obj.toString());
+        appService.shareApp(obj, new AsyncCallback<String>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -286,7 +293,8 @@ public class DataSharingPresenterImpl implements SharingPresenter {
     }
 
     private void callUnshareService(JSONObject obj) {
-        diskResourceService.unshareDiskResource(obj, new AsyncCallback<String>() {
+        GWT.log("app un-sharing request:" + obj.toString());
+        appService.unshareApp(obj, new AsyncCallback<String>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -301,18 +309,11 @@ public class DataSharingPresenterImpl implements SharingPresenter {
         });
     }
 
-    private FastMap<SharedResource> getSelectedResourcesAsMap(List<DiskResource> selectedResources) {
-        FastMap<SharedResource> resourcesMap = new FastMap<>();
-        for (DiskResource sr : selectedResources) {
-            resourcesMap.put(sr.getPath(),
-                             new SharedResource(sr.getPath(),
-                                                  DiskResourceUtil.getInstance()
-                                                                  .parseNameFromPath(sr.getPath())));
-        }
-        return resourcesMap;
+    private PermissionValue buildPermissionFromJson(JSONObject perm) {
+        return PermissionValue.valueOf(jsonUtil.getString(perm, "permission"));
     }
 
-    private void loadPermissions(String path, JSONArray user_arr) {
+    private void loadPermissions(String id, String appName, JSONArray user_arr) {
         for (int i = 0; i < user_arr.size(); i++) {
             JSONObject userPermission = jsonUtil.getObjectAt(user_arr, i);
             JSONObject perm = new JSONObject();
@@ -325,15 +326,9 @@ public class DataSharingPresenterImpl implements SharingPresenter {
                 sharingList.put(userName, shareList);
             }
             perm.put("permission", new JSONString(permVal));
-            perm.put("path", new JSONString(path)); //$NON-NLS-1$
+            perm.put("id", new JSONString(id)); //$NON-NLS-1$
+            perm.put("name", new JSONString(appName));
             shareList.add(perm);
-        }
-
-    }
-
-    private void share(JSONObject requestBody) {
-      if (requestBody != null) {
-            callSharingService(requestBody);
         }
 
     }
@@ -344,6 +339,5 @@ public class DataSharingPresenterImpl implements SharingPresenter {
         }
 
     }
-
 
 }

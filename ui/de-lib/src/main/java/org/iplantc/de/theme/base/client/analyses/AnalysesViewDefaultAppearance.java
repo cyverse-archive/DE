@@ -272,4 +272,9 @@ public class AnalysesViewDefaultAppearance implements AnalysesView.Appearance {
     public String jobId() {
         return analysesMessages.jobId();
     }
+
+    @Override
+    public ImageResource shareIcon() {
+        return iplantResources.share();
+    }
 }

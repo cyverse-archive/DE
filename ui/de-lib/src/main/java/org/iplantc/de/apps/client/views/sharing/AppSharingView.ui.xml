@@ -5,14 +5,11 @@
              xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid">
 
 
-    <ui:with field="appearance"
-             type="org.iplantc.de.client.sharing.SharingAppearance" />
-
-    <ui:with field="diskResourcesListStore"
+    <ui:with field="appListStore"
              type="com.sencha.gxt.data.shared.ListStore"/>
-    <ui:with field="diskResourcesColumnModel"
+    <ui:with field="appColumnModel"
              type="com.sencha.gxt.widget.core.client.grid.ColumnModel"/>
-    <ui:with field="diskResourcesGridView"
+    <ui:with field="appGridView"
              type="com.sencha.gxt.widget.core.client.grid.GridView">
         <ui:attributes forceFit="true"
                        autoFill="true"/>
@@ -21,15 +18,15 @@
 
     <container:VerticalLayoutContainer ui:field="container">
         <container:child>
-            <gxt:FramedPanel ui:field="diskResourceListPnl"
+            <gxt:FramedPanel ui:field="appListPnl"
                              collapsible="false"
                              headerVisible="true"
-                             headingText="{appearance.selectFilesFolders}"
+                             headingText="Selected Apps"
                              height="200px">
-                <grid:Grid ui:field="diskResourcesGrid"
-                           cm="{diskResourcesColumnModel}"
-                           store="{diskResourcesListStore}"
-                           view="{diskResourcesGridView}"
+                <grid:Grid ui:field="appGrid"
+                           cm="{appColumnModel}"
+                           store="{appListStore}"
+                           view="{appGridView}"
                            loadMask="true"
                            columnReordering="true"
                            borders="false"/>

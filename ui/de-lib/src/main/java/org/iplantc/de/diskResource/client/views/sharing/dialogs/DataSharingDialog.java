@@ -6,6 +6,8 @@ package org.iplantc.de.diskResource.client.views.sharing.dialogs;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.sharing.SharingAppearance;
+import org.iplantc.de.client.sharing.SharingPresenter;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.collaborators.client.util.CollaboratorsUtil;
@@ -38,8 +40,8 @@ public class DataSharingDialog extends IPlantDialog implements SelectHandler {
 
     private final DiskResourceServiceFacade diskResourceService;
     private final DiskResourceUtil diskResourceUtil;
-    private final DataSharingView.Appearance appearance;
-    private DataSharingView.Presenter sharingPresenter;
+    private final SharingAppearance appearance;
+    private SharingPresenter sharingPresenter;
 
     @Inject CollaboratorsUtil collaboratorsUtil;
     @Inject JsonUtil jsonUtil;
@@ -47,7 +49,7 @@ public class DataSharingDialog extends IPlantDialog implements SelectHandler {
     @Inject
     DataSharingDialog(final DiskResourceServiceFacade diskResourceService,
                       final DiskResourceUtil diskResourceUtil,
-                      final DataSharingView.Appearance appearance) {
+                      final SharingAppearance appearance) {
         super(true);
         this.diskResourceService = diskResourceService;
         this.diskResourceUtil = diskResourceUtil;
