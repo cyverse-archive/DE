@@ -32,7 +32,7 @@ __Response Body__:
 
 __Curl Command__:
 
-    curl -sH "$AUTH_HEADER" -d '{"paths":["/iplant/home/ipctest/simple.fasta"]}' http://127.0.0.1:3000/secured/coge/load-genomes
+    curl -sH "$AUTH_HEADER" -d '{"paths":["/iplant/home/ipctest/simple.fasta"]}' http://127.0.0.1:3000/coge/genomes/load
 
 Searching for Genomes in CoGe
 -----------------------------
