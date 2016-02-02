@@ -458,6 +458,11 @@
   [props config-valid configs]
   "terrain.permanent-id.publish-dir")
 
+(cc/defprop-str permanent-id-target-base-url
+  "The base URL where curated folders with a permanent ID are published."
+  [props config-valid configs]
+  "terrain.permanent-id.target-base-url")
+
 (cc/defprop-str permanent-id-identifier-attr
   "The metadata attribute where a new permanent ID is stored."
   [props config-valid configs]

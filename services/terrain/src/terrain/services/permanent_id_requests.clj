@@ -20,9 +20,23 @@
 (def ^:private status-code-completion "Completion")
 (def ^:private status-code-failed "Failed")
 
+(def ^:private ezid-target-attr "_target")
+
 (defn- parse-service-json
   [response]
   (-> response :body service/decode-json))
+
+(defn- format-staging-path
+  [path]
+  (ft/path-join (config/permanent-id-staging-dir) (ft/basename path)))
+
+(defn- format-publish-path
+  [path]
+  (ft/path-join (config/permanent-id-publish-dir) (ft/basename path)))
+
+(defn- format-metadata-target-url
+  [path]
+  (str (ft/rm-last-slash (config/permanent-id-target-base-url)) (format-publish-path path)))
 
 (defn- validate-ezid-metadata
   [ezid-metadata]
@@ -80,7 +94,7 @@
 
 (defn- validate-publish-dest
   [{:keys [path] :as data-item}]
-  (let [publish-dest (ft/path-join (config/permanent-id-publish-dir) (ft/basename path))
+  (let [publish-dest (format-publish-path path)
         paths-exist (parse-service-json (data-info/check-existence {:user (config/permanent-id-curators-group)}
                                                                    {:paths [publish-dest]}))]
     (validate-publish-dest-available paths-exist publish-dest))
@@ -89,8 +103,8 @@
 (defn- validate-data-item
   [user {:keys [path] :as data-item}]
   (validate-owner user data-item)
-  (let [staging-dest (ft/path-join (config/permanent-id-staging-dir) (ft/basename path))
-        publish-dest (ft/path-join (config/permanent-id-publish-dir) (ft/basename path))
+  (let [staging-dest (format-staging-path path)
+        publish-dest (format-publish-path path)
         paths-exist  (parse-service-json (data-info/check-existence {:user (config/permanent-id-curators-group)}
                                                                     {:paths [staging-dest
                                                                              publish-dest]}))]
@@ -131,7 +145,7 @@
 
 (defn- stage-data-item
   [user {:keys [id path] :as data-item}]
-  (let [staged-path (ft/path-join (config/permanent-id-staging-dir) (ft/basename path))
+  (let [staged-path (format-staging-path path)
         curators    (config/permanent-id-curators-group)]
     (data-info-client/move-single (config/irods-user) id (config/permanent-id-staging-dir))
     (data-info/share (config/irods-user) [user] [staged-path] "write")
@@ -140,7 +154,7 @@
 
 (defn- publish-data-item
   [user {:keys [id path] :as data-item}]
-  (let [publish-path (ft/path-join (config/permanent-id-publish-dir) (ft/basename path))
+  (let [publish-path (format-publish-path path)
         curators     (config/permanent-id-curators-group)]
     (data-info-client/move-single curators id (config/permanent-id-publish-dir))
     (data-info/share (config/irods-user) [curators] [publish-path] "own")
@@ -181,22 +195,23 @@
              :request-type type})))
 
 (defn- parse-valid-ezid-metadata
-  [irods-avus metadata]
+  [{:keys [path]} irods-avus metadata]
   (let [metadata (mapcat :avus (:templates metadata))
         format-avus #(vector (:attr %) (:value %))
         ezid-metadata (into {} (concat (map format-avus irods-avus) (map format-avus metadata)))
-        ezid-metadata (assoc ezid-metadata (config/permanent-id-date-attr) (str (time/year (time/now))))]
+        ezid-metadata (assoc ezid-metadata
+                        ezid-target-attr (format-metadata-target-url path)
+                        (config/permanent-id-date-attr) (str (time/year (time/now))))]
     (validate-ezid-metadata ezid-metadata)
     ezid-metadata))
 
 (defn- get-validated-data-item
   "Gets data-info stat for the given ID and checks if the data item is valid for a Permanent ID request."
   [user data-id]
-  (let [{:keys [irods-avus metadata]} (metadata-get user data-id)]
-    (parse-valid-ezid-metadata irods-avus metadata))
-  (->> data-id
-       (data-info/stat-by-uuid user)
-       (validate-data-item user)))
+  (let [data-item (->> data-id (data-info/stat-by-uuid user) (validate-data-item user))
+        {:keys [irods-avus metadata]} (metadata-get user data-id)]
+    (parse-valid-ezid-metadata data-item irods-avus metadata)
+    data-item))
 
 (defn- format-alt-id-avus
   "Formats metadata service AVUs from the alt-identifiers-map, only if existing-alt-id is empty."
@@ -309,7 +324,7 @@
           folder-id                     (uuidify (:id folder))
           {:keys [irods-avus metadata]} (metadata-get user folder-id)
           template-id                   (-> metadata :templates first :template_id)
-          ezid-metadata                 (parse-valid-ezid-metadata irods-avus metadata)
+          ezid-metadata                 (parse-valid-ezid-metadata folder irods-avus metadata)
           ezid-response                 (ezid/mint-id shoulder ezid-metadata)
           identifier                    (get ezid-response (keyword type))
           alt-identifiers               (dissoc ezid-response (keyword type))
