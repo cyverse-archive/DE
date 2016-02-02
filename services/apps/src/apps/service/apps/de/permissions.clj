@@ -4,6 +4,7 @@
   (:require [apps.clients.iplant-groups :as iplant-groups]
             [apps.util.service :as service]
             [clojure.string :as string]
+            [clojure.tools.logging :as log]
             [clojure-commons.exception-util :as cxu]))
 
 (def permission-precedence (into {} (map-indexed (fn [i v] (vector v i)) ["own" "write" "read"])))

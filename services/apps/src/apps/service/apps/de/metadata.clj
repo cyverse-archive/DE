@@ -28,25 +28,18 @@
   [app-id]
   (amp/get-app app-id))
 
-(defn- validate-app-ownership
-  "Verifies that a user owns an app."
-  [username app-id]
-  (when-not (perms/check-app-permissions username "own" [app-id])
-    (throw+ {:type  :clojure-commons.exception/bad-request-field
-             :error (str username " does not own app " app-id)})))
-
 (defn- validate-deletion-request
   "Validates an app deletion request."
-  [user req]
+  [{username :shortUsername} req]
   (when (empty? (:app_ids req))
     (throw+ {:type  :clojure-commons.exception/bad-request-field
              :error "no app identifiers provided"}))
-  (when (and (nil? (:username user)) (not (:root_deletion_request req)))
+  (when (and (nil? username) (not (:root_deletion_request req)))
     (throw+ {:type  :clojure-commons.exception/bad-request-field
              :error "no username provided for non-root deletion request"}))
   (dorun (map validate-app-existence (:app_ids req)))
   (when-not (:root_deletion_request req)
-    (dorun (map (partial validate-app-ownership (:username user)) (:app_ids req)))))
+    (perms/check-app-permissions username "own" (:app_ids req))))
 
 (defn permanently-delete-apps
   "This service removes apps from the database rather than merely marking them as deleted."
@@ -66,9 +59,9 @@
 
 (defn delete-app
   "This service marks an existing app as deleted in the database."
-  [user app-id]
+  [{username :shortUsername} app-id]
   (validate-app-existence app-id)
-  (validate-app-ownership (:username user) app-id)
+  (perms/check-app-permissions username "own" [app-id])
   (amp/delete-app app-id)
   {})
 
