@@ -7,10 +7,10 @@
                                     get-app-subcategory-id
                                     remove-app-from-category]]
         [kameleon.uuids :only [uuidify]]
-        [apps.service.apps.de.validation :only [app-publishable?]]
+        [apps.service.apps.de.validation :only [app-publishable? verify-app-permission]]
         [apps.util.config :only [workspace-beta-app-category-id
                                        workspace-favorites-app-category-index]]
-        [apps.validation :only [get-valid-user-id verify-app-ownership]]
+        [apps.validation :only [get-valid-user-id]]
         [apps.workspace :only [get-workspace]]
         [korma.db :only [transaction]]
         [slingshot.slingshot :only [throw+]])
@@ -19,6 +19,7 @@
             [apps.clients.iplant-groups :as iplant-groups]
             [apps.persistence.app-metadata :as amp]
             [apps.service.apps.de.docs :as app-docs]
+            [apps.service.apps.de.permissions :as perms]
             [apps.translations.app-metadata :as atx]
             [apps.util.config :as config]))
 
@@ -30,7 +31,7 @@
 (defn- validate-app-ownership
   "Verifies that a user owns an app."
   [username app-id]
-  (when-not (every? (partial = username) (amp/app-accessible-by app-id))
+  (when-not (perms/check-app-permissions username "own" [app-id])
     (throw+ {:type  :clojure-commons.exception/bad-request-field
              :error (str username " does not own app " app-id)})))
 
@@ -145,7 +146,7 @@
 
 (defn make-app-public
   [user {app-id :id :as app}]
-  (verify-app-ownership user (validate-app-existence app-id))
+  (verify-app-permission user (validate-app-existence app-id) "own")
   (let [[publishable? reason] (app-publishable? app-id)]
     (if publishable?
       (publish-app user app)

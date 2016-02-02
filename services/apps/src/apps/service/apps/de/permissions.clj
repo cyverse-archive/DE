@@ -20,7 +20,7 @@
 
 (def lacks-permission-level (complement has-permission-level))
 
-(defn- check-app-permissions
+(defn check-app-permissions
   [user required-level app-ids]
   (let [perms (iplant-groups/load-app-permissions user app-ids)]
     (when-let [forbidden-apps (seq (filter (partial lacks-permission-level perms required-level) app-ids))]

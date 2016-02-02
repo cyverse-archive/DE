@@ -223,31 +223,6 @@
                :error "This tool is already in use by apps."
                :apps  apps}))))
 
-(defn- verify-app-not-public
-  "Verifies that an app has not been made public."
-  [app]
-  (if (:is_public app)
-    (throw+ {:type  :clojure-commons.exception/not-writeable
-             :error (str "Workflow, " (:id app) ", is public and may not be edited")})))
-
-(defn verify-app-ownership
-  "Verifies that a user owns the app that is being edited."
-  ([app]
-     (verify-app-ownership current-user app))
-  ([user app]
-     (when-not (validators/user-owns-app? user app)
-       (throw+ {:type     :clojure-commons.exception/not-owner
-                :error    (str (:shortUsername user) " does not own app " (:id app))
-                :username (:username user),}))))
-
-(defn verify-app-editable
-  "Verifies that the app is allowed to be edited by the current user."
-  ([app]
-     (verify-app-editable current-user app))
-  ([user app]
-     (verify-app-ownership user app)
-     (verify-app-not-public app)))
-
 (defn validate-external-app-step
   "Verifies that an external app step in a pipeline has all of the required fields."
   [step-number {external-app-id :external_app_id}]

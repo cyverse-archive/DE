@@ -2,7 +2,9 @@
   (:use [slingshot.slingshot :only [throw+]])
   (:require [apps.persistence.app-documentation :as dp]
             [apps.persistence.app-metadata :as ap]
-            [apps.validation :as v]))
+            [apps.service.apps.de.validation :as de-validation]
+            [apps.validation :as v]
+            [clojure-commons.validators :as cv]))
 
 (defn- get-references
   "Returns a list of references from the database for the given app ID."
@@ -26,9 +28,11 @@
   (get-app-docs app-id))
 
 (defn owner-edit-app-docs
-  "Updates an App's documentation in the database if the App is owned by the current user."
+  "Updates an app's documentation in the database if the user has permisison to edit the app."
   [user app-id docs]
-  (v/verify-app-ownership user (ap/get-app app-id))
+  (let [app (ap/get-app app-id)]
+    (when-not (cv/user-owns-app? user app)
+      (de-validation/verify-app-permission user app "write")))
   (edit-app-docs user app-id docs))
 
 (defn add-app-docs
@@ -42,7 +46,9 @@
   (get-app-docs app-id))
 
 (defn owner-add-app-docs
-  "Adds an App's documentation to the database if the App is owned by the current user."
+  "Adds an app's documentation to the database if the user has permission to edit the app."
   [user app-id docs]
-  (v/verify-app-ownership user (ap/get-app app-id))
+  (let [app (ap/get-app app-id)]
+    (when-not (cv/user-owns-app? user app)
+      (de-validation/verify-app-permission user (ap/get-app app-id) "write")))
   (add-app-docs user app-id docs))

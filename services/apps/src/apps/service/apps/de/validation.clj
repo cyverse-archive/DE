@@ -1,11 +1,13 @@
 (ns apps.service.apps.de.validation
-  (:use [slingshot.slingshot :only [try+ throw+]]
+  (:use [clojure-commons.exception-util :only [forbidden]]
+        [slingshot.slingshot :only [try+ throw+]]
         [korma.core :exclude [update]]
         [kameleon.core]
         [kameleon.entities]
         [kameleon.queries :only [parameter-types-for-tool-type]]
         [apps.persistence.app-metadata :only [get-app]])
-  (:require [clojure.string :as string]))
+  (:require [apps.service.apps.de.permissions :as perms]
+            [clojure.string :as string]))
 
 (defn- get-tool-type-from-database
   "Gets the tool type for the deployed component with the given identifier from
@@ -115,3 +117,22 @@
           (= 1 (count task-ids)) [true]
           (seq private-apps)     [false "contains private apps" private-apps]
           :else                  [true])))
+
+(defn- verify-app-not-public
+  "Verifies that an app has not been made public."
+  [app]
+  (when (:is_public app)
+    (throw+ {:type  :clojure-commons.exception/not-writeable
+             :error (str "Workflow, " (:id app) ", is public and may not be edited")})))
+
+(defn verify-app-permission
+  "Verifies that a user has the appropriate permission level for an app."
+  [{user :shortUsername} {app-id :id} level]
+  (when-not (perms/check-app-permissions user app-id level)
+    (forbidden (str user " has insufficient privileges for app " app-id) :username user)))
+
+(defn verify-app-editable
+  "Verifies that the app is allowed to be edited by the current user."
+  [user app]
+  (verify-app-permission user app "write")
+  (verify-app-not-public app))
