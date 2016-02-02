@@ -33,9 +33,16 @@
     (when-not (empty? identifier)
     (throw+ {:type :clojure-commons.exception/bad-request
              :error (str "The " (config/permanent-id-identifier-attr)
-                         " metadata attribue already contains a value: "
+                         " metadata attribute already contains a value: "
                          identifier)})))
   ezid-metadata)
+
+(defn- validate-request-for-completion
+  [{:keys [permanent_id]}]
+  (when-not (empty? permanent_id)
+    (throw+ {:type :clojure-commons.exception/bad-request
+             :error "This Request appears to be completed, since it already has a Permanent ID."
+             :permanent-id permanent_id})))
 
 (defn- validate-request-target-type
   [{target-type :type :as folder}]
@@ -55,7 +62,7 @@
              :folder-id id}))
   data-item)
 
-(defn- validate-staging-dest-exists
+(defn- validate-staging-dest-available
   [{:keys [paths]} staging-dest]
   (let [path-exists? (get paths (keyword staging-dest))]
     (when path-exists?
@@ -63,7 +70,7 @@
              :error "A folder with this name has already been submitted for a Permanent ID request."
              :path staging-dest}))))
 
-(defn- validate-publish-dest-exists
+(defn- validate-publish-dest-available
   [{:keys [paths]} publish-dest]
   (let [path-exists? (get paths (keyword publish-dest))]
     (when path-exists?
@@ -76,7 +83,7 @@
   (let [publish-dest (ft/path-join (config/permanent-id-publish-dir) (ft/basename path))
         paths-exist (parse-service-json (data-info/check-existence {:user (config/permanent-id-curators-group)}
                                                                    {:paths [publish-dest]}))]
-    (validate-publish-dest-exists paths-exist publish-dest))
+    (validate-publish-dest-available paths-exist publish-dest))
   data-item)
 
 (defn- validate-data-item
@@ -87,8 +94,8 @@
         paths-exist  (parse-service-json (data-info/check-existence {:user (config/permanent-id-curators-group)}
                                                                     {:paths [staging-dest
                                                                              publish-dest]}))]
-    (validate-staging-dest-exists paths-exist staging-dest)
-    (validate-publish-dest-exists paths-exist publish-dest))
+    (validate-staging-dest-available paths-exist staging-dest)
+    (validate-publish-dest-available paths-exist publish-dest))
   data-item)
 
 (defn- submit-permanent-id-request
@@ -295,6 +302,7 @@
 
 (defn- complete-permanent-id-request
   [user {request-id :id :keys [folder type] :as request}]
+  (validate-request-for-completion request)
   (try+
     (let [shoulder                      (request-type->shoulder type)
           folder                        (validate-publish-dest folder)
