@@ -114,12 +114,29 @@ public class ShareBreakDownDialog extends Dialog {
     private ColumnModel<Sharing> buildColumnModel() {
         List<ColumnConfig<Sharing, ?>> configs = new ArrayList<>();
         DataSharingProperties props = GWT.create(DataSharingProperties.class);
-        ColumnConfig<Sharing, String> name = new ColumnConfig<>(props.name());
+        ColumnConfig<Sharing, String> name = new ColumnConfig<>(new ValueProvider<Sharing, String>() {
+
+            @Override
+            public String getValue(Sharing object) {
+                return object.getCollaboratorName();
+            }
+
+            @Override
+            public void setValue(Sharing object, String value) {
+                // do nothing intentionally
+
+            }
+
+            @Override
+            public String getPath() {
+                return "";
+            }
+        });
 
         name.setHeader(appearance.nameColumnLabel());
         name.setWidth(appearance.shareBreakDownDlgNameColumnWidth());
 
-        ColumnConfig<Sharing, String> diskRsc = new ColumnConfig<>(new ValueProvider<Sharing, String>() {
+        ColumnConfig<Sharing, String> resource = new ColumnConfig<>(new ValueProvider<Sharing, String>() {
 
             @Override
             public String getValue(Sharing object) {
@@ -138,8 +155,8 @@ public class ShareBreakDownDialog extends Dialog {
             }
         });
 
-        diskRsc.setHeader(appearance.nameColumnLabel());
-        diskRsc.setWidth(appearance.shareBreakDownDlgNameColumnWidth());
+        resource.setHeader(appearance.nameColumnLabel());
+        resource.setWidth(appearance.shareBreakDownDlgNameColumnWidth());
         ColumnConfig<Sharing, PermissionValue> permission = new ColumnConfig<>(new ValueProvider<Sharing, PermissionValue>() {
 
             @Override
@@ -162,7 +179,7 @@ public class ShareBreakDownDialog extends Dialog {
         permission.setHeader(appearance.permissionsColumnLabel());
         permission.setWidth(appearance.shareBreakDownDlgPermissionColumnWidth());
         configs.add(name);
-        configs.add(diskRsc);
+        configs.add(resource);
         configs.add(permission);
         return new ColumnModel<>(configs);
     }

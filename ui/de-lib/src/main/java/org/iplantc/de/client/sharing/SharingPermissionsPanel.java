@@ -6,7 +6,6 @@ import org.iplantc.de.client.models.collaborators.Collaborator;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.sharing.SharedResource;
 import org.iplantc.de.client.models.sharing.Sharing;
-import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.collaborators.client.events.UserSearchResultSelected;
 import org.iplantc.de.collaborators.client.util.UserSearchField;
 import org.iplantc.de.collaborators.client.views.ManageCollaboratorsDialog;
@@ -240,7 +239,7 @@ public class SharingPermissionsPanel implements IsWidget {
                 Sharing share = new Sharing(user,
                                             presenter.getDefaultPermissions(),
                                             path,
-                                            DiskResourceUtil.getInstance().parseNameFromPath(path));
+                                            resources.get(path).getName());
                 shareList.add(share);
 
                 if (displayShare == null) {
@@ -300,9 +299,22 @@ public class SharingPermissionsPanel implements IsWidget {
         List<ColumnConfig<Sharing, ?>> configs = new ArrayList<>();
         DataSharingProperties props = GWT.create(DataSharingProperties.class);
 
-        ColumnConfig<Sharing, String> name = new ColumnConfig<>(props.name(),
-                                                                appearance.nameColumnWidth(),
-                                                                appearance.nameColumnLabel());
+        ColumnConfig<Sharing, String> name = new ColumnConfig<>(new ValueProvider<Sharing, String>() {
+            @Override
+            public String getValue(Sharing object) {
+                return object.getCollaboratorName();
+            }
+
+            @Override
+            public void setValue(Sharing object, String value) {
+
+            }
+
+            @Override
+            public String getPath() {
+                return null;
+            }
+        }, appearance.nameColumnWidth(), appearance.nameColumnLabel());
         ColumnConfig<Sharing, PermissionValue> permission = buildPermissionColumn(props);
         ColumnConfig<Sharing, String> remove = buildRemoveColumn();
 
@@ -453,7 +465,7 @@ public class SharingPermissionsPanel implements IsWidget {
                         models.add(new Sharing(user,
                                                perm,
                                                path,
-                                               DiskResourceUtil.getInstance().parseNameFromPath(path)));
+                                               resources.get(path).getName()));
                     }
                 }
             }

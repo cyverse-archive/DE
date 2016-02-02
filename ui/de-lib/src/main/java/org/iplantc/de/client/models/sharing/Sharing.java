@@ -1,6 +1,6 @@
 /**
- * 
- * 
+ *
+ *
  */
 package org.iplantc.de.client.models.sharing;
 
@@ -8,9 +8,7 @@ import org.iplantc.de.client.models.collaborators.Collaborator;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
 
 /**
- * 
  * @author sriram
- * 
  */
 public class Sharing {
 
@@ -40,13 +38,13 @@ public class Sharing {
     }
 
     public boolean isReadable() {
-        return permission != null
-                && (permission.equals(PermissionValue.read) || permission.equals(PermissionValue.write) || permission.equals(PermissionValue.own));
+        return permission != null && (permission.equals(PermissionValue.read) || permission.equals(
+                PermissionValue.write) || permission.equals(PermissionValue.own));
     }
 
     public boolean isWritable() {
-        return permission != null
-                && (permission.equals(PermissionValue.own) || permission.equals(PermissionValue.write));
+        return permission != null && (permission.equals(PermissionValue.own) || permission.equals(
+                PermissionValue.write));
     }
 
     public boolean isOwner() {
@@ -95,6 +93,15 @@ public class Sharing {
     }
 
     public String getName() {
+        return name;
+    }
+
+    public Collaborator getCollaborator() {
+        return collaborator;
+    }
+
+
+    public String getCollaboratorName() {
         StringBuilder builder = new StringBuilder();
         if (getCollaborator().getFirstName() != null && !getCollaborator().getFirstName().isEmpty()) {
             builder.append(getCollaborator().getFirstName());
@@ -105,11 +112,6 @@ public class Sharing {
         } else {
             return getCollaborator().getUserName();
         }
-
-    }
-
-    public Collaborator getCollaborator() {
-        return collaborator;
     }
 
 }

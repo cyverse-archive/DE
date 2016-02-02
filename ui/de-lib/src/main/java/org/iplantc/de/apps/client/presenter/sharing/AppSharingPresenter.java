@@ -12,7 +12,6 @@ import org.iplantc.de.client.models.sharing.Sharing;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.sharing.SharingPermissionsPanel;
 import org.iplantc.de.client.sharing.SharingPresenter;
-import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.collaborators.client.util.CollaboratorsUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -48,29 +47,29 @@ public class AppSharingPresenter implements SharingPresenter {
 
             @Override
             public void onSuccess(FastMap<Collaborator> results) {
-                dataSharingMap = new FastMap<>();
+                sharingMap = new FastMap<>();
                 for (String userName : usernames) {
                     Collaborator user = results.get(userName);
                     if (user == null) {
                         user = collaboratorsUtil.getDummyCollaborator(userName);
                     }
 
-                    List<Sharing> dataShares = new ArrayList<>();
+                    List<Sharing> shares = new ArrayList<>();
 
-                    dataSharingMap.put(userName, dataShares);
+                    sharingMap.put(userName, shares);
 
                     for (JSONObject share : sharingList.get(userName)) {
-                        String path = jsonUtil.getString(share, "path"); //$NON-NLS-1$
-                        Sharing dataSharing = new Sharing(user,
+                        String id = jsonUtil.getString(share, "id"); //$NON-NLS-1$
+                        String name = jsonUtil.getString(share,"name");
+                        Sharing sharing = new Sharing(user,
                                                           buildPermissionFromJson(share),
-                                                          path,
-                                                          DiskResourceUtil.getInstance()
-                                                                          .parseNameFromPath(path));
-                        dataShares.add(dataSharing);
+                                                          id,
+                                                         name);
+                        shares.add(sharing);
                     }
                 }
 
-                permissionsPanel.loadSharingData(dataSharingMap);
+                permissionsPanel.loadSharingData(sharingMap);
                 permissionsPanel.unmask();
             }
         }
@@ -89,9 +88,11 @@ public class AppSharingPresenter implements SharingPresenter {
                 sharingList = new FastMap<>();
                 for (int i = 0; i < permissionsArray.size(); i++) {
                     JSONObject user_perm_obj = permissionsArray.get(i).isObject();
-                    String path = jsonUtil.getString(user_perm_obj, "id"); //$NON-NLS-1$
+                    String id = jsonUtil.getString(user_perm_obj, "id"); //$NON-NLS-1$
+                    String appName = jsonUtil.getString(user_perm_obj,"name");
                     JSONArray user_arr = jsonUtil.getArray(user_perm_obj, "permissions"); //$NON-NLS-1$
-                    loadPermissions(path, user_arr);
+
+                    loadPermissions(id,appName, user_arr);
                 }
 
                 final List<String> usernames = new ArrayList<>();
@@ -106,7 +107,7 @@ public class AppSharingPresenter implements SharingPresenter {
     private final List<App> selectedApps;
     private final AppUserServiceFacade appService;
     private Appearance appearance;
-    private FastMap<List<Sharing>> dataSharingMap;
+    private FastMap<List<Sharing>> sharingMap;
     private FastMap<List<JSONObject>> sharingList;
     private final JsonUtil jsonUtil;
     private final CollaboratorsUtil collaboratorsUtil;
@@ -312,7 +313,7 @@ public class AppSharingPresenter implements SharingPresenter {
         return PermissionValue.valueOf(jsonUtil.getString(perm, "permission"));
     }
 
-    private void loadPermissions(String path, JSONArray user_arr) {
+    private void loadPermissions(String id, String appName, JSONArray user_arr) {
         for (int i = 0; i < user_arr.size(); i++) {
             JSONObject userPermission = jsonUtil.getObjectAt(user_arr, i);
             JSONObject perm = new JSONObject();
@@ -325,7 +326,8 @@ public class AppSharingPresenter implements SharingPresenter {
                 sharingList.put(userName, shareList);
             }
             perm.put("permission", new JSONString(permVal));
-            perm.put("path", new JSONString(path)); //$NON-NLS-1$
+            perm.put("id", new JSONString(id)); //$NON-NLS-1$
+            perm.put("name", new JSONString(appName));
             shareList.add(perm);
         }
 
