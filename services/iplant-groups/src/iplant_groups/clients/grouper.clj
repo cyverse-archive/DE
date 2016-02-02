@@ -504,6 +504,12 @@
   [username attribute-def name display-extension description]
   (format-attribute-name-add-update-request false username attribute-def name display-extension description))
 
+(defn- format-attribute-name-delete-request
+  [username attribute-def-name]
+  {:WsRestAttributeDefNameDeleteRequest
+   {:actAsSubjectLookup (act-as-subject-lookup username)
+    :wsAttributeDefNameLookups [{:name attribute-def-name}]}})
+
 (defn- add-update-attribute-name
   [request-body]
   (with-trap [default-error-handler]
@@ -517,6 +523,11 @@
   [username attribute-def name display-extension description]
   (add-update-attribute-name
    (format-attribute-name-add-request username attribute-def name display-extension description)))
+
+(defn delete-attribute-name
+  [username attribute-name]
+  (add-update-attribute-name
+   (format-attribute-name-delete-request username attribute-name)))
 
 ;; Permission assignment
 ;; search/lookup
