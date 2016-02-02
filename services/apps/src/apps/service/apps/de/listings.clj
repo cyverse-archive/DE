@@ -330,7 +330,8 @@
 
 (defn get-app-details
   "This service obtains the high-level details of an app."
-  [app-id]
+  [{username :shortUsername} app-id]
+  (perms/check-app-permissions username "read" [app-id])
   (let [details (load-app-details app-id)
         tools   (get-app-tools app-id)]
     (when (empty? tools)
@@ -415,13 +416,15 @@
 
 (defn get-app-task-listing
   "A service used to list the file parameters in an app."
-  [app-id]
+  [{username :shortUsername} app-id]
+  (perms/check-app-permissions username "read" [app-id])
   (let [app (get-app app-id)]
     (format-app-task-listing app)))
 
 (defn get-app-tool-listing
   "A service to list the tools used by an app."
-  [app-id]
+  [{username :shortUsername} app-id]
+  (perms/check-app-permissions username "read" [app-id])
   (let [app (get-app app-id)
         tasks (:tasks (first (select apps
                                (with tasks (fields :tool_id))

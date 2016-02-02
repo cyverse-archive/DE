@@ -82,8 +82,8 @@
   "Adds or updates a user's rating and comment ID for the given app. The request must contain either
    the rating or the comment ID, and the rating must be between 1 and 5, inclusive."
   [user app-id {:keys [rating comment_id] :as request}]
-  (validate-app-existence app-id)
-  (let [user-id (get-valid-user-id (:username user))]
+  (let [app     (validate-app-existence app-id)
+        user-id (get-valid-user-id (:username user))]
     (when (and (nil? rating) (nil? comment_id))
       (throw+ {:type  :clojure-commons.exception/bad-request-field
                :error (str "No rating or comment ID given")}))
@@ -91,14 +91,20 @@
       (throw+ {:type  :clojure-commons.exception/bad-request-field
                :error (str "Rating must be an integer between 1 and 5 inclusive."
                                 " Invalid rating (" rating ") for App ID " app-id)}))
+    (when-not (:is_public app)
+      (throw+ {:type  :clojure-commons.exception/bad-request-field
+               :error (str "Unable to rate private app, " app-id)}))
     (amp/rate-app app-id user-id request)
     (amp/get-app-avg-rating app-id)))
 
 (defn delete-app-rating
   "Removes a user's rating and comment ID for the given app."
   [user app-id]
-  (validate-app-existence app-id)
-  (let [user-id (get-valid-user-id (:username user))]
+  (let [app     (validate-app-existence app-id)
+        user-id (get-valid-user-id (:username user))]
+    (when-not (:is_public app)
+      (throw+ {:type  :clojure-commons.exception/bad-request-field
+               :error (str "Unable to remove rating from private app, " app-id)}))
     (amp/delete-app-rating app-id user-id)
     (amp/get-app-avg-rating app-id)))
 
@@ -114,6 +120,7 @@
   [user app-id]
   (let [app (amp/get-app app-id)
         fav-category-id (get-favorite-category-id user)]
+    (verify-app-permission user app "read")
     (add-app-to-category app-id fav-category-id))
   nil)
 
@@ -139,8 +146,7 @@
 
 (defn make-app-public
   [user {app-id :id :as app}]
-  (verify-app-permission user (validate-app-existence app-id) "own")
-  (let [[publishable? reason] (app-publishable? app-id)]
+  (let [[publishable? reason] (app-publishable? user app-id)]
     (if publishable?
       (publish-app user app)
       (throw+ {:type  :clojure-commons.exception/bad-request-field

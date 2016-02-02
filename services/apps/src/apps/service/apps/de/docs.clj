@@ -11,8 +11,8 @@
   [app-id]
   (map :reference_text (dp/get-app-references app-id)))
 
-(defn get-app-docs
-  "Retrieves documentation details for the given app ID."
+(defn- get-app-docs*
+  "Retrieves app documentation."
   [app-id]
   (if-let [docs (dp/get-documentation app-id)]
     (assoc docs :references (get-references app-id))
@@ -20,12 +20,18 @@
              :error  "App documentation not found"
              :app_id app-id})))
 
+(defn get-app-docs
+  "Retrieves documentation details for the given app ID."
+  [user app-id]
+  (de-validation/verify-app-permission user (ap/get-app app-id) "read")
+  (get-app-docs* app-id))
+
 (defn edit-app-docs
   "Updates an App's documentation and modified details in the database."
   [{:keys [username]} app-id {docs :documentation}]
-  (when (get-app-docs app-id)
+  (when (get-app-docs* app-id)
     (dp/edit-documentation (v/get-valid-user-id username) docs app-id))
-  (get-app-docs app-id))
+  (get-app-docs* app-id))
 
 (defn owner-edit-app-docs
   "Updates an app's documentation in the database if the user has permission to edit the app."
@@ -43,7 +49,7 @@
              :error  "App already has documentation"
              :app_id app-id}))
   (dp/add-documentation (v/get-valid-user-id username) docs app-id)
-  (get-app-docs app-id))
+  (get-app-docs* app-id))
 
 (defn owner-add-app-docs
   "Adds an app's documentation to the database if the user has permission to edit the app."

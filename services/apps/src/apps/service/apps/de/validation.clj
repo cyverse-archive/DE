@@ -101,12 +101,14 @@
                (where {:t.id              [in task-ids]
                        :t.tool_id         nil
                        :t.external_app_id nil}))))
+
 (defn app-publishable?
   "Determines whether or not an app can be published. An app is publishable if none of the
    templates in the app are associated with any single-step apps that are not public. Returns
    a flag indicating whether or not the app is publishable along with the reason the app isn't
    publishable if it's not."
-  [app-id]
+  [{username :shortUsername} app-id & {:keys [permissions-checked]}]
+  (perms/check-app-permissions username "own" [app-id])
   (let [app              (get-app app-id)
         task-ids         (task-ids-for-app app-id)
         unrunnable-tasks (list-unrunnable-tasks task-ids)

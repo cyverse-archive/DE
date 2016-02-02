@@ -81,7 +81,7 @@
 
   (getAppDetails [_ app-id]
     (when (util/uuid? app-id)
-      (listings/get-app-details (uuidify app-id))))
+      (listings/get-app-details user (uuidify app-id))))
 
   (removeAppFavorite [_ app-id]
     (when (util/uuid? app-id)
@@ -93,7 +93,7 @@
 
   (isAppPublishable [_ app-id]
     (when (util/uuid? app-id)
-      (first (app-validation/app-publishable? app-id))))
+      (first (app-validation/app-publishable? user app-id))))
 
   (makeAppPublic [_ app]
     (when (util/uuid? (:id app))
@@ -109,11 +109,11 @@
 
   (getAppTaskListing [_ app-id]
     (when (util/uuid? app-id)
-      (listings/get-app-task-listing (uuidify app-id))))
+      (listings/get-app-task-listing user (uuidify app-id))))
 
   (getAppToolListing [_ app-id]
     (when (util/uuid? app-id)
-      (listings/get-app-tool-listing (uuidify app-id))))
+      (listings/get-app-tool-listing user (uuidify app-id))))
 
   (getAppUi [_ app-id]
     (when (util/uuid? app-id)
@@ -206,7 +206,7 @@
 
   (getAppDocs [_ app-id]
     (when (util/uuid? app-id)
-      (docs/get-app-docs (uuidify app-id))))
+      (docs/get-app-docs user (uuidify app-id))))
 
   (ownerEditAppDocs [_ app-id body]
     (when (util/uuid? app-id)
