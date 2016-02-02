@@ -1,5 +1,10 @@
 package org.iplantc.de.client.services.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.search.DateInterval;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
@@ -10,11 +15,6 @@ import com.google.gwtmockito.GwtMockitoTestRunner;
 
 import com.sencha.gxt.core.client.util.DateWrapper;
 import com.sencha.gxt.core.client.util.Format;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +38,6 @@ public class DataSearchQueryBuilderTest {
 
     @Before public void setUp() {
         when(dsf.isIncludeTrashItems()).thenReturn(true);
-        when(userInfoMock.getBaseTrashPath()).thenReturn("/iplant/trash");
         when(userInfoMock.getUsername()).thenReturn("test_user");
     }
 
