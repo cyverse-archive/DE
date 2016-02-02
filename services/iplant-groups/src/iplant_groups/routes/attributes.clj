@@ -35,6 +35,13 @@
   (context* "/:attribute-name" []
     :path-params [attribute-name :- AttributeNamePathParam]
 
+    (DELETE* "/" []
+             :query       [params StandardUserQueryParams]
+             :summary     "Remove Attribute Name/Resource Definition"
+             :description "This endpoint allows an existing attribute name to be deleted."
+             (attributes/delete-attribute-name attribute-name params)
+             (ok))
+
     (context* "/permissions" []
 
       (GET* "/" []

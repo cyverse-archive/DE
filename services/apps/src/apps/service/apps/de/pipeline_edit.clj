@@ -13,9 +13,9 @@
                                                     remove-app-steps
                                                     update-app]]
         [apps.util.conversions :only [remove-nil-vals]]
+        [apps.service.apps.de.validation :only [verify-app-editable]]
         [apps.validation :only [validate-external-app-step
-                                      validate-pipeline
-                                      verify-app-editable]]
+                                      validate-pipeline]]
         [apps.service.apps.de.edit :only [add-app-to-user-dev-category app-copy-name]])
   (:require [apps.service.apps.de.listings :as listings]))
 

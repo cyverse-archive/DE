@@ -1,11 +1,13 @@
 (ns apps.service.apps.de.validation
-  (:use [slingshot.slingshot :only [try+ throw+]]
+  (:use [clojure-commons.exception-util :only [forbidden]]
+        [slingshot.slingshot :only [try+ throw+]]
         [korma.core :exclude [update]]
         [kameleon.core]
         [kameleon.entities]
         [kameleon.queries :only [parameter-types-for-tool-type]]
         [apps.persistence.app-metadata :only [get-app]])
-  (:require [clojure.string :as string]))
+  (:require [apps.service.apps.de.permissions :as perms]
+            [clojure.string :as string]))
 
 (defn- get-tool-type-from-database
   "Gets the tool type for the deployed component with the given identifier from
@@ -99,12 +101,14 @@
                (where {:t.id              [in task-ids]
                        :t.tool_id         nil
                        :t.external_app_id nil}))))
+
 (defn app-publishable?
   "Determines whether or not an app can be published. An app is publishable if none of the
    templates in the app are associated with any single-step apps that are not public. Returns
    a flag indicating whether or not the app is publishable along with the reason the app isn't
    publishable if it's not."
-  [app-id]
+  [{username :shortUsername} app-id & {:keys [permissions-checked]}]
+  (perms/check-app-permissions username "own" [app-id])
   (let [app              (get-app app-id)
         task-ids         (task-ids-for-app app-id)
         unrunnable-tasks (list-unrunnable-tasks task-ids)
@@ -115,3 +119,21 @@
           (= 1 (count task-ids)) [true]
           (seq private-apps)     [false "contains private apps" private-apps]
           :else                  [true])))
+
+(defn- verify-app-not-public
+  "Verifies that an app has not been made public."
+  [app]
+  (when (:is_public app)
+    (throw+ {:type  :clojure-commons.exception/not-writeable
+             :error (str "Workflow, " (:id app) ", is public and may not be edited")})))
+
+(defn verify-app-permission
+  "Verifies that the user has sufficient privileges for an app."
+  [{user :shortUsername} {app-id :id} level]
+  (perms/check-app-permissions user level [app-id]))
+
+(defn verify-app-editable
+  "Verifies that the app is allowed to be edited by the current user."
+  [user app]
+  (verify-app-permission user app "write")
+  (verify-app-not-public app))

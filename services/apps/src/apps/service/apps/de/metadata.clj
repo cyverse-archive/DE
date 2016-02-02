@@ -7,10 +7,10 @@
                                     get-app-subcategory-id
                                     remove-app-from-category]]
         [kameleon.uuids :only [uuidify]]
-        [apps.service.apps.de.validation :only [app-publishable?]]
+        [apps.service.apps.de.validation :only [app-publishable? verify-app-permission]]
         [apps.util.config :only [workspace-beta-app-category-id
                                        workspace-favorites-app-category-index]]
-        [apps.validation :only [get-valid-user-id verify-app-ownership]]
+        [apps.validation :only [get-valid-user-id]]
         [apps.workspace :only [get-workspace]]
         [korma.db :only [transaction]]
         [slingshot.slingshot :only [throw+]])
@@ -19,6 +19,7 @@
             [apps.clients.iplant-groups :as iplant-groups]
             [apps.persistence.app-metadata :as amp]
             [apps.service.apps.de.docs :as app-docs]
+            [apps.service.apps.de.permissions :as perms]
             [apps.translations.app-metadata :as atx]
             [apps.util.config :as config]))
 
@@ -27,32 +28,31 @@
   [app-id]
   (amp/get-app app-id))
 
-(defn- validate-app-ownership
-  "Verifies that a user owns an app."
-  [username app-id]
-  (when-not (every? (partial = username) (amp/app-accessible-by app-id))
-    (throw+ {:type  :clojure-commons.exception/bad-request-field
-             :error (str username " does not own app " app-id)})))
-
 (defn- validate-deletion-request
   "Validates an app deletion request."
-  [user req]
+  [{username :shortUsername} req]
   (when (empty? (:app_ids req))
     (throw+ {:type  :clojure-commons.exception/bad-request-field
              :error "no app identifiers provided"}))
-  (when (and (nil? (:username user)) (not (:root_deletion_request req)))
+  (when (and (nil? username) (not (:root_deletion_request req)))
     (throw+ {:type  :clojure-commons.exception/bad-request-field
              :error "no username provided for non-root deletion request"}))
   (dorun (map validate-app-existence (:app_ids req)))
   (when-not (:root_deletion_request req)
-    (dorun (map (partial validate-app-ownership (:username user)) (:app_ids req)))))
+    (perms/check-app-permissions username "own" (:app_ids req))))
+
+(defn- permanently-delete-app
+  "Permanently deletes a single app from the database."
+  [app-id]
+  (amp/permanently-delete-app app-id)
+  (iplant-groups/delete-app-resource app-id))
 
 (defn permanently-delete-apps
   "This service removes apps from the database rather than merely marking them as deleted."
   [user req]
   (validate-deletion-request user req)
   (transaction
-    (dorun (map amp/permanently-delete-app (:app_ids req)))
+    (dorun (map permanently-delete-app (:app_ids req)))
     (amp/remove-workflow-map-orphans))
   nil)
 
@@ -65,9 +65,9 @@
 
 (defn delete-app
   "This service marks an existing app as deleted in the database."
-  [user app-id]
+  [{username :shortUsername} app-id]
   (validate-app-existence app-id)
-  (validate-app-ownership (:username user) app-id)
+  (perms/check-app-permissions username "own" [app-id])
   (amp/delete-app app-id)
   {})
 
@@ -88,8 +88,8 @@
   "Adds or updates a user's rating and comment ID for the given app. The request must contain either
    the rating or the comment ID, and the rating must be between 1 and 5, inclusive."
   [user app-id {:keys [rating comment_id] :as request}]
-  (validate-app-existence app-id)
-  (let [user-id (get-valid-user-id (:username user))]
+  (let [app     (validate-app-existence app-id)
+        user-id (get-valid-user-id (:username user))]
     (when (and (nil? rating) (nil? comment_id))
       (throw+ {:type  :clojure-commons.exception/bad-request-field
                :error (str "No rating or comment ID given")}))
@@ -97,14 +97,20 @@
       (throw+ {:type  :clojure-commons.exception/bad-request-field
                :error (str "Rating must be an integer between 1 and 5 inclusive."
                                 " Invalid rating (" rating ") for App ID " app-id)}))
+    (when-not (:is_public app)
+      (throw+ {:type  :clojure-commons.exception/bad-request-field
+               :error (str "Unable to rate private app, " app-id)}))
     (amp/rate-app app-id user-id request)
     (amp/get-app-avg-rating app-id)))
 
 (defn delete-app-rating
   "Removes a user's rating and comment ID for the given app."
   [user app-id]
-  (validate-app-existence app-id)
-  (let [user-id (get-valid-user-id (:username user))]
+  (let [app     (validate-app-existence app-id)
+        user-id (get-valid-user-id (:username user))]
+    (when-not (:is_public app)
+      (throw+ {:type  :clojure-commons.exception/bad-request-field
+               :error (str "Unable to remove rating from private app, " app-id)}))
     (amp/delete-app-rating app-id user-id)
     (amp/get-app-avg-rating app-id)))
 
@@ -120,6 +126,7 @@
   [user app-id]
   (let [app (amp/get-app app-id)
         fav-category-id (get-favorite-category-id user)]
+    (verify-app-permission user app "read")
     (add-app-to-category app-id fav-category-id))
   nil)
 
@@ -145,8 +152,7 @@
 
 (defn make-app-public
   [user {app-id :id :as app}]
-  (verify-app-ownership user (validate-app-existence app-id))
-  (let [[publishable? reason] (app-publishable? app-id)]
+  (let [[publishable? reason] (app-publishable? user app-id)]
     (if publishable?
       (publish-app user app)
       (throw+ {:type  :clojure-commons.exception/bad-request-field

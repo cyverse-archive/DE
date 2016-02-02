@@ -5,6 +5,7 @@
             [apps.persistence.app-metadata :as amp]
             [apps.util.service :as service]
             [clojure.string :as string]
+            [clojure.tools.logging :as log]
             [clojure-commons.exception-util :as cxu]))
 
 (def permission-precedence (into {} (map-indexed (fn [i v] (vector v i)) ["own" "write" "read"])))
@@ -21,7 +22,7 @@
 
 (def lacks-permission-level (complement has-permission-level))
 
-(defn- check-app-permissions
+(defn check-app-permissions
   [user required-level app-ids]
   (let [perms (iplant-groups/load-app-permissions user app-ids)]
     (when-let [forbidden-apps (seq (filter (partial lacks-permission-level perms required-level) app-ids))]
