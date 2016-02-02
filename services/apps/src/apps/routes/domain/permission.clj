@@ -14,6 +14,7 @@
 
 (defschema AppPermissionListElement
   {:id          (describe NonBlankString "The app ID")
+   :name        (describe String "The app name")
    :permissions (describe [UserPermissionListElement] "The list of user permissions for the app")})
 
 (defschema AppPermissionListing
