@@ -26,7 +26,10 @@ h1 {
     color: #0971AB;
     font-size: 1.5em;
     line-height: .5em;
-    font-family: TextaBlack;
+    font-family: TextaBlack, Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro",
+    Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L",
+    Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial,
+    sans-serif !important;
 }
 a {
     color: #0971AB;

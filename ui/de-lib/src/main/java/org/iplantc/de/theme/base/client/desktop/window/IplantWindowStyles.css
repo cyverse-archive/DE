@@ -1,6 +1,6 @@
 @font-face {
-    font-family: TextaBold;
-    src: url(../Texta_Font/Texta-Bold.otf);
+    font-family: TextaRegular;
+    src: url(../Texta_Font/Texta-Regular.otf);
 }
 
 @sprite .restoreBtn {
@@ -67,6 +67,9 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    font-family: TextaBold;
+    font-family: TextaRegular, Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro",
+    Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L",
+    Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial,
+    sans-serif !important;
     font-size: 13px;
 }
