@@ -41,12 +41,18 @@
   (when-not (:root_deletion_request req)
     (perms/check-app-permissions username "own" (:app_ids req))))
 
+(defn- permanently-delete-app
+  "Permanently deletes a single app from the database."
+  [app-id]
+  (amp/permanently-delete-app app-id)
+  (iplant-groups/delete-app-resource app-id))
+
 (defn permanently-delete-apps
   "This service removes apps from the database rather than merely marking them as deleted."
   [user req]
   (validate-deletion-request user req)
   (transaction
-    (dorun (map amp/permanently-delete-app (:app_ids req)))
+    (dorun (map permanently-delete-app (:app_ids req)))
     (amp/remove-workflow-map-orphans))
   nil)
 

@@ -90,6 +90,12 @@
                      :content-type :json
                      :as           :json})))
 
+(defn- remove-resource
+  "Removes an existing permission name from grouper."
+  [resource-name]
+  (http/delete (grouper-url "attributes" resource-name)
+               {:query-params {:user grouper-user}}))
+
 (defn- grant-role-user-permission
   "Grants permission to access a resource to an individual user."
   [user role resource-name action]
@@ -105,6 +111,11 @@
   (let [app-resource-name (grouper-app-resource-name app-id)]
     (create-resource app-resource-name (grouper-app-permission-def))
     (grant-role-user-permission user (grouper-user-group) app-resource-name "own")))
+
+(defn delete-app-resource
+  "Deletes an app resource permission name in grouper."
+  [app-id]
+  (remove-resource (grouper-app-resource-name app-id)))
 
 (defn- format-role-permissions
   "Formats the role permissions for a permission update request."
