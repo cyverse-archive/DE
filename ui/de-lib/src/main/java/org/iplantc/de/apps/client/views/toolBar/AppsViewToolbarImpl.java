@@ -53,6 +53,7 @@ import com.sencha.gxt.widget.core.client.menu.Item;
 import com.sencha.gxt.widget.core.client.menu.Menu;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -261,10 +262,8 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
                 // Wf run menu item is left enabled so user can get error announcement
                 wfRunEnabled = isMultiStep && !isAppDisabled;
                 GWT.log(selectedApp.getPermission() + "&&--&&");
-                shareWithCollaboratorsMiEnabled =
-                        selectedApp.getPermission() != null && selectedApp.getPermission()
-                                                                          .equals(PermissionValue.own)
-                        && !selectedApp.getAppType().equals(App.EXTERNAL_APP);
+                shareWithCollaboratorsMiEnabled = containsSharableApps(Arrays.asList(selectedApp));
+
                 break;
             default:
                 final boolean containsSingleStepApp = containsSingleStepApp(currentSelection);
@@ -325,14 +324,19 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
     }
 
     boolean containsSharableApps(List<App> apps) {
-        for (App a : apps) {
-            if (!(a.getPermission() != null && a.getPermission().equals(PermissionValue.own)
-                  && !a.getAppType().equals(App.EXTERNAL_APP))) {
-                return false;
+        if(apps!=null && apps.size() > 0) {
+            for (App a : apps) {
+                System.out.println(a.getAppType());
+                System.out.println(a.getPermission());
+                if (!(a.getPermission() != null && a.getPermission().equals(PermissionValue.own)
+                      && a.getAppType() != null && !a.getAppType().equals(App.EXTERNAL_APP))) {
+                    return false;
+                }
             }
+            return true;
+        } else {
+            return false;
         }
-
-        return true;
     }
 
     boolean containsSingleStepApp(List<App> apps) {

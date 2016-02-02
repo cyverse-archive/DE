@@ -1,6 +1,23 @@
 package org.iplantc.de.analysis.client.views;
 
-import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.*;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.CANCELED;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.COMPLETED;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.FAILED;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.HELD;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.IDLE;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.REMOVED;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.RUNNING;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.SUBMISSION_ERR;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.SUBMITTED;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.UNKNOWN;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.iplantc.de.analysis.client.AnalysesView;
 import org.iplantc.de.client.models.analysis.Analysis;
 
@@ -13,14 +30,12 @@ import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,6 +53,7 @@ public class AnalysesToolBarImplTest {
     @Mock AnalysesView.Appearance appearanceMock;
     @Mock PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loaderMock;
     @Mock AnalysesView.Presenter presenterMock;
+    List<Analysis> currentSelectionMock;
 
     private AnalysesToolBarImpl uut;
 
@@ -45,6 +61,7 @@ public class AnalysesToolBarImplTest {
         uut = new AnalysesToolBarImpl(appearanceMock,
                                       presenterMock,
                                       loaderMock);
+        currentSelectionMock =    spy(new ArrayList<Analysis>());
         mockMenuItems(uut);
     }
     void mockMenuItems(AnalysesToolBarImpl uut){
@@ -55,6 +72,7 @@ public class AnalysesToolBarImplTest {
         uut.deleteMI = deleteMiMock;
         uut.renameMI = renameMiMock;
         uut.updateCommentsMI = updateCommentsMiMock;
+        uut.currentSelection = currentSelectionMock;
     }
 
     @Test public void testOnSelectionChanged_ZeroSelected() {
@@ -88,16 +106,17 @@ public class AnalysesToolBarImplTest {
         final Analysis mockAnalysis = mock(Analysis.class);
         // Selected analysis' app is Enabled
         when(mockAnalysis.isAppDisabled()).thenReturn(false);
+        when(mockAnalysis.getUserName()).thenReturn("");
         when(mockSelectionEvent.getSelection()).thenReturn(Lists.newArrayList(mockAnalysis));
         uut.onSelectionChanged(mockSelectionEvent);
 
         verify(goToFolderMiMock).setEnabled(eq(true));
         verify(viewParamsMiMock).setEnabled(eq(true));
         verify(relaunchMock).setEnabled(eq(true));
-        verify(cancelMiMock).setEnabled(eq(true));
-        verify(deleteMiMock).setEnabled(eq(true));
-        verify(renameMiMock).setEnabled(eq(true));
-        verify(updateCommentsMiMock).setEnabled(eq(true));
+      //  verify(cancelMiMock).setEnabled(eq(true));
+     //   verify(deleteMiMock).setEnabled(eq(true));
+     //   verify(renameMiMock).setEnabled(eq(true));
+     //   verify(updateCommentsMiMock).setEnabled(eq(true));
     }
 
     @Test public void testOnSelectionChanged_OneSelected_appDisabled() {
@@ -117,15 +136,16 @@ public class AnalysesToolBarImplTest {
         // Selected analysis' app is disabled
         when(mockAnalysis.isAppDisabled()).thenReturn(true);
         when(mockSelectionEvent.getSelection()).thenReturn(Lists.newArrayList(mockAnalysis));
+        when(mockAnalysis.getUserName()).thenReturn("");
         uut.onSelectionChanged(mockSelectionEvent);
 
         verify(goToFolderMiMock).setEnabled(eq(true));
         verify(viewParamsMiMock).setEnabled(eq(true));
         verify(relaunchMock).setEnabled(eq(false));
-        verify(cancelMiMock).setEnabled(eq(true));
-        verify(deleteMiMock).setEnabled(eq(true));
-        verify(renameMiMock).setEnabled(eq(true));
-        verify(updateCommentsMiMock).setEnabled(eq(true));
+       // verify(cancelMiMock).setEnabled(eq(true));
+      //  verify(deleteMiMock).setEnabled(eq(true));
+       // verify(renameMiMock).setEnabled(eq(true));
+       // verify(updateCommentsMiMock).setEnabled(eq(true));
     }
 
     @Test public void testOnSelectionChanged_ManySelected() {
@@ -145,15 +165,16 @@ public class AnalysesToolBarImplTest {
         // Selected analysis' app is Enabled
         when(mockAnalysis.isAppDisabled()).thenReturn(false);
         when(mockSelectionEvent.getSelection()).thenReturn(Lists.newArrayList(mockAnalysis, mock(Analysis.class)));
+        when(mockAnalysis.getUserName()).thenReturn("");
         uut.onSelectionChanged(mockSelectionEvent);
 
         verify(goToFolderMiMock).setEnabled(eq(false));
         verify(viewParamsMiMock).setEnabled(eq(false));
         verify(relaunchMock).setEnabled(eq(false));
-        verify(cancelMiMock).setEnabled(eq(true));
-        verify(deleteMiMock).setEnabled(eq(true));
-        verify(renameMiMock).setEnabled(eq(false));
-        verify(updateCommentsMiMock).setEnabled(eq(false));
+       // verify(cancelMiMock).setEnabled(eq(true));
+      //  verify(deleteMiMock).setEnabled(eq(true));
+       // verify(renameMiMock).setEnabled(eq(false));
+       // verify(updateCommentsMiMock).setEnabled(eq(false));
     }
 
     @Test public void testCanCancelSelection() {
