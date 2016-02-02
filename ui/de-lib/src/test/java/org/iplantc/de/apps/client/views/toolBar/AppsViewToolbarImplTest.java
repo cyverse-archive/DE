@@ -1,5 +1,14 @@
 package org.iplantc.de.apps.client.views.toolBar;
 
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+
 import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
@@ -9,6 +18,7 @@ import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.proxy.AppLoadConfig;
 import org.iplantc.de.client.models.apps.proxy.AppSearchAutoBeanFactory;
+import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.services.AppServiceFacade;
 
 import com.google.common.collect.Lists;
@@ -21,12 +31,12 @@ import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
-import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -52,7 +62,6 @@ public class AppsViewToolbarImplTest {
     @Mock MenuItem mockEditWf;
     @Mock MenuItem mockRequestTool;
     @Mock MenuItem mockSubmitApp;
-    @Mock MenuItem mockSubmitWf;
     @Mock MenuItem mockWfRun;
 
     @Mock TextButton mockAppMenu;
@@ -71,7 +80,6 @@ public class AppsViewToolbarImplTest {
         when(mockAppSearchFactory.loadConfig()).thenReturn(mockLoadConfigAb);
         when(mockLoadConfigAb.as()).thenReturn(mockLoadConfig);
         uut = new AppsViewToolbarImpl(mockAppearance, mockLoader);
-
         setupMocks(uut);
     }
 
@@ -88,8 +96,7 @@ public class AppsViewToolbarImplTest {
         uut.editApp = mockEditApp;
         uut.editWf = mockEditWf;
         uut.requestTool = mockRequestTool;
-        uut.submitApp = mockSubmitApp;
-        uut.submitWf = mockSubmitWf;
+        uut.sharePublic = mockSubmitApp;
         uut.wfRun = mockWfRun;
 
         uut.appSearch = appSearchMock;
@@ -122,7 +129,6 @@ public class AppsViewToolbarImplTest {
                                mockEditWf,
                                mockRequestTool,
                                mockSubmitApp,
-                               mockSubmitWf,
                                mockWfRun);
     }
 
@@ -150,7 +156,6 @@ public class AppsViewToolbarImplTest {
                                mockEditWf,
                                mockRequestTool,
                                mockSubmitApp,
-                               mockSubmitWf,
                                mockWfRun);
     }
 
@@ -175,7 +180,6 @@ public class AppsViewToolbarImplTest {
         verify(mockAppRun).setEnabled(false);
         verify(mockDeleteWf).setEnabled(false);
         verify(mockEditWf).setEnabled(false);
-        verify(mockSubmitWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
 
@@ -193,7 +197,6 @@ public class AppsViewToolbarImplTest {
                                  mockEditWf,
                                  mockRequestTool,
                                  mockSubmitApp,
-                                 mockSubmitWf,
                                  mockWfRun);
         verifyZeroInteractions(appSearchMock);
     }
@@ -205,6 +208,8 @@ public class AppsViewToolbarImplTest {
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App appMock = mock(App.class);
+        when(appMock.getPermission()).thenReturn(PermissionValue.read);
+        when(appMock.getAppType()).thenReturn("DE");
         when(appMock.getStepCount()).thenReturn(1);
         // User does not own app
         when(appMock.getIntegratorEmail()).thenReturn("user@email.com");
@@ -230,7 +235,6 @@ public class AppsViewToolbarImplTest {
         verify(mockAppRun).setEnabled(true);
         verify(mockDeleteWf).setEnabled(false);
         verify(mockEditWf).setEnabled(false);
-        verify(mockSubmitWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
 
@@ -248,7 +252,6 @@ public class AppsViewToolbarImplTest {
                                  mockEditWf,
                                  mockRequestTool,
                                  mockSubmitApp,
-                                 mockSubmitWf,
                                  mockWfRun);
         verifyZeroInteractions(appSearchMock);
     }
@@ -260,6 +263,8 @@ public class AppsViewToolbarImplTest {
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App wfMock = mock(App.class);
+        when(wfMock.getPermission()).thenReturn(PermissionValue.read);
+        when(wfMock.getAppType()).thenReturn("DE");
         when(wfMock.getStepCount()).thenReturn(2);
         // User does not own app
         when(wfMock.getIntegratorEmail()).thenReturn("user@email.com");
@@ -283,9 +288,8 @@ public class AppsViewToolbarImplTest {
         verify(mockSubmitApp).setEnabled(false);
         verify(mockCopyApp).setEnabled(false);
         verify(mockAppRun).setEnabled(false);
-        verify(mockDeleteWf).setEnabled(true);
+        verify(mockDeleteWf).setEnabled(false);
         verify(mockEditWf).setEnabled(false);
-        verify(mockSubmitWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(true);
         verify(mockWfRun).setEnabled(true);
 
@@ -303,7 +307,6 @@ public class AppsViewToolbarImplTest {
                                  mockEditWf,
                                  mockRequestTool,
                                  mockSubmitApp,
-                                 mockSubmitWf,
                                  mockWfRun);
         verifyZeroInteractions(appSearchMock);
     }
@@ -315,6 +318,8 @@ public class AppsViewToolbarImplTest {
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App appMock = mock(App.class);
+        when(appMock.getPermission()).thenReturn(PermissionValue.read);
+        when(appMock.getAppType()).thenReturn("DE");
         when(appMock.getStepCount()).thenReturn(1);
         when(appMock.isPublic()).thenReturn(true);
         // User does not own app
@@ -342,7 +347,6 @@ public class AppsViewToolbarImplTest {
         verify(mockAppRun).setEnabled(true);
         verify(mockDeleteWf).setEnabled(false);
         verify(mockEditWf).setEnabled(false);
-        verify(mockSubmitWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
 
@@ -360,7 +364,6 @@ public class AppsViewToolbarImplTest {
                                  mockEditWf,
                                  mockRequestTool,
                                  mockSubmitApp,
-                                 mockSubmitWf,
                                  mockWfRun);
         verifyZeroInteractions(appSearchMock);
     }
@@ -371,6 +374,8 @@ public class AppsViewToolbarImplTest {
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App appMock = mock(App.class);
+        when(appMock.getPermission()).thenReturn(PermissionValue.own);
+        when(appMock.getAppType()).thenReturn("DE");
         when(appMock.getStepCount()).thenReturn(2);
         when(appMock.isPublic()).thenReturn(true);
         // User does not own app
@@ -398,7 +403,6 @@ public class AppsViewToolbarImplTest {
         verify(mockAppRun).setEnabled(false);
         verify(mockDeleteWf).setEnabled(false);
         verify(mockEditWf).setEnabled(false);
-        verify(mockSubmitWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(true);
         verify(mockWfRun).setEnabled(true);
 
@@ -416,7 +420,6 @@ public class AppsViewToolbarImplTest {
                                  mockEditWf,
                                  mockRequestTool,
                                  mockSubmitApp,
-                                 mockSubmitWf,
                                  mockWfRun);
         verifyZeroInteractions(appSearchMock);
     }
@@ -429,6 +432,8 @@ public class AppsViewToolbarImplTest {
 
         App appMock = mock(App.class);
         when(appMock.getStepCount()).thenReturn(1);
+        when(appMock.getPermission()).thenReturn(PermissionValue.own);
+        when(appMock.getAppType()).thenReturn("DE");
         // User owns app
         when(appMock.getIntegratorEmail()).thenReturn("user@email.com");
         when(mockUserInfo.getEmail()).thenReturn("user@email.com");
@@ -454,7 +459,6 @@ public class AppsViewToolbarImplTest {
         verify(mockAppRun).setEnabled(true);
         verify(mockDeleteWf).setEnabled(false);
         verify(mockEditWf).setEnabled(false);
-        verify(mockSubmitWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
 
@@ -472,7 +476,6 @@ public class AppsViewToolbarImplTest {
                                  mockEditWf,
                                  mockRequestTool,
                                  mockSubmitApp,
-                                 mockSubmitWf,
                                  mockWfRun);
         verifyZeroInteractions(appSearchMock);
     }
@@ -484,6 +487,8 @@ public class AppsViewToolbarImplTest {
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App wfMock = mock(App.class);
+        when(wfMock.getPermission()).thenReturn(PermissionValue.own);
+        when(wfMock.getAppType()).thenReturn("DE");
         when(wfMock.getStepCount()).thenReturn(2);
         // User owns app
         when(wfMock.getIntegratorEmail()).thenReturn("user@email.com");
@@ -510,7 +515,6 @@ public class AppsViewToolbarImplTest {
         verify(mockAppRun).setEnabled(false);
         verify(mockDeleteWf).setEnabled(true);
         verify(mockEditWf).setEnabled(true);
-        verify(mockSubmitWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(true);
         verify(mockWfRun).setEnabled(true);
 
@@ -528,7 +532,6 @@ public class AppsViewToolbarImplTest {
                                  mockEditWf,
                                  mockRequestTool,
                                  mockSubmitApp,
-                                 mockSubmitWf,
                                  mockWfRun);
         verifyZeroInteractions(appSearchMock);
     }
@@ -539,6 +542,9 @@ public class AppsViewToolbarImplTest {
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App appMock = mock(App.class);
+        when(appMock.getStepCount()).thenReturn(1);
+        when(appMock.getPermission()).thenReturn(PermissionValue.own);
+        when(appMock.getAppType()).thenReturn("DE");
         when(appMock.getStepCount()).thenReturn(1);
         when(appMock.isRunnable()).thenReturn(true);
         // User owns app
@@ -566,7 +572,6 @@ public class AppsViewToolbarImplTest {
         verify(mockAppRun).setEnabled(true);
         verify(mockDeleteWf).setEnabled(false);
         verify(mockEditWf).setEnabled(false);
-        verify(mockSubmitWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
 
@@ -584,7 +589,6 @@ public class AppsViewToolbarImplTest {
                                  mockEditWf,
                                  mockRequestTool,
                                  mockSubmitApp,
-                                 mockSubmitWf,
                                  mockWfRun);
         verifyZeroInteractions(appSearchMock);
     }
@@ -596,6 +600,9 @@ public class AppsViewToolbarImplTest {
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App wfMock = mock(App.class);
+        when(wfMock.getStepCount()).thenReturn(1);
+        when(wfMock.getPermission()).thenReturn(PermissionValue.own);
+        when(wfMock.getAppType()).thenReturn("DE");
         when(wfMock.getStepCount()).thenReturn(2);
         when(wfMock.isRunnable()).thenReturn(true);
 
@@ -624,7 +631,6 @@ public class AppsViewToolbarImplTest {
         verify(mockAppRun).setEnabled(false);
         verify(mockDeleteWf).setEnabled(true);
         verify(mockEditWf).setEnabled(true);
-        verify(mockSubmitWf).setEnabled(true);
         verify(mockCopyWf).setEnabled(true);
         verify(mockWfRun).setEnabled(true);
 
@@ -642,7 +648,6 @@ public class AppsViewToolbarImplTest {
                                  mockEditWf,
                                  mockRequestTool,
                                  mockSubmitApp,
-                                 mockSubmitWf,
                                  mockWfRun);
         verifyZeroInteractions(appSearchMock);
     }
@@ -654,6 +659,8 @@ public class AppsViewToolbarImplTest {
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App appMock = mock(App.class);
+        when(appMock.getStepCount()).thenReturn(1);
+        when(appMock.getPermission()).thenReturn(PermissionValue.own);
         when(appMock.getStepCount()).thenReturn(1);
         when(appMock.isPublic()).thenReturn(true);
         when(appMock.isRunnable()).thenReturn(true);
@@ -682,7 +689,6 @@ public class AppsViewToolbarImplTest {
         verify(mockAppRun).setEnabled(true);
         verify(mockDeleteWf).setEnabled(false);
         verify(mockEditWf).setEnabled(false);
-        verify(mockSubmitWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
 
@@ -700,7 +706,6 @@ public class AppsViewToolbarImplTest {
                                  mockEditWf,
                                  mockRequestTool,
                                  mockSubmitApp,
-                                 mockSubmitWf,
                                  mockWfRun);
         verifyZeroInteractions(appSearchMock);
     }
@@ -712,6 +717,9 @@ public class AppsViewToolbarImplTest {
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App wfMock = mock(App.class);
+        when(wfMock.getStepCount()).thenReturn(1);
+        when(wfMock.getPermission()).thenReturn(PermissionValue.own);
+        when(wfMock.getAppType()).thenReturn("DE");
         when(wfMock.getStepCount()).thenReturn(2);
         when(wfMock.isPublic()).thenReturn(true);
         when(wfMock.isRunnable()).thenReturn(true);
@@ -741,7 +749,6 @@ public class AppsViewToolbarImplTest {
         verify(mockAppRun).setEnabled(false);
         verify(mockDeleteWf).setEnabled(false);
         verify(mockEditWf).setEnabled(false);
-        verify(mockSubmitWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(true);
         verify(mockWfRun).setEnabled(true);
 
@@ -759,7 +766,6 @@ public class AppsViewToolbarImplTest {
                                  mockEditWf,
                                  mockRequestTool,
                                  mockSubmitApp,
-                                 mockSubmitWf,
                                  mockWfRun);
         verifyZeroInteractions(appSearchMock);
     }
@@ -788,6 +794,10 @@ public class AppsViewToolbarImplTest {
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App wfMock = mock(App.class);
+        when(wfMock.getPermission()).thenReturn(PermissionValue.own);
+        when(wfMock.getAppType()).thenReturn("DE");
+        when(wfMock.getStepCount()).thenReturn(1);
+        when(wfMock.getPermission()).thenReturn(PermissionValue.own);
         when(wfMock.getStepCount()).thenReturn(2);
         when(wfMock.isPublic()).thenReturn(true);
 
@@ -800,10 +810,10 @@ public class AppsViewToolbarImplTest {
         when(appMock.getIntegratorEmail()).thenReturn("user@email.com");
         when(mockUserInfo.getEmail()).thenReturn("notUser@email.com");
 
+        currentSelectionMock = spy(new ArrayList<App>());
+        uut.currentSelection = currentSelectionMock;
         List<App> singleAppSelection = Lists.newArrayList(wfMock, appMock);
         when(eventMock.getAppSelection()).thenReturn(singleAppSelection);
-        when(currentSelectionMock.size()).thenReturn(singleAppSelection.size());
-        when(currentSelectionMock.get(eq(0))).thenReturn(singleAppSelection.get(0));
 
         /*** CALL METHOD UNDER TEST ***/
         uut.onAppSelectionChanged(eventMock);
@@ -821,7 +831,6 @@ public class AppsViewToolbarImplTest {
         verify(mockAppRun).setEnabled(false);
         verify(mockDeleteWf).setEnabled(false);
         verify(mockEditWf).setEnabled(false);
-        verify(mockSubmitWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
 
@@ -839,7 +848,6 @@ public class AppsViewToolbarImplTest {
                                  mockEditWf,
                                  mockRequestTool,
                                  mockSubmitApp,
-                                 mockSubmitWf,
                                  mockWfRun);
         verifyZeroInteractions(appSearchMock);
     }
@@ -868,10 +876,15 @@ public class AppsViewToolbarImplTest {
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App wfMock = mock(App.class);
+        when(wfMock.getStepCount()).thenReturn(1);
+        when(wfMock.getPermission()).thenReturn(PermissionValue.own);
+        when(wfMock.getAppType()).thenReturn("DE");
         when(wfMock.getStepCount()).thenReturn(2);
         when(wfMock.isPublic()).thenReturn(true);
 
         App appMock = mock(App.class);
+        when(appMock.getPermission()).thenReturn(PermissionValue.own);
+        when(appMock.getAppType()).thenReturn("DE");
         when(appMock.getStepCount()).thenReturn(1);
         when(appMock.isPublic()).thenReturn(true);
 
@@ -880,10 +893,10 @@ public class AppsViewToolbarImplTest {
         when(appMock.getIntegratorEmail()).thenReturn("user@email.com");
         when(mockUserInfo.getEmail()).thenReturn("notUser@email.com");
 
+        currentSelectionMock = spy(new ArrayList<App>());
+        uut.currentSelection = currentSelectionMock;
         List<App> singleAppSelection = Lists.newArrayList(wfMock, appMock);
         when(eventMock.getAppSelection()).thenReturn(singleAppSelection);
-        when(currentSelectionMock.size()).thenReturn(singleAppSelection.size());
-        when(currentSelectionMock.get(eq(0))).thenReturn(singleAppSelection.get(0));
 
         /*** CALL METHOD UNDER TEST ***/
         uut.onAppSelectionChanged(eventMock);
@@ -901,7 +914,6 @@ public class AppsViewToolbarImplTest {
         verify(mockAppRun).setEnabled(false);
         verify(mockDeleteWf).setEnabled(true);
         verify(mockEditWf).setEnabled(false);
-        verify(mockSubmitWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
 
@@ -919,7 +931,6 @@ public class AppsViewToolbarImplTest {
                                  mockEditWf,
                                  mockRequestTool,
                                  mockSubmitApp,
-                                 mockSubmitWf,
                                  mockWfRun);
         verifyZeroInteractions(appSearchMock);
     }
@@ -948,10 +959,14 @@ public class AppsViewToolbarImplTest {
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App wfMock = mock(App.class);
+        when(wfMock.getStepCount()).thenReturn(1);
+        when(wfMock.getPermission()).thenReturn(PermissionValue.own);
         when(wfMock.getStepCount()).thenReturn(2);
         when(wfMock.isPublic()).thenReturn(true);
 
         App appMock = mock(App.class);
+        when(appMock.getPermission()).thenReturn(PermissionValue.own);
+        when(appMock.getAppType()).thenReturn("DE");
         when(appMock.getStepCount()).thenReturn(1);
         when(appMock.isPublic()).thenReturn(true);
 
@@ -960,10 +975,10 @@ public class AppsViewToolbarImplTest {
         when(appMock.getIntegratorEmail()).thenReturn("user@email.com");
         when(mockUserInfo.getEmail()).thenReturn("notUser@email.com");
 
+        currentSelectionMock = spy(new ArrayList<App>());
+        uut.currentSelection = currentSelectionMock;
         List<App> singleAppSelection = Lists.newArrayList(wfMock, appMock);
         when(eventMock.getAppSelection()).thenReturn(singleAppSelection);
-        when(currentSelectionMock.size()).thenReturn(singleAppSelection.size());
-        when(currentSelectionMock.get(eq(0))).thenReturn(singleAppSelection.get(0));
 
         /*** CALL METHOD UNDER TEST ***/
         uut.onAppSelectionChanged(eventMock);
@@ -981,7 +996,6 @@ public class AppsViewToolbarImplTest {
         verify(mockAppRun).setEnabled(false);
         verify(mockDeleteWf).setEnabled(false);
         verify(mockEditWf).setEnabled(false);
-        verify(mockSubmitWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
 
@@ -999,7 +1013,6 @@ public class AppsViewToolbarImplTest {
                                  mockEditWf,
                                  mockRequestTool,
                                  mockSubmitApp,
-                                 mockSubmitWf,
                                  mockWfRun);
         verifyZeroInteractions(appSearchMock);
     }
@@ -1028,23 +1041,30 @@ public class AppsViewToolbarImplTest {
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App wfMock = mock(App.class);
+        when(wfMock.getStepCount()).thenReturn(1);
+        when(wfMock.getPermission()).thenReturn(PermissionValue.read);
+        when(wfMock.getAppType()).thenReturn("DE");
         when(wfMock.getStepCount()).thenReturn(2);
-        when(wfMock.isPublic()).thenReturn(true);
+        when(wfMock.isPublic()).thenReturn(false);
 
         App appMock = mock(App.class);
         when(appMock.getStepCount()).thenReturn(1);
         when(appMock.isPublic()).thenReturn(true);
+        when(appMock.getPermission()).thenReturn(PermissionValue.read);
+        when(appMock.getAppType()).thenReturn("DE");
+        when(appMock.isPublic()).thenReturn(false);
 
         // User does not own apps
         when(wfMock.getIntegratorEmail()).thenReturn("user@email.com");
         when(appMock.getIntegratorEmail()).thenReturn("user@email.com");
         when(mockUserInfo.getEmail()).thenReturn("notUser@email.com");
 
-        List<App> singleAppSelection = Lists.newArrayList(wfMock, appMock);
-        when(eventMock.getAppSelection()).thenReturn(singleAppSelection);
-        when(currentSelectionMock.size()).thenReturn(singleAppSelection.size());
-        when(currentSelectionMock.get(eq(0))).thenReturn(singleAppSelection.get(0));
 
+        currentSelectionMock = spy(new ArrayList<App>());
+        uut.currentSelection = currentSelectionMock;
+        List<App> singleAppSelection = Lists.newArrayList(wfMock, appMock);
+
+        when(eventMock.getAppSelection()).thenReturn(singleAppSelection);
         /*** CALL METHOD UNDER TEST ***/
         uut.onAppSelectionChanged(eventMock);
 
@@ -1061,7 +1081,6 @@ public class AppsViewToolbarImplTest {
         verify(mockAppRun).setEnabled(false);
         verify(mockDeleteWf).setEnabled(true);
         verify(mockEditWf).setEnabled(false);
-        verify(mockSubmitWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
 
@@ -1079,7 +1098,6 @@ public class AppsViewToolbarImplTest {
                                  mockEditWf,
                                  mockRequestTool,
                                  mockSubmitApp,
-                                 mockSubmitWf,
                                  mockWfRun);
         verifyZeroInteractions(appSearchMock);
     }

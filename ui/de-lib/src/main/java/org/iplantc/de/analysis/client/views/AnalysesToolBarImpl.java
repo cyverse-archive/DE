@@ -80,7 +80,7 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
     @Inject AsyncProvider<AnalysisParametersDialog> analysisParametersDialogAsyncProvider;
 
 
-    private List<Analysis> currentSelection;
+    List<Analysis> currentSelection;
     private final AnalysesView.Presenter presenter;
     private final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader;
 
