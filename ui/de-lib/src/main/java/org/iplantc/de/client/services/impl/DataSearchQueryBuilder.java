@@ -20,12 +20,11 @@ import java.util.logging.Logger;
 
 /**
  * This class uses a builder pattern to construct a search query from a given query template.
- * 
+ *
  * If a field in the given query template is null or empty, the corresponding search term will be omitted
  * from the final query.
- * 
+ *
  * @author jstroot
- * 
  */
 @SuppressWarnings("nls")
 public class DataSearchQueryBuilder {
@@ -77,9 +76,8 @@ public class DataSearchQueryBuilder {
                  .modifiedWithin()
                  .negatedFile()
                  .sharedWith()
-                 .excludeTrash()
                  .taggedWith();
-               
+
         LOG.fine("search query==>" + toString());
         return toString();
     }
@@ -286,15 +284,15 @@ public class DataSearchQueryBuilder {
     /**
      * Applies "implicit asterisks" to the front and end of every search term delimited term in the given
      * searchText string if that string does not contain any of the following characters:
-     * 
+     *
      * <pre>
      * *
      * ?
      * \
      * </pre>
-     * 
+     *
      * @return a string whose space-delimited terms are prepended and appended with "*" if the given
-     *         string does not contain *, ?, nor /.
+     * string does not contain *, ?, nor /.
      */
     String applyImplicitAsteriskSearchText(final String searchText) {
         String implicitSearchText = "";
@@ -324,10 +322,8 @@ public class DataSearchQueryBuilder {
      */
     String applyOROperator(final String searchText) {
         String implicitSearchText = "";
-        final Iterable<String> transform = Splitter.on(" ")
-                                                   .trimResults()
-                                                   .omitEmptyStrings()
-                                                   .split(searchText);
+        final Iterable<String> transform =
+                Splitter.on(" ").trimResults().omitEmptyStrings().split(searchText);
         implicitSearchText = Joiner.on(OR_OPERATOR).join(transform);
         return implicitSearchText;
     }
@@ -343,15 +339,6 @@ public class DataSearchQueryBuilder {
         mustNotList.assign(bool, "must_not");
 
         return query.getPayload();
-    }
-
-    public DataSearchQueryBuilder excludeTrash() {
-        // CORE-5182 exclude Trash items by default
-        String baseTrashPath = userinfo.getBaseTrashPath();
-        if (!dsf.isIncludeTrashItems() && !Strings.isNullOrEmpty(baseTrashPath)) {
-                appendArrayItem(mustNotList, createWildcard(PATH, baseTrashPath + "/*"));
-        }
-        return this;
     }
 
     private Splittable createWildcard(String field, String content) {
