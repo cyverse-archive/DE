@@ -18,9 +18,6 @@ public class Sharing {
     private final Collaborator collaborator;
     private String name;
 
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public Sharing(final Collaborator c, final PermissionValue p, final String id, final String name) {
         this.collaborator = c;
@@ -31,6 +28,10 @@ public class Sharing {
             displayPermission = permission;
         }
 
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setId(String id) {
