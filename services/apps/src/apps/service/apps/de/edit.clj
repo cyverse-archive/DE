@@ -1,5 +1,6 @@
 (ns apps.service.apps.de.edit
   (:use [clojure.string :only [blank?]]
+        [clojure-commons.validators :only [user-owns-app?]]
         [korma.core :exclude [update]]
         [korma.db :only [transaction]]
         [kameleon.app-groups :only [add-app-to-category get-app-subcategory-id]]
@@ -7,9 +8,10 @@
         [kameleon.entities]
         [kameleon.uuids :only [uuidify]]
         [apps.metadata.params :only [format-reference-genome-value]]
+        [apps.service.apps.de.validation :only [verify-app-editable verify-app-permission]]
         [apps.util.config :only [workspace-dev-app-category-index]]
         [apps.util.conversions :only [remove-nil-vals convert-rule-argument]]
-        [apps.validation :only [validate-parameter verify-app-editable verify-app-ownership]]
+        [apps.validation :only [validate-parameter]]
         [apps.workspace :only [get-workspace]]
         [slingshot.slingshot :only [throw+]])
   (:require [clojure.set :as set]
@@ -204,7 +206,7 @@
   "This service prepares a JSON response for editing an App in the client."
   [user app-id]
   (let [app (persistence/get-app app-id)]
-    (verify-app-ownership user app)
+    (verify-app-permission user app "write")
     (format-app-for-editing app)))
 
 (defn- update-parameter-argument
@@ -448,15 +450,16 @@
 (defn copy-app
   "This service makes a copy of an App available in Tito for editing."
   [user app-id]
-  (-> app-id
-      (persistence/get-app)
-      (convert-app-to-copy)
-      ((partial add-app user))))
+  (let [app (persistence/get-app app-id)]
+    (verify-app-permission user app "read")
+    (add-app user (convert-app-to-copy app))))
 
 (defn relabel-app
   "This service allows labels to be updated in any app, whether or not the app has been submitted
    for public use."
   [user {app-id :id :as body}]
-  (verify-app-ownership user (persistence/get-app app-id))
+  (let [app (persistence/get-app app-id)]
+    (when-not (user-owns-app? user app)
+      (verify-app-permission user app "write")))
   (transaction (persistence/update-app-labels body))
   (get-app-ui user app-id))

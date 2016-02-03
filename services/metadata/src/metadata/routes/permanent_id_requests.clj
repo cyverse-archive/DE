@@ -77,6 +77,9 @@
       :description
 "Allows administrators to update the status of a Permanent ID Request from any user.
 
+`Note`: If the `permanent_id` is provided in the request, then the Permanent ID Request must not already
+have a `permanent_id` set, otherwise an error is returned and the Status is not updated.
+
 `Note`: The status code is case-sensitive, and if it isn't defined in the database already then it will
  be added to the list of known status codes."
       (ok (update-permanent-id-request request-id user body)))))

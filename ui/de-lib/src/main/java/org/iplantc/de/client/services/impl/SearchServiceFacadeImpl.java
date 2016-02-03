@@ -375,6 +375,9 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
             addressSb.append(tags);
         }
 
+
+        addressSb.append("&includeTrash="
+                         + queryTemplate.isIncludeTrashItems());
         addressSb.append(limitParameter);
         addressSb.append(offsetParameter);
         addressSb.append(typeParameter);

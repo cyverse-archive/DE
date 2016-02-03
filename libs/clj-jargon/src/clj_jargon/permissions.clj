@@ -310,15 +310,26 @@
    (.setAccessPermissionOwn collection-ao zone path owner true)))
 
 (defn set-inherits
-  "Sets the inheritance attribute of a collection to true.
+  "Sets the inheritance attribute of a collection to true (recursively).
 
     Parameters:
       cm - The iRODS context map
       path - The path being altered."
   [{^CollectionAO collection-ao :collectionAO zone :zone :as cm} path]
   (validate-path-lengths path)
-  (if (item/is-dir? cm path)
-    (.setAccessPermissionInherit collection-ao zone path false)))
+  (when (item/is-dir? cm path)
+    (.setAccessPermissionInherit collection-ao zone path true)))
+
+(defn remove-inherits
+  "Sets the inheritance attribute of a collection to false (recursively).
+
+     Parameters:
+       cm - The iRODS context map
+       path - the path being altered."
+  [{^CollectionAO collection-ao :collectionAO zone :zone :as cm} path]
+  (validate-path-lengths path)
+  (when (item/is-dir? cm path)
+    (.setAccessPermissionToNotInherit collection-ao zone path true)))
 
 (defn ^Boolean permissions-inherited?
   "Determines whether the inheritance attribute of a collection is true.

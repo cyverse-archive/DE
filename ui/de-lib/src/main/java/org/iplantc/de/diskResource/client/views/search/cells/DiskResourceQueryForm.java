@@ -540,12 +540,12 @@ public class DiskResourceQueryForm extends Composite implements
 
     void initOwnerSharedSearchField() {
         ownedBy = new TextField();
-        ownedBy.setEmptyText("Enter iPlant user name");
+        ownedBy.setEmptyText("Enter CyVerse user name");
         ownedBy.setWidth(cw);
         con.add(new FieldLabel(ownedBy, "Owned by"), new HtmlData(".owner"));
 
         sharedWith = new TextField();
-        sharedWith.setEmptyText("Enter iPlant user name");
+        sharedWith.setEmptyText("Enter CyVerse user name");
         sharedWith.setWidth(cw);
         con.add(new FieldLabel(sharedWith, "Shared with"), new HtmlData(".shared"));
     }

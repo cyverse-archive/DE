@@ -8,6 +8,7 @@ import org.iplantc.de.analysis.client.events.selection.AnalysisNameSelectedEvent
 import org.iplantc.de.analysis.client.gin.factory.AnalysesViewFactory;
 import org.iplantc.de.analysis.client.presenter.proxy.AnalysisRpcProxy;
 import org.iplantc.de.analysis.client.views.AnalysisStepsView;
+import org.iplantc.de.analysis.client.views.dialogs.AnalysisSharingDialog;
 import org.iplantc.de.analysis.client.views.dialogs.AnalysisStepsInfoDialog;
 import org.iplantc.de.analysis.client.views.widget.AnalysisSearchField;
 import org.iplantc.de.client.events.EventBus;
@@ -28,6 +29,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.loader.FilterConfigBean;
@@ -172,6 +174,8 @@ public class AnalysesPresenterImpl implements
     AnalysesView.Presenter.Appearance appearance;
     @Inject
     AnalysisStepsView analysisStepView;
+    @Inject
+    Provider<AnalysisSharingDialog> aSharingDialogProvider;
 
     private final ListStore<Analysis> listStore;
 
@@ -288,6 +292,11 @@ public class AnalysesPresenterImpl implements
     @Override
     public void onShowAllSelected() {
         loadAnalyses(true);
+    }
+
+    @Override
+    public void onShareSelected(List<Analysis> selected) {
+        aSharingDialogProvider.get().show(selected);
     }
 
     @Override

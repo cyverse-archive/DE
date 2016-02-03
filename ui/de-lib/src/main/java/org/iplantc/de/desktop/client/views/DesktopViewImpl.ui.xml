@@ -13,7 +13,7 @@
         <!--Header-->
         <div class="{appearance.styles.iplantHeader}">
             <div class="{appearance.styles.logoContainer}">
-                <a href="http://iplantcollaborative.org" target="_blank"><div class="{appearance.styles.logo}"/></a>
+                <a href="http://cyverse.org" target="_blank"><div class="{appearance.styles.logo}"/></a>
                 <span class="{appearance.styles.logoText}">Discovery Environment</span>
             </div>
             <nav class="{appearance.styles.userMenuContainer}">

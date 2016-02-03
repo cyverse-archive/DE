@@ -142,7 +142,7 @@
     (.copy dto source res dest nil nil)))
 
 (defn copy-stream
-  [cm ^Closeable istream user dest-path]
+  [cm ^Closeable istream user dest-path & {:keys [set-owner?] :or {set-owner? true}}]
   (validate-path-lengths dest-path)
   (let [^Closeable ostream (output-stream cm dest-path)]
     (try
@@ -150,7 +150,8 @@
       (finally
         (.close istream)
         (.close ostream)
-        (set-owner cm dest-path user)))
+        (when set-owner?
+          (set-owner cm dest-path user))))
     (info/stat cm dest-path)))
 
 

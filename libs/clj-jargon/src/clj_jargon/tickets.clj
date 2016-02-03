@@ -54,6 +54,12 @@
   [cm user ticket-id]
   (.deleteTicket (ticket-admin-service cm user) ticket-id))
 
+(defn publicize-ticket
+  "Allows the ticket to be viewed by the public group."
+  [cm ticket-id]
+  (doto (ticket-admin-service cm (:username cm))
+    (.addTicketGroupRestriction ticket-id "public")))
+
 (defn ticket?
   "Checks to see if ticket-id is already being used as a ticket
    identifier."
@@ -117,3 +123,4 @@
 (defn ticket-proxy-input-stream
   [cm user ticket-id]
   (proxy-input-stream cm (ticket-input-stream cm user ticket-id)))
+

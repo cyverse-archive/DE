@@ -29,8 +29,8 @@ public interface IplantResources extends ClientBundle,
      * 
      * @return image.
      */
-    @Source("iplant_tiny.png")
-    ImageResource iplantTiny();
+    @Source("cyverse_tiny.png")
+    ImageResource cyverseTiny();
 
     /**
      * Image resource.

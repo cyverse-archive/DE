@@ -1,5 +1,14 @@
 package org.iplantc.de.apps.client.presenter.toolBar;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+
 import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent.AppSearchResultLoadEventHandler;
 import org.iplantc.de.apps.client.events.CreateNewAppEvent;
@@ -27,8 +36,6 @@ import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -74,6 +81,7 @@ public class AppsToolbarPresenterImplTest {
         verify(viewMock).addEditAppSelectedHandler(eq(uut));
         verify(viewMock).addRequestToolSelectedHandler(eq(uut));
         verify(viewMock).addEditWorkflowSelectedHandler(eq(uut));
+        verify(viewMock).addShareAppSelectedHandler(eq(uut));
 
         verifyNoMoreInteractions(viewFactoryMock,
                                  viewMock);

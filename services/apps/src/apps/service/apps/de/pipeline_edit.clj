@@ -13,9 +13,9 @@
                                                     remove-app-steps
                                                     update-app]]
         [apps.util.conversions :only [remove-nil-vals]]
+        [apps.service.apps.de.validation :only [verify-app-editable]]
         [apps.validation :only [validate-external-app-step
-                                      validate-pipeline
-                                      verify-app-editable]]
+                                      validate-pipeline]]
         [apps.service.apps.de.edit :only [add-app-to-user-dev-category app-copy-name]])
   (:require [apps.service.apps.de.listings :as listings]))
 
@@ -163,10 +163,10 @@
     (add-step app-id step-number step)))
 
 (defn- add-pipeline-steps
-  [app-id steps]
   "Adds steps to a pipeline. The app type isn't stored in the database, but needs to be kept in
    the list of steps so that external steps can be distinguished from DE steps. The two types of
    steps normally can't be distinguished without examining the associated task."
+  [app-id steps]
   (doall
     (map-indexed (fn [step-number step]
                    (assoc (add-pipeline-step app-id step-number step)

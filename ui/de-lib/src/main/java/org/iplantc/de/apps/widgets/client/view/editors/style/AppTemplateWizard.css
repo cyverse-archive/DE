@@ -1,7 +1,7 @@
 @def horOffset 40px;
 @def blur 10px;
 @def spread 5px;
-@def selectionColor #AADDDD;
+@def selectionColor #E2E2E2;
 
 .appHeaderSelect {
     background-image: linear-gradient(bottom, rgb(220, 220, 220) 7%,

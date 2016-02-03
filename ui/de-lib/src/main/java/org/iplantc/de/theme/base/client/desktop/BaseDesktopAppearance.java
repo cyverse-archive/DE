@@ -1,9 +1,10 @@
 package org.iplantc.de.theme.base.client.desktop;
 
+import static com.google.gwt.resources.client.ImageResource.ImageOptions;
+
 import org.iplantc.de.desktop.client.DesktopView;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
-import static com.google.gwt.resources.client.ImageResource.ImageOptions;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
@@ -55,9 +56,9 @@ public class BaseDesktopAppearance implements DesktopView.DesktopAppearance {
         ImageResource headerBg();
 
         @Source("org/iplantc/de/theme/base/client/desktop/mini_logo.png")
-        ImageResource iplantLogo();
+        ImageResource cyverseLogo();
 
-        @Source("org/iplantc/de/theme/base/client/desktop/globe.png")
+        @Source("org/iplantc/de/theme/base/client/desktop/notification.png")
         ImageResource notificationsImg();
 
         @Source("org/iplantc/de/theme/base/client/desktop/user.png")

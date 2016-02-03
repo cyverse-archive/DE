@@ -1,10 +1,13 @@
 (ns apps.clients.iplant-groups
-  (:use [medley.core :only [remove-vals]]
-        [slingshot.slingshot :only [throw+]])
+  (:use [clojure-commons.error-codes :only [clj-http-error?]]
+        [medley.core :only [remove-vals]]
+        [slingshot.slingshot :only [try+]])
   (:require [apps.util.config :as config]
+            [apps.util.service :as service]
             [cemerick.url :as curl]
             [clj-http.client :as http]
             [clojure.string :as string]
+            [clojure.tools.logging :as log]
             [clojure-commons.exception :as cx]
             [kameleon.uuids :refer [uuidify]]))
 
@@ -87,6 +90,12 @@
                      :content-type :json
                      :as           :json})))
 
+(defn- remove-resource
+  "Removes an existing permission name from grouper."
+  [resource-name]
+  (http/delete (grouper-url "attributes" resource-name)
+               {:query-params {:user grouper-user}}))
+
 (defn- grant-role-user-permission
   "Grants permission to access a resource to an individual user."
   [user role resource-name action]
@@ -102,6 +111,11 @@
   (let [app-resource-name (grouper-app-resource-name app-id)]
     (create-resource app-resource-name (grouper-app-permission-def))
     (grant-role-user-permission user (grouper-user-group) app-resource-name "own")))
+
+(defn delete-app-resource
+  "Deletes an app resource permission name in grouper."
+  [app-id]
+  (remove-resource (grouper-app-resource-name app-id)))
 
 (defn- format-role-permissions
   "Formats the role permissions for a permission update request."
@@ -136,3 +150,53 @@
                     :form-params  (public-permission-update-body)
                     :content-type :json
                     :as           :json})))
+
+(defn- share-app*
+  "Shares an app with a user."
+  [app-id subject-id level]
+  (let [resource-name (grouper-app-resource-name app-id)
+        role-name     (grouper-user-group)]
+    (http/put (grouper-url "attributes" resource-name "permissions" "memberships" role-name subject-id level)
+              {:query-params {:user grouper-user}
+               :form-params  {:allowed true}
+               :content-type :json
+               :as           :json}))
+  nil)
+
+(defn- unshare-app*
+  "Unshares an app with a user."
+  [app-id subject-id]
+  (let [resource-name (grouper-app-resource-name app-id)
+        role-name     (grouper-user-group)]
+    (http/delete (grouper-url "attributes" resource-name "permissions" "memberships" role-name subject-id)
+                 {:query-params {:user grouper-user}
+                  :as           :json}))
+  nil)
+
+(defn- get-error-reason
+  "Attempts to extract the reason for an error from an iplant-groups response body."
+  [body status]
+  (let [status-msg (str "HTTP status: " status)]
+    (try+
+      (or (:grouper_result_message (service/parse-json body)) status-msg)
+      (catch Object _ status-msg))))
+
+(defn share-app
+  "Shares an app with a user."
+  [app-id subject-id level]
+  (try+
+   (share-app* app-id subject-id level)
+   (catch clj-http-error? {:keys [status body]}
+     (let [reason (get-error-reason body status)]
+       (log/error (str "unable to share " app-id " with " subject-id ": " reason)))
+     "the app sharing request failed")))
+
+(defn unshare-app
+  "Unshares an app with a user."
+  [app-id subject-id]
+  (try+
+   (unshare-app* app-id subject-id)
+   (catch clj-http-error? {:keys [status body]}
+     (let [reason (get-error-reason body status)]
+       (log/error (str "unable to unshare " app-id " with " subject-id ": " reason)))
+     "the app unsharing request failed")))

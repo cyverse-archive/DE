@@ -82,6 +82,8 @@ public class AboutApplicationWindow extends IplantWindowBase {
         vlc.setBorders(true);
         vlc.setStyleName(appearance.iplantcAboutPadText());
         Image logo = new Image(appearance.iplantAbout().getSafeUri());
+        logo.setHeight("77px");
+        logo.setWidth("300px");
         vlc.add(logo);
         vlc.add(buildDetailsContainer());
         add(vlc);

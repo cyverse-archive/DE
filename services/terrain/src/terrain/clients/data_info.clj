@@ -148,6 +148,12 @@
   (log/warn "checking to see if" path "can be created")
   (st/can-create-dir? user path))
 
+(defn overwrite-file
+  "Overwrite a file with a new file by path."
+  [user dest istream]
+  (let [path-uuid (uuid-for-path user dest)]
+    (raw/overwrite-file user path-uuid istream)))
+
 (defn rename
   "Uses the data-info set-name endpoint to rename a file within the same directory."
   [{:keys [user]} {:keys [source dest]}]
@@ -265,19 +271,6 @@
      It returns the list of group names."
   [^String user]
   (users/list-user-groups user))
-
-
-(defn ^IPersistentMap path-stat
-  "retrieves the stat info for an entity with a given path
-
-   Params:
-     user - the username of the user making the request
-     path - the absolute path to the entity
-
-   Returns:
-     It returns the stat info formatted for the HTTP response."
-  [^String user ^String path]
-  (st/path-stat user path))
 
 
 (defn ^IPersistentMap stat-by-uuid

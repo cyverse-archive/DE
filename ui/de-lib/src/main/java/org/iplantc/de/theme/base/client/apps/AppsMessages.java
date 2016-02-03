@@ -117,4 +117,12 @@ public interface AppsMessages extends Messages {
     String appUrl();
 
     String copyAppUrl();
+
+    String copyAppSuccessMessage(String appName);
+
+    String share();
+
+    String shareCollab();
+
+    String sharePublic();
 }

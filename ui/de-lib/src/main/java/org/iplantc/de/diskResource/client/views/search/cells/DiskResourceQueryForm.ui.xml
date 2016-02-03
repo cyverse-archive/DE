@@ -129,7 +129,7 @@
                              labelAlign="TOP">
                 <form:widget>
                     <form:TextField ui:field="ownedBy"
-                                    emptyText="Enter iPlant user name"/>
+                                    emptyText="Enter CyVerse user name"/>
                 </form:widget>
             </form:FieldLabel>
         </container:child>
@@ -140,7 +140,7 @@
                              labelAlign="TOP">
                 <form:widget>
                     <form:TextField ui:field="sharedWith"
-                                    emptyText="Enter iPlant user name"/>
+                                    emptyText="Enter CyVerse user name"/>
                 </form:widget>
             </form:FieldLabel>
         </container:child>

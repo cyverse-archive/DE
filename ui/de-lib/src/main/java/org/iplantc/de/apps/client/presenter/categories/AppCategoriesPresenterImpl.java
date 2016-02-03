@@ -29,6 +29,7 @@ import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -318,6 +319,8 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
             public void onSuccess(final AppTemplate app) {
                 // Update the user's private apps group count.
                 if (!app.getId().isEmpty()) {
+                    announcer.schedule(new SuccessAnnouncementConfig(appearance.copyAppSuccessMessage(appToBeCopied.getName())));
+
                     view.getTree().getSelectionModel().deselectAll();
                     AppCategory userCategory = findAppCategoryByName(USER_APPS_GROUP);
 

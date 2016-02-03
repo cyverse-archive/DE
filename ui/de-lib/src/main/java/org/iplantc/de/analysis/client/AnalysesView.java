@@ -110,6 +110,8 @@ public interface AnalysesView extends IsWidget,
         String jobId();
 
         AnalysisInfoStyle css();
+
+        ImageResource shareIcon();
     }
 
     interface Presenter {
@@ -162,6 +164,8 @@ public interface AnalysesView extends IsWidget,
         void updateAnalysisComment(Analysis value, String comment);
 
         void getAnalysisStepInfo(Analysis value);
+
+        void onShareSelected(List<Analysis> selected);
     }
 
     void filterByAnalysisId(String id, String name);

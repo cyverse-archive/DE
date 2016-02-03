@@ -9,5 +9,6 @@ CREATE TABLE permanent_id_requests (
     type UUID,
     target_id UUID NOT NULL,
     target_type target_enum NOT NULL,
-    original_path TEXT
+    original_path TEXT,
+    permanent_id TEXT
 );

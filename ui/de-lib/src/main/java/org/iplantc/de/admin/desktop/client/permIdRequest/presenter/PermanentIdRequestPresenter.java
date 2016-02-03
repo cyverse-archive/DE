@@ -1,10 +1,5 @@
 package org.iplantc.de.admin.desktop.client.permIdRequest.presenter;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HasOneWidget;
-import com.google.inject.Inject;
-import com.google.web.bindery.autobean.shared.AutoBean;
-import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import org.iplantc.de.admin.desktop.client.permIdRequest.service.PermanentIdRequestAdminServiceFacade;
 import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView;
 import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView.PermanentIdRequestPresenterAppearance;
@@ -19,6 +14,12 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.commons.client.views.dialogs.IplantErrorDialog;
 import org.iplantc.de.resources.client.messages.I18N;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HasOneWidget;
+import com.google.inject.Inject;
+import com.google.web.bindery.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 /**
  * 
@@ -73,16 +74,19 @@ public class PermanentIdRequestPresenter implements Presenter {
 
     @Override
     public void getPermIdRequests() {
+        view.mask(I18N.DISPLAY.loadingMask());
         prsvc.getPermanentIdRequests(new AsyncCallback<String>() {
 
             @Override
             public void onFailure(Throwable caught) {
+                view.unmask();
                 IplantAnnouncer.getInstance()
                                .schedule(new ErrorAnnouncementConfig(appearance.requestLoadFailure()));
             }
 
             @Override
             public void onSuccess(String result) {
+                view.unmask();
                 final AutoBean<PermanentIdRequestList> decode = AutoBeanCodex.decode(factory,
                                                                                      PermanentIdRequestList.class,
                                                                                      result);
@@ -135,6 +139,7 @@ public class PermanentIdRequestPresenter implements Presenter {
                 @Override
                 public void onFailure(Throwable caught) {
                     view.unmask();
+                    loadPermIdRequests();
                     IplantAnnouncer.getInstance()
                                    .schedule(new ErrorAnnouncementConfig(appearance.createPermIdFailure()));
                     IplantErrorDialog ied = new IplantErrorDialog(I18N.DISPLAY.error(), caught.getMessage());
@@ -146,6 +151,9 @@ public class PermanentIdRequestPresenter implements Presenter {
                     view.unmask();
                     IplantAnnouncer.getInstance()
                                    .schedule(new SuccessAnnouncementConfig(appearance.createPermIdSucess()));
+
+                  //refresh page
+                    loadPermIdRequests();
 
                 }
             });

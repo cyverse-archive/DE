@@ -14,12 +14,14 @@
 
 (defn- mk-handler
   [consume]
-  (fn [_ {:keys [routing-key delivery-tag]} ^bytes payload]
+  (fn [channel {:keys [routing-key delivery-tag redelivery?]} ^bytes payload]
     (tc/with-logging-context {:amqp-delivery-tag delivery-tag}
       (try+
         (consume routing-key (json/parse-string (String. payload "UTF-8") true))
+        (lb/ack channel delivery-tag)
         (catch Object _
-          (log/error (:throwable &throw-context) "MESSAGE HANDLING ERROR"))))))
+          (lb/reject channel delivery-tag (not redelivery?))
+          (log/error (:throwable &throw-context) (str "MESSAGE HANDLING ERROR, redelivery: " redelivery?)))))))
 
 
 (defn- consume
@@ -40,7 +42,7 @@
     (le/topic channel exchange-name :durable exchange-durable :auto-delete exchange-auto-delete)
     (lq/declare channel queue :durable true)
     (doseq [topic topics] (lq/bind channel queue exchange-name :routing-key topic))
-    (lb/consume channel queue consumer :auto-ack true)))
+    (lb/consume channel queue consumer :auto-ack false)))
 
 
 (defn attach-to-exchange

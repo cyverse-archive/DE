@@ -677,3 +677,11 @@
           (join [:apps :app]
                 {:app.id :s.app_id})
           (where {:app.id (uuidify app-id)})))
+
+(defn get-app-names
+  [app-ids]
+  (->> (select :apps
+               (fields :id :name)
+               (where {:id [in (map uuidify app-ids)]}))
+       (map (juxt :id :name))
+       (into {})))

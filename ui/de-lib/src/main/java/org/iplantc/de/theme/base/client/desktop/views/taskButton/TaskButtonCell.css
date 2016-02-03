@@ -5,6 +5,11 @@
  *
  * http://www.sencha.com/products/gxt/license/
  */
+@font-face {
+  font-family: TextaRegular;
+  src: url(../../Texta_Font/Texta-Regular.otf);
+}
+
 .mainTable {
   height: 29px;
 }
@@ -12,4 +17,9 @@
 .text {
   color: white;
   height: auto;
+  font-family: TextaRegular, Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro",
+  Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L",
+  Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial,
+  sans-serif !important;
+  font-size: 12px;
 }

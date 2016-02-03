@@ -31,7 +31,7 @@ public class IplantBaseWindowAppearance implements IplantWindowBase.IplantWindow
         @Source("org/iplantc/de/theme/base/client/desktop/window/IplantWindowStyles.css")
         Styles css();
 
-        @Source("org/iplantc/de/theme/base/client/desktop/window/iplant_tiny.png")
+        @Source("org/iplantc/de/theme/base/client/desktop/window/cyverse_tiny.png")
         ImageResource headerIcon();
 
         @Source("org/iplantc/de/theme/base/client/desktop/window/button_exit.png")

@@ -119,6 +119,7 @@
    ["test.rsf"                :rsf]
    ["test.vcf"                :vcf]
    ["example.vcf"             :vcf]
+   ["SRR013472.sff"           :sff]
    ["test.stockholm"          :stockholm]
    ["test.swiss"              :swiss]
    ["test.prodom"             :prodom]

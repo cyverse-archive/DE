@@ -34,8 +34,8 @@ public class Belphegor implements EntryPoint {
     private final String APP_NAME = "Tool Integration Administration";
     private final String CANT_LOAD_USER_INFO_ERROR = "Unable to load user info";
     private final String RETRIEVE_USER_INFO_ERROR = "There has been an unexpected error. " +
-                                                        "Please log out of your iPlant account or close your browser window and try again. " +
-                                                        "If you continue to experience problems, contact us at support@iplantcollaborative.org.";
+                                                        "Please log out of your CyVerse account or close your browser window and try again. " +
+                                                        "If you continue to experience problems, contact us at support@cyverse.org.";
 
     /**
      * This is the entry point method.

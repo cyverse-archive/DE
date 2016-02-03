@@ -1,6 +1,11 @@
 package org.iplantc.de.analysis.client.views;
 
-import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.*;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.CANCELED;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.COMPLETED;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.FAILED;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.IDLE;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.RUNNING;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.SUBMITTED;
 
 import org.iplantc.de.analysis.client.AnalysesView;
 import org.iplantc.de.analysis.client.AnalysisToolBarView;
@@ -8,6 +13,7 @@ import org.iplantc.de.analysis.client.views.dialogs.AnalysisCommentsDialog;
 import org.iplantc.de.analysis.client.views.dialogs.AnalysisParametersDialog;
 import org.iplantc.de.analysis.client.views.widget.AnalysisSearchField;
 import org.iplantc.de.analysis.shared.AnalysisModule;
+import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
@@ -69,10 +75,12 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
     @UiField TextButton showAllTb;
     @UiField AnalysisSearchField searchField;
     @UiField(provided = true) final AnalysesView.Appearance appearance;
+    // @UiField
+    // MenuItem shareMI;
     @Inject AsyncProvider<AnalysisParametersDialog> analysisParametersDialogAsyncProvider;
 
 
-    private List<Analysis> currentSelection;
+    List<Analysis> currentSelection;
     private final AnalysesView.Presenter presenter;
     private final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader;
 
@@ -106,14 +114,17 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
 
     @Override
     public void onSelectionChanged(SelectionChangedEvent<Analysis> event) {
+        
+        GWT.log("user--->" + UserInfo.getInstance().getFullUsername());
         currentSelection = event.getSelection();
 
         int size = currentSelection.size();
         final boolean canCancelSelection = canCancelSelection(currentSelection);
         final boolean canDeleteSelection = canDeleteSelection(currentSelection);
+        boolean isOwner = canShare(currentSelection);
 
         boolean goToFolderEnabled, viewParamsEnabled, relaunchEnabled, cancelEnabled, deleteEnabled;
-        boolean renameEnabled, updateCommentsEnabled;
+        boolean renameEnabled, updateCommentsEnabled, shareEnabled;
         switch (size) {
             case 0:
                 goToFolderEnabled = false;
@@ -124,17 +135,19 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
 
                 renameEnabled = false;
                 updateCommentsEnabled = false;
+                shareEnabled = false;
 
                 break;
             case 1:
                 goToFolderEnabled = true;
                 viewParamsEnabled = true;
                 relaunchEnabled = !currentSelection.get(0).isAppDisabled();
-                cancelEnabled = canCancelSelection;
-                deleteEnabled = canDeleteSelection;
+                cancelEnabled = canCancelSelection && isOwner;
+                deleteEnabled = canDeleteSelection && isOwner;
 
-                renameEnabled = true;
-                updateCommentsEnabled = true;
+                renameEnabled = isOwner;
+                updateCommentsEnabled = isOwner;
+                shareEnabled = isOwner;
                 break;
 
             default:
@@ -142,9 +155,9 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
                 goToFolderEnabled = false;
                 viewParamsEnabled = false;
                 relaunchEnabled = false;
-                cancelEnabled = canCancelSelection;
-                deleteEnabled = canDeleteSelection;
-
+                cancelEnabled = canCancelSelection && isOwner;
+                deleteEnabled = canDeleteSelection && isOwner;
+                shareEnabled = isOwner;
                 renameEnabled = false;
                 updateCommentsEnabled = false;
         }
@@ -155,9 +168,26 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
         relaunchMI.setEnabled(relaunchEnabled);
         cancelMI.setEnabled(cancelEnabled);
         deleteMI.setEnabled(deleteEnabled);
-
+        /**
+         * always disabled for now.
+         * 
+         */
+        // shareMI.setEnabled(shareEnabled);
+        /**
+         * uncomment when feature is needed.
+         */
         renameMI.setEnabled(renameEnabled);
         updateCommentsMI.setEnabled(updateCommentsEnabled);
+    }
+
+    private boolean canShare(List<Analysis> selection) {
+        for (Analysis a : selection) {
+            if (!(a.getUserName().equals(UserInfo.getInstance().getFullUsername()))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override
@@ -367,4 +397,8 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
     }
     //</editor-fold>
 
+    /**
+     * @UiHandler("shareMI") void onShareSelected(SelectionEvent<Item> event) {
+     *                       presenter.onShareSelected(currentSelection); }
+     **/
 }

@@ -21,6 +21,9 @@ public interface AppsModule {
         String MENU_ITEM_DELETE_APP = ".delete";
         String MENU_ITEM_SHARE_APP = ".share";
 
+        String MENU_ITEM_SHARE_APP_COLLAB = ".shareCollab";
+        String MENU_ITEM_SHARE_APP_PUBLIC = ".sharePublic";
+
         String MENU_ITEM_WF = ".wf";
         String MENU_ITEM_USE_WF = ".useWf";
         String MENU_ITEM_CREATE_WF = ".createNew";

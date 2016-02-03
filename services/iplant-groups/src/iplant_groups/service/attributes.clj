@@ -16,6 +16,10 @@
   (let [attribute-name (grouper/add-attribute-name user attribute_definition name display_extension description)]
     (fmt/format-attribute-name attribute-name)))
 
+(defn delete-attribute-name
+  [attribute-name {:keys [user]}]
+  (grouper/delete-attribute-name user attribute-name))
+
 (defn assign-role-permission
   [{:keys [user]} {:keys [allowed]} attribute-name role-name action-name]
   (let [attribute-assign (grouper/assign-role-permission user attribute-name role-name allowed [action-name])]
@@ -25,6 +29,12 @@
   [{:keys [user]} attribute-name role-name action-name]
   (let [attribute-assign (grouper/remove-role-permission user attribute-name role-name [action-name])]
     (fmt/format-attribute-assign attribute-assign)))
+
+(defn remove-existing-membership-permissions
+  [{:keys [user]} attribute-name role-name subject-id]
+  {:assignments
+   (mapv fmt/format-attribute-assign
+         (grouper/remove-existing-membership-permissions user attribute-name role-name subject-id))})
 
 (defn assign-membership-permission
   [{:keys [user]} {:keys [allowed]} attribute-name role-name subject-id action-name]

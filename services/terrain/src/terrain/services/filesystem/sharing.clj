@@ -69,7 +69,7 @@
 
     (when (is-dir? cm fpath)
       (log/warn fpath "is a directory, setting the inherit bit.")
-      (.setAccessPermissionInherit (:collectionAO cm) (:zone cm) fpath true))
+      (set-inherits cm fpath))
 
     (when-not (is-readable? cm share-with hdir)
       (log/warn share-with "is being given read permissions on" hdir "by" user)
@@ -118,7 +118,7 @@
   [cm user unshare-with fpath]
   (when (remove-inherit-bit? cm user fpath)
     (log/warn "Removing inherit bit on" fpath)
-    (.setAccessPermissionToNotInherit (:collectionAO cm) (:zone cm) fpath true)))
+    (remove-inherits cm fpath)))
 
 (defn- unshare-path
   "Removes permissions for a user to access a path.  This consists of several steps:

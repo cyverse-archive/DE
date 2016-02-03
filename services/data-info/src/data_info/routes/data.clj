@@ -4,7 +4,6 @@
         [data-info.routes.domain.data]
         [data-info.routes.domain.stats])
   (:require [data-info.services.create :as create]
-            [data-info.services.rename :as rename]
             [data-info.services.metadata :as meta]
             [data-info.services.entry :as entry]
             [data-info.services.write :as write]
@@ -16,49 +15,6 @@
             [data-info.util.schema :as s]))
 
 (defroutes* data-operations
-
-  (POST* "/mover" [:as {uri :uri}]
-    :tags ["bulk"]
-    :query [params StandardUserQueryParams]
-    :body [body (describe MultiRenameRequest "The paths to rename and their destination.")]
-    :return MultiRenameResult
-    :summary "Move Data Items"
-    :description (str
-"Given a list of sources and a destination in the body, moves all the sources into the given destination directory."
-(get-error-code-block "ERR_NOT_A_FOLDER, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_EXISTS, ERR_TOO_MANY_PATHS, ERR_NOT_A_USER"))
-    (svc/trap uri rename/do-move params body))
-
-  (context* "/admin/data" []
-    :tags ["data"]
-
-    (context* "/:data-id" []
-      :path-params [data-id :- DataIdPathParam]
-      :tags ["data-by-id"]
-
-      (GET* "/avus" [:as {uri :uri}]
-        :query [{:keys [user]} StandardUserQueryParams]
-        :return AVUGetResult
-        :summary "List AVUs (administrative)"
-        :description (str "List iRODS AVUs associated with a data item. Include administrative/system AVUs."
-(get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE"))
-        (svc/trap uri meta/admin-metadata-get data-id))
-
-      (POST* "/avus" [:as {uri :uri}]
-        :query [{:keys [user]} StandardUserQueryParams]
-        :body [{:keys [irods-avus]} (describe AVUListing "An list of AVUs to add")]
-        :return AVUChangeResult
-        :summary "Add AVUs (administrative)"
-        :description (str "Associate AVUs with a data item. Allow adding any AVU."
-(get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_AUTHORIZED"))
-        (svc/trap uri meta/admin-metadata-add data-id irods-avus))
-
-      (DELETE* "/avus" [:as {uri :uri}]
-        :query [{:keys [user attr value]} AVUDeleteParams]
-        :return AVUChangeResult
-        :summary "Delete AVU (administrative)"
-        :description (str "Delete a single AVU from a data item. Allows deleting any AVU."
-(get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_AUTHORIZED"))
-        (svc/trap uri meta/admin-metadata-delete data-id [{:attr attr :value value}]))))
 
   (context* "/data" []
     :tags ["data"]
@@ -90,7 +46,7 @@
     (POST* "/" [:as {uri :uri}]
       :query [params FileUploadQueryParams]
       :multipart-params [file :- String]
-      :middlewares [write/wrap-multipart]
+      :middlewares [write/wrap-multipart-create]
       :return FileStat
       :summary "Upload a file"
       :description (str
@@ -129,64 +85,16 @@ with characters in a runtime-configurable parameter. Currently, this parameter l
         :description "Returns an HTTP status according to the user's access level to the data item."
         (ce/trap uri entry/id-entry data-id user))
 
-      (GET* "/avus" [:as {uri :uri}]
-        :query [{:keys [user]} StandardUserQueryParams]
-        :return AVUGetResult
-        :summary "List AVUs"
-        :description (str "List iRODS AVUs associated with a data item."
-(get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE"))
-        (svc/trap uri meta/metadata-get user data-id :system false))
-
-      (POST* "/avus" [:as {uri :uri}]
-        :query [{:keys [user]} StandardUserQueryParams]
-        :body [{:keys [irods-avus]} (describe AVUListing "An list of AVUs to add")]
-        :return AVUChangeResult
-        :summary "Add AVUs"
-        :description (str "Associate AVUs with a data item. Administrative AVUs may not be added with this endpoint."
-(get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_AUTHORIZED"))
-        (svc/trap uri meta/metadata-add user data-id irods-avus))
-
-      (PUT* "/avus" [:as {uri :uri}]
-        :query [{:keys [user]} StandardUserQueryParams]
-        :body [{:keys [irods-avus]} (describe AVUListing "A list of AVUs to set for this file. May not include administrative AVUs, and will not delete them.")]
-        :return AVUSetResult
-        :summary "Set AVUs"
-        :description (str "Set the iRODS AVUS for a data item to a provided set. This set may not include administrative AVUs, and similarly will not remove administrative AVUs."
-(get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_AUTHORIZED"))
-        (svc/trap uri meta/metadata-set user data-id irods-avus))
-
-      (PUT* "/name" [:as {uri :uri}]
+      (PUT* "/" [:as {uri :uri}]
         :query [params StandardUserQueryParams]
-        :body [body (describe Filename "The new name of the data item.")]
-        :return RenameResult
-        :summary "Rename Data Item"
+        :multipart-params [file :- String]
+        :middlewares [write/wrap-multipart-overwrite]
+        :return FileStat
+        :summary "Overwrite Contents"
         :description (str
-  "Moves the data item with the provided UUID to a new name within the same folder."
-  (get-error-code-block
-    "ERR_NOT_A_FOLDER, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_EXISTS, ERR_INCOMPLETE_RENAME, ERR_NOT_A_USER, ERR_TOO_MANY_PATHS"))
-        (svc/trap uri rename/do-rename-uuid params body data-id))
-
-      (PUT* "/dir" [:as {uri :uri}]
-        :query [params StandardUserQueryParams]
-        :body [body (describe Dirname "The new directory name of the data item.")]
-        :return RenameResult
-        :summary "Move Data Item"
-        :description (str
-  "Moves the data item with the provided UUID to a new folder, retaining its name."
-  (get-error-code-block
-    "ERR_NOT_A_FOLDER, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_EXISTS, ERR_INCOMPLETE_RENAME, ERR_NOT_A_USER, ERR_TOO_MANY_PATHS"))
-        (svc/trap uri rename/do-move-uuid params body data-id))
-
-      (PUT* "/children/dir" [:as {uri :uri}]
-        :query [params StandardUserQueryParams]
-        :body [body (describe Dirname "The new directory name of the data items.")]
-        :return MultiRenameResult
-        :summary "Move Data Item Contents"
-        :description (str
-  "Moves the contents of the folder with the provided UUID to a new folder, retaining their filenames."
-  (get-error-code-block
-    "ERR_NOT_A_FOLDER, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_EXISTS, ERR_INCOMPLETE_RENAME, ERR_NOT_A_USER, ERR_TOO_MANY_PATHS"))
-        (svc/trap uri rename/do-move-uuid-contents params body data-id))
+"Overwrites a file as a user, given the user can write to it and the file already exists."
+(get-error-code-block "ERR_NOT_A_USER, ERR_DOES_NOT_EXIST, ERR_NOT_A_FILE, ERR_NOT_WRITEABLE"))
+        (svc/trap uri write/do-upload params file))
 
       (GET* "/chunks" [:as {uri :uri}]
         :query [params ChunkParams]
@@ -208,6 +116,7 @@ with characters in a runtime-configurable parameter. Currently, this parameter l
     "ERR_DOES_NOT_EXIST, ERR_NOT_A_FILE, ERR_NOT_READABLE, ERR_NOT_A_USER, ERR_INVALID_PAGE, ERR_PAGE_NOT_POS, ERR_CHUNK_TOO_SMALL"))
         (svc/trap uri page-tabular/do-read-csv-chunk params data-id))
 
+      ;; XXX: The logic coordinating this with the metadata service should be migrated up into terrain; it should just use POST /data
       (POST* "/metadata/save" [:as {uri :uri}]
         :query [params StandardUserQueryParams]
         :body [body (describe MetadataSaveRequest "The metadata save request.")]

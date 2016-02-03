@@ -1,6 +1,6 @@
 # DiscoveryEnvironment
 The Discovery Environment is a web portal for life science research, giving access to the 
-data store and compute of the iPlant cyber-infrastructure.
+data store and compute of the CyVerse cyber-infrastructure.
 
 This project is built with [Gradle](http://www.gradle.org/). Please refer to the Gradle 
 documentation for an intro to the 

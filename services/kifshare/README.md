@@ -1,6 +1,6 @@
 # kifshare
 
-A simple web page that allows users to download publicly available files without an iPlant account.
+A simple web page that allows users to download publicly available files without a CyVerse account.
 
 # Development Prerequisites
 

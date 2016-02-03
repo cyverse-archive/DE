@@ -1,7 +1,10 @@
 package org.iplantc.de.fileViewers.client.views;
 
+import static org.iplantc.de.client.models.viewer.InfoType.BED;
+import static org.iplantc.de.client.models.viewer.InfoType.BOWTIE;
 import static org.iplantc.de.client.models.viewer.InfoType.CSV;
 import static org.iplantc.de.client.models.viewer.InfoType.GFF;
+import static org.iplantc.de.client.models.viewer.InfoType.GTF;
 import static org.iplantc.de.client.models.viewer.InfoType.HT_ANALYSIS_PATH_LIST;
 import static org.iplantc.de.client.models.viewer.InfoType.TSV;
 import static org.iplantc.de.client.models.viewer.InfoType.VCF;
@@ -137,7 +140,10 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
             return COMMA_DELIMITER;
         } else if (TSV.equals(fromTypeString)
                        || VCF.equals(fromTypeString)
-                       || GFF.equals(fromTypeString)) {
+                       || GFF.equals(fromTypeString)
+                       || BED.equals(fromTypeString)
+                       || GTF.equals(fromTypeString)
+                       || BOWTIE.equals(fromTypeString)) {
             return TAB_DELIMITER;
         } else {
             return SPACE_DELIMITER;

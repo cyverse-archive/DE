@@ -2,7 +2,7 @@
 <project name="Discovery Environment">
   <bannerLeft>
     <name>Discovery Environment</name>
-    <src>./images/iplant_logo.png</src>
+    <src>./images/cyverse_logo.png</src>
     <href>http://projects.iplantcollaborative.org/</href>
   </bannerLeft>
   <!--
@@ -14,7 +14,7 @@
     <links>
       <item name="Apache" href="http://www.apache.org/" />
       <item name="Maven 2" href="http://maven.apache.org/"/>
-      <item name="The iPlant Collaborative" href="http://iplantcollaborative.org"/>
+      <item name="CyVerse" href="http://cyverse.org"/>
     </links>
     <menu ref="reports" />
 	<menu name="Web Service Documentation">

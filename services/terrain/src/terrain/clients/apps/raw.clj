@@ -90,6 +90,24 @@
                 :as               :stream
                 :follow-redirects false}))
 
+(defn share
+  [body]
+  (client/post (apps-url "apps" "sharing")
+               {:query-params     (secured-params)
+                :body             body
+                :content-type     :json
+                :as               :stream
+                :follow-redirects false}))
+
+(defn unshare
+  [body]
+  (client/post (apps-url "apps" "unsharing")
+               {:query-params     (secured-params)
+                :body             body
+                :content-type     :json
+                :as               :stream
+                :follow-redirects false}))
+
 (defn get-app
   [app-id]
   (client/get (apps-url "apps" app-id)

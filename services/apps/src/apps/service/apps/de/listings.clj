@@ -18,6 +18,7 @@
             [cemerick.url :as curl]))
 
 (def my-public-apps-id (uuidify "00000000-0000-0000-0000-000000000000"))
+(def shared-with-me-id (uuidify "EEEEEEEE-EEEE-EEEE-EEEE-EEEEEEEEEEEE"))
 (def trash-category-id (uuidify "FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"))
 
 (def default-sort-params
@@ -54,7 +55,7 @@
 
 (defn- format-my-public-apps-group
   "Formats the virtual group for the user's public apps."
-  [user workspace-id params]
+  [user _ params]
   {:id        my-public-apps-id
    :name      "My public apps"
    :is_public false
@@ -69,21 +70,37 @@
    (:email user)
    params))
 
+(defn format-shared-with-me-category
+  "Formats the virtual group for apps that have been shared with the user."
+  [_ workspace params]
+  {:id        shared-with-me-id
+   :name      "Shared with me"
+   :is_public false
+   :app_count (count-shared-apps workspace (workspace-favorites-app-category-index) params)})
+
+(defn list-apps-shared-with-me
+  [_ workspace params]
+  (list-shared-apps workspace (workspace-favorites-app-category-index) params))
+
 (def ^:private virtual-group-fns
-  {(keyword (str my-public-apps-id)) {:format-group   format-my-public-apps-group
-                                      :format-listing list-my-public-apps}
-   (keyword (str trash-category-id)) {:format-group   format-trash-category
-                                      :format-listing list-trashed-apps}})
+  {my-public-apps-id {:format-group   format-my-public-apps-group
+                      :format-listing list-my-public-apps}
+   trash-category-id {:format-group   format-trash-category
+                      :format-listing list-trashed-apps}
+   shared-with-me-id {:format-group   format-shared-with-me-category
+                      :format-listing list-apps-shared-with-me}})
+
+(def ^:private virtual-group-ids (set (keys virtual-group-fns)))
 
 (defn- format-private-virtual-groups
   "Formats any virtual groups that should appear in a user's workspace."
-  [user workspace-id params]
+  [user workspace params]
   (remove :is_public
-    (map (fn [[_ {f :format-group}]] (f user workspace-id params)) virtual-group-fns)))
+    (map (fn [[_ {f :format-group}]] (f user workspace params)) virtual-group-fns)))
 
 (defn- add-private-virtual-groups
-  [user group workspace-id params]
-  (let [virtual-groups (format-private-virtual-groups user workspace-id params)
+  [user group workspace params]
+  (let [virtual-groups (format-private-virtual-groups user workspace params)
         actual-count   (count-apps-in-group-for-user
                         (:id group)
                         (:email user)
@@ -95,32 +112,30 @@
 (defn- format-app-group-hierarchy
   "Formats the app group hierarchy rooted at the app group with the given
    identifier."
-  [user user-workspace-id params {root-id :root_category_id workspace-id :id}]
+  [user user-workspace params {root-id :root_category_id workspace-id :id}]
   (let [groups (get-app-group-hierarchy root-id params)
         root   (first (filter #(= root-id (:id %)) groups))
         result (add-subgroups root groups)]
-    (if (= user-workspace-id workspace-id)
-      (add-private-virtual-groups user result workspace-id params)
+    (if (= (:id user-workspace) workspace-id)
+      (add-private-virtual-groups user result user-workspace params)
       result)))
 
 (defn- get-workspace-app-groups
   "Retrieves the list of the current user's workspace app groups."
   [user params]
-  (let [workspace (get-workspace (:username user))
-        workspace-id (:id workspace)]
-    [(format-app-group-hierarchy user workspace-id params workspace)]))
+  (let [workspace (get-workspace (:username user))]
+    [(format-app-group-hierarchy user workspace params workspace)]))
 
 (defn- get-visible-app-groups-for-workspace
   "Retrieves the list of app groups that are visible from a workspace."
-  [workspace-id user params]
-  (let [workspaces (get-visible-workspaces workspace-id)]
-    (map (partial format-app-group-hierarchy user workspace-id params) workspaces)))
+  [user-workspace user params]
+  (let [workspaces (get-visible-workspaces (:id user-workspace))]
+    (map (partial format-app-group-hierarchy user user-workspace params) workspaces)))
 
 (defn- get-visible-app-groups
   "Retrieves the list of app groups that are visible to a user."
   [user {:keys [admin] :as params}]
   (-> (when-not admin (get-optional-workspace (:username user)))
-      (:id)
       (get-visible-app-groups-for-workspace user params)))
 
 (defn get-app-groups
@@ -217,11 +232,10 @@
 (defn- list-apps-in-virtual-group
   "Formats a listing for a virtual group."
   [user workspace group-id perms params]
-  (let [group-key (keyword (str group-id))]
-    (when-let [format-fns (virtual-group-fns group-key)]
-      (-> ((:format-group format-fns) user (:id workspace) params)
-          (assoc :apps (->> ((:format-listing format-fns) user workspace params)
-                            (map (partial format-app-listing perms))))))))
+  (when-let [format-fns (virtual-group-fns group-id)]
+    (-> ((:format-group format-fns) user workspace params)
+        (assoc :apps (->> ((:format-listing format-fns) user workspace params)
+                          (map (partial format-app-listing perms)))))))
 
 (defn- count-apps-in-group
   "Counts the number of apps in an app group, including virtual app groups that may be included."
@@ -264,7 +278,7 @@
 (defn has-category
   "Determines whether or not a category with the given ID exists."
   [category-id]
-  (or (#{my-public-apps-id trash-category-id} category-id)
+  (or (virtual-group-ids category-id)
       (seq (select :app_categories (where {:id category-id})))))
 
 (defn search-apps
@@ -316,7 +330,8 @@
 
 (defn get-app-details
   "This service obtains the high-level details of an app."
-  [app-id]
+  [{username :shortUsername} app-id]
+  (perms/check-app-permissions username "read" [app-id])
   (let [details (load-app-details app-id)
         tools   (get-app-tools app-id)]
     (when (empty? tools)
@@ -401,13 +416,15 @@
 
 (defn get-app-task-listing
   "A service used to list the file parameters in an app."
-  [app-id]
+  [{username :shortUsername} app-id]
+  (perms/check-app-permissions username "read" [app-id])
   (let [app (get-app app-id)]
     (format-app-task-listing app)))
 
 (defn get-app-tool-listing
   "A service to list the tools used by an app."
-  [app-id]
+  [{username :shortUsername} app-id]
+  (perms/check-app-permissions username "read" [app-id])
   (let [app (get-app app-id)
         tasks (:tasks (first (select apps
                                (with tasks (fields :tool_id))

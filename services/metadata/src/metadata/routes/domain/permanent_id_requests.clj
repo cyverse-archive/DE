@@ -17,7 +17,8 @@
   {:type (describe PermanentIDRequestTypeEnum "The type of persistent ID requested")
    :target_id (describe UUID "The UUID of the data item for which the persistent ID is being requested")
    :target_type DataTypeParam
-   (s/optional-key :original_path) (describe String "The path associated with the given `target_id`")})
+   (s/optional-key :original_path) (describe String "The path associated with the given `target_id`")
+   (s/optional-key :permanent_id) (describe String "The identifier of a completed Permanent ID Request")})
 
 (s/defschema PermanentIDRequestBase
   (merge PermanentIDRequest
@@ -26,7 +27,8 @@
 
 (s/defschema PermanentIDRequestStatusUpdate
   {(s/optional-key :status) (describe String "The status code of the Permanent ID Request update")
-   (s/optional-key :comments) (describe String "The curator comments of the Permanent ID Request status update")})
+   (s/optional-key :comments) (describe String "The curator comments of the Permanent ID Request status update")
+   (s/optional-key :permanent_id) (describe String "The identifier of a completed Permanent ID Request")})
 
 (s/defschema PermanentIDRequestStatus
   (merge PermanentIDRequestStatusUpdate

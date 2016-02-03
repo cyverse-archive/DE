@@ -82,4 +82,12 @@ public interface AppUserServiceFacade extends AppServiceFacade {
                  AsyncCallback<AppFeedback> callback);
 
     void deleteRating(App app, AsyncCallback<AppFeedback> callback);
+
+    void getPermissions(List<App> apps, AsyncCallback<String> callback);
+
+    void shareApp(JSONObject request, AsyncCallback<String> callback);
+    
+    void unshareApp(JSONObject request, AsyncCallback<String> callback);
+
+
 }

@@ -303,11 +303,6 @@
   "The identifier of the internal app used for URL imports."
   [props config-valid configs fileio-routes-enabled]
   "terrain.fileio.url-import-app")
-
-(cc/defprop-int fileio-max-edit-file-size
-  "The old service name for fileio"
-  [props config-valid configs fileio-routes-enabled]
-  "terrain.fileio.max-edit-file-size")
 ;;; End File IO configuration
 
 ;;; Filesystem configuration (a.k.a. data-info).
@@ -462,6 +457,31 @@
   "The data store directory where curated folders with a permanent ID are published."
   [props config-valid configs]
   "terrain.permanent-id.publish-dir")
+
+(cc/defprop-str permanent-id-target-base-url
+  "The base URL where curated folders with a permanent ID are published."
+  [props config-valid configs]
+  "terrain.permanent-id.target-base-url")
+
+(cc/defprop-str permanent-id-identifier-attr
+  "The metadata attribute where a new permanent ID is stored."
+  [props config-valid configs]
+  "terrain.permanent-id.attr.identifier")
+
+(cc/defprop-str permanent-id-alt-identifier-attr
+  "The metadata attribute where a new permanent ID is stored."
+  [props config-valid configs]
+  "terrain.permanent-id.attr.alt-identifier")
+
+(cc/defprop-str permanent-id-alt-identifier-type-attr
+  "The metadata attribute where a new permanent ID is stored."
+  [props config-valid configs]
+  "terrain.permanent-id.attr.alt-identifier-type")
+
+(cc/defprop-str permanent-id-date-attr
+  "The metadata attribute where a permanent ID request's publication year is set."
+  [props config-valid configs]
+  "terrain.permanent-id.attr.publication-year")
 
 (cc/defprop-str ezid-base-url
   "The EZID API base URL."

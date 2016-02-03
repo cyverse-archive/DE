@@ -3,7 +3,7 @@
         [apps.routes.domain.oauth]
         [apps.routes.params]
         [ring.util.http-response :only [ok]])
-  (require [apps.service.oauth :as oauth]))
+  (:require [apps.service.oauth :as oauth]))
 
 (defroutes* oauth
   (GET* "/access-code/:api-name" []
