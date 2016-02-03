@@ -5,6 +5,8 @@ import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppDoc;
 import org.iplantc.de.client.models.apps.AppFeedback;
 import org.iplantc.de.client.models.apps.integration.AppTemplate;
+import org.iplantc.de.client.models.apps.sharing.AppSharingRequestList;
+import org.iplantc.de.client.models.apps.sharing.AppUnSharingRequestList;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -85,9 +87,9 @@ public interface AppUserServiceFacade extends AppServiceFacade {
 
     void getPermissions(List<App> apps, AsyncCallback<String> callback);
 
-    void shareApp(JSONObject request, AsyncCallback<String> callback);
+    void shareApp(AppSharingRequestList request, AsyncCallback<String> callback);
     
-    void unshareApp(JSONObject request, AsyncCallback<String> callback);
+    void unshareApp(AppUnSharingRequestList request, AsyncCallback<String> callback);
 
 
 }

@@ -2,8 +2,14 @@ package org.iplantc.de.client.models.sharing;
 
 public class SharedResource {
 
+    /**
+     * id of the shared resource
+     */
     private String id;
 
+    /**
+     * name of the shared resource
+     */
     private String name;
 
     public SharedResource(String id, String name) {
