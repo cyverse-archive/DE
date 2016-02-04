@@ -26,6 +26,7 @@
 
 (defschema AppSharingResponseElement
   (assoc AppSharingRequestElement
+    :app_name             (describe String "The app name")
     :success              (describe Boolean "A Boolean flag indicating whether the sharing request succeeded")
     (optional-key :error) (describe ErrorResponse "Information about any error that may have occurred")))
 
@@ -45,6 +46,7 @@
 
 (defschema AppUnsharingResponseElement
   {:app_id               (describe NonBlankString "The app ID")
+   :app_name             (describe String "The app name")
    :success              (describe Boolean "A Boolean flag indicating whether the unsharing request succeeded")
    (optional-key :error) (describe ErrorResponse "Information about any error that may have occurred")})
 

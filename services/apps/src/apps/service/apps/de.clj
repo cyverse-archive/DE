@@ -231,23 +231,23 @@
   (shareApps [self sharing-requests]
     (app-permissions/process-app-sharing-requests self sharing-requests))
 
-  (shareAppsWithUser [self sharee user-app-sharing-requests]
-    (app-permissions/process-user-app-sharing-requests self sharee user-app-sharing-requests))
+  (shareAppsWithUser [self app-names sharee user-app-sharing-requests]
+    (app-permissions/process-user-app-sharing-requests self app-names sharee user-app-sharing-requests))
 
-  (shareAppWithUser [_ sharee app-id level]
+  (shareAppWithUser [_ app-names sharee app-id level]
     (when (util/uuid? app-id)
       (if-let [failure-reason (perms/share-app-with-user user sharee (uuidify app-id) level)]
-        (app-permissions/app-sharing-failure app-id level failure-reason)
-        (app-permissions/app-sharing-success app-id level))))
+        (app-permissions/app-sharing-failure app-names app-id level failure-reason)
+        (app-permissions/app-sharing-success app-names app-id level))))
 
   (unshareApps [self unsharing-requests]
     (app-permissions/process-app-unsharing-requests self unsharing-requests))
 
-  (unshareAppsWithUser [self sharee app-ids]
-    (app-permissions/process-user-app-unsharing-requests self sharee app-ids))
+  (unshareAppsWithUser [self app-names sharee app-ids]
+    (app-permissions/process-user-app-unsharing-requests self app-names sharee app-ids))
 
-  (unshareAppWithUser [self sharee app-id]
+  (unshareAppWithUser [self app-names sharee app-id]
     (when (util/uuid? app-id)
       (if-let [failure-reason (perms/unshare-app-with-user user sharee (uuidify app-id))]
-        (app-permissions/app-unsharing-failure app-id failure-reason)
-        (app-permissions/app-unsharing-success app-id)))))
+        (app-permissions/app-unsharing-failure app-names app-id failure-reason)
+        (app-permissions/app-unsharing-success app-names app-id)))))
