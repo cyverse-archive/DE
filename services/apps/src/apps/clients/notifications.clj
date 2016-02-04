@@ -6,6 +6,7 @@
             [clj-time.format :as tf]
             [clojure.string :as string]
             [clojure.tools.logging :as log]
+            [apps.clients.notifications.app-sharing :as asn]
             [apps.persistence.tool-requests :as tp]
             [apps.util.config :as config]))
 
@@ -26,6 +27,14 @@
   (http/post (notificationagent-url "notification")
              {:content-type :json
               :body (cheshire/encode m)}))
+
+(defn- guarded-send-notification
+  "Sends a notification to a user, logging an error if an exception occurs."
+  [m]
+  (try
+    (send-notification m)
+    (catch Exception e
+      (log/error e "unable to send notification:" (cheshire/encode m)))))
 
 (defn- send-email?
   [job-info]
@@ -103,3 +112,17 @@
     (send-notification (format-tool-request-update-notification tool-req user-details))
     (catch Exception e
       (log/warn e "unable to send tool request update notification for" tool-req))))
+
+(defn send-app-sharing-notifications
+  "Sends app sharing notifications."
+  [sharer sharee responses]
+  (->> (asn/format-sharing-notifications sharer sharee responses)
+       (map guarded-send-notification)
+       dorun))
+
+(defn send-app-unsharing-notifications
+  "Sends app unsharing notifications."
+  [sharer sharee responses]
+  (->> (asn/format-unsharing-notifications sharer sharee responses)
+       (map guarded-send-notification)
+       dorun))
