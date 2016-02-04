@@ -216,17 +216,17 @@
   (shareApps [self sharing-requests]
     (app-permissions/process-app-sharing-requests self sharing-requests))
 
-  (shareAppsWithUser [self sharee user-app-sharing-requests]
-    (app-permissions/process-user-app-sharing-requests self sharee user-app-sharing-requests))
+  (shareAppsWithUser [self app-names sharee user-app-sharing-requests]
+    (app-permissions/process-user-app-sharing-requests self app-names sharee user-app-sharing-requests))
 
-  (shareAppWithUser [_ sharee app-id level]
-    (first (remove nil? (map #(.shareAppWithUser % sharee app-id level) clients))))
+  (shareAppWithUser [_ app-names sharee app-id level]
+    (first (remove nil? (map #(.shareAppWithUser % app-names sharee app-id level) clients))))
 
   (unshareApps [self unsharing-requests]
     (app-permissions/process-app-unsharing-requests self unsharing-requests))
 
-  (unshareAppsWithUser [self sharee app-ids]
-    (app-permissions/process-user-app-unsharing-requests self sharee app-ids))
+  (unshareAppsWithUser [self app-names sharee app-ids]
+    (app-permissions/process-user-app-unsharing-requests self app-names sharee app-ids))
 
-  (unshareAppWithUser [self sharee app-id]
-    (first (remove nil? (map #(.unshareAppWithUser % sharee app-id) clients)))))
+  (unshareAppWithUser [self app-names sharee app-id]
+    (first (remove nil? (map #(.unshareAppWithUser % app-names sharee app-id) clients)))))

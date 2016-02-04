@@ -3,6 +3,7 @@
         [slingshot.slingshot :only [try+]])
   (:require [apps.clients.iplant-groups :as iplant-groups]
             [apps.persistence.app-metadata :as amp]
+            [apps.service.apps.util :as apps-util]
             [apps.util.service :as service]
             [clojure.string :as string]
             [clojure.tools.logging :as log]
@@ -43,7 +44,7 @@
   (->> (group-by (comp string/lower-case :id :subject) (perms app-id))
        (map (fn [[subject subject-perms]] {:user subject :permission (get-permission-level subject-perms)}))
        (remove (comp (partial = user) :user))
-       (hash-map :id (str app-id) :name (app-names app-id "") :permissions)))
+       (hash-map :id (str app-id) :name (apps-util/get-app-name app-names app-id) :permissions)))
 
 (defn list-app-permissions
   [{user :shortUsername} app-ids]
