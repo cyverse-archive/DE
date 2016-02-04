@@ -20,7 +20,7 @@
       :tags ["bulk"]
       :query [params StandardUserQueryParams]
       :body [body (describe Paths "The paths to move to the trash")]
-      :return Paths
+      :return (s/doc-only TrashPaths TrashPathsDoc)
       :summary "Delete Data Items"
       :description (str
   "Delete the data items with the listed paths."
@@ -46,7 +46,7 @@
 
       (DELETE* "/" [:as {uri :uri}]
         :query [params StandardUserQueryParams]
-        :return Paths
+        :return TrashPaths
         :summary "Delete Data Item"
         :description (str
   "Deletes the data item with the provided UUID."
@@ -56,7 +56,7 @@
 
       (DELETE* "/children" [:as {uri :uri}]
         :query [params StandardUserQueryParams]
-        :return Paths
+        :return TrashPaths
         :summary "Delete Data Item Contents"
         :description (str
   "Deletes the contents of the folder with the provided UUID."

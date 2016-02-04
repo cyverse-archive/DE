@@ -35,7 +35,8 @@
   [cm p user]
   (let [trash-path (randomized-trash-path user p)]
     (move cm p trash-path :user user :admin-users (cfg/irods-admins))
-    (set-metadata cm trash-path "ipc-trash-origin" p paths/IPCSYSTEM)))
+    (set-metadata cm trash-path "ipc-trash-origin" p paths/IPCSYSTEM)
+    trash-path))
 
 (defn- home-matcher
   [user path]
@@ -51,7 +52,8 @@
 (defn- delete-paths
   [user paths]
   (with-jargon (cfg/jargon-cfg) [cm]
-    (let [paths (mapv ft/rm-last-slash paths)]
+    (let [paths (mapv ft/rm-last-slash paths)
+          trash-paths (atom (hash-map))]
       (validators/user-exists cm user)
       (validators/all-paths-exist cm paths)
       (validators/user-owns-paths cm user paths)
@@ -69,10 +71,13 @@
         ;;; If the file isn't already in the user's trash, move it there
         ;;; otherwise, do a hard delete.
         (if-not (.startsWith p (paths/user-trash-path user))
-          (move-to-trash cm p user)
+          (do (let [trash-path (move-to-trash cm p user)]
+              (reset! trash-paths
+                      (assoc @trash-paths p trash-path))))
           (delete cm p true))) ;;; Force a delete to bypass proxy user's trash.
 
-       {:paths paths})))
+       {:paths paths
+        :trash-paths @trash-paths})))
 
 (defn- delete-uuid
   "Delete by UUID: given a user and a data item UUID, delete that data item, returning a list of filenames deleted."
