@@ -46,9 +46,9 @@
   (let [identifier (get ezid-metadata (config/permanent-id-identifier-attr))]
     (when-not (empty? identifier)
     (throw+ {:type :clojure-commons.exception/bad-request
-             :error (str "The " (config/permanent-id-identifier-attr)
-                         " metadata attribute already contains a value: "
-                         identifier)})))
+             :error "The metadata already contains a Permanent Identifier attribute with a value."
+             :attribute (config/permanent-id-identifier-attr)
+             :identifier identifier})))
   ezid-metadata)
 
 (defn- validate-request-for-completion
@@ -198,12 +198,11 @@
   [{:keys [path]} irods-avus metadata]
   (let [metadata (mapcat :avus (:templates metadata))
         format-avus #(vector (:attr %) (:value %))
-        ezid-metadata (into {} (concat (map format-avus irods-avus) (map format-avus metadata)))
-        ezid-metadata (assoc ezid-metadata
-                        ezid-target-attr (format-metadata-target-url path)
-                        (config/permanent-id-date-attr) (str (time/year (time/now))))]
+        ezid-metadata (into {} (concat (map format-avus irods-avus) (map format-avus metadata)))]
     (validate-ezid-metadata ezid-metadata)
-    ezid-metadata))
+    (assoc ezid-metadata
+      ezid-target-attr (format-metadata-target-url path)
+      (config/permanent-id-date-attr) (str (time/year (time/now))))))
 
 (defn- get-validated-data-item
   "Gets data-info stat for the given ID and checks if the data item is valid for a Permanent ID request."
