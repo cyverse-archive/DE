@@ -221,6 +221,14 @@
   (request :post ["data" path-uuid "metadata" "save"]
            (mk-req-map user (json/encode {:dest dest :recursive recursive}))))
 
+;; SHARING
+
+(defn share-with-anonymous
+  "Share a list of paths with the anonymous user."
+  [user paths]
+  (request :post ["anonymizer"]
+           (mk-req-map user (json/encode {:paths paths}))))
+
 ;; MISC
 
 (defn collect-permissions

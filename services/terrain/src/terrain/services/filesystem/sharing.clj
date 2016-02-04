@@ -172,30 +172,3 @@
   [p]
   (let [aurl (url/url (cfg/anon-files-base))]
     (str (-> aurl (assoc :path (ft/path-join (:path aurl) (string/replace p #"^\/" "")))))))
-
-(defn anon-files-urls
-  [paths]
-  (into {} (map #(vector %1 (anon-file-url %1)) paths)))
-
-(defn anon-files
-  [user paths]
-  (with-jargon (icat/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (validators/all-paths-exist cm paths)
-    (validators/paths-are-files cm paths)
-    (validators/user-owns-paths cm user paths)
-    (log/warn "Giving read access to" (cfg/fs-anon-user) "on:" (string/join " " paths))
-    (share user [(cfg/fs-anon-user)] paths :read)
-    {:user user :paths (anon-files-urls paths)}))
-
-(defn fix-broken-paths
-  [paths]
-  (mapv #(string/replace % #"\/$" "") paths))
-
-(defn do-anon-files
-  [params body]
-  (paths/log-call "do-anon-files" params body)
-  (validate-map params {:user string?})
-  (validate-map body {:paths sequential?})
-  (validators/validate-num-paths (:paths body))
-  (anon-files (:user params) (fix-broken-paths (:paths body))))
