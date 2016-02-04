@@ -7,7 +7,7 @@
       (string/trim (:out (sh "git" "rev-parse" "HEAD")))
       ""))
 
-(defproject org.iplantc/terrain "5.2.4.0-SNAPSHOT"
+(defproject org.iplantc/terrain "5.2.5.0-SNAPSHOT"
   :description "Framework for hosting DiscoveryEnvironment metadata services."
   :url "https://github.com/cyverse/DE"
   :license {:name "BSD Standard License"
@@ -33,15 +33,15 @@
                  [org.nexml.model/nexml "1.5-SNAPSHOT"]  ; provides org.nexml.model
                  [org/forester "1.005" ]
                  [slingshot "0.12.2"]
-                 [org.iplantc/clj-cas "5.2.4.0"]
-                 [org.iplantc/clj-icat-direct "5.2.4.0"]
-                 [org.iplantc/clj-jargon "5.2.4.0"]
-                 [org.iplantc/clojure-commons "5.2.4.0"]
-                 [org.iplantc/common-cfg "5.2.4.0"]
-                 [org.iplantc/common-cli "5.2.4.0"]
-                 [org.iplantc/kameleon "5.2.4.0"]
-                 [org.iplantc/heuristomancer "5.2.4.0"]
-                 [org.iplantc/service-logging "5.2.4.0"]]
+                 [org.iplantc/clj-cas "5.2.5.0"]
+                 [org.iplantc/clj-icat-direct "5.2.5.0"]
+                 [org.iplantc/clj-jargon "5.2.5.0"]
+                 [org.iplantc/clojure-commons "5.2.5.0"]
+                 [org.iplantc/common-cfg "5.2.5.0"]
+                 [org.iplantc/common-cli "5.2.5.0"]
+                 [org.iplantc/kameleon "5.2.5.0"]
+                 [org.iplantc/heuristomancer "5.2.5.0"]
+                 [org.iplantc/service-logging "5.2.5.0"]]
   :plugins [[lein-ring "0.9.2" :exclusions [org.clojure/clojure]]
             [swank-clojure "1.4.2" :exclusions [org.clojure/clojure]]]
   :profiles {:dev     {:resource-paths ["conf/test"]}
