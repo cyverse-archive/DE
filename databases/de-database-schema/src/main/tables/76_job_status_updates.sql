@@ -26,8 +26,8 @@ CREATE TABLE job_status_updates (
     sent_from_hostname text NOT NULL,
 
     -- Send date is the date that the update was actually sent, not the date
-    -- that the record was created.
-    sent_on timestamp NOT NULL,
+    -- that the record was created. Should be in milliseconds since the epoch.
+    sent_on bigint NOT NULL,
 
     -- The date that the record was created by whichever service adds the record.
     -- This is not the date that the update was sent.
