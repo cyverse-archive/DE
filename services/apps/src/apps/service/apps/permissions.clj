@@ -1,6 +1,7 @@
 (ns apps.service.apps.permissions
   (:use [medley.core :only [map-kv]])
   (:require [apps.clients.notifications :as cn]
+            [apps.service.apps.util :as apps-util]
             [clojure-commons.error-codes :as ce]))
 
 ;; TODO: this will have to change to account for the possibility of duplicate app IDs
@@ -14,10 +15,6 @@
        (#(.loadAppTables apps-client %))
        (apply merge)
        (map-kv (fn [k v] [k (:name v)]))))
-
-(defn- get-app-name
-  [app-names app-id]
-  (app-names app-id (str "app ID " app-id)))
 
 (defn process-app-sharing-requests
   [apps-client app-sharing-requests]
@@ -40,14 +37,14 @@
 (defn app-sharing-success
   [app-names app-id level]
   {:app_id     app-id
-   :app_name   (get-app-name app-names app-id)
+   :app_name   (apps-util/get-app-name app-names app-id)
    :permission level
    :success    true})
 
 (defn app-sharing-failure
   [app-names app-id level reason]
   {:app_id     app-id
-   :app_name   (get-app-name app-names app-id)
+   :app_name   (apps-util/get-app-name app-names app-id)
    :permission level
    :success    false
    :error      {:error_code ce/ERR_BAD_REQUEST
@@ -74,13 +71,13 @@
 (defn app-unsharing-success
   [app-names app-id]
   {:app_id   app-id
-   :app_name (get-app-name app-names app-id)
+   :app_name (apps-util/get-app-name app-names app-id)
    :success  true})
 
 (defn app-unsharing-failure
   [app-names app-id reason]
   {:app_id   app-id
-   :app_name (get-app-name app-names app-id)
+   :app_name (apps-util/get-app-name app-names app-id)
    :success  false
    :error    {:error_code ce/ERR_BAD_REQUEST
               :reason     reason}})
