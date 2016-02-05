@@ -17,6 +17,8 @@ import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.notifications.NotificationAutoBeanFactory;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
+import org.iplantc.de.client.models.notifications.payload.PayloadApps;
+import org.iplantc.de.client.models.notifications.payload.PayloadAppsList;
 import org.iplantc.de.client.models.notifications.payload.PayloadRequest;
 import org.iplantc.de.client.models.requestStatus.RequestHistory;
 import org.iplantc.de.client.services.DEFeedbackServiceFacade;
@@ -46,6 +48,7 @@ import org.iplantc.de.desktop.client.presenter.util.MessagePoller;
 import org.iplantc.de.desktop.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.desktop.shared.DeModule;
 import org.iplantc.de.fileViewers.client.callbacks.LoadGenomeInCoGeCallback;
+import org.iplantc.de.notifications.client.events.WindowShowRequestEvent;
 import org.iplantc.de.notifications.client.utils.NotifyInfo;
 import org.iplantc.de.notifications.client.views.dialogs.RequestHistoryDialog;
 import org.iplantc.de.shared.services.PropertyServiceAsync;
@@ -305,6 +308,27 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
 
         String context = selectedItem.getContext();
         switch(selectedItem.getCategory()){
+
+            case APPS:
+                final AppsWindowConfig appsConfig = ConfigFactory.appsWindowConfig();
+                final PayloadAppsList pal = AutoBeanCodex.decode(notificationFactory,
+                                                                 PayloadAppsList.class,
+                                                                 context).as();
+                if (pal != null && pal.getApps() != null && pal.getApps().size() > 0) {
+                    PayloadApps payload = pal.getApps().get(0);
+                    final String appCategoryId = payload.getCategoryId();
+                    final String appId = payload.getId();
+                    appsConfig.setSelectedAppCategory(CommonModelUtils.getInstance()
+                                                                      .createHasIdFromString(
+                                                                              appCategoryId));
+                    appsConfig.setSelectedApp(CommonModelUtils.getInstance()
+                                                              .createHasIdFromString(appId));
+                    EventBus.getInstance()
+                            .fireEvent(new WindowShowRequestEvent(appsConfig, true));
+                }
+
+                break;
+
             case DATA:
                 // execute data context
                 File file = AutoBeanCodex.decode(diskResourceFactory, File.class, context).as();
