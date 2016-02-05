@@ -220,7 +220,8 @@
     (app-permissions/process-user-app-sharing-requests self app-names sharee user-app-sharing-requests))
 
   (shareAppWithUser [_ app-names sharee app-id level]
-    (first (remove nil? (map #(.shareAppWithUser % app-names sharee app-id level) clients))))
+    (or (first (remove nil? (map #(.shareAppWithUser % app-names sharee app-id level) clients)))
+        (app-permissions/app-sharing-failure app-names app-id level nil nil (str "app ID " app-id " does not exist"))))
 
   (unshareApps [self unsharing-requests]
     (app-permissions/process-app-unsharing-requests self unsharing-requests))
@@ -229,4 +230,5 @@
     (app-permissions/process-user-app-unsharing-requests self app-names sharee app-ids))
 
   (unshareAppWithUser [self app-names sharee app-id]
-    (first (remove nil? (map #(.unshareAppWithUser % app-names sharee app-id) clients)))))
+    (or (first (remove nil? (map #(.unshareAppWithUser % app-names sharee app-id) clients)))
+        (app-permissions/app-unsharing-failure app-names app-id nil (str "app ID " app-id " does not exist")))))

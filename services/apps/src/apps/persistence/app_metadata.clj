@@ -107,6 +107,11 @@
                     :description
                     :label])))
 
+(defn app-exists?
+  "Determines whether or not an app exists."
+  [app-id]
+  (not (nil? (app-listing/get-app-listing (uuidify app-id)))))
+
 (defn get-app
   "Retrieves all app listing fields from the database."
   [app-id]
@@ -685,3 +690,23 @@
                (where {:id [in (map uuidify app-ids)]}))
        (map (juxt :id :name))
        (into {})))
+
+(defn- user-favorite-subselect
+  [root-category-field faves-idx]
+  (subselect [:app_category_group :acg]
+             (fields :child_category_id)
+             (where {:parent_category_id root-category-field
+                     :child_index        faves-idx})))
+
+(defn get-category-id-for-app
+  [username app-id faves-idx]
+  ((comp :id first)
+   (select [:app_category_listing :l]
+           (fields :l.id)
+           (join [:app_category_app :aca] {:l.id :aca.app_category_id})
+           (join [:workspace :w] {:l.workspace_id :w.id})
+           (join [:users :u] {:w.user_id :u.id})
+           (where (and (or {:l.is_public true}
+                           {:u.username username})
+                       {:aca.app_id (uuidify app-id)
+                        :l.id       [not= (user-favorite-subselect :w.root_category_id faves-idx)]})))))

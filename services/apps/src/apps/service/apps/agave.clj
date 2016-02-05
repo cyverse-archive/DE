@@ -154,7 +154,8 @@
   (shareAppWithUser [_ app-names _ app-id level]
     (when (and (user-has-access-token?)
                (not (util/uuid? app-id)))
-      (app-permissions/app-sharing-failure app-names app-id level app-permission-rejection)))
+      (let [category (.hpcAppGroup agave)]
+        (app-permissions/app-sharing-failure app-names app-id level category category app-permission-rejection))))
 
   (unshareApps [self unsharing-requests]
     (app-permissions/process-app-unsharing-requests self unsharing-requests))
@@ -165,4 +166,5 @@
   (unshareAppWithUser [_ app-names _ app-id]
     (when (and (user-has-access-token?)
                (not (util/uuid? app-id)))
-      (app-permissions/app-unsharing-failure app-names app-id app-permission-rejection))))
+      (let [category (.hpcAppGroup agave)]
+        (app-permissions/app-unsharing-failure app-names app-id category app-permission-rejection)))))

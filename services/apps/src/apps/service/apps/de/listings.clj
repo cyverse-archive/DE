@@ -7,13 +7,13 @@
         [kameleon.app-listing]
         [kameleon.uuids :only [uuidify]]
         [apps.persistence.app-documentation :only [get-documentation]]
-        [apps.persistence.app-metadata :only [get-app get-app-tools]]
         [apps.tools :only [get-tools-by-id]]
         [apps.util.assertions :only [assert-not-nil]]
         [apps.util.config]
         [apps.util.conversions :only [to-long remove-nil-vals]]
         [apps.workspace])
   (:require [apps.clients.iplant-groups :as iplant-groups]
+            [apps.persistence.app-metadata :refer [get-app get-app-tools] :as amp]
             [apps.service.apps.de.permissions :as perms]
             [cemerick.url :as curl]))
 
@@ -431,3 +431,13 @@
                                (where {:apps.id app-id}))))
         tool-ids (map :tool_id tasks)]
     {:tools (get-tools-by-id tool-ids)}))
+
+(defn get-category-id-for-app
+  "Determines the category that an app is in. If the category can't be found for the app then
+   the app is assumed to be in the 'Shared with me' category. This means that the ID of the
+   'Shared with me' category will be returned if the user does not have access to the app. For
+   this reason, it is important to verify that the user does, in fact, have access to the app
+   when calling this function."
+  [{:keys [username]} app-id]
+  (or (amp/get-category-id-for-app username app-id (workspace-favorites-app-category-index))
+      shared-with-me-id))
