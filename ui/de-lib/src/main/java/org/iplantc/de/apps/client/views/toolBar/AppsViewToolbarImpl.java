@@ -229,6 +229,7 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
                 wfRunEnabled = false;
                 shareWithCollaboratorsMiEnabled = false;
 
+
                 break;
             case 1:
                 final App selectedApp = currentSelection.get(0);
@@ -246,12 +247,11 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
                 final boolean isAppPublic = selectedApp.isPublic();
                 final boolean isAppDisabled = selectedApp.isDisabled();
                 final boolean isRunnable = selectedApp.isRunnable();
-                // final boolean isOwner = selectedApp.getIntegratorEmail().equals(userInfo.getEmail());
 
-                deleteAppEnabled = isSingleStep && !isAppPublic;
+                deleteAppEnabled = isSingleStep && !isAppPublic && isOwner;
                 // allow owners to edit their app
                 editAppEnabled = isSingleStep && isEditable;
-                submitAppEnabled = isSingleStep && isRunnable && !isAppPublic && isOwner;
+                submitAppEnabled = isRunnable && !isAppPublic && isOwner;
                 copyAppEnabled = isSingleStep && isCopyable;
                 // App run menu item is left enabled so user can get error announcement
                 appRunEnabled = isSingleStep && !isAppDisabled;
@@ -283,6 +283,7 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
                 shareWithCollaboratorsMiEnabled = containsSharableApps(currentSelection);
         }
 
+        sharingMenu.setEnabled(submitAppEnabled || shareWithCollaboratorsMiEnabled);
         deleteApp.setEnabled(deleteAppEnabled);
         editApp.setEnabled(editAppEnabled);
         sharePublic.setEnabled(submitAppEnabled);
