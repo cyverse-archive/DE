@@ -76,6 +76,14 @@
              :folder-id id}))
   data-item)
 
+(defn- validate-folder-not-empty
+  [{:keys [dir-count file-count] :as folder}]
+  (when-not (and dir-count file-count (<= 1 (+ dir-count file-count)))
+    (throw+ {:type :clojure-commons.exception/bad-request-field
+             :error "The given folder appears to be empty."
+             :folder folder}))
+  folder)
+
 (defn- validate-staging-dest-available
   [{:keys [paths]} staging-dest]
   (let [path-exists? (get paths (keyword staging-dest))]
@@ -103,6 +111,8 @@
 (defn- validate-data-item
   [user {:keys [path] :as data-item}]
   (validate-owner user data-item)
+  (validate-request-target-type data-item)
+  (validate-folder-not-empty data-item)
   (let [staging-dest (format-staging-path path)
         publish-dest (format-publish-path path)
         paths-exist  (parse-service-json (data-info/check-existence {:user (config/permanent-id-curators-group)}
@@ -144,7 +154,7 @@
       (data-info/share (config/irods-user) [curators] [staging-path] "own"))))
 
 (defn- stage-data-item
-  [user {:keys [id path] :as data-item}]
+  [user {:keys [id path]}]
   (let [staged-path (format-staging-path path)
         curators    (config/permanent-id-curators-group)]
     (data-info-client/move-single (config/irods-user) id (config/permanent-id-staging-dir))
@@ -153,7 +163,7 @@
     staged-path))
 
 (defn- publish-data-item
-  [user {:keys [id path] :as data-item}]
+  [user {:keys [id path]}]
   (let [publish-path (format-publish-path path)
         curators     (config/permanent-id-curators-group)]
     (data-info-client/move-single curators id (config/permanent-id-publish-dir))
