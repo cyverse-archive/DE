@@ -7,7 +7,7 @@
 
 (defn get-app-name
   [app-names app-id]
-  (let [app-name (app-names app-id)]
+  (let [app-name (app-names (str app-id))]
     (if (string/blank? app-name)
       (str "app ID " app-id)
       app-name)))

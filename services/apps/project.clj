@@ -18,6 +18,7 @@
                  [clj-http "2.0.0"]
                  [com.cemerick/url "0.1.1"]
                  [com.google.guava/guava "18.0"]
+                 [de.ubercode.clostache/clostache "1.4.0"]
                  [medley "0.7.0"]
                  [metosin/compojure-api "0.24.2"]
                  [org.iplantc/authy "5.2.5.0"]

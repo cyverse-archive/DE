@@ -7,6 +7,7 @@ import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.models.notifications.NotificationList;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.client.models.notifications.payload.PayloadAnalysis;
+import org.iplantc.de.client.models.notifications.payload.PayloadAppsList;
 import org.iplantc.de.client.models.notifications.payload.PayloadData;
 import org.iplantc.de.client.util.CommonModelUtils;
 
@@ -46,7 +47,14 @@ public class NotificationCallbackConverter extends AsyncCallbackConverter<String
                 case ALL:
                     GWT.log("ALL Analysis category");
                     break;
-
+                case APPS:
+                    PayloadAppsList appPList  = AutoBeanCodex.decode(notFactory, PayloadAppsList.class, payload).as();
+                    if("share".equalsIgnoreCase(appPList.getAction())) {
+                        msg.setContext(payload.getPayload());
+                    } else {
+                        GWT.log("Unhandled apps action type!!");
+                    }
+                    break;
                 case ANALYSIS:
                     PayloadAnalysis analysisPayload = AutoBeanCodex.decode(notFactory,
                             PayloadAnalysis.class, payload).as();
