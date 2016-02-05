@@ -72,8 +72,7 @@
         ;;; otherwise, do a hard delete.
         (if-not (.startsWith p (paths/user-trash-path user))
           (do (let [trash-path (move-to-trash cm p user)]
-              (reset! trash-paths
-                      (assoc @trash-paths p trash-path))))
+              (swap! trash-paths assoc p trash-path)))
           (delete cm p true))) ;;; Force a delete to bypass proxy user's trash.
 
        {:paths paths
@@ -206,9 +205,8 @@
                 (move cm path fully-restored :user user :admin-users (cfg/irods-admins))
                 (log/warn "Done moving " path " to " fully-restored)
 
-                (reset! retval
-                        (assoc @retval path {:restored-path fully-restored
-                                             :partial-restore restored-to-homedir}))))
+                (swap! retval assoc path {:restored-path fully-restored
+                                          :partial-restore restored-to-homedir})))
             {:restored @retval}))
         {:restored {}}))))
 
