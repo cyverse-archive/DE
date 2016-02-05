@@ -27,3 +27,21 @@
 (s/defschema RestorationPaths
   {:restored
    (describe RestorationPathsMap "A map of paths from the request to their restoration info")})
+
+(s/defschema TrashPathsMap
+  {(describe s/Keyword "The iRODS data item's original path.")
+   (describe String "The data item's path in the trash")})
+
+(s/defschema TrashPaths
+  (assoc Paths
+         :trash-paths (describe TrashPathsMap "A map of paths from the request to their location in the trash, if any.")))
+
+;; Used only for documentation in Swagger UI
+(s/defschema TrashPathsDocMap
+  {:/path/from/request/to/a/file/or/folder
+   (describe String "The data item's path in the trash")})
+
+;; Used only for documentation in Swagger UI
+(s/defschema TrashPathsDoc
+  (assoc TrashPaths
+         :trash-paths (describe TrashPathsDocMap "A map of paths from the request to their location in the trash, if any.")))
