@@ -1,6 +1,7 @@
 (ns apps.service.apps.de
   (:use [kameleon.uuids :only [uuidify]])
   (:require [clojure.string :as string]
+            [clojure.tools.logging :as log]
             [apps.clients.jex :as jex]
             [apps.persistence.app-metadata :as ap]
             [apps.persistence.jobs :as jp]
@@ -14,6 +15,7 @@
             [apps.service.apps.de.metadata :as app-metadata]
             [apps.service.apps.de.permissions :as perms]
             [apps.service.apps.de.pipeline-edit :as pipeline-edit]
+            [apps.service.apps.de.sharing :as sharing]
             [apps.service.apps.de.validation :as app-validation]
             [apps.service.apps.job-listings :as job-listings]
             [apps.service.apps.permissions :as app-permissions]
@@ -236,9 +238,10 @@
 
   (shareAppWithUser [_ app-names sharee app-id level]
     (when (util/uuid? app-id)
-      (if-let [failure-reason (perms/share-app-with-user user sharee (uuidify app-id) level)]
-        (app-permissions/app-sharing-failure app-names app-id level failure-reason)
-        (app-permissions/app-sharing-success app-names app-id level))))
+      (sharing/share-app-with-user
+       user sharee (uuidify app-id) level
+       (partial app-permissions/app-sharing-success app-names app-id level)
+       (partial app-permissions/app-sharing-failure app-names app-id level))))
 
   (unshareApps [self unsharing-requests]
     (app-permissions/process-app-unsharing-requests self unsharing-requests))
@@ -248,6 +251,7 @@
 
   (unshareAppWithUser [self app-names sharee app-id]
     (when (util/uuid? app-id)
-      (if-let [failure-reason (perms/unshare-app-with-user user sharee (uuidify app-id))]
-        (app-permissions/app-unsharing-failure app-names app-id failure-reason)
-        (app-permissions/app-unsharing-success app-names app-id)))))
+      (sharing/unshare-app-with-user
+       user sharee (uuidify app-id)
+       (partial app-permissions/app-unsharing-success app-names app-id)
+       (partial app-permissions/app-unsharing-failure app-names app-id)))))

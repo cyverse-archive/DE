@@ -2,6 +2,7 @@
   (:use [medley.core :only [map-kv]])
   (:require [apps.clients.notifications :as cn]
             [apps.service.apps.util :as apps-util]
+            [clojure.tools.logging :as log]
             [clojure-commons.error-codes :as ce]))
 
 ;; TODO: this will have to change to account for the possibility of duplicate app IDs
@@ -32,23 +33,27 @@
   [apps-client app-names sharee user-app-sharing-requests]
   (let [responses (share-apps-with-user apps-client app-names sharee user-app-sharing-requests)]
     (cn/send-app-sharing-notifications (:shortUsername (.getUser apps-client)) sharee responses)
-    responses))
+    (mapv #(dissoc % :sharer_category :sharee_category) responses)))
 
 (defn app-sharing-success
-  [app-names app-id level]
-  {:app_id     app-id
-   :app_name   (apps-util/get-app-name app-names app-id)
-   :permission level
-   :success    true})
+  [app-names app-id level sharer-category sharee-category]
+  {:app_id          (str app-id)
+   :app_name        (apps-util/get-app-name app-names app-id)
+   :sharer_category sharer-category
+   :sharee_category sharee-category
+   :permission      level
+   :success         true})
 
 (defn app-sharing-failure
-  [app-names app-id level reason]
-  {:app_id     app-id
-   :app_name   (apps-util/get-app-name app-names app-id)
-   :permission level
-   :success    false
-   :error      {:error_code ce/ERR_BAD_REQUEST
-                :reason     reason}})
+  [app-names app-id level sharer-category sharee-category reason]
+  {:app_id          (str app-id)
+   :app_name        (apps-util/get-app-name app-names app-id)
+   :sharer_category sharer-category
+   :sharee_category sharee-category
+   :permission      level
+   :success         false
+   :error           {:error_code ce/ERR_BAD_REQUEST
+                     :reason     reason}})
 
 (defn process-app-unsharing-requests
   [apps-client app-unsharing-requests]
@@ -66,18 +71,20 @@
   [apps-client app-names sharee app-ids]
   (let [responses (unshare-apps-with-user apps-client app-names sharee app-ids)]
     (cn/send-app-unsharing-notifications (:shortUsername (.getUser apps-client)) sharee responses)
-    responses))
+    (mapv #(dissoc % :sharer_category) responses)))
 
 (defn app-unsharing-success
-  [app-names app-id]
-  {:app_id   app-id
-   :app_name (apps-util/get-app-name app-names app-id)
-   :success  true})
+  [app-names app-id sharer-category]
+  {:app_id          (str app-id)
+   :app_name        (apps-util/get-app-name app-names app-id)
+   :sharer_category sharer-category
+   :success         true})
 
 (defn app-unsharing-failure
-  [app-names app-id reason]
-  {:app_id   app-id
-   :app_name (apps-util/get-app-name app-names app-id)
-   :success  false
-   :error    {:error_code ce/ERR_BAD_REQUEST
-              :reason     reason}})
+  [app-names app-id sharer-category reason]
+  {:app_id          (str app-id)
+   :app_name        (apps-util/get-app-name app-names app-id)
+   :sharer_category sharer-category
+   :success         false
+   :error           {:error_code ce/ERR_BAD_REQUEST
+                     :reason     reason}})
