@@ -10,9 +10,13 @@ import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.notifications.NotificationAutoBeanFactory;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
+import org.iplantc.de.client.models.notifications.payload.PayloadApps;
+import org.iplantc.de.client.models.notifications.payload.PayloadAppsList;
 import org.iplantc.de.client.models.notifications.payload.PayloadRequest;
+import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.views.window.configs.AnalysisWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.AppsWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.DiskResourceWindowConfig;
 import org.iplantc.de.notifications.client.events.WindowShowRequestEvent;
@@ -80,40 +84,64 @@ public class NotificationMessageCell extends AbstractCell<NotificationMessage> {
                 String context1 = value.getContext();
 
                 switch (category) {
+
+                    case APPS:
+                        final AppsWindowConfig appsConfig = ConfigFactory.appsWindowConfig();
+                        final PayloadAppsList pal = AutoBeanCodex.decode(notificationFactory,
+                                                                         PayloadAppsList.class,
+                                                                         context1).as();
+                        if (pal != null && pal.getApps() != null && pal.getApps().size() > 0) {
+                            PayloadApps payload = pal.getApps().get(0);
+                            final String appCategoryId = payload.getCategoryId();
+                            final String appId = payload.getId();
+                            appsConfig.setSelectedAppCategory(CommonModelUtils.getInstance()
+                                                                              .createHasIdFromString(
+                                                                                      appCategoryId));
+                            appsConfig.setSelectedApp(CommonModelUtils.getInstance()
+                                                                      .createHasIdFromString(appId));
+                            EventBus.getInstance()
+                                    .fireEvent(new WindowShowRequestEvent(appsConfig, true));
+                        }
+
+                        break;
                     case DATA:
                         // execute data context
                         File file = AutoBeanCodex.decode(drFactory, File.class, context1).as();
                         ArrayList<HasId> selectedResources = Lists.newArrayList();
                         selectedResources.add(file);
 
-                        DiskResourceWindowConfig dataWindowConfig = ConfigFactory
-                                .diskResourceWindowConfig(false);
+                        DiskResourceWindowConfig dataWindowConfig =
+                                ConfigFactory.diskResourceWindowConfig(false);
                         HasPath folder = diskResourceUtil.getFolderPathFromFile(file);
                         dataWindowConfig.setSelectedFolder(folder);
                         dataWindowConfig.setSelectedDiskResources(selectedResources);
-                        EventBus.getInstance().fireEvent(new WindowShowRequestEvent(dataWindowConfig, true));
+                        EventBus.getInstance()
+                                .fireEvent(new WindowShowRequestEvent(dataWindowConfig, true));
 
                         break;
 
                     case ANALYSIS:
-                        AutoBean<Analysis> hAb = AutoBeanCodex.decode(analysesFactory, Analysis.class, context1);
+                        AutoBean<Analysis> hAb =
+                                AutoBeanCodex.decode(analysesFactory, Analysis.class, context1);
 
                         AnalysisWindowConfig analysisWindowConfig = ConfigFactory.analysisWindowConfig();
                         analysisWindowConfig.setSelectedAnalyses(Lists.newArrayList(hAb.as()));
-                        EventBus.getInstance().fireEvent(new WindowShowRequestEvent(analysisWindowConfig, true));
+                        EventBus.getInstance()
+                                .fireEvent(new WindowShowRequestEvent(analysisWindowConfig, true));
 
                         break;
                     case PERMANENTIDREQUEST:
                         // fall through to ToolRequest logic
                     case TOOLREQUEST:
-                        PayloadRequest toolRequest = AutoBeanCodex.decode(notificationFactory,
-                                                                              PayloadRequest.class,
-                                                                              context1).as();
+                        PayloadRequest toolRequest =
+                                AutoBeanCodex.decode(notificationFactory, PayloadRequest.class, context1)
+                                             .as();
 
-                        List<org.iplantc.de.client.models.requestStatus.RequestHistory> history = toolRequest.getHistory();
+                        List<org.iplantc.de.client.models.requestStatus.RequestHistory> history =
+                                toolRequest.getHistory();
 
-                        RequestHistoryDialog dlg = new RequestHistoryDialog(toolRequest.getName(),
-                                history);
+                        RequestHistoryDialog dlg =
+                                new RequestHistoryDialog(toolRequest.getName(), history);
                         dlg.show();
 
                         break;

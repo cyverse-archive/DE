@@ -17,6 +17,8 @@ public enum NotificationCategory {
     ANALYSIS("Analysis"),
     /** tool rquest status update notification */
     TOOLREQUEST("Tool Request"),
+    /** apps notification */
+    APPS("Apps"),
 
     /** EZID request */
     PERMANENTIDREQUEST("Permanent ID Request"),

@@ -5,10 +5,20 @@ package org.iplantc.de.apps.client.presenter.sharing;
 
 import org.iplantc.de.apps.client.views.sharing.AppSharingView;
 import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
+import org.iplantc.de.client.models.apps.sharing.AppPermission;
+import org.iplantc.de.client.models.apps.sharing.AppSharingAutoBeanFactory;
+import org.iplantc.de.client.models.apps.sharing.AppSharingRequest;
+import org.iplantc.de.client.models.apps.sharing.AppSharingRequestList;
+import org.iplantc.de.client.models.apps.sharing.AppUnSharingRequestList;
+import org.iplantc.de.client.models.apps.sharing.AppUnsharingRequest;
+import org.iplantc.de.client.models.apps.sharing.AppUserPermissions;
+import org.iplantc.de.client.models.apps.sharing.AppUserPermissionsList;
 import org.iplantc.de.client.models.collaborators.Collaborator;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.sharing.SharedResource;
 import org.iplantc.de.client.models.sharing.Sharing;
+import org.iplantc.de.client.models.sharing.UserPermission;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.sharing.SharingPermissionsPanel;
 import org.iplantc.de.client.sharing.SharingPresenter;
@@ -18,12 +28,12 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
-import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
+import com.google.web.bindery.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.core.shared.FastMap;
 
@@ -60,11 +70,8 @@ public class AppSharingPresenter implements SharingPresenter {
 
                     for (JSONObject share : sharingList.get(userName)) {
                         String id = jsonUtil.getString(share, "id"); //$NON-NLS-1$
-                        String name = jsonUtil.getString(share,"name");
-                        Sharing sharing = new Sharing(user,
-                                                          buildPermissionFromJson(share),
-                                                          id,
-                                                         name);
+                        String name = jsonUtil.getString(share, "name");
+                        Sharing sharing = new Sharing(user, buildPermissionFromJson(share), id, name);
                         shares.add(sharing);
                     }
                 }
@@ -82,24 +89,21 @@ public class AppSharingPresenter implements SharingPresenter {
 
         @Override
         public void onSuccess(String result) {
-            JSONArray permissionsArray =
-                    jsonUtil.getArray(jsonUtil.getObject(result), "apps"); //$NON-NLS-1$
-            if (permissionsArray != null) {
-                sharingList = new FastMap<>();
-                for (int i = 0; i < permissionsArray.size(); i++) {
-                    JSONObject user_perm_obj = permissionsArray.get(i).isObject();
-                    String id = jsonUtil.getString(user_perm_obj, "id"); //$NON-NLS-1$
-                    String appName = jsonUtil.getString(user_perm_obj,"name");
-                    JSONArray user_arr = jsonUtil.getArray(user_perm_obj, "permissions"); //$NON-NLS-1$
-
-                    loadPermissions(id,appName, user_arr);
-                }
-
-                final List<String> usernames = new ArrayList<>();
-                usernames.addAll(sharingList.keySet());
-                collaboratorsUtil.getUserInfo(usernames, new GetUserInfoCallback(usernames));
+            AutoBean<AppUserPermissionsList> abrp =
+                    AutoBeanCodex.decode(shareFactory, AppUserPermissionsList.class, result);
+            AppUserPermissionsList appPermsList = abrp.as();
+            sharingList = new FastMap<>();
+            for (AppUserPermissions rup : appPermsList.getResourceUserPermissionsList()) {
+                String id = rup.getId();
+                String appName = rup.getName();
+                List<UserPermission> upList = rup.getPermissions();
+                loadPermissions(id, appName, upList);
             }
+            final List<String> usernames = new ArrayList<>();
+            usernames.addAll(sharingList.keySet());
+            collaboratorsUtil.getUserInfo(usernames, new GetUserInfoCallback(usernames));
         }
+
     }
 
     final AppSharingView view;
@@ -111,6 +115,8 @@ public class AppSharingPresenter implements SharingPresenter {
     private FastMap<List<JSONObject>> sharingList;
     private final JsonUtil jsonUtil;
     private final CollaboratorsUtil collaboratorsUtil;
+    private AppAutoBeanFactory appFactory = GWT.create(AppAutoBeanFactory.class);
+    private AppSharingAutoBeanFactory shareFactory = GWT.create(AppSharingAutoBeanFactory.class);
 
 
     public AppSharingPresenter(final AppUserServiceFacade appService,
@@ -140,8 +146,7 @@ public class AppSharingPresenter implements SharingPresenter {
         this.jsonUtil = jsonUtil;
         this.collaboratorsUtil = collaboratorsUtil;
         this.selectedApps = selectedApps;
-        this.permissionsPanel =
-                new SharingPermissionsPanel(this, getSelectedApps(selectedApps));
+        this.permissionsPanel = new SharingPermissionsPanel(this, getSelectedApps(selectedApps));
         view.addShareWidget(permissionsPanel.asWidget());
         loadResources();
         loadPermissions();
@@ -179,104 +184,126 @@ public class AppSharingPresenter implements SharingPresenter {
         return PermissionValue.read;
     }
 
+    private PermissionValue buildPermissionFromJson(JSONObject perm) {
+        return PermissionValue.valueOf(jsonUtil.getString(perm, "permission"));
+    }
+
+    private void loadPermissions(String id, String appName, List<UserPermission> userPerms) {
+        for (UserPermission up : userPerms) {
+            String permVal = up.getPermission();
+            String userName = up.getUser();
+            JSONObject perm = new JSONObject();
+            List<JSONObject> shareList = sharingList.get(userName);
+            if (shareList == null) {
+                shareList = new ArrayList<>();
+                sharingList.put(userName, shareList);
+            }
+            perm.put("permission", new JSONString(permVal));
+            perm.put("id", new JSONString(id)); //$NON-NLS-1$
+            perm.put("name", new JSONString(appName));
+            shareList.add(perm);
+        }
+
+    }
+
     @Override
     public void processRequest() {
-        JSONObject requestBody = buildSharingJson();
-        JSONObject unshareRequestBody = buildUnSharingJson();
-        if (requestBody != null) {
-            share(requestBody);
+        AppSharingRequestList request = buildSharingRequest();
+        AppUnSharingRequestList unshareRequest = buildUnSharingRequest();
+        if (request != null) {
+            callSharingService(request);
         }
 
-        if (unshareRequestBody != null) {
-            unshare(unshareRequestBody);
+        if (unshareRequest != null) {
+            callUnshareService(unshareRequest);
         }
 
-        if (requestBody != null || unshareRequestBody != null) {
+        if (request != null || unshareRequest != null) {
             IplantAnnouncer.getInstance().schedule(appearance.sharingCompleteMsg());
         }
 
     }
 
-    private JSONObject buildSharingJson() {
-        JSONObject sharingObj = new JSONObject();
+    private AppSharingRequestList buildSharingRequest() {
+        AutoBean<AppSharingRequestList> sharingAbList =
+                AutoBeanCodex.decode(appFactory, AppSharingRequestList.class, "{}");
+        AppSharingRequestList sharingRequestList = sharingAbList.as();
+
         FastMap<List<Sharing>> sharingMap = permissionsPanel.getSharingMap();
 
+        List<AppSharingRequest> requests = new ArrayList<>();
         if (sharingMap != null && sharingMap.size() > 0) {
-            JSONArray sharingArr = new JSONArray();
-            int index = 0;
             for (String userName : sharingMap.keySet()) {
+                AutoBean<AppSharingRequest> sharingAb =
+                        AutoBeanCodex.decode(appFactory, AppSharingRequest.class, "{}");
+                AppSharingRequest sharingRequest = sharingAb.as();
                 List<Sharing> shareList = sharingMap.get(userName);
-                JSONObject userObj = new JSONObject();
-                userObj.put("user", new JSONString(userName));
-                userObj.put("apps", buildPathArrWithPermissions(shareList));
-                sharingArr.set(index++, userObj);
+                sharingRequest.setUser(userName);
+                sharingRequest.setAppPermissions(buildAppPermissions(shareList));
+                requests.add(sharingRequest);
             }
 
-            sharingObj.put("sharing", sharingArr);
-            return sharingObj;
+            sharingRequestList.setAppSharingRequestList(requests);
+            return sharingRequestList;
+
         } else {
             return null;
         }
+
     }
 
-    private JSONObject buildUnSharingJson() {
-        JSONObject unsharingObj = new JSONObject();
+    private AppUnSharingRequestList buildUnSharingRequest() {
+        AutoBean<AppUnSharingRequestList> unsharingAbList =
+                AutoBeanCodex.decode(appFactory, AppUnSharingRequestList.class, "{}");
+
+        AppUnSharingRequestList unsharingRequestList = unsharingAbList.as();
+
         FastMap<List<Sharing>> unSharingMap = permissionsPanel.getUnshareList();
 
+        List<AppUnsharingRequest> requests = new ArrayList<>();
+
         if (unSharingMap != null && unSharingMap.size() > 0) {
-            JSONArray unsharingArr = new JSONArray();
-            int index = 0;
             for (String userName : unSharingMap.keySet()) {
                 List<Sharing> shareList = unSharingMap.get(userName);
-                JSONObject userObj = new JSONObject();
-                userObj.put("user", new JSONString(userName));
-                userObj.put("apps", buildPathArr(shareList));
-                unsharingArr.set(index++, userObj);
+                AutoBean<AppUnsharingRequest> unsharingAb =
+                        AutoBeanCodex.decode(appFactory, AppUnsharingRequest.class, "{}");
+
+                AppUnsharingRequest unsharingRequest = unsharingAb.as();
+                unsharingRequest.setUser(userName);
+                unsharingRequest.setApps(buildAppsList(shareList));
+                requests.add(unsharingRequest);
             }
-            unsharingObj.put("unsharing", unsharingArr);
-            return unsharingObj;
+            unsharingRequestList.setAppUnSharingRequestList(requests);
+            return unsharingRequestList;
         } else {
             return null;
         }
+
     }
 
-    private JSONArray buildPathArr(List<Sharing> shareList) {
-        JSONArray pathArr = new JSONArray();
-        int index = 0;
+    private List<String> buildAppsList(List<Sharing> shareList) {
+        List<String> appIds = new ArrayList<>();
         for (Sharing s : shareList) {
-            pathArr.set(index++, new JSONString(s.getId()));
+            appIds.add(s.getId());
         }
-        return pathArr;
+
+        return appIds;
     }
 
-    private JSONArray buildPathArrWithPermissions(List<Sharing> shareList) {
-        JSONArray pathArr = new JSONArray();
-        int index = 0;
-        JSONObject obj;
+    private List<AppPermission> buildAppPermissions(List<Sharing> shareList) {
+        List<AppPermission> appPermList = new ArrayList<>();
         for (Sharing s : shareList) {
-            obj = new JSONObject();
-            obj.put("app_id", new JSONString(s.getId()));
-            obj.put("permission", buildSharingPermissionsAsJson(s));
-            pathArr.set(index++, obj);
+            AutoBean<AppPermission> appPermAb =
+                    AutoBeanCodex.decode(appFactory, AppPermission.class, "{}");
+            AppPermission appPerm = appPermAb.as();
+            appPerm.setId(s.getId());
+            appPerm.setPermission(s.getPermission().toString());
+            appPermList.add(appPerm);
         }
-
-        return pathArr;
+        return appPermList;
     }
 
-    private JSONValue buildSharingPermissionsAsJson(Sharing sh) {
-        return new JSONString(sh.getPermission().toString());
-    }
-
-
-    private void share(JSONObject requestBody) {
-        if (requestBody != null) {
-            callSharingService(requestBody);
-        }
-
-    }
-
-    private void callSharingService(JSONObject obj) {
-        GWT.log("app sharing request:" + obj.toString());
+    private void callSharingService(AppSharingRequestList obj) {
         appService.shareApp(obj, new AsyncCallback<String>() {
 
             @Override
@@ -292,8 +319,7 @@ public class AppSharingPresenter implements SharingPresenter {
         });
     }
 
-    private void callUnshareService(JSONObject obj) {
-        GWT.log("app un-sharing request:" + obj.toString());
+    private void callUnshareService(AppUnSharingRequestList obj) {
         appService.unshareApp(obj, new AsyncCallback<String>() {
 
             @Override
@@ -307,37 +333,6 @@ public class AppSharingPresenter implements SharingPresenter {
                 // do nothing
             }
         });
-    }
-
-    private PermissionValue buildPermissionFromJson(JSONObject perm) {
-        return PermissionValue.valueOf(jsonUtil.getString(perm, "permission"));
-    }
-
-    private void loadPermissions(String id, String appName, JSONArray user_arr) {
-        for (int i = 0; i < user_arr.size(); i++) {
-            JSONObject userPermission = jsonUtil.getObjectAt(user_arr, i);
-            JSONObject perm = new JSONObject();
-            String permVal = jsonUtil.getString(userPermission, "permission"); //$NON-NLS-1$
-            String userName = jsonUtil.getString(userPermission, "user"); //$NON-NLS-1$
-
-            List<JSONObject> shareList = sharingList.get(userName);
-            if (shareList == null) {
-                shareList = new ArrayList<>();
-                sharingList.put(userName, shareList);
-            }
-            perm.put("permission", new JSONString(permVal));
-            perm.put("id", new JSONString(id)); //$NON-NLS-1$
-            perm.put("name", new JSONString(appName));
-            shareList.add(perm);
-        }
-
-    }
-
-    private void unshare(JSONObject unshareRequestBody) {
-        if (unshareRequestBody != null) {
-            callUnshareService(unshareRequestBody);
-        }
-
     }
 
 }
