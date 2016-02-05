@@ -228,6 +228,11 @@
     (let [path-uuid (uuid-for-path (:user params) (:path body))]
       (raw/set-file-type (:user params) path-uuid (:type body))))
 
+(defn share-with-anonymous
+    "Uses the data-info anonymizer endpoint to share paths with the anonymous user."
+    [params body]
+    (raw/share-with-anonymous (:user params) (:paths body)))
+
 (defn gen-output-dir
   "Either obtains or creates a default output directory using a specified base name."
   [base]

@@ -15,20 +15,6 @@
             [terrain.services.filesystem.icat :as icat]
             [terrain.services.filesystem.validators :as validators]))
 
-(def shared-with-attr "ipc-contains-obj-shared-with")
-
-(defn- add-user-shared-with
-  "Adds 'ipc-contains-obj-shared-with' AVU for a user to an object if it's not there."
-  [cm fpath shared-with]
-  (when (empty? (get-avus-by-collection cm fpath shared-with shared-with-attr))
-    (set-metadata cm fpath shared-with shared-with shared-with-attr)))
-
-(defn- remove-user-shared-with
-  "Removes 'ipc-contains-obj-shared-with' AVU for a user from an object if it's there."
-  [cm fpath shared-with]
-  (when-not (empty? (get-avus-by-collection cm fpath shared-with shared-with-attr))
-    (delete-metadata cm fpath shared-with)))
-
 (defn- shared?
   ([cm share-with fpath]
      (:read (permissions cm share-with fpath)))
@@ -101,7 +87,6 @@
           share-recs (group-by keyfn (share-paths cm user share-withs fpaths perm))
           sharees    (map :user (:succeeded share-recs))
           home-dir   (paths/user-home-dir user)]
-      (dorun (map (partial add-user-shared-with cm (paths/user-home-dir user)) sharees))
       {:user        sharees
        :path        fpaths
        :skipped     (map #(dissoc % :skipped) (:skipped share-recs))
@@ -155,12 +140,6 @@
           (shared? cm unshare-with fpath) (unshare-path cm user unshare-with fpath)
           :else                           (skip-share unshare-with fpath :not-shared))))
 
-(defn- clean-up-unsharee-avus
-  [cm fpath unshare-with]
-  (when-not (shared? cm unshare-with fpath)
-    (log/warn "Removing shared with AVU on" fpath "for" unshare-with)
-    (remove-user-shared-with cm fpath unshare-with)))
-
 (defn unshare
   "Allows 'user' to unshare file 'fpath' with user 'unshare-with'."
   [user unshare-withs fpaths]
@@ -181,7 +160,6 @@
           unshare-recs (group-by keyfn (unshare-paths cm user unshare-withs fpaths))
           unsharees    (map :user (:succeeded unshare-recs))
           home-dir     (paths/user-home-dir user)]
-      (dorun (map (partial clean-up-unsharee-avus cm home-dir) unsharees))
       {:user unsharees
        :path fpaths
        :skipped (map #(dissoc % :skipped) (:skipped unshare-recs))})))
@@ -194,30 +172,3 @@
   [p]
   (let [aurl (url/url (cfg/anon-files-base))]
     (str (-> aurl (assoc :path (ft/path-join (:path aurl) (string/replace p #"^\/" "")))))))
-
-(defn anon-files-urls
-  [paths]
-  (into {} (map #(vector %1 (anon-file-url %1)) paths)))
-
-(defn anon-files
-  [user paths]
-  (with-jargon (icat/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (validators/all-paths-exist cm paths)
-    (validators/paths-are-files cm paths)
-    (validators/user-owns-paths cm user paths)
-    (log/warn "Giving read access to" (cfg/fs-anon-user) "on:" (string/join " " paths))
-    (share user [(cfg/fs-anon-user)] paths :read)
-    {:user user :paths (anon-files-urls paths)}))
-
-(defn fix-broken-paths
-  [paths]
-  (mapv #(string/replace % #"\/$" "") paths))
-
-(defn do-anon-files
-  [params body]
-  (paths/log-call "do-anon-files" params body)
-  (validate-map params {:user string?})
-  (validate-map body {:paths sequential?})
-  (validators/validate-num-paths (:paths body))
-  (anon-files (:user params) (fix-broken-paths (:paths body))))

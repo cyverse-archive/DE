@@ -90,7 +90,7 @@
       (controller req data/read-tabular-chunk :params :body))
 
     (POST "/filesystem/anon-files" [:as req]
-      (controller req sharing/do-anon-files :params :body))))
+      (controller req data/share-with-anonymous :params :body))))
 
 (defn secured-filesystem-metadata-routes
   "The routes for file metadata endpoints."
