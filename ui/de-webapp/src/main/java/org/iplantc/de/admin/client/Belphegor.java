@@ -6,6 +6,7 @@ import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
+import org.iplantc.de.conf.GwtRpcConfig;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.PropertyService;
 import org.iplantc.de.shared.services.PropertyServiceAsync;
@@ -42,7 +43,6 @@ public class Belphegor implements EntryPoint {
      */
     @Override
     public void onModuleLoad() {
-        setBrowserContextMenuEnabled(adminProperties.isContextClickEnabled());
         setEntryPointTitle();
         initProperties();
     }
@@ -61,6 +61,7 @@ public class Belphegor implements EntryPoint {
             @Override
             public void onSuccess(HashMap<String, String> result) {
                 adminProperties.initialize(result);
+                setBrowserContextMenuEnabled(adminProperties.isContextClickEnabled());
                 initUserInfo();
             }
         });
