@@ -1,6 +1,6 @@
 ---
 # defaults file for systemd-service-cfg
-systemd_unit_file_dir: "{{systemd.unit_file_dir}}"
+systemd_unit_file_dir: "/usr/lib/systemd/system"
 group_name: "{{service_name_short}}"
 unit_type: service
 systemd_enable: true
