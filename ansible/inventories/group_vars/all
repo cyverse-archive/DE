@@ -22,14 +22,6 @@ docker:
 java:
   version: 1.7.0
 
-logstash_forwarder:
-  service_description: logstash forwarder service
-  service_name: logstash-forwarder.service
-  service_name_short: logstash-forwarder
-  compose_service: logstash_forwarder
-  image_name: willdurand/logstash-forwarder
-  container_name: logstash-fowarder
-
 # Indicates whether or not this environment is a complete environment or piggybacks off some other
 # environment
 parasitic: false
