@@ -103,11 +103,13 @@ func (e *Event) setExitCode() {
 	matchesLength := len(matches)
 	if matchesLength < 2 {
 		e.ExitCode = EventCodeNotSet
+		return
 	}
 	code, err := strconv.Atoi(matches[1])
 	if err != nil {
 		logger.Printf("Error converting exit code to an integer: %s", matches[1])
 		e.ExitCode = EventCodeNotSet
+		return
 	}
 	e.ExitCode = code
 }
@@ -119,6 +121,7 @@ func (e *Event) setCondorID() {
 	matchesLength := len(matches)
 	if matchesLength < 2 {
 		e.CondorID = ""
+		return
 	}
 	if strings.HasPrefix(matches[1], "0") {
 		e.CondorID = strings.TrimLeft(matches[1], "0")
@@ -136,7 +139,6 @@ func (e *Event) setInvocationID() {
 	} else {
 		e.InvocationID = matches[1]
 	}
-	logger.Printf("Parsed out %s as the invocation ID", e.InvocationID)
 }
 
 // Parse extracts info from an event string.

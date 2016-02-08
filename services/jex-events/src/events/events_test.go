@@ -1,7 +1,6 @@
 package events
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -31,7 +30,7 @@ func TestSetExitCode(t *testing.T) {
 	text := `
                               event_text
 -----------------------------------------------------------------------
- 005 (222.000.000) 11/05 14:18:27 Job terminated.                     +
+005 (222.000.000) 11/05 14:18:27 Job terminated.                      +
          (1) Normal termination (return value 0)                      +
                  Usr 0 00:00:06, Sys 0 00:00:00  -  Run Remote Usage  +
                  Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage   +
@@ -54,7 +53,64 @@ func TestSetExitCode(t *testing.T) {
 	}
 	e.setExitCode()
 	if e.ExitCode != 0 {
-		fmt.Printf("ExitCode is set to %d and not 0", e.ExitCode)
+		t.Errorf("ExitCode is set to %d and not 0", e.ExitCode)
+	}
+}
+
+// TestMissingExitCode verifies that a missing exit code in a job terminated
+// event behaves correctly.
+func TestMissingExitCode(t *testing.T) {
+	text := `
+                              event_text
+-----------------------------------------------------------------------
+005 (222.000.000) 11/05 14:18:27 Job terminated.                      +
+         (1) Normal termination                                       +
+                 Usr 0 00:00:06, Sys 0 00:00:00  -  Run Remote Usage  +
+                 Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage   +
+                 Usr 0 00:00:06, Sys 0 00:00:00  -  Total Remote Usage+
+                 Usr 0 00:00:00, Sys 0 00:00:00  -  Total Local Usage +
+         123091  -  Run Bytes Sent By Job                             +
+         801816  -  Run Bytes Received By Job                         +
+         123091  -  Total Bytes Sent By Job                           +
+         801816  -  Total Bytes Received By Job                       +
+         Partitionable Resources :    Usage  Request Allocated        +
+            Cpus                 :                 1         1        +
+            Disk (KB)            :     1019     1024   2825331        +
+            Memory (MB)          :        3        1      1024        +
+ ...                                                                  +
+
+(1 row)
+`
+	e := Event{
+		Event: text,
+	}
+	e.setExitCode()
+	if e.ExitCode != EventCodeNotSet {
+		t.Errorf("ExitCode is set to %d and not %d", e.ExitCode, EventCodeNotSet)
+	}
+}
+
+// TestSetCondorID tests the function that parses the Condor ID from the
+// event text.
+func TestSetCondorID(t *testing.T) {
+	e := Event{
+		ID: "005 (222.000.000) 11/05 14:18:27 Job terminated.",
+	}
+	e.setCondorID()
+	if e.CondorID != "222" {
+		t.Errorf("CondorID is set to %s and not 222", e.CondorID)
+	}
+}
+
+// TestMissingCondorID verifies that a missing Condor ID in an event behaves
+// correctly.
+func TestMissingCondorID(t *testing.T) {
+	e := Event{
+		ID: "005 () 11/05 14:18:27 Job terminated.\n",
+	}
+	e.setCondorID()
+	if e.CondorID != "" {
+		t.Errorf("CondorID is set to %s and not empty string", e.CondorID)
 	}
 }
 
@@ -88,7 +144,8 @@ ReceivedBytes = 801816.0
 		Event: text,
 	}
 	e.setInvocationID()
-	if e.InvocationID != "995f0ee0-8a8d-44e3-a3bb-a2f58210c65e" {
-		fmt.Printf("InvocationID is set to %s and not %s", e.InvocationID, "995f0ee0-8a8d-44e3-a3bb-a2f58210c65e")
+	expected := "995f0ee0-8a8d-44e3-a3bb-a2f58210c65e"
+	if e.InvocationID != expected {
+		t.Errorf("InvocationID is set to %s and not %s", e.InvocationID, expected)
 	}
 }
