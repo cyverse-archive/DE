@@ -260,7 +260,7 @@ public class DataSearchQueryBuilder {
     public DataSearchQueryBuilder sharedWith() {
         String content = applyImplicitUsernameWildcard(dsf.getSharedWith());
         if (!Strings.isNullOrEmpty(content)) {
-            // {"bool":{"must":[{"nested":{"path":"userPermissions","query":{"bool":{"must":[{"term":{"permission":"own"}},{"wildcard":{"user":"currentUser#*"}}]}}}},{"nested":{"path":"userPermissions","query":{"bool":{"must":[{"wildcard":{"user":queryContent}}]}}}}]}}
+            // {"bool":{"must":[{"nested":{"path":"userPermissions","query":{"bool":{"must":[{"term":{"permission":"own"}},{"wildcard":{"userPermissions.user":"currentUser#*"}}]}}}},{"nested":{"path":"userPermissions","query":{"bool":{"must":[{"wildcard":{"user":queryContent}}]}}}}]}}
             Splittable query = StringQuoter.createSplittable();
             Splittable bool = addChild(query, BOOL);
             Splittable must = addArray(bool, "must");
@@ -272,7 +272,7 @@ public class DataSearchQueryBuilder {
             Splittable nested = addChild(sharedWith, NESTED2);
             StringQuoter.create("userPermissions").assign(nested, PATH);
 
-            createWildcard("user", content).assign(nested, QUERY2);
+            createWildcard("userPermissions.user", content).assign(nested, QUERY2);
 
             appendArrayItem(must, sharedWith);
 
@@ -394,7 +394,7 @@ public class DataSearchQueryBuilder {
     }
 
     private Splittable createOwnerQuery(String user) {
-        // {"nested":{"path":"userPermissions","query":{"bool":{"must":[{"term":{"permission":"own"}},{"wildcard":{"user":queryContent}}]}}}}
+        // {"nested":{"path":"userPermissions","query":{"bool":{"must":[{"term":{"userPermissions.permission":"own"}},{"wildcard":{"userPermissions.user":queryContent}}]}}}}
         Splittable ownedBy = StringQuoter.createSplittable();
 
         Splittable nested = addChild(ownedBy, NESTED2);
@@ -404,8 +404,8 @@ public class DataSearchQueryBuilder {
         Splittable bool = addChild(query, BOOL);
         Splittable must = addArray(bool, "must");
 
-        appendArrayItem(must, createQuery("term", "permission", "own"));
-        appendArrayItem(must, createWildcard("user", applyImplicitUsernameWildcard(user)));
+        appendArrayItem(must, createQuery("term", "userPermissions.permission", "own"));
+        appendArrayItem(must, createWildcard("userPermissions.user", applyImplicitUsernameWildcard(user)));
 
         return ownedBy;
     }
