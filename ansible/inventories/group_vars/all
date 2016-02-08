@@ -223,35 +223,6 @@ dewey:
   log_file: dewey-docker.log
   max_heap: "{{ max_heap.low }}"
 
-systemd:
-  syslogFacility: local6
-  unit_file_dir: /usr/lib/systemd/system
-  services:
-          - "{{anon_files}}"
-          - "{{clockwork}}"
-          - "{{condor_log_monitor}}"
-          - "{{data_info}}"
-          - "{{de.http_server}}"
-          - "{{de}}"
-          - "{{dewey}}"
-          - "{{terrain}}"
-          - "{{exim}}"
-          - "{{infosquito}}"
-          - "{{info_typer}}"
-          - "{{iplant_email}}"
-          - "{{iplant_groups}}"
-          - "{{jex}}"
-          - "{{jexevents}}"
-          - "{{kifshare}}"
-          - "{{apps}}"
-          - "{{metadata}}"
-          - "{{monkey}}"
-          - "{{notificationagent}}"
-          - "{{saved_searches}}"
-          - "{{tree_urls}}"
-          - "{{user_preferences}}"
-          - "{{user_sessions}}"
-
 terrain:
   host: "{{ groups['terrain'][0] }}"
   port:
