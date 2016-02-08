@@ -291,7 +291,7 @@ public class DataSearchQueryBuilderTest {
      */
     private String setOwnedBy(final String givenValue) {
         when(dsf.getOwnedBy()).thenReturn(givenValue);
-        return "{\"nested\":{\"query\":{\"bool\":{\"must\":[{\"term\":{\"permission\":\"own\"}},{\"wildcard\":{\"user\":\""
+        return "{\"nested\":{\"query\":{\"bool\":{\"must\":[{\"term\":{\"userPermissions.permission\":\"own\"}},{\"wildcard\":{\"userPermissions.user\":\""
                 + givenValue + "#*\"}}]}},\"path\":\"userPermissions\"}}";
     }
 
@@ -408,9 +408,9 @@ public class DataSearchQueryBuilderTest {
      */
     private String setSharedWith(final String givenValue) {
         when(dsf.getSharedWith()).thenReturn(givenValue);
-        return "{\"bool\":{\"must\":[{\"nested\":{\"query\":{\"bool\":{\"must\":[{\"term\":{\"permission\":\"own\"}},{\"wildcard\":{\"user\":\""
+        return "{\"bool\":{\"must\":[{\"nested\":{\"query\":{\"bool\":{\"must\":[{\"term\":{\"userPermissions.permission\":\"own\"}},{\"wildcard\":{\"userPermissions.user\":\""
                 + userInfoMock.getUsername()
-                + "#*\"}}]}},\"path\":\"userPermissions\"}},{\"nested\":{\"query\":{\"wildcard\":{\"user\":\""
+                + "#*\"}}]}},\"path\":\"userPermissions\"}},{\"nested\":{\"query\":{\"wildcard\":{\"userPermissions.user\":\""
                 + givenValue + "#*\"}},\"path\":\"userPermissions\"}}]}}";
     }
 
