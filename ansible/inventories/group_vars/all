@@ -235,9 +235,6 @@ systemd:
           - "{{de}}"
           - "{{dewey}}"
           - "{{terrain}}"
-          - "{{elk.elasticsearch}}"
-          - "{{elk.kibana}}"
-          - "{{elk.logstash}}"
           - "{{exim}}"
           - "{{infosquito}}"
           - "{{info_typer}}"
@@ -286,47 +283,6 @@ iplant_email:
   max_heap: "{{ max_heap.low }}"
 
 environment_name:
-
-elk:
-  conf_dir: "{{de_config_dir}}/elk"
-  logstash:
-    port: 5000
-    container_name: elk_logstash
-    service_name: elk-logstash.service
-    service_name_short: elk-logstash
-    compose_service: elk_logstash
-    service_description: ELK logstash
-    image_name: de-logstash
-    log_file: elk-logstash-docker.log
-  data:
-    container_name: elk_data
-    service_name: elk-data.service
-    service_name_short: elk-data
-    compose_service: elk_data
-    service_description: ELK data container
-    image_name: busybox
-  elasticsearch:
-    port: 9200
-    container_name: elk_elasticsearch
-    service_name: elk-elasticsearch.service
-    service_name_short: elk-elasticsearch
-    compose_service: elk_elasticsearch
-    service_description: ELK elasticsearch
-    image_name: elasticsearch
-    image_version: 1.7.3
-    heap_size: "12g"
-    cluster_name: "de-elk-dev"
-    log_file: elk-elasticsearch-docker.log
-  kibana:
-    port: 5601
-    container_name: elk_kibana
-    service_name: elk-kibana.service
-    service_name_short: elk-kibana
-    compose_service: elk_kibana
-    service_description: ELK kibana
-    version: 4.1.4
-    image_name: "kibana:4.1.4"
-    log_file: elk-kibana-docker.log
 
 elasticsearch:
   host: "{{ groups['elasticsearch'][0] }}"
