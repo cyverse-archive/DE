@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM jeanblanchard/alpine-glibc
 
 ADD bin/jex-events /bin/
 
