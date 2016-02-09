@@ -119,6 +119,7 @@ type UpdateMessage struct {
 	Version int
 	State   JobState
 	Message string
+	SentOn  string // Should be the milliseconds since the epoch
 	Sender  string // Should be the hostname of the box sending the message.
 }
 
@@ -359,6 +360,9 @@ func (c *Client) Publish(key string, body []byte) error {
 // PublishJobUpdate sends a mess to the configured exchange with a routing key of
 // "jobs.updates"
 func (c *Client) PublishJobUpdate(u *UpdateMessage) error {
+	if u.SentOn == "" {
+		u.SentOn = string(time.Now().UnixNano() / int64(time.Millisecond))
+	}
 	msgJSON, err := json.Marshal(u)
 	if err != nil {
 		return err
