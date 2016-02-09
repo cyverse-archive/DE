@@ -29,6 +29,10 @@ CREATE TABLE job_status_updates (
     -- that the record was created. Should be in milliseconds since the epoch.
     sent_on bigint NOT NULL,
 
+    -- propagated tells whether or not the status update has been pushed
+    -- upstream, from the apps service's perspective.
+    propagated boolean NOT NULL DEFAULT 'false',
+
     -- The date that the record was created by whichever service adds the record.
     -- This is not the date that the update was sent.
     created_date timestamp NOT NULL DEFAULT now()
