@@ -5,6 +5,7 @@
         [kameleon.entities]
         [kameleon.uuids :only [uuidify]]
         [medley.core :only [find-first]]
+        [apps.clients.iplant-groups :as iplant-groups]
         [apps.persistence.app-metadata :only [add-app
                                                     add-mapping
                                                     add-step
@@ -185,6 +186,7 @@
     (let [app-id (:id (add-app app))]
       (add-app-to-user-dev-category user app-id)
       (add-app-steps-mappings (assoc app :id app-id))
+      (iplant-groups/register-private-app (:shortUsername user) app-id)
       app-id)))
 
 (defn- update-pipeline-app
