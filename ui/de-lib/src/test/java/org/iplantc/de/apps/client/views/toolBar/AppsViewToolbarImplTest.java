@@ -372,6 +372,8 @@ public class AppsViewToolbarImplTest {
         when(eventMock.getAppSelection()).thenReturn(singleAppSelection);
         when(currentSelectionMock.size()).thenReturn(singleAppSelection.size());
         when(currentSelectionMock.get(eq(0))).thenReturn(singleAppSelection.get(0));
+        when(appMock.getIntegratorEmail()).thenReturn("user@email.com");
+        when(mockUserInfo.getEmail()).thenReturn("notCurrentUser@dongle.com");
 
         /*** CALL METHOD UNDER TEST ***/
         uut.onAppSelectionChanged(eventMock);
@@ -430,6 +432,8 @@ public class AppsViewToolbarImplTest {
         when(eventMock.getAppSelection()).thenReturn(singleAppSelection);
         when(currentSelectionMock.size()).thenReturn(singleAppSelection.size());
         when(currentSelectionMock.get(eq(0))).thenReturn(singleAppSelection.get(0));
+        when(appMock.getIntegratorEmail()).thenReturn("user@email.com");
+        when(mockUserInfo.getEmail()).thenReturn("notCurrentUser@dongle.com");
 
         /*** CALL METHOD UNDER TEST ***/
         uut.onAppSelectionChanged(eventMock);
@@ -726,7 +730,8 @@ public class AppsViewToolbarImplTest {
         when(eventMock.getAppSelection()).thenReturn(singleAppSelection);
         when(currentSelectionMock.size()).thenReturn(singleAppSelection.size());
         when(currentSelectionMock.get(eq(0))).thenReturn(singleAppSelection.get(0));
-
+        when(appMock.getIntegratorEmail()).thenReturn("user@email.com");
+        when(mockUserInfo.getEmail()).thenReturn("user@email.com");
         /*** CALL METHOD UNDER TEST ***/
         uut.onAppSelectionChanged(eventMock);
 
@@ -737,7 +742,7 @@ public class AppsViewToolbarImplTest {
         verify(mockWfMenu).setEnabled(eq(true));
 
         verify(mockDeleteApp).setEnabled(false);
-        verify(mockEditApp).setEnabled(false);
+        verify(mockEditApp).setEnabled(true);
         verify(mockCopyApp).setEnabled(true);
         verify(mockAppRun).setEnabled(true);
         verify(mockDeleteWf).setEnabled(false);
@@ -788,6 +793,8 @@ public class AppsViewToolbarImplTest {
         when(eventMock.getAppSelection()).thenReturn(singleAppSelection);
         when(currentSelectionMock.size()).thenReturn(singleAppSelection.size());
         when(currentSelectionMock.get(eq(0))).thenReturn(singleAppSelection.get(0));
+        when(wfMock.getIntegratorEmail()).thenReturn("user@email.com");
+        when(mockUserInfo.getEmail()).thenReturn("notCurrentUser@dongle.com");
 
         /*** CALL METHOD UNDER TEST ***/
         uut.onAppSelectionChanged(eventMock);
