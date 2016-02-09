@@ -10,7 +10,7 @@ import (
 	"messaging"
 	"net"
 	"os"
-	"time"
+	"strconv"
 
 	_ "github.com/lib/pq"
 	"github.com/streadway/amqp"
@@ -47,7 +47,7 @@ func AppVersion() {
 	}
 }
 
-func insert(state, invID, msg, host, ip string, sentOn time.Time) (sql.Result, error) {
+func insert(state, invID, msg, host, ip string, sentOn int64) (sql.Result, error) {
 	insertStr := `
 		INSERT INTO job_status_updates (
 			external_id,
@@ -109,13 +109,18 @@ func msg(delivery amqp.Delivery) {
 		}
 	}
 	logger.Printf("Sent from: %s", sentFromAddr)
+	sentOn, err := strconv.ParseInt(update.SentOn, 10, 64)
+	if err != nil {
+		logger.Printf("Error parsing SentOn field, setting field to 0: %s", err)
+		sentOn = 0
+	}
 	result, err := insert(
 		string(update.State),
 		update.Job.InvocationID,
 		update.Message,
 		update.Sender,
 		sentFromAddr,
-		delivery.Timestamp,
+		sentOn,
 	)
 	if err != nil {
 		logger.Print(err)

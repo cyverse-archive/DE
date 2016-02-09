@@ -133,12 +133,12 @@ type JobMessageHandler struct {
 	In           chan messaging.UpdateMessage
 	Exit         chan int
 	queueLock    *sync.Mutex
-	Queue        []*messaging.UpdateMessage
+	Queue        []messaging.UpdateMessage
 }
 
 // NewJobMessageHandler returns a new JobMessageHandler
 func NewJobMessageHandler(jt *JobTracker, invID string) *JobMessageHandler {
-	var q []*messaging.UpdateMessage
+	var q []messaging.UpdateMessage
 	i := make(chan messaging.UpdateMessage)
 	e := make(chan int)
 	jmh := &JobMessageHandler{
@@ -186,7 +186,7 @@ func (h *JobMessageHandler) launch() {
 				m := msg
 				logger.Printf("Locking the queue for the input goroutine for job %s", h.InvocationID)
 				h.queueLock.Lock()
-				h.Queue = append(h.Queue, &m)
+				h.Queue = append(h.Queue, m)
 				h.queueLock.Unlock()
 				logger.Printf("Unlocked the queue for the input goroutine for job %s", h.InvocationID)
 				notifications <- 1
@@ -203,7 +203,7 @@ func (h *JobMessageHandler) launch() {
 		select {
 		case <-notifications:
 			logger.Printf("Received message in notification loop for job %s", h.InvocationID)
-			var update *messaging.UpdateMessage
+			var update messaging.UpdateMessage
 			logger.Printf("Locking the queue in the notification loop for job %s", h.InvocationID)
 			h.queueLock.Lock()
 			logger.Printf("Length of queue in the notification loop for job %s: %d", h.InvocationID, len(h.Queue))
