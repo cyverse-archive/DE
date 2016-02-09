@@ -42,7 +42,6 @@ public class Belphegor implements EntryPoint {
      */
     @Override
     public void onModuleLoad() {
-        setBrowserContextMenuEnabled(adminProperties.isContextClickEnabled());
         setEntryPointTitle();
         initProperties();
     }
@@ -61,6 +60,7 @@ public class Belphegor implements EntryPoint {
             @Override
             public void onSuccess(HashMap<String, String> result) {
                 adminProperties.initialize(result);
+                setBrowserContextMenuEnabled(adminProperties.isContextClickEnabled());
                 initUserInfo();
             }
         });
