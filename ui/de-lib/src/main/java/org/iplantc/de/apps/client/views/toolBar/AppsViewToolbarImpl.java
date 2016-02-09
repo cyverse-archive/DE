@@ -233,21 +233,10 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
                 break;
             case 1:
                 final App selectedApp = currentSelection.get(0);
-                final boolean isOwner =
-                        selectedApp.getPermission() != null && selectedApp.getPermission()
-                                                                          .equals(PermissionValue.own);
-                final String integratorEmail = selectedApp.getIntegratorEmail();
-                String email = userInfo.getEmail();
-
-                final boolean isEditable = isOwner || (selectedApp.getPermission() != null && selectedApp
-                        .getPermission()
-                        .equals(PermissionValue.write)) || (selectedApp.isPublic()
-                                                            && integratorEmail.equalsIgnoreCase(email));
-
-
-                final boolean isCopyable =
-                        isEditable || selectedApp.getPermission() != null && selectedApp.getPermission()
-                                                                                        .equals(PermissionValue.read);
+                final boolean isOwner = hasOwnerPermission(selectedApp);
+                final boolean isEditable =
+                        isOwner || hasWritePermission(selectedApp) || isIntegrator(selectedApp);
+                final boolean isCopyable = isEditable || hasReadPermission(selectedApp);
                 final boolean isSingleStep = selectedApp.getStepCount() == 1;
                 final boolean isMultiStep = selectedApp.getStepCount() > 1;
                 final boolean isAppPublic = selectedApp.isPublic();
@@ -302,6 +291,26 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         editWf.setEnabled(editWfEnabled);
         copyWf.setEnabled(copyWfEnabled);
         wfRun.setEnabled(wfRunEnabled);
+    }
+
+    private boolean hasReadPermission(App selectedApp) {
+        return selectedApp.getPermission() != null && selectedApp.getPermission()
+                                                                 .equals(PermissionValue.read);
+    }
+
+    private boolean hasOwnerPermission(App selectedApp) {
+        return selectedApp.getPermission() != null && selectedApp.getPermission()
+                                                                 .equals(PermissionValue.own);
+    }
+
+    private boolean isIntegrator(App selectedApp) {
+        return selectedApp.isPublic() && selectedApp.getIntegratorEmail()
+                                                    .equalsIgnoreCase(userInfo.getEmail());
+    }
+
+    private boolean hasWritePermission(App selectedApp) {
+        return selectedApp.getPermission() != null && selectedApp.getPermission()
+                                                                 .equals(PermissionValue.write);
     }
 
     // </editor-fold>
