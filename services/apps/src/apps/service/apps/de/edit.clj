@@ -206,7 +206,8 @@
   "This service prepares a JSON response for editing an App in the client."
   [user app-id]
   (let [app (persistence/get-app app-id)]
-    (verify-app-permission user app "write")
+    (when-not (user-owns-app? user app)
+      (verify-app-permission user app "write"))
     (format-app-for-editing app)))
 
 (defn- update-parameter-argument
