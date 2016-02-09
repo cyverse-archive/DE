@@ -1,8 +1,3 @@
----
-layout: page
-title: DE API Documentation
----
-
 # Endpoint Index
 
 * [GET /](endpoints/misc.html#verifying-that-terrain-is-running)
@@ -66,11 +61,14 @@ title: DE API Documentation
 * [GET /apps/elements](endpoints/app-metadata.html#listing-app-elements)
 * [GET /apps/elements/{element-type}](endpoints/app-metadata.html#listing-app-elements)
 * [GET /apps/ids](endpoints/app-metadata.html#listing-app-identifiers)
+* [POST /apps/permission-lister](endpoints/app-metadata.html#listing-permissions-for-a-set-of-apps)
 * [POST /apps/pipelines](endpoints/app-metadata.html#creating-a-pipeline)
 * [PUT /apps/pipelines/{app-id}](endpoints/app-metadata.html#updating-a-pipeline)
 * [POST /apps/pipelines/{app-id}/copy](endpoints/app-metadata.html#making-a-copy-of-a-pipeline-available-for-editing)
 * [GET /apps/pipelines/{app-id}/ui](endpoints/app-metadata.html#making-a-pipeline-available-for-editing)
+* [POST /apps/share](endpoints/app-metadata.html#granting-access-to-a-set-of-apps)
 * [POST /apps/shredder](endpoints/app-metadata.html#logically-deleting-apps)
+* [POST /apps/unshare](endpoints/app-metadata.html#revoking-access-to-a-set-of-apps)
 * [DELETE /apps/{app-id}](endpoints/app-metadata.html#logically-deleting-apps)
 * [GET /apps/{app-id}](endpoints/app-metadata.html#getting-analyses-in-the-json-format-required-by-the-de)
 * [PATCH /apps/{app-id}](endpoints/app-metadata.html#updating-app-labels)
@@ -107,7 +105,6 @@ title: DE API Documentation
 * [GET /permanent-id-requests/{request-id}](endpoints/permanent-id-requests.html#list-permanent-id-request-details)
 * [GET /reference-genomes](endpoints/reference-genomes.html#exporting-reference-genomes)
 * [GET /reference-genomes/{reference-genome-id}](endpoints/reference-genomes.html#get-a-reference-genome-by-id)
-* [POST /secured//fileio/upload](endpoints/fileio.html#uploading)
 * [GET /secured/bootstrap](endpoints/misc.html#initializing-a-users-workspace-and-preferences)
 * [GET /secured/collaborators](endpoints/collaborators.html#listing-collaborators)
 * [POST /secured/collaborators](endpoints/collaborators.html#adding-collaborators)
@@ -121,6 +118,7 @@ title: DE API Documentation
 * [GET /secured/fileio/download](endpoints/fileio.html#downloading)
 * [POST /secured/fileio/save](endpoints/fileio.html#save)
 * [POST /secured/fileio/saveas](endpoints/fileio.html#save-as)
+* [POST /secured/fileio/upload](endpoints/fileio.html#uploading)
 * [POST /secured/fileio/urlupload](endpoints/fileio.html#url-uploads)
 * [POST /secured/filesystem/anon-files](endpoints/filesystem/sharing.html#sharing-files-with-the-anonymous-user)
 * [POST /secured/filesystem/delete](endpoints/filesystem/delete.html#deleting-files-andor-directories)
