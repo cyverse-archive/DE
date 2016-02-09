@@ -1,4 +1,3 @@
-# Table of Contents
 ---
 layout: page
 title: DE API Documentation
