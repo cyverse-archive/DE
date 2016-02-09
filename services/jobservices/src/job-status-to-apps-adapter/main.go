@@ -241,7 +241,7 @@ func (h *JobMessageHandler) launch() {
 					return
 				}
 				defer resp.Body.Close()
-				logger.Printf("Response from %s in the notification loop for job %s is: %#v", appsURI, h.InvocationID, err)
+				logger.Printf("Response from %s in the notification loop for job %s is: %s", appsURI, h.InvocationID, resp.Status)
 			} else {
 				if update.State == "" {
 					logger.Printf("The update's state was blank in the notification loop for job %s", h.InvocationID)
