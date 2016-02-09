@@ -236,9 +236,15 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
                 final boolean isOwner =
                         selectedApp.getPermission() != null && selectedApp.getPermission()
                                                                           .equals(PermissionValue.own);
-                final boolean isEditable =
-                        isOwner || selectedApp.getPermission() != null && selectedApp.getPermission()
-                                                                                     .equals(PermissionValue.write);
+                final String integratorEmail = selectedApp.getIntegratorEmail();
+                String email = userInfo.getEmail();
+
+                final boolean isEditable = isOwner || (selectedApp.getPermission() != null && selectedApp
+                        .getPermission()
+                        .equals(PermissionValue.write)) || (selectedApp.isPublic()
+                                                            && integratorEmail.equalsIgnoreCase(email));
+
+
                 final boolean isCopyable =
                         isEditable || selectedApp.getPermission() != null && selectedApp.getPermission()
                                                                                         .equals(PermissionValue.read);
