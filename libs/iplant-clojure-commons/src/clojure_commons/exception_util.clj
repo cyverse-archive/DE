@@ -11,3 +11,8 @@
   "Throws an error indicating that the request is forbidden."
   [reason & {:as ex-info}]
   (throw+ (assoc ex-info :type ::cx/forbidden :error reason)))
+
+(defn exists
+  "Throws an error indicating that there was an attempt to create something that already exists."
+  [reason & {:as ex-info}]
+  (throw+ (assoc ex-info :type ::cx/exists :error reason)))
