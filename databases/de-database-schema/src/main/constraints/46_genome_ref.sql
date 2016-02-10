@@ -4,7 +4,7 @@ SET search_path = public, pg_catalog;
 -- Uniqueness constraint on reference genome name.
 --
 ALTER TABLE ONLY genome_reference
-ADD CONSTRAINT genome_ref_mame_unique
+ADD CONSTRAINT genome_ref_name_unique
 UNIQUE (name);
 
 --
