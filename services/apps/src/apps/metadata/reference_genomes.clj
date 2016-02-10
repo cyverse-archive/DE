@@ -97,11 +97,18 @@
   (if (seq (get-reference-genomes-where {:path path}))
     (cxu/exists "A reference genome with the given path already exists." :path path)))
 
+(defn- validate-reference-genome-name
+  "Verifies that a reference genome with the same name doesn't already exist."
+  [name]
+  (if (seq (get-reference-genomes-where {:name name}))
+    (cxu/exists "A reference genome with the given name already exists." :name name)))
+
 (defn add-reference-genome
   "Adds a reference genome with the given name and path."
   [{:keys [name path] :as reference-genome}]
   (let [user-id (get-user-id (:username current-user))]
     (validate-reference-genome-path path)
+    (validate-reference-genome-name name)
     (-> (insert genome_reference
                 (values {:name             name
                          :path             path
