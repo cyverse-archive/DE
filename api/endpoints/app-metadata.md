@@ -50,6 +50,9 @@ title: DE API Documentation
     * [Listing Tool Installation Requests](#listing-tool-installation-requests)
     * [Listing Tool Installation Request Details](#listing-tool-installation-request-details)
     * [Listing Tool Request Status Codes](#listing-tool-request-status-codes)
+    * [Listing Permissions for a Set of Apps](#listing-permissions-for-a-set-of-apps)
+    * [Granting Access to a Set of Apps](#granting-access-to-a-set-of-apps)
+    * [Revoking Access to a Set of Apps](#revoking-access-to-a-set-of-apps)
 
 # Application Metadata Endpoints
 
@@ -436,5 +439,23 @@ This service is a passthrough to the apps endpoint using the same path. Please s
 ## Listing Tool Request Status Codes
 
 Secured Endpoint: GET /tool-requests/status-codes
+
+This service is a passthrough to the apps endpoint using the same path. Please see the apps service documentation for more details.
+
+## Listing Permissions for a Set of Apps
+
+Secured Endpoint: POST /apps/permission-lister
+
+This service is a passthrough to the apps endpoint using the same path. Please see the apps service documentation for more details.
+
+## Granting Access to a Set of Apps
+
+Secured Endpoint: POST /apps/share
+
+This service is a passthrough to the apps endpoint using the same path. Please see the apps service documentation for more details.
+
+## Revoking Access to a Set of Apps
+
+Secured Endpoint: POST /apps/unshare
 
 This service is a passthrough to the apps endpoint using the same path. Please see the apps service documentation for more details.
