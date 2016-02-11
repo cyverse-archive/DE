@@ -1,4 +1,4 @@
-(defproject org.iplantc/common-swagger-api "5.2.4.0"
+(defproject org.iplantc/common-swagger-api "5.2.5.0"
   :description "Common library for Swagger documented RESTful APIs"
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"

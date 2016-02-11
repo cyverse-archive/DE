@@ -44,7 +44,7 @@ ENV LEIN_ROOT 1
 ENV PATH /bin:/usr/bin:/usr/local/bin:/sbin/:/usr/sbin:/opt/go/bin:/opt/gopath/bin:/opt/maven/bin:/opt/nodejs/bin
 RUN go get github.com/tools/godep
 RUN go get github.com/constabulary/gb/...
-ADD https://raw.githubusercontent.com/technomancy/leiningen/2.5.3/bin/lein /usr/bin/lein
+ADD https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein /usr/bin/lein
 ADD build_profiles.clj /root/.lein/profiles.clj
 
 RUN chmod a+x /usr/bin/lein

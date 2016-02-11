@@ -7,7 +7,7 @@
       (string/trim (:out (sh "git" "rev-parse" "HEAD")))
       ""))
 
-(defproject org.iplantc/apps "5.2.4.0"
+(defproject org.iplantc/apps "5.2.5.0"
   :description "Framework for hosting DiscoveryEnvironment metadata services."
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"
@@ -21,14 +21,14 @@
                  [de.ubercode.clostache/clostache "1.4.0"]
                  [medley "0.7.0"]
                  [metosin/compojure-api "0.24.2"]
-                 [org.iplantc/authy "5.2.4.0"]
-                 [org.iplantc/clojure-commons "5.2.4.0"]
-                 [org.iplantc/kameleon "5.2.4.0"]
-                 [org.iplantc/mescal "5.2.4.0"]
-                 [org.iplantc/common-cli "5.2.4.0"]
-                 [org.iplantc/common-cfg "5.2.4.0"]
-                 [org.iplantc/common-swagger-api "5.2.4.0"]
-                 [org.iplantc/service-logging "5.2.4.0"]
+                 [org.iplantc/authy "5.2.5.0"]
+                 [org.iplantc/clojure-commons "5.2.5.0"]
+                 [org.iplantc/kameleon "5.2.5.0"]
+                 [org.iplantc/mescal "5.2.5.0"]
+                 [org.iplantc/common-cli "5.2.5.0"]
+                 [org.iplantc/common-cfg "5.2.5.0"]
+                 [org.iplantc/common-swagger-api "5.2.5.0"]
+                 [org.iplantc/service-logging "5.2.5.0"]
                  [me.raynes/fs "1.4.6"]
                  [mvxcvi/clj-pgp "0.8.0"]]
   :plugins [[lein-ring "0.9.6"]
