@@ -271,10 +271,9 @@
 
 (defn- format-requested-by
   [user {:keys [requested_by target_id] :as permanent-id-request}]
-  (let [user-info (groups/lookup-subject user requested_by)]
-    (if user-info
-      (assoc permanent-id-request :requested_by (groups/format-like-trellis user-info))
-      permanent-id-request)))
+  (if-let [user-info (groups/lookup-subject user requested_by)]
+    (assoc permanent-id-request :requested_by (groups/format-like-trellis user-info))
+    permanent-id-request))
 
 (defn- format-permanent-id-request-details
   [user permanent-id-request]
@@ -295,7 +294,7 @@
       (update :requests format-perm-id-req-list)))
 
 (defn create-permanent-id-request
-  [params body]
+  [body]
   (create-staging-dir)
   (let [{type :type folder-id :folder} (service/decode-json body)
         folder-id                      (uuidify folder-id)
@@ -315,15 +314,15 @@
     (format-permanent-id-request-details user response)))
 
 (defn list-permanent-id-request-status-codes
-  [params]
+  []
   (metadata/list-permanent-id-request-status-codes))
 
 (defn list-permanent-id-request-types
-  [params]
+  []
   (metadata/list-permanent-id-request-types))
 
 (defn get-permanent-id-request
-  [request-id params]
+  [request-id]
   (->> (metadata/get-permanent-id-request request-id)
        parse-service-json
        (format-permanent-id-request-details (:shortUsername current-user))))
@@ -335,13 +334,13 @@
       (update :requests format-perm-id-req-list)))
 
 (defn admin-get-permanent-id-request
-  [request-id params]
+  [request-id]
   (->> (metadata/admin-get-permanent-id-request request-id)
        parse-service-json
        (format-permanent-id-request-details (:shortUsername current-user))))
 
 (defn update-permanent-id-request
-  [request-id params body]
+  [request-id body]
   (let [response (->> (metadata/update-permanent-id-request request-id body)
                       parse-service-json
                       (format-permanent-id-request-details (:shortUsername current-user)))]
@@ -370,14 +369,14 @@
       identifier)
     (catch Object e
       (log/error e)
-      (update-permanent-id-request request-id nil (json/encode {:status status-code-failed}))
+      (update-permanent-id-request request-id (json/encode {:status status-code-failed}))
       (throw+ e))))
 
 (defn create-permanent-id
-  [request-id params body]
+  [request-id body]
   (create-publish-dir)
   (let [identifier (complete-permanent-id-request (:shortUsername current-user)
-                                                  (admin-get-permanent-id-request request-id nil))]
-    (update-permanent-id-request request-id nil (json/encode {:status       status-code-completion
-                                                              :comments     identifier
-                                                              :permanent_id identifier}))))
+                                                  (admin-get-permanent-id-request request-id))]
+    (update-permanent-id-request request-id (json/encode {:status       status-code-completion
+                                                          :comments     identifier
+                                                          :permanent_id identifier}))))
