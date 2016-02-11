@@ -301,10 +301,6 @@ func ScanAndPropagate(d *sql.DB) error {
 					logger.Print(err)
 					continue
 				}
-			} else {
-				if subupdates.PropagationAttempts >= *maxRetries {
-					logger.Printf("%d either exceeds or meets the maximum allowed retries currently set at %d", subupdates.PropagationAttempts, *maxRetries)
-				}
 			}
 		}
 		if err = proper.Finished(); err != nil {
@@ -362,7 +358,10 @@ func main() {
 	}
 	logger.Println("Connected to the database")
 
-	if err = ScanAndPropagate(db); err != nil {
-		logger.Fatal(err)
+	for {
+		if err = ScanAndPropagate(db); err != nil {
+			logger.Fatal(err)
+		}
+		time.Sleep(5 * time.Second)
 	}
 }
