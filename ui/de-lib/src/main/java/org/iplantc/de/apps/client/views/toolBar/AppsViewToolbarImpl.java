@@ -229,29 +229,24 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
                 wfRunEnabled = false;
                 shareWithCollaboratorsMiEnabled = false;
 
+
                 break;
             case 1:
                 final App selectedApp = currentSelection.get(0);
-                final boolean isOwner =
-                        selectedApp.getPermission() != null && selectedApp.getPermission()
-                                                                          .equals(PermissionValue.own);
+                final boolean isOwner = hasOwnerPermission(selectedApp);
                 final boolean isEditable =
-                        isOwner || selectedApp.getPermission() != null && selectedApp.getPermission()
-                                                                                     .equals(PermissionValue.write);
-                final boolean isCopyable =
-                        isEditable || selectedApp.getPermission() != null && selectedApp.getPermission()
-                                                                                        .equals(PermissionValue.read);
+                        isOwner || hasWritePermission(selectedApp) || isIntegrator(selectedApp);
+                final boolean isCopyable = isEditable || hasReadPermission(selectedApp);
                 final boolean isSingleStep = selectedApp.getStepCount() == 1;
                 final boolean isMultiStep = selectedApp.getStepCount() > 1;
                 final boolean isAppPublic = selectedApp.isPublic();
                 final boolean isAppDisabled = selectedApp.isDisabled();
                 final boolean isRunnable = selectedApp.isRunnable();
-                // final boolean isOwner = selectedApp.getIntegratorEmail().equals(userInfo.getEmail());
 
-                deleteAppEnabled = isSingleStep && !isAppPublic;
+                deleteAppEnabled = isSingleStep && !isAppPublic && isOwner;
                 // allow owners to edit their app
                 editAppEnabled = isSingleStep && isEditable;
-                submitAppEnabled = isSingleStep && isRunnable && !isAppPublic && isOwner;
+                submitAppEnabled = isRunnable && !isAppPublic && isOwner;
                 copyAppEnabled = isSingleStep && isCopyable;
                 // App run menu item is left enabled so user can get error announcement
                 appRunEnabled = isSingleStep && !isAppDisabled;
@@ -283,6 +278,7 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
                 shareWithCollaboratorsMiEnabled = containsSharableApps(currentSelection);
         }
 
+        sharingMenu.setEnabled(submitAppEnabled || shareWithCollaboratorsMiEnabled);
         deleteApp.setEnabled(deleteAppEnabled);
         editApp.setEnabled(editAppEnabled);
         sharePublic.setEnabled(submitAppEnabled);
@@ -295,6 +291,26 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         editWf.setEnabled(editWfEnabled);
         copyWf.setEnabled(copyWfEnabled);
         wfRun.setEnabled(wfRunEnabled);
+    }
+
+    private boolean hasReadPermission(App selectedApp) {
+        return selectedApp.getPermission() != null && selectedApp.getPermission()
+                                                                 .equals(PermissionValue.read);
+    }
+
+    private boolean hasOwnerPermission(App selectedApp) {
+        return selectedApp.getPermission() != null && selectedApp.getPermission()
+                                                                 .equals(PermissionValue.own);
+    }
+
+    private boolean isIntegrator(App selectedApp) {
+        return selectedApp.isPublic() && selectedApp.getIntegratorEmail()
+                                                    .equalsIgnoreCase(userInfo.getEmail());
+    }
+
+    private boolean hasWritePermission(App selectedApp) {
+        return selectedApp.getPermission() != null && selectedApp.getPermission()
+                                                                 .equals(PermissionValue.write);
     }
 
     // </editor-fold>

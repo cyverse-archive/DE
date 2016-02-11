@@ -29,6 +29,7 @@ import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.menu.Menu;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
 import org.junit.Before;
@@ -45,38 +46,64 @@ import java.util.List;
  */
 @RunWith(GxtMockitoTestRunner.class)
 public class AppsViewToolbarImplTest {
+    @Mock
+    AppAutoBeanFactory mockAppFactory;
+    @Mock
+    AppSearchAutoBeanFactory mockAppSearchFactory;
+    @Mock
+    AppServiceFacade mockAppService;
+    @Mock
+    UserInfo mockUserInfo;
 
-    @Mock AppAutoBeanFactory mockAppFactory;
-    @Mock AppSearchAutoBeanFactory mockAppSearchFactory;
-    @Mock AppServiceFacade mockAppService;
-    @Mock UserInfo mockUserInfo;
+    @Mock
+    MenuItem mockAppRun;
+    @Mock
+    MenuItem mockCopyApp;
+    @Mock
+    MenuItem mockCopyWf;
+    @Mock
+    MenuItem mockCreateNewApp;
+    @Mock
+    MenuItem mockCreateWorkflow;
+    @Mock
+    MenuItem mockDeleteApp;
+    @Mock
+    MenuItem mockDeleteWf;
+    @Mock
+    MenuItem mockEditApp;
+    @Mock
+    MenuItem mockEditWf;
+    @Mock
+    MenuItem mockRequestTool;
+    @Mock
+    MenuItem mockWfRun;
 
-    @Mock MenuItem mockAppRun;
-    @Mock MenuItem mockCopyApp;
-    @Mock MenuItem mockCopyWf;
-    @Mock MenuItem mockCreateNewApp;
-    @Mock MenuItem mockCreateWorkflow;
-    @Mock MenuItem mockDeleteApp;
-    @Mock MenuItem mockDeleteWf;
-    @Mock MenuItem mockEditApp;
-    @Mock MenuItem mockEditWf;
-    @Mock MenuItem mockRequestTool;
-    @Mock MenuItem mockSubmitApp;
-    @Mock MenuItem mockWfRun;
+    @Mock
+    TextButton mockAppMenu;
+    @Mock
+    TextButton mockWfMenu;
 
-    @Mock TextButton mockAppMenu;
-    @Mock TextButton mockWfMenu;
-
-    @Mock AutoBean<AppLoadConfig> mockLoadConfigAb;
-    @Mock AppLoadConfig mockLoadConfig;
-    @Mock AppsToolbarView.AppsToolbarAppearance mockAppearance;
-    @Mock PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> mockLoader;
-    @Mock List<App> currentSelectionMock;
-    @Mock AppSearchField appSearchMock;
+    @Mock
+    AutoBean<AppLoadConfig> mockLoadConfigAb;
+    @Mock
+    AppLoadConfig mockLoadConfig;
+    @Mock
+    AppsToolbarView.AppsToolbarAppearance mockAppearance;
+    @Mock
+    PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> mockLoader;
+    @Mock
+    List<App> currentSelectionMock;
+    @Mock
+    AppSearchField appSearchMock;
+    @Mock
+    Menu mockSharingMenu;
+    @Mock
+    MenuItem mockShareCollab, mockSharePublic;
 
     private AppsViewToolbarImpl uut;
 
-    @Before public void setUp() {
+    @Before
+    public void setUp() {
         when(mockAppSearchFactory.loadConfig()).thenReturn(mockLoadConfigAb);
         when(mockLoadConfigAb.as()).thenReturn(mockLoadConfig);
         uut = new AppsViewToolbarImpl(mockAppearance, mockLoader);
@@ -96,8 +123,10 @@ public class AppsViewToolbarImplTest {
         uut.editApp = mockEditApp;
         uut.editWf = mockEditWf;
         uut.requestTool = mockRequestTool;
-        uut.sharePublic = mockSubmitApp;
         uut.wfRun = mockWfRun;
+        uut.sharingMenu = mockSharingMenu;
+        uut.shareCollab = mockShareCollab;
+        uut.sharePublic = mockSharePublic;
 
         uut.appSearch = appSearchMock;
 
@@ -105,7 +134,8 @@ public class AppsViewToolbarImplTest {
         uut.userInfo = mockUserInfo;
     }
 
-    @Test public void emptySelection_onAppCategorySelectionChanged() {
+    @Test
+    public void emptySelection_onAppCategorySelectionChanged() {
         AppCategorySelectionChangedEvent eventMock = mock(AppCategorySelectionChangedEvent.class);
         final List<AppCategory> emptyList = Collections.emptyList();
         when(eventMock.getAppCategorySelection()).thenReturn(emptyList);
@@ -128,11 +158,14 @@ public class AppsViewToolbarImplTest {
                                mockEditApp,
                                mockEditWf,
                                mockRequestTool,
-                               mockSubmitApp,
-                               mockWfRun);
+                               mockWfRun,
+                               mockSharingMenu,
+                               mockShareCollab,
+                               mockSharePublic);
     }
 
-    @Test public void nonEmptySelection_onAppCategorySelectionChanged() {
+    @Test
+    public void nonEmptySelection_onAppCategorySelectionChanged() {
         AppCategorySelectionChangedEvent eventMock = mock(AppCategorySelectionChangedEvent.class);
         final List<AppCategory> selection = Lists.newArrayList(mock(AppCategory.class));
         when(eventMock.getAppCategorySelection()).thenReturn(selection);
@@ -155,11 +188,14 @@ public class AppsViewToolbarImplTest {
                                mockEditApp,
                                mockEditWf,
                                mockRequestTool,
-                               mockSubmitApp,
-                               mockWfRun);
+                               mockWfRun,
+                               mockSharingMenu,
+                               mockSharePublic,
+                               mockShareCollab);
     }
 
-    @Test public void emptySelection_onAppSelectionChanged() {
+    @Test
+    public void emptySelection_onAppSelectionChanged() {
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
         List<App> emptySelectionMock = Collections.emptyList();
         when(eventMock.getAppSelection()).thenReturn(emptySelectionMock);
@@ -175,13 +211,15 @@ public class AppsViewToolbarImplTest {
 
         verify(mockDeleteApp).setEnabled(false);
         verify(mockEditApp).setEnabled(false);
-        verify(mockSubmitApp).setEnabled(false);
         verify(mockCopyApp).setEnabled(false);
         verify(mockAppRun).setEnabled(false);
         verify(mockDeleteWf).setEnabled(false);
         verify(mockEditWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
+        verify(mockSharingMenu).setEnabled(false);
+        verify(mockSharePublic).setEnabled(false);
+        verify(mockShareCollab).setEnabled(false);
 
         verifyNoMoreInteractions(mockAppMenu,
                                  mockWfMenu,
@@ -196,24 +234,25 @@ public class AppsViewToolbarImplTest {
                                  mockEditApp,
                                  mockEditWf,
                                  mockRequestTool,
-                                 mockSubmitApp,
-                                 mockWfRun);
+                                 mockWfRun,
+                                 mockSharingMenu,
+                                 mockShareCollab,
+                                 mockSharePublic);
+
         verifyZeroInteractions(appSearchMock);
     }
 
     /**
      * Verify menu items when app is single step.
      */
-    @Test public void singleAppSelection_onAppSelectionChanged() {
+    @Test
+    public void singleAppSelection_onAppSelectionChanged() {
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App appMock = mock(App.class);
         when(appMock.getPermission()).thenReturn(PermissionValue.read);
         when(appMock.getAppType()).thenReturn("DE");
         when(appMock.getStepCount()).thenReturn(1);
-        // User does not own app
-        when(appMock.getIntegratorEmail()).thenReturn("user@email.com");
-        when(mockUserInfo.getEmail()).thenReturn("notCurrentUser@dongle.com");
         List<App> singleAppSelection = Lists.newArrayList(appMock);
         when(eventMock.getAppSelection()).thenReturn(singleAppSelection);
         when(currentSelectionMock.size()).thenReturn(singleAppSelection.size());
@@ -228,15 +267,17 @@ public class AppsViewToolbarImplTest {
         verify(mockAppMenu).setEnabled(eq(true));
         verify(mockWfMenu).setEnabled(eq(true));
 
-        verify(mockDeleteApp).setEnabled(true);
+        verify(mockDeleteApp).setEnabled(false);
         verify(mockEditApp).setEnabled(false);
-        verify(mockSubmitApp).setEnabled(false);
         verify(mockCopyApp).setEnabled(true);
         verify(mockAppRun).setEnabled(true);
         verify(mockDeleteWf).setEnabled(false);
         verify(mockEditWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
+        verify(mockSharingMenu).setEnabled(false);
+        verify(mockShareCollab).setEnabled(false);
+        verify(mockSharePublic).setEnabled(false);
 
         verifyNoMoreInteractions(mockAppMenu,
                                  mockWfMenu,
@@ -251,24 +292,24 @@ public class AppsViewToolbarImplTest {
                                  mockEditApp,
                                  mockEditWf,
                                  mockRequestTool,
-                                 mockSubmitApp,
-                                 mockWfRun);
+                                 mockWfRun,
+                                 mockSharePublic,
+                                 mockShareCollab,
+                                 mockSharingMenu);
         verifyZeroInteractions(appSearchMock);
     }
 
     /**
      * Verify menu items when app is multi step.
      */
-    @Test public void singleWfSelection_onAppSelectionChanged() {
+    @Test
+    public void singleWfSelection_onAppSelectionChanged() {
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App wfMock = mock(App.class);
         when(wfMock.getPermission()).thenReturn(PermissionValue.read);
         when(wfMock.getAppType()).thenReturn("DE");
         when(wfMock.getStepCount()).thenReturn(2);
-        // User does not own app
-        when(wfMock.getIntegratorEmail()).thenReturn("user@email.com");
-        when(mockUserInfo.getEmail()).thenReturn("notCurrentUser@dongle.com");
         List<App> singleAppSelection = Lists.newArrayList(wfMock);
         when(eventMock.getAppSelection()).thenReturn(singleAppSelection);
         when(currentSelectionMock.size()).thenReturn(singleAppSelection.size());
@@ -285,13 +326,15 @@ public class AppsViewToolbarImplTest {
 
         verify(mockDeleteApp).setEnabled(false);
         verify(mockEditApp).setEnabled(false);
-        verify(mockSubmitApp).setEnabled(false);
         verify(mockCopyApp).setEnabled(false);
         verify(mockAppRun).setEnabled(false);
         verify(mockDeleteWf).setEnabled(false);
         verify(mockEditWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(true);
         verify(mockWfRun).setEnabled(true);
+        verify(mockSharingMenu).setEnabled(false);
+        verify(mockShareCollab).setEnabled(false);
+        verify(mockSharePublic).setEnabled(false);
 
         verifyNoMoreInteractions(mockAppMenu,
                                  mockWfMenu,
@@ -306,15 +349,17 @@ public class AppsViewToolbarImplTest {
                                  mockEditApp,
                                  mockEditWf,
                                  mockRequestTool,
-                                 mockSubmitApp,
-                                 mockWfRun);
+                                 mockWfRun,
+                                 mockSharePublic,
+                                 mockShareCollab);
         verifyZeroInteractions(appSearchMock);
     }
 
     /**
      * Verify menu items when app is single step and public.
      */
-    @Test public void singleAppSelection_public_onAppSelectionChanged() {
+    @Test
+    public void singleAppSelection_public_onAppSelectionChanged() {
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App appMock = mock(App.class);
@@ -322,14 +367,13 @@ public class AppsViewToolbarImplTest {
         when(appMock.getAppType()).thenReturn("DE");
         when(appMock.getStepCount()).thenReturn(1);
         when(appMock.isPublic()).thenReturn(true);
-        // User does not own app
-        when(appMock.getIntegratorEmail()).thenReturn("user@email.com");
-        when(mockUserInfo.getEmail()).thenReturn("notCurrentUser@dongle.com");
 
         List<App> singleAppSelection = Lists.newArrayList(appMock);
         when(eventMock.getAppSelection()).thenReturn(singleAppSelection);
         when(currentSelectionMock.size()).thenReturn(singleAppSelection.size());
         when(currentSelectionMock.get(eq(0))).thenReturn(singleAppSelection.get(0));
+        when(appMock.getIntegratorEmail()).thenReturn("user@email.com");
+        when(mockUserInfo.getEmail()).thenReturn("notCurrentUser@dongle.com");
 
         /*** CALL METHOD UNDER TEST ***/
         uut.onAppSelectionChanged(eventMock);
@@ -342,13 +386,15 @@ public class AppsViewToolbarImplTest {
 
         verify(mockDeleteApp).setEnabled(false);
         verify(mockEditApp).setEnabled(false);
-        verify(mockSubmitApp).setEnabled(false);
         verify(mockCopyApp).setEnabled(true);
         verify(mockAppRun).setEnabled(true);
         verify(mockDeleteWf).setEnabled(false);
         verify(mockEditWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
+        verify(mockSharingMenu).setEnabled(false);
+        verify(mockShareCollab).setEnabled(false);
+        verify(mockSharePublic).setEnabled(false);
 
         verifyNoMoreInteractions(mockAppMenu,
                                  mockWfMenu,
@@ -363,29 +409,31 @@ public class AppsViewToolbarImplTest {
                                  mockEditApp,
                                  mockEditWf,
                                  mockRequestTool,
-                                 mockSubmitApp,
-                                 mockWfRun);
+                                 mockWfRun,
+                                 mockShareCollab,
+                                 mockSharePublic);
         verifyZeroInteractions(appSearchMock);
     }
-        /**
+
+    /**
      * Verify menu items when app is multi step and public.
      */
-    @Test public void singleWfSelection_public_onAppSelectionChanged() {
+    @Test
+    public void singleWfSelection_public_onAppSelectionChanged() {
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App appMock = mock(App.class);
-        when(appMock.getPermission()).thenReturn(PermissionValue.own);
+        when(appMock.getPermission()).thenReturn(PermissionValue.read);
         when(appMock.getAppType()).thenReturn("DE");
         when(appMock.getStepCount()).thenReturn(2);
         when(appMock.isPublic()).thenReturn(true);
-        // User does not own app
-        when(appMock.getIntegratorEmail()).thenReturn("user@email.com");
-        when(mockUserInfo.getEmail()).thenReturn("notCurrentUser@dongle.com");
 
         List<App> singleAppSelection = Lists.newArrayList(appMock);
         when(eventMock.getAppSelection()).thenReturn(singleAppSelection);
         when(currentSelectionMock.size()).thenReturn(singleAppSelection.size());
         when(currentSelectionMock.get(eq(0))).thenReturn(singleAppSelection.get(0));
+        when(appMock.getIntegratorEmail()).thenReturn("user@email.com");
+        when(mockUserInfo.getEmail()).thenReturn("notCurrentUser@dongle.com");
 
         /*** CALL METHOD UNDER TEST ***/
         uut.onAppSelectionChanged(eventMock);
@@ -398,13 +446,15 @@ public class AppsViewToolbarImplTest {
 
         verify(mockDeleteApp).setEnabled(false);
         verify(mockEditApp).setEnabled(false);
-        verify(mockSubmitApp).setEnabled(false);
         verify(mockCopyApp).setEnabled(false);
         verify(mockAppRun).setEnabled(false);
         verify(mockDeleteWf).setEnabled(false);
         verify(mockEditWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(true);
         verify(mockWfRun).setEnabled(true);
+        verify(mockSharingMenu).setEnabled(false);
+        verify(mockShareCollab).setEnabled(false);
+        verify(mockSharePublic).setEnabled(false);
 
         verifyNoMoreInteractions(mockAppMenu,
                                  mockWfMenu,
@@ -419,7 +469,6 @@ public class AppsViewToolbarImplTest {
                                  mockEditApp,
                                  mockEditWf,
                                  mockRequestTool,
-                                 mockSubmitApp,
                                  mockWfRun);
         verifyZeroInteractions(appSearchMock);
     }
@@ -427,16 +476,15 @@ public class AppsViewToolbarImplTest {
     /**
      * Verify menu items when app is single step and owner.
      */
-    @Test public void singleAppSelection_owner_onAppSelectionChanged() {
+    @Test
+    public void singleAppSelection_owner_onAppSelectionChanged() {
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App appMock = mock(App.class);
         when(appMock.getStepCount()).thenReturn(1);
         when(appMock.getPermission()).thenReturn(PermissionValue.own);
         when(appMock.getAppType()).thenReturn("DE");
-        // User owns app
-        when(appMock.getIntegratorEmail()).thenReturn("user@email.com");
-        when(mockUserInfo.getEmail()).thenReturn("user@email.com");
+        when(appMock.isRunnable()).thenReturn(true);
 
         List<App> singleAppSelection = Lists.newArrayList(appMock);
         when(eventMock.getAppSelection()).thenReturn(singleAppSelection);
@@ -454,13 +502,15 @@ public class AppsViewToolbarImplTest {
 
         verify(mockDeleteApp).setEnabled(true);
         verify(mockEditApp).setEnabled(true);
-        verify(mockSubmitApp).setEnabled(false);
         verify(mockCopyApp).setEnabled(true);
         verify(mockAppRun).setEnabled(true);
         verify(mockDeleteWf).setEnabled(false);
         verify(mockEditWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
+        verify(mockSharingMenu).setEnabled(true);
+        verify(mockShareCollab).setEnabled(true);
+        verify(mockSharePublic).setEnabled(true);
 
         verifyNoMoreInteractions(mockAppMenu,
                                  mockWfMenu,
@@ -475,24 +525,26 @@ public class AppsViewToolbarImplTest {
                                  mockEditApp,
                                  mockEditWf,
                                  mockRequestTool,
-                                 mockSubmitApp,
-                                 mockWfRun);
+                                 mockWfRun,
+                                 mockSharingMenu,
+                                 mockShareCollab,
+                                 mockSharePublic);
         verifyZeroInteractions(appSearchMock);
     }
 
     /**
      * Verify menu items when app is multi step and owner.
      */
-    @Test public void singleWfSelection_owner_onAppSelectionChanged() {
+    @Test
+    public void singleWfSelection_owner_onAppSelectionChanged() {
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App wfMock = mock(App.class);
         when(wfMock.getPermission()).thenReturn(PermissionValue.own);
         when(wfMock.getAppType()).thenReturn("DE");
         when(wfMock.getStepCount()).thenReturn(2);
-        // User owns app
-        when(wfMock.getIntegratorEmail()).thenReturn("user@email.com");
-        when(mockUserInfo.getEmail()).thenReturn("user@email.com");
+        when(wfMock.isPublic()).thenReturn(false);
+        when(wfMock.isRunnable()).thenReturn(true);
 
         List<App> singleAppSelection = Lists.newArrayList(wfMock);
         when(eventMock.getAppSelection()).thenReturn(singleAppSelection);
@@ -510,13 +562,15 @@ public class AppsViewToolbarImplTest {
 
         verify(mockDeleteApp).setEnabled(false);
         verify(mockEditApp).setEnabled(false);
-        verify(mockSubmitApp).setEnabled(false);
         verify(mockCopyApp).setEnabled(false);
         verify(mockAppRun).setEnabled(false);
         verify(mockDeleteWf).setEnabled(true);
         verify(mockEditWf).setEnabled(true);
         verify(mockCopyWf).setEnabled(true);
         verify(mockWfRun).setEnabled(true);
+        verify(mockSharingMenu).setEnabled(true);
+        verify(mockShareCollab).setEnabled(true);
+        verify(mockSharePublic).setEnabled(true);
 
         verifyNoMoreInteractions(mockAppMenu,
                                  mockWfMenu,
@@ -531,14 +585,18 @@ public class AppsViewToolbarImplTest {
                                  mockEditApp,
                                  mockEditWf,
                                  mockRequestTool,
-                                 mockSubmitApp,
-                                 mockWfRun);
+                                 mockWfRun,
+                                 mockSharePublic,
+                                 mockSharingMenu,
+                                 mockShareCollab);
         verifyZeroInteractions(appSearchMock);
     }
+
     /**
      * Verify menu items when app is single step and owner and runnable.
      */
-    @Test public void singleAppSelection_ownerRunnable_onAppSelectionChanged() {
+    @Test
+    public void singleAppSelection_ownerRunnable_onAppSelectionChanged() {
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App appMock = mock(App.class);
@@ -547,9 +605,6 @@ public class AppsViewToolbarImplTest {
         when(appMock.getAppType()).thenReturn("DE");
         when(appMock.getStepCount()).thenReturn(1);
         when(appMock.isRunnable()).thenReturn(true);
-        // User owns app
-        when(appMock.getIntegratorEmail()).thenReturn("user@email.com");
-        when(mockUserInfo.getEmail()).thenReturn("user@email.com");
 
         List<App> singleAppSelection = Lists.newArrayList(appMock);
         when(eventMock.getAppSelection()).thenReturn(singleAppSelection);
@@ -567,13 +622,15 @@ public class AppsViewToolbarImplTest {
 
         verify(mockDeleteApp).setEnabled(true);
         verify(mockEditApp).setEnabled(true);
-        verify(mockSubmitApp).setEnabled(true);
         verify(mockCopyApp).setEnabled(true);
         verify(mockAppRun).setEnabled(true);
         verify(mockDeleteWf).setEnabled(false);
         verify(mockEditWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
+        verify(mockSharePublic).setEnabled(true);
+        verify(mockSharingMenu).setEnabled(true);
+        verify(mockShareCollab).setEnabled(true);
 
         verifyNoMoreInteractions(mockAppMenu,
                                  mockWfMenu,
@@ -588,15 +645,18 @@ public class AppsViewToolbarImplTest {
                                  mockEditApp,
                                  mockEditWf,
                                  mockRequestTool,
-                                 mockSubmitApp,
-                                 mockWfRun);
+                                 mockWfRun,
+                                 mockSharePublic,
+                                 mockShareCollab,
+                                 mockSharingMenu);
         verifyZeroInteractions(appSearchMock);
     }
 
     /**
      * Verify menu items when app is multi step and owner and runnable.
      */
-    @Test public void singleWfSelection_ownerRunnable_onAppSelectionChanged() {
+    @Test
+    public void singleWfSelection_ownerRunnable_onAppSelectionChanged() {
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App wfMock = mock(App.class);
@@ -605,10 +665,6 @@ public class AppsViewToolbarImplTest {
         when(wfMock.getAppType()).thenReturn("DE");
         when(wfMock.getStepCount()).thenReturn(2);
         when(wfMock.isRunnable()).thenReturn(true);
-
-        // User owns app
-        when(wfMock.getIntegratorEmail()).thenReturn("user@email.com");
-        when(mockUserInfo.getEmail()).thenReturn("user@email.com");
 
         List<App> singleAppSelection = Lists.newArrayList(wfMock);
         when(eventMock.getAppSelection()).thenReturn(singleAppSelection);
@@ -626,13 +682,15 @@ public class AppsViewToolbarImplTest {
 
         verify(mockDeleteApp).setEnabled(false);
         verify(mockEditApp).setEnabled(false);
-        verify(mockSubmitApp).setEnabled(false);
         verify(mockCopyApp).setEnabled(false);
         verify(mockAppRun).setEnabled(false);
         verify(mockDeleteWf).setEnabled(true);
         verify(mockEditWf).setEnabled(true);
         verify(mockCopyWf).setEnabled(true);
         verify(mockWfRun).setEnabled(true);
+        verify(mockSharePublic).setEnabled(true);
+        verify(mockSharingMenu).setEnabled(true);
+        verify(mockShareCollab).setEnabled(true);
 
         verifyNoMoreInteractions(mockAppMenu,
                                  mockWfMenu,
@@ -647,32 +705,33 @@ public class AppsViewToolbarImplTest {
                                  mockEditApp,
                                  mockEditWf,
                                  mockRequestTool,
-                                 mockSubmitApp,
-                                 mockWfRun);
+                                 mockWfRun,
+                                 mockShareCollab,
+                                 mockSharePublic,
+                                 mockSharingMenu);
         verifyZeroInteractions(appSearchMock);
     }
 
     /**
      * Verify menu items when app is single step and owner, runnable and public.
      */
-    @Test public void singleAppSelection_ownerRunnablePublic_onAppSelectionChanged() {
+    @Test
+    public void singleAppSelection_ownerRunnablePublic_onAppSelectionChanged() {
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App appMock = mock(App.class);
         when(appMock.getStepCount()).thenReturn(1);
-        when(appMock.getPermission()).thenReturn(PermissionValue.own);
+        when(appMock.getPermission()).thenReturn(PermissionValue.read);
         when(appMock.getStepCount()).thenReturn(1);
         when(appMock.isPublic()).thenReturn(true);
         when(appMock.isRunnable()).thenReturn(true);
-        // User owns app
-        when(appMock.getIntegratorEmail()).thenReturn("user@email.com");
-        when(mockUserInfo.getEmail()).thenReturn("user@email.com");
 
         List<App> singleAppSelection = Lists.newArrayList(appMock);
         when(eventMock.getAppSelection()).thenReturn(singleAppSelection);
         when(currentSelectionMock.size()).thenReturn(singleAppSelection.size());
         when(currentSelectionMock.get(eq(0))).thenReturn(singleAppSelection.get(0));
-
+        when(appMock.getIntegratorEmail()).thenReturn("user@email.com");
+        when(mockUserInfo.getEmail()).thenReturn("user@email.com");
         /*** CALL METHOD UNDER TEST ***/
         uut.onAppSelectionChanged(eventMock);
 
@@ -684,13 +743,16 @@ public class AppsViewToolbarImplTest {
 
         verify(mockDeleteApp).setEnabled(false);
         verify(mockEditApp).setEnabled(true);
-        verify(mockSubmitApp).setEnabled(false);
         verify(mockCopyApp).setEnabled(true);
         verify(mockAppRun).setEnabled(true);
         verify(mockDeleteWf).setEnabled(false);
         verify(mockEditWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
+        verify(mockSharePublic).setEnabled(false);
+        verify(mockSharingMenu).setEnabled(false);
+        verify(mockShareCollab).setEnabled(false);
+
 
         verifyNoMoreInteractions(mockAppMenu,
                                  mockWfMenu,
@@ -705,33 +767,34 @@ public class AppsViewToolbarImplTest {
                                  mockEditApp,
                                  mockEditWf,
                                  mockRequestTool,
-                                 mockSubmitApp,
-                                 mockWfRun);
+                                 mockWfRun,
+                                 mockSharePublic,
+                                 mockSharingMenu,
+                                 mockShareCollab);
         verifyZeroInteractions(appSearchMock);
     }
 
     /**
      * Verify menu items when app is multi step and owner, runnable and public.
      */
-    @Test public void singleWfSelection_ownerRunnablePublic_onAppSelectionChanged() {
+    @Test
+    public void singleWfSelection_ownerRunnablePublic_onAppSelectionChanged() {
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App wfMock = mock(App.class);
         when(wfMock.getStepCount()).thenReturn(1);
-        when(wfMock.getPermission()).thenReturn(PermissionValue.own);
+        when(wfMock.getPermission()).thenReturn(PermissionValue.read);
         when(wfMock.getAppType()).thenReturn("DE");
         when(wfMock.getStepCount()).thenReturn(2);
         when(wfMock.isPublic()).thenReturn(true);
         when(wfMock.isRunnable()).thenReturn(true);
 
-        // User owns app
-        when(wfMock.getIntegratorEmail()).thenReturn("user@email.com");
-        when(mockUserInfo.getEmail()).thenReturn("user@email.com");
-
         List<App> singleAppSelection = Lists.newArrayList(wfMock);
         when(eventMock.getAppSelection()).thenReturn(singleAppSelection);
         when(currentSelectionMock.size()).thenReturn(singleAppSelection.size());
         when(currentSelectionMock.get(eq(0))).thenReturn(singleAppSelection.get(0));
+        when(wfMock.getIntegratorEmail()).thenReturn("user@email.com");
+        when(mockUserInfo.getEmail()).thenReturn("notCurrentUser@dongle.com");
 
         /*** CALL METHOD UNDER TEST ***/
         uut.onAppSelectionChanged(eventMock);
@@ -744,13 +807,15 @@ public class AppsViewToolbarImplTest {
 
         verify(mockDeleteApp).setEnabled(false);
         verify(mockEditApp).setEnabled(false);
-        verify(mockSubmitApp).setEnabled(false);
         verify(mockCopyApp).setEnabled(false);
         verify(mockAppRun).setEnabled(false);
         verify(mockDeleteWf).setEnabled(false);
         verify(mockEditWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(true);
         verify(mockWfRun).setEnabled(true);
+        verify(mockSharePublic).setEnabled(false);
+        verify(mockSharingMenu).setEnabled(false);
+        verify(mockShareCollab).setEnabled(false);
 
         verifyNoMoreInteractions(mockAppMenu,
                                  mockWfMenu,
@@ -765,50 +830,48 @@ public class AppsViewToolbarImplTest {
                                  mockEditApp,
                                  mockEditWf,
                                  mockRequestTool,
-                                 mockSubmitApp,
-                                 mockWfRun);
+                                 mockWfRun,
+                                 mockShareCollab,
+                                 mockSharePublic,
+                                 mockSharePublic);
         verifyZeroInteractions(appSearchMock);
     }
 
     /**
      * Verify menu items when multi apps are all public.
      */
-    @Test public void multiAppWfSelection_allPublic_onAppSelectionChanged() {
-         uut = new AppsViewToolbarImpl(mockAppearance, mockLoader){
-             @Override
-             boolean containsSingleStepApp(List<App> apps) {
-                 return true;
-             }
+    @Test
+    public void multiAppWfSelection_allPublic_onAppSelectionChanged() {
+        uut = new AppsViewToolbarImpl(mockAppearance, mockLoader) {
+            @Override
+            boolean containsSingleStepApp(List<App> apps) {
+                return true;
+            }
 
-             @Override
-             boolean containsMultiStepApp(List<App> apps) {
-                 return true;
-             }
+            @Override
+            boolean containsMultiStepApp(List<App> apps) {
+                return true;
+            }
 
-             @Override
-             boolean allAppsPrivate(List<App> apps) {
-                 return false;
-             }
-         };
+            @Override
+            boolean allAppsPrivate(List<App> apps) {
+                return false;
+            }
+        };
         setupMocks(uut);
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App wfMock = mock(App.class);
-        when(wfMock.getPermission()).thenReturn(PermissionValue.own);
+        when(wfMock.getPermission()).thenReturn(PermissionValue.read);
         when(wfMock.getAppType()).thenReturn("DE");
-        when(wfMock.getStepCount()).thenReturn(1);
-        when(wfMock.getPermission()).thenReturn(PermissionValue.own);
         when(wfMock.getStepCount()).thenReturn(2);
         when(wfMock.isPublic()).thenReturn(true);
 
         App appMock = mock(App.class);
+        when(appMock.getPermission()).thenReturn(PermissionValue.read);
         when(appMock.getStepCount()).thenReturn(1);
         when(appMock.isPublic()).thenReturn(true);
-
-        // User does not own apps
-        when(wfMock.getIntegratorEmail()).thenReturn("user@email.com");
-        when(appMock.getIntegratorEmail()).thenReturn("user@email.com");
-        when(mockUserInfo.getEmail()).thenReturn("notUser@email.com");
+        when(wfMock.getAppType()).thenReturn("DE");
 
         currentSelectionMock = spy(new ArrayList<App>());
         uut.currentSelection = currentSelectionMock;
@@ -826,13 +889,15 @@ public class AppsViewToolbarImplTest {
 
         verify(mockDeleteApp).setEnabled(false);
         verify(mockEditApp).setEnabled(false);
-        verify(mockSubmitApp).setEnabled(false);
         verify(mockCopyApp).setEnabled(false);
         verify(mockAppRun).setEnabled(false);
         verify(mockDeleteWf).setEnabled(false);
         verify(mockEditWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
+        verify(mockSharePublic).setEnabled(false);
+        verify(mockSharingMenu).setEnabled(false);
+        verify(mockShareCollab).setEnabled(false);
 
         verifyNoMoreInteractions(mockAppMenu,
                                  mockWfMenu,
@@ -847,51 +912,49 @@ public class AppsViewToolbarImplTest {
                                  mockEditApp,
                                  mockEditWf,
                                  mockRequestTool,
-                                 mockSubmitApp,
-                                 mockWfRun);
+                                 mockWfRun,
+                                 mockSharePublic,
+                                 mockShareCollab,
+                                 mockSharingMenu);
         verifyZeroInteractions(appSearchMock);
     }
 
     /**
      * Verify menu items when multi apps are all private.
      */
-    @Test public void multiAppWfSelection_allPrivate_onAppSelectionChanged() {
-         uut = new AppsViewToolbarImpl(mockAppearance, mockLoader){
-             @Override
-             boolean containsSingleStepApp(List<App> apps) {
-                 return true;
-             }
+    @Test
+    public void multiAppWfSelection_allPrivate_onAppSelectionChanged() {
+        uut = new AppsViewToolbarImpl(mockAppearance, mockLoader) {
+            @Override
+            boolean containsSingleStepApp(List<App> apps) {
+                return true;
+            }
 
-             @Override
-             boolean containsMultiStepApp(List<App> apps) {
-                 return true;
-             }
+            @Override
+            boolean containsMultiStepApp(List<App> apps) {
+                return true;
+            }
 
-             @Override
-             boolean allAppsPrivate(List<App> apps) {
-                 return true;
-             }
-         };
+            @Override
+            boolean allAppsPrivate(List<App> apps) {
+                return true;
+            }
+        };
         setupMocks(uut);
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App wfMock = mock(App.class);
         when(wfMock.getStepCount()).thenReturn(1);
-        when(wfMock.getPermission()).thenReturn(PermissionValue.own);
+        when(wfMock.getPermission()).thenReturn(PermissionValue.read);
         when(wfMock.getAppType()).thenReturn("DE");
         when(wfMock.getStepCount()).thenReturn(2);
-        when(wfMock.isPublic()).thenReturn(true);
+        when(wfMock.isPublic()).thenReturn(false);
 
         App appMock = mock(App.class);
-        when(appMock.getPermission()).thenReturn(PermissionValue.own);
+        when(appMock.getPermission()).thenReturn(PermissionValue.read);
         when(appMock.getAppType()).thenReturn("DE");
         when(appMock.getStepCount()).thenReturn(1);
-        when(appMock.isPublic()).thenReturn(true);
-
-        // User does not own apps
-        when(wfMock.getIntegratorEmail()).thenReturn("user@email.com");
-        when(appMock.getIntegratorEmail()).thenReturn("user@email.com");
-        when(mockUserInfo.getEmail()).thenReturn("notUser@email.com");
+        when(appMock.isPublic()).thenReturn(false);
 
         currentSelectionMock = spy(new ArrayList<App>());
         uut.currentSelection = currentSelectionMock;
@@ -909,13 +972,15 @@ public class AppsViewToolbarImplTest {
 
         verify(mockDeleteApp).setEnabled(true);
         verify(mockEditApp).setEnabled(false);
-        verify(mockSubmitApp).setEnabled(false);
         verify(mockCopyApp).setEnabled(false);
         verify(mockAppRun).setEnabled(false);
         verify(mockDeleteWf).setEnabled(true);
         verify(mockEditWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
+        verify(mockSharePublic).setEnabled(false);
+        verify(mockSharingMenu).setEnabled(false);
+        verify(mockShareCollab).setEnabled(false);
 
         verifyNoMoreInteractions(mockAppMenu,
                                  mockWfMenu,
@@ -930,50 +995,48 @@ public class AppsViewToolbarImplTest {
                                  mockEditApp,
                                  mockEditWf,
                                  mockRequestTool,
-                                 mockSubmitApp,
-                                 mockWfRun);
+                                 mockWfRun,
+                                 mockShareCollab,
+                                 mockSharePublic,
+                                 mockSharingMenu);
         verifyZeroInteractions(appSearchMock);
     }
 
-     /**
+    /**
      * Verify menu items when multi apps are all private.
      */
-    @Test public void multiAppSelection_allPrivate_onAppSelectionChanged() {
-         uut = new AppsViewToolbarImpl(mockAppearance, mockLoader){
-             @Override
-             boolean containsSingleStepApp(List<App> apps) {
-                 return true;
-             }
+    @Test
+    public void multiAppSelection_allPrivate_onAppSelectionChanged() {
+        uut = new AppsViewToolbarImpl(mockAppearance, mockLoader) {
+            @Override
+            boolean containsSingleStepApp(List<App> apps) {
+                return true;
+            }
 
-             @Override
-             boolean containsMultiStepApp(List<App> apps) {
-                 return false;
-             }
+            @Override
+            boolean containsMultiStepApp(List<App> apps) {
+                return false;
+            }
 
-             @Override
-             boolean allAppsPrivate(List<App> apps) {
-                 return true;
-             }
-         };
+            @Override
+            boolean allAppsPrivate(List<App> apps) {
+                return true;
+            }
+        };
         setupMocks(uut);
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
         App wfMock = mock(App.class);
         when(wfMock.getStepCount()).thenReturn(1);
-        when(wfMock.getPermission()).thenReturn(PermissionValue.own);
+        when(wfMock.getPermission()).thenReturn(PermissionValue.read);
         when(wfMock.getStepCount()).thenReturn(2);
         when(wfMock.isPublic()).thenReturn(true);
 
         App appMock = mock(App.class);
-        when(appMock.getPermission()).thenReturn(PermissionValue.own);
+        when(appMock.getPermission()).thenReturn(PermissionValue.read);
         when(appMock.getAppType()).thenReturn("DE");
         when(appMock.getStepCount()).thenReturn(1);
         when(appMock.isPublic()).thenReturn(true);
-
-        // User does not own apps
-        when(wfMock.getIntegratorEmail()).thenReturn("user@email.com");
-        when(appMock.getIntegratorEmail()).thenReturn("user@email.com");
-        when(mockUserInfo.getEmail()).thenReturn("notUser@email.com");
 
         currentSelectionMock = spy(new ArrayList<App>());
         uut.currentSelection = currentSelectionMock;
@@ -991,13 +1054,15 @@ public class AppsViewToolbarImplTest {
 
         verify(mockDeleteApp).setEnabled(true);
         verify(mockEditApp).setEnabled(false);
-        verify(mockSubmitApp).setEnabled(false);
         verify(mockCopyApp).setEnabled(false);
         verify(mockAppRun).setEnabled(false);
         verify(mockDeleteWf).setEnabled(false);
         verify(mockEditWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
+        verify(mockSharePublic).setEnabled(false);
+        verify(mockSharingMenu).setEnabled(false);
+        verify(mockShareCollab).setEnabled(false);
 
         verifyNoMoreInteractions(mockAppMenu,
                                  mockWfMenu,
@@ -1012,31 +1077,34 @@ public class AppsViewToolbarImplTest {
                                  mockEditApp,
                                  mockEditWf,
                                  mockRequestTool,
-                                 mockSubmitApp,
-                                 mockWfRun);
+                                 mockWfRun,
+                                 mockShareCollab,
+                                 mockSharePublic,
+                                 mockSharingMenu);
         verifyZeroInteractions(appSearchMock);
     }
 
     /**
      * Verify menu items when multi apps are all private.
      */
-    @Test public void multiWfSelection_allPrivate_onAppSelectionChanged() {
-         uut = new AppsViewToolbarImpl(mockAppearance, mockLoader){
-             @Override
-             boolean containsSingleStepApp(List<App> apps) {
-                 return false;
-             }
+    @Test
+    public void multiWfSelection_allPrivate_onAppSelectionChanged() {
+        uut = new AppsViewToolbarImpl(mockAppearance, mockLoader) {
+            @Override
+            boolean containsSingleStepApp(List<App> apps) {
+                return false;
+            }
 
-             @Override
-             boolean containsMultiStepApp(List<App> apps) {
-                 return true;
-             }
+            @Override
+            boolean containsMultiStepApp(List<App> apps) {
+                return true;
+            }
 
-             @Override
-             boolean allAppsPrivate(List<App> apps) {
-                 return true;
-             }
-         };
+            @Override
+            boolean allAppsPrivate(List<App> apps) {
+                return true;
+            }
+        };
         setupMocks(uut);
         AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
 
@@ -1054,12 +1122,6 @@ public class AppsViewToolbarImplTest {
         when(appMock.getAppType()).thenReturn("DE");
         when(appMock.isPublic()).thenReturn(false);
 
-        // User does not own apps
-        when(wfMock.getIntegratorEmail()).thenReturn("user@email.com");
-        when(appMock.getIntegratorEmail()).thenReturn("user@email.com");
-        when(mockUserInfo.getEmail()).thenReturn("notUser@email.com");
-
-
         currentSelectionMock = spy(new ArrayList<App>());
         uut.currentSelection = currentSelectionMock;
         List<App> singleAppSelection = Lists.newArrayList(wfMock, appMock);
@@ -1076,13 +1138,16 @@ public class AppsViewToolbarImplTest {
 
         verify(mockDeleteApp).setEnabled(false);
         verify(mockEditApp).setEnabled(false);
-        verify(mockSubmitApp).setEnabled(false);
         verify(mockCopyApp).setEnabled(false);
         verify(mockAppRun).setEnabled(false);
         verify(mockDeleteWf).setEnabled(true);
         verify(mockEditWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
+        verify(mockSharePublic).setEnabled(false);
+        verify(mockSharingMenu).setEnabled(false);
+        verify(mockShareCollab).setEnabled(false);
+
 
         verifyNoMoreInteractions(mockAppMenu,
                                  mockWfMenu,
@@ -1097,8 +1162,127 @@ public class AppsViewToolbarImplTest {
                                  mockEditApp,
                                  mockEditWf,
                                  mockRequestTool,
-                                 mockSubmitApp,
-                                 mockWfRun);
+                                 mockWfRun,
+                                 mockSharePublic,
+                                 mockSharingMenu,
+                                 mockShareCollab);
+        verifyZeroInteractions(appSearchMock);
+    }
+
+    /**
+     * Verify menu items when app is single step.
+     */
+    @Test
+    public void singleAppSelectionWithWrite_onAppSelectionChanged() {
+        AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
+
+        App appMock = mock(App.class);
+        when(appMock.getPermission()).thenReturn(PermissionValue.write);
+        when(appMock.getAppType()).thenReturn("DE");
+        when(appMock.getStepCount()).thenReturn(1);
+        when(appMock.isPublic()).thenReturn(false);
+
+        List<App> singleAppSelection = Lists.newArrayList(appMock);
+        when(eventMock.getAppSelection()).thenReturn(singleAppSelection);
+        when(currentSelectionMock.size()).thenReturn(singleAppSelection.size());
+        when(currentSelectionMock.get(eq(0))).thenReturn(singleAppSelection.get(0));
+
+        /*** CALL METHOD UNDER TEST ***/
+        uut.onAppSelectionChanged(eventMock);
+
+        verify(currentSelectionMock).clear();
+        verify(currentSelectionMock).addAll(eq(singleAppSelection));
+
+        verify(mockAppMenu).setEnabled(eq(true));
+        verify(mockWfMenu).setEnabled(eq(true));
+
+        verify(mockDeleteApp).setEnabled(false);
+        verify(mockEditApp).setEnabled(true);
+        verify(mockCopyApp).setEnabled(true);
+        verify(mockAppRun).setEnabled(true);
+        verify(mockDeleteWf).setEnabled(false);
+        verify(mockEditWf).setEnabled(false);
+        verify(mockCopyWf).setEnabled(false);
+        verify(mockWfRun).setEnabled(false);
+        verify(mockSharingMenu).setEnabled(false);
+        verify(mockShareCollab).setEnabled(false);
+        verify(mockSharePublic).setEnabled(false);
+
+        verifyNoMoreInteractions(mockAppMenu,
+                                 mockWfMenu,
+                                 mockAppRun,
+                                 mockCopyApp,
+                                 mockCopyApp,
+                                 mockCopyWf,
+                                 mockCreateNewApp,
+                                 mockCreateWorkflow,
+                                 mockDeleteApp,
+                                 mockDeleteWf,
+                                 mockEditApp,
+                                 mockEditWf,
+                                 mockRequestTool,
+                                 mockWfRun,
+                                 mockSharePublic,
+                                 mockShareCollab,
+                                 mockSharingMenu);
+        verifyZeroInteractions(appSearchMock);
+    }
+
+    /**
+     * Verify menu items when app is multi step.
+     */
+    @Test
+    public void singleWfSelectionWithWrite_onAppSelectionChanged() {
+        AppSelectionChangedEvent eventMock = mock(AppSelectionChangedEvent.class);
+
+        App wfMock = mock(App.class);
+        when(wfMock.getPermission()).thenReturn(PermissionValue.write);
+        when(wfMock.getAppType()).thenReturn("DE");
+        when(wfMock.getStepCount()).thenReturn(2);
+        when(wfMock.isPublic()).thenReturn(false);
+
+        List<App> singleAppSelection = Lists.newArrayList(wfMock);
+        when(eventMock.getAppSelection()).thenReturn(singleAppSelection);
+        when(currentSelectionMock.size()).thenReturn(singleAppSelection.size());
+        when(currentSelectionMock.get(eq(0))).thenReturn(singleAppSelection.get(0));
+
+        /*** CALL METHOD UNDER TEST ***/
+        uut.onAppSelectionChanged(eventMock);
+
+        verify(currentSelectionMock).clear();
+        verify(currentSelectionMock).addAll(eq(singleAppSelection));
+
+        verify(mockAppMenu).setEnabled(eq(true));
+        verify(mockWfMenu).setEnabled(eq(true));
+
+        verify(mockDeleteApp).setEnabled(false);
+        verify(mockEditApp).setEnabled(false);
+        verify(mockCopyApp).setEnabled(false);
+        verify(mockAppRun).setEnabled(false);
+        verify(mockDeleteWf).setEnabled(false);
+        verify(mockEditWf).setEnabled(true);
+        verify(mockCopyWf).setEnabled(true);
+        verify(mockWfRun).setEnabled(true);
+        verify(mockSharingMenu).setEnabled(false);
+        verify(mockShareCollab).setEnabled(false);
+        verify(mockSharePublic).setEnabled(false);
+
+        verifyNoMoreInteractions(mockAppMenu,
+                                 mockWfMenu,
+                                 mockAppRun,
+                                 mockCopyApp,
+                                 mockCopyApp,
+                                 mockCopyWf,
+                                 mockCreateNewApp,
+                                 mockCreateWorkflow,
+                                 mockDeleteApp,
+                                 mockDeleteWf,
+                                 mockEditApp,
+                                 mockEditWf,
+                                 mockRequestTool,
+                                 mockWfRun,
+                                 mockSharePublic,
+                                 mockShareCollab);
         verifyZeroInteractions(appSearchMock);
     }
 

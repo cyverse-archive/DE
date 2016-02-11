@@ -14,6 +14,8 @@ import org.iplantc.de.client.models.apps.AppList;
 import org.iplantc.de.client.models.apps.integration.AppTemplate;
 import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
 import org.iplantc.de.client.models.apps.proxy.AppListLoadResult;
+import org.iplantc.de.client.models.apps.sharing.AppSharingRequestList;
+import org.iplantc.de.client.models.apps.sharing.AppUnSharingRequestList;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.services.converters.AppCategoryListCallbackConverter;
 import org.iplantc.de.client.services.converters.AppTemplateCallbackConverter;
@@ -29,6 +31,7 @@ import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -377,19 +380,20 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
      }
 
     @Override
-    public void shareApp(JSONObject request,
-                         AsyncCallback<String> callback) {
-        String address = APPS + "/" +  "sharing";
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, request.toString());
-        deServiceFacade.getServiceData(wrapper,callback);
-
-    }
+    public void shareApp(AppSharingRequestList request, AsyncCallback<String> callback) {
+        final String payload = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(request)).getPayload();
+        GWT.log("app sharing request:" + payload);
+        String address = APPS + "/" + "sharing";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, payload);
+        deServiceFacade.getServiceData(wrapper, callback);
+   }
 
     @Override
-    public void unshareApp(JSONObject request, AsyncCallback<String> callback) {
-        String address = APPS + "/" +  "unsharing";
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, request.toString());
-        deServiceFacade.getServiceData(wrapper,callback);
-
-    }
+    public void unshareApp(AppUnSharingRequestList request, AsyncCallback<String> callback) {
+        final String payload = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(request)).getPayload();
+        GWT.log("app un-sharing request:" + payload);
+        String address = APPS + "/" + "unsharing";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, payload);
+        deServiceFacade.getServiceData(wrapper, callback);
+   }
 }

@@ -46,9 +46,9 @@
   (let [identifier (get ezid-metadata (config/permanent-id-identifier-attr))]
     (when-not (empty? identifier)
     (throw+ {:type :clojure-commons.exception/bad-request
-             :error (str "The " (config/permanent-id-identifier-attr)
-                         " metadata attribute already contains a value: "
-                         identifier)})))
+             :error "The metadata already contains a Permanent Identifier attribute with a value."
+             :attribute (config/permanent-id-identifier-attr)
+             :identifier identifier})))
   ezid-metadata)
 
 (defn- validate-request-for-completion
@@ -75,6 +75,14 @@
              :user user
              :folder-id id}))
   data-item)
+
+(defn- validate-folder-not-empty
+  [{:keys [dir-count file-count] :as folder}]
+  (when-not (and dir-count file-count (<= 1 (+ dir-count file-count)))
+    (throw+ {:type :clojure-commons.exception/bad-request-field
+             :error "The given folder appears to be empty."
+             :folder folder}))
+  folder)
 
 (defn- validate-staging-dest-available
   [{:keys [paths]} staging-dest]
@@ -103,6 +111,8 @@
 (defn- validate-data-item
   [user {:keys [path] :as data-item}]
   (validate-owner user data-item)
+  (validate-request-target-type data-item)
+  (validate-folder-not-empty data-item)
   (let [staging-dest (format-staging-path path)
         publish-dest (format-publish-path path)
         paths-exist  (parse-service-json (data-info/check-existence {:user (config/permanent-id-curators-group)}
@@ -144,7 +154,7 @@
       (data-info/share (config/irods-user) [curators] [staging-path] "own"))))
 
 (defn- stage-data-item
-  [user {:keys [id path] :as data-item}]
+  [user {:keys [id path]}]
   (let [staged-path (format-staging-path path)
         curators    (config/permanent-id-curators-group)]
     (data-info-client/move-single (config/irods-user) id (config/permanent-id-staging-dir))
@@ -153,7 +163,7 @@
     staged-path))
 
 (defn- publish-data-item
-  [user {:keys [id path] :as data-item}]
+  [user {:keys [id path]}]
   (let [publish-path (format-publish-path path)
         curators     (config/permanent-id-curators-group)]
     (data-info-client/move-single curators id (config/permanent-id-publish-dir))
@@ -198,12 +208,11 @@
   [{:keys [path]} irods-avus metadata]
   (let [metadata (mapcat :avus (:templates metadata))
         format-avus #(vector (:attr %) (:value %))
-        ezid-metadata (into {} (concat (map format-avus irods-avus) (map format-avus metadata)))
-        ezid-metadata (assoc ezid-metadata
-                        ezid-target-attr (format-metadata-target-url path)
-                        (config/permanent-id-date-attr) (str (time/year (time/now))))]
+        ezid-metadata (into {} (concat (map format-avus irods-avus) (map format-avus metadata)))]
     (validate-ezid-metadata ezid-metadata)
-    ezid-metadata))
+    (assoc ezid-metadata
+      ezid-target-attr (format-metadata-target-url path)
+      (config/permanent-id-date-attr) (str (time/year (time/now))))))
 
 (defn- get-validated-data-item
   "Gets data-info stat for the given ID and checks if the data item is valid for a Permanent ID request."
