@@ -81,7 +81,7 @@
         email-request (:email_request msg)]
     (log/debug "UUID of persisted message:" uuid)
     (when-not (nil? email-request)
-      (send-email-request uuid email-request))
+      (.start (Thread. #(send-email-request uuid email-request))))
     (send-msg uuid msg)))
 
 (defn- optional-insert-system-args
