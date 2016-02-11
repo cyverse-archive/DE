@@ -33,6 +33,15 @@ CREATE TABLE job_status_updates (
     -- upstream, from the apps service's perspective.
     propagated boolean NOT NULL DEFAULT 'false',
 
+    -- propagation_attempts contains the number of attempts that were made to
+    -- propagate the job status update upstream. Ideally, should always be 1.
+    -- Defaults to 0.
+    propagation_attempts bigint NOT NULL DEFAULT 0,
+
+    -- last_propagation_attempt contains the number of milliseconds since the
+    -- epoch at which time the last propagation attempt was made.
+    last_propagation_attempt bigint,
+
     -- The date that the record was created by whichever service adds the record.
     -- This is not the date that the update was sent.
     created_date timestamp NOT NULL DEFAULT now()
