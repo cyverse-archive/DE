@@ -1,12 +1,13 @@
 /**
  * 
  */
-package org.iplantc.de.notifications.client.views;
+package org.iplantc.de.notifications.client.model;
 
 import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
 
 import com.sencha.gxt.core.client.ValueProvider;
+import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.PropertyAccess;
 
 /**
@@ -14,6 +15,8 @@ import com.sencha.gxt.data.shared.PropertyAccess;
  * 
  */
 public interface NotificationMessageProperties extends PropertyAccess<NotificationMessage> {
+
+    ModelKeyProvider<NotificationMessage> id();
 
     ValueProvider<NotificationMessage, NotificationCategory> category();
 

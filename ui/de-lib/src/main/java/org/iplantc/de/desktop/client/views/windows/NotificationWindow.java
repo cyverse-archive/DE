@@ -36,15 +36,6 @@ import java.util.List;
  */
 public class NotificationWindow extends IplantWindowBase {
 
-    private class NotificationKeyProvider implements ModelKeyProvider<NotificationMessage> {
-
-        @Override
-        public String getKey(NotificationMessage item) {
-            return item.getId();
-        }
-
-    }
-
     private static CheckBoxSelectionModel<NotificationMessage> checkBoxModel;
     private final IplantDisplayStrings displayStrings;
     private NotificationView.Presenter presenter;
