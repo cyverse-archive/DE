@@ -3,7 +3,9 @@ package main
 import (
 	"bytes"
 	"configurate"
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -11,20 +13,24 @@ import (
 	"messaging"
 	"net/http"
 	"os"
-	"sync"
 	"time"
 
-	"github.com/streadway/amqp"
+	_ "github.com/lib/pq"
 )
 
 var (
-	logger  = logcabin.New()
-	cfgPath = flag.String("config", "", "Path to the config file. Required.")
-	version = flag.Bool("version", false, "Print the version information")
-	gitref  string
-	appver  string
-	builtby string
-	appsURI string
+	logger     = logcabin.New()
+	cfgPath    = flag.String("config", "", "Path to the config file. Required.")
+	version    = flag.Bool("version", false, "Print the version information")
+	dbURI      = flag.String("db", "", "The URI used to connect to the database")
+	amqpURI    = flag.String("amqp", "", "The URI used to connect to the amqp broker")
+	maxRetries = flag.Int64("retries", 3, "The maximum number of propagation retries to make")
+	gitref     string
+	appver     string
+	builtby    string
+	appsURI    string
+	amqpClient *messaging.Client
+	db         *sql.DB
 )
 
 // AppVersion prints version information to stdout
@@ -47,9 +53,9 @@ func init() {
 
 // JobStatusUpdate contains the data POSTed to the apps service.
 type JobStatusUpdate struct {
-	Status         messaging.JobState `json:"status"`
-	CompletionDate string             `json:"completion_date,omitempty"`
-	UUID           string             `json:"uuid"`
+	Status         string `json:"status"`
+	CompletionDate string `json:"completion_date,omitempty"`
+	UUID           string `json:"uuid"`
 }
 
 // JobStatusUpdateWrapper wraps a JobStatusUpdate
@@ -57,235 +63,306 @@ type JobStatusUpdateWrapper struct {
 	State JobStatusUpdate `json:"state"`
 }
 
-/*
-Each new job gets:
-  * An influx goroutine
-	* A message buffer
-	* An exit handling goroutine
-	* An input channel
-	* An exit channel.
-
-Each goroutine is entered into a map, which the invocation ID as the key and the channel as the value.
-
-Each message's invocation ID is used to figure out which channel to send the message out on.
-
-Access to the map is controlled with locks.
-*/
-
-// JobTracker maps InvocationIDs to channels and spins up JobMessageHandlers.
-type JobTracker struct {
-	JobMap map[string]chan messaging.UpdateMessage
-	Locker *sync.Mutex
+// DBJobStatusUpdate represents a row from the job_status_updates table
+type DBJobStatusUpdate struct {
+	ID                     string
+	ExternalID             string
+	Message                string
+	Status                 string
+	SentFrom               string
+	SentFromHostname       string
+	SentOn                 int64
+	Propagated             bool
+	PropagationAttempts    int64
+	LastPropagationAttempt sql.NullInt64
+	CreatedDate            time.Time
 }
 
-// NewJobTracker returns a new *JobTracker
-func NewJobTracker() *JobTracker {
-	return &JobTracker{
-		JobMap: make(map[string]chan messaging.UpdateMessage),
-		Locker: &sync.Mutex{},
+// Unpropagated returns a []string of the UUIDs for jobs that have steps that
+// haven't been propagated yet.
+func Unpropagated(d *sql.DB) ([]string, error) {
+	queryStr := `
+	select distinct external_id
+	  from job_status_updates
+	 where propagated = 'false'`
+	rows, err := d.Query(queryStr)
+	if err != nil {
+		return nil, err
 	}
+	defer rows.Close()
+	var retval []string
+	for rows.Next() {
+		var extID string
+		err = rows.Scan(&extID)
+		if err != nil {
+			return nil, err
+		}
+		retval = append(retval, extID)
+	}
+	err = rows.Err()
+	return retval, err
 }
 
-// HandleMessage is the function that handles a delivery and passes it off to a
-// JobMessageHandler.
-func (t *JobTracker) HandleMessage(d amqp.Delivery) {
-	d.Ack(false)
-	logger.Println("Message received")
-	update := &messaging.UpdateMessage{}
-	err := json.Unmarshal(d.Body, update)
+// Propagator looks for job status updates in the database and pushes them to
+// the apps service if they haven't been successfully pushed there yet.
+type Propagator struct {
+	db       *sql.DB
+	tx       *sql.Tx
+	rollback bool
+}
+
+// NewPropagator returns a *Propagator that has been initialized with a new
+// transaction.
+func NewPropagator(d *sql.DB) (*Propagator, error) {
+	t, err := db.Begin()
+	if err != nil {
+		return nil, err
+	}
+	return &Propagator{
+		db: d,
+		tx: t,
+	}, nil
+}
+
+// Finished commits the transaction held by the *Propagator.
+func (p *Propagator) Finished() error {
+	if p.rollback {
+		return p.tx.Rollback()
+	}
+	return p.tx.Commit()
+}
+
+// Propagate pushes the update to the apps service.
+func (p *Propagator) Propagate(status *DBJobStatusUpdate) error {
+	jsu := JobStatusUpdate{
+		Status: status.Status,
+		UUID:   status.ExternalID,
+	}
+	if jsu.Status == "Complete" || jsu.Status == "Failed" {
+		jsu.CompletionDate = fmt.Sprintf("%d", time.Now().UnixNano()/int64(time.Millisecond))
+	}
+	jsuw := JobStatusUpdateWrapper{
+		State: jsu,
+	}
+	logger.Printf("Job status in the propagate function for job %s is: %#v", jsu.UUID, jsuw)
+	msg, err := json.Marshal(jsuw)
 	if err != nil {
 		logger.Print(err)
-		return
+		return err
 	}
-	if update.State == "" {
-		logger.Println("State was unset, dropping update")
-		return
+	buf := bytes.NewBuffer(msg)
+	if err != nil {
+		logger.Print(err)
+		return err
 	}
-	logger.Printf("State is %s\n", update.State)
-	if update.Job.InvocationID == "" {
-		logger.Println("InvocationID was unset, dropping update")
-		return
+	logger.Printf("Message to propagate: %s", string(msg))
+	logger.Printf("Sending job status to %s in the propagate function for job %s", appsURI, jsu.UUID)
+	resp, err := http.Post(appsURI, "application/json", buf)
+	if err != nil {
+		logger.Printf("Error sending job status to %s in the propagate function for job %s: %#v", appsURI, jsu.UUID, err)
+		return err
 	}
-	if _, ok := t.JobMap[update.Job.InvocationID]; !ok {
-		logger.Printf("Job map did not have a match for %s, creating entry", update.Job.InvocationID)
-		mh := NewJobMessageHandler(t, update.Job.InvocationID)
-		logger.Printf("Locking job map for %s", update.Job.InvocationID)
-		t.Locker.Lock()
-		t.JobMap[update.Job.InvocationID] = mh.In
-		t.Locker.Unlock()
-		logger.Printf("Unlocking job map for %s", update.Job.InvocationID)
+	defer resp.Body.Close()
+	logger.Printf("Response from %s in the propagate function for job %s is: %s", appsURI, jsu.UUID, resp.Status)
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		return errors.New("bad response")
 	}
-	t.JobMap[update.Job.InvocationID] <- *update
-	// Check if invocation ID is in the map.
-	// If no:
-	//   Create a New JobMessageHandler
-	//   Lock the map
-	//   Register the JobMessageHandler's channel in JobMap.
-	//   Unlock the map.
-	// Send the message to the channel
+	return nil
 }
 
-// JobMessageHandler maintains a buffer of job messages in the order that they're
-// received and propagates each message up to the apps service.
-type JobMessageHandler struct {
-	tracker      *JobTracker
-	InvocationID string
-	In           chan messaging.UpdateMessage
-	Exit         chan int
-	queueLock    *sync.Mutex
-	Queue        []messaging.UpdateMessage
-}
-
-// NewJobMessageHandler returns a new JobMessageHandler
-func NewJobMessageHandler(jt *JobTracker, invID string) *JobMessageHandler {
-	var q []messaging.UpdateMessage
-	i := make(chan messaging.UpdateMessage)
-	e := make(chan int)
-	jmh := &JobMessageHandler{
-		tracker:      jt,
-		InvocationID: invID,
-		Queue:        q,
-		queueLock:    &sync.Mutex{},
-		In:           i,
-		Exit:         e,
+// JobUpdates returns a list of JobUpdate's that are sorted by their SentOn
+// field.
+func (p *Propagator) JobUpdates(extID string) ([]DBJobStatusUpdate, error) {
+	queryStr := `
+	select id,
+				 external_id,
+				 message,
+				 status,
+				 sent_from,
+				 sent_from_hostname,
+				 sent_on,
+				 propagated,
+				 propagation_attempts,
+				 last_propagation_attempt,
+				 created_date
+	  from job_status_updates
+	 where external_id = $1
+	order by sent_on asc`
+	rows, err := p.tx.Query(queryStr, extID)
+	if err != nil {
+		p.rollback = true
+		return nil, err
 	}
-	go jmh.launch()
-	return jmh
-}
-
-// launch sets up the message handling logic for a JobMessageHandler. This is
-// where updates get propagated up to the apps service.
-func (h *JobMessageHandler) launch() {
-	notifications := make(chan int)
-	quitListening := make(chan int)
-
-	// Start up exit handler
-	go func() {
-		select {
-		case <-h.Exit:
-			logger.Printf("Received message in exit goroutine for job %s", h.InvocationID)
-			h.Queue = nil
-			logger.Printf("Locking the job map in the exit goroutine for job %s", h.InvocationID)
-			h.tracker.Locker.Lock()
-			logger.Printf("Deleting entry from job map in the exit goroutine for job %s", h.InvocationID)
-			delete(h.tracker.JobMap, h.InvocationID)
-			h.tracker.Locker.Unlock()
-			logger.Printf("Unlocking the job map in the exit goroutine for job %s", h.InvocationID)
-			quitListening <- 1 // tell the other goroutine to exit
-			return
+	defer rows.Close()
+	var retval []DBJobStatusUpdate
+	for rows.Next() {
+		r := DBJobStatusUpdate{}
+		err = rows.Scan(
+			&r.ID,
+			&r.ExternalID,
+			&r.Message,
+			&r.Status,
+			&r.SentFrom,
+			&r.SentFromHostname,
+			&r.SentOn,
+			&r.Propagated,
+			&r.PropagationAttempts,
+			&r.LastPropagationAttempt,
+			&r.CreatedDate,
+		)
+		if err != nil {
+			p.rollback = true
+			return nil, err
 		}
-	}()
+		retval = append(retval, r)
+	}
+	err = rows.Err()
+	if err != nil {
+		p.rollback = true
+	}
+	return retval, err
+}
 
-	// Start goroutine that pushes jobs into the queue from the input channel
-	go func() {
-		logger.Printf("Starting goroutine that reads messages from the input channel for job %s", h.InvocationID)
-		for {
-			select {
-			case msg := <-h.In:
-				logger.Printf("Input goroutine got a message for job %s", h.InvocationID)
-				m := msg
-				logger.Printf("Locking the queue for the input goroutine for job %s", h.InvocationID)
-				h.queueLock.Lock()
-				h.Queue = append(h.Queue, m)
-				h.queueLock.Unlock()
-				logger.Printf("Unlocked the queue for the input goroutine for job %s", h.InvocationID)
-				notifications <- 1
-			case <-quitListening: // exit handler told this goroutine to exit
-				logger.Printf("Received exit message in input goroutine for job %s", h.InvocationID)
-				return
-			}
+// MarkPropagated marks the job as propagated in the database as part of the
+// transaction tracked by the *Propagator.
+func (p *Propagator) MarkPropagated(id string) error {
+	updateStr := `UPDATE ONLY job_status_updates SET propagated = 'true' where id = $1`
+	_, err := p.tx.Exec(updateStr, id)
+	return err
+}
+
+// LastPropagated returns the index in the list of []DBJobStatusUpdates that
+// contains the last update that is marked as propagated in the database.
+func LastPropagated(updates []DBJobStatusUpdate) int {
+	lastID := 0
+	for idx, update := range updates {
+		if update.Propagated {
+			lastID = idx
 		}
-	}()
+	}
+	return lastID
+}
 
-	// for-select on the notification channel.
-	//   for each loop, pull a message off of the queue
-	for {
-		select {
-		case <-notifications:
-			logger.Printf("Received message in notification loop for job %s", h.InvocationID)
-			var update messaging.UpdateMessage
-			logger.Printf("Locking the queue in the notification loop for job %s", h.InvocationID)
-			h.queueLock.Lock()
-			logger.Printf("Length of queue in the notification loop for job %s: %d", h.InvocationID, len(h.Queue))
-			if len(h.Queue) > 0 {
-				update, h.Queue = h.Queue[0], h.Queue[1:]
-			}
-			h.queueLock.Unlock()
-			logger.Printf("Unlocked queue in the notification loop for job %s", h.InvocationID)
-			if update.State != "" && update.Job.InvocationID != "" {
-				jsu := JobStatusUpdate{
-					Status: update.State,
-					UUID:   update.Job.InvocationID,
-				}
-				if jsu.Status == messaging.SucceededState || jsu.Status == messaging.FailedState {
-					jsu.CompletionDate = fmt.Sprintf("%d", time.Now().UnixNano()/int64(time.Millisecond))
-				}
-				jsuw := JobStatusUpdateWrapper{
-					State: jsu,
-				}
-				logger.Printf("Job status in the notification loop for job %s is: %#v", h.InvocationID, jsuw)
-				msg, err := json.Marshal(jsuw)
-				if err != nil {
+// StorePropagationAttempts stores an incremented value for the update's
+// propagation_attempts field.
+func (p *Propagator) StorePropagationAttempts(update *DBJobStatusUpdate) error {
+	newVal := update.PropagationAttempts
+	id := update.ID
+	lastAttemptTime := time.Now().UnixNano() / int64(time.Millisecond)
+	insertStr := `UPDATE ONLY job_status_updates
+												SET propagation_attempts = $2,
+														last_propagation_attempt = $3
+											WHERE id = $1`
+	_, err := p.tx.Exec(insertStr, id, newVal, lastAttemptTime)
+	return err
+}
+
+// StoreLastPropagationAttempt (update *DBJobStatusUpdate)
+
+// ScanAndPropagate is contains the core logic. Here's what it does:
+// * Gets all job IDs with a status update that hasn't been propagated yet.
+// * For each of those jobs, start a database transaction and get all of the
+//   associcated status updates from the database.
+// * Mark any unpropagated updates that appear __before__ a propagated update as
+//   propagated.
+// * Propagate any unpropagated steps that appear after the last propagated
+//   update.
+// * Commit the transaction.
+func ScanAndPropagate(d *sql.DB) error {
+	unpropped, err := Unpropagated(d)
+	if err != nil {
+		return err
+	}
+	for _, jobExtID := range unpropped {
+		proper, err := NewPropagator(d)
+		if err != nil {
+			return err
+		}
+
+		updates, err := proper.JobUpdates(jobExtID)
+		if err != nil {
+			return err
+		}
+
+		// if lastIdx+1 < len(updates)-1 {
+		for _, subupdates := range updates {
+			if !subupdates.Propagated && subupdates.PropagationAttempts < *maxRetries {
+				logger.Printf("Propagating %#v", subupdates)
+				if err = proper.Propagate(&subupdates); err != nil {
 					logger.Print(err)
-					return
+					subupdates.PropagationAttempts = subupdates.PropagationAttempts + 1
+					if err = proper.StorePropagationAttempts(&subupdates); err != nil {
+						logger.Print(err)
+					}
+					continue
 				}
-				buf := bytes.NewBuffer(msg)
-				if err != nil {
+				logger.Printf("Marking update %s as propagated", subupdates.ID)
+				if err = proper.MarkPropagated(subupdates.ID); err != nil {
 					logger.Print(err)
-					return
+					continue
 				}
-				logger.Printf("Sending job status to %s in the notification loop for job %s", appsURI, h.InvocationID)
-				resp, err := http.Post(appsURI, "application/json", buf)
-				if err != nil {
-					logger.Printf("Error sending job status to %s in the notification loop for job %s: %#v", appsURI, h.InvocationID, err)
-					return
-				}
-				defer resp.Body.Close()
-				logger.Printf("Response from %s in the notification loop for job %s is: %s", appsURI, h.InvocationID, resp.Status)
 			} else {
-				if update.State == "" {
-					logger.Printf("The update's state was blank in the notification loop for job %s", h.InvocationID)
-				}
-				if update.Job.InvocationID == "" {
-					logger.Printf("The update's invocation ID was blank in the notification loop for job %s", h.InvocationID)
+				if subupdates.PropagationAttempts >= *maxRetries {
+					logger.Printf("%d either exceeds or meets the maximum allowed retries currently set at %d", subupdates.PropagationAttempts, *maxRetries)
 				}
 			}
 		}
+		if err = proper.Finished(); err != nil {
+			logger.Print(err)
+		}
 	}
+	return nil
 }
 
 func main() {
+	var err error
+
 	if *version {
 		AppVersion()
 		os.Exit(0)
 	}
+
 	if *cfgPath == "" {
 		fmt.Println("Error: --config must be set.")
 		flag.PrintDefaults()
 		os.Exit(-1)
 	}
-	err := configurate.Init(*cfgPath)
+
+	err = configurate.Init(*cfgPath)
 	if err != nil {
 		logger.Print(err)
 		os.Exit(-1)
 	}
+
 	logger.Println("Done reading config.")
 
-	uri, err := configurate.C.String("amqp.uri")
-	if err != nil {
-		log.Fatal(err)
+	if *dbURI == "" {
+		if *dbURI == "" {
+			*dbURI, err = configurate.C.String("db.uri")
+			if err != nil {
+				logger.Fatal(err)
+			}
+		}
 	}
+
 	appsURI, err = configurate.C.String("apps.callbacks_uri")
 	if err != nil {
 		log.Fatal(err)
 	}
-	client, err := messaging.NewClient(uri, true)
+
+	logger.Println("Connecting to the database...")
+	db, err = sql.Open("postgres", *dbURI)
 	if err != nil {
 		logger.Fatal(err)
 	}
-	defer client.Close()
 
-	jt := NewJobTracker()
-	client.AddConsumer(messaging.JobsExchange, "job_status_to_apps_adapter", messaging.UpdatesKey, jt.HandleMessage)
-	client.Listen()
+	err = db.Ping()
+	if err != nil {
+		logger.Fatal(err)
+	}
+	logger.Println("Connected to the database")
+
+	if err = ScanAndPropagate(db); err != nil {
+		logger.Fatal(err)
+	}
 }
