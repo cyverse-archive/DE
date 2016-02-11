@@ -185,4 +185,58 @@ public class NotificationViewImpl implements NotificationView {
     public TextButton getRefreshButton() {
         return toolBar.getRefreshButton();
     }
+
+
+    @UiFactory
+    ColumnModel<NotificationMessage> createColumnModel() {
+        NotificationMessageProperties props = GWT.create(NotificationMessageProperties.class);
+        List<ColumnConfig<NotificationMessage, ?>> configs = new LinkedList<>();
+
+        checkBoxModel =
+                new CheckBoxSelectionModel<>(new IdentityValueProvider<NotificationMessage>());
+        @SuppressWarnings("rawtypes")
+        ColumnConfig colCheckBox = checkBoxModel.getColumn();
+        configs.add(colCheckBox);
+
+        ColumnConfig<NotificationMessage, NotificationCategory> colCategory =
+                new ColumnConfig<>(props.category(),
+                                   appearance.categoryColumnWidth(),
+                                   appearance.category());
+        configs.add(colCategory);
+        colCategory.setMenuDisabled(true);
+        colCategory.setSortable(false);
+
+        ColumnConfig<NotificationMessage, NotificationMessage> colMessage =
+                new ColumnConfig<>(new IdentityValueProvider<NotificationMessage>(),
+                                   appearance.messagesColumnWidth(),
+                                   appearance.messagesGridHeader());
+        colMessage.setCell(new NotificationMessageCell());
+        configs.add(colMessage);
+        colMessage.setSortable(false);
+        colMessage.setMenuDisabled(true);
+
+        ColumnConfig<NotificationMessage, Date> colTimestamp = new ColumnConfig<>(new ValueProvider<NotificationMessage, Date>() {
+
+            @Override
+            public Date getValue(NotificationMessage object) {
+                return new Date(object.getTimestamp());
+            }
+
+            @Override
+            public void setValue(NotificationMessage object,
+                                 Date value) {
+                // do nothing
+            }
+
+            @Override
+            public String getPath() {
+                return "timestamp";
+            }
+        }, appearance.createdDateColumnWidth(), appearance.createdDateGridHeader());
+        colTimestamp.setCell(new DateCell(DateTimeFormat
+                                                  .getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM)));
+
+        configs.add(colTimestamp);
+        return new ColumnModel<>(configs);
+    }
 }

@@ -52,11 +52,7 @@ public class NotificationWindow extends IplantWindowBase {
     public <C extends WindowConfig> void show(C windowConfig, String tag,
                                               boolean isMaximizable) {
         NotifyWindowConfig notifyWindowConfig = (NotifyWindowConfig) windowConfig;
-        NotificationKeyProvider keyProvider = new NotificationKeyProvider();
-        ListStore<NotificationMessage> store = new ListStore<>(keyProvider);
-        ColumnModel<NotificationMessage> cm = buildNotificationColumnModel();
-        NotificationView view = new NotificationViewImpl(store, cm, checkBoxModel);
-        presenter = new NotificationPresenterImpl(view);
+
         presenter.go(this);
         if (notifyWindowConfig != null) {
             presenter.filterBy(notifyWindowConfig.getSortCategory());
@@ -68,55 +64,6 @@ public class NotificationWindow extends IplantWindowBase {
     public WindowState getWindowState() {
         NotifyWindowConfig config = ConfigFactory.notifyWindowConfig(presenter.getCurrentCategory());
         return createWindowState(config);
-    }
-
-    @SuppressWarnings("unchecked")
-    private ColumnModel<NotificationMessage> buildNotificationColumnModel() {
-        NotificationMessageProperties props = GWT.create(NotificationMessageProperties.class);
-        List<ColumnConfig<NotificationMessage, ?>> configs = new LinkedList<>();
-
-        checkBoxModel = new CheckBoxSelectionModel<>(new IdentityValueProvider<NotificationMessage>());
-        @SuppressWarnings("rawtypes")
-        ColumnConfig colCheckBox = checkBoxModel.getColumn();
-        configs.add(colCheckBox);
-
-        ColumnConfig<NotificationMessage, NotificationCategory> colCategory = new ColumnConfig<>(props.category(), 100);
-        colCategory.setHeader(displayStrings.category());
-        configs.add(colCategory);
-        colCategory.setMenuDisabled(true);
-        colCategory.setSortable(false);
-
-        ColumnConfig<NotificationMessage, NotificationMessage> colMessage = new ColumnConfig<>(new IdentityValueProvider<NotificationMessage>(), 420);
-        colMessage.setHeader(displayStrings.messagesGridHeader());
-        colMessage.setCell(new NotificationMessageCell());
-        configs.add(colMessage);
-        colMessage.setSortable(false);
-        colMessage.setMenuDisabled(true);
-
-        ColumnConfig<NotificationMessage, Date> colTimestamp = new ColumnConfig<>(new ValueProvider<NotificationMessage, Date>() {
-
-            @Override
-            public Date getValue(NotificationMessage object) {
-                return new Date(object.getTimestamp());
-            }
-
-            @Override
-            public void setValue(NotificationMessage object,
-                                 Date value) {
-                // do nothing
-            }
-
-            @Override
-            public String getPath() {
-                return "timestamp";
-            }
-        }, 170);
-        colTimestamp.setCell(new DateCell(DateTimeFormat
-                                              .getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM)));
-        colTimestamp.setHeader(displayStrings.createdDateGridHeader());
-
-        configs.add(colTimestamp);
-        return new ColumnModel<>(configs);
     }
 
 }
