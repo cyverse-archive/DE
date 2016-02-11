@@ -108,7 +108,7 @@
 
 (defroutes* admin-categories
   (GET* "/" []
-        :query [params CategoryListingParams]
+        :query [params SecuredQueryParams]
         :return AppCategoryListing
         :summary "List App Categories"
         :description "This service is used by DE admins to obtain a list of public app categories along
