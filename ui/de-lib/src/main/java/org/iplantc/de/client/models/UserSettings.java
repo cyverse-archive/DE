@@ -91,9 +91,9 @@ public class UserSettings {
             setEnableAnalysisEmailNotification(true);
         }
         if (split.get(EMAIL_IMPORT_NOTIFICATION) != null) {
-            setEnableAnalysisEmailNotification(split.get(EMAIL_IMPORT_NOTIFICATION).asBoolean());
+            setEnableImportEmailNotification(split.get(EMAIL_IMPORT_NOTIFICATION).asBoolean());
         } else {
-            setEnableAnalysisEmailNotification(true);
+            setEnableImportEmailNotification(true);
         }
 
         if (split.get(DEFAULT_FILE_SELECTOR_PATH) != null) {
