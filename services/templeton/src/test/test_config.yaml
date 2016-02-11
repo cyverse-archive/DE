@@ -1,0 +1,9 @@
+amqp:
+  uri: amqp://guest:guest@192.168.99.100:5672/
+
+elasticsearch:
+  base: http://localhost:9200
+  index: data
+
+db:
+  uri: postgres://de:notprod@192.168.99.100:5432/metadata?sslmode=disable
