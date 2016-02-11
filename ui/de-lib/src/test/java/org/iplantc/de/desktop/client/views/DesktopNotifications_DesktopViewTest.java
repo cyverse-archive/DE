@@ -57,7 +57,6 @@ public class DesktopNotifications_DesktopViewTest {
 
     @Test public void notificationsNotMarkedSeenWhenNotificationBtnSelectedWithGreaterThan10Unseen() {
 
-        uut.setPresenter(mockPresenter);
         uut.unseenNotificationCount = 11;
 
         uut.onNotificationMenuClicked(mock(ShowContextMenuEvent.class));
