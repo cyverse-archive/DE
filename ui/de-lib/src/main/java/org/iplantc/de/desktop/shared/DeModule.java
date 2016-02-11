@@ -53,7 +53,8 @@ public interface DeModule {
         String ANALYSES_SC = ".analysesShortcut";
         String NOTIFICATION_SC = ".notificationsShortcut";
         String CLOSE_SC = ".closeActiveShortcut";
-        String EMAIL_NOTIFICATION = ".emailNotification";
+        String EMAIL_ANALYSIS_NOTIFICATION = ".emailAnalysisNotification";
+        String EMAIL_IMPORT_NOTIFICATION = ".emailImportNotification";
         String REMEMBER_LAST_PATH = ".rememberLastPath";
         String SAVE_SESSION = ".saveSession";
         String DEFAULT_OUTPUT_FOLDER = ".defaultOutputFolder";

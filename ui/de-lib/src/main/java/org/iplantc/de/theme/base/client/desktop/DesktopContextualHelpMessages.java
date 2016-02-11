@@ -28,4 +28,7 @@ public interface DesktopContextualHelpMessages extends Messages {
 
     @Key("saveSessionHelp")
     String saveSessionHelp();
+
+    @Key("notifyEmail")
+    String notifyEmail();
 }

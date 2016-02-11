@@ -31,7 +31,7 @@
     </ui:with>
     <ui:with type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData"
              field="verticalLayoutData">
-        <ui:attributes width=".9" height="-1"/>
+        <ui:attributes width="1" height="-1"/>
     </ui:with>
     <container:VerticalLayoutContainer ui:field="container"
                                        adjustForScroll="true"
@@ -42,10 +42,17 @@
             <container:VerticalLayoutContainer ui:field="prefContainer"
                                                height="150">
                 <container:child layoutData="{preferenceLayoutData}">
-                    <form:CheckBox ui:field="enableEmailNotification"
-                                   debugId="idCboNotifyEmail"
-                                   boxLabel="{appearance.notifyEmail}"/>
+                    <form:CheckBox ui:field="enableAnalysisEmailNotification"
+                                   debugId="idCboAnalysisNotifyEmail"
+                                   boxLabel="{appearance.notifyAnalysisEmail}"/>
                 </container:child>
+
+                <container:child layoutData="{preferenceLayoutData}">
+                    <form:CheckBox ui:field="enableImportEmailNotification"
+                                   debugId="idCboImportNotifyEmail"
+                                   boxLabel="{appearance.notifyImportEmail}"/>
+                </container:child>
+
                 <container:child layoutData="{preferenceLayoutData}">
                     <form:CheckBox ui:field="rememberLastPath"
                                    debugId="cboLastPath"
