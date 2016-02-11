@@ -115,12 +115,12 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
 
     private final IplantErrorStrings errorStrings;
 
-    private final EventBus eventBus;
-    private final MessageServiceFacade messageServiceFacade;
-    private final NotificationToolbarView toolbar;
+    EventBus eventBus;
+    MessageServiceFacade messageServiceFacade;
+    NotificationToolbarView toolbar;
     private final NotificationView view;
     private PagingLoadResult<NotificationMessage> callbackResult;
-    private NotificationCategory currentCategory;
+    NotificationCategory currentCategory;
     private final JsonUtil jsonUtil;
 
     public NotificationPresenterImpl(final NotificationView view) {
