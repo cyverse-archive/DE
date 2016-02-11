@@ -10,6 +10,7 @@
             [terrain.clients.data-info :as data-info]
             [terrain.clients.data-info.raw :as data-info-client]
             [terrain.clients.ezid :as ezid]
+            [terrain.clients.iplant-groups :as groups]
             [terrain.clients.metadata.raw :as metadata]
             [terrain.clients.notifications :as notifications]
             [terrain.util.config :as config]
@@ -176,24 +177,29 @@
     (metadata/add-metadata-template-avus id data-type template-id publish-avus)))
 
 (defn- send-notification
-  [user subject request-id]
+  [user email subject contents request-id]
   (log/debug "sending permanent_id_request notification to" user ":" subject)
   (try
     (notifications/send-notification
       {:type "permanent_id_request"
        :user user
        :subject subject
-       :payload {:uuid request-id}})
+       :email true
+       :email_template "blank"
+       :payload {:email_address email
+                 :contents      contents
+                 :uuid          request-id}})
     (catch Exception e
       (log/error e
         "Could not send permanent_id_request (" request-id ") notification to" user ":" subject))))
 
 (defn- send-update-notification
-  [{:keys [id type folder history requested_by] :or {folder {:path "unknown"}}}]
-  (send-notification
-    requested_by
-    (str type " Request for " (ft/basename (:path folder)) " Status Changed to " (:status (last history)))
-    id))
+  [{{:keys [username email]} :requested_by
+    :keys [id type folder history]
+    :or {folder {:path "unknown"}}}]
+  (let [{:keys [status comments]} (last history)
+        subject (str type " Request for " (ft/basename (:path folder)) " Status Changed to " status)]
+    (send-notification username email subject comments id)))
 
 (defn- request-type->shoulder
   [type]
@@ -263,6 +269,19 @@
       (dissoc :target_id :target_type :original_path)
       (assoc :folder (data-info/stat-by-uuid user (uuidify target_id)))))
 
+(defn- format-requested-by
+  [user {:keys [requested_by target_id] :as permanent-id-request}]
+  (let [user-info (groups/lookup-subject user requested_by)]
+    (if user-info
+      (assoc permanent-id-request :requested_by (groups/format-like-trellis user-info))
+      permanent-id-request)))
+
+(defn- format-permanent-id-request-details
+  [user permanent-id-request]
+  (->> permanent-id-request
+       (format-perm-id-req-response user)
+       (format-requested-by user)))
+
 (defn- format-perm-id-req-list
   [requests]
   (map
@@ -273,7 +292,7 @@
   [params]
   (-> (metadata/list-permanent-id-requests params)
       parse-service-json
-      (update-in [:requests] format-perm-id-req-list)))
+      (update :requests format-perm-id-req-list)))
 
 (defn create-permanent-id-request
   [params body]
@@ -285,10 +304,15 @@
         target-type                    (validate-request-target-type folder)
         {request-id :id :as response}  (submit-permanent-id-request type folder-id target-type path)
         staged-path                    (stage-data-item user folder)]
-    (send-notification user (str type " Request Submitted for " (ft/basename path)) request-id)
+    (send-notification
+      user
+      (:email current-user)
+      (str type " Request Submitted for " (ft/basename path))
+      nil
+      request-id)
     (email/send-permanent-id-request-new type staged-path current-user)
     (email/send-permanent-id-request-submitted type staged-path current-user)
-    (format-perm-id-req-response user response)))
+    (format-permanent-id-request-details user response)))
 
 (defn list-permanent-id-request-status-codes
   [params]
@@ -302,25 +326,25 @@
   [request-id params]
   (->> (metadata/get-permanent-id-request request-id)
        parse-service-json
-       (format-perm-id-req-response (:shortUsername current-user))))
+       (format-permanent-id-request-details (:shortUsername current-user))))
 
 (defn admin-list-permanent-id-requests
   [params]
   (-> (metadata/admin-list-permanent-id-requests params)
       parse-service-json
-      (update-in [:requests] format-perm-id-req-list)))
+      (update :requests format-perm-id-req-list)))
 
 (defn admin-get-permanent-id-request
   [request-id params]
   (->> (metadata/admin-get-permanent-id-request request-id)
        parse-service-json
-       (format-perm-id-req-response (:shortUsername current-user))))
+       (format-permanent-id-request-details (:shortUsername current-user))))
 
 (defn update-permanent-id-request
   [request-id params body]
   (let [response (->> (metadata/update-permanent-id-request request-id body)
                       parse-service-json
-                      (format-perm-id-req-response (:shortUsername current-user)))]
+                      (format-permanent-id-request-details (:shortUsername current-user)))]
     (send-update-notification response)
     response))
 
@@ -355,4 +379,5 @@
   (let [identifier (complete-permanent-id-request (:shortUsername current-user)
                                                   (admin-get-permanent-id-request request-id nil))]
     (update-permanent-id-request request-id nil (json/encode {:status       status-code-completion
+                                                              :comments     identifier
                                                               :permanent_id identifier}))))
