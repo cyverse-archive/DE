@@ -68,7 +68,13 @@ Allows administrators to retrieve details for a Permanent ID Request from any us
     "id": "The Permanent ID Requests's UUID",
     "type": "The type of persistent identifier requested",
     "folder": {},
-    "requested_by": "The username of the user that submitted the Permanent ID Request",
+    "requested_by": {
+        "username": "The username of the user that submitted the Permanent ID Request",
+        "firstname": "The first name of the user that submitted the Permanent ID Request",
+        "lastname": "The last name of the user that submitted the Permanent ID Request",
+        "email": "The email of the user that submitted the Permanent ID Request",
+        "institution": "The institution of the user that submitted the Permanent ID Request"
+    },
     "history": [
         {
             "status": "(optional) The status code of the Permanent ID Request update",
