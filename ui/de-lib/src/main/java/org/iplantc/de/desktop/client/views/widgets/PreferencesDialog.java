@@ -56,7 +56,9 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
 
         String preferences();
 
-        String notifyEmail();
+        String notifyAnalysisEmail();
+
+        String notifyImportEmail();
 
         String completeRequiredFieldsError();
 
@@ -87,6 +89,8 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
         String closeActiveWindow();
 
         String saveSessionHelp();
+
+        String notifyEmail();
     }
 
     public interface HtmlLayoutContainerTemplate extends XTemplates {
@@ -106,7 +110,8 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
     @UiField TextField analysesShortCut;
     @UiField TextField appsShortCut;
     @UiField CheckBox rememberLastPath;
-    @UiField CheckBox enableEmailNotification;
+    @UiField CheckBox enableAnalysisEmailNotification;
+    @UiField CheckBox enableImportEmailNotification;
     @UiField CheckBox saveSession;
     @UiField TextField closeShortCut;
     @UiField TextField dataShortCut;
@@ -159,7 +164,8 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
         defaultsBtn.addSelectHandler(new SelectEvent.SelectHandler() {
             @Override
             public void onSelect(SelectEvent event) {
-                enableEmailNotification.setValue(true);
+                enableAnalysisEmailNotification.setValue(true);
+                enableImportEmailNotification.setValue(true);
                 rememberLastPath.setValue(true);
                 saveSession.setValue(true);
                 appsShortCut.setValue(KB_CONSTANTS.appsKeyShortCut());
@@ -231,7 +237,8 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
 
 
         } else if (button == defaultsBtn) {
-            enableEmailNotification.setValue(true);
+            enableAnalysisEmailNotification.setValue(true);
+            enableImportEmailNotification.setValue(true);
             rememberLastPath.setValue(true);
             saveSession.setValue(true);
             appsShortCut.setValue(KB_CONSTANTS.appsKeyShortCut());
@@ -256,7 +263,8 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
         getButton(PredefinedButton.CANCEL).ensureDebugId(baseID + DeModule.PreferenceIds.CANCEL);
         defaultsBtn.ensureDebugId(baseID + DeModule.PreferenceIds.DEFAULTS_BTN);
 
-        enableEmailNotification.ensureDebugId(baseID + DeModule.PreferenceIds.EMAIL_NOTIFICATION);
+        enableAnalysisEmailNotification.ensureDebugId(baseID + DeModule.PreferenceIds.EMAIL_ANALYSIS_NOTIFICATION);
+        enableImportEmailNotification.ensureDebugId(baseID + DeModule.PreferenceIds.EMAIL_IMPORT_NOTIFICATION);
         rememberLastPath.ensureDebugId(baseID + DeModule.PreferenceIds.REMEMBER_LAST_PATH);
         saveSession.ensureDebugId(baseID + DeModule.PreferenceIds.SAVE_SESSION);
         defaultOutputFolder.ensureDebugId(baseID + DeModule.PreferenceIds.DEFAULT_OUTPUT_FOLDER);

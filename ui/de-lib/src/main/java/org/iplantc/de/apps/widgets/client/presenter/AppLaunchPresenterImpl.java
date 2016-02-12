@@ -77,7 +77,7 @@ public class AppLaunchPresenterImpl implements AppLaunchView.Presenter, RequestA
         final AppTemplateAutoBeanFactory factory = GWT.create(AppTemplateAutoBeanFactory.class);
         final JobExecution je = factory.jobExecution().as();
         je.setAppTemplateId(appTemplate.getId());
-        je.setEmailNotificationEnabled(userSettings.isEnableEmailNotification());
+        je.setEmailNotificationEnabled(userSettings.isEnableAnalysisEmailNotification());
         // JDS Replace all Cmd Line restricted chars with underscores
         String regex = Format.substitute("[{0}]",
                                          RegExp.escapeCharacterClassSet(valConstants.restrictedCmdLineChars()

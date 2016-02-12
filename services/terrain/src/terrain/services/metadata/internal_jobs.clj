@@ -1,8 +1,16 @@
 (ns terrain.services.metadata.internal-jobs
-  (:use [slingshot.slingshot :only [throw+]])
+  (:use [slingshot.slingshot :only [throw+]]
+        [terrain.auth.user-attributes :only [current-user]])
   (:require [clojure-commons.error-codes :as ce]
             [terrain.clients.apps :as apps]
+            [terrain.clients.user-prefs :as prefs]
             [terrain.util.config :as config]))
+
+(defn- get-url-import-notify-pref
+  "Looks up the current user's enableImportEmailNotification preference.
+   Returns true by default if the preference is not set or could not be retrieved."
+  []
+  (:enableImportEmailNotification (prefs/get-prefs-safe (:username current-user)) true))
 
 (defn- load-param-map
   [app-id]
@@ -48,7 +56,7 @@
    :debug                false
    :create_output_subdir false
    :output_dir           dest-path
-   :notify               true
+   :notify               (get-url-import-notify-pref)
    :skip-parent-meta     true
    :file-metadata        [(avu "ipc-url-import" address "Import URL")]
    :archive_logs         false})
