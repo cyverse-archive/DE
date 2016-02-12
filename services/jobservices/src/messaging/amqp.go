@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"model"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/streadway/amqp"
@@ -361,7 +362,7 @@ func (c *Client) Publish(key string, body []byte) error {
 // "jobs.updates"
 func (c *Client) PublishJobUpdate(u *UpdateMessage) error {
 	if u.SentOn == "" {
-		u.SentOn = string(time.Now().UnixNano() / int64(time.Millisecond))
+		u.SentOn = strconv.FormatInt(time.Now().UnixNano()/int64(time.Millisecond), 10)
 	}
 	msgJSON, err := json.Marshal(u)
 	if err != nil {
