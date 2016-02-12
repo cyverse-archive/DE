@@ -257,8 +257,6 @@ func (p *Propagator) StorePropagationAttempts(update *DBJobStatusUpdate) error {
 	return err
 }
 
-// StoreLastPropagationAttempt (update *DBJobStatusUpdate)
-
 // ScanAndPropagate is contains the core logic. Here's what it does:
 // * Gets all job IDs with a status update that hasn't been propagated yet.
 // * For each of those jobs, start a database transaction and get all of the
@@ -284,7 +282,6 @@ func ScanAndPropagate(d *sql.DB) error {
 			return err
 		}
 
-		// if lastIdx+1 < len(updates)-1 {
 		for _, subupdates := range updates {
 			if !subupdates.Propagated && subupdates.PropagationAttempts < *maxRetries {
 				logger.Printf("Propagating %#v", subupdates)
