@@ -109,11 +109,13 @@ func msg(delivery amqp.Delivery) {
 		}
 	}
 	logger.Printf("Sent from: %s", sentFromAddr)
+	logger.Printf("Sent On, unparsed: %s", update.SentOn)
 	sentOn, err := strconv.ParseInt(update.SentOn, 10, 64)
 	if err != nil {
 		logger.Printf("Error parsing SentOn field, setting field to 0: %s", err)
 		sentOn = 0
 	}
+	logger.Printf("Sent On: %d", sentOn)
 	result, err := insert(
 		string(update.State),
 		update.Job.InvocationID,
