@@ -1,0 +1,42 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/araddon/gou",
+			"repository": "https://github.com/araddon/gou",
+			"revision": "1fd0868458fb611a8a956fae0ed0d0cc657cd321",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/bitly/go-hostpool",
+			"repository": "https://github.com/bitly/go-hostpool",
+			"revision": "d0e59c22a56e8dadfed24f74f452cea5a52722d2",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/lib/pq",
+			"repository": "https://github.com/lib/pq",
+			"revision": "69552e54d2a9d4c6a2438926a774930f7bc398ec",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/mattbaird/elastigo/lib",
+			"repository": "https://github.com/mattbaird/elastigo",
+			"revision": "7dc47d261c9718f93000e2ed2b0b94b13d078e77",
+			"branch": "master",
+			"path": "/lib"
+		},
+		{
+			"importpath": "github.com/olebedev/config",
+			"repository": "https://github.com/olebedev/config",
+			"revision": "e3edea7d68b76222b5118cc2e1cf3825e30abb80",
+			"branch": "master"
+		},
+		{
+			"importpath": "gopkg.in/yaml.v2",
+			"repository": "https://gopkg.in/yaml.v2",
+			"revision": "f7716cbe52baa25d2e9b0d0da546fcf909fc16b4",
+			"branch": "v2"
+		}
+	]
+}
