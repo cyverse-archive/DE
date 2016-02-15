@@ -52,7 +52,7 @@ var (
 	RunningState JobState = "Running"
 
 	//SucceededState is when a job has successfully completed the required steps.
-	SucceededState JobState = "Complete"
+	SucceededState JobState = "Completed"
 
 	//FailedState is when a job has failed. Duh.
 	FailedState JobState = "Failed"
