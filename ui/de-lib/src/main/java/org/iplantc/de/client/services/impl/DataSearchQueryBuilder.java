@@ -436,6 +436,7 @@ public class DataSearchQueryBuilder {
     }
 
     public Splittable getSimpleQuery(String field, String userEntry) {
+        // {"query": {"query_string": {"query": "*la* OR *foo*", "fields":["whatever"]}}}
         Splittable query = StringQuoter.createSplittable();
         Splittable simpleQuery = addChild(query, QUERY_STRING);
         String entry = applyImplicitAsteriskSearchText(applyOROperator(userEntry));
