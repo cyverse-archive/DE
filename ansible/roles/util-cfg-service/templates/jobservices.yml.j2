@@ -9,7 +9,7 @@ condor:
   path_env_var: /opt/condor/bin/:/usr/bin/:/usr/local/bin/:/bin/
   log_path: /tmp/
   request_disk: 0
-  filter_files: .job.ad,.machine.ad,_condor_stderr,_condor_stdout,condor_exec.exe,.chirp_config,.chirp.config,logs/output-last-stdout,logs/output-last-stderr,config,job,iplant.cmd
+  filter_files: .job.ad,.machine.ad,_condor_stderr,_condor_stdout,condor_exec.exe,.chirp_config,.chirp.config,logs/logs-stderr-output,logs/logs-stdout-output,config,job,iplant.cmd
 
 db:
   uri: postgresql://{{db_user}}:{{db_password}}@{{db_host}}:{{db_port}}/{{db_name}}?sslmode=disable
