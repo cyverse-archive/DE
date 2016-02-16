@@ -56,21 +56,20 @@ func (e *Elasticer) IndexEverything(d *database.Databaser) {
 	indexer.Start()
 	defer indexer.Stop()
 
-	nextObjFunc, endFunc, err := d.GetAllObjects()
-	defer endFunc()
-
+	cursor, err := d.GetAllObjects()
 	if err != nil {
 		logger.Fatal(err)
 	}
+	defer cursor.Close()
 
 	for {
-		ids, err := nextObjFunc()
-		if err != nil {
-			logger.Print(err)
+		ids, err := cursor.Next()
+		if err == database.EOS {
+			logger.Print("Done all rows, finishing.")
 			break
 		}
-		if ids == nil {
-			logger.Print("Done all rows, finishing.")
+		if err != nil {
+			logger.Print(err)
 			break
 		}
 
