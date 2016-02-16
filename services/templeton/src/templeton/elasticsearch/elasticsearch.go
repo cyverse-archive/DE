@@ -43,8 +43,15 @@ func (e *Elasticer) Close() {
 	e.es.Close()
 }
 
+// PurgeIndex walks an index querying a database, deleting those which should not exist
+func (e *Elasticer) PurgeIndex(d *database.Databaser) {
+	indexer := e.es.NewBulkIndexerErrors(10, 60)
+	indexer.Start()
+	defer indexer.Stop()
+}
+
 // IndexEverything creates a bulk indexer and takes a database, and iterates to index its contents
-func (e *Elasticer) IndexEverything(d *database.Databaser) error {
+func (e *Elasticer) IndexEverything(d *database.Databaser) {
 	indexer := e.es.NewBulkIndexerErrors(10, 60)
 	indexer.Start()
 	defer indexer.Stop()
@@ -82,5 +89,4 @@ func (e *Elasticer) IndexEverything(d *database.Databaser) error {
 
 		indexer.Index(e.index, "metadata", formatted.ID, "", "", nil, js)
 	}
-	return nil
 }

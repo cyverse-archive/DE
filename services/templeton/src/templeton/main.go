@@ -127,7 +127,7 @@ func main() {
 	if *mode == "full" {
 		logger.Println("Full indexing mode selected.")
 
-		// TODO: purge deleted items
+		go es.PurgeIndex(d)
 		es.IndexEverything(d)
 		return
 	}
