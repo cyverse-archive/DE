@@ -3,8 +3,7 @@ package elasticsearch
 import (
 	"logcabin"
 
-	"encoding/json"
-	"github.com/mattbaird/elastigo/lib"
+	"github.com/olivere/elastic"
 
 	"templeton/database"
 	"templeton/model"
@@ -16,7 +15,7 @@ var (
 
 // Elasticer is a type used to interact with Elasticsearch
 type Elasticer struct {
-	es      *elastigo.Conn
+	es      *elastic.Client
 	baseURL string
 	index   string
 }
@@ -24,14 +23,8 @@ type Elasticer struct {
 // NewElasticer returns a pointer to an Elasticer instance that has already tested its connection
 // by making a WaitForStatus call to the configured Elasticsearch cluster
 func NewElasticer(elasticsearchBase string, elasticsearchIndex string) (*Elasticer, error) {
-	c := elastigo.NewConn()
+	c, err := elastic.NewClient(elastic.SetURL(elasticsearchBase))
 
-	err := c.SetFromUrl(elasticsearchBase)
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = c.WaitForStatus("red", 10, elasticsearchIndex)
 	if err != nil {
 		return nil, err
 	}
@@ -40,21 +33,51 @@ func NewElasticer(elasticsearchBase string, elasticsearchIndex string) (*Elastic
 }
 
 func (e *Elasticer) Close() {
-	e.es.Close()
+	e.es.Stop()
+}
+
+type BulkIndexer struct {
+	es          *elastic.Client
+	bulkSize    int
+	bulkService *elastic.BulkService
+}
+
+func (e *Elasticer) NewBulkIndexer(bulkSize int) *BulkIndexer {
+	return &BulkIndexer{bulkSize: bulkSize, es: e.es, bulkService: e.es.Bulk()}
+}
+
+func (b *BulkIndexer) Add(r elastic.BulkableRequest) error {
+	b.bulkService.Add(r)
+	if b.bulkService.NumberOfActions() >= b.bulkSize {
+		err := b.Flush()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (b *BulkIndexer) Flush() error {
+	_, err := b.bulkService.Do()
+	if err != nil {
+		return err
+	}
+
+	b.bulkService = b.es.Bulk()
+
+	return nil
 }
 
 // PurgeIndex walks an index querying a database, deleting those which should not exist
 func (e *Elasticer) PurgeIndex(d *database.Databaser) {
-	indexer := e.es.NewBulkIndexerErrors(10, 60)
-	indexer.Start()
-	defer indexer.Stop()
+	indexer := e.NewBulkIndexer(10)
+	defer indexer.Flush()
 }
 
 // IndexEverything creates a bulk indexer and takes a database, and iterates to index its contents
 func (e *Elasticer) IndexEverything(d *database.Databaser) {
-	indexer := e.es.NewBulkIndexerErrors(10, 60)
-	indexer.Start()
-	defer indexer.Stop()
+	indexer := e.NewBulkIndexer(10)
+	defer indexer.Flush()
 
 	cursor, err := d.GetAllObjects()
 	if err != nil {
@@ -80,12 +103,11 @@ func (e *Elasticer) IndexEverything(d *database.Databaser) {
 		}
 		logger.Printf("Indexing %s", formatted.ID)
 
-		js, err := json.Marshal(formatted)
+		req := elastic.NewBulkIndexRequest().Index(e.index).Type("metadata").Id(formatted.ID).Doc(formatted)
+		err = indexer.Add(req)
 		if err != nil {
 			logger.Print(err)
 			break
 		}
-
-		indexer.Index(e.index, "metadata", formatted.ID, "", "", nil, js)
 	}
 }
