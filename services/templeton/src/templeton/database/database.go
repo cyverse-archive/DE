@@ -2,11 +2,19 @@ package database
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
+
+	"logcabin"
 
 	"templeton/model"
 
 	_ "github.com/lib/pq"
+)
+
+var (
+	EOS    = errors.New("EOS")
+	logger = logcabin.New()
 )
 
 // Databaser is a type used to interact with the database.
@@ -124,46 +132,69 @@ func (d *Databaser) GetObjectAVUs(uuid string) ([]model.AVURecord, error) {
 	return retval, err
 }
 
+type objectCursor struct {
+	rows     *sql.Rows
+	lastRow  *model.AVURecord
+	moreRows bool
+	anyRows  bool
+}
+
+func newObjectCursor(rows *sql.Rows) *objectCursor {
+	return &objectCursor{rows: rows, lastRow: &model.AVURecord{TargetId: ""}, moreRows: true, anyRows: false}
+}
+
+func (o *objectCursor) Next() ([]model.AVURecord, error) {
+	if !o.moreRows {
+		return nil, EOS
+	}
+
+	var retval []model.AVURecord
+
+	if o.lastRow.TargetId != "" {
+		retval = append(retval, *o.lastRow)
+	}
+
+	for o.moreRows {
+		o.moreRows = o.rows.Next()
+		if !o.moreRows {
+			break
+		}
+		o.anyRows = true
+
+		ar, err := avuRecordFromRow(o.rows)
+		if err != nil {
+			return nil, err
+		}
+
+		if o.lastRow.TargetId == "" || o.lastRow.TargetId == ar.TargetId {
+			o.lastRow = ar
+			retval = append(retval, *ar)
+		} else {
+			o.lastRow = ar
+			break
+		}
+	}
+	err := o.rows.Err()
+	if err == nil && !o.anyRows {
+		logger.Print("No metadata was found in the configured database.")
+		return nil, EOS
+	}
+	return retval, err
+}
+
+func (o *objectCursor) Close() {
+	o.rows.Close()
+}
+
 // GetAllObjects returns a function to iterate through individual objects' worth of AVURecords, and a function to clean up
 // The function it returns will return nil if all records have been read.
-func (d *Databaser) GetAllObjects() (func() ([]model.AVURecord, error), func(), error) {
+func (d *Databaser) GetAllObjects() (*objectCursor, error) {
 	query := selectAVUsWhere("")
 
 	rows, err := d.db.Query(query)
-	endFunc := func() { rows.Close() }
 	if err != nil {
-		return nil, endFunc, err
+		return nil, err
 	}
 
-	lastRow := &model.AVURecord{TargetId: ""}
-	moreRows := true
-
-	return func() ([]model.AVURecord, error) {
-		if !moreRows {
-			return nil, nil
-		}
-		var retval []model.AVURecord
-		if lastRow.TargetId != "" {
-			retval = append(retval, *lastRow)
-		}
-		for moreRows {
-			moreRows = rows.Next()
-			if !moreRows {
-				break
-			}
-			ar, err := avuRecordFromRow(rows)
-			if err != nil {
-				return nil, err
-			}
-			if lastRow.TargetId == "" || lastRow.TargetId == ar.TargetId {
-				lastRow = ar
-				retval = append(retval, *ar)
-			} else {
-				lastRow = ar
-				break
-			}
-		}
-		err = rows.Err()
-		return retval, err
-	}, endFunc, err
+	return newObjectCursor(rows), nil
 }
