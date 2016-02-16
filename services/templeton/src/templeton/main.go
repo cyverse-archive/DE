@@ -127,9 +127,24 @@ func main() {
 	if *mode == "full" {
 		logger.Println("Full indexing mode selected.")
 
+		// TODO: purge deleted items
 		es.IndexEverything(d)
 		return
 	}
 
 	loadAMQPConfig()
+
+	if *mode == "periodic" {
+		logger.Println("Periodic indexing mode selected.")
+
+		// TODO: AMQP listener triggering same steps as full mode
+		return
+	}
+
+	if *mode == "incremental" {
+		logger.Println("Incremental indexing mode selected.")
+
+		// TODO: AMQP listener triggering incremental updates
+		return
+	}
 }
