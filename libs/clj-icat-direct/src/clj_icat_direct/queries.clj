@@ -517,21 +517,19 @@
 
 (def queries
   {:count-all-items-under-folder
-   "WITH user_groups AS ( SELECT g.*
+   "WITH user_groups AS ( SELECT g.group_user_id
                             FROM r_user_main u
                             JOIN r_user_group g ON g.user_id = u.user_id
                            WHERE u.user_name = ?
                              AND u.zone_name = ? ),
 
-         parent      AS ( SELECT * from r_coll_main
+         parent      AS ( SELECT DISTINCT coll_id, coll_name from r_coll_main
                            WHERE coll_name = ?
-                          UNION
-                          SELECT * from r_coll_main
-                           WHERE coll_name LIKE ? || '/%' ),
+                              OR coll_name LIKE ? || '/%' ),
 
-         data_objs   AS ( SELECT *
+         data_objs   AS ( SELECT data_id
                             FROM r_data_main
-                           WHERE coll_id = ANY(ARRAY( SELECT coll_id FROM parent )))
+                           WHERE coll_id = ANY(ARRAY( SELECT coll_id FROM parent )) )
 
     SELECT ((SELECT count(DISTINCT d.data_id) FROM r_objt_access a
                JOIN data_objs d ON a.object_id = d.data_id
@@ -545,13 +543,10 @@
                 AND c.coll_type != 'linkPoint')) AS total"
 
    :list-folders-in-folder
-   "WITH user_groups AS ( SELECT g.* FROM r_user_main u
+   "WITH user_groups AS ( SELECT g.group_user_id FROM r_user_main u
                             JOIN r_user_group g ON g.user_id = u.user_id
                            WHERE u.user_name = ?
                              AND u.zone_name = ? ),
-
-         parent      AS ( SELECT * from r_coll_main
-                           WHERE coll_name = ? )
 
     SELECT DISTINCT
            c.parent_coll_name                     as dir_name,
@@ -565,28 +560,28 @@
            MAX(a.access_type_id)                  as access_type_id
       FROM r_coll_main c
       JOIN r_objt_access a ON c.coll_id = a.object_id
-      JOIN parent p ON c.parent_coll_name = p.coll_name
       JOIN r_objt_metamap mm ON mm.object_id = c.coll_id
       JOIN r_meta_main m ON m.meta_id = mm.meta_id 
      WHERE a.user_id IN ( SELECT group_user_id FROM user_groups )
        AND c.coll_type != 'linkPoint'
+       AND c.parent_coll_name = ?
        AND m.meta_attr_name = 'ipc_UUID'
   GROUP BY dir_name, full_path, base_name, c.create_ts, c.modify_ts, type, data_size, uuid
   ORDER BY base_name ASC"
 
    :count-files-in-folder
-   "WITH user_groups AS ( SELECT g.*
+   "WITH user_groups AS ( SELECT g.group_user_id
                             FROM r_user_main u
                             JOIN r_user_group g ON g.user_id = u.user_id
                            WHERE u.user_name = ?
                              AND u.zone_name = ? ),
 
-         parent      AS ( SELECT * from r_coll_main
+         parent      AS ( SELECT coll_id from r_coll_main
                            WHERE coll_name = ? ),
 
-         data_objs   AS ( SELECT *
+         data_objs   AS ( SELECT data_id
                             FROM r_data_main
-                           WHERE coll_id = ANY(ARRAY( SELECT coll_id FROM parent )))
+                           WHERE coll_id IN ( SELECT coll_id FROM parent ))
 
       SELECT count(DISTINCT d.data_id) FROM r_objt_access a
         JOIN data_objs d ON a.object_id = d.data_id
@@ -594,20 +589,17 @@
          AND a.object_id IN ( SELECT data_id from data_objs )"
 
    :count-folders-in-folder
-   "WITH user_groups AS ( SELECT g.*
+   "WITH user_groups AS ( SELECT g.group_user_id
                             FROM r_user_main u
                             JOIN r_user_group g ON g.user_id = u.user_id
                            WHERE u.user_name = ?
                              AND u.zone_name = ? ),
 
-         parent      AS ( SELECT * from r_coll_main
-                           WHERE coll_name = ? )
-
     SELECT count(DISTINCT c.coll_id) FROM r_coll_main c
       JOIN r_objt_access a ON c.coll_id = a.object_id
-      JOIN parent p ON c.parent_coll_name = p.coll_name
      WHERE a.user_id IN ( SELECT group_user_id FROM user_groups )
-       AND c.coll_type != 'linkPoint'"
+       AND c.coll_type != 'linkPoint'
+       AND c.parent_coll_name = ?"
 
    :file-permissions
    "SELECT DISTINCT o.access_type_id, u.user_name
