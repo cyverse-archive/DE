@@ -24,7 +24,7 @@
   (str (assoc (curl/url (:auth-uri server-info))
          :query {:response_type "code"
                  :client_id     (:client-key server-info)
-                 :redirect-uri  (:redirect-uri server-info)
+                 :redirect_uri  (:redirect-uri server-info)
                  :state         (op/store-authorization-request username state-info)})))
 
 (defn- authorization-redirect

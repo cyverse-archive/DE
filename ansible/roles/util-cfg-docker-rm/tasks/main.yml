@@ -13,5 +13,6 @@
   shell: "docker-compose -f {{docker.compose_path}} rm -f -v {{service_name}}"
   register: docker_pull_v
   changed_when: docker_pull_v.stdout.find('Image is up to date') == -1
+  ignore_errors: yes
   tags:
     - docker_rm

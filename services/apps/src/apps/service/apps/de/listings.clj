@@ -154,7 +154,7 @@
   "Retrieves the list of app groups that are accessible to administrators. This includes all public
    app groups along with the trash group."
   [user params]
-  (let [params (assoc params :admin true)]
+  (let [params (assoc params :admin true :public true)]
     (conj (vec (get-app-groups user params))
           (format-trash-category nil nil params))))
 
