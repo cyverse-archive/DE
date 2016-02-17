@@ -115,12 +115,12 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
 
     private final IplantErrorStrings errorStrings;
 
-    private final EventBus eventBus;
-    private final MessageServiceFacade messageServiceFacade;
-    private final NotificationToolbarView toolbar;
+    EventBus eventBus;
+    MessageServiceFacade messageServiceFacade;
+    NotificationToolbarView toolbar;
     private final NotificationView view;
     private PagingLoadResult<NotificationMessage> callbackResult;
-    private NotificationCategory currentCategory;
+    NotificationCategory currentCategory;
     private final JsonUtil jsonUtil;
 
     public NotificationPresenterImpl(final NotificationView view) {
@@ -202,7 +202,7 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
     @Override
     public void onDeleteAllClicked() {
         view.mask();
-        messageServiceFacade.deleteAll(new AsyncCallback<String>() {
+        messageServiceFacade.deleteAll(currentCategory.toString(), new AsyncCallback<String>() {
 
             @Override
             public void onFailure(Throwable caught) {

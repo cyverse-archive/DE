@@ -53,7 +53,7 @@ public interface MessageServiceFacade {
      */
     void getMessageCounts(AsyncCallback<Counts> callback);
 
-    void deleteAll(AsyncCallback<String> callback);
+    void deleteAll(String filter, AsyncCallback<String> callback);
 
     void markAllNotificationsSeen(AsyncCallback<Void> callback);
     

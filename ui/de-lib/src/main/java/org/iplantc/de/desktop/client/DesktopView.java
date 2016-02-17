@@ -248,4 +248,6 @@ public interface DesktopView extends IsWidget {
     void setUnseenNotificationCount(int count);
 
     void setUnseenSystemMessageCount(int count);
+
+    void hideNotificationMenu();
 }

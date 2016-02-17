@@ -5,10 +5,12 @@ import org.iplantc.de.desktop.client.presenter.util.MessagePoller;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.WindowType;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
+import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.systemMessages.client.view.NewMessageView;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwtmockito.GxtMockitoTestRunner;
+import com.google.gwtmockito.WithClassesToStub;
 
 import com.sencha.gxt.widget.core.client.WindowManager;
 
@@ -22,6 +24,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
 @RunWith(GxtMockitoTestRunner.class)
+@WithClassesToStub(ConfigFactory.class)
 public class DesktopPresenterImplTest {
 
     @Mock DesktopWindowManager desktopWindowManagerMock;
@@ -82,6 +85,16 @@ public class DesktopPresenterImplTest {
         uut.onSystemMessagesClick();
         verify(desktopWindowManagerMock).show(WindowType.SYSTEM_MESSAGES);
         verifyNoMoreInteractions(desktopWindowManagerMock);
+    }
+
+    @Test public void testDoSeeAllNotifications() {
+        uut.doSeeAllNotifications();
+        verify(viewMock).hideNotificationMenu();
+    }
+
+    @Test public void testDoSeeNewNotifications() {
+        uut.doSeeNewNotifications();
+        verify(viewMock).hideNotificationMenu();
     }
 
 }
