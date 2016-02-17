@@ -3,7 +3,7 @@ package elasticsearch
 import (
 	"logcabin"
 
-	"github.com/olivere/elastic"
+	"gopkg.in/olivere/elastic.v3"
 
 	"templeton/database"
 	"templeton/model"
