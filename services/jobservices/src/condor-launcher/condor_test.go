@@ -25,7 +25,7 @@ func JSONData() ([]byte, error) {
 
 var (
 	s *model.Job
-	l = logcabin.New()
+	l = logcabin.New("test_condor", "test_condor")
 )
 
 func _inittests(t *testing.T, memoize bool) *model.Job {

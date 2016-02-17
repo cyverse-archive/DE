@@ -2,6 +2,7 @@ package messaging
 
 import (
 	"fmt"
+	"logcabin"
 	"model"
 	"os"
 	"reflect"
@@ -10,6 +11,8 @@ import (
 
 	"github.com/streadway/amqp"
 )
+
+var l = logcabin.New("test_amqp", "test_amqp")
 
 func shouldrun() bool {
 	if os.Getenv("RABBIT_PORT_5672_TCP_ADDR") != "" {
@@ -67,7 +70,11 @@ func TestNewClient(t *testing.T) {
 	if !shouldrun() {
 		return
 	}
-	actual := NewClient(uri())
+	actual, err := NewClient(uri(), false)
+	if err != nil {
+		t.Error(err)
+		t.Fail()
+	}
 	defer actual.Close()
 	expected := uri()
 	if actual.uri != expected {
@@ -79,7 +86,11 @@ func TestClient(t *testing.T) {
 	if !shouldrun() {
 		return
 	}
-	client := NewClient(uri())
+	client, err := NewClient(uri(), false)
+	if err != nil {
+		t.Error(err)
+		t.Fail()
+	}
 	defer client.Close()
 	exchange := "jex_tests"
 	key := "tests"

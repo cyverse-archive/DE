@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	logger  = logcabin.New()
+	logger  = logcabin.New("jex-adapter", "jex-adapter")
 	version = flag.Bool("version", false, "Print version information")
 	cfgPath = flag.String("config", "", "Path to the configuration file")
 	amqpURI string
@@ -51,44 +51,44 @@ func home(writer http.ResponseWriter, request *http.Request) {
 }
 
 func stop(writer http.ResponseWriter, request *http.Request) {
-	logger.Printf("Request received:\n%#v\n", request)
+	log.Printf("Request received:\n%#v\n", request)
 	var (
 		invID string
 		ok    bool
 		err   error
 		v     = mux.Vars(request)
 	)
-	logger.Println("Getting invocation ID out of the Vars")
+	log.Println("Getting invocation ID out of the Vars")
 	if invID, ok = v["invocation_id"]; !ok {
 		writer.WriteHeader(http.StatusBadRequest)
 		writer.Write([]byte("Missing job id in URL"))
-		logger.Print("Missing job id in URL")
+		log.Print("Missing job id in URL")
 		return
 	}
-	logger.Printf("Invocation ID is %s\n", invID)
+	log.Printf("Invocation ID is %s\n", invID)
 	stopRequest := messaging.StopRequest{
 		Reason:       "User request",
 		Username:     "system",
 		InvocationID: invID,
 	}
-	logger.Println("Marshalling stop request to JSON")
+	log.Println("Marshalling stop request to JSON")
 	reqJSON, err := json.Marshal(stopRequest)
 	if err != nil {
-		logger.Print(err)
+		log.Print(err)
 		writer.WriteHeader(http.StatusInternalServerError)
 		writer.Write([]byte(fmt.Sprintf("Error creating stop request JSON: %s", err.Error())))
 		return
 	}
-	logger.Println("Sending stop request")
+	log.Println("Sending stop request")
 	stopKey := fmt.Sprintf("%s.%s", messaging.StopsKey, invID)
 	err = client.Publish(stopKey, reqJSON)
 	if err != nil {
-		logger.Print(err)
+		log.Print(err)
 		writer.WriteHeader(http.StatusInternalServerError)
 		writer.Write([]byte(fmt.Sprintf("Error sending stop request: %s", err.Error())))
 		return
 	}
-	logger.Println("Done sending stop request")
+	log.Println("Done sending stop request")
 }
 
 func launch(writer http.ResponseWriter, request *http.Request) {
@@ -209,7 +209,7 @@ func main() {
 	}
 	client, err = messaging.NewClient(amqpURI, false)
 	if err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 	defer client.Close()
 	client.SetupPublishing(messaging.JobsExchange)

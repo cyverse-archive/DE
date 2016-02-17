@@ -18,7 +18,7 @@ import (
 
 var (
 	s *model.Job
-	l = logcabin.New()
+	l = logcabin.New("test_containers", "test_containers")
 )
 
 func shouldrun() bool {

@@ -20,7 +20,7 @@ import (
 
 var (
 	s *model.Job
-	l = logcabin.New()
+	l = logcabin.New("test_jex_adapter", "test_jex_adapter")
 )
 
 func shouldrun() bool {

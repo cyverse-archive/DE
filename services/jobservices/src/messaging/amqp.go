@@ -2,7 +2,7 @@ package messaging
 
 import (
 	"encoding/json"
-	"logcabin"
+	"log"
 	"math/rand"
 	"model"
 	"os"
@@ -22,8 +22,6 @@ type JobState string
 type StatusCode int
 
 var (
-	logger = logcabin.New()
-
 	//LaunchCommand is the string used in LaunchCo
 	LaunchCommand = "LAUNCH"
 
@@ -179,19 +177,19 @@ func NewClient(uri string, reconnect bool) (*Client, error) {
 	randomizer := rand.New(rand.NewSource(time.Now().UnixNano()))
 	c.uri = uri
 	c.Reconnect = reconnect
-	logger.Println("Attempting AMQP connection...")
+	log.Println("Attempting AMQP connection...")
 	var connection *amqp.Connection
 	var err error
 	if c.Reconnect {
 		for {
 			connection, err = amqp.Dial(c.uri)
 			if err != nil {
-				logger.Print(err)
+				log.Print(err)
 				waitFor := randomizer.Intn(10)
-				logger.Printf("Re-attempting connection in %d seconds", waitFor)
+				log.Printf("Re-attempting connection in %d seconds", waitFor)
 				time.Sleep(time.Duration(waitFor) * time.Second)
 			} else {
-				logger.Println("Successfully connected to the AMQP broker")
+				log.Println("Successfully connected to the AMQP broker")
 				break
 			}
 		}
@@ -200,7 +198,7 @@ func NewClient(uri string, reconnect bool) (*Client, error) {
 		if err != nil {
 			return nil, err
 		}
-		logger.Println("Successfully connected to the AMQP broker")
+		log.Println("Successfully connected to the AMQP broker")
 	}
 	c.connection = connection
 	c.aggregationChan = make(chan aggregationMessage)
@@ -224,7 +222,7 @@ func (c *Client) Listen() {
 	for {
 		select {
 		case err := <-c.errors:
-			logger.Printf("An error in the connection to the AMQP broker occurred:\n%s", err)
+			log.Printf("An error in the connection to the AMQP broker occurred:\n%s", err)
 			if c.Reconnect {
 				c, _ = NewClient(c.uri, c.Reconnect)
 				c.consumers = consumers

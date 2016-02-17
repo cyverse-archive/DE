@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"logcabin"
 	"messaging"
 	"model"
@@ -19,7 +20,7 @@ import (
 )
 
 var (
-	logger    = logcabin.New()
+	logger    = logcabin.New("road-runner", "road-runner")
 	version   = flag.Bool("version", false, "Print the version information")
 	jobFile   = flag.String("job", "", "The path to the job description file")
 	cfgPath   = flag.String("config", "", "The path to the config file")
@@ -36,12 +37,12 @@ func signals() {
 	signal.Notify(c, os.Interrupt, os.Kill, syscall.SIGTERM, syscall.SIGSTOP, syscall.SIGQUIT)
 	go func() {
 		sig := <-c
-		logger.Println("Received signal:", sig)
+		log.Println("Received signal:", sig)
 		if dckr == nil {
-			logger.Println("Docker client is nil, can't clean up. Probably don't need to.")
+			log.Println("Docker client is nil, can't clean up. Probably don't need to.")
 		}
 		if job == nil {
-			logger.Println("Info didn't get parsed from the job file, can't clean up. Probably don't need to.")
+			log.Println("Info didn't get parsed from the job file, can't clean up. Probably don't need to.")
 		}
 		if dckr != nil && job != nil {
 			cleanup(job)
@@ -81,14 +82,14 @@ func AppVersion() {
 func hostname() string {
 	h, err := os.Hostname()
 	if err != nil {
-		logger.Printf("Couldn't get the hostname: %s", err.Error())
+		log.Printf("Couldn't get the hostname: %s", err.Error())
 		return ""
 	}
 	return h
 }
 
 func fail(client *messaging.Client, job *model.Job, msg string) error {
-	logger.Print(msg)
+	log.Print(msg)
 	return client.PublishJobUpdate(&messaging.UpdateMessage{
 		Job:     job,
 		State:   messaging.FailedState,
@@ -113,26 +114,26 @@ func running(client *messaging.Client, job *model.Job, msg string) {
 		Sender:  hostname(),
 	})
 	if err != nil {
-		logger.Print(err)
+		log.Print(err)
 	}
-	logger.Print(msg)
+	log.Print(msg)
 }
 
 func cleanup(job *model.Job) {
 	err := dckr.NukeContainersByLabel(model.DockerLabelKey, job.InvocationID)
 	if err != nil {
-		logger.Print(err)
+		log.Print(err)
 	}
 	for _, dc := range job.DataContainers() {
 		err := dckr.SafelyRemoveImage(dc.Name, dc.Tag)
 		if err != nil {
-			logger.Print(err)
+			log.Print(err)
 		}
 	}
 	for _, ci := range job.ContainerImages() {
 		err := dckr.SafelyRemoveImage(ci.Name, ci.Tag)
 		if err != nil {
-			logger.Print(err)
+			log.Print(err)
 		}
 	}
 }
@@ -142,7 +143,7 @@ func Run(client *messaging.Client, dckr *Docker, exit chan messaging.StatusCode)
 	status := messaging.Success
 	host, err := os.Hostname()
 	if err != nil {
-		logger.Print(err)
+		log.Print(err)
 		host = "UNKNOWN"
 	}
 	// let everyone know the job is running
@@ -150,22 +151,22 @@ func Run(client *messaging.Client, dckr *Docker, exit chan messaging.StatusCode)
 
 	err = os.Mkdir("logs", 0755)
 	if err != nil {
-		logger.Print(err)
+		log.Print(err)
 	}
 
 	transferTrigger, err := os.Create("logs/de-transfer-trigger.log")
 	if err != nil {
-		logger.Print(err)
+		log.Print(err)
 	} else {
 		_, err = transferTrigger.WriteString("This is only used to force HTCondor to transfer files.")
 		if err != nil {
-			logger.Print(err)
+			log.Print(err)
 		}
 	}
 
 	if _, err := os.Stat("iplant.cmd"); err != nil {
 		if err = os.Rename("iplant.cmd", "logs/iplant.cmd"); err != nil {
-			logger.Print(err)
+			log.Print(err)
 		}
 	}
 
@@ -174,7 +175,7 @@ func Run(client *messaging.Client, dckr *Docker, exit chan messaging.StatusCode)
 		running(client, job, fmt.Sprintf("Pulling container image %s:%s", dc.Name, dc.Tag))
 		err = dckr.Pull(dc.Name, dc.Tag)
 		if err != nil {
-			logger.Print(err)
+			log.Print(err)
 			status = messaging.StatusDockerPullFailed
 			running(client, job, fmt.Sprintf("Error pulling container '%s:%s': %s", dc.Name, dc.Tag, err.Error()))
 			break
@@ -188,7 +189,7 @@ func Run(client *messaging.Client, dckr *Docker, exit chan messaging.StatusCode)
 			running(client, job, fmt.Sprintf("Creating data container %s-%s", dc.NamePrefix, job.InvocationID))
 			_, _, err := dckr.CreateDataContainer(&dc, job.InvocationID)
 			if err != nil {
-				logger.Print(err)
+				log.Print(err)
 				status = messaging.StatusDockerPullFailed
 				running(client, job, fmt.Sprintf("Error creating data container %s-%s", dc.NamePrefix, job.InvocationID))
 				break
@@ -203,7 +204,7 @@ func Run(client *messaging.Client, dckr *Docker, exit chan messaging.StatusCode)
 			running(client, job, fmt.Sprintf("Pulling tool container %s:%s", ci.Name, ci.Tag))
 			err = dckr.Pull(ci.Name, ci.Tag)
 			if err != nil {
-				logger.Print(err)
+				log.Print(err)
 				status = messaging.StatusDockerPullFailed
 				running(client, job, fmt.Sprintf("Error pulling tool container '%s:%s': %s", ci.Name, ci.Tag, err.Error()))
 				break
@@ -221,7 +222,7 @@ func Run(client *messaging.Client, dckr *Docker, exit chan messaging.StatusCode)
 			exitCode, err := dckr.DownloadInputs(job, &input, idx)
 			if exitCode != 0 || err != nil {
 				if err != nil {
-					logger.Print(err)
+					log.Print(err)
 					running(client, job, fmt.Sprintf("Error downloading %s: %s", input.IRODSPath(), err.Error()))
 				} else {
 					running(client, job, fmt.Sprintf("Error downloading %s: Transfer utility exited with %d", input.IRODSPath(), exitCode))
@@ -248,7 +249,7 @@ func Run(client *messaging.Client, dckr *Docker, exit chan messaging.StatusCode)
 			exitCode, err := dckr.RunStep(&step, job.InvocationID, idx)
 			if exitCode != 0 || err != nil {
 				if err != nil {
-					logger.Print(err)
+					log.Print(err)
 					running(client, job,
 						fmt.Sprintf(
 							"Error running tool container %s:%s with arguments '%s': %s",
@@ -288,14 +289,14 @@ func Run(client *messaging.Client, dckr *Docker, exit chan messaging.StatusCode)
 	exitCode, err := dckr.UploadOutputs(job)
 	if exitCode != 0 || err != nil {
 		if err != nil {
-			logger.Print(err)
+			log.Print(err)
 			running(client, job, fmt.Sprintf("Error uploading outputs to %s: %s", job.OutputDirectory(), err.Error()))
 		} else {
 			if client == nil {
-				logger.Println("client is nil")
+				log.Println("client is nil")
 			}
 			if job == nil {
-				logger.Println("job is nil")
+				log.Println("job is nil")
 			}
 			od := job.OutputDirectory()
 			running(client, job, fmt.Sprintf("Transfer utility exited with a code of %d when uploading outputs to %s", exitCode, od))
@@ -322,7 +323,7 @@ func Wait(client *messaging.Client, dckr *Docker, seconds chan int64, exit chan 
 		exit <- messaging.StatusBadDuration
 	} else {
 		time.Sleep(duration)
-		logger.Printf("Time limit reached after %s", durationStr)
+		log.Printf("Time limit reached after %s", durationStr)
 		exit <- messaging.StatusTimeLimit
 	}
 }
@@ -333,40 +334,40 @@ func main() {
 		os.Exit(0)
 	}
 	if *cfgPath == "" {
-		logger.Fatal("--config must be set.")
+		log.Fatal("--config must be set.")
 	}
 	err := configurate.Init(*cfgPath)
 	if err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 	uri, err := configurate.C.String("amqp.uri")
 	if err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 
 	client, err := messaging.NewClient(uri, true)
 	if err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 	defer client.Close()
 	client.SetupPublishing(messaging.JobsExchange)
 
 	if *jobFile == "" {
-		logger.Fatal("--job must be set.")
+		log.Fatal("--job must be set.")
 	}
 	data, err := ioutil.ReadFile(*jobFile)
 	if err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 	job, err = model.NewFromData(data)
 	if err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 
 	dckr, err = NewDocker(*dockerURI)
 	if err != nil {
 		fail(client, job, "Failed to connect to local docker socket")
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 
 	// The channel that the exit code will be passed along on.
@@ -387,58 +388,58 @@ func main() {
 			//but allow the output containers to run. Yanking the rug out from the
 			//containers should force the Run() function to 'fall through' to any clean
 			//up steps.
-			logger.Printf("Received an exit code of %d, cleaning up", int(exitCode))
+			log.Printf("Received an exit code of %d, cleaning up", int(exitCode))
 			for _, dc := range job.DataContainers() {
-				logger.Printf("Nuking image %s:%s", dc.Name, dc.Tag)
+				log.Printf("Nuking image %s:%s", dc.Name, dc.Tag)
 				err := dckr.NukeImage(dc.Name, dc.Tag)
 				if err != nil {
-					logger.Print(err)
+					log.Print(err)
 				}
 			}
 			for _, ci := range job.ContainerImages() {
-				logger.Printf("Nuking image %s:%s", ci.Name, ci.Tag)
+				log.Printf("Nuking image %s:%s", ci.Name, ci.Tag)
 				err := dckr.NukeImage(ci.Name, ci.Tag)
 				if err != nil {
-					logger.Print(err)
+					log.Print(err)
 				}
 			}
-			logger.Println("Finding all input containers")
+			log.Println("Finding all input containers")
 			inputContainers, err := dckr.ContainersWithLabel(typeLabel, strconv.Itoa(inputContainer), true)
 			if err != nil {
-				logger.Print(err)
+				log.Print(err)
 				inputContainers = []string{}
 			}
 			for _, ic := range inputContainers {
-				logger.Printf("Nuking input container %s", ic)
+				log.Printf("Nuking input container %s", ic)
 				err = dckr.NukeContainer(ic)
 				if err != nil {
-					logger.Print(err)
+					log.Print(err)
 				}
 			}
-			logger.Println("Finding all step containers")
+			log.Println("Finding all step containers")
 			stepContainers, err := dckr.ContainersWithLabel(typeLabel, strconv.Itoa(stepContainer), true)
 			if err != nil {
-				logger.Print(err)
+				log.Print(err)
 				inputContainers = []string{}
 			}
 			for _, sc := range stepContainers {
-				logger.Printf("Nuking step container %s", sc)
+				log.Printf("Nuking step container %s", sc)
 				err = dckr.NukeContainer(sc)
 				if err != nil {
-					logger.Print(err)
+					log.Print(err)
 				}
 			}
-			logger.Println("Finding all data containers")
+			log.Println("Finding all data containers")
 			dataContainers, err := dckr.ContainersWithLabel(typeLabel, strconv.Itoa(dataContainer), true)
 			if err != nil {
-				logger.Print(err)
+				log.Print(err)
 				inputContainers = []string{}
 			}
 			for _, dc := range dataContainers {
-				logger.Printf("Nuking data container %s", dc)
+				log.Printf("Nuking data container %s", dc)
 				err = dckr.NukeContainer(dc)
 				if err != nil {
-					logger.Print(err)
+					log.Print(err)
 				}
 			}
 
@@ -446,39 +447,39 @@ func main() {
 			<-exit
 
 			//Aggressively clean up the rest of the job.
-			logger.Printf("Nuking all containers with the label %s=%s", model.DockerLabelKey, job.InvocationID)
+			log.Printf("Nuking all containers with the label %s=%s", model.DockerLabelKey, job.InvocationID)
 			err = dckr.NukeContainersByLabel(model.DockerLabelKey, job.InvocationID)
 			if err != nil {
-				logger.Print(err)
+				log.Print(err)
 			}
 
 		default:
-			logger.Printf("Received an exit code of %d, cleaning up", int(exitCode))
-			logger.Printf("Finding all containers with the label %s=%s", model.DockerLabelKey, job.InvocationID)
+			log.Printf("Received an exit code of %d, cleaning up", int(exitCode))
+			log.Printf("Finding all containers with the label %s=%s", model.DockerLabelKey, job.InvocationID)
 			jobContainers, err := dckr.ContainersWithLabel(model.DockerLabelKey, job.InvocationID, true)
 			if err != nil {
-				logger.Print(err)
+				log.Print(err)
 				jobContainers = []string{}
 			}
 			for _, jc := range jobContainers {
-				logger.Printf("Nuking container %s", jc)
+				log.Printf("Nuking container %s", jc)
 				err = dckr.NukeContainer(jc)
 				if err != nil {
-					logger.Print(err)
+					log.Print(err)
 				}
 			}
 			for _, dc := range job.DataContainers() {
-				logger.Printf("Safely removing image %s:%s", dc.Name, dc.Tag)
+				log.Printf("Safely removing image %s:%s", dc.Name, dc.Tag)
 				err := dckr.SafelyRemoveImage(dc.Name, dc.Tag)
 				if err != nil {
-					logger.Print(err)
+					log.Print(err)
 				}
 			}
 			for _, ci := range job.ContainerImages() {
-				logger.Printf("Safely removing image %s:%s", ci.Name, ci.Tag)
+				log.Printf("Safely removing image %s:%s", ci.Name, ci.Tag)
 				err := dckr.SafelyRemoveImage(ci.Name, ci.Tag)
 				if err != nil {
-					logger.Print(err)
+					log.Print(err)
 				}
 			}
 		}

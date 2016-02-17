@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	logger     = logcabin.New()
+	logger     = logcabin.New("job-status-to-apps-adapter", "job-status-to-apps-adapter")
 	cfgPath    = flag.String("config", "", "Path to the config file. Required.")
 	version    = flag.Bool("version", false, "Print the version information")
 	dbURI      = flag.String("db", "", "The URI used to connect to the database")
@@ -144,26 +144,26 @@ func (p *Propagator) Propagate(status *DBJobStatusUpdate) error {
 	jsuw := JobStatusUpdateWrapper{
 		State: jsu,
 	}
-	logger.Printf("Job status in the propagate function for job %s is: %#v", jsu.UUID, jsuw)
+	log.Printf("Job status in the propagate function for job %s is: %#v", jsu.UUID, jsuw)
 	msg, err := json.Marshal(jsuw)
 	if err != nil {
-		logger.Print(err)
+		log.Print(err)
 		return err
 	}
 	buf := bytes.NewBuffer(msg)
 	if err != nil {
-		logger.Print(err)
+		log.Print(err)
 		return err
 	}
-	logger.Printf("Message to propagate: %s", string(msg))
-	logger.Printf("Sending job status to %s in the propagate function for job %s", appsURI, jsu.UUID)
+	log.Printf("Message to propagate: %s", string(msg))
+	log.Printf("Sending job status to %s in the propagate function for job %s", appsURI, jsu.UUID)
 	resp, err := http.Post(appsURI, "application/json", buf)
 	if err != nil {
-		logger.Printf("Error sending job status to %s in the propagate function for job %s: %#v", appsURI, jsu.UUID, err)
+		log.Printf("Error sending job status to %s in the propagate function for job %s: %#v", appsURI, jsu.UUID, err)
 		return err
 	}
 	defer resp.Body.Close()
-	logger.Printf("Response from %s in the propagate function for job %s is: %s", appsURI, jsu.UUID, resp.Status)
+	log.Printf("Response from %s in the propagate function for job %s is: %s", appsURI, jsu.UUID, resp.Status)
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		return errors.New("bad response")
 	}
@@ -284,24 +284,24 @@ func ScanAndPropagate(d *sql.DB) error {
 
 		for _, subupdates := range updates {
 			if !subupdates.Propagated && subupdates.PropagationAttempts < *maxRetries {
-				logger.Printf("Propagating %#v", subupdates)
+				log.Printf("Propagating %#v", subupdates)
 				if err = proper.Propagate(&subupdates); err != nil {
-					logger.Print(err)
+					log.Print(err)
 					subupdates.PropagationAttempts = subupdates.PropagationAttempts + 1
 					if err = proper.StorePropagationAttempts(&subupdates); err != nil {
-						logger.Print(err)
+						log.Print(err)
 					}
 					continue
 				}
-				logger.Printf("Marking update %s as propagated", subupdates.ID)
+				log.Printf("Marking update %s as propagated", subupdates.ID)
 				if err = proper.MarkPropagated(subupdates.ID); err != nil {
-					logger.Print(err)
+					log.Print(err)
 					continue
 				}
 			}
 		}
 		if err = proper.Finished(); err != nil {
-			logger.Print(err)
+			log.Print(err)
 		}
 	}
 	return nil
@@ -323,17 +323,17 @@ func main() {
 
 	err = configurate.Init(*cfgPath)
 	if err != nil {
-		logger.Print(err)
+		log.Print(err)
 		os.Exit(-1)
 	}
 
-	logger.Println("Done reading config.")
+	log.Println("Done reading config.")
 
 	if *dbURI == "" {
 		if *dbURI == "" {
 			*dbURI, err = configurate.C.String("db.uri")
 			if err != nil {
-				logger.Fatal(err)
+				log.Fatal(err)
 			}
 		}
 	}
@@ -343,21 +343,21 @@ func main() {
 		log.Fatal(err)
 	}
 
-	logger.Println("Connecting to the database...")
+	log.Println("Connecting to the database...")
 	db, err = sql.Open("postgres", *dbURI)
 	if err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 
 	err = db.Ping()
 	if err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
-	logger.Println("Connected to the database")
+	log.Println("Connected to the database")
 
 	for {
 		if err = ScanAndPropagate(db); err != nil {
-			logger.Fatal(err)
+			log.Fatal(err)
 		}
 		time.Sleep(5 * time.Second)
 	}

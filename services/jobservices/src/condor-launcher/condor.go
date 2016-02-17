@@ -40,7 +40,7 @@ import (
 )
 
 var (
-	logger  = logcabin.New()
+	logger  = logcabin.New("condor-launcher", "condor-launcher")
 	cfgPath = flag.String("config", "", "Path to the config file. Required.")
 	version = flag.Bool("version", false, "Print the version information")
 	gitref  string
@@ -267,11 +267,11 @@ func submit(cmdPath string, s *model.Job) (string, error) {
 		fmt.Sprintf("CONDOR_CONFIG=%s", condorCfg),
 	}
 	output, err := cmd.CombinedOutput()
-	logger.Printf("Output of condor_submit:\n%s\n", output)
+	log.Printf("Output of condor_submit:\n%s\n", output)
 	if err != nil {
 		return "", err
 	}
-	logger.Printf("Extracted ID: %s\n", string(model.ExtractJobID(output)))
+	log.Printf("Extracted ID: %s\n", string(model.ExtractJobID(output)))
 	return string(model.ExtractJobID(output)), err
 }
 
@@ -291,13 +291,13 @@ func launch(s *model.Job) (string, error) {
 		log.Printf("Error submitting job:\n%s", err)
 		return "", err
 	}
-	logger.Printf("Condor job id is %s\n", id)
+	log.Printf("Condor job id is %s\n", id)
 	return id, err
 }
 
 func stop(s *model.Job) (string, error) {
 	crPath, err := exec.LookPath("condor_rm")
-	logger.Printf("condor_rm found at %s", crPath)
+	log.Printf("condor_rm found at %s", crPath)
 	if err != nil {
 		return "", err
 	}
@@ -321,7 +321,7 @@ func stop(s *model.Job) (string, error) {
 		fmt.Sprintf("CONDOR_CONFIG=%s", condorConfig),
 	}
 	output, err := cmd.CombinedOutput()
-	logger.Printf("condor_rm output for job %s:\n%s\n", s.CondorID, string(output))
+	log.Printf("condor_rm output for job %s:\n%s\n", s.CondorID, string(output))
 	if err != nil {
 		return "", err
 	}
@@ -354,10 +354,10 @@ func main() {
 	}
 	err := configurate.Init(*cfgPath)
 	if err != nil {
-		logger.Print(err)
+		log.Print(err)
 		os.Exit(-1)
 	}
-	logger.Println("Done reading config.")
+	log.Println("Done reading config.")
 
 	uri, err := configurate.C.String("amqp.uri")
 	if err != nil {
@@ -365,7 +365,7 @@ func main() {
 	}
 	client, err := messaging.NewClient(uri, true)
 	if err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 	defer client.Close()
 	client.SetupPublishing(messaging.JobsExchange)
@@ -377,8 +377,8 @@ func main() {
 		req := messaging.JobRequest{}
 		err := json.Unmarshal(body, &req)
 		if err != nil {
-			logger.Print(err)
-			logger.Print(string(body[:]))
+			log.Print(err)
+			log.Print(string(body[:]))
 			return
 		}
 		if req.Job.RequestDisk == "" {
@@ -388,17 +388,17 @@ func main() {
 		case messaging.Launch:
 			jobID, err := launch(req.Job)
 			if err != nil {
-				logger.Print(err)
+				log.Print(err)
 				err = client.PublishJobUpdate(&messaging.UpdateMessage{
 					Job:     req.Job,
 					State:   messaging.FailedState,
 					Message: fmt.Sprintf("condor-launcher failed to launch job:\n %s", err),
 				})
 				if err != nil {
-					logger.Print(err)
+					log.Print(err)
 				}
 			} else {
-				logger.Printf("Launched Condor ID %s", jobID)
+				log.Printf("Launched Condor ID %s", jobID)
 
 				err = client.PublishJobUpdate(&messaging.UpdateMessage{
 					Job:     req.Job,
@@ -406,7 +406,7 @@ func main() {
 					Message: fmt.Sprintf("Launched Condor ID %s", jobID),
 				})
 				if err != nil {
-					logger.Print(err)
+					log.Print(err)
 				}
 			}
 		}
