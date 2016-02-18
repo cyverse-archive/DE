@@ -1,6 +1,16 @@
 //
 // condor-launcher launches jobs on an HTCondor cluster.
 //
+// This service connects to an AMQP broker's "jobs" exchange and waits for
+// messages sent with the "jobs.launches" key. It then turns the request
+// into an iplant.cmd, config, job, and irods_config file in /tmp/<user>/<UUID>
+// and calls out to condor_submit to submit the job to the cluster.
+//
+// Since it launches jobs by executing the condor_submit command it shouldn't
+// run inside a Docker container. Our Condor cluster is moderately large and
+// requires a lot of ports to be opened up, which doesn't play nicely with
+// Docker.
+//
 // Required configuration keys are:
 //   amqp.uri
 //   irods.user
