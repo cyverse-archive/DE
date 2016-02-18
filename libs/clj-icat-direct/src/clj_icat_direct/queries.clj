@@ -712,7 +712,7 @@
                        AND o.object_id IN (SELECT object_id
                                              FROM r_objt_access
                                              WHERE user_id in (SELECT group_user_id FROM groups))),
-         file_types AS (SELECT *
+         file_types AS (SELECT om.object_id, mm.meta_attr_value
                           FROM r_objt_metamap AS om
                             JOIN r_meta_main AS mm ON mm.meta_id = om.meta_id
                           WHERE om.object_id = ANY(ARRAY(SELECT object_id FROM uuids))
