@@ -1,3 +1,11 @@
+// jex-adapter
+//
+// jex-adapter allows the apps service to submit job requuests through an AMQP
+// broker by implementing the portion of the old JEX API that apps interacted
+// with. Instead of writing the files out to disk and calling condor_submit like
+// the JEX service did, it serializes the request as JSON and pushes it out
+// as a message on the "jobs" exchange with a routing key of "jobs.launches".
+//
 package main
 
 import (
