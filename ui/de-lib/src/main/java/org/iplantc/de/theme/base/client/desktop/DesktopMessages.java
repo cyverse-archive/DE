@@ -51,8 +51,11 @@ public interface DesktopMessages extends Messages {
     @Key("newNotificationsAlert")
     String newNotificationsAlert();
 
-    @Key("notifyEmail")
-    String notifyEmail();
+    @Key("notifyAnalysisEmail")
+    String notifyAnalysisEmail();
+
+    @Key("notifyImportEmail")
+    String notifyImportEmail();
 
     @Key("oneCharMax")
     String oneCharMax();

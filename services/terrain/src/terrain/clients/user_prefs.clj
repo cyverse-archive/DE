@@ -1,10 +1,11 @@
 (ns terrain.clients.user-prefs
   (:use [terrain.util.config]
         [clojure-commons.error-codes]
-        [slingshot.slingshot :only [throw+]])
+        [slingshot.slingshot :only [try+ throw+]])
   (:require [clj-http.client :as http]
             [cemerick.url :refer [url]]
-            [cheshire.core :as json]))
+            [cheshire.core :as json]
+            [clojure.tools.logging :as log]))
 
 (defn- user-prefs-url
   [user]
@@ -28,6 +29,16 @@
 
      :else
      (json/parse-string (:body resp) true))))
+
+(defn get-prefs-safe
+  "Same as get-prefs, but does not throw exceptions.
+   Instead, caught exceptions are logged and nil is returned."
+  [username]
+  (try+
+   (get-prefs username)
+   (catch Object e
+     (log/error e)
+     nil)))
 
 (defn set-prefs
   [username prefs-map]
