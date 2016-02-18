@@ -62,7 +62,7 @@ func TestInsert(t *testing.T) {
 	}
 	db = initdb(t)
 	defer db.Close()
-	n := time.Now()
+	n := time.Now().UnixNano() / int64(time.Millisecond)
 	actual, err := insert("RUNNING", "test-invocation-id", "test", "localhost", "127.0.0.1", n)
 	if err != nil {
 		t.Error(err)
@@ -81,7 +81,7 @@ func TestInsert(t *testing.T) {
 	defer rows.Close()
 	var (
 		status, message, sentFromHostname string
-		sentOn                            *time.Time
+		sentOn                            int64
 		sentFrom                          string
 	)
 	for rows.Next() {
@@ -102,7 +102,7 @@ func TestInsert(t *testing.T) {
 		if sentFromHostname != "localhost" {
 			t.Errorf("sentFromHostname was %s instead of 'localhost'", sentFromHostname)
 		}
-		if n.Equal(*sentOn) {
+		if n == sentOn {
 			t.Errorf("sentOn was %#v instead of %#v", sentOn, n)
 		}
 	}
