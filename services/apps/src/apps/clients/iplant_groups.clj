@@ -42,6 +42,12 @@
   (-> (http/get (grouper-url "subjects" short-username) {:query-params {:user user} :as :json})
       (:body)))
 
+(defn add-de-user
+  "Adds a user to the de-users group."
+  [subject-id]
+  (http/put (grouper-url "groups" (grouper-user-group) "members" subject-id)
+            {:query-params {:user grouper-user}}))
+
 (defn- retrieve-permissions
   "Retrieves permission assignments from Grouper."
   [role subject attribute-def attribute-def-names]

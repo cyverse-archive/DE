@@ -54,6 +54,15 @@
        (http/post (apply grouper-uri uri-parts))
        (:body)))
 
+(defn- grouper-put
+  [body & uri-parts]
+  (->> {:body         (json/encode body)
+        :basic-auth   (auth-params)
+        :content-type content-type
+        :as           :json}
+       (http/put (apply grouper-uri uri-parts))
+       (:body)))
+
 (defn grouper-ok?
   []
   (try+
@@ -72,6 +81,46 @@
 (defn- parse-boolean
   [bool-str]
   (when bool-str (Boolean/parseBoolean bool-str)))
+
+(defn- role-lookup
+  [role-name]
+  (when-not (nil? role-name)
+    {:groupName role-name}))
+
+(defn- role-lookups
+  [role-names]
+  (when-not (every? nil? role-names)
+    (mapv role-lookup (remove nil? role-names))))
+
+(defn- subject-lookup
+  [subject-id]
+  (when-not (nil? subject-id)
+    {:subjectId subject-id}))
+
+(defn- subject-lookups
+  [subject-ids]
+  (when-not (every? nil? subject-ids)
+    (mapv subject-lookup (remove nil? subject-ids))))
+
+(defn- name-lookup
+  [name]
+  (when-not (nil? name)
+    {:name name}))
+
+(defn- name-lookups
+  [names]
+  (when-not (every? nil? names)
+    (mapv name-lookup (remove nil? names))))
+
+(defn- uuid-lookup
+  [uuid]
+  (when-not (nil? uuid)
+    {:uuid uuid}))
+
+(defn- uuid-lookups
+  [uuids]
+  (when-not (every? nil? uuids)
+    (mapv uuid-lookup (remove nil? uuids))))
 
 ;; Group search.
 
@@ -208,6 +257,35 @@
                        (grouper-post "groups")
                        :WsGetMembersResults)]
       [(:wsSubjects (first (:results response))) (:subjectAttributeNames response)])))
+
+;; Add group member.
+
+(defn- format-member-addition-request
+  [username subject-id]
+  {:WsRestAddMemberRequest
+   {:actAsSubjectLookup (act-as-subject-lookup username)
+    :replaceAllExisting "F"
+    :subjectLookups     (subject-lookups [subject-id])}})
+
+(defn add-group-member
+  [username group-name subject-id]
+  (with-trap [default-error-handler]
+    (-> (format-member-addition-request username subject-id)
+        (grouper-put "groups" group-name "members"))))
+
+;; Remove group member.
+
+(defn- format-member-removal-request
+  [username subject-id]
+  {:WsRestDeleteMemberRequest
+   {:actAsSubjectLookup (act-as-subject-lookup username)
+    :subjectLookups     (subject-lookups [subject-id])}})
+
+(defn remove-group-member
+  [username group-name subject-id]
+  (with-trap [default-error-handler]
+    (-> (format-member-removal-request username subject-id)
+        (grouper-post "groups" group-name "members"))))
 
 ;; Folder search.
 
@@ -531,41 +609,6 @@
 
 ;; Permission assignment
 ;; search/lookup
-(defn- role-lookup
-  [role-name]
-  (when-not (nil? role-name)
-    {:groupName role-name}))
-
-(defn- role-lookups
-  [role-names]
-  (when-not (every? nil? role-names)
-    (mapv role-lookup (remove nil? role-names))))
-
-(defn- subject-lookup
-  [subject-id]
-  (when-not (nil? subject-id)
-    {:subjectId subject-id}))
-
-(defn- subject-lookups
-  [subject-ids]
-  (when-not (every? nil? subject-ids)
-    (mapv subject-lookup (remove nil? subject-ids))))
-
-(defn- name-lookup
-  [name]
-  (when-not (nil? name)
-    {:name name}))
-
-(defn- name-lookups
-  [names]
-  (when-not (every? nil? names)
-    (mapv name-lookup (remove nil? names))))
-
-(defn- uuid-lookup
-  [uuid]
-  (when-not (nil? uuid)
-    {:uuid uuid}))
-
 (defn- uuid-lookups
   [uuids]
   (when-not (every? nil? uuids)

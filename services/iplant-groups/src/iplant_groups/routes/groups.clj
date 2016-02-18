@@ -80,9 +80,30 @@
               specific group."
               (ok (groups/remove-group-privilege group-name subject-id privilege-name params)))))
 
-    (GET* "/members" []
-          :query       [params StandardUserQueryParams]
-          :return      GroupMembers
-          :summary     "List Group Members"
-          :description "This endpoint allows callers to list the members of a single group."
-          (ok (groups/get-group-members group-name params)))))
+    (context* "/members" []
+      (GET* "/" []
+            :query       [params StandardUserQueryParams]
+            :return      GroupMembers
+            :summary     "List Group Members"
+            :description "This endpoint allows callers to list the members of a single group."
+            (ok (groups/get-group-members group-name params)))
+
+      (context* "/:subject-id" []
+        :path-params [subject-id :- SubjectIdPathParam]
+
+        (PUT* "/" []
+              :query       [params StandardUserQueryParams]
+              :summary     "Add Group members"
+              :description "This endpoint allows callers to add members to a group. Note that a request to add a user
+              who is already a member of the group is treated as a no-op and no error will be reported."
+              (groups/add-member group-name subject-id params)
+              (ok))
+
+        (DELETE* "/" []
+                 :query       [params StandardUserQueryParams]
+                 :summary     "Remove Group members"
+                 :description "This endpoint allows callers to add members to a group. Note that a request to remove
+                 someone who is not currently a member of the group (even a non-existent user) is treated as a no-op
+                 and no error will be reported."
+                 (groups/remove-member group-name subject-id params)
+                 (ok))))))
