@@ -1,3 +1,15 @@
+// job-status-to-apps-adapter
+//
+// This service periodically queries the DE database's job-status-updates table
+// for new entries and propagates them up through the apps services's API, which
+// eventually triggers job notifications in the UI.
+//
+// This service works by first querying for all jobs that have unpropagated
+// statuses, iterating through each job and propagating all unpropagated
+// status in the correct order. It records each attempt and will not re-attempt
+// a propagation if the number of retries exceeds the configured maximum number
+// of retries (which defaults to 3).
+//
 package main
 
 import (
