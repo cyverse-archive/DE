@@ -142,11 +142,11 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
     }
 
     @Override
-    public void deleteAll(String filter, AsyncCallback<String> callback) {
+    public void deleteAll(NotificationCategory category, AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "notifications/delete-all"; //$NON-NLS-1$
 
-        if (!filter.toLowerCase().equals(NotificationCategory.ALL.toString().toLowerCase())){
-            address += "?filter=" + URL.encodeQueryString(filter.toLowerCase());
+        if (!category.equals(NotificationCategory.ALL)) {
+            address += "?filter=" + URL.encodeQueryString(category.name().toLowerCase());
         }
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(DELETE, address);

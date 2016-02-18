@@ -105,7 +105,7 @@ public class NotificationPresenterImplTest {
         uut.onDeleteAllClicked();
 
         verify(viewMock).mask();
-        verify(messageServiceFacadeMock).deleteAll(eq(currentCategoryMock.toString()), asyncCallbackStringCaptor.capture());
+        verify(messageServiceFacadeMock).deleteAll(eq(currentCategoryMock), asyncCallbackStringCaptor.capture());
         AsyncCallback<String> asyncCallback = asyncCallbackStringCaptor.getValue();
 
         asyncCallback.onSuccess("result");

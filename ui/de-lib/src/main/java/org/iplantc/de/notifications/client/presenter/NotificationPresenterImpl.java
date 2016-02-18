@@ -202,7 +202,7 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
     @Override
     public void onDeleteAllClicked() {
         view.mask();
-        messageServiceFacade.deleteAll(currentCategory.toString(), new AsyncCallback<String>() {
+        messageServiceFacade.deleteAll(currentCategory, new AsyncCallback<String>() {
 
             @Override
             public void onFailure(Throwable caught) {
