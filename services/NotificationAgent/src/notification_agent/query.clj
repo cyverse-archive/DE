@@ -83,7 +83,7 @@
         filt (mangle-filter (:filter query-params))]
     (if (= filt "new") false seen)))
 
-(defn- get-filter
+(defn get-filter
   "Gets the filter from the query parameters."
   [query-params]
   (let [filt (mangle-filter (:filter query-params))]
