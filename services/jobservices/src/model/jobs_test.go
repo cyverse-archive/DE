@@ -433,12 +433,12 @@ func TestFileMetadataArgument(t *testing.T) {
 	s := inittests(t)
 	fm := s.FileMetadata
 	actual := fm[0].Argument()
-	expected := []string{"-m", "'attr1,value1,unit1'"}
+	expected := []string{"-m", "attr1,value1,unit1"}
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("Argument() returned %#v instead of %#v", actual, expected)
 	}
 	actual = fm[1].Argument()
-	expected = []string{"-m", "'attr2,value2,unit2'"}
+	expected = []string{"-m", "attr2,value2,unit2"}
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("Argument() returned %#v instead of %#v", actual, expected)
 	}
@@ -448,10 +448,10 @@ func TestSubmissionFileMetadataArguments(t *testing.T) {
 	s := inittests(t)
 	actual := MetadataArgs(s.FileMetadata).FileMetadataArguments()
 	expected := []string{
-		"-m", "'attr1,value1,unit1'",
-		"-m", "'attr2,value2,unit2'",
-		"-m", "'ipc-analysis-id,c7f05682-23c8-4182-b9a2-e09650a5f49b,UUID'",
-		"-m", "'ipc-execution-id,07b04ce2-7757-4b21-9e15-0b4c2f44be26,UUID'",
+		"-m", "attr1,value1,unit1",
+		"-m", "attr2,value2,unit2",
+		"-m", "ipc-analysis-id,c7f05682-23c8-4182-b9a2-e09650a5f49b,UUID",
+		"-m", "ipc-execution-id,07b04ce2-7757-4b21-9e15-0b4c2f44be26,UUID",
 	}
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("FileMetadataArguments() returned %#v instead of %#v", actual, expected)
@@ -558,11 +558,11 @@ func TestFinalOutputArguments(t *testing.T) {
 		"put",
 		"--user", "test_this_is_a_test",
 		"--config", "irods-config",
-		"--destination", fmt.Sprintf("'%s'", outputdir),
-		"-m", "'attr1,value1,unit1'",
-		"-m", "'attr2,value2,unit2'",
-		"-m", "'ipc-analysis-id,c7f05682-23c8-4182-b9a2-e09650a5f49b,UUID'",
-		"-m", "'ipc-execution-id,07b04ce2-7757-4b21-9e15-0b4c2f44be26,UUID'",
+		"--destination", fmt.Sprintf("%s", outputdir),
+		"-m", "attr1,value1,unit1",
+		"-m", "attr2,value2,unit2",
+		"-m", "ipc-analysis-id,c7f05682-23c8-4182-b9a2-e09650a5f49b,UUID",
+		"-m", "ipc-execution-id,07b04ce2-7757-4b21-9e15-0b4c2f44be26,UUID",
 		"--exclude", "foo,bar,baz,blippy",
 	}
 	if !reflect.DeepEqual(actual, expected) {
@@ -574,11 +574,11 @@ func TestFinalOutputArguments(t *testing.T) {
 		"put",
 		"--user", "test_this_is_a_test",
 		"--config", "irods-config",
-		"--destination", fmt.Sprintf("'%s'", outputdir),
-		"-m", "'attr1,value1,unit1'",
-		"-m", "'attr2,value2,unit2'",
-		"-m", "'ipc-analysis-id,c7f05682-23c8-4182-b9a2-e09650a5f49b,UUID'",
-		"-m", "'ipc-execution-id,07b04ce2-7757-4b21-9e15-0b4c2f44be26,UUID'",
+		"--destination", fmt.Sprintf("%s", outputdir),
+		"-m", "attr1,value1,unit1",
+		"-m", "attr2,value2,unit2",
+		"-m", "ipc-analysis-id,c7f05682-23c8-4182-b9a2-e09650a5f49b,UUID",
+		"-m", "ipc-execution-id,07b04ce2-7757-4b21-9e15-0b4c2f44be26,UUID",
 		"--exclude", "foo,bar,baz,blippy",
 		"--skip-parent-meta",
 	}

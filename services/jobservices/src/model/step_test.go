@@ -367,12 +367,12 @@ func TestInputArguments(t *testing.T) {
 	expected := []string{
 		"get",
 		"--user", "testuser",
-		"--source", "'/iplant/home/wregglej/Acer-tree.txt'",
+		"--source", "/iplant/home/wregglej/Acer-tree.txt",
 		"--config", "irods-config",
-		"-m", "'attr1,value1,unit1'",
-		"-m", "'attr2,value2,unit2'",
-		"-m", "'ipc-analysis-id,c7f05682-23c8-4182-b9a2-e09650a5f49b,UUID'",
-		"-m", "'ipc-execution-id,07b04ce2-7757-4b21-9e15-0b4c2f44be26,UUID'",
+		"-m", "attr1,value1,unit1",
+		"-m", "attr2,value2,unit2",
+		"-m", "ipc-analysis-id,c7f05682-23c8-4182-b9a2-e09650a5f49b,UUID",
+		"-m", "ipc-execution-id,07b04ce2-7757-4b21-9e15-0b4c2f44be26,UUID",
 	}
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("Arguments() returned:\n\t%#v\ninstead of:\n\t%#v", actual, expected)
@@ -529,7 +529,7 @@ func TestOutputArguments(t *testing.T) {
 	s := inittests(t)
 	output := s.Steps[0].Config.Outputs[0]
 	actual := output.Arguments("testuser", "/irods/dest/")
-	expected := "run --rm -a stdout -a stderr -v $(pwd):/de-app-work -w /de-app-work discoenv/porklock:test put --user testuser --source 'wc_out.txt' --destination '/irods/dest/' --config logs/irods-config"
+	expected := "run --rm -a stdout -a stderr -v $(pwd):/de-app-work -w /de-app-work discoenv/porklock:test put --user testuser --source wc_out.txt --destination /irods/dest/ --config logs/irods-config"
 	if actual != expected {
 		t.Errorf("Arguments returned:\n\t%s\ninstead of:\n\t%s", actual, expected)
 	}
