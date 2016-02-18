@@ -1,3 +1,9 @@
+// job-status-recorder
+//
+// This service listens for job updates sent via AMQP on the "jobs" exchange
+// with a key of "jobs.updates". Each update is recorded in the DE database's
+// job_status_updates table.
+//
 package main
 
 import (
