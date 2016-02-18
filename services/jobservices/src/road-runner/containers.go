@@ -4,6 +4,7 @@ import (
 	"configurate"
 	"fmt"
 	"io"
+	"log"
 	"model"
 	"os"
 	"strconv"
@@ -219,7 +220,7 @@ func (d *Docker) CreateContainerFromStep(step *model.Step, invID string) (*docke
 		if parsedMem, err := strconv.ParseInt(step.Component.Container.MemoryLimit, 10, 64); err == nil {
 			createConfig.Memory = parsedMem
 		} else {
-			logger.Print(err)
+			log.Print(err)
 		}
 	}
 
@@ -227,7 +228,7 @@ func (d *Docker) CreateContainerFromStep(step *model.Step, invID string) (*docke
 		if parsedCPU, err := strconv.ParseInt(step.Component.Container.CPUShares, 10, 64); err == nil {
 			createConfig.CPUShares = parsedCPU
 		} else {
-			logger.Print(err)
+			log.Print(err)
 		}
 	}
 
@@ -313,8 +314,8 @@ func (d *Docker) CreateContainerFromStep(step *model.Step, invID string) (*docke
 			fmt.Sprintf("%s:%s", lm.Source, lm.Destination),
 		)
 	}
-	logger.Printf("Mounts: %#v\n", createConfig.Mounts)
-	logger.Printf("Binds: %#v\n", createHostConfig.Binds)
+	log.Printf("Mounts: %#v\n", createConfig.Mounts)
+	log.Printf("Binds: %#v\n", createHostConfig.Binds)
 
 	for _, dev := range step.Component.Container.Devices {
 		device := docker.Device{
@@ -376,7 +377,7 @@ func (d *Docker) runContainer(container *docker.Container, opts *docker.CreateCo
 	go func() {
 		err = d.Attach(container, stdoutFile, stderrFile, successChan)
 		if err != nil {
-			logger.Print(err)
+			log.Print(err)
 		}
 	}()
 	successChan <- <-successChan

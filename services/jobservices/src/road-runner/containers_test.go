@@ -5,6 +5,7 @@ import (
 	"configurate"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"logcabin"
 	"model"
 	"os"
@@ -72,7 +73,7 @@ func _inittests(t *testing.T, memoize bool) *model.Job {
 		}
 		err = configurate.Init("../test/test_config.yaml")
 		if err != nil {
-			logger.Fatal(err)
+			log.Fatal(err)
 		}
 	}
 	return s
