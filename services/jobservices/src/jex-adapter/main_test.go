@@ -102,7 +102,11 @@ func TestStop(t *testing.T) {
 	invID := "test-invocation-id"
 	stopKey := fmt.Sprintf("%s.%s", messaging.StopsKey, invID)
 	exitChan := make(chan int)
-	client = messaging.NewClient(uri())
+	client, err := messaging.NewClient(uri(), false)
+	if err != nil {
+		t.Error(err)
+		t.Fail()
+	}
 	defer client.Close()
 	client.AddConsumer(messaging.JobsExchange, "test_stop", stopKey, func(d amqp.Delivery) {
 		d.Ack(false)
@@ -151,7 +155,11 @@ func TestLaunch(t *testing.T) {
 	}
 	job := inittests(t)
 	exitChan := make(chan int)
-	client = messaging.NewClient(uri())
+	client, err := messaging.NewClient(uri(), false)
+	if err != nil {
+		t.Error(err)
+		t.Fail()
+	}
 	defer client.Close()
 	client.AddConsumer(messaging.JobsExchange, "test_launch", messaging.LaunchesKey, func(d amqp.Delivery) {
 		d.Ack(false)
