@@ -1,21 +1,12 @@
-jex_rabbit:
+rabbit:
     image: rabbitmq:management
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-de_db:
+    net: jobservices
+jexdb:
     image: discoenv/unittest-dedb:jex-go
-    ports:
-      - "5432:5432"
-jex_dind:
-    image: docker:dind
-    privileged: true
+    net: jobservices
 test:
     image: discoenv/buildenv
-    links:
-      - jex_db:jexdb
-      - jex_rabbit:rabbit
-      - jex_dind:dind
+    net: jobservices
     volumes:
       - .:/jex
     working_dir: /jex

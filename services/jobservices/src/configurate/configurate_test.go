@@ -29,7 +29,7 @@ func TestAMQPConfig(t *testing.T) {
 		t.Error(err)
 		t.Fail()
 	}
-	expected := "amqp://guest:guest@192.168.99.100:5672/"
+	expected := "amqp://guest:guest@rabbit:5672/"
 	if actual != expected {
 		t.Errorf("The amqp.uri was %s instead of %s", actual, expected)
 	}
