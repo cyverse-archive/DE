@@ -90,7 +90,7 @@ public class PermanentIdRequestPresenterTest {
     public void testUpdateRequest() {
         presenter.setSelectedRequest(mockSelectedRequest);
         when(mockSelectedRequest.getId()).thenReturn("101010101");
-        presenter.updateRequest(mockRequestUpdate);
+        presenter.doUpdateRequest(mockRequestUpdate);
         verify(mockPrFacade).updatePermanentIdRequestStatus(mockSelectedRequest.getId(),
                                                             mockRequestUpdate,
                                                             stirngCallbackCaptor.capture());
@@ -100,7 +100,7 @@ public class PermanentIdRequestPresenterTest {
     public void testUpdateRequest_nullUpdate() {
         presenter.setSelectedRequest(mockSelectedRequest);
         when(mockSelectedRequest.getId()).thenReturn("101010101");
-        presenter.updateRequest(null);
+        presenter.doUpdateRequest(null);
         verifyZeroInteractions(mockPrFacade);
     }
 

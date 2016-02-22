@@ -124,16 +124,6 @@ public class PermanentIdRequestViewDefaultAppearance implements PermanentIdReque
     }
 
     @Override
-    public String updateStatus() {
-        return displayStrings.updateStatus();
-    }
-
-    @Override
-    public String update() {
-        return displayStrings.update();
-    }
-
-    @Override
     public String request() {
         return displayStrings.request();
     }

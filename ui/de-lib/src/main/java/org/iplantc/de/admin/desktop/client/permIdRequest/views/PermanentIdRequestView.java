@@ -7,6 +7,7 @@ import org.iplantc.de.client.models.identifiers.PermanentIdRequestUpdate;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -70,10 +71,6 @@ public interface PermanentIdRequestView extends IsWidget, IsMaskable {
 
         String commentsLbl();
 
-        String updateStatus();
-
-        String update();
-
         String request();
     }
 
@@ -89,9 +86,13 @@ public interface PermanentIdRequestView extends IsWidget, IsMaskable {
 
         void setSelectedRequest(PermanentIdRequest request);
 
-        void updateRequest(PermanentIdRequestUpdate update);
+        void doUpdateRequest(PermanentIdRequestUpdate update);
+
+        void onUpdateRequest();
 
         void createPermanentId();
+
+        void getRequestDetails(AsyncCallback<String> callback);
     }
 
     public interface PermanentIdRequestPresenterAppearance {
@@ -106,6 +107,10 @@ public interface PermanentIdRequestView extends IsWidget, IsMaskable {
         String statusUpdateFailure();
 
         String statusUpdateSuccess();
+
+        String updateStatus();
+
+        String update();
     }
 
 }

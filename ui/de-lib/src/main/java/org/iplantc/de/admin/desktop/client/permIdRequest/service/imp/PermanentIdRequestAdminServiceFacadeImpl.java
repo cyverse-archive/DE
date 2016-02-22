@@ -47,4 +47,11 @@ public class PermanentIdRequestAdminServiceFacadeImpl implements PermanentIdRequ
 
     }
 
+    @Override
+    public void getRequestDetails(String id, AsyncCallback<String> asyncCallback) {
+        String address = PERMID_ADMIN_REQUEST + "/" + id;
+        final ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.GET, address);
+        deService.getServiceData(wrapper, asyncCallback);
+    }
+
 }

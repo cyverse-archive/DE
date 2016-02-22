@@ -4,6 +4,8 @@ import org.iplantc.de.admin.desktop.client.permIdRequest.service.PermanentIdRequ
 import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView;
 import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView.PermanentIdRequestPresenterAppearance;
 import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView.Presenter;
+import org.iplantc.de.admin.desktop.client.permIdRequest.views.UpdatePermanentIdRequestDialog;
+import org.iplantc.de.client.models.identifiers.PermanentIdRequesDetails;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequest;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestAutoBeanFactory;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestList;
@@ -20,6 +22,8 @@ import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
 
 /**
  * 
@@ -87,9 +91,8 @@ public class PermanentIdRequestPresenter implements Presenter {
             @Override
             public void onSuccess(String result) {
                 view.unmask();
-                final AutoBean<PermanentIdRequestList> decode = AutoBeanCodex.decode(factory,
-                                                                                     PermanentIdRequestList.class,
-                                                                                     result);
+                final AutoBean<PermanentIdRequestList> decode =
+                        AutoBeanCodex.decode(factory, PermanentIdRequestList.class, result);
 
                 view.loadRequests(decode.as().getRequests());
             }
@@ -103,7 +106,7 @@ public class PermanentIdRequestPresenter implements Presenter {
     }
 
     @Override
-    public void updateRequest(final PermanentIdRequestUpdate update) {
+    public void doUpdateRequest(final PermanentIdRequestUpdate update) {
         if (selectedRequest != null && update != null) {
             view.mask(I18N.DISPLAY.loadingMask());
             prsvc.updatePermanentIdRequestStatus(selectedRequest.getId(),
@@ -114,7 +117,8 @@ public class PermanentIdRequestPresenter implements Presenter {
                                                      public void onFailure(Throwable caught) {
                                                          view.unmask();
                                                          IplantAnnouncer.getInstance()
-                                                                        .schedule(new ErrorAnnouncementConfig(appearance.statusUpdateFailure()));
+                                                                        .schedule(new ErrorAnnouncementConfig(
+                                                                                appearance.statusUpdateFailure()));
 
                                                      }
 
@@ -122,12 +126,48 @@ public class PermanentIdRequestPresenter implements Presenter {
                                                      public void onSuccess(String result) {
                                                          view.unmask();
                                                          IplantAnnouncer.getInstance()
-                                                                        .schedule(new SuccessAnnouncementConfig(appearance.statusUpdateSuccess()));
+                                                                        .schedule(new SuccessAnnouncementConfig(
+                                                                                appearance.statusUpdateSuccess()));
                                                          selectedRequest.setStatus(update.getStatus());
                                                          view.update(selectedRequest);
                                                      }
                                                  });
         }
+    }
+
+    @Override
+    public void onUpdateRequest() {
+        getRequestDetails(new AsyncCallback<String>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                view.unmask();
+                IplantErrorDialog ied = new IplantErrorDialog(I18N.DISPLAY.error(), caught.getMessage());
+                ied.show();
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                view.unmask();
+                final AutoBean<PermanentIdRequesDetails> decode =
+                        AutoBeanCodex.decode(factory, PermanentIdRequesDetails.class, result);
+                final UpdatePermanentIdRequestDialog dialog = new UpdatePermanentIdRequestDialog(
+                        selectedRequest.getStatus(),
+                        decode.as(),
+                        factory);
+                dialog.setHeadingText(appearance.updateStatus());
+                dialog.getOkButton().setText(appearance.update());
+                dialog.getOkButton().addSelectHandler(new SelectEvent.SelectHandler() {
+
+                    @Override
+                    public void onSelect(SelectEvent event) {
+                        final PermanentIdRequestUpdate update = dialog.getPermanentIdRequestUpdate();
+                        doUpdateRequest(update);
+                    }
+                });
+
+                dialog.show();
+            }
+        });
     }
 
     @Override
@@ -152,7 +192,7 @@ public class PermanentIdRequestPresenter implements Presenter {
                     IplantAnnouncer.getInstance()
                                    .schedule(new SuccessAnnouncementConfig(appearance.createPermIdSucess()));
 
-                  //refresh page
+                    //refresh page
                     loadPermIdRequests();
 
                 }
@@ -160,4 +200,12 @@ public class PermanentIdRequestPresenter implements Presenter {
         }
     }
 
+    @Override
+    public void getRequestDetails(AsyncCallback<String> callback) {
+        if (selectedRequest != null) {
+            view.mask(I18N.DISPLAY.loadingMask());
+            prsvc.getRequestDetails(selectedRequest.getId(), callback);
+        }
+
+    }
 }

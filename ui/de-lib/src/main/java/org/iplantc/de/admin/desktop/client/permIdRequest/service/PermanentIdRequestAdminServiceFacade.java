@@ -23,4 +23,6 @@ public interface PermanentIdRequestAdminServiceFacade {
 
     void createPermanentId(String id, AsyncCallback<String> asyncCallback);
 
+    void getRequestDetails(String id, AsyncCallback<String> asyncCallback);
+
 }
