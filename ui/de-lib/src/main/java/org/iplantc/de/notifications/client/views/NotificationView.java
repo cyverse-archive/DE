@@ -2,6 +2,8 @@ package org.iplantc.de.notifications.client.views;
 
 import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
+import org.iplantc.de.notifications.client.events.NotificationGridRefreshEvent;
+import org.iplantc.de.notifications.client.events.NotificationSelectionEvent;
 
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -12,6 +14,9 @@ import com.sencha.gxt.widget.core.client.button.TextButton;
 
 import java.util.List;
 
+public interface NotificationView extends IsWidget,
+                                          NotificationGridRefreshEvent.HasNotificationGridRefreshEventHandlers,
+                                          NotificationSelectionEvent.HasNotificationSelectionEventHandlers {
     interface NotificationViewAppearance {
 
         String notifications();
@@ -49,17 +54,9 @@ import java.util.List;
          */
         public FilterPagingLoadConfig buildDefaultLoadConfig();
 
-        /**
-         * 
-         * 
-         */
-        public void onNotificationSelection(List<NotificationMessage> items);
-
         void setRefreshButton(TextButton refreshBtn);
 
         NotificationCategory getCurrentCategory();
-
-        void onGridRefresh();
     }
 
     /**
@@ -75,8 +72,6 @@ import java.util.List;
      * @return a list containing selected notification objects
      */
     public List<NotificationMessage> getSelectedItems();
-
-    public void setPresenter(final Presenter presenter);
 
     /**
      * loads notifications using given laod conig

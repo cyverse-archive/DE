@@ -6,12 +6,15 @@ package org.iplantc.de.notifications.client.views;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.commons.client.widgets.DEPagingToolbar;
+import org.iplantc.de.notifications.client.events.NotificationGridRefreshEvent;
+import org.iplantc.de.notifications.client.events.NotificationSelectionEvent;
 import org.iplantc.de.notifications.client.model.NotificationMessageProperties;
 import org.iplantc.de.notifications.client.views.cells.NotificationMessageCell;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.cell.client.DateCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
@@ -82,11 +85,22 @@ public class NotificationViewImpl extends Composite implements NotificationView 
         addGridRefreshHandler();
     }
 
+
+    @Override
+    public HandlerRegistration addNotificationGridRefreshEventHandler(NotificationGridRefreshEvent.NotificationGridRefreshEventHandler handler) {
+        return addHandler(handler, NotificationGridRefreshEvent.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addNotificationSelectionEventHandler(NotificationSelectionEvent.NotificationSelectionEventHandler handler) {
+        return addHandler(handler, NotificationSelectionEvent.TYPE);
+    }
+
     private void addGridRefreshHandler() {
         grid.addRefreshHandler(new RefreshEvent.RefreshHandler() {
             @Override
             public void onRefresh(RefreshEvent event) {
-                presenter.onGridRefresh();
+                fireEvent(new NotificationGridRefreshEvent());
             }
         });
     }
@@ -97,7 +111,7 @@ public class NotificationViewImpl extends Composite implements NotificationView 
 
                     @Override
                     public void onSelectionChanged(SelectionChangedEvent<NotificationMessage> event) {
-                        presenter.onNotificationSelection(event.getSelection());
+                        fireEvent(new NotificationSelectionEvent(event.getSelection()));
                     }
                 });
     }
@@ -120,28 +134,6 @@ public class NotificationViewImpl extends Composite implements NotificationView 
     @Override
     public List<NotificationMessage> getSelectedItems() {
         return grid.getSelectionModel().getSelectedItems();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.iplantc.de.client.gxt3.views.NotificationView#setPresenter(org.iplantc.de.client.gxt3.views
-     * .NotificationView.Presenter)
-     */
-    @Override
-    public void setPresenter(Presenter presenter) {
-        this.presenter = presenter;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.iplantc.de.client.gxt3.views.NotificationView#getListStore()
-     */
-    @Override
-    public ListStore<NotificationMessage> getListStore() {
-        return listStore;
     }
 
     @SuppressWarnings("unchecked")

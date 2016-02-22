@@ -4,10 +4,14 @@
 package org.iplantc.de.notifications.client.views;
 
 import org.iplantc.de.client.models.notifications.NotificationCategory;
+import org.iplantc.de.notifications.client.events.NotificationToolbarDeleteAllClickedEvent;
+import org.iplantc.de.notifications.client.events.NotificationToolbarDeleteClickedEvent;
+import org.iplantc.de.notifications.client.events.NotificationToolbarSelectionEvent;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -34,8 +38,6 @@ public class NotificationToolbarViewImpl extends Composite implements Notificati
     interface NotificationToolbarUiBinder extends UiBinder<Widget, NotificationToolbarViewImpl> {
     }
 
-    private Presenter presenter;
-
     @UiField
     TextButton btnDelete;
 
@@ -58,6 +60,24 @@ public class NotificationToolbarViewImpl extends Composite implements Notificati
         initFilters();
     }
 
+    @Override
+    public HandlerRegistration addNotificationToolbarDeleteAllClickedEventHandler(
+            NotificationToolbarDeleteAllClickedEvent.NotificationToolbarDeleteAllClickedEventHandler handler) {
+        return addHandler(handler, NotificationToolbarDeleteAllClickedEvent.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addNotificationToolbarDeleteClickedEventHandler(
+            NotificationToolbarDeleteClickedEvent.NotificationToolbarDeleteClickedEventHandler handler) {
+        return addHandler(handler, NotificationToolbarDeleteClickedEvent.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addNotificationToolbarSelectionEventHandler(
+            NotificationToolbarSelectionEvent.NotificationToolbarSelectionEventHandler handler) {
+        return addHandler(handler, NotificationToolbarSelectionEvent.TYPE);
+    }
+
     private void initFilters() {
         cboFilter.add(NotificationCategory.NEW);
         cboFilter.add(NotificationCategory.ALL);
@@ -71,7 +91,7 @@ public class NotificationToolbarViewImpl extends Composite implements Notificati
         cboFilter.addSelectionHandler(new SelectionHandler<NotificationCategory>() {
             @Override
             public void onSelection(SelectionEvent<NotificationCategory> event) {
-                presenter.onFilterSelection(event.getSelectedItem());
+                fireEvent(new NotificationToolbarSelectionEvent(event.getSelectedItem()));
             }
         });
         cboFilter.setEditable(false);
@@ -95,18 +115,12 @@ public class NotificationToolbarViewImpl extends Composite implements Notificati
 
     @UiHandler("btnDelete")
     public void deleteClicked(SelectEvent event) {
-        presenter.onDeleteClicked();
+        fireEvent(new NotificationToolbarDeleteClickedEvent());
     }
 
     @UiHandler("btnDeleteAll")
     public void deleteAllClicked(SelectEvent event) {
-        presenter.onDeleteAllClicked();
-    }
-
-    @Override
-    public void setPresenter(Presenter p) {
-        this.presenter = p;
-
+        fireEvent(new NotificationToolbarDeleteAllClickedEvent());
     }
 
     @Override
