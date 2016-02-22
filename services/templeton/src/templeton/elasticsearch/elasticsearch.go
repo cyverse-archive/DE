@@ -72,6 +72,42 @@ func (b *BulkIndexer) Flush() error {
 func (e *Elasticer) PurgeIndex(d *database.Databaser) {
 	indexer := e.NewBulkIndexer(1000)
 	defer indexer.Flush()
+
+	scanner, err := e.es.Scan(e.index).Type("metadata").Scroll("1m").Fields("_id").Do()
+	if err != nil {
+		logger.Fatal(err)
+		return
+	}
+
+	for {
+		docs, err := scanner.Next()
+		if err == elastic.EOS {
+			logger.Print("Finished all rows for purge.")
+			break
+		}
+		if err != nil {
+			logger.Print(err)
+			break
+		}
+
+		if docs.TotalHits() > 0 {
+			for _, hit := range docs.Hits.Hits {
+				avus, err := d.GetObjectAVUs(hit.Id)
+				if err != nil {
+					logger.Printf("Error processing %s: %s", hit.Id, err)
+					continue
+				}
+				if len(avus) == 0 {
+					logger.Printf("Deleting %s", hit.Id)
+					req := elastic.NewBulkDeleteRequest().Index(e.index).Type("metadata").Id(hit.Id)
+					err = indexer.Add(req)
+					if err != nil {
+						logger.Printf("Error enqueuing delete of %s: %s", hit.Id, err)
+					}
+				}
+			}
+		}
+	}
 }
 
 // IndexEverything creates a bulk indexer and takes a database, and iterates to index its contents
