@@ -53,8 +53,13 @@ public class PreferencesViewDefaultAppearance implements PreferencesDialog.Prefe
     }
 
     @Override
-    public String notifyEmail() {
-        return desktopMessages.notifyEmail();
+    public String notifyAnalysisEmail() {
+        return desktopMessages.notifyAnalysisEmail();
+    }
+
+    @Override
+    public String notifyImportEmail() {
+        return desktopMessages.notifyImportEmail();
     }
 
     @Override
@@ -130,5 +135,10 @@ public class PreferencesViewDefaultAppearance implements PreferencesDialog.Prefe
     @Override
     public String saveSessionHelp() {
         return help.saveSessionHelp();
+    }
+
+    @Override
+    public String notifyEmail() {
+        return help.notifyEmail();
     }
 }

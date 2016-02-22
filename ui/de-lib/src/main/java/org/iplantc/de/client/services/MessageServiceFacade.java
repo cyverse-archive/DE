@@ -3,6 +3,7 @@ package org.iplantc.de.client.services;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.notifications.Counts;
 import org.iplantc.de.client.models.notifications.Notification;
+import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.services.callbacks.NotificationCallback;
 
 import com.google.gwt.json.client.JSONObject;
@@ -53,7 +54,7 @@ public interface MessageServiceFacade {
      */
     void getMessageCounts(AsyncCallback<Counts> callback);
 
-    void deleteAll(AsyncCallback<String> callback);
+    void deleteAll(NotificationCategory category, AsyncCallback<String> callback);
 
     void markAllNotificationsSeen(AsyncCallback<Void> callback);
     

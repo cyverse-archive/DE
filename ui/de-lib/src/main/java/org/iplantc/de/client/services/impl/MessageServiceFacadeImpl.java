@@ -8,6 +8,7 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.notifications.Counts;
 import org.iplantc.de.client.models.notifications.Notification;
 import org.iplantc.de.client.models.notifications.NotificationAutoBeanFactory;
+import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.services.PermIdRequestUserServiceFacade;
 import org.iplantc.de.client.services.callbacks.NotificationCallback;
@@ -141,8 +142,12 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
     }
 
     @Override
-    public void deleteAll(AsyncCallback<String> callback) {
+    public void deleteAll(NotificationCategory category, AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "notifications/delete-all"; //$NON-NLS-1$
+
+        if (NotificationCategory.ALL != category) {
+            address += "?filter=" + URL.encodeQueryString(category.name().toLowerCase());
+        }
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(DELETE, address);
 

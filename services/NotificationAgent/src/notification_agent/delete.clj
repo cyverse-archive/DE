@@ -2,7 +2,8 @@
   (:use [notification-agent.common]
         [slingshot.slingshot :only [throw+]])
   (:require [clojure.tools.logging :as log]
-            [notification-agent.db :as db]))
+            [notification-agent.db :as db]
+            [notification-agent.query :as query]))
 
 (defn delete-messages
   "Handles a message deletion request.  The request body should consist of
@@ -23,9 +24,10 @@
   "Handles a request to delete all messages for a specific user that match"
   [params]
   (log/debug "handling a notification delete-all request")
-  (let [user (validate-user (:user params))]
+  (let [user (validate-user (:user params))
+        query {:filter  (query/get-filter params)}]
     (log/debug "deleting notifications for" user)
-    (db/delete-matching-notifications user params)
+    (db/delete-matching-notifications user query)
     {:count (str (db/count-matching-messages user {:seen false}))}))
 
 (defn delete-system-messages

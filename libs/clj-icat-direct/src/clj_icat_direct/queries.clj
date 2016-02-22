@@ -533,17 +533,16 @@
                             FROM r_data_main
                            WHERE coll_id = ANY(ARRAY( SELECT coll_id FROM parent )))
 
-    SELECT count(*) AS total
-      FROM ( SELECT DISTINCT d.data_id FROM r_objt_access a
+    SELECT ((SELECT count(DISTINCT d.data_id) FROM r_objt_access a
                JOIN data_objs d ON a.object_id = d.data_id
               WHERE a.user_id IN ( SELECT group_user_id FROM user_groups )
-                AND a.object_id IN ( SELECT data_id from data_objs )
-              UNION
-             SELECT DISTINCT c.coll_id FROM r_coll_main c
+                AND a.object_id IN ( SELECT data_id from data_objs ))
+            +
+            (SELECT count(DISTINCT c.coll_id) FROM r_coll_main c
                JOIN r_objt_access a ON c.coll_id = a.object_id
-               JOIN parent p ON c.parent_coll_name = p.coll_name
               WHERE a.user_id IN ( SELECT group_user_id FROM user_groups )
-                AND c.coll_type != 'linkPoint' ) AS contents"
+                AND c.parent_coll_name = ANY(ARRAY( SELECT coll_name FROM parent ))
+                AND c.coll_type != 'linkPoint')) AS total"
 
    :list-folders-in-folder
    "WITH user_groups AS ( SELECT g.* FROM r_user_main u

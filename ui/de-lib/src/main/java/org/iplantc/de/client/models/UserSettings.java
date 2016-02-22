@@ -22,7 +22,8 @@ import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 public class UserSettings {
 
     private final KeyBoardShortcutConstants SHORTCUTS = GWT.create(KeyBoardShortcutConstants.class);
-    private boolean enableEmailNotification;
+    private boolean enableAnalysisEmailNotification;
+    private boolean enableImportEmailNotification;
     private String defaultFileSelectorPath;
     private boolean rememberLastPath;
     private boolean saveSession;
@@ -36,7 +37,8 @@ public class UserSettings {
     private String lastPath;
     
     
-    public static final String EMAIL_NOTIFCATOIN = "enableEmailNotification";
+    public static final String EMAIL_ANALYSIS_NOTIFCATOIN = "enableAnalysisEmailNotification";
+    public static final String EMAIL_IMPORT_NOTIFICATION = "enableImportEmailNotification";
     public static final String DEFAULT_FILE_SELECTOR_PATH = "defaultFileSelectorPath";
     public static final String REMEMBER_LAST_PATH = "rememberLastPath";
     public static final String SAVE_SESSION = "saveSession";
@@ -57,7 +59,7 @@ public class UserSettings {
     }
 
     private UserSettings() {
-        this.enableEmailNotification = false;
+        this.enableAnalysisEmailNotification = false;
         this.rememberLastPath = false;
         this.saveSession = true;
     }
@@ -83,11 +85,17 @@ public class UserSettings {
             return;
         }
 
-        if (split.get(EMAIL_NOTIFCATOIN) != null) {
-            setEnableEmailNotification(split.get(EMAIL_NOTIFCATOIN).asBoolean());
+        if (split.get(EMAIL_ANALYSIS_NOTIFCATOIN) != null) {
+            setEnableAnalysisEmailNotification(split.get(EMAIL_ANALYSIS_NOTIFCATOIN).asBoolean());
         } else {
-            setEnableEmailNotification(true);
+            setEnableAnalysisEmailNotification(true);
         }
+        if (split.get(EMAIL_IMPORT_NOTIFICATION) != null) {
+            setEnableImportEmailNotification(split.get(EMAIL_IMPORT_NOTIFICATION).asBoolean());
+        } else {
+            setEnableImportEmailNotification(true);
+        }
+
         if (split.get(DEFAULT_FILE_SELECTOR_PATH) != null) {
             setDefaultFileSelectorPath(split.get(DEFAULT_FILE_SELECTOR_PATH).asString());
         }
@@ -197,17 +205,17 @@ public class UserSettings {
         return notifyShortCut;
     }
     /**
-     * @param enableEmailNotification the enableEmailNotification to set
+     * @param enableAnalysisEmailNotification the enableAnalysisEmailNotification to set
      */
-    public void setEnableEmailNotification(boolean enableEmailNotification) {
-        this.enableEmailNotification = enableEmailNotification;
+    public void setEnableAnalysisEmailNotification(boolean enableAnalysisEmailNotification) {
+        this.enableAnalysisEmailNotification = enableAnalysisEmailNotification;
     }
 
     /**
-     * @return the enableEmailNotification
+     * @return the enableAnalysisEmailNotification
      */
-    public boolean isEnableEmailNotification() {
-        return enableEmailNotification;
+    public boolean isEnableAnalysisEmailNotification() {
+        return enableAnalysisEmailNotification;
     }
 
     /**
@@ -231,7 +239,8 @@ public class UserSettings {
      */
     public Splittable asSplittable() {
         Splittable ret = StringQuoter.createSplittable();
-        StringQuoter.create(isEnableEmailNotification()).assign(ret, EMAIL_NOTIFCATOIN);
+        StringQuoter.create(isEnableAnalysisEmailNotification()).assign(ret, EMAIL_ANALYSIS_NOTIFCATOIN);
+        StringQuoter.create(isEnableImportEmailNotification()).assign(ret, EMAIL_IMPORT_NOTIFICATION);
         StringQuoter.create(getDefaultFileSelectorPath()).assign(ret, DEFAULT_FILE_SELECTOR_PATH);
         StringQuoter.create(isRememberLastPath()).assign(ret, REMEMBER_LAST_PATH);
         StringQuoter.create(isSaveSession()).assign(ret, SAVE_SESSION);
@@ -339,5 +348,13 @@ public class UserSettings {
      */
     public void setLastPath(String lastPath) {
         this.lastPath = lastPath;
+    }
+
+    public boolean isEnableImportEmailNotification() {
+        return enableImportEmailNotification;
+    }
+
+    public void setEnableImportEmailNotification(boolean enableImportEmailNotification) {
+        this.enableImportEmailNotification = enableImportEmailNotification;
     }
 }

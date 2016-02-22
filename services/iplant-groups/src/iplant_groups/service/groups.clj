@@ -46,3 +46,11 @@
 (defn delete-group
   [group-name {:keys [user]}]
   (fmt/format-group (grouper/delete-group user group-name)))
+
+(defn add-member
+  [group-name subject-id {:keys [user]}]
+  (grouper/add-group-member user group-name subject-id))
+
+(defn remove-member
+  [group-name subject-id {:keys [user]}]
+  (grouper/remove-group-member user group-name subject-id))
