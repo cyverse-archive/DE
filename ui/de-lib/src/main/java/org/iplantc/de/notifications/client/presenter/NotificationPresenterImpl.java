@@ -109,15 +109,15 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
             });
         }
     }
-    EventBus eventBus;
-    MessageServiceFacade messageServiceFacade;
     private final ListStore<NotificationMessage> listStore;
     private final NotificationToolbarView toolbar;
     private final NotificationView view;
     private PagingLoadResult<NotificationMessage> callbackResult;
     private NotificationView.NotificationViewAppearance appearance;
     NotificationCategory currentCategory;
-    private final JsonUtil jsonUtil;
+    @Inject EventBus eventBus;
+    @Inject MessageServiceFacade messageServiceFacade;
+    @Inject JsonUtil jsonUtil;
 
     @Inject
     public NotificationPresenterImpl(final NotificationViewFactory viewFactory,
@@ -128,7 +128,6 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
         this.listStore = createListStore(messageProperties);
         this.view = viewFactory.create(listStore);
         currentCategory = NotificationCategory.ALL;
-        this.jsonUtil = JsonUtil.getInstance();
         toolbar.setPresenter(this);
         view.setNorthWidget(toolbar);
         this.view.setPresenter(this);
