@@ -1,7 +1,6 @@
 package messaging
 
 import (
-	"fmt"
 	"logcabin"
 	"model"
 	"os"
@@ -15,16 +14,14 @@ import (
 var l = logcabin.New("test_amqp", "test_amqp")
 
 func shouldrun() bool {
-	if os.Getenv("RABBIT_PORT_5672_TCP_ADDR") != "" {
+	if os.Getenv("RUN_INTEGRATION_TESTS") != "" {
 		return true
 	}
 	return false
 }
 
 func uri() string {
-	addr := os.Getenv("RABBIT_PORT_5672_TCP_ADDR")
-	port := os.Getenv("RABBIT_PORT_5672_TCP_PORT")
-	return fmt.Sprintf("amqp://guest:guest@%s:%s/", addr, port)
+	return "amqp://guest:guest@rabbit:5672/"
 }
 
 func TestConstants(t *testing.T) {
