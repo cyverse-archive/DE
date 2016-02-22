@@ -523,7 +523,7 @@
                            WHERE u.user_name = ?
                              AND u.zone_name = ? ),
 
-         parent      AS ( SELECT DISTINCT coll_id, coll_name from r_coll_main
+         parent      AS ( SELECT coll_id, coll_name from r_coll_main
                            WHERE coll_name = ?
                               OR coll_name LIKE ? || '/%' ),
 
