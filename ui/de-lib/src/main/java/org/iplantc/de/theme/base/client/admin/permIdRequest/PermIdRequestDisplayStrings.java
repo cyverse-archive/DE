@@ -52,4 +52,6 @@ public interface PermIdRequestDisplayStrings extends Messages {
     String statusUpdateFailure();
 
     String statusUpdateSuccess();
+
+    String userEmail();
 }

@@ -128,4 +128,9 @@ public class PermanentIdRequestViewDefaultAppearance implements PermanentIdReque
         return displayStrings.request();
     }
 
+    @Override
+    public String userEmail() {
+        return displayStrings.userEmail();
+    }
+
 }

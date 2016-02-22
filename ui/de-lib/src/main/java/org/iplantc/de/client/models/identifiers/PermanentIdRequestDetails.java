@@ -13,7 +13,7 @@ import java.util.List;
  * @author sriram
  * 
  */
-public interface PermanentIdRequesDetails {
+public interface PermanentIdRequestDetails {
 
     String getId();
 

@@ -1,6 +1,6 @@
 package org.iplantc.de.admin.desktop.client.permIdRequest.views;
 
-import org.iplantc.de.client.models.identifiers.PermanentIdRequesDetails;
+import org.iplantc.de.client.models.identifiers.PermanentIdRequestDetails;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestAutoBeanFactory;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestStatus;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestUpdate;
@@ -48,7 +48,7 @@ public class UpdatePermanentIdRequestDialog extends IPlantDialog {
     private final PermanentIdRequestAutoBeanFactory factory;
 
     public UpdatePermanentIdRequestDialog(String curr_status,
-                                          final PermanentIdRequesDetails details,
+                                          final PermanentIdRequestDetails details,
                                           PermanentIdRequestAutoBeanFactory factory) {
         this.factory = factory;
         add(uiBinder.createAndBindUi(this));

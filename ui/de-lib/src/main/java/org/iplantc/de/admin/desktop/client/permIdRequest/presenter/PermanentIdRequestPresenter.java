@@ -5,9 +5,9 @@ import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdReques
 import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView.PermanentIdRequestPresenterAppearance;
 import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView.Presenter;
 import org.iplantc.de.admin.desktop.client.permIdRequest.views.UpdatePermanentIdRequestDialog;
-import org.iplantc.de.client.models.identifiers.PermanentIdRequesDetails;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequest;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestAutoBeanFactory;
+import org.iplantc.de.client.models.identifiers.PermanentIdRequestDetails;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestList;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestUpdate;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
@@ -20,8 +20,6 @@ import org.iplantc.de.resources.client.messages.I18N;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
-import com.google.web.bindery.autobean.shared.AutoBean;
-import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 
@@ -79,7 +77,7 @@ public class PermanentIdRequestPresenter implements Presenter {
     @Override
     public void getPermIdRequests() {
         view.mask(I18N.DISPLAY.loadingMask());
-        prsvc.getPermanentIdRequests(new AsyncCallback<String>() {
+        prsvc.getPermanentIdRequests(new AsyncCallback<PermanentIdRequestList>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -89,12 +87,9 @@ public class PermanentIdRequestPresenter implements Presenter {
             }
 
             @Override
-            public void onSuccess(String result) {
-                view.unmask();
-                final AutoBean<PermanentIdRequestList> decode =
-                        AutoBeanCodex.decode(factory, PermanentIdRequestList.class, result);
-
-                view.loadRequests(decode.as().getRequests());
+            public void onSuccess(PermanentIdRequestList result) {
+               view.unmask();
+               view.loadRequests(result.getRequests());
             }
         });
 
@@ -137,7 +132,7 @@ public class PermanentIdRequestPresenter implements Presenter {
 
     @Override
     public void onUpdateRequest() {
-        getRequestDetails(new AsyncCallback<String>() {
+        getRequestDetails(new AsyncCallback<PermanentIdRequestDetails>() {
             @Override
             public void onFailure(Throwable caught) {
                 view.unmask();
@@ -146,13 +141,11 @@ public class PermanentIdRequestPresenter implements Presenter {
             }
 
             @Override
-            public void onSuccess(String result) {
+            public void onSuccess(PermanentIdRequestDetails result) {
                 view.unmask();
-                final AutoBean<PermanentIdRequesDetails> decode =
-                        AutoBeanCodex.decode(factory, PermanentIdRequesDetails.class, result);
                 final UpdatePermanentIdRequestDialog dialog = new UpdatePermanentIdRequestDialog(
                         selectedRequest.getStatus(),
-                        decode.as(),
+                        result,
                         factory);
                 dialog.setHeadingText(appearance.updateStatus());
                 dialog.getOkButton().setText(appearance.update());
@@ -182,7 +175,8 @@ public class PermanentIdRequestPresenter implements Presenter {
                     loadPermIdRequests();
                     IplantAnnouncer.getInstance()
                                    .schedule(new ErrorAnnouncementConfig(appearance.createPermIdFailure()));
-                    IplantErrorDialog ied = new IplantErrorDialog(I18N.DISPLAY.error(), caught.getMessage());
+                    IplantErrorDialog ied =
+                            new IplantErrorDialog(I18N.DISPLAY.error(), caught.getMessage());
                     ied.show();
                 }
 
@@ -201,7 +195,7 @@ public class PermanentIdRequestPresenter implements Presenter {
     }
 
     @Override
-    public void getRequestDetails(AsyncCallback<String> callback) {
+    public void getRequestDetails(AsyncCallback<PermanentIdRequestDetails> callback) {
         if (selectedRequest != null) {
             view.mask(I18N.DISPLAY.loadingMask());
             prsvc.getRequestDetails(selectedRequest.getId(), callback);

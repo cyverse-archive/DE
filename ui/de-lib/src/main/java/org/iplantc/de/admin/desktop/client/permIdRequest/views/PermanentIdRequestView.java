@@ -3,6 +3,7 @@ package org.iplantc.de.admin.desktop.client.permIdRequest.views;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequest;
+import org.iplantc.de.client.models.identifiers.PermanentIdRequestDetails;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestUpdate;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 
@@ -72,6 +73,8 @@ public interface PermanentIdRequestView extends IsWidget, IsMaskable {
         String commentsLbl();
 
         String request();
+
+        String userEmail();
     }
 
     public interface Presenter {
@@ -92,7 +95,7 @@ public interface PermanentIdRequestView extends IsWidget, IsMaskable {
 
         void createPermanentId();
 
-        void getRequestDetails(AsyncCallback<String> callback);
+        void getRequestDetails(AsyncCallback<PermanentIdRequestDetails> callback);
     }
 
     public interface PermanentIdRequestPresenterAppearance {

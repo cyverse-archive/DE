@@ -20,7 +20,7 @@
 
     <container:VerticalLayoutContainer>
         <container:child layoutData="{layoutData}">
-            <form:FieldLabel text="Email">
+            <form:FieldLabel text="{appearance.userEmail}">
                 <form:widget>
                     <g:Label ui:field="userEmail" width="200px"/>
                 </form:widget>
