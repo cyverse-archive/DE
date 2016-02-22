@@ -5,7 +5,6 @@ import org.iplantc.de.client.models.notifications.NotificationMessage;
 
 import com.google.gwt.user.client.ui.IsWidget;
 
-import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
@@ -13,7 +12,28 @@ import com.sencha.gxt.widget.core.client.button.TextButton;
 
 import java.util.List;
 
-public interface NotificationView extends IsWidget {
+    interface NotificationViewAppearance {
+
+        String notifications();
+
+        String refresh();
+
+        String notificationDeleteFail();
+
+        String category();
+
+        int categoryColumnWidth();
+
+        String messagesGridHeader();
+
+        int messagesColumnWidth();
+
+        String createdDateGridHeader();
+
+        int createdDateColumnWidth();
+
+    }
+
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter {
         /**
          * Filters the list of notifications by a given Category.
@@ -57,8 +77,6 @@ public interface NotificationView extends IsWidget {
     public List<NotificationMessage> getSelectedItems();
 
     public void setPresenter(final Presenter presenter);
-
-    public ListStore<NotificationMessage> getListStore();
 
     /**
      * loads notifications using given laod conig

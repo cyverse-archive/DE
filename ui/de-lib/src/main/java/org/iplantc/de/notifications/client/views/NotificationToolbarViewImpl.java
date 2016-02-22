@@ -12,7 +12,9 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 
 import com.sencha.gxt.data.shared.StringLabelProvider;
 import com.sencha.gxt.widget.core.client.button.TextButton;
@@ -24,7 +26,7 @@ import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
  * @author sriram
  * 
  */
-public class NotificationToolbarViewImpl implements NotificationToolbarView {
+public class NotificationToolbarViewImpl extends Composite implements NotificationToolbarView {
 
     private static NotificationToolbarUiBinder uiBinder = GWT.create(NotificationToolbarUiBinder.class);
 
@@ -32,7 +34,6 @@ public class NotificationToolbarViewImpl implements NotificationToolbarView {
     interface NotificationToolbarUiBinder extends UiBinder<Widget, NotificationToolbarViewImpl> {
     }
 
-    private final Widget widget;
     private Presenter presenter;
 
     @UiField
@@ -47,9 +48,12 @@ public class NotificationToolbarViewImpl implements NotificationToolbarView {
     @UiField(provided = true)
     SimpleComboBox<NotificationCategory> cboFilter = new SimpleComboBox<NotificationCategory>(
             new StringLabelProvider<NotificationCategory>());
+    private NotificationView.NotificationViewAppearance appearance;
 
-    public NotificationToolbarViewImpl() {
-        widget = uiBinder.createAndBindUi(this);
+    @Inject
+    public NotificationToolbarViewImpl(NotificationView.NotificationViewAppearance appearance) {
+        this.appearance = appearance;
+        initWidget(uiBinder.createAndBindUi(this));
 
         initFilters();
     }
@@ -75,7 +79,7 @@ public class NotificationToolbarViewImpl implements NotificationToolbarView {
 
     @Override
     public Widget asWidget() {
-        return widget;
+        return this;
     }
 
     @Override
@@ -107,6 +111,7 @@ public class NotificationToolbarViewImpl implements NotificationToolbarView {
 
     @Override
     public void setRefreshButton(TextButton refreshBtn) {
+        refreshBtn.setText(appearance.refresh());
         menuToolBar.insert(refreshBtn, 1);
     }
 

@@ -3,33 +3,46 @@
  */
 package org.iplantc.de.notifications.client.views;
 
-import org.iplantc.de.commons.client.widgets.DEPagingToolbar;
+import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
+import org.iplantc.de.commons.client.widgets.DEPagingToolbar;
+import org.iplantc.de.notifications.client.model.NotificationMessageProperties;
+import org.iplantc.de.notifications.client.views.cells.NotificationMessageCell;
 import org.iplantc.de.resources.client.messages.I18N;
 
+import com.google.gwt.cell.client.DateCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
+import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.core.client.Style.SelectionMode;
+import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
+import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.FramedPanel;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
 import com.sencha.gxt.widget.core.client.event.RefreshEvent;
+import com.sencha.gxt.widget.core.client.grid.CheckBoxSelectionModel;
+import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
-import com.sencha.gxt.widget.core.client.grid.GridSelectionModel;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
 
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -39,7 +52,7 @@ import java.util.List;
  * @author sriram
  * 
  */
-public class NotificationViewImpl implements NotificationView {
+public class NotificationViewImpl extends Composite implements NotificationView {
 
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
@@ -47,36 +60,25 @@ public class NotificationViewImpl implements NotificationView {
     interface MyUiBinder extends UiBinder<Widget, NotificationViewImpl> {
     }
 
-    @UiField(provided = true)
-    final ListStore<NotificationMessage> listStore;
-    @UiField(provided = true)
-    final ColumnModel<NotificationMessage> cm;
 
-    @UiField
-    Grid<NotificationMessage> grid;
+    @UiField(provided = true) final ListStore<NotificationMessage> listStore;
+    @UiField Grid<NotificationMessage> grid;
+    @UiField FramedPanel mainPanel;
+    @UiField BorderLayoutContainer con;
+    @UiField DEPagingToolbar toolBar;
+    @UiField BorderLayoutData northData;
 
-    @UiField
-    FramedPanel mainPanel;
+    CheckBoxSelectionModel<NotificationMessage> checkBoxModel;
+    private NotificationViewAppearance appearance;
 
-    @UiField
-    BorderLayoutContainer con;
-
-    @UiField
-    DEPagingToolbar toolBar;
-
-    @UiField
-    BorderLayoutData northData;
-
-    private final Widget widget;
-    private Presenter presenter;
-
-    public NotificationViewImpl(ListStore<NotificationMessage> listStore,
-            ColumnModel<NotificationMessage> cm, GridSelectionModel<NotificationMessage> sm) {
-        this.cm = cm;
+    @Inject
+    public NotificationViewImpl(@Assisted ListStore<NotificationMessage> listStore,
+                                NotificationViewAppearance appearance) {
         this.listStore = listStore;
-        this.widget = uiBinder.createAndBindUi(this);
+        this.appearance = appearance;
+        initWidget(uiBinder.createAndBindUi(this));
         toolBar.getElement().getStyle().setProperty("borderBottom", "none");
-        grid.setSelectionModel(sm);
+        grid.setSelectionModel(checkBoxModel);
         grid.getSelectionModel().setSelectionMode(SelectionMode.MULTI);
         addGridSelectionHandler();
         addGridRefreshHandler();
@@ -109,7 +111,7 @@ public class NotificationViewImpl implements NotificationView {
      */
     @Override
     public Widget asWidget() {
-        return widget;
+        return this;
     }
 
     /*
