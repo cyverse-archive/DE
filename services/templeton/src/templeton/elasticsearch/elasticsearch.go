@@ -70,13 +70,13 @@ func (b *BulkIndexer) Flush() error {
 
 // PurgeIndex walks an index querying a database, deleting those which should not exist
 func (e *Elasticer) PurgeIndex(d *database.Databaser) {
-	indexer := e.NewBulkIndexer(10)
+	indexer := e.NewBulkIndexer(1000)
 	defer indexer.Flush()
 }
 
 // IndexEverything creates a bulk indexer and takes a database, and iterates to index its contents
 func (e *Elasticer) IndexEverything(d *database.Databaser) {
-	indexer := e.NewBulkIndexer(10)
+	indexer := e.NewBulkIndexer(1000)
 	defer indexer.Flush()
 
 	cursor, err := d.GetAllObjects()
