@@ -3,11 +3,11 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"messaging"
 	"model"
 	"net"
 	"os"
+	"strconv"
 	"testing"
 	"time"
 
@@ -15,31 +15,18 @@ import (
 )
 
 func shouldrun() bool {
-	db := false
-	rabbit := false
-	if os.Getenv("DEDB_PORT_5432_TCP_ADDR") != "" {
-		db = true
-	} else {
-		db = false
+	if os.Getenv("RUN_INTEGRATION_TESTS") != "" {
+		return true
 	}
-	if os.Getenv("RABBIT_PORT_5672_TCP_ADDR") != "" {
-		rabbit = true
-	} else {
-		rabbit = true
-	}
-	return db && rabbit
+	return false
 }
 
 func rabbituri() string {
-	addr := os.Getenv("RABBIT_PORT_5672_TCP_ADDR")
-	port := os.Getenv("RABBIT_PORT_5672_TCP_PORT")
-	return fmt.Sprintf("amqp://guest:guest@%s:%s/", addr, port)
+	return "amqp://guest:guest@rabbit:5672/"
 }
 
 func dburi() string {
-	addr := os.Getenv("DEDB_PORT_5432_TCP_ADDR")
-	port := os.Getenv("DEDB_PORT_5432_TCP_PORT")
-	return fmt.Sprintf("postgres://de:notprod@%s:%s/de?sslmode=disable", addr, port)
+	return "postgres://de:notprod@dedb:5432/de?sslmode=disable"
 }
 
 func initdb(t *testing.T) *sql.DB {
@@ -102,8 +89,8 @@ func TestInsert(t *testing.T) {
 		if sentFromHostname != "localhost" {
 			t.Errorf("sentFromHostname was %s instead of 'localhost'", sentFromHostname)
 		}
-		if n == sentOn {
-			t.Errorf("sentOn was %#v instead of %#v", sentOn, n)
+		if n != sentOn {
+			t.Errorf("sentOn was %d instead of %d", sentOn, n)
 		}
 	}
 	err = rows.Err()
@@ -136,6 +123,7 @@ func TestMsg(t *testing.T) {
 		Job:     j,
 		State:   "RUNNING",
 		Message: "this is a test",
+		SentOn:  strconv.FormatInt(time.Now().UnixNano()/int64(time.Millisecond), 10),
 		Sender:  me,
 	}
 	m, err := json.Marshal(expected)
@@ -156,7 +144,7 @@ func TestMsg(t *testing.T) {
 	defer rows.Close()
 	var (
 		status, message, sentFromHostname string
-		sentOn                            *time.Time
+		sentOn                            int64
 		sentFrom                          string
 	)
 	for rows.Next() {
@@ -189,8 +177,9 @@ func TestMsg(t *testing.T) {
 		if sentFromHostname != me {
 			t.Errorf("sentFromHostname was %s instead of %s", sentFromHostname, me)
 		}
-		if d.Timestamp.Equal(*sentOn) {
-			t.Errorf("sentOn was %#v instead of %#v", sentOn, d.Timestamp)
+		actual := strconv.FormatInt(sentOn, 10)
+		if expected.SentOn != actual {
+			t.Errorf("sentOn was %s instead of %s", actual, expected.SentOn)
 		}
 	}
 	err = rows.Err()
