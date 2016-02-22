@@ -54,12 +54,10 @@ import java.util.List;
  */
 public class NotificationViewImpl extends Composite implements NotificationView {
 
-    private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
-
-    @UiTemplate("NotificationView.ui.xml")
-    interface MyUiBinder extends UiBinder<Widget, NotificationViewImpl> {
+    interface NotificationViewImplUiBinder extends UiBinder<Widget, NotificationViewImpl> {
     }
 
+    private static NotificationViewImplUiBinder uiBinder = GWT.create(NotificationViewImplUiBinder.class);
 
     @UiField(provided = true) final ListStore<NotificationMessage> listStore;
     @UiField Grid<NotificationMessage> grid;
