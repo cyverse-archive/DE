@@ -546,7 +546,7 @@
    "WITH user_groups AS ( SELECT g.group_user_id FROM r_user_main u
                             JOIN r_user_group g ON g.user_id = u.user_id
                            WHERE u.user_name = ?
-                             AND u.zone_name = ? ),
+                             AND u.zone_name = ? )
 
     SELECT DISTINCT
            c.parent_coll_name                     as dir_name,
@@ -593,7 +593,7 @@
                             FROM r_user_main u
                             JOIN r_user_group g ON g.user_id = u.user_id
                            WHERE u.user_name = ?
-                             AND u.zone_name = ? ),
+                             AND u.zone_name = ? )
 
     SELECT count(DISTINCT c.coll_id) FROM r_coll_main c
       JOIN r_objt_access a ON c.coll_id = a.object_id
