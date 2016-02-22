@@ -581,7 +581,7 @@
 
          data_objs   AS ( SELECT data_id
                             FROM r_data_main
-                           WHERE coll_id IN ( SELECT coll_id FROM parent ))
+                           WHERE coll_id = ANY(ARRAY( SELECT coll_id FROM parent )) )
 
       SELECT count(DISTINCT d.data_id) FROM r_objt_access a
         JOIN data_objs d ON a.object_id = d.data_id
