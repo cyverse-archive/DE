@@ -1,10 +1,10 @@
-(ns facepalm.c240-2016011902
+(ns facepalm.c250-2016022201
   (:use [korma.core]
         [kameleon.sql-reader :only [load-sql-file]]))
 
 (def ^:private version
   "The destination database version."
-  "2.4.0:20160119.02")
+  "2.5.0:20160222.01")
 
 (defn- add-job-status-table
   []
@@ -13,7 +13,7 @@
   (load-sql-file "constraints/76_job_status_updates.sql"))
 
 (defn convert
-  "Performs the conversion for database version 2.4.0:20160119.02"
+  "Performs the conversion for database version 2.5.0:20160222.01"
   []
   (println "Performing the conversion for" version)
   (add-job-status-table))
