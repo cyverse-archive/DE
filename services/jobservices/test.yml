@@ -1,12 +1,21 @@
+dind:
+    image: docker:dind
+    container_name: dind
+    privileged: true
+    net: jobservices
 rabbit:
     image: rabbitmq:management
+    container_name: rabbit
     net: jobservices
-jexdb:
-    image: discoenv/unittest-dedb:jex-go
+dedb:
+    image: discoenv/unittest-dedb:dev
+    container_name: dedb
     net: jobservices
 test:
     image: discoenv/buildenv
     net: jobservices
+    environment:
+      RUN_INTEGRATION_TESTS: 1
     volumes:
       - .:/jex
     working_dir: /jex

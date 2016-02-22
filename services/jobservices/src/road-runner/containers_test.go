@@ -23,16 +23,14 @@ var (
 )
 
 func shouldrun() bool {
-	if os.Getenv("DIND_PORT_2375_TCP_ADDR") != "" {
+	if os.Getenv("RUN_INTEGRATION_TESTS") != "" {
 		return true
 	}
 	return false
 }
 
 func uri() string {
-	addr := os.Getenv("DIND_PORT_2375_TCP_ADDR")
-	port := os.Getenv("DIND_PORT_2375_TCP_PORT")
-	return fmt.Sprintf("http://%s:%s", addr, port)
+	return "http://dind:2375"
 }
 
 func JSONData() ([]byte, error) {
