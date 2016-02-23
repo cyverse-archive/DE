@@ -34,7 +34,7 @@ To run integration tests, use the **test.sh** script. It uses **docker-compose**
 
 ## Workflow
 
-A user submits a job through the UI. The job submission is assembled in as JSON in the **apps** service, which posts the JSON to the **jex-adapter** service. The **jex-adapter** service sends the JSON as a message out on the **jobs.launches** topic of the **jobs** exchange.
+A user submits a job through the UI. The job submission is assembled into JSON in the **apps** service, which posts the JSON to the **jex-adapter** service. The **jex-adapter** service sends the JSON as a message out on the **jobs.launches** topic of the **jobs** exchange.
 
 **condor-launcher** receives the message, assembles the job submission for HTCondor, and submits the job by calling out to **condor_submit**.
 
@@ -42,7 +42,7 @@ HTCondor schedules the job for a slot in the cluster. It fires up **road-runner*
 
 Each job status update is received by **job-status-recorder**, which saves the update to the **job_status_updates** table of the DE database.
 
-Periodically, **job-status-to-apps-adapter** spins up and queries the database for any jobs that have updates that having been propagated up to the UI yet. It posts those updates to the **apps** service, recording the status of each attempt.
+Periodically, **job-status-to-apps-adapter** spins up and queries the database for any jobs that have updates that have not been propagated up to the UI yet. It posts those updates to the **apps** service, recording the status of each attempt.
 
 At that point, **apps** forwards the update to the **notification-agent**, which makes it available to the UI and forwards completion notifications to the **iplant-email** service.
 
@@ -74,8 +74,8 @@ The above files and the **road-runner** executable are transferred to the HTCond
 
 ### job-status-to-apps-adapter
 
-**job-status-to-apps-adapter** periodically queries the **job_status_updates** table for any jobs that have updates that haven't posted been posted to the **apps** service. It then iterates through all of those jobs, attempting to post the unposted updates and recording the result of the attempt back to the DE database.
+**job-status-to-apps-adapter** periodically queries the **job_status_updates** table for any jobs that have updates that have not been posted to the **apps** service. It then iterates through all of those jobs, attempting to post the unposted updates and recording the result of the attempt back to the DE database.
 
 ### road-runner
 
-**road-runner** executes jobs based on a JSON blob serialized to a file. Each step of the job runs inside a Docker container. Job results are transferred back into iRODS through the porklock tool. Job status updates are posted to the **jobs.updates** topic in the **jobs** exchange.
+**road-runner** executes jobs based on a JSON blob serialized to a file. Each step of the job runs inside a Docker container. Job results are transferred back into iRODS with the porklock tool. Job status updates are posted to the **jobs.updates** topic in the **jobs** exchange.
