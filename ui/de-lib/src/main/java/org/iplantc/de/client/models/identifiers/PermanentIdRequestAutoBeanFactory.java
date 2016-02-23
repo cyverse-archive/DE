@@ -16,4 +16,6 @@ public interface PermanentIdRequestAutoBeanFactory extends AutoBeanFactory {
     AutoBean<PermanentIdRequestList> getAllRequests();
 
     AutoBean<PermanentIdRequestUpdate> getStatus();
+
+    AutoBean<PermanentIdRequestDetails> getDetails();
 }

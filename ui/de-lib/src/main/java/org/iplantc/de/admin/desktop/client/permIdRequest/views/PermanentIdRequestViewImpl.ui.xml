@@ -45,6 +45,7 @@
                         text="Create Permanent Identifier" icon="{appearance.updateIcon}"
                         enabled="false" />
                 </toolbar:child>
+
 			</toolbar:ToolBar>
 		</container:north>
 		<container:center layoutData="{centerData}">
