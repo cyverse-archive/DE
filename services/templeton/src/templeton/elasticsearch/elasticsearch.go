@@ -147,3 +147,8 @@ func (e *Elasticer) IndexEverything(d *database.Databaser) {
 		}
 	}
 }
+
+func (e *Elasticer) Reindex(d *database.Databaser) {
+	e.PurgeIndex(d)
+	e.IndexEverything(d)
+}

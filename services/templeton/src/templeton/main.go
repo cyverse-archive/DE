@@ -127,8 +127,7 @@ func main() {
 	if *mode == "full" {
 		logger.Println("Full indexing mode selected.")
 
-		go es.PurgeIndex(d)
-		es.IndexEverything(d)
+		es.Reindex(d)
 		return
 	}
 
