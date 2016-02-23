@@ -10,7 +10,7 @@ All of the job services and their required packages are built with a single invo
 
     gb build
 
-That places the executables in the **bin/** sub-directory. To build a version for another platform, set the **GOOS** environment variable (https://golang.org/doc/install/source#environment). Here's an example you would run on an OS X or Windows box if you're making a build for a Linux box:
+That command places the executables in the **bin/** sub-directory. To build a version for another platform, set the **GOOS** environment variable (https://golang.org/doc/install/source#environment). Here's an example you would run on an OS X or Windows box if you're making a build for a Linux box:
 
     GOOS=linux gb build
 
