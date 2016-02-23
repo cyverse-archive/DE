@@ -11,18 +11,16 @@
 (def DataIdPathParam (describe UUID "The data item's UUID"))
 
 (s/defschema Paths
-  {:paths (describe [NonBlankString] "A list of iRODS paths")})
+  {:paths (describe [(s/one NonBlankString "path") NonBlankString] "A list of iRODS paths")})
 
 (s/defschema OptionalPaths
-  (-> Paths
-    (->optional-param :paths)))
+  {(s/optional-key :paths) (describe [NonBlankString] "A list of iRODS paths")})
 
 (s/defschema DataIds
   {:ids (describe [UUID] "A list of iRODS data-object UUIDs")})
 
 (s/defschema OptionalPathsOrDataIds
-  (-> (merge DataIds Paths)
-      (->optional-param :paths)
+  (-> (merge DataIds OptionalPaths)
       (->optional-param :ids)))
 
 (def ValidInfoTypesEnum (apply s/enum (hm/supported-formats)))
