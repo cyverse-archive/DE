@@ -36,7 +36,7 @@ To run integration tests, use the **test.sh** script. It uses **docker-compose**
 
 A user submits a job through the UI. The job submission is assembled into JSON in the **apps** service, which posts the JSON to the **jex-adapter** service. The **jex-adapter** service sends the JSON as a message out on the **jobs.launches** topic of the **jobs** exchange.
 
-**condor-launcher** receives the message, assembles the job submission for HTCondor, and submits the job by calling out to **condor_submit**.
+**condor-launcher** receives the message, assembles the job submission for HTCondor, and submits the job by calling out to **condor_submit**. The submitted job is configured to run **road-runner**, passing it configuration files and the JSON job definition inside of a file. More information on these files is provided below.
 
 HTCondor schedules the job for a slot in the cluster. It fires up **road-runner**, which reads in the job JSON and executes the job. It sends out multiple job status updates to the **jobs.updates** topic of the **jobs** exchange.
 
