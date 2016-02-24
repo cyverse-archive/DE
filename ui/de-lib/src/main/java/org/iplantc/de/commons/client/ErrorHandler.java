@@ -162,11 +162,11 @@ public class ErrorHandler {
         }
 
         if (jsonError != null) {
-            String name = JsonUtil.getInstance().getString(jsonError, "name"); //$NON-NLS-1$
-            String message = JsonUtil.getInstance().getString(jsonError, "message"); //$NON-NLS-1$
+            String error_code = JsonUtil.getInstance().getString(jsonError, "error_code"); //$NON-NLS-1$
+            String message = JsonUtil.getInstance().getString(jsonError, "reason"); //$NON-NLS-1$
 
-            if (!message.isEmpty() || !name.isEmpty()) {
-                exceptionMessage = appearance.errorReport(name, message);
+            if (!message.isEmpty() || !error_code.isEmpty()) {
+                exceptionMessage = appearance.errorReport(error_code, message);
             }
         }
 
