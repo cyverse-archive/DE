@@ -347,8 +347,9 @@
 (defn update-app
   "This service will update a single-step App, including the information at its top level and the
    tool used by its single task, as long as the App has not been submitted for public use."
-  [user {app-id :id :keys [references groups] :as app}]
+  [user {app-id :id app-name :name :keys [references groups] :as app}]
   (verify-app-editable user (persistence/get-app app-id))
+  (validate-app-name app-name app-id (workspace-beta-app-category-id))
   (transaction
     (persistence/update-app app)
     (let [tool-id (->> app :tools first :id)
