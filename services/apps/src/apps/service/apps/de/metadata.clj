@@ -6,7 +6,6 @@
                                     decategorize-app
                                     get-app-subcategory-id
                                     remove-app-from-category]]
-        [kameleon.uuids :only [uuidify]]
         [apps.service.apps.de.validation :only [app-publishable? verify-app-permission]]
         [apps.util.config :only [workspace-beta-app-category-id
                                        workspace-favorites-app-category-index]]
@@ -146,7 +145,7 @@
     (amp/set-app-references app-id references)
     (amp/set-app-suggested-categories app-id categories)
     (decategorize-app app-id)
-    (add-app-to-category app-id (uuidify (workspace-beta-app-category-id)))
+    (add-app-to-category app-id (workspace-beta-app-category-id))
     (iplant-groups/make-app-public app-id))
   nil)
 

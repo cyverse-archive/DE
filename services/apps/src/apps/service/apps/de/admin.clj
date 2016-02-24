@@ -1,6 +1,5 @@
 (ns apps.service.apps.de.admin
-  (:use [kameleon.uuids :only [uuidify]]
-        [korma.db :only [transaction]]
+  (:use [korma.db :only [transaction]]
         [apps.persistence.app-metadata.relabel :only [update-app-labels]]
         [apps.util.assertions :only [assert-not-nil]]
         [apps.util.config :only [workspace-public-id]]
@@ -106,7 +105,7 @@
   (validate-subcategory-name parent_id name)
   (validate-category-empty parent_id)
   (transaction
-   (let [category-id (:id (app-groups/create-app-group (uuidify (workspace-public-id)) category))]
+   (let [category-id (:id (app-groups/create-app-group (workspace-public-id) category))]
      (app-groups/add-subgroup parent_id category-id)
      category-id)))
 
