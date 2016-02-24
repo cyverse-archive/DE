@@ -47,4 +47,15 @@ public class PermanentIdRequestPresenterDefaultAppearance implements
         return displayStrings.statusUpdateSuccess();
     }
 
+    @Override
+    public String updateStatus() {
+        return displayStrings.updateStatus();
+    }
+
+    @Override
+    public String update() {
+        return displayStrings.update();
+    }
+
+
 }

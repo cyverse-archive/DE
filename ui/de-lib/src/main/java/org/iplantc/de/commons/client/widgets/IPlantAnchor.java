@@ -25,9 +25,12 @@ public class IPlantAnchor extends Component implements HasClickHandlers {
         void onUpdateText(XElement element, String text);
 
         void render(SafeHtmlBuilder sb);
+
     }
 
     private final IPlantAnchorAppearance appearance;
+
+    private String text;
 
     @UiConstructor
     public IPlantAnchor(String text) {
@@ -44,6 +47,7 @@ public class IPlantAnchor extends Component implements HasClickHandlers {
      * @param text text to display
      */
     public IPlantAnchor(String text, int width, IPlantAnchorAppearance appearance) {
+        this.text = text;
         this.appearance = appearance;
         SafeHtmlBuilder sb = new SafeHtmlBuilder();
         this.appearance.render(sb);
@@ -66,6 +70,12 @@ public class IPlantAnchor extends Component implements HasClickHandlers {
     }
 
     public void setText(String text) {
+        this.text = text;
         appearance.onUpdateText(getElement(), text);
     }
+
+    public String getText() {
+        return text;
+    }
+
 }

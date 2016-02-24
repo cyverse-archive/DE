@@ -97,23 +97,7 @@ public class PermanentIdRequestViewImpl extends Composite implements PermanentId
 
     @UiHandler("updateBtn")
     void onUpdateBtnClicked(SelectEvent event) {
-        final UpdatePermanentIdRequestDialog dialog = new UpdatePermanentIdRequestDialog(grid.getSelectionModel()
-                                                                                             .getSelectedItem(),
-                                                                                         presenter,
-                                                                                         factory);
-
-        dialog.setHeadingText(appearance.updateStatus());
-        dialog.getOkButton().setText(appearance.update());
-        dialog.getOkButton().addSelectHandler(new SelectHandler() {
-
-            @Override
-            public void onSelect(SelectEvent event) {
-                final PermanentIdRequestUpdate update = dialog.getPermanentIdRequestUpdate();
-                presenter.updateRequest(update);
-            }
-        });
-
-        dialog.show();
+       presenter.onUpdateRequest();
     }
 
     @UiHandler("metadataBtn")

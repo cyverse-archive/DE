@@ -2,7 +2,8 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
-             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+             xmlns:widget="urn:import:org.iplantc.de.commons.client.widgets">
 
 
     <ui:with field="appearance"
@@ -10,7 +11,7 @@
 
     <ui:with field="margins"
              type="com.sencha.gxt.core.client.util.Margins">
-        <ui:attributes top="0" right="5" bottom="10" left="5"/>
+        <ui:attributes top="0" right="0" bottom="10" left="2"/>
     </ui:with>
     <ui:with field="layoutData"
              type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
@@ -19,9 +20,16 @@
 
     <container:VerticalLayoutContainer>
         <container:child layoutData="{layoutData}">
+            <form:FieldLabel text="{appearance.userEmail}">
+                <form:widget>
+                    <g:Label ui:field="userEmail" width="200px"/>
+                </form:widget>
+            </form:FieldLabel>
+            </container:child>
+        <container:child layoutData="{layoutData}">
             <form:FieldLabel text="{appearance.currentStatusLbl}">
                 <form:widget>
-                    <g:Label ui:field="currentStatusLabel"/>
+                    <widget:IPlantAnchor ui:field="currentStatusLabel" text=""/>
                 </form:widget>
             </form:FieldLabel>
         </container:child>
@@ -35,7 +43,7 @@
         <container:child layoutData="{layoutData}">
             <form:FieldLabel text="{appearance.commentsLbl}">
                 <form:widget>
-                    <form:TextArea ui:field="commentsEditor"/>
+                    <form:TextArea ui:field="commentsEditor" height="100px"/>
                 </form:widget>
             </form:FieldLabel>
         </container:child>
