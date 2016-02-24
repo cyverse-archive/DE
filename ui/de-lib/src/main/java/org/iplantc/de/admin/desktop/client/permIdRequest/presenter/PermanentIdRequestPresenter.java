@@ -11,6 +11,7 @@ import org.iplantc.de.client.models.identifiers.PermanentIdRequestDetails;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestList;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestUpdate;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
@@ -175,9 +176,7 @@ public class PermanentIdRequestPresenter implements Presenter {
                     loadPermIdRequests();
                     IplantAnnouncer.getInstance()
                                    .schedule(new ErrorAnnouncementConfig(appearance.createPermIdFailure()));
-                    IplantErrorDialog ied =
-                            new IplantErrorDialog(I18N.DISPLAY.error(), caught.getMessage());
-                    ied.show();
+                    ErrorHandler.post(appearance.createPermIdFailure(), caught);
                 }
 
                 @Override

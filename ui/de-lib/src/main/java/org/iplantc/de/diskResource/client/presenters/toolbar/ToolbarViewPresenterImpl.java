@@ -21,11 +21,11 @@ import org.iplantc.de.client.models.viewer.MimeType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.services.PermIdRequestUserServiceFacade;
+import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
-import org.iplantc.de.commons.client.views.dialogs.IplantErrorDialog;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.PathListWindowConfig;
@@ -47,7 +47,6 @@ import org.iplantc.de.diskResource.client.views.dialogs.CreateFolderDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.CreateNcbiSraFolderStructureDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.GenomeSearchDialog;
 import org.iplantc.de.diskResource.client.views.toolbar.dialogs.TabFileConfigDialog;
-import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Preconditions;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -405,9 +404,7 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter, SimpleDo
             public void onFailure(Throwable caught) {
                 IplantAnnouncer.getInstance()
                                .schedule(new ErrorAnnouncementConfig(appearance.doiRequestFail()));
-                IplantErrorDialog iplantErrorDialog =
-                        new IplantErrorDialog(I18N.DISPLAY.error(), caught.getMessage());
-                iplantErrorDialog.show();
+                ErrorHandler.post(appearance.doiRequestFail(),caught);
             }
 
             @Override
