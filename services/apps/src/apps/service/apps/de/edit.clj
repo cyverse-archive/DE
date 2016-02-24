@@ -9,7 +9,7 @@
         [kameleon.uuids :only [uuidify]]
         [apps.metadata.params :only [format-reference-genome-value]]
         [apps.service.apps.de.validation :only [verify-app-editable verify-app-permission validate-app-name]]
-        [apps.util.config :only [workspace-dev-app-category-index]]
+        [apps.util.config :only [workspace-dev-app-category-index workspace-beta-app-category-id]]
         [apps.util.conversions :only [remove-nil-vals convert-rule-argument]]
         [apps.validation :only [validate-parameter]]
         [apps.workspace :only [get-workspace]]
@@ -459,7 +459,8 @@
 (defn relabel-app
   "This service allows labels to be updated in any app, whether or not the app has been submitted
    for public use."
-  [user {app-id :id :as body}]
+  [user {app-name :name app-id :id :as body}]
+  (validate-app-name app-name app-id (workspace-beta-app-category-id))
   (let [app (persistence/get-app app-id)]
     (when-not (user-owns-app? user app)
       (verify-app-permission user app "write")))

@@ -141,7 +141,11 @@
 (defn validate-app-name
   "Verifies that an app with the same name doesn't already exist in any of the same app categories. The beta
    category is treated as an exception because it's intended to be a staging area for new apps."
-  [app-name category-ids]
-  (when (seq (list-duplicate-apps app-name category-ids))
-    (exists "An app with the same name already exists in one of the same categories."
-            :app_name app-name :category_ids category-ids)))
+  ([app-name category-ids]
+     (when (seq (list-duplicate-apps app-name category-ids))
+       (exists "An app with the same name already exists in one of the selected categories."
+               :app_name app-name :category_ids category-ids)))
+  ([app-name app-id beta-category-id]
+     (when (seq (list-duplicate-apps app-name app-id beta-category-id))
+       (exists "An app with the same name already exists in one of the same categories."
+               :app_name app-name :app_id app-id))))
