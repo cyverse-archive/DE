@@ -8,6 +8,7 @@
         [apps.util.assertions]
         [apps.util.conversions :only [remove-nil-vals]])
   (:require [clojure.set :as set]
+            [clojure.string :as string]
             [kameleon.app-listing :as app-listing]
             [korma.core :as sql]
             [apps.persistence.app-metadata.delete :as delete]
@@ -710,3 +711,13 @@
                            {:u.username username})
                        {:aca.app_id (uuidify app-id)
                         :l.id       [not= (user-favorite-subselect :w.root_category_id faves-idx)]})))))
+
+(defn list-duplicate-apps
+  "List apps with the same name that exist in the same category as the new app."
+  [app-name category-ids]
+  (select [:apps :a]
+          (fields :a.id :a.name :a.description)
+          (join [:app_category_app :aca] {:a.id :aca.app_id})
+          (where {:aca.app_category_id           [in category-ids]
+                  (raw "trim(both from a.name)") (string/trim app-name)
+                  :a.deleted                     false})))

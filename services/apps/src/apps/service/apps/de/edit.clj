@@ -8,7 +8,7 @@
         [kameleon.entities]
         [kameleon.uuids :only [uuidify]]
         [apps.metadata.params :only [format-reference-genome-value]]
-        [apps.service.apps.de.validation :only [verify-app-editable verify-app-permission]]
+        [apps.service.apps.de.validation :only [verify-app-editable verify-app-permission validate-app-name]]
         [apps.util.config :only [workspace-dev-app-category-index]]
         [apps.util.conversions :only [remove-nil-vals convert-rule-argument]]
         [apps.validation :only [validate-parameter]]
@@ -384,7 +384,8 @@
 
 (defn add-app
   "This service will add a single-step App, including the information at its top level."
-  [user {:keys [references groups] :as app}]
+  [{:keys [username] :as user} {app-name :name :keys [references groups] :as app}]
+  (validate-app-name app-name [(get-user-subcategory username (workspace-dev-app-category-index))])
   (transaction
     (let [app-id  (:id (persistence/add-app app))
           tool-id (->> app :tools first :id)
