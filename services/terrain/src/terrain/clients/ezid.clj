@@ -1,4 +1,4 @@
-(ns ^{:author psarando} terrain.clients.ezid
+(ns terrain.clients.ezid
   (:use [ring.util.http-response :only [charset]]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [cemerick.url :as curl]
