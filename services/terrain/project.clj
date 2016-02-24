@@ -43,7 +43,8 @@
                  [org.iplantc/heuristomancer "5.2.5.0"]
                  [org.iplantc/service-logging "5.2.5.0"]]
   :plugins [[lein-ring "0.9.2" :exclusions [org.clojure/clojure]]
-            [swank-clojure "1.4.2" :exclusions [org.clojure/clojure]]]
+            [swank-clojure "1.4.2" :exclusions [org.clojure/clojure]]
+            [test2junit "1.1.3"]]
   :profiles {:dev     {:resource-paths ["conf/test"]}
              :uberjar {:aot :all}}
   :main ^:skip-aot terrain.core

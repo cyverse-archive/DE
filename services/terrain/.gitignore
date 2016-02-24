@@ -26,3 +26,5 @@
 .env
 .vagrant/
 *.swp
+build.xml
+test2junit
