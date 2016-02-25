@@ -1,7 +1,6 @@
 package org.iplantc.de.notifications.client.presenter;
 
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.notifications.Notification;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
@@ -12,12 +11,15 @@ import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.notifications.client.events.DeleteNotificationsUpdateEvent;
 import org.iplantc.de.notifications.client.events.NotificationCountUpdateEvent;
+import org.iplantc.de.notifications.client.events.NotificationGridRefreshEvent;
+import org.iplantc.de.notifications.client.events.NotificationSelectionEvent;
+import org.iplantc.de.notifications.client.events.NotificationToolbarDeleteAllClickedEvent;
+import org.iplantc.de.notifications.client.events.NotificationToolbarDeleteClickedEvent;
+import org.iplantc.de.notifications.client.events.NotificationToolbarSelectionEvent;
+import org.iplantc.de.notifications.client.gin.factory.NotificationViewFactory;
+import org.iplantc.de.notifications.client.model.NotificationMessageProperties;
 import org.iplantc.de.notifications.client.views.NotificationToolbarView;
-import org.iplantc.de.notifications.client.views.NotificationToolbarViewImpl;
 import org.iplantc.de.notifications.client.views.NotificationView;
-import org.iplantc.de.resources.client.messages.I18N;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -27,10 +29,12 @@ import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
+import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import com.sencha.gxt.data.client.loader.RpcProxy;
+import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.SortDir;
 import com.sencha.gxt.data.shared.SortInfo;
 import com.sencha.gxt.data.shared.SortInfoBean;
@@ -53,7 +57,12 @@ import java.util.List;
  *
  * @author sriram
  */
-public class NotificationPresenterImpl implements NotificationView.Presenter, NotificationToolbarView.Presenter {
+public class NotificationPresenterImpl implements NotificationView.Presenter,
+                                                  NotificationGridRefreshEvent.NotificationGridRefreshEventHandler,
+                                                  NotificationSelectionEvent.NotificationSelectionEventHandler,
+                                                  NotificationToolbarSelectionEvent.NotificationToolbarSelectionEventHandler,
+                                                  NotificationToolbarDeleteClickedEvent.NotificationToolbarDeleteClickedEventHandler,
+                                                  NotificationToolbarDeleteAllClickedEvent.NotificationToolbarDeleteAllClickedEventHandler {
 
     private final class NotificationServiceCallback extends NotificationCallback {
         private final AsyncCallback<PagingLoadResult<NotificationMessage>> callback;
@@ -85,8 +94,8 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
                 messages.add(n.getMessage());
             }
 
-            callbackResult = new PagingLoadResultBean<>(messages, total,
-                                                        loadConfig.getOffset());
+            PagingLoadResult<NotificationMessage> callbackResult =
+                    new PagingLoadResultBean<>(messages, total, loadConfig.getOffset());
             callback.onSuccess(callbackResult);
 
             List<HasId> hasIds = Lists.newArrayList();
@@ -110,33 +119,50 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
             });
         }
     }
-
-    private final IplantDisplayStrings displayStrings;
-
-    private final IplantErrorStrings errorStrings;
-
-    EventBus eventBus;
-    MessageServiceFacade messageServiceFacade;
-    NotificationToolbarView toolbar;
+    private final ListStore<NotificationMessage> listStore;
+    private final NotificationToolbarView toolbar;
     private final NotificationView view;
-    private PagingLoadResult<NotificationMessage> callbackResult;
+    private NotificationView.NotificationViewAppearance appearance;
     NotificationCategory currentCategory;
-    private final JsonUtil jsonUtil;
+    @Inject EventBus eventBus;
+    @Inject MessageServiceFacade messageServiceFacade;
+    @Inject JsonUtil jsonUtil;
 
-    public NotificationPresenterImpl(final NotificationView view) {
-        this.view = view;
-        this.errorStrings = I18N.ERROR;
-        this.displayStrings = I18N.DISPLAY;
-        this.messageServiceFacade = ServicesInjector.INSTANCE.getMessageServiceFacade();
-        this.eventBus = EventBus.getInstance();
+    @Inject
+    public NotificationPresenterImpl(final NotificationViewFactory viewFactory,
+                                     NotificationView.NotificationViewAppearance appearance,
+                                     NotificationToolbarView toolbar,
+                                     NotificationMessageProperties messageProperties) {
+        this.appearance = appearance;
+        this.listStore = createListStore(messageProperties);
+        this.view = viewFactory.create(listStore);
         currentCategory = NotificationCategory.ALL;
-        toolbar = new NotificationToolbarViewImpl();
-        this.jsonUtil = JsonUtil.getInstance();
-        toolbar.setPresenter(this);
+        this.toolbar = toolbar;
         view.setNorthWidget(toolbar);
-        this.view.setPresenter(this);
+
         setRefreshButton(view.getRefreshButton());
-        // set default cat
+        addEventHandlers();
+    }
+
+    private void addEventHandlers() {
+        view.addNotificationGridRefreshEventHandler(this);
+        view.addNotificationSelectionEventHandler(this);
+        toolbar.addNotificationToolbarDeleteAllClickedEventHandler(this);
+        toolbar.addNotificationToolbarDeleteClickedEventHandler(this);
+        toolbar.addNotificationToolbarSelectionEventHandler(this);
+    }
+
+    ListStore<NotificationMessage> createListStore(NotificationMessageProperties messageProperties) {
+        return new ListStore<>(messageProperties.id());
+    }
+
+    @Override
+    public void onNotificationGridRefresh(NotificationGridRefreshEvent event) {
+        if (listStore.size() > 0) {
+            toolbar.setDeleteAllButtonEnabled(true);
+        } else {
+            toolbar.setDeleteAllButtonEnabled(false);
+        }
     }
 
     @Override
@@ -180,16 +206,11 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
     }
 
     @Override
-    public NotificationCategory getCurrentCategory() {
-        return currentCategory;
-    }
-
-    @Override
-    public void onGridRefresh() {
-        if (view.getListStore().size() > 0) {
-            toolbar.setDeleteAllButtonEnabled(true);
+    public void onNotificationSelection(NotificationSelectionEvent event) {
+        if (event.getNotifications() == null || event.getNotifications().size() == 0) {
+            toolbar.setDeleteButtonEnabled(false);
         } else {
-            toolbar.setDeleteAllButtonEnabled(false);
+            toolbar.setDeleteButtonEnabled(true);
         }
     }
 
@@ -199,8 +220,9 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
         view.setLoader(initProxyLoader());
     }
 
+
     @Override
-    public void onDeleteAllClicked() {
+    public void onNotificationToolbarDeleteAllClicked(NotificationToolbarDeleteAllClickedEvent event) {
         view.mask();
         messageServiceFacade.deleteAll(currentCategory, new AsyncCallback<String>() {
 
@@ -218,11 +240,10 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
                 eventBus.fireEvent(event);
             }
         });
-
     }
 
     @Override
-    public void onDeleteClicked() {
+    public void onNotificationToolbarDeleteClicked(NotificationToolbarDeleteClickedEvent event) {
         final List<NotificationMessage> notifications = view.getSelectedItems();
         final Command callback = new Command() {
             @Override
@@ -243,7 +264,7 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
             messageServiceFacade.deleteMessages(obj, new AsyncCallback<String>() {
                 @Override
                 public void onFailure(Throwable caught) {
-                    ErrorHandler.post(errorStrings.notificationDeletFail(), caught);
+                    ErrorHandler.post(appearance.notificationDeleteFail(), caught);
                 }
 
                 @Override
@@ -254,29 +275,23 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
                 }
             });
         }
-
     }
 
     @Override
-    public void onFilterSelection(NotificationCategory cat) {
-        filterBy(cat);
-    }
-
-    @Override
-    public void onNotificationSelection(List<NotificationMessage> items) {
-        if (items == null || items.size() == 0) {
-            toolbar.setDeleteButtonEnabled(false);
-        } else {
-            toolbar.setDeleteButtonEnabled(true);
-        }
+    public void onNotificationToolbarSelection(NotificationToolbarSelectionEvent event) {
+        filterBy(event.getNotificationCategory());
     }
 
     @Override
     public void setRefreshButton(TextButton refreshBtn) {
         if (refreshBtn != null) {
-            refreshBtn.setText(displayStrings.refresh());
             toolbar.setRefreshButton(refreshBtn);
         }
+    }
+
+    @Override
+    public NotificationCategory getCurrentCategory() {
+        return currentCategory;
     }
 
     private PagingLoader<FilterPagingLoadConfig, PagingLoadResult<NotificationMessage>> initProxyLoader() {
@@ -308,7 +323,8 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
 
         final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<NotificationMessage>> loader = new PagingLoader<>(proxy);
         loader.setRemoteSort(true);
-        loader.addLoadHandler(new LoadResultListStoreBinding<FilterPagingLoadConfig, NotificationMessage, PagingLoadResult<NotificationMessage>>(view.getListStore()));
+        loader.addLoadHandler(new LoadResultListStoreBinding<FilterPagingLoadConfig, NotificationMessage, PagingLoadResult<NotificationMessage>>(
+                listStore));
         loader.useLoadConfig(buildDefaultLoadConfig());
         return loader;
     }

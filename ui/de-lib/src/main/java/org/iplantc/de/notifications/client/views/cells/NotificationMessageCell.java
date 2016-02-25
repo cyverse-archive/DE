@@ -24,6 +24,7 @@ import org.iplantc.de.notifications.client.views.dialogs.RequestHistoryDialog;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -31,8 +32,6 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
-
-import com.sencha.gxt.core.client.util.Format;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,24 +45,20 @@ import java.util.List;
  */
 public class NotificationMessageCell extends AbstractCell<NotificationMessage> {
 
+    public interface NotificationMessageCellAppearance {
+        void render(Cell.Context context, NotificationMessage value, SafeHtmlBuilder sb);
+    }
+
+    private final NotificationMessageCellAppearance appearance =
+            GWT.create(NotificationMessageCellAppearance.class);
+
     private final DiskResourceAutoBeanFactory drFactory = GWT.create(DiskResourceAutoBeanFactory.class);
     private final AnalysesAutoBeanFactory analysesFactory = GWT.create(AnalysesAutoBeanFactory.class);
     private final NotificationAutoBeanFactory notificationFactory = GWT.create(NotificationAutoBeanFactory.class);
     private final DiskResourceUtil diskResourceUtil = DiskResourceUtil.getInstance();
+
     public NotificationMessageCell() {
         super("click"); //$NON-NLS-1$
-    }
-
-    @Override
-    public void render(Context context, NotificationMessage value, SafeHtmlBuilder sb) {
-        String style = "white-space:pre-wrap;text-overflow:ellipsis;overflow:hidden;"; //$NON-NLS-1$
-
-        if (value.getContext() != null) {
-            style += "cursor:pointer; text-decoration:underline;"; //$NON-NLS-1$
-        }
-
-        sb.appendHtmlConstant(Format.substitute("<div style=\"{0}\">{1}</div>", style, //$NON-NLS-1$
-                value.getMessage()));
     }
 
     @Override
@@ -151,6 +146,11 @@ public class NotificationMessageCell extends AbstractCell<NotificationMessage> {
                 }
             }
         }
+    }
+
+    @Override
+    public void render(Context context, NotificationMessage value, SafeHtmlBuilder sb) {
+        appearance.render(context, value, sb);
     }
 
 }

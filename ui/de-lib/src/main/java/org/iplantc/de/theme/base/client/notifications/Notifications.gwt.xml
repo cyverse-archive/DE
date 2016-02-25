@@ -1,0 +1,15 @@
+<module>
+    <!-- View -->
+    <replace-with class="org.iplantc.de.theme.base.client.notifications.NotificationViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.notifications.client.views.NotificationView.NotificationViewAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.notifications.cells.NotificationMessageCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.notifications.client.views.cells.NotificationMessageCell.NotificationMessageCellAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.notifications.cells.RequestStatusCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.notifications.client.views.cells.RequestStatusCell.RequestStatusCellAppearance"/>
+    </replace-with>
+
+</module>

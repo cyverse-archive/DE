@@ -7,6 +7,7 @@
     <inherits name="org.iplantc.de.theme.base.client.analyses.Analyses" />
     <inherits name="org.iplantc.de.theme.base.client.collaborators.Collaborators" />
     <inherits name="org.iplantc.de.theme.base.client.apps.Applications" />
+    <inherits name="org.iplantc.de.theme.base.client.notifications.Notifications" />
 
     <inherits name="org.iplantc.de.theme.base.client.admin.Belphegor"/>
     <inherits name="org.iplantc.de.theme.base.client.admin.apps.AdminApps" />
