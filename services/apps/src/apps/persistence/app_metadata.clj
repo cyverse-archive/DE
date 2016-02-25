@@ -1,6 +1,7 @@
 (ns apps.persistence.app-metadata
   "Persistence layer for app metadata."
   (:use [kameleon.entities]
+        [kameleon.util :only [normalize-string]]
         [kameleon.uuids :only [uuidify]]
         [korma.core :exclude [update]]
         [korma.db :only [transaction]]
@@ -725,10 +726,10 @@
   (select [:apps :a]
           (fields :a.id :a.name :a.description)
           (join [:app_category_app :aca] {:a.id :aca.app_id})
-          (where {(raw "trim(both from a.name)") (string/trim app-name)
-                  :a.deleted                     false
-                  :aca.app_category_id           [in category-id-set]
-                  :a.id                          [not= app-id]})))
+          (where {(normalize-string :a.name) (normalize-string app-name)
+                  :a.deleted                 false
+                  :aca.app_category_id       [in category-id-set]
+                  :a.id                      [not= app-id]})))
 
 (defn- app-category-id-subselect
   [app-id beta-app-category-id]

@@ -92,10 +92,10 @@
   "This service updates high-level details and labels in an App, and can mark or unmark the app as
    deleted or disabled in the database."
   [{app-name :name app-id :id :as app}]
-  (validate-app-existence app-id)
-  (when-not (nil? app-name)
-    (av/validate-app-name app-name app-id (workspace-beta-app-category-id)))
   (transaction
+   (validate-app-existence app-id)
+   (when-not (nil? app-name)
+     (av/validate-app-name app-name app-id (workspace-beta-app-category-id)))
    (if (empty? (select-keys app [:name :description :wiki_url :references :groups]))
      (update-app-deleted-disabled app)
      (update-app-details app))))
