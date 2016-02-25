@@ -1,17 +1,34 @@
 package messaging
 
 import (
+	"encoding/json"
+	"fmt"
 	"logcabin"
 	"model"
 	"os"
 	"reflect"
 	"testing"
-	"time"
 
 	"github.com/streadway/amqp"
 )
 
 var l = logcabin.New("test_amqp", "test_amqp")
+var client *Client
+
+func GetClient(t *testing.T) *Client {
+	var err error
+	if client != nil {
+		return client
+	}
+	client, err = NewClient(uri(), false)
+	if err != nil {
+		t.Error(err)
+		t.Fail()
+	}
+	client.SetupPublishing(JobsExchange)
+	go client.Listen()
+	return client
+}
 
 func shouldrun() bool {
 	if os.Getenv("RUN_INTEGRATION_TESTS") != "" {
@@ -83,16 +100,11 @@ func TestClient(t *testing.T) {
 	if !shouldrun() {
 		return
 	}
-	client, err := NewClient(uri(), false)
-	if err != nil {
-		t.Error(err)
-		t.Fail()
-	}
-	defer client.Close()
-	exchange := "jex_tests"
-	key := "tests"
-	client.SetupPublishing("jex_tests")
 
+	client := GetClient(t)
+
+	//defer client.Close()
+	key := "tests"
 	actual := ""
 	expected := "this is a test"
 	coord := make(chan int)
@@ -102,13 +114,38 @@ func TestClient(t *testing.T) {
 		actual = string(d.Body)
 		coord <- 1
 	}
-	client.AddConsumer(exchange, "test_queue", key, handler)
-	go client.Listen()
-	time.Sleep(100 * time.Millisecond)
+	client.AddConsumer(JobsExchange, "test_queue", key, handler)
 	client.Publish(key, []byte(expected))
 	<-coord
 	if actual != expected {
 		t.Errorf("Handler received %s instead of %s", actual, expected)
 	}
 
+}
+
+func TestSendTimeLimitRequest(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+	client := GetClient(t)
+	var actual []byte
+	coord := make(chan int)
+	handler := func(d amqp.Delivery) {
+		d.Ack(false)
+		actual = d.Body
+		coord <- 1
+	}
+	key := fmt.Sprintf("%s.%s", TimeLimitRequestsKey, "test")
+	client.AddConsumer(JobsExchange, "test_queue1", key, handler)
+	client.SendTimeLimitRequest("test")
+	<-coord
+	req := &TimeLimitRequest{}
+	err := json.Unmarshal(actual, req)
+	if err != nil {
+		t.Error(err)
+		t.Fail()
+	}
+	if req.InvocationID != "test" {
+		t.Errorf("TimeLimitRequest's InvocationID was %s instead of test", req.InvocationID)
+	}
 }

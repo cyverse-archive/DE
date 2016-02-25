@@ -2,6 +2,7 @@ package messaging
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"math/rand"
 	"model"
@@ -39,6 +40,16 @@ var (
 
 	//CommandsKey is the routing/binding key for job command messages.
 	CommandsKey = "jobs.commands"
+
+	// TimeLimitRequestsKey is the routing/binding key for the job time limit messages.
+	TimeLimitRequestsKey = "jobs.timelimits.requests"
+
+	//TimeLimitDeltaKey is the routing/binding key for the job time limit delta messages.
+	TimeLimitDeltaKey = "jobs.timelimits.deltas"
+
+	//TimeLimitResponseKey is the routing/binding key for the job time limit
+	//response messages.
+	TimeLimitResponseKey = "jobs.timelimits.responses"
 
 	//QueuedState is when a job is queued.
 	QueuedState JobState = "Queued"
@@ -122,6 +133,28 @@ type UpdateMessage struct {
 	Sender  string // Should be the hostname of the box sending the message.
 }
 
+// TimeLimitRequest is the message that is sent to road-runner to get it to
+// broadcast its current time limit.
+type TimeLimitRequest struct {
+	InvocationID string
+}
+
+// TimeLimitResponse is the message that is sent by road-runner in response
+// to a TimeLimitRequest. It contains the current time limit from road-runner.
+type TimeLimitResponse struct {
+	InvocationID          string
+	MillisecondsRemaining int64
+}
+
+// TimeLimitDelta is the message that is sent to get road-runner to change its
+// time limit. The 'Delta' field contains a string in Go's Duration string
+// format. More info on the format is available here:
+// https://golang.org/pkg/time/#ParseDuration
+type TimeLimitDelta struct {
+	InvocationID string
+	Delta        string
+}
+
 // NewStopRequest returns a *JobRequest that has been constructed to be a
 // stop request for a running job.
 func NewStopRequest() *StopRequest {
@@ -155,6 +188,11 @@ type consumer struct {
 	handler  MessageHandler
 }
 
+type consumeradder struct {
+	consumer consumer
+	latch    chan int
+}
+
 type publisher struct {
 	exchange string
 	channel  *amqp.Channel
@@ -167,6 +205,7 @@ type Client struct {
 	aggregationChan chan aggregationMessage
 	errors          chan *amqp.Error
 	consumers       []*consumer
+	consumersChan   chan consumeradder
 	publisher       *publisher
 	Reconnect       bool
 }
@@ -201,6 +240,7 @@ func NewClient(uri string, reconnect bool) (*Client, error) {
 		log.Println("Successfully connected to the AMQP broker")
 	}
 	c.connection = connection
+	c.consumersChan = make(chan consumeradder)
 	c.aggregationChan = make(chan aggregationMessage)
 	c.errors = c.connection.NotifyClose(make(chan *amqp.Error))
 	return c, nil
@@ -210,23 +250,32 @@ func NewClient(uri string, reconnect bool) (*Client, error) {
 // their own goroutine.
 func (c *Client) Listen() {
 	var consumers []*consumer
-	init := func() {
-		for _, cs := range c.consumers {
-			c.initconsumer(cs)
-		}
-	}
-	init()
-	for _, cs := range c.consumers {
-		consumers = append(consumers, cs)
-	}
+	// init := func() {
+	// 	for _, cs := range c.consumers {
+	// 		c.initconsumer(cs)
+	// 	}
+	// }
+	// init()
+	// for _, cs := range c.consumers {
+	// 	consumers = append(consumers, cs)
+	// }
 	for {
 		select {
+		case cs := <-c.consumersChan:
+			log.Println("A new consumer is being added")
+			c.initconsumer(&cs.consumer)
+			consumers = append(consumers, &cs.consumer)
+			log.Println("Done adding a new consumer")
+			cs.latch <- 1
 		case err := <-c.errors:
 			log.Printf("An error in the connection to the AMQP broker occurred:\n%s", err)
 			if c.Reconnect {
 				c, _ = NewClient(c.uri, c.Reconnect)
 				c.consumers = consumers
-				init()
+				for _, cs := range c.consumers {
+					c.initconsumer(cs)
+				}
+				// init()
 			} else {
 				os.Exit(-1)
 			}
@@ -248,13 +297,18 @@ func (c *Client) Close() {
 // list, it doesn't actually start handling messages yet. You need to call
 // Listen() for that.
 func (c *Client) AddConsumer(exchange, queue, key string, handler MessageHandler) {
-	cs := &consumer{
+	cs := consumer{
 		exchange: exchange,
 		queue:    queue,
 		key:      key,
 		handler:  handler,
 	}
-	c.consumers = append(c.consumers, cs)
+	adder := consumeradder{
+		consumer: cs,
+		latch:    make(chan int),
+	}
+	c.consumersChan <- adder
+	<-adder.latch
 }
 
 func (c *Client) initconsumer(cs *consumer) error {
@@ -367,4 +421,51 @@ func (c *Client) PublishJobUpdate(u *UpdateMessage) error {
 		return err
 	}
 	return c.Publish(UpdatesKey, msgJSON)
+}
+
+// SendTimeLimitRequest sends out a message to the job on the
+// "jobs.timelimits.requests.<invocationID>" topic. This should trigger the job
+// to emit a TimeLimitResponse.
+func (c *Client) SendTimeLimitRequest(invID string) error {
+	req := &TimeLimitRequest{
+		InvocationID: invID,
+	}
+	msg, err := json.Marshal(req)
+	if err != nil {
+		return err
+	}
+	key := fmt.Sprintf("%s.%s", TimeLimitRequestsKey, invID)
+	return c.Publish(key, msg)
+}
+
+// SendTimeLimitResponse sends out a message to the
+// jobs.timelimits.responses.<invocationID> topic containing the remaining time
+// for the job.
+func (c *Client) SendTimeLimitResponse(invID string, timeRemaining int64) error {
+	resp := &TimeLimitResponse{
+		InvocationID:          invID,
+		MillisecondsRemaining: timeRemaining,
+	}
+	msg, err := json.Marshal(resp)
+	if err != nil {
+		return err
+	}
+	key := fmt.Sprintf("%s.%s", TimeLimitResponseKey, invID)
+	return c.Publish(key, msg)
+}
+
+// SendTimeLimitDelta sends out a message to the
+// jobs.timelimits.deltas.<invocationID> topic containing how the job should
+// adjust its timelimit.
+func (c *Client) SendTimeLimitDelta(invID, delta string) error {
+	d := &TimeLimitDelta{
+		InvocationID: invID,
+		Delta:        delta,
+	}
+	msg, err := json.Marshal(d)
+	if err != nil {
+		return err
+	}
+	key := fmt.Sprintf("%s.%s", TimeLimitDeltaKey, invID)
+	return c.Publish(key, msg)
 }
