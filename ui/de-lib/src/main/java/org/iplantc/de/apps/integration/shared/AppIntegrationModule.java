@@ -8,6 +8,7 @@ public interface AppIntegrationModule {
     interface Ids {
         String APP_EDITOR_VIEW = ".appEditorView";
         String PALETTE = ".pallete";
+        String PALETTE_HELP = ".help";
         String TOOLBAR = ".menuBar";
         String CMD_LINE_PREVIEW = ".cmdLinePreview";
 
@@ -48,6 +49,13 @@ public interface AppIntegrationModule {
         String INSTALLED_TOOLS_DLG = ".installedToolsDlg";
         String OK = ".ok";
         String CANCEL = ".cancel";
+        String FILE_FOLDER_PANEL = ".fileFolderPanel";
+        String TEXT_NUMERICAL_PANEL = ".textNumericalPanel";
+        String LIST_PANEL = ".listPanel";
+        String OUTPUT_PANEL = ".outputPanel";
+        String REFERENCE_GENOME_PANEL = ".referenceGenomePanel";
+        String HELP_BTN = ".help";
+        String COLLAPSE_BTN = ".collapseBtn";
     }
 
     interface PropertyPanelIds {

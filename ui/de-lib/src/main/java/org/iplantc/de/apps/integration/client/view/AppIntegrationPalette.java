@@ -39,6 +39,7 @@ import com.sencha.gxt.dnd.core.client.DndDragStartEvent;
 import com.sencha.gxt.dnd.core.client.DndDragStartEvent.DndDragStartHandler;
 import com.sencha.gxt.dnd.core.client.DragSource;
 import com.sencha.gxt.widget.core.client.Composite;
+import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.button.ToolButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.tree.Tree.CheckCascade;
@@ -55,6 +56,8 @@ import java.util.Map;
 public class AppIntegrationPalette extends Composite {
 
     interface AppIntegrationPaletteUiBinder extends UiBinder<Widget, AppIntegrationPalette> {}
+
+    @UiField ContentPanel fileFolderPanel, textNumericalPanel, listPanel, outputPanel, referenceGenomePanel;
 
     @UiField ToolButton fileFolderCategoryHelpBtn,
         listsCategoryHelpBtn,
@@ -145,6 +148,27 @@ public class AppIntegrationPalette extends Composite {
     @Override
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
+
+        fileFolderPanel.ensureDebugId(baseID + Ids.FILE_FOLDER_PANEL);
+        fileFolderCategoryHelpBtn.ensureDebugId(baseID + Ids.FILE_FOLDER_PANEL + Ids.HELP_BTN);
+        getCollapseBtn(fileFolderPanel).ensureDebugId(baseID + Ids.FILE_FOLDER_PANEL + Ids.COLLAPSE_BTN);
+
+        textNumericalPanel.ensureDebugId(baseID + Ids.TEXT_NUMERICAL_PANEL);
+        textNumericalInputCategoryHelpBtn.ensureDebugId(baseID + Ids.TEXT_NUMERICAL_PANEL + Ids.HELP_BTN);
+        getCollapseBtn(textNumericalPanel).ensureDebugId(baseID + Ids.TEXT_NUMERICAL_PANEL + Ids.COLLAPSE_BTN);
+
+        listPanel.ensureDebugId(baseID + Ids.LIST_PANEL);
+        listsCategoryHelpBtn.ensureDebugId(baseID + Ids.LIST_PANEL + Ids.HELP_BTN);
+        getCollapseBtn(listPanel).ensureDebugId(baseID + Ids.LIST_PANEL + Ids.COLLAPSE_BTN);
+
+        outputPanel.ensureDebugId(baseID + Ids.OUTPUT_PANEL);
+        outputCategoryHelpBtn.ensureDebugId(baseID + Ids.OUTPUT_PANEL + Ids.HELP_BTN);
+        getCollapseBtn(outputPanel).ensureDebugId(baseID + Ids.OUTPUT_PANEL + Ids.COLLAPSE_BTN);
+
+        referenceGenomePanel.ensureDebugId(baseID + Ids.REFERENCE_GENOME_PANEL);
+        referenceGenomeCategoryHelpBtn.ensureDebugId(baseID + Ids.REFERENCE_GENOME_PANEL + Ids.HELP_BTN);
+        getCollapseBtn(referenceGenomePanel).ensureDebugId(baseID + Ids.REFERENCE_GENOME_PANEL + Ids.COLLAPSE_BTN);
+
         group.ensureDebugId(baseID + Ids.GROUP);
         environmentVariable.ensureDebugId(baseID + Ids.ENV_VARIABLE);
         fileInput.ensureDebugId(baseID + Ids.FILE_INPUT);
@@ -166,6 +190,11 @@ public class AppIntegrationPalette extends Composite {
         referenceGenome.ensureDebugId(baseID + Ids.REFERENCE_GENOME);
         referenceSequence.ensureDebugId(baseID + Ids.REFERENCE_SEQUENCE);
         referenceAnnotation.ensureDebugId(baseID + Ids.REFERENCE_ANNOTATION);
+    }
+
+    private Widget getCollapseBtn(ContentPanel panel) {
+        int lastWidget = panel.getHeader().getToolCount() - 1;
+        return panel.getHeader().getTool(lastWidget);
     }
 
     public void setOnlyLabelEditMode(boolean onlyLabelEditMode) {
