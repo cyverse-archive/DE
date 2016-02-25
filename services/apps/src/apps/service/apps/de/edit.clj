@@ -386,9 +386,10 @@
 (defn add-app
   "This service will add a single-step App, including the information at its top level."
   [{:keys [username] :as user} {app-name :name :keys [references groups] :as app}]
-  (validate-app-name app-name [(get-user-subcategory username (workspace-dev-app-category-index))])
   (transaction
-    (let [app-id  (:id (persistence/add-app app))
+    (let [cat-id  (get-user-subcategory username (workspace-dev-app-category-index))
+          _       (validate-app-name app-name nil (workspace-beta-app-category-id) [cat-id])
+          app-id  (:id (persistence/add-app app))
           tool-id (->> app :tools first :id)
           task-id (-> (assoc app :id app-id :tool_id tool-id)
                       (add-single-step-task)

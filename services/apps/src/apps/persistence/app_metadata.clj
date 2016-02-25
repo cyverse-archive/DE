@@ -721,13 +721,14 @@
                         :l.id       [not= (user-favorite-subselect :w.root_category_id faves-idx)]})))))
 
 (defn- list-duplicate-apps*
-  [app-name category-id-set]
+  [app-name app-id category-id-set]
   (select [:apps :a]
           (fields :a.id :a.name :a.description)
           (join [:app_category_app :aca] {:a.id :aca.app_id})
           (where {(raw "trim(both from a.name)") (string/trim app-name)
                   :a.deleted                     false
-                  :aca.app_category_id           [in category-id-set]})))
+                  :aca.app_category_id           [in category-id-set]
+                  :a.id                          [not= app-id]})))
 
 (defn- app-category-id-subselect
   [app-id beta-app-category-id]
@@ -738,7 +739,8 @@
 
 (defn list-duplicate-apps
   "List apps with the same name that exist in the same category as the new app."
-  ([app-name category-ids]
-     (list-duplicate-apps* app-name category-ids))
-  ([app-name app-id beta-app-category-id]
-     (list-duplicate-apps* app-name (app-category-id-subselect app-id beta-app-category-id))))
+  [app-name app-id beta-app-category-id category-ids]
+  (->> (if (seq category-ids)
+         (remove (partial = beta-app-category-id) category-ids)
+         (app-category-id-subselect app-id beta-app-category-id))
+       (list-duplicate-apps* app-name app-id)))
