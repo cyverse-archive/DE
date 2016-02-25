@@ -463,8 +463,9 @@
    for public use."
   [user {app-name :name app-id :id :as body}]
   (let [app (persistence/get-app app-id)]
-    (validate-app-name app-name app-id (workspace-beta-app-category-id))
     (when-not (user-owns-app? user app)
       (verify-app-permission user app "write")))
-  (transaction (persistence/update-app-labels body))
+  (transaction
+   (validate-app-name app-name app-id (workspace-beta-app-category-id))
+   (persistence/update-app-labels body))
   (get-app-ui user app-id))
