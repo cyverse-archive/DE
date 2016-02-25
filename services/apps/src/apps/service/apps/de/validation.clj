@@ -1,11 +1,11 @@
 (ns apps.service.apps.de.validation
-  (:use [clojure-commons.exception-util :only [forbidden]]
+  (:use [clojure-commons.exception-util :only [forbidden exists]]
         [slingshot.slingshot :only [try+ throw+]]
         [korma.core :exclude [update]]
         [kameleon.core]
         [kameleon.entities]
         [kameleon.queries :only [parameter-types-for-tool-type]]
-        [apps.persistence.app-metadata :only [get-app]])
+        [apps.persistence.app-metadata :only [get-app list-duplicate-apps]])
   (:require [apps.service.apps.de.permissions :as perms]
             [clojure.string :as string]))
 
@@ -137,3 +137,25 @@
   [user app]
   (verify-app-permission user app "write")
   (verify-app-not-public app))
+
+(def ^:private duplicate-app-selected-categories-msg
+  "An app with the same name already exists in one of the selected categories.")
+
+(def ^:private duplicate-app-existing-categories-msg
+  "An app with the same name already exists in one of the same categories.")
+
+(defn validate-app-name
+  "Verifies that an app with the same name doesn't already exist in any of the same app categories. The beta
+   category is treated as an exception because it's intended to be a staging area for new apps."
+  ([app-name app-id beta-app-category-id]
+     (validate-app-name app-name app-id beta-app-category-id nil))
+  ([app-name app-id beta-app-category-id category-ids]
+     (when (seq (list-duplicate-apps app-name app-id beta-app-category-id category-ids))
+       (if (seq category-ids)
+         (exists duplicate-app-selected-categories-msg :app_name app-name :category_ids category-ids)
+         (exists duplicate-app-existing-categories-msg :app_name app-name :app_id app-id))))
+  ([app-name app-id beta-app-category-id category-ids path]
+     (when (seq (list-duplicate-apps app-name app-id beta-app-category-id category-ids))
+       (if (seq category-ids)
+         (exists duplicate-app-selected-categories-msg :app_name app-name :category_ids category-ids :path path)
+         (exists duplicate-app-existing-categories-msg :app_name app-name :app_id app-id :path path)))))

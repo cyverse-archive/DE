@@ -8,8 +8,8 @@
         [kameleon.entities]
         [kameleon.uuids :only [uuidify]]
         [apps.metadata.params :only [format-reference-genome-value]]
-        [apps.service.apps.de.validation :only [verify-app-editable verify-app-permission]]
-        [apps.util.config :only [workspace-dev-app-category-index]]
+        [apps.service.apps.de.validation :only [verify-app-editable verify-app-permission validate-app-name]]
+        [apps.util.config :only [workspace-dev-app-category-index workspace-beta-app-category-id]]
         [apps.util.conversions :only [remove-nil-vals convert-rule-argument]]
         [apps.validation :only [validate-parameter]]
         [apps.workspace :only [get-workspace]]
@@ -347,9 +347,10 @@
 (defn update-app
   "This service will update a single-step App, including the information at its top level and the
    tool used by its single task, as long as the App has not been submitted for public use."
-  [user {app-id :id :keys [references groups] :as app}]
+  [user {app-id :id app-name :name :keys [references groups] :as app}]
   (verify-app-editable user (persistence/get-app app-id))
   (transaction
+    (validate-app-name app-name app-id (workspace-beta-app-category-id))
     (persistence/update-app app)
     (let [tool-id (->> app :tools first :id)
           app-task (->> (get-app-details app-id) :tasks first)
@@ -384,9 +385,11 @@
 
 (defn add-app
   "This service will add a single-step App, including the information at its top level."
-  [user {:keys [references groups] :as app}]
+  [{:keys [username] :as user} {app-name :name :keys [references groups] :as app}]
   (transaction
-    (let [app-id  (:id (persistence/add-app app))
+    (let [cat-id  (get-user-subcategory username (workspace-dev-app-category-index))
+          _       (validate-app-name app-name nil (workspace-beta-app-category-id) [cat-id])
+          app-id  (:id (persistence/add-app app))
           tool-id (->> app :tools first :id)
           task-id (-> (assoc app :id app-id :tool_id tool-id)
                       (add-single-step-task)
@@ -458,9 +461,11 @@
 (defn relabel-app
   "This service allows labels to be updated in any app, whether or not the app has been submitted
    for public use."
-  [user {app-id :id :as body}]
+  [user {app-name :name app-id :id :as body}]
   (let [app (persistence/get-app app-id)]
     (when-not (user-owns-app? user app)
       (verify-app-permission user app "write")))
-  (transaction (persistence/update-app-labels body))
+  (transaction
+   (validate-app-name app-name app-id (workspace-beta-app-category-id))
+   (persistence/update-app-labels body))
   (get-app-ui user app-id))
