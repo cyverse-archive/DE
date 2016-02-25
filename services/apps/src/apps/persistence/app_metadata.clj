@@ -692,6 +692,14 @@
        (map (juxt :id :name))
        (into {})))
 
+(defn get-app-name
+  [app-id]
+  (->> (select :apps
+               (fields :name)
+               (where {:id (uuidify app-id)}))
+       first
+       :name))
+
 (defn- user-favorite-subselect
   [root-category-field faves-idx]
   (subselect [:app_category_group :acg]

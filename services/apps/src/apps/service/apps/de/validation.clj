@@ -138,14 +138,25 @@
   (verify-app-permission user app "write")
   (verify-app-not-public app))
 
+(def ^:private duplicate-app-selected-categories-msg
+  "An app with the same name already exists in one of the selected categories.")
+
+(def ^:private duplicate-app-existing-categories-msg
+  "An app with the same name already exists in one of the same categories.")
+
 (defn validate-app-name
   "Verifies that an app with the same name doesn't already exist in any of the same app categories. The beta
    category is treated as an exception because it's intended to be a staging area for new apps."
   ([app-name category-ids]
      (when (seq (list-duplicate-apps app-name category-ids))
-       (exists "An app with the same name already exists in one of the selected categories."
-               :app_name app-name :category_ids category-ids)))
+       (exists duplicate-app-selected-categories-msg :app_name app-name :category_ids category-ids)))
   ([app-name app-id beta-category-id]
      (when (seq (list-duplicate-apps app-name app-id beta-category-id))
-       (exists "An app with the same name already exists in one of the same categories."
-               :app_name app-name :app_id app-id))))
+       (exists duplicate-app-existing-categories-msg :app_name app-name :app_id app-id))))
+
+(defn validate-app-name-with-path
+  "Verifies that an app with the same name doesn't already exist in any of the same app categories. The beta
+   category is treated as an exception because it's intended to be a staging area for new apps."
+  [app-name category-ids path]
+  (when (seq (list-duplicate-apps app-name category-ids))
+    (exists duplicate-app-selected-categories-msg :app_name app-name :category_ids category-ids :path path)))
