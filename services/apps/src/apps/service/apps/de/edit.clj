@@ -349,8 +349,8 @@
    tool used by its single task, as long as the App has not been submitted for public use."
   [user {app-id :id app-name :name :keys [references groups] :as app}]
   (verify-app-editable user (persistence/get-app app-id))
-  (validate-app-name app-name app-id (workspace-beta-app-category-id))
   (transaction
+    (validate-app-name app-name app-id (workspace-beta-app-category-id))
     (persistence/update-app app)
     (let [tool-id (->> app :tools first :id)
           app-task (->> (get-app-details app-id) :tasks first)
@@ -462,8 +462,8 @@
   "This service allows labels to be updated in any app, whether or not the app has been submitted
    for public use."
   [user {app-name :name app-id :id :as body}]
-  (validate-app-name app-name app-id (workspace-beta-app-category-id))
   (let [app (persistence/get-app app-id)]
+    (validate-app-name app-name app-id (workspace-beta-app-category-id))
     (when-not (user-owns-app? user app)
       (verify-app-permission user app "write")))
   (transaction (persistence/update-app-labels body))

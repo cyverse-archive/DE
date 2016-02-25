@@ -73,5 +73,6 @@
 (defn categorize-apps
   "A service that categorizes one or more apps in the database."
   [{:keys [categories] :as body}]
-  (validate-request-body body)
-  (transaction (dorun (map categorize-app categories))))
+  (transaction
+   (validate-request-body body)
+   (dorun (map categorize-app categories))))
