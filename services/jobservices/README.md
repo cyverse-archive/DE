@@ -32,6 +32,8 @@ To run integration tests, use the **test.sh** script. It uses **docker-compose**
 
     ./test.sh
 
+If you notice connections failing, check if the **dedb** container started up properly. If **docker logs dedb** shows errors about SHMMAX, you may need to set it up with **--ipc host** (on some older systems, SHMMAX isn't properly inherited from the host system without this). Other sorts of failures may simply require a bit of a forced wait between starting the dedb, rabbit, and dind containers and running the test container.
+
 ## Workflow
 
 A user submits a job through the UI. The job submission is assembled into JSON in the **apps** service, which posts the JSON to the **jex-adapter** service. The **jex-adapter** service sends the JSON as a message out on the **jobs.launches** topic of the **jobs** exchange.
