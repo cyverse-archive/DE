@@ -27,7 +27,7 @@
      nil)))
 
 (defn load-app-tables
-  [agave]
+  [agave app-ids]
   (try+
    (->> (.listApps agave)
         (:apps)

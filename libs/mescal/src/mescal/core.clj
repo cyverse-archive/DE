@@ -5,7 +5,7 @@
   "A client for the Agave API."
   (listSystems [_])
   (getSystemInfo [_ system-name])
-  (listApps [_])
+  (listApps [_] [_ app-ids])
   (getApp [_ app-id])
   (submitJob [_ submission])
   (listJobs [_] [_ job-ids])
@@ -29,6 +29,9 @@
   (listApps [_]
     (v2/check-access-token token-info-fn timeout)
     (v2/list-apps base-url token-info-fn timeout page-len))
+  (listApps [_ app-ids]
+    (v2/check-access-token token-info-fn timeout)
+    (v2/list-apps base-url token-info-fn timeout page-len app-ids))
   (getApp [_ app-id]
     (v2/check-access-token token-info-fn timeout)
     (v2/get-app base-url token-info-fn timeout app-id))

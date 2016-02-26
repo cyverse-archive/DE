@@ -11,7 +11,7 @@
             [mescal.util :as util])
   (:import [java.io IOException]))
 
-; FIXME Update apps service exception handling when this exception handling is updated
+                                        ; FIXME Update apps service exception handling when this exception handling is updated
 (defn- agave-unavailable
   [e]
   (let [msg "Agave appears to be unavailable at this time"]
@@ -95,8 +95,11 @@
   (agave-get token-info-fn timeout (curl/url base-url "/systems/v2/" system-name)))
 
 (defn list-apps
-  [base-url token-info-fn timeout page-len]
-  (agave-get token-info-fn timeout (curl/url base-url "/apps/v2/") {:page-len page-len}))
+  ([base-url token-info-fn timeout page-len]
+     (agave-get token-info-fn timeout (curl/url base-url "/apps/v2/") {:page-len page-len}))
+  ([base-url token-info-fn timeout page-len app-ids]
+     (->> {:page-len page-len :id.in (string/join "," app-ids)}
+          (agave-get token-info-fn timeout (curl/url base-url "/apps/v2/")))))
 
 (defn get-app
   [base-url token-info-fn timeout app-id]

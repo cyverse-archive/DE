@@ -38,11 +38,14 @@
      :permission           "read"
      :wiki_url             ""}))
 
+(defn- format-app-listing-response
+  [listing statuses jobs-enabled?]
+  (assoc (hpc-app-group)
+    :apps      (map (partial format-app-listing statuses jobs-enabled?) listing)
+    :app_count (count listing)))
+
 (defn list-apps
-  [agave statuses jobs-enabled?]
-  (let [listing  (.listApps agave)
-        total    (count listing)
-        listing  (map (partial format-app-listing statuses jobs-enabled?) listing)]
-    (assoc (hpc-app-group)
-      :apps      listing
-      :app_count total)))
+  ([agave statuses jobs-enabled?]
+     (format-app-listing-response (.listApps agave) statuses jobs-enabled?))
+  ([agave statuses jobs-enabled? app-ids]
+     (format-app-listing-response (.listApps agave app-ids) statuses jobs-enabled?)))

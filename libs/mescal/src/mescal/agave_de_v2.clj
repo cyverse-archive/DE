@@ -14,8 +14,10 @@
   (into {} (map (juxt :id :status) (.listSystems agave))))
 
 (defn list-apps
-  [agave jobs-enabled?]
-  (app-listings/list-apps agave (get-system-statuses agave) jobs-enabled?))
+  ([agave jobs-enabled?]
+     (app-listings/list-apps agave (get-system-statuses agave) jobs-enabled?))
+  ([agave jbos-enabled? app-ids]
+     (app-listings/list-apps agave (get-system-statuses agave) jobs-enabled? app-ids)))
 
 (defn- app-matches?
   [search-term app]
