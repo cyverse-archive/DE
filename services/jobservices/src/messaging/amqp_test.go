@@ -149,3 +149,60 @@ func TestSendTimeLimitRequest(t *testing.T) {
 		t.Errorf("TimeLimitRequest's InvocationID was %s instead of test", req.InvocationID)
 	}
 }
+
+func TestSendTimeLimitResponse(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+	client := GetClient(t)
+	var actual []byte
+	coord := make(chan int)
+	handler := func(d amqp.Delivery) {
+		d.Ack(false)
+		actual = d.Body
+		coord <- 1
+	}
+	key := fmt.Sprintf("%s.%s", TimeLimitResponseKey, "test")
+	client.AddConsumer(JobsExchange, "test_queue2", key, handler)
+	client.SendTimeLimitResponse("test", 0)
+	<-coord
+	resp := &TimeLimitResponse{}
+	err := json.Unmarshal(actual, resp)
+	if err != nil {
+		t.Error(err)
+		t.Fail()
+	}
+	if resp.InvocationID != "test" {
+		t.Errorf("TimeLimitRequest's InvocationID was %s instead of test", resp.InvocationID)
+	}
+}
+
+func TestSendTimeLimitDelta(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+	client := GetClient(t)
+	var actual []byte
+	coord := make(chan int)
+	handler := func(d amqp.Delivery) {
+		d.Ack(false)
+		actual = d.Body
+		coord <- 1
+	}
+	key := fmt.Sprintf("%s.%s", TimeLimitDeltaKey, "test")
+	client.AddConsumer(JobsExchange, "test_queue3", key, handler)
+	client.SendTimeLimitDelta("test", "10s")
+	<-coord
+	delta := &TimeLimitDelta{}
+	err := json.Unmarshal(actual, delta)
+	if err != nil {
+		t.Error(err)
+		t.Fail()
+	}
+	if delta.InvocationID != "test" {
+		t.Errorf("TimeLimitDelta's InvocationID was %s instead of test", delta.InvocationID)
+	}
+	if delta.Delta != "10s" {
+		t.Errorf("TimeLimitDelta's Delta was %s instead of 10s", delta.Delta)
+	}
+}
