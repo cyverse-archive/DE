@@ -1,22 +1,31 @@
-dind:
-    image: docker:dind
-    container_name: dind
-    privileged: true
-    net: jobservices
-rabbit:
-    image: rabbitmq:management
-    container_name: rabbit
-    net: jobservices
-dedb:
-    image: discoenv/unittest-dedb:dev
-    container_name: dedb
-    net: jobservices
-test:
-    image: discoenv/buildenv
-    net: jobservices
-    environment:
-      RUN_INTEGRATION_TESTS: 1
-    volumes:
-      - .:/jex
-    working_dir: /jex
-    command: gb test -test.v
+version: '2'
+services:
+    dind:
+        image: docker:dind
+        container_name: dind
+        privileged: true
+        networks:
+         - jobservices
+    rabbit:
+        image: rabbitmq:management
+        container_name: rabbit
+        networks:
+         - jobservices
+    dedb:
+        image: discoenv/unittest-dedb:jex-go
+        container_name: dedb
+        networks:
+         - jobservices
+    test:
+        image: discoenv/buildenv
+        networks:
+         - jobservices
+        environment:
+          RUN_INTEGRATION_TESTS: 1
+        volumes:
+          - .:/jex
+        working_dir: /jex
+        command: gb test -test.v
+networks:
+    jobservices:
+        driver: bridge
