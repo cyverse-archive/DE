@@ -16,23 +16,11 @@
 (defn- get-api-secret []
   (System/getenv "AGAVE_API_SECRET"))
 
-(defn- prompt-for-username []
-  (print "username: ")
-  (flush)
-  (read-line))
-
-(defn- prompt-for-password []
-  (print "password: ")
-  (flush)
-  (.. System console readPassword))
-
 (defn- get-username []
-  (or (System/getenv "IPLANT_CAS_SHORT")
-      (prompt-for-username)))
+  (System/getenv "IPLANT_CAS_SHORT"))
 
 (defn- get-password []
-  (or (System/getenv "IPLANT_CAS_PASS")
-      (prompt-for-password)))
+  (System/getenv "IPLANT_CAS_PASS"))
 
 (defn- get-oauth-info [base-url api-key api-secret]
   {:api-name      "agave"
