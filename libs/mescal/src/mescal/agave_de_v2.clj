@@ -16,7 +16,7 @@
 (defn list-apps
   ([agave jobs-enabled?]
      (app-listings/list-apps agave (get-system-statuses agave) jobs-enabled?))
-  ([agave jbos-enabled? app-ids]
+  ([agave jobs-enabled? app-ids]
      (app-listings/list-apps agave (get-system-statuses agave) jobs-enabled? app-ids)))
 
 (defn- app-matches?

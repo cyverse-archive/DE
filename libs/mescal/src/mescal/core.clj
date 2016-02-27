@@ -18,7 +18,7 @@
   (agaveFilePath [_ file-url])
   (storageSystem [_]))
 
-(deftype AgaveClientV2 [base-url storage-system token-info-fn timeout page-len]
+(deftype AgaveClientV2 [base-url storage-system token-info-fn timeout page-len max-query-items]
   AgaveClient
   (listSystems [_]
     (v2/check-access-token token-info-fn timeout)
@@ -31,7 +31,9 @@
     (v2/list-apps base-url token-info-fn timeout page-len))
   (listApps [_ app-ids]
     (v2/check-access-token token-info-fn timeout)
-    (v2/list-apps base-url token-info-fn timeout page-len app-ids))
+    (if (> (count app-ids) max-query-items)
+      (v2/list-apps base-url token-info-fn timeout page-len)
+      (v2/list-apps base-url token-info-fn timeout page-len app-ids)))
   (getApp [_ app-id]
     (v2/check-access-token token-info-fn timeout)
     (v2/get-app base-url token-info-fn timeout app-id))
@@ -69,8 +71,9 @@
     storage-system))
 
 (defn agave-client-v2
-  [base-url storage-system token-info-fn & {:keys [timeout page-len]
-                                            :or {timeout  5000
-                                                 page-len 100}}]
+  [base-url storage-system token-info-fn & {:keys [timeout page-len max-query-items]
+                                            :or {timeout         5000
+                                                 page-len        100
+                                                 max-query-items 50}}]
   (let [token-info-wrapper-fn (memoize #(ref (token-info-fn)))]
-    (AgaveClientV2. base-url storage-system token-info-wrapper-fn timeout page-len)))
+    (AgaveClientV2. base-url storage-system token-info-wrapper-fn timeout page-len max-query-items)))

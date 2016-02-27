@@ -11,7 +11,7 @@
             [mescal.util :as util])
   (:import [java.io IOException]))
 
-                                        ; FIXME Update apps service exception handling when this exception handling is updated
+; FIXME Update apps service exception handling when this exception handling is updated
 (defn- agave-unavailable
   [e]
   (let [msg "Agave appears to be unavailable at this time"]
@@ -60,19 +60,19 @@
                 :socket-timeout timeout}))))
 
 (defn- agave-get-paged
-  [token-info-fn timeout page-len url]
+  [token-info-fn timeout page-len url & [params]]
   (->> (iterate (partial + page-len) 0)
-       (map (partial hash-map :limit page-len :offset))
+       (map (partial assoc (or params {}) :limit page-len :offset))
        (map (partial agave-get* token-info-fn timeout url))
        (take-upto (comp (partial > page-len) count))
        (apply concat)))
 
 (defn agave-get
-  [token-info-fn timeout url & [{:keys [page-len]}]]
+  [token-info-fn timeout url & [{:keys [page-len] :as params}]]
   (set-ext-svc-tag! "agave")
   (if page-len
-    (agave-get-paged token-info-fn timeout page-len url)
-    (agave-get* token-info-fn timeout url)))
+    (agave-get-paged token-info-fn timeout page-len url (dissoc params :page-len))
+    (agave-get* token-info-fn timeout url params)))
 
 (defn agave-post
   [token-info-fn timeout url body]
