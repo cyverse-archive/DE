@@ -2,6 +2,8 @@ package main
 
 import (
 	"configurate"
+	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -314,73 +316,49 @@ func Run(client *messaging.Client, dckr *Docker, exit chan messaging.StatusCode)
 	exit <- status
 }
 
-// Wait implements the logic for killing the job when the time limit is surpassed.
-func Wait(client *messaging.Client, dckr *Docker, seconds chan int64, exit chan messaging.StatusCode) {
-	limit := <-seconds
-	durationStr := fmt.Sprintf("%ds", limit)
-	duration, err := time.ParseDuration(durationStr)
-	if err != nil {
-		exit <- messaging.StatusBadDuration
-	} else {
-		time.Sleep(duration)
-		log.Printf("Time limit reached after %s", durationStr)
-		exit <- messaging.StatusTimeLimit
+// TimeTracker tracks when road-runner should exit.
+type TimeTracker struct {
+	Timer   *time.Timer
+	EndDate time.Time
+}
+
+// NewTimeTracker returns a new *TimeTracker.
+func NewTimeTracker(d time.Duration, exitFunc func()) *TimeTracker {
+	endDate := time.Now().Add(d)
+	exitTimer := time.AfterFunc(d, exitFunc)
+	return &TimeTracker{
+		EndDate: endDate,
+		Timer:   exitTimer,
 	}
 }
 
-func main() {
-	if *version {
-		AppVersion()
-		os.Exit(0)
-	}
-	if *cfgPath == "" {
-		log.Fatal("--config must be set.")
-	}
-	err := configurate.Init(*cfgPath)
-	if err != nil {
-		log.Fatal(err)
-	}
-	uri, err := configurate.C.String("amqp.uri")
-	if err != nil {
-		log.Fatal(err)
-	}
+// ApplyDelta generates a new end date and modifies the time with the passed-in
+// duration.
+func (t *TimeTracker) ApplyDelta(deltaDuration time.Duration) error {
+	//apply the new duration to the current end date.
+	newEndDate := t.EndDate.Add(deltaDuration)
 
-	client, err := messaging.NewClient(uri, true)
-	if err != nil {
-		log.Fatal(err)
+	//create a new duration that is the difference between the new end date and now.
+	newDuration := t.EndDate.Sub(time.Now())
+
+	//modify the Timer to use the new duration.
+	wasActive := t.Timer.Reset(newDuration)
+
+	//set the new enddate
+	t.EndDate = newEndDate
+
+	if !wasActive {
+		return errors.New("Timer was not active")
 	}
-	defer client.Close()
-	client.SetupPublishing(messaging.JobsExchange)
+	return nil
+}
 
-	if *jobFile == "" {
-		log.Fatal("--job must be set.")
-	}
-	data, err := ioutil.ReadFile(*jobFile)
-	if err != nil {
-		log.Fatal(err)
-	}
-	job, err = model.NewFromData(data)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	dckr, err = NewDocker(*dockerURI)
-	if err != nil {
-		fail(client, job, "Failed to connect to local docker socket")
-		log.Fatal(err)
-	}
-
-	// The channel that the exit code will be passed along on.
-	exit := make(chan messaging.StatusCode)
-
-	// Could probably reuse the exit channel, but that's less explicit.
-	finalExit := make(chan messaging.StatusCode)
-
-	// The channel that additional seconds will be sent through for the time limit.
-	seconds := make(chan int64)
-
-	// Clean up code based on the exit status.
-	go func() {
+// Exit returns a function that can be called by a TimeTracker's Timer, which
+// should be created with timer.AfterFunc(). exit is the channel that this
+// function reads from, finalExit is the channel that this channel writes to
+// when it's done doing its thing.
+func Exit(exit, finalExit chan messaging.StatusCode) func() {
+	return func() {
 		exitCode := <-exit
 		switch exitCode {
 		case messaging.StatusTimeLimit, messaging.StatusKilled:
@@ -484,7 +462,127 @@ func main() {
 			}
 		}
 		finalExit <- exitCode
-	}()
+	}
+}
+
+// Wait implements the logic for killing the job when the time limit is surpassed.
+func Wait(client *messaging.Client, dckr *Docker, seconds chan int64, exit chan messaging.StatusCode) {
+	limit := <-seconds
+	durationStr := fmt.Sprintf("%ds", limit)
+	duration, err := time.ParseDuration(durationStr)
+	if err != nil {
+		exit <- messaging.StatusBadDuration
+	} else {
+		time.Sleep(duration)
+		log.Printf("Time limit reached after %s", durationStr)
+		exit <- messaging.StatusTimeLimit
+	}
+}
+
+// RegisterTimeLimitDeltaListener sets a function that listens for TimeLimitDelta
+// messages on the given client.
+func RegisterTimeLimitDeltaListener(client *messaging.Client, timeTracker *TimeTracker, invID string) {
+	timeLimitDeltaKey := fmt.Sprintf("%s.%s", messaging.TimeLimitDeltaKey, invID)
+	client.AddConsumer(messaging.JobsExchange, "runner", timeLimitDeltaKey, func(d amqp.Delivery) {
+		d.Ack(false)
+		running(client, job, "Received delta request")
+		deltaMsg := &messaging.TimeLimitDelta{}
+		err := json.Unmarshal(d.Body, deltaMsg)
+		if err != nil {
+			running(client, job, fmt.Sprintf("Failed to unmarshal time limit delta: %s", err.Error()))
+			return
+		}
+		newDuration, err := time.ParseDuration(deltaMsg.Delta)
+		if err != nil {
+			running(client, job, fmt.Sprintf("Failed to parse duration string from message: %s", err.Error()))
+			return
+		}
+		err = timeTracker.ApplyDelta(newDuration)
+		if err != nil {
+			running(client, job, fmt.Sprintf("Failed to apply time limit delta: %s", err.Error()))
+			return
+		}
+		running(client, job, fmt.Sprintf("Applied time delta of %s. New end date is %s", deltaMsg.Delta, timeTracker.EndDate.UTC().String()))
+	})
+}
+
+// RegisterTimeLimitRequestListener sets a function that listens for
+// TimeLimitRequest messages on the given client.
+func RegisterTimeLimitRequestListener(client *messaging.Client, timeTracker *TimeTracker, invID string) {
+	timeLimitRequestKey := fmt.Sprintf("%s.%s", messaging.TimeLimitRequestsKey, invID)
+	client.AddConsumer(messaging.JobsExchange, "runner", timeLimitRequestKey, func(d amqp.Delivery) {
+		d.Ack(false)
+		running(client, job, "Received time limit request")
+		timeLeft := int64(timeTracker.EndDate.Sub(time.Now())) / int64(time.Millisecond)
+		err := client.SendTimeLimitResponse(invID, timeLeft)
+		if err != nil {
+			running(client, job, fmt.Sprintf("Failed to send time limit response: %s", err.Error()))
+			return
+		}
+		running(client, job, fmt.Sprintf("Sent message saying that time left is %dms", timeLeft))
+	})
+}
+
+func main() {
+	if *version {
+		AppVersion()
+		os.Exit(0)
+	}
+	if *cfgPath == "" {
+		log.Fatal("--config must be set.")
+	}
+	err := configurate.Init(*cfgPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	uri, err := configurate.C.String("amqp.uri")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	client, err := messaging.NewClient(uri, true)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer client.Close()
+	client.SetupPublishing(messaging.JobsExchange)
+
+	if *jobFile == "" {
+		log.Fatal("--job must be set.")
+	}
+	data, err := ioutil.ReadFile(*jobFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+	job, err = model.NewFromData(data)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	dckr, err = NewDocker(*dockerURI)
+	if err != nil {
+		fail(client, job, "Failed to connect to local docker socket")
+		log.Fatal(err)
+	}
+
+	// The channel that the exit code will be passed along on.
+	exit := make(chan messaging.StatusCode)
+
+	// Could probably reuse the exit channel, but that's less explicit.
+	finalExit := make(chan messaging.StatusCode)
+
+	// The channel that additional seconds will be sent through for the time limit.
+	seconds := make(chan int64)
+
+	exitFunc := Exit(exit, finalExit)
+	defaultDuration, err := time.ParseDuration("48h")
+	if err != nil {
+		fail(client, job, "Failed to parse default duration")
+		log.Fatal(err)
+	}
+	timeTracker := NewTimeTracker(defaultDuration, exitFunc)
+	RegisterTimeLimitDeltaListener(client, timeTracker, job.InvocationID)
+	RegisterTimeLimitRequestListener(client, timeTracker, job.InvocationID)
 
 	// listen for orders to stop the job.
 	stopsKey := fmt.Sprintf("%s.%s", messaging.StopsKey, job.InvocationID)
