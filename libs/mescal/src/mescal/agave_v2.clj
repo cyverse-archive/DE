@@ -60,19 +60,19 @@
                 :socket-timeout timeout}))))
 
 (defn- agave-get-paged
-  [token-info-fn timeout page-len url]
+  [token-info-fn timeout page-len url & [params]]
   (->> (iterate (partial + page-len) 0)
-       (map (partial hash-map :limit page-len :offset))
+       (map (partial assoc (or params {}) :limit page-len :offset))
        (map (partial agave-get* token-info-fn timeout url))
        (take-upto (comp (partial > page-len) count))
        (apply concat)))
 
 (defn agave-get
-  [token-info-fn timeout url & [{:keys [page-len]}]]
+  [token-info-fn timeout url & [{:keys [page-len] :as params}]]
   (set-ext-svc-tag! "agave")
   (if page-len
-    (agave-get-paged token-info-fn timeout page-len url)
-    (agave-get* token-info-fn timeout url)))
+    (agave-get-paged token-info-fn timeout page-len url (dissoc params :page-len))
+    (agave-get* token-info-fn timeout url params)))
 
 (defn agave-post
   [token-info-fn timeout url body]
@@ -95,8 +95,11 @@
   (agave-get token-info-fn timeout (curl/url base-url "/systems/v2/" system-name)))
 
 (defn list-apps
-  [base-url token-info-fn timeout page-len]
-  (agave-get token-info-fn timeout (curl/url base-url "/apps/v2/") {:page-len page-len}))
+  ([base-url token-info-fn timeout page-len]
+     (agave-get token-info-fn timeout (curl/url base-url "/apps/v2/") {:page-len page-len}))
+  ([base-url token-info-fn timeout page-len app-ids]
+     (->> {:page-len page-len :id.in (string/join "," app-ids)}
+          (agave-get token-info-fn timeout (curl/url base-url "/apps/v2/")))))
 
 (defn get-app
   [base-url token-info-fn timeout app-id]

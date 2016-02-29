@@ -27,9 +27,9 @@
      nil)))
 
 (defn load-app-tables
-  [agave]
+  [agave app-ids]
   (try+
-   (->> (.listApps agave)
+   (->> (.listApps agave app-ids)
         (:apps)
         (map (juxt :id identity))
         (into {})
