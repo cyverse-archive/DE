@@ -4,15 +4,21 @@
 package org.iplantc.de.notifications.client.views;
 
 import org.iplantc.de.client.models.notifications.NotificationCategory;
+import org.iplantc.de.notifications.client.events.NotificationToolbarDeleteAllClickedEvent;
+import org.iplantc.de.notifications.client.events.NotificationToolbarDeleteClickedEvent;
+import org.iplantc.de.notifications.client.events.NotificationToolbarSelectionEvent;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 
 import com.sencha.gxt.data.shared.StringLabelProvider;
 import com.sencha.gxt.widget.core.client.button.TextButton;
@@ -24,16 +30,13 @@ import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
  * @author sriram
  * 
  */
-public class NotificationToolbarViewImpl implements NotificationToolbarView {
+public class NotificationToolbarViewImpl extends Composite implements NotificationToolbarView {
 
     private static NotificationToolbarUiBinder uiBinder = GWT.create(NotificationToolbarUiBinder.class);
 
     @UiTemplate("NotificationToolbarView.ui.xml")
     interface NotificationToolbarUiBinder extends UiBinder<Widget, NotificationToolbarViewImpl> {
     }
-
-    private final Widget widget;
-    private Presenter presenter;
 
     @UiField
     TextButton btnDelete;
@@ -47,11 +50,32 @@ public class NotificationToolbarViewImpl implements NotificationToolbarView {
     @UiField(provided = true)
     SimpleComboBox<NotificationCategory> cboFilter = new SimpleComboBox<NotificationCategory>(
             new StringLabelProvider<NotificationCategory>());
+    private NotificationView.NotificationViewAppearance appearance;
 
-    public NotificationToolbarViewImpl() {
-        widget = uiBinder.createAndBindUi(this);
+    @Inject
+    public NotificationToolbarViewImpl(NotificationView.NotificationViewAppearance appearance) {
+        this.appearance = appearance;
+        initWidget(uiBinder.createAndBindUi(this));
 
         initFilters();
+    }
+
+    @Override
+    public HandlerRegistration addNotificationToolbarDeleteAllClickedEventHandler(
+            NotificationToolbarDeleteAllClickedEvent.NotificationToolbarDeleteAllClickedEventHandler handler) {
+        return addHandler(handler, NotificationToolbarDeleteAllClickedEvent.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addNotificationToolbarDeleteClickedEventHandler(
+            NotificationToolbarDeleteClickedEvent.NotificationToolbarDeleteClickedEventHandler handler) {
+        return addHandler(handler, NotificationToolbarDeleteClickedEvent.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addNotificationToolbarSelectionEventHandler(
+            NotificationToolbarSelectionEvent.NotificationToolbarSelectionEventHandler handler) {
+        return addHandler(handler, NotificationToolbarSelectionEvent.TYPE);
     }
 
     private void initFilters() {
@@ -67,7 +91,7 @@ public class NotificationToolbarViewImpl implements NotificationToolbarView {
         cboFilter.addSelectionHandler(new SelectionHandler<NotificationCategory>() {
             @Override
             public void onSelection(SelectionEvent<NotificationCategory> event) {
-                presenter.onFilterSelection(event.getSelectedItem());
+                fireEvent(new NotificationToolbarSelectionEvent(event.getSelectedItem()));
             }
         });
         cboFilter.setEditable(false);
@@ -75,7 +99,7 @@ public class NotificationToolbarViewImpl implements NotificationToolbarView {
 
     @Override
     public Widget asWidget() {
-        return widget;
+        return this;
     }
 
     @Override
@@ -91,22 +115,17 @@ public class NotificationToolbarViewImpl implements NotificationToolbarView {
 
     @UiHandler("btnDelete")
     public void deleteClicked(SelectEvent event) {
-        presenter.onDeleteClicked();
+        fireEvent(new NotificationToolbarDeleteClickedEvent());
     }
 
     @UiHandler("btnDeleteAll")
     public void deleteAllClicked(SelectEvent event) {
-        presenter.onDeleteAllClicked();
-    }
-
-    @Override
-    public void setPresenter(Presenter p) {
-        this.presenter = p;
-
+        fireEvent(new NotificationToolbarDeleteAllClickedEvent());
     }
 
     @Override
     public void setRefreshButton(TextButton refreshBtn) {
+        refreshBtn.setText(appearance.refresh());
         menuToolBar.insert(refreshBtn, 1);
     }
 

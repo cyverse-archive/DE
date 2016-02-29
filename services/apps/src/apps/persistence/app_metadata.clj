@@ -1,6 +1,7 @@
 (ns apps.persistence.app-metadata
   "Persistence layer for app metadata."
   (:use [kameleon.entities]
+        [kameleon.util :only [normalize-string]]
         [kameleon.uuids :only [uuidify]]
         [korma.core :exclude [update]]
         [korma.db :only [transaction]]
@@ -8,6 +9,7 @@
         [apps.util.assertions]
         [apps.util.conversions :only [remove-nil-vals]])
   (:require [clojure.set :as set]
+            [clojure.string :as string]
             [kameleon.app-listing :as app-listing]
             [korma.core :as sql]
             [apps.persistence.app-metadata.delete :as delete]
@@ -691,6 +693,14 @@
        (map (juxt :id :name))
        (into {})))
 
+(defn get-app-name
+  [app-id]
+  (->> (select :apps
+               (fields :name)
+               (where {:id (uuidify app-id)}))
+       first
+       :name))
+
 (defn- user-favorite-subselect
   [root-category-field faves-idx]
   (subselect [:app_category_group :acg]
@@ -710,3 +720,28 @@
                            {:u.username username})
                        {:aca.app_id (uuidify app-id)
                         :l.id       [not= (user-favorite-subselect :w.root_category_id faves-idx)]})))))
+
+(defn- list-duplicate-apps*
+  [app-name app-id category-id-set]
+  (select [:apps :a]
+          (fields :a.id :a.name :a.description)
+          (join [:app_category_app :aca] {:a.id :aca.app_id})
+          (where {(normalize-string :a.name) (normalize-string app-name)
+                  :a.deleted                 false
+                  :aca.app_category_id       [in category-id-set]
+                  :a.id                      [not= app-id]})))
+
+(defn- app-category-id-subselect
+  [app-id beta-app-category-id]
+  (subselect :app_category_app
+             (fields :app_category_id)
+             (where {:app_id          app-id
+                     :app_category_id [not= beta-app-category-id]})))
+
+(defn list-duplicate-apps
+  "List apps with the same name that exist in the same category as the new app."
+  [app-name app-id beta-app-category-id category-ids]
+  (->> (if (seq category-ids)
+         (remove (partial = beta-app-category-id) category-ids)
+         (app-category-id-subselect app-id beta-app-category-id))
+       (list-duplicate-apps* app-name app-id)))

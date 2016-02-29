@@ -81,10 +81,10 @@
     (job-listings/list-jobs self user params))
 
   (loadAppTables [_ app-ids]
-    (if (and (user-has-access-token?)
-             (some (complement util/uuid?) app-ids))
-      (listings/load-app-tables agave)
-      []))
+    (let [agave-app-ids (remove util/uuid? app-ids)]
+      (if (and (seq agave-app-ids) (user-has-access-token?))
+        (listings/load-app-tables agave agave-app-ids)
+        [])))
 
   (submitJob [this submission]
     (when-not (util/uuid? (:app_id submission))

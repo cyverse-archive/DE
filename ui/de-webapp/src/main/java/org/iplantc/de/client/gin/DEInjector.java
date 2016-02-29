@@ -9,6 +9,7 @@ import org.iplantc.de.desktop.client.DesktopView;
 import org.iplantc.de.desktop.client.gin.DEGinModule;
 import org.iplantc.de.diskResource.client.gin.DiskResourceGinModule;
 import org.iplantc.de.fileViewers.client.gin.FileViewerGinModule;
+import org.iplantc.de.notifications.client.gin.NotificationGinModule;
 import org.iplantc.de.tags.client.gin.TagsGinModule;
 import org.iplantc.de.tools.requests.client.gin.ToolRequestGinModule;
 
@@ -29,7 +30,8 @@ import com.google.gwt.inject.client.Ginjector;
                 DiskResourceGinModule.class,
                 CommentsGinModule.class,
                 TagsGinModule.class,
-                FileViewerGinModule.class})
+                FileViewerGinModule.class,
+                NotificationGinModule.class})
 public interface DEInjector extends Ginjector {
     public static final DEInjector INSTANCE = GWT.create(DEInjector.class);
 

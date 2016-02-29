@@ -1,13 +1,13 @@
 (ns apps.service.apps.de.admin
-  (:use [kameleon.uuids :only [uuidify]]
-        [korma.db :only [transaction]]
+  (:use [korma.db :only [transaction]]
         [apps.persistence.app-metadata.relabel :only [update-app-labels]]
         [apps.util.assertions :only [assert-not-nil]]
-        [apps.util.config :only [workspace-public-id]]
+        [apps.util.config :only [workspace-public-id workspace-beta-app-category-id]]
         [slingshot.slingshot :only [throw+]])
   (:require [clojure.tools.logging :as log]
             [kameleon.app-groups :as app-groups]
-            [apps.persistence.app-metadata :as persistence]))
+            [apps.persistence.app-metadata :as persistence]
+            [apps.service.apps.de.validation :as av]))
 
 (def ^:private max-app-category-name-len 255)
 
@@ -91,9 +91,11 @@
 (defn update-app
   "This service updates high-level details and labels in an App, and can mark or unmark the app as
    deleted or disabled in the database."
-  [{app-id :id :as app}]
-  (validate-app-existence app-id)
+  [{app-name :name app-id :id :as app}]
   (transaction
+   (validate-app-existence app-id)
+   (when-not (nil? app-name)
+     (av/validate-app-name app-name app-id (workspace-beta-app-category-id)))
    (if (empty? (select-keys app [:name :description :wiki_url :references :groups]))
      (update-app-deleted-disabled app)
      (update-app-details app))))
@@ -106,7 +108,7 @@
   (validate-subcategory-name parent_id name)
   (validate-category-empty parent_id)
   (transaction
-   (let [category-id (:id (app-groups/create-app-group (uuidify (workspace-public-id)) category))]
+   (let [category-id (:id (app-groups/create-app-group (workspace-public-id) category))]
      (app-groups/add-subgroup parent_id category-id)
      category-id)))
 

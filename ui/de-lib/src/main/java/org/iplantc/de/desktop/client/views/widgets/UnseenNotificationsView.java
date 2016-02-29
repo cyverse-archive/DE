@@ -3,7 +3,7 @@ package org.iplantc.de.desktop.client.views.widgets;
 import org.iplantc.de.desktop.client.DesktopView;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
-import org.iplantc.de.notifications.client.views.NotificationMessageProperties;
+import org.iplantc.de.notifications.client.model.NotificationMessageProperties;
 
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;

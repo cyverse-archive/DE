@@ -34,8 +34,8 @@ public class ErrorHandlerDefaultAppearance implements ErrorHandler.ErrorHandlerA
     }
 
     @Override
-    public String errorReport(String name, String message) {
-        return errorStrings.errorReport(name, message);
+    public String errorReport(String err_code, String message) {
+        return errorStrings.errorReport(err_code, message);
     }
 
     @Override

@@ -4,7 +4,10 @@
         [kameleon.app-groups]
         [kameleon.entities]
         [apps.validation]
-        [slingshot.slingshot :only [throw+]]))
+        [slingshot.slingshot :only [throw+]])
+  (:require [apps.persistence.app-metadata :as ap]
+            [apps.service.apps.de.validation :as av]
+            [apps.util.config :as cfg]))
 
 (defn- categorize-app
   "Associates an app with an app category."
@@ -48,11 +51,18 @@
              :path  path}))
   (dorun (map (partial validate-category-id path) category-ids)))
 
+(defn- validate-app-name
+  "Validates the app name to ensure that there are no apps with the same name in any of the
+  destination categories."
+  [app-id category-ids path]
+  (av/validate-app-name (ap/get-app-name app-id) app-id (cfg/workspace-beta-app-category-id) category-ids path))
+
 (defn- validate-category
   "Validates each categorized app in the request."
   [{app-id :app_id category-ids :category_ids :as category} path]
   (validate-app-info app-id path)
-  (validate-category-ids category-ids path))
+  (validate-category-ids category-ids path)
+  (validate-app-name app-id category-ids path))
 
 (defn- validate-request-body
   "Validates the request body."
@@ -63,5 +73,6 @@
 (defn categorize-apps
   "A service that categorizes one or more apps in the database."
   [{:keys [categories] :as body}]
-  (validate-request-body body)
-  (transaction (dorun (map categorize-app categories))))
+  (transaction
+   (validate-request-body body)
+   (dorun (map categorize-app categories))))
