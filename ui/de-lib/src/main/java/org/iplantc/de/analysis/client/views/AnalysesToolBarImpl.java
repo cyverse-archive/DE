@@ -44,7 +44,6 @@ import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
-import com.sencha.gxt.widget.core.client.info.Info;
 import com.sencha.gxt.widget.core.client.menu.Item;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
@@ -83,7 +82,10 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
     MenuItem shareCollabMI;
     @UiField
     MenuItem shareSupportMI;
-    @Inject AsyncProvider<AnalysisParametersDialog> analysisParametersDialogAsyncProvider;
+    @Inject
+    AsyncProvider<AnalysisParametersDialog> analysisParametersDialogAsyncProvider;
+  @Inject
+    UserInfo userInfo;
 
 
     List<Analysis> currentSelection;
@@ -121,13 +123,13 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
     @Override
     public void onSelectionChanged(SelectionChangedEvent<Analysis> event) {
         
-        GWT.log("user--->" + UserInfo.getInstance().getFullUsername());
+        GWT.log("user--->" + userInfo.getFullUsername());
         currentSelection = event.getSelection();
 
         int size = currentSelection.size();
         final boolean canCancelSelection = canCancelSelection(currentSelection);
         final boolean canDeleteSelection = canDeleteSelection(currentSelection);
-        boolean isOwner = canShare(currentSelection);
+        boolean isOwner = isOwner(currentSelection);
 
         boolean goToFolderEnabled, viewParamsEnabled, relaunchEnabled, cancelEnabled, deleteEnabled;
         boolean renameEnabled, updateCommentsEnabled, shareEnabled;
@@ -181,9 +183,9 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
         updateCommentsMI.setEnabled(updateCommentsEnabled);
     }
 
-    private boolean canShare(List<Analysis> selection) {
+    private boolean isOwner(List<Analysis> selection) {
         for (Analysis a : selection) {
-            if (!(a.getUserName().equals(UserInfo.getInstance().getFullUsername()))) {
+            if (!(a.getUserName().equals(userInfo.getFullUsername()))) {
                 return false;
             }
         }

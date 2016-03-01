@@ -28,6 +28,7 @@ import com.google.gwtmockito.GxtMockitoTestRunner;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
+import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 
@@ -58,6 +59,13 @@ public class AnalysesToolBarImplTest {
     UserInfo mockUserInfo;
     List<Analysis> currentSelectionMock;
 
+    @Mock
+    TextButton share_menuMock;
+    @Mock
+    MenuItem shareCollabMIMock;
+    @Mock
+    MenuItem shareSupportMIMock;
+
     private AnalysesToolBarImpl uut;
 
     @Before public void setUp() {
@@ -76,6 +84,9 @@ public class AnalysesToolBarImplTest {
         uut.renameMI = renameMiMock;
         uut.updateCommentsMI = updateCommentsMiMock;
         uut.currentSelection = currentSelectionMock;
+        uut.share_menu = share_menuMock;
+        uut.shareCollabMI = shareCollabMIMock;
+        uut.shareSupportMI = shareSupportMIMock;
         uut.userInfo = mockUserInfo;
     }
 
@@ -90,6 +101,9 @@ public class AnalysesToolBarImplTest {
         verify(deleteMiMock).setEnabled(eq(false));
         verify(renameMiMock).setEnabled(eq(false));
         verify(updateCommentsMiMock).setEnabled(eq(false));
+        verify(share_menuMock).setEnabled(eq(false));
+        verify(shareCollabMIMock).setEnabled(eq(false));
+        verify(shareSupportMIMock).setEnabled(eq(false));
     }
 
 

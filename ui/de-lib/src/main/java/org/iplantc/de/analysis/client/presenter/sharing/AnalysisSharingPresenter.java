@@ -1,7 +1,5 @@
 /**
- * 
  * @author sriram
- * 
  */
 
 package org.iplantc.de.analysis.client.presenter.sharing;
@@ -42,14 +40,14 @@ public class AnalysisSharingPresenter implements SharingPresenter {
                                     final JsonUtil jsonUtil) {
 
         this.view = view;
-        view.setPresenter(this);
         this.jsonUtil = jsonUtil;
         this.collaboratorsUtil = collaboratorsUtil;
         this.selectedAnalysis = selectedAnalysis;
-        this.permissionsPanel = new SharingPermissionsPanel(this,
-                                                            getSelectedResourcesAsMap(this.selectedAnalysis));
-        permissionsPanel.setPermissionColumnVisibility(false);
+        this.permissionsPanel =
+                new SharingPermissionsPanel(this, getSelectedResourcesAsMap(this.selectedAnalysis));
+        permissionsPanel.hidePermissionColumn();
         permissionsPanel.setExplainPanelVisibility(false);
+        view.setPresenter(this);
         view.addShareWidget(permissionsPanel.asWidget());
     }
 
