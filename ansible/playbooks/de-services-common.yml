@@ -1,7 +1,7 @@
 ---
 - name: Perform common systems configuration
   hosts: systems
-  sudo: yes
+  become: yes
   gather_facts: false
   tags:
       - config

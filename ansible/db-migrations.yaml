@@ -3,7 +3,7 @@
   hosts: db-proxy:&systems
   tags:
       - databases
-  sudo: False
+  become: False
 
   roles:
       - role: util-notify-chat

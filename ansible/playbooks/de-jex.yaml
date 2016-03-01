@@ -1,7 +1,7 @@
 ---
 - name: Configure JEX
   hosts: jex:&systems
-  sudo: yes
+  become: yes
   tags:
       - jex
   pre_tasks:
