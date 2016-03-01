@@ -44,6 +44,7 @@ import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.info.Info;
 import com.sencha.gxt.widget.core.client.menu.Item;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
@@ -75,8 +76,13 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
     @UiField TextButton showAllTb;
     @UiField AnalysisSearchField searchField;
     @UiField(provided = true) final AnalysesView.Appearance appearance;
-    // @UiField
-    // MenuItem shareMI;
+
+    @UiField
+    TextButton share_menu;
+    @UiField
+    MenuItem shareCollabMI;
+    @UiField
+    MenuItem shareSupportMI;
     @Inject AsyncProvider<AnalysisParametersDialog> analysisParametersDialogAsyncProvider;
 
 
@@ -168,14 +174,9 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
         relaunchMI.setEnabled(relaunchEnabled);
         cancelMI.setEnabled(cancelEnabled);
         deleteMI.setEnabled(deleteEnabled);
-        /**
-         * always disabled for now.
-         * 
-         */
-        // shareMI.setEnabled(shareEnabled);
-        /**
-         * uncomment when feature is needed.
-         */
+        share_menu.setEnabled(shareEnabled);
+        shareCollabMI.setEnabled(shareEnabled);
+        shareSupportMI.setEnabled(shareEnabled);
         renameMI.setEnabled(renameEnabled);
         updateCommentsMI.setEnabled(updateCommentsEnabled);
     }
@@ -217,6 +218,12 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
 
         refreshTb.ensureDebugId(baseID + AnalysisModule.Ids.BUTTON_REFRESH);
         searchField.ensureDebugId(baseID + AnalysisModule.Ids.FIELD_SEARCH);
+
+        //share menu
+        share_menu.ensureDebugId(baseID + AnalysisModule.Ids.SHARE_MENU );
+        shareCollabMI.ensureDebugId(baseID + AnalysisModule.Ids.SHARE_COLLAB);
+        shareCollabMI.ensureDebugId(baseID + AnalysisModule.Ids.SHARE_SUPPORT);
+
     }
 
     /**
@@ -397,8 +404,41 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
     }
     //</editor-fold>
 
-    /**
-     * @UiHandler("shareMI") void onShareSelected(SelectionEvent<Item> event) {
-     *                       presenter.onShareSelected(currentSelection); }
-     **/
+
+    @UiHandler("shareCollabMI")
+    void onShareSelected(SelectionEvent<Item> event) {
+       presenter.onShareSelected(currentSelection);
+    }
+
+    @UiHandler("shareSupportMI")
+    void onShareSupportSelected(SelectionEvent<Item> event) {
+        ConfirmMessageBox messageBox = new ConfirmMessageBox(appearance.shareSupport(),
+                                                             appearance.shareSupportConfirm());
+        messageBox.setPredefinedButtons(Dialog.PredefinedButton.YES,
+                                        Dialog.PredefinedButton.NO,
+                                        Dialog.PredefinedButton.CANCEL);
+        messageBox.getButton(Dialog.PredefinedButton.YES).setText(appearance.shareWithInput());
+        messageBox.getButton(Dialog.PredefinedButton.NO).setText(appearance.shareOutputOnly());
+
+        messageBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
+            @Override
+            public void onDialogHide(DialogHideEvent event) {
+                switch (event.getHideButton()) {
+                    case YES:
+                        presenter.onShareSupportSelected(currentSelection, true);
+                        break;
+                    case NO:
+                        presenter.onShareSupportSelected(currentSelection, false);
+                        break;
+
+                    case CANCEL:
+                        break;
+                }
+            }
+        });
+
+        messageBox.show();
+
+    }
+
 }

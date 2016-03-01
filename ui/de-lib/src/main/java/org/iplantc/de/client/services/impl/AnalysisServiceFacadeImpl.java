@@ -289,5 +289,15 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
         deServiceFacade.getServiceData(wrapper, new StringAnalaysisStepInfoConverter(callback, factory));
 
     }
+
+    @Override
+    public void shareAnalyses(List<Analysis> analysisList, AsyncCallback<String> callback) {
+
+    }
+
+    @Override
+    public void unshareAnalyses(List<Analysis> analysisList, AsyncCallback<String> callback) {
+
+    }
 }
 

@@ -31,10 +31,6 @@
                                        text="{appearance.relaunchAnalysis}"
                                        icon="{appearance.runIcon}"
                                        enabled="false"/>
-                 <!--       <menu:MenuItem ui:field="shareMI"
-                                       text="Share with Collaborators..."
-                                       icon="{appearance.shareIcon}"
-                                       enabled="false"/>  -->
                         <menu:MenuItem ui:field="viewJobInfoMI"
                                        text="{appearance.viewAnalysisStepInfo}"
                                        icon="{appearance.fileViewIcon}"
@@ -77,6 +73,20 @@
         </toolbar:child>
         <toolbar:child>
             <toolbar:SeparatorToolItem />
+        </toolbar:child>
+        <toolbar:child>
+            <button:TextButton ui:field="share_menu" text="{appearance.share}">
+                <button:menu>
+                    <menu:Menu ui:field="sharingMenu">
+                        <menu:MenuItem ui:field="shareCollabMI" enabled="false"
+                                       text="{appearance.shareCollab}" icon="{appearance.shareIcon}"
+                        />
+                        <menu:MenuItem ui:field="shareSupportMI" enabled="false"
+                                       text="{appearance.shareSupport}" icon="{appearance.shareIcon}"
+                        />
+                    </menu:Menu>
+                </button:menu>
+            </button:TextButton>
         </toolbar:child>
         <toolbar:child>
             <button:TextButton ui:field="showAllTb"

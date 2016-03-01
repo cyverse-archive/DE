@@ -57,4 +57,10 @@ public interface AnalysisServiceFacade {
      * @param callback
      */
     void getAnalysisSteps(Analysis analysis, AsyncCallback<AnalysisStepsInfo> callback);
+
+    void shareAnalyses(List<Analysis> analysisList, AsyncCallback<String> callback);
+
+    void unshareAnalyses(List<Analysis> analysisList, AsyncCallback<String> callback);
+
+
 }

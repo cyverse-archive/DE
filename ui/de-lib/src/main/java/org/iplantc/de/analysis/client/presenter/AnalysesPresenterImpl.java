@@ -7,15 +7,21 @@ import org.iplantc.de.analysis.client.events.selection.AnalysisAppSelectedEvent;
 import org.iplantc.de.analysis.client.events.selection.AnalysisNameSelectedEvent;
 import org.iplantc.de.analysis.client.gin.factory.AnalysesViewFactory;
 import org.iplantc.de.analysis.client.presenter.proxy.AnalysisRpcProxy;
+import org.iplantc.de.analysis.client.presenter.sharing.AnalysisSharingPresenter;
 import org.iplantc.de.analysis.client.views.AnalysisStepsView;
 import org.iplantc.de.analysis.client.views.dialogs.AnalysisSharingDialog;
 import org.iplantc.de.analysis.client.views.dialogs.AnalysisStepsInfoDialog;
+import org.iplantc.de.analysis.client.views.sharing.AnalysisSharingView;
+import org.iplantc.de.analysis.client.views.sharing.AnalysisSharingViewImpl;
 import org.iplantc.de.analysis.client.views.widget.AnalysisSearchField;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.diskResources.OpenFolderEvent;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.analysis.AnalysisStepsInfo;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
+import org.iplantc.de.client.sharing.SharingPresenter;
+import org.iplantc.de.client.util.JsonUtil;
+import org.iplantc.de.collaborators.client.util.CollaboratorsUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
@@ -177,6 +183,16 @@ public class AnalysesPresenterImpl implements
     @Inject
     Provider<AnalysisSharingDialog> aSharingDialogProvider;
 
+    @Inject
+    CollaboratorsUtil collaboratorsUtil;
+    @Inject
+    JsonUtil jsonUtil;
+
+    private SharingPresenter sharingPresenter;
+    private AnalysisSharingView sharingView;
+
+
+
     private final ListStore<Analysis> listStore;
 
     private final AnalysesView view;
@@ -201,6 +217,12 @@ public class AnalysesPresenterImpl implements
         this.view.addAnalysisNameSelectedEventHandler(this);
         this.view.addAnalysisAppSelectedEventHandler(this);
         this.view.addHTAnalysisExpandEventHandler(this);
+        sharingView = new AnalysisSharingViewImpl();
+    }
+
+    @Override
+    public void onShareSupportSelected(List<Analysis> currentSelection,boolean shareWithInput) {
+
     }
 
     @Override
@@ -296,7 +318,15 @@ public class AnalysesPresenterImpl implements
 
     @Override
     public void onShareSelected(List<Analysis> selected) {
-        aSharingDialogProvider.get().show(selected);
+        sharingView.setSelectedAnalysis(selected);
+        sharingPresenter = new AnalysisSharingPresenter(analysisService,
+                                                        selected,
+                                                        sharingView,
+                                                        collaboratorsUtil,
+                                                        jsonUtil);
+        AnalysisSharingDialog asd = aSharingDialogProvider.get();
+        asd.setPresenter(sharingPresenter);
+        asd.show(selected);
     }
 
     @Override

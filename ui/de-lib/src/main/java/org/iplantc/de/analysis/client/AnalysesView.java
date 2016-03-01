@@ -112,9 +112,23 @@ public interface AnalysesView extends IsWidget,
         AnalysisInfoStyle css();
 
         ImageResource shareIcon();
+
+        String share();
+
+        String shareCollab();
+
+        String shareSupport();
+
+        String shareSupportConfirm();
+
+        String shareWithInput();
+
+        String shareOutputOnly();
     }
 
     interface Presenter {
+
+        void onShareSupportSelected(List<Analysis> currentSelection, boolean shareInputs);
 
         interface Appearance {
 
