@@ -62,6 +62,7 @@ public interface AppIntegrationModule {
         String LABEL = ".label";
         String ARGUMENT_OPTION = ".argumentOption";
         String DEFAULT_VALUE = ".defaultValue";
+        String DEFAULT_VALUE_LABEL = ".defaultValueLabel";
         String DO_NOT_DISPLAY = ".doNotDisplay";
         String REQUIRED = ".required";
         String OMIT_IF_BLANK = ".omitIfBlank";
@@ -76,5 +77,6 @@ public interface AppIntegrationModule {
         String CHECKED_VALUE = ".checkedValue";
         String UNCHECKED_OPTION = ".unCheckedOption";
         String UNCHECKED_VALUE = ".unCheckedValue";
+        String COMMAND_LINE = ".commandLine";
     }
 }
