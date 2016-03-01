@@ -125,6 +125,7 @@ public class EnvVarPropertyEditor extends AbstractArgumentPropertyEditor {
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
         label.ensureDebugId(baseID + PropertyPanelIds.LABEL);
+        doNotDisplay.getCheckBox().ensureDebugId(baseID + PropertyPanelIds.DO_NOT_DISPLAY);
         name.ensureDebugId(baseID + PropertyPanelIds.NAME);
         defaultValueEditor.ensureDebugId(baseID + PropertyPanelIds.DEFAULT_VALUE);
         requiredEditor.ensureDebugId(baseID + PropertyPanelIds.REQUIRED);
