@@ -10,10 +10,8 @@ import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
-import org.iplantc.de.commons.client.views.dialogs.IplantErrorDialog;
 import org.iplantc.de.commons.client.widgets.IPCFileUploadField;
 import org.iplantc.de.diskResource.client.events.FileUploadedEvent;
-import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -251,22 +249,30 @@ public class SimpleFileUploadDialog extends IPlantDialog {
             statList.get(formList.indexOf(event.getSource())).clearStatus("");
         }
 
-        String results2 = event.getResults();
-        String results = Format.stripTags(results2);
-        Splittable split = StringQuoter.split(results);
         IPCFileUploadField field = fufList.get(formList.indexOf(event.getSource()));
-        if (split == null) {
+        String results2 = event.getResults();
+
+        if (Strings.isNullOrEmpty(results2)) {
             IplantAnnouncer.getInstance()
                            .schedule(new ErrorAnnouncementConfig(appearance.fileUploadsFailed(Lists.newArrayList(
                                    field.getValue()))));
         } else {
-            if (split.isUndefined("file") || (split.get("file") == null)) {
-                field.markInvalid(appearance.fileUploadsFailed(Lists.newArrayList(field.getValue())));
+            String results = Format.stripTags(results2);
+            Splittable split = StringQuoter.split(results);
+
+            if (split == null) {
                 IplantAnnouncer.getInstance()
                                .schedule(new ErrorAnnouncementConfig(appearance.fileUploadsFailed(Lists.newArrayList(
                                        field.getValue()))));
             } else {
-                eventBus.fireEvent(new FileUploadedEvent(uploadDest, field.getValue(), results));
+                if (split.isUndefined("file") || (split.get("file") == null)) {
+                    field.markInvalid(appearance.fileUploadsFailed(Lists.newArrayList(field.getValue())));
+                    IplantAnnouncer.getInstance()
+                                   .schedule(new ErrorAnnouncementConfig(appearance.fileUploadsFailed(
+                                           Lists.newArrayList(field.getValue()))));
+                } else {
+                    eventBus.fireEvent(new FileUploadedEvent(uploadDest, field.getValue(), results));
+                }
             }
         }
 
