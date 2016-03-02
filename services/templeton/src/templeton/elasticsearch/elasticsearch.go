@@ -1,6 +1,7 @@
 package elasticsearch
 
 import (
+	"fmt"
 	"logcabin"
 
 	"gopkg.in/olivere/elastic.v3"
@@ -68,45 +69,58 @@ func (b *BulkIndexer) Flush() error {
 	return nil
 }
 
-// PurgeIndex walks an index querying a database, deleting those which should not exist
-func (e *Elasticer) PurgeIndex(d *database.Databaser) {
-	indexer := e.NewBulkIndexer(1000)
-	defer indexer.Flush()
-
-	scanner, err := e.es.Scan(e.index).Type("metadata").Scroll("1m").Fields("_id").Do()
+func (e *Elasticer) PurgeType(d *database.Databaser, indexer *BulkIndexer, t string) error {
+	scanner, err := e.es.Scan(e.index).Type(t).Scroll("1m").Fields("_id").Do()
 	if err != nil {
-		logger.Fatal(err)
-		return
+		return err
 	}
 
 	for {
 		docs, err := scanner.Next()
 		if err == elastic.EOS {
-			logger.Print("Finished all rows for purge.")
+			logger.Printf("Finished all rows for purge of %s.", t)
 			break
 		}
 		if err != nil {
-			logger.Print(err)
-			break
+			return err
 		}
 
 		if docs.TotalHits() > 0 {
 			for _, hit := range docs.Hits.Hits {
 				avus, err := d.GetObjectAVUs(hit.Id)
 				if err != nil {
-					logger.Printf("Error processing %s: %s", hit.Id, err)
+					logger.Printf("Error processing %s/%s: %s", t, hit.Id, err)
 					continue
 				}
 				if len(avus) == 0 {
-					logger.Printf("Deleting %s", hit.Id)
-					req := elastic.NewBulkDeleteRequest().Index(e.index).Type("metadata").Id(hit.Id)
+					logger.Printf("Deleting %s/%s", t, hit.Id)
+					req := elastic.NewBulkDeleteRequest().Index(e.index).Type(t).Routing(hit.Id).Id(hit.Id)
 					err = indexer.Add(req)
 					if err != nil {
-						logger.Printf("Error enqueuing delete of %s: %s", hit.Id, err)
+						logger.Printf("Error enqueuing delete of %s/%s: %s", t, hit.Id, err)
 					}
 				}
 			}
 		}
+	}
+	return nil
+}
+
+// PurgeIndex walks an index querying a database, deleting those which should not exist
+func (e *Elasticer) PurgeIndex(d *database.Databaser) {
+	indexer := e.NewBulkIndexer(1000)
+	defer indexer.Flush()
+
+	err := e.PurgeType(d, indexer, "file_metadata")
+	if err != nil {
+		logger.Fatal(err)
+		return
+	}
+
+	err = e.PurgeType(d, indexer, "folder_metadata")
+	if err != nil {
+		logger.Fatal(err)
+		return
 	}
 }
 
@@ -137,9 +151,10 @@ func (e *Elasticer) IndexEverything(d *database.Databaser) {
 			logger.Print(err)
 			break
 		}
-		logger.Printf("Indexing %s", formatted.ID)
+		indexed_type := fmt.Sprintf("%s_metadata", ids[0].TargetType)
+		logger.Printf("Indexing %s/%s", indexed_type, formatted.ID)
 
-		req := elastic.NewBulkIndexRequest().Index(e.index).Type("metadata").Id(formatted.ID).Doc(formatted)
+		req := elastic.NewBulkIndexRequest().Index(e.index).Type(indexed_type).Parent(formatted.ID).Id(formatted.ID).Doc(formatted)
 		err = indexer.Add(req)
 		if err != nil {
 			logger.Print(err)
