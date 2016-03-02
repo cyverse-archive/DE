@@ -17,6 +17,7 @@
 (def AppPublicParam (describe Boolean
                       "Whether the App has been published and is viewable by all users"))
 
+(def OptionalDebugKey (optional-key :debug))
 (def OptionalGroupsKey (optional-key :groups))
 (def OptionalParametersKey (optional-key :parameters))
 (def OptionalParameterArgumentsKey (optional-key :arguments))
@@ -243,6 +244,7 @@
     :label            (describe String "An alias for the App's name")
     :deleted          AppDeletedParam
     :disabled         AppDisabledParam
+    OptionalDebugKey  (describe Boolean "True if input files should be retained for the job by default.")
     OptionalGroupsKey (describe [AppGroupJobView] GroupListDocs)))
 
 (defschema AppDetailCategory
