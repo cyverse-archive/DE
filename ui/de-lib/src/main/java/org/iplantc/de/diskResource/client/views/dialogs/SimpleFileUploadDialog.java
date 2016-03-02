@@ -251,7 +251,7 @@ public class SimpleFileUploadDialog extends IPlantDialog {
 
         IPCFileUploadField field = fufList.get(formList.indexOf(event.getSource()));
         String results2 = event.getResults();
-
+        GWT.log("upload result->" + results2);
         if (Strings.isNullOrEmpty(results2)) {
             IplantAnnouncer.getInstance()
                            .schedule(new ErrorAnnouncementConfig(appearance.fileUploadsFailed(Lists.newArrayList(
@@ -350,7 +350,7 @@ public class SimpleFileUploadDialog extends IPlantDialog {
                     destResourceMap.get(id).markInvalid(appearance.fileExist());
                 }
             } else {
-                for (IPCFileUploadField field : destResourceMap.values()) {
+                for (final IPCFileUploadField field : destResourceMap.values()) {
                     int index = fufList.indexOf(field);
                     statList.get(index).setBusy("");
                     FormPanel form = formList.get(index);
@@ -358,10 +358,23 @@ public class SimpleFileUploadDialog extends IPlantDialog {
 
                         @Override
                         public void onSubmit(SubmitEvent event) {
+                            if (event.isCanceled()) {
+                                IplantAnnouncer.getInstance()
+                                               .schedule(new ErrorAnnouncementConfig(appearance.fileUploadsFailed(
+                                                       Lists.newArrayList(field.getValue()))));
+                            }
+
                             getOkButton().disable();
-                        }
+                       }
                     });
-                    form.submit();
+                    try {
+                        form.submit();
+                    } catch(Exception e ) {
+                        GWT.log("expcetion on submit" + e.getMessage());
+                        IplantAnnouncer.getInstance()
+                                       .schedule(new ErrorAnnouncementConfig(appearance.fileUploadsFailed(
+                                               Lists.newArrayList(field.getValue()))));
+                    }
                     submittedForms.add(form);
                 }
             }

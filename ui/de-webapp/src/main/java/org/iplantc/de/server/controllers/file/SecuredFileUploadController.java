@@ -1,5 +1,14 @@
 package org.iplantc.de.server.controllers.file;
 
+import static org.iplantc.de.server.AppLoggerConstants.API_METRICS_LOGGER;
+import static org.iplantc.de.server.AppLoggerConstants.REQUEST_KEY;
+import static org.iplantc.de.server.AppLoggerConstants.RESPONSE_KEY;
+
+import org.iplantc.de.server.AppLoggerUtil;
+import org.iplantc.de.server.auth.DESecurityConstants;
+import org.iplantc.de.server.auth.JwtBuilder;
+import org.iplantc.de.shared.services.BaseServiceCallWrapper;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -9,10 +18,6 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.iplantc.de.server.AppLoggerUtil;
-import org.iplantc.de.server.auth.DESecurityConstants;
-import org.iplantc.de.server.auth.JwtBuilder;
-import org.iplantc.de.shared.services.BaseServiceCallWrapper;
 import org.jose4j.lang.JoseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,16 +32,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import static org.iplantc.de.server.AppLoggerConstants.API_METRICS_LOGGER;
-import static org.iplantc.de.server.AppLoggerConstants.REQUEST_KEY;
-import static org.iplantc.de.server.AppLoggerConstants.RESPONSE_KEY;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Performs secured file uploads.
@@ -47,6 +48,7 @@ import static org.iplantc.de.server.AppLoggerConstants.RESPONSE_KEY;
 @Controller
 public class SecuredFileUploadController {
 
+    public static final int ENTITY_TOO_LARGE = 413;
     private final Logger API_REQUEST_LOG = LoggerFactory.getLogger(API_METRICS_LOGGER);
     private final AppLoggerUtil loggerUtil = AppLoggerUtil.getInstance();
 
@@ -82,6 +84,9 @@ public class SecuredFileUploadController {
         try {
             final long requestStartTime = System.currentTimeMillis();
             final CloseableHttpResponse incomingResponse = loggerUtil.copyRequestIdHeader(post, client.execute(post));
+            if(incomingResponse.getStatusLine().getStatusCode() == ENTITY_TOO_LARGE) {
+                throw new Exception("File too large to upload!");
+            }
             final long responseRecvTime = System.currentTimeMillis();
             final String responseJson = loggerUtil.createMdcResponseMapJson(incomingResponse,
                                                                             BaseServiceCallWrapper.Type.GET,
