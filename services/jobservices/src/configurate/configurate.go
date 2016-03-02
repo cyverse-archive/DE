@@ -1,3 +1,6 @@
+// Package configurate provides common configuration functionality.
+// It supports reading configuration settings from a YAML file. All of the job
+// services are intended to read from the same configuration file.
 package configurate
 
 import (

@@ -1,3 +1,6 @@
+// Package messaging provides the logic and data structures that the services
+// will need to communicate with each other over AMQP (as implemented
+// by RabbitMQ).
 package messaging
 
 import (
