@@ -593,21 +593,11 @@ func main() {
 		exit <- messaging.StatusTimeLimit
 	})
 
+	go client.Listen()
+
 	RegisterTimeLimitDeltaListener(client, timeTracker, job.InvocationID)
 	RegisterTimeLimitRequestListener(client, timeTracker, job.InvocationID)
 	RegisterStopRequestListener(client, exit, job.InvocationID)
-
-	// listen for orders to stop the job.
-	stopsKey := fmt.Sprintf("%s.%s", messaging.StopsKey, job.InvocationID)
-	client.AddConsumer(messaging.JobsExchange, "runner", stopsKey, func(d amqp.Delivery) {
-		d.Ack(false)
-		running(client, job, "Received stop request")
-		exit <- -1
-	})
-
-	go func() {
-		client.Listen()
-	}()
 
 	go Wait(client, dckr, seconds, exit)
 	seconds <- job.TimeLimit
