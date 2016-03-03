@@ -5,97 +5,108 @@ import (
 	"io/ioutil"
 	"os"
 	"testing"
+	"log"
+	"regexp"
 )
 
-func TestNewLogMessage(t *testing.T) {
-	logger := New("jex-events", "jex-events")
-	m := logger.NewLogMessage("foo")
-	expected := "jex-events"
-	if m.Service != expected {
-		t.Errorf("LogMessage.Service was %s instead of %s", m.Service, expected)
-	}
-	if m.Artifact != expected {
-		t.Errorf("LogMessage.Artifact was %s instead of %s", m.Artifact, expected)
-	}
-	expected = "org.iplantc"
-	if m.Group != expected {
-		t.Errorf("LogMessage.Group was %s instead of %s", m.Group, expected)
-	}
-	expected = "INFO"
-	if m.Level != expected {
-		t.Errorf("LogMessage.Level was %s instead of %s", m.Level, expected)
-	}
-	expected = "foo"
-	if m.Message != expected {
-		t.Errorf("LogMessage.Message was %s instead of %s", m.Message, expected)
-	}
+func TestAllLoggerOutput(t *testing.T) {
+	svc, artifact, msg := "test_service", "test_artifact", "msg"
+	Init(svc, artifact)
+	testLoggerOutput(svc, artifact, trace_lvl, msg, Trace, t)
+	testLoggerOutput(svc, artifact, info_lvl, msg, Info, t)
+	testLoggerOutput(svc, artifact, warn_lvl, msg, Warning, t)
+	testLoggerOutput(svc, artifact, err_lvl, msg, Error, t)
 }
 
-func TestConfigurableNew(t *testing.T) {
-	l := New("test_service", "test_artifact")
-	if l == nil {
-		t.Error("logger was nil when it shouldn't have been")
-		t.Fail()
-	}
-	expected := "test_service"
-	if l.service != expected {
-		t.Errorf("logger.service was %s instead of %s", l.service, expected)
-	}
-	expected = "test_artifact"
-	if l.artifact != expected {
-		t.Errorf("logger.artifact was %s instead of %s", l.artifact, expected)
-	}
-}
-
-func TestLogWriter(t *testing.T) {
+func testLoggerOutput(expectedSvc string, expectedArtifact string, expectedLvl string, expectedMsg string, logger *log.Logger, t *testing.T) {
 	original := os.Stdout
-	r, w, err := os.Pipe()
-	if err != nil {
-		t.Error(err)
-		t.Fail()
-	}
-	os.Stdout = w
 	restore := func() {
 		os.Stdout = original
 	}
 	defer restore()
-	expected := "this is a test"
-	logger := New("test_service", "test_artifact")
-	_, err = logger.Write([]byte(expected))
+
+	r, w, err := os.Pipe()
 	if err != nil {
 		t.Error(err)
-		os.Stdout = original
-		t.Fail()
 	}
+	os.Stdout = w
+
+	logger.Println(expectedMsg)
+
 	w.Close()
-	var msg LogMessage
 	actualBytes, err := ioutil.ReadAll(r)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
+	var msg logMessage
 	err = json.Unmarshal(actualBytes, &msg)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
-	actual := msg.Message
-	if actual != expected {
-		t.Errorf("logger returned %s instead of %s", actual, expected)
-	}
-	expected = "test_service"
-	actual = msg.Service
-	if actual != expected {
+	actual := msg.Service
+	expected := expectedSvc
+	if expected != actual {
 		t.Errorf("msg.Service was %s instead of %s", actual, expected)
 	}
-	expected = "test_artifact"
+
 	actual = msg.Artifact
+	expected = expectedArtifact
 	if actual != expected {
 		t.Errorf("msg.Artifact was %s instead of %s", actual, expected)
 	}
-	expected = "org.iplantc"
+
 	actual = msg.Group
+	expected = "org.iplantc"
 	if actual != expected {
 		t.Errorf("msg.Group was %s instead of %s", actual, expected)
 	}
+
+	actual = msg.Level
+	expected = expectedLvl
+	if actual != expected {
+		t.Errorf("msg.Level was %s instead of %s", actual, expected)
+	}
+
+	actual = msg.Message
+	expected = expectedMsg
+	if match, _ := regexp.MatchString(expectedMsg, actual); !match {
+		t.Errorf("msg.Message was \"%s\", and did not contain %s", actual, expected)
+	}
 }
+
+func BenchmarkTrace(b *testing.B){
+	svc, artifact, msg := "test_service", "test_artifact", "msg"
+	Init(svc, artifact)
+	Trace.SetOutput(ioutil.Discard)
+	for i := 0; i < b.N; i++ {
+		Trace.Println(msg)
+	}
+}
+
+func BenchmarkInfo(b *testing.B){
+	svc, artifact, msg := "test_service", "test_artifact", "msg"
+	Init(svc, artifact)
+	Info.SetOutput(ioutil.Discard)
+	for i := 0; i < b.N; i++ {
+		Info.Println(msg)
+	}
+}
+
+func BenchmarkWarn(b *testing.B){
+	svc, artifact, msg := "test_service", "test_artifact", "msg"
+	Init(svc, artifact)
+	Warning.SetOutput(ioutil.Discard)
+	for i := 0; i < b.N; i++ {
+		Warning.Println(msg)
+	}
+}
+
+func BenchmarkErr(b *testing.B){
+	svc, artifact, msg := "test_service", "test_artifact", "msg"
+	Init(svc, artifact)
+	Error.SetOutput(ioutil.Discard)
+	for i := 0; i < b.N; i++ {
+		Error.Println(msg)
+	}
+}
+
