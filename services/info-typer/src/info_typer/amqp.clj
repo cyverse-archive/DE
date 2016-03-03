@@ -86,7 +86,7 @@
   (log/info "configuring AMQP connection")
   (let [chan (lch/open (get-connection (connection-map)))
         q    (declare-queue chan (str "info-typer." (cfg/environment-name)))]
-    (lb/qos chan 100)
+    (lb/qos chan (cfg/amqp-qos))
     (declare-exchange chan (cfg/amqp-exchange) (cfg/amqp-exchange-type)
       :durable (cfg/amqp-exchange-durable?) :auto-delete (cfg/amqp-exchange-auto-delete?))
     (doseq [topic topics] (bind chan q (cfg/amqp-exchange) topic))
