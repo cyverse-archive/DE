@@ -3,6 +3,7 @@
   (:require [clojure.java.jdbc :as jdbc]
             [clojure.string :as string]
             [common-cli.core :as cli]
+            [sharkbait.analyses :as analyses]
             [sharkbait.apps :as apps]
             [sharkbait.consts :as consts]
             [sharkbait.db :as db]
@@ -63,12 +64,19 @@
   (let [subjects (into {} (map (juxt #(.getId %) identity) subjects))]
     (apps/register-de-apps db-spec session subjects folder-names consts/app-permission-def-name)))
 
+(defn- register-de-analyses
+  [db-spec folder-names session subjects]
+  (println "Registering DE analyses...")
+  (let [subjects (into {} (map (juxt #(.getId %) identity) subjects))]
+    (analyses/register-de-analyses db-spec session subjects folder-names consts/analysis-permission-def-name)))
+
 (defn- register-de-entities
   "Registers DE entities in Grouper."
   [db-spec folder-names session subjects]
   (time (register-de-users session folder-names subjects))
   (time (create-permission-defs session folder-names))
-  (time (register-de-apps db-spec folder-names session subjects)))
+  (time (register-de-apps db-spec folder-names session subjects))
+  (time (register-de-analyses db-spec folder-names session subjects)))
 
 (defn- perform-de-user-actions
   "Performs the actions that do not require superuser privileges."

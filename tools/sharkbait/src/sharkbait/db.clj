@@ -50,6 +50,19 @@
   [db-spec]
   (jdbc/query db-spec (list-de-apps-query)))
 
+(defn- list-de-analyses-query
+  "Formats an SQL query to list all of the analyses in the DE database."
+  []
+  (-> (select :j.id :u.username)
+      (from [:jobs :j])
+      (join [:users :u] [:= :j.user_id :u.id])
+      sql/format))
+
+(defn list-de-analyses
+  "Lists all of the analyses in the DE."
+  [db-spec]
+  (jdbc/query db-spec (list-de-analyses-query)))
+
 (defn- list-de-users-query
   "Formats an SQL query to list all users in the DE database."
   []
