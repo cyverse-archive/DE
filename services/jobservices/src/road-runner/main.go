@@ -128,18 +128,48 @@ func running(client *messaging.Client, job *model.Job, msg string) {
 }
 
 func cleanup(job *model.Job) {
-	err := dckr.NukeContainersByLabel(model.DockerLabelKey, job.InvocationID)
-	if err != nil {
-		log.Print(err)
-	}
-	for _, dc := range job.DataContainers() {
-		err := dckr.SafelyRemoveImage(dc.Name, dc.Tag)
+	for _, ci := range job.ContainerImages() {
+		log.Printf("Nuking image %s:%s", ci.Name, ci.Tag)
+		err := dckr.NukeImage(ci.Name, ci.Tag)
 		if err != nil {
 			log.Print(err)
 		}
 	}
-	for _, ci := range job.ContainerImages() {
-		err := dckr.SafelyRemoveImage(ci.Name, ci.Tag)
+	log.Println("Finding all input containers")
+	inputContainers, err := dckr.ContainersWithLabel(typeLabel, strconv.Itoa(inputContainer), true)
+	if err != nil {
+		log.Print(err)
+		inputContainers = []string{}
+	}
+	for _, ic := range inputContainers {
+		log.Printf("Nuking input container %s", ic)
+		err = dckr.NukeContainer(ic)
+		if err != nil {
+			log.Print(err)
+		}
+	}
+	log.Println("Finding all step containers")
+	stepContainers, err := dckr.ContainersWithLabel(typeLabel, strconv.Itoa(stepContainer), true)
+	if err != nil {
+		log.Print(err)
+		inputContainers = []string{}
+	}
+	for _, sc := range stepContainers {
+		log.Printf("Nuking step container %s", sc)
+		err = dckr.NukeContainer(sc)
+		if err != nil {
+			log.Print(err)
+		}
+	}
+	log.Println("Finding all data containers")
+	dataContainers, err := dckr.ContainersWithLabel(typeLabel, strconv.Itoa(dataContainer), true)
+	if err != nil {
+		log.Print(err)
+		inputContainers = []string{}
+	}
+	for _, dc := range dataContainers {
+		log.Printf("Nuking data container %s", dc)
+		err = dckr.NukeContainer(dc)
 		if err != nil {
 			log.Print(err)
 		}
@@ -363,112 +393,67 @@ func (t *TimeTracker) ApplyDelta(deltaDuration time.Duration) error {
 // should be created with timer.AfterFunc(). exit is the channel that this
 // function reads from, finalExit is the channel that this channel writes to
 // when it's done doing its thing.
-func Exit(exit, finalExit chan messaging.StatusCode) func() {
-	return func() {
-		exitCode := <-exit
-		switch exitCode {
-		case messaging.StatusTimeLimit, messaging.StatusKilled:
-			//Annihilate the input/steps/data containers even if they're running,
-			//but allow the output containers to run. Yanking the rug out from the
-			//containers should force the Run() function to 'fall through' to any clean
-			//up steps.
-			log.Printf("Received an exit code of %d, cleaning up", int(exitCode))
-			for _, dc := range job.DataContainers() {
-				log.Printf("Nuking image %s:%s", dc.Name, dc.Tag)
-				err := dckr.NukeImage(dc.Name, dc.Tag)
-				if err != nil {
-					log.Print(err)
-				}
-			}
-			for _, ci := range job.ContainerImages() {
-				log.Printf("Nuking image %s:%s", ci.Name, ci.Tag)
-				err := dckr.NukeImage(ci.Name, ci.Tag)
-				if err != nil {
-					log.Print(err)
-				}
-			}
-			log.Println("Finding all input containers")
-			inputContainers, err := dckr.ContainersWithLabel(typeLabel, strconv.Itoa(inputContainer), true)
+func Exit(exit, finalExit chan messaging.StatusCode) {
+	var err error
+	exitCode := <-exit
+	switch exitCode {
+	case messaging.StatusTimeLimit, messaging.StatusKilled:
+		//Annihilate the input/steps/data containers even if they're running,
+		//but allow the output containers to run. Yanking the rug out from the
+		//containers should force the Run() function to 'fall through' to any clean
+		//up steps.
+		log.Printf("Received an exit code of %d, cleaning up", int(exitCode))
+		for _, dc := range job.DataContainers() {
+			log.Printf("Nuking image %s:%s", dc.Name, dc.Tag)
+			err := dckr.NukeImage(dc.Name, dc.Tag)
 			if err != nil {
 				log.Print(err)
-				inputContainers = []string{}
-			}
-			for _, ic := range inputContainers {
-				log.Printf("Nuking input container %s", ic)
-				err = dckr.NukeContainer(ic)
-				if err != nil {
-					log.Print(err)
-				}
-			}
-			log.Println("Finding all step containers")
-			stepContainers, err := dckr.ContainersWithLabel(typeLabel, strconv.Itoa(stepContainer), true)
-			if err != nil {
-				log.Print(err)
-				inputContainers = []string{}
-			}
-			for _, sc := range stepContainers {
-				log.Printf("Nuking step container %s", sc)
-				err = dckr.NukeContainer(sc)
-				if err != nil {
-					log.Print(err)
-				}
-			}
-			log.Println("Finding all data containers")
-			dataContainers, err := dckr.ContainersWithLabel(typeLabel, strconv.Itoa(dataContainer), true)
-			if err != nil {
-				log.Print(err)
-				inputContainers = []string{}
-			}
-			for _, dc := range dataContainers {
-				log.Printf("Nuking data container %s", dc)
-				err = dckr.NukeContainer(dc)
-				if err != nil {
-					log.Print(err)
-				}
-			}
-
-			//wait for the exit code from the Run function.
-			<-exit
-
-			//Aggressively clean up the rest of the job.
-			log.Printf("Nuking all containers with the label %s=%s", model.DockerLabelKey, job.InvocationID)
-			err = dckr.NukeContainersByLabel(model.DockerLabelKey, job.InvocationID)
-			if err != nil {
-				log.Print(err)
-			}
-
-		default:
-			log.Printf("Received an exit code of %d, cleaning up", int(exitCode))
-			log.Printf("Finding all containers with the label %s=%s", model.DockerLabelKey, job.InvocationID)
-			jobContainers, err := dckr.ContainersWithLabel(model.DockerLabelKey, job.InvocationID, true)
-			if err != nil {
-				log.Print(err)
-				jobContainers = []string{}
-			}
-			for _, jc := range jobContainers {
-				log.Printf("Nuking container %s", jc)
-				err = dckr.NukeContainer(jc)
-				if err != nil {
-					log.Print(err)
-				}
-			}
-			for _, dc := range job.DataContainers() {
-				log.Printf("Safely removing image %s:%s", dc.Name, dc.Tag)
-				err := dckr.SafelyRemoveImage(dc.Name, dc.Tag)
-				if err != nil {
-					log.Print(err)
-				}
-			}
-			for _, ci := range job.ContainerImages() {
-				log.Printf("Safely removing image %s:%s", ci.Name, ci.Tag)
-				err := dckr.SafelyRemoveImage(ci.Name, ci.Tag)
-				if err != nil {
-					log.Print(err)
-				}
 			}
 		}
-		finalExit <- exitCode
+
+		cleanup(job)
+
+		//wait for the exit code from the Run function.
+		<-exit
+
+		//Aggressively clean up the rest of the job.
+		log.Printf("Nuking all containers with the label %s=%s", model.DockerLabelKey, job.InvocationID)
+		err = dckr.NukeContainersByLabel(model.DockerLabelKey, job.InvocationID)
+		if err != nil {
+			log.Print(err)
+		}
+
+	default:
+		log.Printf("Received an exit code of %d, cleaning up", int(exitCode))
+		log.Printf("Finding all containers with the label %s=%s", model.DockerLabelKey, job.InvocationID)
+		jobContainers, err := dckr.ContainersWithLabel(model.DockerLabelKey, job.InvocationID, true)
+		if err != nil {
+			log.Print(err)
+			jobContainers = []string{}
+		}
+		for _, jc := range jobContainers {
+			log.Printf("Nuking container %s", jc)
+			err = dckr.NukeContainer(jc)
+			if err != nil {
+				log.Print(err)
+			}
+		}
+		for _, dc := range job.DataContainers() {
+			log.Printf("Safely removing image %s:%s", dc.Name, dc.Tag)
+			err := dckr.SafelyRemoveImage(dc.Name, dc.Tag)
+			if err != nil {
+				log.Print(err)
+			}
+		}
+		for _, ci := range job.ContainerImages() {
+			log.Printf("Safely removing image %s:%s", ci.Name, ci.Tag)
+			err := dckr.SafelyRemoveImage(ci.Name, ci.Tag)
+			if err != nil {
+				log.Print(err)
+			}
+		}
 	}
+	finalExit <- exitCode
 }
 
 // Wait implements the logic for killing the job when the time limit is surpassed.
@@ -530,6 +515,7 @@ func RegisterTimeLimitRequestListener(client *messaging.Client, timeTracker *Tim
 }
 
 func main() {
+	log.Print("yay")
 	if *version {
 		AppVersion()
 		os.Exit(0)
@@ -580,13 +566,22 @@ func main() {
 	// The channel that additional seconds will be sent through for the time limit.
 	seconds := make(chan int64)
 
-	exitFunc := Exit(exit, finalExit)
+	// Launch the go routine that will handle job exits by signal or timer.
+	go Exit(exit, finalExit)
+
+	// The default time limt for the jobs.
 	defaultDuration, err := time.ParseDuration("48h")
 	if err != nil {
 		fail(client, job, "Failed to parse default duration")
 		log.Fatal(err)
 	}
-	timeTracker := NewTimeTracker(defaultDuration, exitFunc)
+
+	// Set up the self destruct timer. All this does is fire off a message on the
+	// exit channel that is listened to in the goroutine running Exit().
+	timeTracker := NewTimeTracker(defaultDuration, func() {
+		exit <- messaging.StatusTimeLimit
+	})
+
 	RegisterTimeLimitDeltaListener(client, timeTracker, job.InvocationID)
 	RegisterTimeLimitRequestListener(client, timeTracker, job.InvocationID)
 
