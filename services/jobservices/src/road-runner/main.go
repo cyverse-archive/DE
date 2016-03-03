@@ -1,3 +1,9 @@
+// road-runner
+//
+// Executes jobs based on a JSON blob serialized to a file.
+// Each step of the job runs inside a Docker container. Job results are
+// transferred back into iRODS with the porklock tool. Job status updates are
+// posted to the **jobs.updates** topic in the **jobs** exchange.
 package main
 
 import (

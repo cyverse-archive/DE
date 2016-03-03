@@ -1,3 +1,5 @@
+// Package logcabin provides common logging functionality that can be used to
+// emit messages in the JSON format that we use for logstash/kibana.
 package logcabin
 
 import (
