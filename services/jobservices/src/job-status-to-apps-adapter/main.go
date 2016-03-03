@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"log"
 	"logcabin"
-	"messaging"
 	"net/http"
 	"os"
 	"time"
@@ -41,7 +40,6 @@ var (
 	appver     string
 	builtby    string
 	appsURI    string
-	amqpClient *messaging.Client
 	db         *sql.DB
 )
 
