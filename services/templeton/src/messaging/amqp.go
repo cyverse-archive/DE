@@ -11,6 +11,17 @@ import (
 
 var logger = logcabin.New()
 
+var (
+	//ReindexExchange is the name of the exchange that full-reindex info is passed around on.
+	ReindexExchange = "de"
+
+	//ReindexAllKey is the routing/binding key for full reindex messages.
+	ReindexAllKey = "index.all"
+
+	//ReindexTemplatesKey is the routing/binding key for templates reindex messages.
+	ReindexTemplatesKey = "index.templates"
+)
+
 // MessageHandler defines a type for amqp.Delivery handlers.
 type MessageHandler func(amqp.Delivery)
 
@@ -20,10 +31,11 @@ type aggregationMessage struct {
 }
 
 type consumer struct {
-	exchange string
-	queue    string
-	key      string
-	handler  MessageHandler
+	exchange     string
+	exchangeType string
+	queue        string
+	key          string
+	handler      MessageHandler
 }
 
 type consumeradder struct {
@@ -134,12 +146,13 @@ func (c *Client) Close() {
 // each time the client is set up. Note that this just adds the consumers to a
 // list, it doesn't actually start handling messages yet. You need to call
 // Listen() for that.
-func (c *Client) AddConsumer(exchange, queue, key string, handler MessageHandler) {
+func (c *Client) AddConsumer(exchange, exchangeType, queue, key string, handler MessageHandler) {
 	cs := consumer{
-		exchange: exchange,
-		queue:    queue,
-		key:      key,
-		handler:  handler,
+		exchange:     exchange,
+		exchangeType: exchangeType,
+		queue:        queue,
+		key:          key,
+		handler:      handler,
 	}
 	adder := consumeradder{
 		consumer: cs,
@@ -155,13 +168,13 @@ func (c *Client) initconsumer(cs *consumer) error {
 		return err
 	}
 	err = channel.ExchangeDeclare(
-		cs.exchange, //name
-		"topic",     //kind
-		true,        //durable
-		false,       //auto-delete
-		false,       //internal
-		false,       //no-wait
-		nil,         //args
+		cs.exchange,     //name
+		cs.exchangeType, //kind
+		true,            //durable
+		false,           //auto-delete
+		false,           //internal
+		false,           //no-wait
+		nil,             //args
 	)
 	_, err = channel.QueueDeclare(
 		cs.queue,

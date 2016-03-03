@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"logcabin"
+	"messaging"
 
 	"configurate"
 	"fmt"
@@ -10,6 +11,8 @@ import (
 
 	"templeton/database"
 	"templeton/elasticsearch"
+
+	"github.com/streadway/amqp"
 )
 
 var (
@@ -133,11 +136,36 @@ func main() {
 
 	loadAMQPConfig()
 
+	client, err := messaging.NewClient(amqpURI, true)
+	if err != nil {
+		logger.Fatal(err)
+	}
+	defer client.Close()
+
 	if *mode == "periodic" {
 		logger.Println("Periodic indexing mode selected.")
 
-		// TODO: AMQP listener triggering same steps as full mode
-		return
+		go client.Listen()
+
+		// Accept and handle messages sent out with the index.all and index.templates routing keys
+		client.AddConsumer(messaging.ReindexExchange, "direct", "templeton.reindexAll", messaging.ReindexAllKey, func(del amqp.Delivery) {
+			es.Reindex(d)
+			del.Ack(false)
+		})
+		client.AddConsumer(messaging.ReindexExchange, "direct", "templeton.reindexTemplates", messaging.ReindexTemplatesKey, func(del amqp.Delivery) {
+			es.Reindex(d)
+			del.Ack(false)
+		})
+
+		// spinner in order to keep the program running since client.Listen() is in a goroutine.
+		spinner := make(chan int)
+		for {
+			select {
+			case <-spinner:
+				fmt.Println("Exiting")
+				break
+			}
+		}
 	}
 
 	if *mode == "incremental" {
