@@ -39,6 +39,7 @@
                                                           exchange-auto-delete
                                                           topics
                                                           delivery-fn)))]
+    (lb/qos channel 100)
     (le/topic channel exchange-name :durable exchange-durable :auto-delete exchange-auto-delete)
     (lq/declare channel queue :durable true)
     (doseq [topic topics] (lq/bind channel queue exchange-name :routing-key topic))
