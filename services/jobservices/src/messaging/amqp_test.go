@@ -206,3 +206,37 @@ func TestSendTimeLimitDelta(t *testing.T) {
 		t.Errorf("TimeLimitDelta's Delta was %s instead of 10s", delta.Delta)
 	}
 }
+
+func TestSendStopRequest(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+	client := GetClient(t)
+	var actual []byte
+	var err error
+	coord := make(chan int)
+	invID := "test"
+	handler := func(d amqp.Delivery) {
+		d.Ack(false)
+		actual = d.Body
+		coord <- 1
+	}
+	key := fmt.Sprintf("%s.%s", StopsKey, invID)
+	client.AddConsumer(JobsExchange, "test_queue4", key, handler)
+	client.SendStopRequest(invID, "test_user", "this is a test")
+	<-coord
+	req := &StopRequest{}
+	if err = json.Unmarshal(actual, req); err != nil {
+		t.Error(err)
+		t.Fail()
+	}
+	if req.Reason != "this is a test" {
+		t.Errorf("Reason was '%s' instead of '%s'", req.Reason, "this is a test")
+	}
+	if req.InvocationID != invID {
+		t.Errorf("InvocationID was %s instead of %s", req.InvocationID, invID)
+	}
+	if req.Username != "test_user" {
+		t.Errorf("Username was %s instead of %s", req.Username, "test_user")
+	}
+}

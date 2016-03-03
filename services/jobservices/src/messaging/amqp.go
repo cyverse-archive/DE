@@ -472,3 +472,18 @@ func (c *Client) SendTimeLimitDelta(invID, delta string) error {
 	key := fmt.Sprintf("%s.%s", TimeLimitDeltaKey, invID)
 	return c.Publish(key, msg)
 }
+
+// SendStopRequest sends out a message to the jobs.stops.<invocation_id> topic
+// telling listeners to stop their job.
+func (c *Client) SendStopRequest(invID, user, reason string) error {
+	s := NewStopRequest()
+	s.Username = user
+	s.Reason = reason
+	s.InvocationID = invID
+	msg, err := json.Marshal(s)
+	if err != nil {
+		return err
+	}
+	key := fmt.Sprintf("%s.%s", StopsKey, invID)
+	return c.Publish(key, msg)
+}
