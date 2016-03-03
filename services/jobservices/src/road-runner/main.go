@@ -514,6 +514,17 @@ func RegisterTimeLimitRequestListener(client *messaging.Client, timeTracker *Tim
 	})
 }
 
+// RegisterStopRequestListener sets a function that responses to StopRequest
+// messages.
+func RegisterStopRequestListener(client *messaging.Client, exit chan messaging.StatusCode, invID string) {
+	stopsKey := fmt.Sprintf("%s.%s", messaging.StopsKey, invID)
+	client.AddConsumer(messaging.JobsExchange, fmt.Sprintf("road-runner-%s-stops-request", invID), stopsKey, func(d amqp.Delivery) {
+		d.Ack(false)
+		running(client, job, "Received stop request")
+		exit <- messaging.StatusKilled
+	})
+}
+
 func main() {
 	log.Print("yay")
 	if *version {
@@ -584,6 +595,7 @@ func main() {
 
 	RegisterTimeLimitDeltaListener(client, timeTracker, job.InvocationID)
 	RegisterTimeLimitRequestListener(client, timeTracker, job.InvocationID)
+	RegisterStopRequestListener(client, exit, job.InvocationID)
 
 	// listen for orders to stop the job.
 	stopsKey := fmt.Sprintf("%s.%s", messaging.StopsKey, job.InvocationID)

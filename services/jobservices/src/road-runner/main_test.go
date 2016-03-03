@@ -106,6 +106,25 @@ func TestRegisterTimeLimitRequestListener(t *testing.T) {
 	}
 }
 
+func TestRegisterStopRequestListener(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+	client := GetClient(t)
+	invID := "test"
+	exit := make(chan messaging.StatusCode)
+	RegisterStopRequestListener(client, exit, invID)
+	err := client.SendStopRequest(invID, "test", "this is a test")
+	if err != nil {
+		t.Error(err)
+		t.Fail()
+	}
+	actual := <-exit
+	if actual != messaging.StatusKilled {
+		t.Errorf("StatusCode was %d instead of %d", int64(actual), int64(messaging.StatusKilled))
+	}
+}
+
 func TestNewTimeTracker(t *testing.T) {
 	actual := 0
 	expected := 1
