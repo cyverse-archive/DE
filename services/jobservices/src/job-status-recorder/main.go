@@ -172,6 +172,7 @@ func main() {
 			}
 		}
 	}
+	log.Printf("AMQP broker setting is %s\n", *amqpURI)
 	amqpClient, err := messaging.NewClient(*amqpURI, false)
 	if err != nil {
 		log.Fatal(err)
@@ -187,6 +188,8 @@ func main() {
 		log.Fatal(err)
 	}
 	log.Println("Connected to the database")
+	go amqpClient.Listen()
 	amqpClient.AddConsumer(messaging.JobsExchange, "job_status_recorder", messaging.UpdatesKey, msg)
-	amqpClient.Listen()
+	spinner := make(chan int)
+	<-spinner
 }
