@@ -105,3 +105,50 @@ func TestRegisterTimeLimitRequestListener(t *testing.T) {
 		t.Errorf("MillisecondsRemaining was %d instead of >0", parsedResponse.MillisecondsRemaining)
 	}
 }
+
+func TestNewTimeTracker(t *testing.T) {
+	actual := 0
+	expected := 1
+	duration, err := time.ParseDuration("1s")
+	if err != nil {
+		t.Error(err)
+		t.Fail()
+	}
+	coord := make(chan int)
+	handler := func() {
+		actual = 1
+		coord <- 1
+	}
+	tt := NewTimeTracker(duration, handler)
+	if tt == nil {
+		t.Error("NewTimeTracker returned nil")
+	}
+	<-coord
+	if actual != expected {
+		t.Errorf("actual was %d instead of %d", actual, expected)
+	}
+}
+
+func TestApplyDelta(t *testing.T) {
+	defaultDuration, err := time.ParseDuration("10s")
+	if err != nil {
+		t.Error(err)
+		t.Fail()
+	}
+	resetDuration, err := time.ParseDuration("20s")
+	if err != nil {
+		t.Error(err)
+		t.Fail()
+	}
+	handler := func() {}
+	tt := NewTimeTracker(defaultDuration, handler)
+	firstDate := tt.EndDate
+	if err = tt.ApplyDelta(resetDuration); err != nil {
+		t.Error(err)
+		t.Fail()
+	}
+	secondDate := tt.EndDate
+	if !secondDate.After(firstDate) {
+		t.Errorf("The date after ApplyDelta() was %s, which isn't later than %s", secondDate.String(), firstDate.String())
+	}
+}
