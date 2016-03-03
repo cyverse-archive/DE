@@ -55,6 +55,8 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author jstroot
@@ -114,6 +116,8 @@ public class SimpleFileUploadDialog extends IPlantDialog {
     private final String userName;
     private final EventBus eventBus;
     private final DiskResourceUtil diskResourceUtil;
+
+    final Logger LOG = Logger.getLogger("<----- Simple upload dialog --->");
 
     public SimpleFileUploadDialog(final HasPath uploadDest,
                                   final DiskResourceServiceFacade drService,
@@ -252,6 +256,7 @@ public class SimpleFileUploadDialog extends IPlantDialog {
         IPCFileUploadField field = fufList.get(formList.indexOf(event.getSource()));
         String results2 = event.getResults();
         GWT.log("upload result->" + results2);
+        LOG.log(Level.SEVERE, "\nUpload result -->" + results2 + "<----\n");
         if (Strings.isNullOrEmpty(results2)) {
             IplantAnnouncer.getInstance()
                            .schedule(new ErrorAnnouncementConfig(appearance.fileUploadsFailed(Lists.newArrayList(
@@ -260,17 +265,22 @@ public class SimpleFileUploadDialog extends IPlantDialog {
             String results = Format.stripTags(results2);
             Splittable split = StringQuoter.split(results);
 
+            LOG.log(Level.SEVERE, "\nUpload split -->" + results + "<---\n");
+
             if (split == null) {
+                LOG.log(Level.SEVERE, "\n--->Upload split null-->\n");
                 IplantAnnouncer.getInstance()
                                .schedule(new ErrorAnnouncementConfig(appearance.fileUploadsFailed(Lists.newArrayList(
                                        field.getValue()))));
             } else {
                 if (split.isUndefined("file") || (split.get("file") == null)) {
+                    LOG.log(Level.SEVERE, "\n--->Upload split file empty-->\n");
                     field.markInvalid(appearance.fileUploadsFailed(Lists.newArrayList(field.getValue())));
                     IplantAnnouncer.getInstance()
                                    .schedule(new ErrorAnnouncementConfig(appearance.fileUploadsFailed(
                                            Lists.newArrayList(field.getValue()))));
                 } else {
+                   LOG.log(Level.SEVERE, "\n--->Upload split not empty -->\n");
                     eventBus.fireEvent(new FileUploadedEvent(uploadDest, field.getValue(), results));
                 }
             }
@@ -369,8 +379,10 @@ public class SimpleFileUploadDialog extends IPlantDialog {
                     });
                     try {
                         form.submit();
+                        LOG.log(Level.SEVERE, "\nUpload submitted!\n");
                     } catch(Exception e ) {
-                        GWT.log("expcetion on submit" + e.getMessage());
+                        GWT.log("\nxpcetion on submit\n" + e.getMessage());
+                        LOG.log(Level.SEVERE, "\nUpload exception!\n");
                         IplantAnnouncer.getInstance()
                                        .schedule(new ErrorAnnouncementConfig(appearance.fileUploadsFailed(
                                                Lists.newArrayList(field.getValue()))));
