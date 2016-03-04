@@ -15,18 +15,32 @@
 (def grouper-user-group-fmt "iplant:de:%s:users:de-users")
 (def grouper-app-permission-def-fmt "iplant:de:%s:apps:app-permission-def")
 (def grouper-app-resource-name-fmt "iplant:de:%s:apps:%s")
+(def grouper-analysis-permission-def-fmt "iplant:de:%s:analyses:analysis-permission-def")
+(def grouper-analysis-resource-name-fmt "iplant:de:%s:analyses:%s")
 
 (defn- grouper-user-group
   []
   (format grouper-user-group-fmt (config/env-name)))
 
-(defn- grouper-app-permission-def
-  []
-  (format grouper-app-permission-def-fmt (config/env-name)))
+(defn- grouper-permission-def
+  [fmt]
+  (format fmt (config/env-name)))
 
-(defn- grouper-app-resource-name
-  [app-id]
-  (format grouper-app-resource-name-fmt (config/env-name) app-id))
+(def ^:private grouper-app-permission-def
+  (partial grouper-permission-def grouper-app-permission-def-fmt))
+
+(def ^:private grouper-analysis-permission-def
+  (partial grouper-permission-def grouper-analysis-permission-def-fmt))
+
+(defn- grouper-resource-name
+  [fmt id]
+  (format fmt (config/env-name) id))
+
+(def ^:private grouper-app-resource-name
+  (partial grouper-resource-name grouper-app-resource-name-fmt))
+
+(def ^:private grouper-analysis-resource-name
+  (partial grouper-resource-name grouper-analysis-resource-name-fmt))
 
 (defn- grouper-url
   [& components]
@@ -206,3 +220,10 @@
      (let [reason (get-error-reason body status)]
        (log/error (str "unable to unshare " app-id " with " subject-id ": " reason)))
      "the app unsharing request failed")))
+
+(defn register-analysis
+  "Registers a new analysis in Grouper."
+  [user analysis-id]
+  (let [analysis-resource-name (grouper-analysis-resource-name analysis-id)]
+    (create-resource analysis-resource-name (grouper-analysis-permission-def))
+    (grant-role-user-permission user (grouper-user-group) analysis-resource-name "own")))
