@@ -5,7 +5,6 @@ import (
 	"configurate"
 	"fmt"
 	"io/ioutil"
-	"logcabin"
 	"os"
 	"path"
 	"reflect"
@@ -28,7 +27,6 @@ func JSONData() ([]byte, error) {
 
 var (
 	s *Job
-	l = logcabin.New("test_jobs", "test_jobs")
 )
 
 func _inittests(t *testing.T, memoize bool) *Job {

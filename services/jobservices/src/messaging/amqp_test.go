@@ -3,7 +3,6 @@ package messaging
 import (
 	"encoding/json"
 	"fmt"
-	"logcabin"
 	"model"
 	"os"
 	"reflect"
@@ -12,7 +11,6 @@ import (
 	"github.com/streadway/amqp"
 )
 
-var l = logcabin.New("test_amqp", "test_amqp")
 var client *Client
 
 func GetClient(t *testing.T) *Client {
