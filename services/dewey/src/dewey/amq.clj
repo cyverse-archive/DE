@@ -41,7 +41,7 @@
                                                           delivery-fn)))]
     (lb/qos channel qos)
     (le/topic channel exchange-name :durable exchange-durable :auto-delete exchange-auto-delete)
-    (lq/declare channel queue :durable true)
+    (lq/declare channel queue :durable true :auto-delete false :exclusive false)
     (doseq [topic topics] (lq/bind channel queue exchange-name :routing-key topic))
     (lb/consume channel queue consumer :auto-ack false)))
 
