@@ -36,7 +36,6 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"logcabin"
 	"messaging"
 	"model"
@@ -50,7 +49,6 @@ import (
 )
 
 var (
-	logger  = logcabin.New("condor-launcher", "condor-launcher")
 	cfgPath = flag.String("config", "", "Path to the config file. Required.")
 	version = flag.Bool("version", false, "Print the version information")
 	gitref  string
@@ -60,6 +58,7 @@ var (
 
 func init() {
 	flag.Parse()
+	logcabin.Init("condor-launcher", "condor-launcher")
 }
 
 // GenerateCondorSubmit returns a string (or error) containing the contents
@@ -277,37 +276,37 @@ func submit(cmdPath string, s *model.Job) (string, error) {
 		fmt.Sprintf("CONDOR_CONFIG=%s", condorCfg),
 	}
 	output, err := cmd.CombinedOutput()
-	log.Printf("Output of condor_submit:\n%s\n", output)
+	logcabin.Info.Printf("Output of condor_submit:\n%s\n", output)
 	if err != nil {
 		return "", err
 	}
-	log.Printf("Extracted ID: %s\n", string(model.ExtractJobID(output)))
+	logcabin.Info.Printf("Extracted ID: %s\n", string(model.ExtractJobID(output)))
 	return string(model.ExtractJobID(output)), err
 }
 
 func launch(s *model.Job) (string, error) {
 	sdir, err := CreateSubmissionDirectory(s)
 	if err != nil {
-		log.Printf("Error creating submission directory:\n%s\n", err)
+		logcabin.Error.Printf("Error creating submission directory:\n%s\n", err)
 		return "", err
 	}
 	cmd, _, _, err := CreateSubmissionFiles(sdir, s)
 	if err != nil {
-		log.Printf("Error creating submission files:\n%s", err)
+		logcabin.Error.Printf("Error creating submission files:\n%s", err)
 		return "", err
 	}
 	id, err := submit(cmd, s)
 	if err != nil {
-		log.Printf("Error submitting job:\n%s", err)
+		logcabin.Error.Printf("Error submitting job:\n%s", err)
 		return "", err
 	}
-	log.Printf("Condor job id is %s\n", id)
+	logcabin.Info.Printf("Condor job id is %s\n", id)
 	return id, err
 }
 
 func stop(s *model.Job) (string, error) {
 	crPath, err := exec.LookPath("condor_rm")
-	log.Printf("condor_rm found at %s", crPath)
+	logcabin.Info.Printf("condor_rm found at %s", crPath)
 	if err != nil {
 		return "", err
 	}
@@ -331,7 +330,7 @@ func stop(s *model.Job) (string, error) {
 		fmt.Sprintf("CONDOR_CONFIG=%s", condorConfig),
 	}
 	output, err := cmd.CombinedOutput()
-	log.Printf("condor_rm output for job %s:\n%s\n", s.CondorID, string(output))
+	logcabin.Info.Printf("condor_rm output for job %s:\n%s\n", s.CondorID, string(output))
 	if err != nil {
 		return "", err
 	}
@@ -364,18 +363,17 @@ func main() {
 	}
 	err := configurate.Init(*cfgPath)
 	if err != nil {
-		log.Print(err)
-		os.Exit(-1)
+		logcabin.Error.Fatal(err)
 	}
-	log.Println("Done reading config.")
+	logcabin.Info.Println("Done reading config.")
 
 	uri, err := configurate.C.String("amqp.uri")
 	if err != nil {
-		log.Fatal(err)
+		logcabin.Error.Fatal(err)
 	}
 	client, err := messaging.NewClient(uri, true)
 	if err != nil {
-		log.Fatal(err)
+		logcabin.Error.Fatal(err)
 	}
 	defer client.Close()
 	client.SetupPublishing(messaging.JobsExchange)
@@ -387,8 +385,8 @@ func main() {
 		req := messaging.JobRequest{}
 		err := json.Unmarshal(body, &req)
 		if err != nil {
-			log.Print(err)
-			log.Print(string(body[:]))
+			logcabin.Error.Print(err)
+			logcabin.Error.Print(string(body[:]))
 			return
 		}
 		if req.Job.RequestDisk == "" {
@@ -398,17 +396,17 @@ func main() {
 		case messaging.Launch:
 			jobID, err := launch(req.Job)
 			if err != nil {
-				log.Print(err)
+				logcabin.Error.Print(err)
 				err = client.PublishJobUpdate(&messaging.UpdateMessage{
 					Job:     req.Job,
 					State:   messaging.FailedState,
 					Message: fmt.Sprintf("condor-launcher failed to launch job:\n %s", err),
 				})
 				if err != nil {
-					log.Print(err)
+					logcabin.Error.Print(err)
 				}
 			} else {
-				log.Printf("Launched Condor ID %s", jobID)
+				logcabin.Info.Printf("Launched Condor ID %s", jobID)
 
 				err = client.PublishJobUpdate(&messaging.UpdateMessage{
 					Job:     req.Job,
@@ -416,7 +414,7 @@ func main() {
 					Message: fmt.Sprintf("Launched Condor ID %s", jobID),
 				})
 				if err != nil {
-					log.Print(err)
+					logcabin.Error.Print(err)
 				}
 			}
 		}

@@ -4,11 +4,11 @@ import (
 	"configurate"
 	"fmt"
 	"io"
-	"log"
 	"model"
 	"os"
 	"strconv"
 	"strings"
+	"logcabin"
 
 	"github.com/fsouza/go-dockerclient"
 )
@@ -185,7 +185,7 @@ func (d *Docker) Pull(name, tag string) error {
 		Repository:   name,
 		Registry:     reg,
 		Tag:          tag,
-		OutputStream: logger,
+		OutputStream: logcabin.Info_Lincoln,
 	}
 	return d.Client.PullImage(opts, auth)
 }
@@ -220,7 +220,7 @@ func (d *Docker) CreateContainerFromStep(step *model.Step, invID string) (*docke
 		if parsedMem, err := strconv.ParseInt(step.Component.Container.MemoryLimit, 10, 64); err == nil {
 			createConfig.Memory = parsedMem
 		} else {
-			log.Print(err)
+			logcabin.Error.Print(err)
 		}
 	}
 
@@ -228,7 +228,7 @@ func (d *Docker) CreateContainerFromStep(step *model.Step, invID string) (*docke
 		if parsedCPU, err := strconv.ParseInt(step.Component.Container.CPUShares, 10, 64); err == nil {
 			createConfig.CPUShares = parsedCPU
 		} else {
-			log.Print(err)
+			logcabin.Error.Print(err)
 		}
 	}
 
@@ -314,8 +314,8 @@ func (d *Docker) CreateContainerFromStep(step *model.Step, invID string) (*docke
 			fmt.Sprintf("%s:%s", lm.Source, lm.Destination),
 		)
 	}
-	log.Printf("Mounts: %#v\n", createConfig.Mounts)
-	log.Printf("Binds: %#v\n", createHostConfig.Binds)
+	logcabin.Info.Printf("Mounts: %#v\n", createConfig.Mounts)
+	logcabin.Info.Printf("Binds: %#v\n", createHostConfig.Binds)
 
 	for _, dev := range step.Component.Container.Devices {
 		device := docker.Device{
@@ -377,7 +377,7 @@ func (d *Docker) runContainer(container *docker.Container, opts *docker.CreateCo
 	go func() {
 		err = d.Attach(container, stdoutFile, stderrFile, successChan)
 		if err != nil {
-			log.Print(err)
+			logcabin.Error.Print(err)
 		}
 	}()
 	successChan <- <-successChan

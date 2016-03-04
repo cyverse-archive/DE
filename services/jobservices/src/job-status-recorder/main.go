@@ -12,7 +12,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"log"
 	"logcabin"
 	"messaging"
 	"net"
@@ -24,7 +23,6 @@ import (
 )
 
 var (
-	logger     = logcabin.New("job-status-recorder", "job-status-recorder")
 	version    = flag.Bool("version", false, "Print the version information")
 	cfgPath    = flag.String("config", "", "The path to the config file")
 	dbURI      = flag.String("db", "", "The URI used to connect to the database")
@@ -38,6 +36,7 @@ var (
 
 func init() {
 	flag.Parse()
+	logcabin.Init("job-status-recorder", "job-status-recorder")
 }
 
 // AppVersion prints version information to stdout
@@ -76,30 +75,30 @@ func insert(state, invID, msg, host, ip string, sentOn int64) (sql.Result, error
 
 func msg(delivery amqp.Delivery) {
 	delivery.Ack(false)
-	log.Println("Message received")
+	logcabin.Info.Println("Message received")
 	update := &messaging.UpdateMessage{}
 	err := json.Unmarshal(delivery.Body, update)
 	if err != nil {
-		log.Print(err)
+		logcabin.Error.Print(err)
 		return
 	}
 	if update.State == "" {
-		log.Println("State was unset, dropping update")
+		logcabin.Warning.Println("State was unset, dropping update")
 		return
 	}
-	log.Printf("State is %s\n", update.State)
+	logcabin.Info.Printf("State is %s\n", update.State)
 	if update.Job.InvocationID == "" {
-		log.Println("InvocationID was unset, dropping update")
+		logcabin.Warning.Println("InvocationID was unset, dropping update")
 	}
-	log.Printf("InvocationID is %s\n", update.Job.InvocationID)
+	logcabin.Info.Printf("InvocationID is %s\n", update.Job.InvocationID)
 	if update.Message == "" {
-		log.Println("Message set to empty string, setting to UNKNOWN")
+		logcabin.Warning.Println("Message set to empty string, setting to UNKNOWN")
 		update.Message = "UNKNOWN"
 	}
-	log.Printf("Message is: %s", update.Message)
+	logcabin.Info.Printf("Message is: %s", update.Message)
 	var sentFromAddr string
 	if update.Sender == "" {
-		log.Println("Unknown sender, setting from address to 0.0.0.0")
+		logcabin.Warning.Println("Unknown sender, setting from address to 0.0.0.0")
 		update.Sender = "0.0.0.0"
 	}
 	parsedIP := net.ParseIP(update.Sender)
@@ -108,21 +107,21 @@ func msg(delivery amqp.Delivery) {
 	} else {
 		ips, err := net.LookupIP(update.Sender)
 		if err != nil {
-			log.Print(err)
+			logcabin.Error.Print(err)
 		} else {
 			if len(ips) > 0 {
 				sentFromAddr = ips[0].String()
 			}
 		}
 	}
-	log.Printf("Sent from: %s", sentFromAddr)
-	log.Printf("Sent On, unparsed: %s", update.SentOn)
+	logcabin.Info.Printf("Sent from: %s", sentFromAddr)
+	logcabin.Info.Printf("Sent On, unparsed: %s", update.SentOn)
 	sentOn, err := strconv.ParseInt(update.SentOn, 10, 64)
 	if err != nil {
-		log.Printf("Error parsing SentOn field, setting field to 0: %s", err)
+		logcabin.Error.Printf("Error parsing SentOn field, setting field to 0: %s", err)
 		sentOn = 0
 	}
-	log.Printf("Sent On: %d", sentOn)
+	logcabin.Info.Printf("Sent On: %d", sentOn)
 	result, err := insert(
 		string(update.State),
 		update.Job.InvocationID,
@@ -132,15 +131,15 @@ func msg(delivery amqp.Delivery) {
 		sentOn,
 	)
 	if err != nil {
-		log.Print(err)
+		logcabin.Error.Print(err)
 		return
 	}
 	rowCount, err := result.RowsAffected()
 	if err != nil {
-		log.Print(err)
+		logcabin.Error.Print(err)
 		return
 	}
-	log.Printf("Inserted %d rows\n", rowCount)
+	logcabin.Info.Printf("Inserted %d rows\n", rowCount)
 }
 
 func main() {
@@ -153,41 +152,41 @@ func main() {
 
 	if *dbURI == "" || *amqpURI == "" {
 		if *cfgPath == "" {
-			log.Fatal("--config must be set.")
+			logcabin.Error.Fatal("--config must be set.")
 		}
 		err := configurate.Init(*cfgPath)
 		if err != nil {
-			log.Fatal(err)
+			logcabin.Error.Fatal(err)
 		}
 		if *dbURI == "" {
 			*dbURI, err = configurate.C.String("db.uri")
 			if err != nil {
-				log.Fatal(err)
+				logcabin.Error.Fatal(err)
 			}
 		}
 		if *amqpURI == "" {
 			*amqpURI, err = configurate.C.String("amqp.uri")
 			if err != nil {
-				log.Fatal(err)
+				logcabin.Error.Fatal(err)
 			}
 		}
 	}
-	log.Printf("AMQP broker setting is %s\n", *amqpURI)
+	logcabin.Info.Printf("AMQP broker setting is %s\n", *amqpURI)
 	amqpClient, err := messaging.NewClient(*amqpURI, false)
 	if err != nil {
-		log.Fatal(err)
+		logcabin.Error.Fatal(err)
 	}
 	defer amqpClient.Close()
-	log.Println("Connecting to the database...")
+	logcabin.Info.Println("Connecting to the database...")
 	db, err = sql.Open("postgres", *dbURI)
 	if err != nil {
-		log.Fatal(err)
+		logcabin.Error.Fatal(err)
 	}
 	err = db.Ping()
 	if err != nil {
-		log.Fatal(err)
+		logcabin.Error.Fatal(err)
 	}
-	log.Println("Connected to the database")
+	logcabin.Info.Println("Connected to the database")
 	go amqpClient.Listen()
 	amqpClient.AddConsumer(messaging.JobsExchange, "job_status_recorder", messaging.UpdatesKey, msg)
 	spinner := make(chan int)

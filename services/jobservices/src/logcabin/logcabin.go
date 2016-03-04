@@ -14,6 +14,14 @@ var (
 	Info	*log.Logger
 	Warning	*log.Logger
 	Error	*log.Logger
+
+	Trace_Lincoln *Lincoln
+	Info_Lincoln *Lincoln
+	Warning_Lincoln *Lincoln
+	Error_Lincoln *Lincoln
+
+	Service string
+	Artifact string
 )
 
 // Log Level Constants
@@ -24,11 +32,23 @@ const (
 	err_lvl = "ERR"
 )
 
+func init() {
+	Init("jobservices", "default")
+}
+
 func Init(service, artifact string) {
-	Trace = log.New(&lincoln{service, artifact, trace_lvl}, "", log.Lshortfile)
-	Info = log.New(&lincoln{service, artifact, info_lvl}, "", log.Lshortfile)
-	Warning = log.New(&lincoln{service, artifact, warn_lvl}, "", log.Lshortfile)
-	Error = log.New(&lincoln{service, artifact, err_lvl}, "", log.Lshortfile)
+	Service = service
+	Artifact = artifact
+
+	Trace_Lincoln = &Lincoln{service, artifact, trace_lvl}
+	Info_Lincoln = &Lincoln{service, artifact, info_lvl}
+	Warning_Lincoln = &Lincoln{service, artifact, warn_lvl}
+	Error_Lincoln = &Lincoln{service, artifact, err_lvl}
+
+	Trace = log.New(Trace_Lincoln, "", log.Lshortfile)
+	Info = log.New(Info_Lincoln, "", log.Lshortfile)
+	Warning = log.New(Warning_Lincoln, "", log.Lshortfile)
+	Error = log.New(Error_Lincoln, "", log.Lshortfile)
 }
 
 // LogMessage represents a message that will be logged in JSON format.
@@ -42,14 +62,14 @@ type logMessage struct {
 }
 
 // Lincoln is a logger for jex-events.
-type lincoln struct {
+type Lincoln struct {
 	service string
 	artifact string
 	level string
 }
 
 // NewLogMessage returns a pointer to a new instance of LogMessage.
-func (l *lincoln) newLogMessage(message string) *logMessage {
+func (l *Lincoln) newLogMessage(message string) *logMessage {
 	lm := &logMessage{
 		Service:  l.service,
 		Artifact: l.artifact,
@@ -61,7 +81,7 @@ func (l *lincoln) newLogMessage(message string) *logMessage {
 	return lm
 }
 
-func (l *lincoln) Write(buf []byte) (n int, err error) {
+func (l *Lincoln) Write(buf []byte) (n int, err error) {
 	m := l.newLogMessage(string(buf[:]))
 	j, err := json.Marshal(m)
 	if err != nil {
