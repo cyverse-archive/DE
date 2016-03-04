@@ -1,6 +1,6 @@
 // jex-adapter
 //
-// jex-adapter allows the apps service to submit job requuests through an AMQP
+// jex-adapter allows the apps service to submit job requests through an AMQP
 // broker by implementing the portion of the old JEX API that apps interacted
 // with. Instead of writing the files out to disk and calling condor_submit like
 // the JEX service did, it serializes the request as JSON and pushes it out
@@ -14,7 +14,6 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"logcabin"
 	"messaging"
 	"model"
@@ -25,7 +24,6 @@ import (
 )
 
 var (
-	logger  = logcabin.New("jex-adapter", "jex-adapter")
 	version = flag.Bool("version", false, "Print version information")
 	cfgPath = flag.String("config", "", "Path to the configuration file")
 	amqpURI string
@@ -38,6 +36,7 @@ var (
 
 func init() {
 	flag.Parse()
+	logcabin.Init("jex-adapter", "jex-adapter")
 }
 
 // AppVersion prints version information to stdout
@@ -59,78 +58,78 @@ func home(writer http.ResponseWriter, request *http.Request) {
 }
 
 func stop(writer http.ResponseWriter, request *http.Request) {
-	log.Printf("Request received:\n%#v\n", request)
+	logcabin.Info.Printf("Request received:\n%#v\n", request)
 	var (
 		invID string
 		ok    bool
 		err   error
 		v     = mux.Vars(request)
 	)
-	log.Println("Getting invocation ID out of the Vars")
+	logcabin.Info.Println("Getting invocation ID out of the Vars")
 	if invID, ok = v["invocation_id"]; !ok {
 		writer.WriteHeader(http.StatusBadRequest)
 		writer.Write([]byte("Missing job id in URL"))
-		log.Print("Missing job id in URL")
+		logcabin.Error.Print("Missing job id in URL")
 		return
 	}
-	log.Printf("Invocation ID is %s\n", invID)
+	logcabin.Info.Printf("Invocation ID is %s\n", invID)
 	stopRequest := messaging.StopRequest{
 		Reason:       "User request",
 		Username:     "system",
 		InvocationID: invID,
 	}
-	log.Println("Marshalling stop request to JSON")
+	logcabin.Info.Println("Marshalling stop request to JSON")
 	reqJSON, err := json.Marshal(stopRequest)
 	if err != nil {
-		log.Print(err)
+		logcabin.Error.Print(err)
 		writer.WriteHeader(http.StatusInternalServerError)
 		writer.Write([]byte(fmt.Sprintf("Error creating stop request JSON: %s", err.Error())))
 		return
 	}
-	log.Println("Sending stop request")
+	logcabin.Info.Println("Sending stop request")
 	stopKey := fmt.Sprintf("%s.%s", messaging.StopsKey, invID)
 	err = client.Publish(stopKey, reqJSON)
 	if err != nil {
-		log.Print(err)
+		logcabin.Error.Print(err)
 		writer.WriteHeader(http.StatusInternalServerError)
 		writer.Write([]byte(fmt.Sprintf("Error sending stop request: %s", err.Error())))
 		return
 	}
-	log.Println("Done sending stop request")
+	logcabin.Info.Println("Done sending stop request")
 }
 
 func launch(writer http.ResponseWriter, request *http.Request) {
 	bodyBytes, err := ioutil.ReadAll(request.Body)
 	if err != nil {
-		log.Print(err)
+		logcabin.Error.Print(err)
 		writer.WriteHeader(http.StatusBadRequest)
 		writer.Write([]byte("Request had no body"))
 		return
 	}
 	job, err := model.NewFromData(bodyBytes)
 	if err != nil {
-		log.Print(err)
+		logcabin.Error.Print(err)
 		writer.WriteHeader(http.StatusBadRequest)
 		writer.Write([]byte(fmt.Sprintf("Failed to create job from json: %s", err.Error())))
 		return
 	}
 	launchRequest := messaging.NewLaunchRequest(job)
 	if err != nil {
-		log.Print(err)
+		logcabin.Error.Print(err)
 		writer.WriteHeader(http.StatusInternalServerError)
 		writer.Write([]byte(fmt.Sprintf("Error creating launch request: %s", err.Error())))
 		return
 	}
 	launchJSON, err := json.Marshal(launchRequest)
 	if err != nil {
-		log.Print(err)
+		logcabin.Error.Print(err)
 		writer.WriteHeader(http.StatusInternalServerError)
 		writer.Write([]byte(fmt.Sprintf("Error creating launch request JSON: %s", err.Error())))
 		return
 	}
 	err = client.Publish(messaging.LaunchesKey, launchJSON)
 	if err != nil {
-		log.Print(err)
+		logcabin.Error.Print(err)
 		writer.WriteHeader(http.StatusInternalServerError)
 		writer.Write([]byte(fmt.Sprintf("Error publishing launch request: %s", err.Error())))
 		return
@@ -156,7 +155,7 @@ type PreviewerReturn struct {
 func preview(writer http.ResponseWriter, request *http.Request) {
 	bodyBytes, err := ioutil.ReadAll(request.Body)
 	if err != nil {
-		log.Print(err)
+		logcabin.Error.Print(err)
 		writer.WriteHeader(http.StatusBadRequest)
 		writer.Write([]byte("Request had no body"))
 		return
@@ -164,7 +163,7 @@ func preview(writer http.ResponseWriter, request *http.Request) {
 	previewer := &Previewer{}
 	err = json.Unmarshal(bodyBytes, previewer)
 	if err != nil {
-		log.Print(err)
+		logcabin.Error.Print(err)
 		writer.WriteHeader(http.StatusBadRequest)
 		writer.Write([]byte(fmt.Sprintf("Error parsing preview JSON: %s", err.Error())))
 		return
@@ -173,14 +172,14 @@ func preview(writer http.ResponseWriter, request *http.Request) {
 	paramMap.Params = previewer.Params.String()
 	outgoingJSON, err := json.Marshal(paramMap)
 	if err != nil {
-		log.Print(err)
+		logcabin.Error.Print(err)
 		writer.WriteHeader(http.StatusInternalServerError)
 		writer.Write([]byte(fmt.Sprintf("Error creating response JSON: %s", err.Error())))
 		return
 	}
 	_, err = writer.Write(outgoingJSON)
 	if err != nil {
-		log.Print(err)
+		logcabin.Error.Print(err)
 		writer.WriteHeader(http.StatusInternalServerError)
 		writer.Write([]byte(fmt.Sprintf("Error writing response: %s", err.Error())))
 		return
@@ -209,18 +208,18 @@ func main() {
 	}
 	err := configurate.Init(*cfgPath)
 	if err != nil {
-		log.Fatal(err)
+		logcabin.Error.Fatal(err)
 	}
 	amqpURI, err = configurate.C.String("amqp.uri")
 	if err != nil {
-		log.Fatal(err)
+		logcabin.Error.Fatal(err)
 	}
 	client, err = messaging.NewClient(amqpURI, false)
 	if err != nil {
-		log.Fatal(err)
+		logcabin.Error.Fatal(err)
 	}
 	defer client.Close()
 	client.SetupPublishing(messaging.JobsExchange)
 	router := NewRouter()
-	log.Fatal(http.ListenAndServe(*addr, router))
+	logcabin.Error.Fatal(http.ListenAndServe(*addr, router))
 }

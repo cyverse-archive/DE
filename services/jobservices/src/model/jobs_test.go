@@ -5,7 +5,6 @@ import (
 	"configurate"
 	"fmt"
 	"io/ioutil"
-	"logcabin"
 	"os"
 	"path"
 	"reflect"
@@ -28,7 +27,6 @@ func JSONData() ([]byte, error) {
 
 var (
 	s *Job
-	l = logcabin.New("test_jobs", "test_jobs")
 )
 
 func _inittests(t *testing.T, memoize bool) *Job {
@@ -49,12 +47,10 @@ func _inittests(t *testing.T, memoize bool) *Job {
 		data, err := JSONData()
 		if err != nil {
 			t.Error(err)
-			t.Fail()
 		}
 		s, err = NewFromData(data)
 		if err != nil {
 			t.Error(err)
-			t.Fail()
 		}
 	}
 	return s
@@ -261,7 +257,6 @@ func TestCondorLogDir(t *testing.T) {
 	logPath, err := configurate.C.String("condor.log_path")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	expected := fmt.Sprintf("%s/", path.Join(logPath, s.Submitter, s.DirectoryName()))
 	actual := s.CondorLogDirectory()

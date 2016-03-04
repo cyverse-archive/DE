@@ -33,12 +33,10 @@ func initdb(t *testing.T) *sql.DB {
 	db, err := sql.Open("postgres", dburi())
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	err = db.Ping()
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	return db
 }
@@ -53,17 +51,14 @@ func TestInsert(t *testing.T) {
 	actual, err := insert("RUNNING", "test-invocation-id", "test", "localhost", "127.0.0.1", n)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	rowCount, err := actual.RowsAffected()
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	rows, err := db.Query("select status, message, sent_from, sent_from_hostname, sent_on from job_status_updates where external_id = 'test-invocation-id'")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	defer rows.Close()
 	var (
@@ -75,7 +70,6 @@ func TestInsert(t *testing.T) {
 		err := rows.Scan(&status, &message, &sentFrom, &sentFromHostname, &sentOn)
 		if err != nil {
 			t.Error(err)
-			t.Fail()
 		}
 		if status != "RUNNING" {
 			t.Errorf("status was %s instead of RUNNING", status)
@@ -96,7 +90,6 @@ func TestInsert(t *testing.T) {
 	err = rows.Err()
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	if rowCount != 1 {
 		t.Errorf("RowsAffected() should have returned 1: %d", rowCount)
@@ -116,7 +109,6 @@ func TestMsg(t *testing.T) {
 	me, err := os.Hostname()
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	j := &model.Job{InvocationID: "test-invocation-id"}
 	expected := &messaging.UpdateMessage{
@@ -129,7 +121,6 @@ func TestMsg(t *testing.T) {
 	m, err := json.Marshal(expected)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	d := amqp.Delivery{
 		Body:      m,
@@ -139,7 +130,6 @@ func TestMsg(t *testing.T) {
 	rows, err := db.Query("select status, message, sent_from, sent_from_hostname, sent_on from job_status_updates where external_id = 'test-invocation-id'")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	defer rows.Close()
 	var (
@@ -151,7 +141,6 @@ func TestMsg(t *testing.T) {
 		err := rows.Scan(&status, &message, &sentFrom, &sentFromHostname, &sentOn)
 		if err != nil {
 			t.Error(err)
-			t.Fail()
 		}
 		if status != string(expected.State) {
 			t.Errorf("status was %s instead of %s", status, expected.State)
@@ -162,14 +151,12 @@ func TestMsg(t *testing.T) {
 		ips, err := net.LookupIP(expected.Sender)
 		if err != nil {
 			t.Error(err)
-			t.Fail()
 		}
 		var expectedSentFrom string
 		if len(ips) > 0 {
 			expectedSentFrom = ips[0].String()
 		} else {
 			t.Error("Couldn't get ip address")
-			t.Fail()
 		}
 		if sentFrom != expectedSentFrom {
 			t.Errorf("sentFrom was %s instead of %s", sentFrom, expectedSentFrom)
@@ -185,7 +172,6 @@ func TestMsg(t *testing.T) {
 	err = rows.Err()
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	_, err = db.Exec("DELETE FROM job_status_updates")
 	if err != nil {

@@ -6,12 +6,12 @@ package messaging
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"math/rand"
 	"model"
 	"os"
 	"strconv"
 	"time"
+	"logcabin"
 
 	"github.com/streadway/amqp"
 )
@@ -219,19 +219,19 @@ func NewClient(uri string, reconnect bool) (*Client, error) {
 	randomizer := rand.New(rand.NewSource(time.Now().UnixNano()))
 	c.uri = uri
 	c.Reconnect = reconnect
-	log.Println("Attempting AMQP connection...")
+	logcabin.Info.Println("Attempting AMQP connection...")
 	var connection *amqp.Connection
 	var err error
 	if c.Reconnect {
 		for {
 			connection, err = amqp.Dial(c.uri)
 			if err != nil {
-				log.Print(err)
+				logcabin.Error.Print(err)
 				waitFor := randomizer.Intn(10)
-				log.Printf("Re-attempting connection in %d seconds", waitFor)
+				logcabin.Info.Printf("Re-attempting connection in %d seconds", waitFor)
 				time.Sleep(time.Duration(waitFor) * time.Second)
 			} else {
-				log.Println("Successfully connected to the AMQP broker")
+				logcabin.Info.Println("Successfully connected to the AMQP broker")
 				break
 			}
 		}
@@ -240,7 +240,7 @@ func NewClient(uri string, reconnect bool) (*Client, error) {
 		if err != nil {
 			return nil, err
 		}
-		log.Println("Successfully connected to the AMQP broker")
+		logcabin.Info.Println("Successfully connected to the AMQP broker")
 	}
 	c.connection = connection
 	c.consumersChan = make(chan consumeradder)
@@ -265,13 +265,13 @@ func (c *Client) Listen() {
 	for {
 		select {
 		case cs := <-c.consumersChan:
-			log.Println("A new consumer is being added")
+			logcabin.Info.Println("A new consumer is being added")
 			c.initconsumer(&cs.consumer)
 			consumers = append(consumers, &cs.consumer)
-			log.Println("Done adding a new consumer")
+			logcabin.Info.Println("Done adding a new consumer")
 			cs.latch <- 1
 		case err := <-c.errors:
-			log.Printf("An error in the connection to the AMQP broker occurred:\n%s", err)
+			logcabin.Error.Printf("An error in the connection to the AMQP broker occurred:\n%s", err)
 			if c.Reconnect {
 				c, _ = NewClient(c.uri, c.Reconnect)
 				c.consumers = consumers

@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"logcabin"
 	"messaging"
 	"model"
 	"net/http"
@@ -20,7 +19,6 @@ import (
 
 var (
 	s *model.Job
-	l = logcabin.New("test_jex_adapter", "test_jex_adapter")
 )
 
 func shouldrun() bool {
@@ -65,12 +63,10 @@ func _inittests(t *testing.T, memoize bool) *model.Job {
 		data, err := JSONData()
 		if err != nil {
 			t.Error(err)
-			t.Fail()
 		}
 		s, err = model.NewFromData(data)
 		if err != nil {
 			t.Error(err)
-			t.Fail()
 		}
 	}
 	return s
@@ -84,7 +80,6 @@ func TestGetHome(t *testing.T) {
 	req, err := http.NewRequest("GET", "http://for-a-test.org", nil)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	recorder := httptest.NewRecorder()
 	home(recorder, req)
@@ -105,7 +100,6 @@ func TestStop(t *testing.T) {
 	client, err := messaging.NewClient(uri(), false)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	defer client.Close()
 	client.AddConsumer(messaging.JobsExchange, "test_stop", stopKey, func(d amqp.Delivery) {
@@ -139,7 +133,6 @@ func TestStop(t *testing.T) {
 	request, err := http.NewRequest("DELETE", requestURL, nil)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	recorder := httptest.NewRecorder()
 	NewRouter().ServeHTTP(recorder, request)
@@ -158,7 +151,6 @@ func TestLaunch(t *testing.T) {
 	client, err := messaging.NewClient(uri(), false)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	defer client.Close()
 	client.AddConsumer(messaging.JobsExchange, "test_launch", messaging.LaunchesKey, func(d amqp.Delivery) {
@@ -186,12 +178,10 @@ func TestLaunch(t *testing.T) {
 	marshalledJob, err := json.Marshal(job)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	request, err := http.NewRequest("POST", "http://for-a-test.org/", bytes.NewReader(marshalledJob))
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	recorder := httptest.NewRecorder()
 	NewRouter().ServeHTTP(recorder, request)
@@ -210,12 +200,10 @@ func TestPreview(t *testing.T) {
 	marshalledPreviewer, err := json.Marshal(previewer)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	request, err := http.NewRequest("POST", "http://for-a-test.org/arg-preview", bytes.NewReader(marshalledPreviewer))
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	recorder := httptest.NewRecorder()
 	NewRouter().ServeHTTP(recorder, request)
@@ -226,12 +214,10 @@ func TestPreview(t *testing.T) {
 	body, err := ioutil.ReadAll(recorder.Body)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	err = json.Unmarshal(body, returnedPreview)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	actual := returnedPreview.Params
 	expected := model.PreviewableStepParam(params).String()
