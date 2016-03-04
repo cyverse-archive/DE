@@ -193,7 +193,7 @@
   [user tags-str]
   (try+
     (if tags-str
-      (search/filter-user-tags user (map #(UUID/fromString %) (string/split tags-str #",")))
+      (search/filter-user-tags (str user "#iplant") (map #(UUID/fromString %) (string/split tags-str #",")))
       [])
     (catch Throwable _
       (throw+ {:type   :invalid-argument
