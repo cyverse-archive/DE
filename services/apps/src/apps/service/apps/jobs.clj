@@ -4,6 +4,7 @@
   (:require [clojure.tools.logging :as log]
             [clojure.string :as string]
             [kameleon.db :as db]
+            [apps.clients.iplant-groups :as iplant-groups]
             [apps.clients.notifications :as cn]
             [apps.persistence.jobs :as jp]
             [apps.service.apps.job-listings :as listings]
@@ -182,4 +183,7 @@
 
 (defn submit
   [apps-client user submission]
-  (transaction (submissions/submit apps-client user submission)))
+  (transaction
+   (let [job-info (submissions/submit apps-client user submission)]
+     (iplant-groups/register-analysis (:shortUsername user) (:id job-info))
+     job-info)))
