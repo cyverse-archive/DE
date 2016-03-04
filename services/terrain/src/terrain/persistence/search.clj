@@ -117,8 +117,7 @@
                                                       (str path \/))))
         filter-tag  (fn [tag] (query/term :id {:type  "tag"
                                                :id    tag
-                                               :path  "targets.id"
-                                               :cache false}))
+                                               :path  "targets.id"}))
         perm-filter (query/nested :path   "userPermissions"
                                   :filter (query/term "userPermissions.user" memberships))]
     (query/bool :must   (query/bool :must perm-filter :should (map filter-path in-folders))
