@@ -59,16 +59,14 @@ func _inittests(t *testing.T, memoize bool) *model.Job {
 		data, err := JSONData()
 		if err != nil {
 			t.Error(err)
-			t.Fail()
 		}
 		s, err = model.NewFromData(data)
 		if err != nil {
 			t.Error(err)
-			t.Fail()
 		}
 		err = configurate.Init("../test/test_config.yaml")
 		if err != nil {
-			log.Fatal(err)
+			t.Fatal(err)
 		}
 	}
 	return s
@@ -85,7 +83,6 @@ func TestNewDocker(t *testing.T) {
 	_, err := NewDocker(uri())
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 }
 
@@ -96,7 +93,6 @@ func TestIsContainer(t *testing.T) {
 	dc, err := NewDocker(uri())
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	actual, err := dc.IsContainer("test_not_there")
 	if err != nil {
@@ -114,7 +110,6 @@ func TestPull(t *testing.T) {
 	dc, err := NewDocker(uri())
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	err = dc.Pull("alpine", "latest")
 	if err != nil {
@@ -130,7 +125,6 @@ func TestCreateIsContainerAndNukeByName(t *testing.T) {
 	dc, err := NewDocker(uri())
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	err = dc.Pull("alpine", "latest")
 	if err != nil {
@@ -146,7 +140,6 @@ func TestCreateIsContainerAndNukeByName(t *testing.T) {
 	container, opts, err := dc.CreateContainerFromStep(&job.Steps[0], job.InvocationID)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	if container.ID == "" {
 		t.Error("CreateContainerFromStep created a container with a blank ID")
@@ -244,17 +237,14 @@ func TestCreateDownloadContainer(t *testing.T) {
 	dc, err := NewDocker(uri())
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	image, err := configurate.C.String("porklock.image")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	tag, err := configurate.C.String("porklock.tag")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	err = dc.Pull(image, tag)
 	if err != nil {
@@ -271,7 +261,6 @@ func TestCreateDownloadContainer(t *testing.T) {
 	container, opts, err := dc.CreateDownloadContainer(job, &job.Steps[0].Config.Inputs[0], "0")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 
 	if container.Name != cName {
@@ -298,7 +287,6 @@ func TestCreateDownloadContainer(t *testing.T) {
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	expectedMount := docker.Mount{
 		Source:      wd,
@@ -338,17 +326,14 @@ func TestCreateUploadContainer(t *testing.T) {
 	dc, err := NewDocker(uri())
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	image, err := configurate.C.String("porklock.image")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	tag, err := configurate.C.String("porklock.tag")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	containerName := fmt.Sprintf("output-%s", job.InvocationID)
 	exists, err := dc.IsContainer(containerName)
@@ -361,7 +346,6 @@ func TestCreateUploadContainer(t *testing.T) {
 	container, opts, err := dc.CreateUploadContainer(job)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	if container.Name != containerName {
 		t.Errorf("container name was %s instead of %s", container.Name, containerName)
@@ -387,7 +371,6 @@ func TestCreateUploadContainer(t *testing.T) {
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	expectedMount := docker.Mount{
 		Source:      wd,
@@ -427,7 +410,6 @@ func TestAttach(t *testing.T) {
 	dc, err := NewDocker(uri())
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	err = dc.Pull("alpine", "latest")
 	if err != nil {
@@ -443,7 +425,6 @@ func TestAttach(t *testing.T) {
 	container, _, err := dc.CreateContainerFromStep(&job.Steps[0], job.InvocationID)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	stdout := bytes.NewBufferString("")
 	stderr := bytes.NewBufferString("")
@@ -452,7 +433,6 @@ func TestAttach(t *testing.T) {
 		err = dc.Attach(container, stdout, stderr, success)
 		if err != nil {
 			t.Error(err)
-			t.Fail()
 		}
 	}()
 	<-success
@@ -474,7 +454,6 @@ func TestRunStep(t *testing.T) {
 	dc, err := NewDocker(uri())
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	err = dc.Pull("alpine", "latest")
 	if err != nil {
@@ -491,13 +470,11 @@ func TestRunStep(t *testing.T) {
 		err = os.MkdirAll("logs", 0755)
 		if err != nil {
 			t.Error(err)
-			t.Fail()
 		}
 	}
 	exitCode, err := dc.RunStep(&job.Steps[0], job.InvocationID, 0)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	if exitCode != 0 {
 		t.Errorf("RunStep's exit code was %d instead of 0\n", exitCode)
@@ -512,7 +489,6 @@ func TestRunStep(t *testing.T) {
 	actualBytes, err := ioutil.ReadFile(job.Steps[0].Stdout("0"))
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	actual := strings.TrimSpace(string(actualBytes))
 	if !reflect.DeepEqual(actual, expected) {
@@ -539,17 +515,14 @@ func TestDownloadInputs(t *testing.T) {
 	dc, err := NewDocker(uri())
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	image, err := configurate.C.String("porklock.image")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	tag, err := configurate.C.String("porklock.tag")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	err = dc.Pull(image, tag)
 	if err != nil {
@@ -567,13 +540,11 @@ func TestDownloadInputs(t *testing.T) {
 		err = os.MkdirAll("logs", 0755)
 		if err != nil {
 			t.Error(err)
-			t.Fail()
 		}
 	}
 	exitCode, err := dc.DownloadInputs(job, &job.Steps[0].Config.Inputs[0], 0)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	if exitCode != 0 {
 		t.Errorf("DownloadInputs's exit code was %d instead of 0\n", exitCode)
@@ -591,7 +562,6 @@ func TestDownloadInputs(t *testing.T) {
 	actualBytes, err := ioutil.ReadFile(job.Steps[0].Config.Inputs[0].Stdout("0"))
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	actual := strings.TrimSpace(string(actualBytes))
 	if !reflect.DeepEqual(actual, expected) {
@@ -618,17 +588,14 @@ func TestUploadOutputs(t *testing.T) {
 	dc, err := NewDocker(uri())
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	image, err := configurate.C.String("porklock.image")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	tag, err := configurate.C.String("porklock.tag")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	err = dc.Pull(image, tag)
 	if err != nil {
@@ -646,13 +613,11 @@ func TestUploadOutputs(t *testing.T) {
 		err = os.MkdirAll("logs", 0755)
 		if err != nil {
 			t.Error(err)
-			t.Fail()
 		}
 	}
 	exitCode, err := dc.UploadOutputs(job)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	if exitCode != 0 {
 		t.Errorf("UploadOutputs exit code was %d instead of 0\n", exitCode)
@@ -670,7 +635,6 @@ func TestUploadOutputs(t *testing.T) {
 	actualBytes, err := ioutil.ReadFile("logs/logs-stdout-output")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	actual := strings.TrimSpace(string(actualBytes))
 	if !reflect.DeepEqual(actual, expected) {
@@ -697,17 +661,14 @@ func TestCreateDataContainer(t *testing.T) {
 	dc, err := NewDocker(uri())
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	image, err := configurate.C.String("porklock.image")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	tag, err := configurate.C.String("porklock.tag")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	err = dc.Pull(image, tag)
 	if err != nil {

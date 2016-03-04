@@ -21,7 +21,6 @@ func GetClient(t *testing.T) *Client {
 	client, err = NewClient(uri(), false)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	client.SetupPublishing(JobsExchange)
 	go client.Listen()
@@ -85,7 +84,6 @@ func TestNewClient(t *testing.T) {
 	actual, err := NewClient(uri(), false)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	defer actual.Close()
 	expected := uri()
@@ -141,7 +139,6 @@ func TestSendTimeLimitRequest(t *testing.T) {
 	err := json.Unmarshal(actual, req)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	if req.InvocationID != "test" {
 		t.Errorf("TimeLimitRequest's InvocationID was %s instead of test", req.InvocationID)
@@ -168,7 +165,6 @@ func TestSendTimeLimitResponse(t *testing.T) {
 	err := json.Unmarshal(actual, resp)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	if resp.InvocationID != "test" {
 		t.Errorf("TimeLimitRequest's InvocationID was %s instead of test", resp.InvocationID)
@@ -195,7 +191,6 @@ func TestSendTimeLimitDelta(t *testing.T) {
 	err := json.Unmarshal(actual, delta)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	if delta.InvocationID != "test" {
 		t.Errorf("TimeLimitDelta's InvocationID was %s instead of test", delta.InvocationID)
@@ -226,7 +221,6 @@ func TestSendStopRequest(t *testing.T) {
 	req := &StopRequest{}
 	if err = json.Unmarshal(actual, req); err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	if req.Reason != "this is a test" {
 		t.Errorf("Reason was '%s' instead of '%s'", req.Reason, "this is a test")

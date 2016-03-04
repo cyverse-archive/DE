@@ -43,12 +43,10 @@ func _inittests(t *testing.T, memoize bool) *model.Job {
 		data, err := JSONData()
 		if err != nil {
 			t.Error(err)
-			t.Fail()
 		}
 		s, err = model.NewFromData(data)
 		if err != nil {
 			t.Error(err)
-			t.Fail()
 		}
 		PATH := fmt.Sprintf("../test/:%s", os.Getenv("PATH"))
 		err = os.Setenv("PATH", PATH)
@@ -234,12 +232,10 @@ func TestLaunch(t *testing.T) {
 	j, err := model.NewFromData(data)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	actual, err := launch(j)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	expected := "10000"
 	if actual != expected {
@@ -267,7 +263,6 @@ func TestStop(t *testing.T) {
 	actual, err := stop(jr)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	if actual == "" {
 		t.Errorf("stop returned an empty string")

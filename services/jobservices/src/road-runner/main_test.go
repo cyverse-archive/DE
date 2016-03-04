@@ -20,7 +20,6 @@ func GetClient(t *testing.T) *messaging.Client {
 	client, err = messaging.NewClient(messagingURI(), false)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	client.SetupPublishing(messaging.JobsExchange)
 	go client.Listen()
@@ -39,7 +38,6 @@ func TestRegisterTimeLimitDeltaListener(t *testing.T) {
 	defaultDuration, err := time.ParseDuration("48h")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	exitFunc := func() {
 		fmt.Println("exitFunc called")
@@ -63,7 +61,6 @@ func TestRegisterTimeLimitRequestListener(t *testing.T) {
 	defaultDuration, err := time.ParseDuration("48h")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	exitFunc := func() {
 		fmt.Println("exitFunc called")
@@ -89,14 +86,12 @@ func TestRegisterTimeLimitRequestListener(t *testing.T) {
 	err = client.SendTimeLimitRequest(invID)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	time.Sleep(1000 * time.Millisecond)
 	<-coord
 	parsedResponse := &messaging.TimeLimitResponse{}
 	if err = json.Unmarshal(actual, parsedResponse); err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	if parsedResponse.InvocationID != invID {
 		t.Errorf("InvocationID was %s instead of %s", parsedResponse.InvocationID, invID)
@@ -117,7 +112,6 @@ func TestRegisterStopRequestListener(t *testing.T) {
 	err := client.SendStopRequest(invID, "test", "this is a test")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	actual := <-exit
 	if actual != messaging.StatusKilled {
@@ -131,7 +125,6 @@ func TestNewTimeTracker(t *testing.T) {
 	duration, err := time.ParseDuration("1s")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	coord := make(chan int)
 	handler := func() {
@@ -152,19 +145,16 @@ func TestApplyDelta(t *testing.T) {
 	defaultDuration, err := time.ParseDuration("10s")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	resetDuration, err := time.ParseDuration("20s")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	handler := func() {}
 	tt := NewTimeTracker(defaultDuration, handler)
 	firstDate := tt.EndDate
 	if err = tt.ApplyDelta(resetDuration); err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	secondDate := tt.EndDate
 	if !secondDate.After(firstDate) {

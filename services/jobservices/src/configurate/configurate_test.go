@@ -11,7 +11,6 @@ func TestNew(t *testing.T) {
 	err := configurator()
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	if C == nil {
 		t.Errorf("configurate.New() returned nil")
@@ -22,12 +21,10 @@ func TestAMQPConfig(t *testing.T) {
 	err := configurator()
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	actual, err := C.String("amqp.uri")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	expected := "amqp://guest:guest@rabbit:5672/"
 	if actual != expected {
