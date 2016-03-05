@@ -18,6 +18,30 @@
 (def grouper-analysis-permission-def-fmt "iplant:de:%s:analyses:analysis-permission-def")
 (def grouper-analysis-resource-name-fmt "iplant:de:%s:analyses:%s")
 
+(def ^:private permission-precedence
+  (into {} (map-indexed (fn [i v] (vector v i)) ["own" "write" "read"])))
+
+(defn get-permission-level
+  ([perms id]
+     (get-permission-level (perms id)))
+  ([perms]
+     (first (sort-by permission-precedence (map :action_name perms)))))
+
+(defn has-permission-level
+  [perms required-level id]
+  (some (comp (partial = required-level) :action_name) (perms id)))
+
+(def lacks-permission-level (complement has-permission-level))
+
+(defn format-permission
+  [[subject subject-perms]]
+  {:user        subject
+   :permission (get-permission-level subject-perms)})
+
+(defn find-forbidden-resources
+  [perms required-level ids]
+  (filter (partial lacks-permission-level perms required-level) ids))
+
 (defn- grouper-user-group
   []
   (format grouper-user-group-fmt (config/env-name)))
