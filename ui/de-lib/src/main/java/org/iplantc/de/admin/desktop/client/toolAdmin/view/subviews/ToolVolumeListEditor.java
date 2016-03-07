@@ -2,6 +2,7 @@ package org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews;
 
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
 import org.iplantc.de.admin.desktop.client.toolAdmin.model.ToolVolumeProperties;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.tool.ToolAutoBeanFactory;
 import org.iplantc.de.client.models.tool.ToolVolume;
 
@@ -147,5 +148,12 @@ public class ToolVolumeListEditor extends Composite implements IsEditor<Editor<L
             }
         }
         return true;
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        grid.ensureDebugId(baseID + Belphegor.ToolAdminIds.CONTAINER_VOLUMES_GRID);
     }
 }

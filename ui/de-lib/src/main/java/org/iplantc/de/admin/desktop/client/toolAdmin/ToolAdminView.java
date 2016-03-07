@@ -209,6 +209,7 @@ public interface ToolAdminView extends IsWidget,
 
         void go(HasOneWidget container);
 
+        void setViewDebugId(String baseId);
     }
 
     void editToolDetails(Tool tool);
