@@ -1,5 +1,6 @@
 package org.iplantc.de.admin.desktop.client.permIdRequest.views;
 
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestDetails;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestAutoBeanFactory;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestStatus;
@@ -20,6 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.sencha.gxt.cell.core.client.form.ComboBoxCell.TriggerAction;
 import com.sencha.gxt.data.shared.LabelProvider;
+import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.form.SimpleComboBox;
 import com.sencha.gxt.widget.core.client.form.TextArea;
 
@@ -63,6 +65,8 @@ public class UpdatePermanentIdRequestDialog extends IPlantDialog {
             }
         });
         userEmail.setText(details.getRequestor().getEmail());
+
+        ensureDebugId(Belphegor.PermIds.UPDATE_PERMID_DIALOG + Belphegor.PermIds.VIEW);
     }
 
     @UiFactory
@@ -94,4 +98,20 @@ public class UpdatePermanentIdRequestDialog extends IPlantDialog {
         return update;
     }
 
+    @Override
+    public void show() {
+        super.show();
+        ensureDebugId(Belphegor.PermIds.UPDATE_PERMID_DIALOG);
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        getButton(Dialog.PredefinedButton.OK).ensureDebugId(baseID + Belphegor.PermIds.UPDATE);
+        currentStatusLabel.setId(baseID + Belphegor.PermIds.CURRENT_STATUS);
+        userEmail.ensureDebugId(baseID + Belphegor.PermIds.USER_EMAIL);
+        statusCombo.setId(baseID + Belphegor.PermIds.STATUS_COMBO);
+        commentsEditor.setId(baseID + Belphegor.PermIds.COMMENTS);
+    }
 }

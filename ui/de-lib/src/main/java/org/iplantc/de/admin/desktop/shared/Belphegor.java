@@ -202,4 +202,23 @@ public interface Belphegor {
         String YES = ".yesBtn";
         String NO = ".noBtn";
     }
+
+    interface PermIds {
+        String VIEW = ".view";
+        String UPDATE = ".updateBtn";
+        String METADATA = ".metadataBtn";
+        String DOI = ".createDOIBtn";
+        String GRID = ".grid";
+        String CREATE_DOI_MSG = "createDOIMsg";
+        String YES = ".yesBtn";
+        String NO = ".noBtn";
+        String METADATA_DIALOG = "editMetadataDialog";
+        String OK = ".okBtn";
+        String UPDATE_PERMID_DIALOG = "updatePermIdDialog";
+        String CURRENT_STATUS = ".currentStatus";
+        String USER_EMAIL = ".userEmail";
+        String STATUS_COMBO = ".statusCombo";
+        String COMMENTS = ".comments";
+        String CANCEL = ".cancelBtn";
+    }
 }
