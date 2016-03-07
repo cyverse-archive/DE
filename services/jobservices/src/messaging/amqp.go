@@ -6,12 +6,12 @@ package messaging
 import (
 	"encoding/json"
 	"fmt"
+	"logcabin"
 	"math/rand"
 	"model"
 	"os"
 	"strconv"
 	"time"
-	"logcabin"
 
 	"github.com/streadway/amqp"
 )
@@ -185,10 +185,12 @@ type aggregationMessage struct {
 }
 
 type consumer struct {
-	exchange string
-	queue    string
-	key      string
-	handler  MessageHandler
+	exchange        string
+	queue           string
+	key             string
+	handler         MessageHandler
+	queueAutoDelete bool
+	queueDurable    bool
 }
 
 type consumeradder struct {
@@ -296,15 +298,37 @@ func (c *Client) Close() {
 }
 
 // AddConsumer adds a consumer to the list of consumers that need to be created
-// each time the client is set up. Note that this just adds the consumers to a
-// list, it doesn't actually start handling messages yet. You need to call
-// Listen() for that.
+// each time the client is set up. Make sure that Listen() has been called
+// before calling this function.
 func (c *Client) AddConsumer(exchange, queue, key string, handler MessageHandler) {
 	cs := consumer{
-		exchange: exchange,
-		queue:    queue,
-		key:      key,
-		handler:  handler,
+		exchange:        exchange,
+		queue:           queue,
+		key:             key,
+		handler:         handler,
+		queueDurable:    true,
+		queueAutoDelete: false,
+	}
+	adder := consumeradder{
+		consumer: cs,
+		latch:    make(chan int),
+	}
+	c.consumersChan <- adder
+	<-adder.latch
+}
+
+// AddDeletableConsumer adds a consumer to the list of consumers that need to be
+// created each time the client is set up. Unlike AddConsumer(), the new
+// consumer will have auto-delete set to true and durable set to false. Make
+// sure that Listen() has been called before calling this function.
+func (c *Client) AddDeletableConsumer(exchange, queue, key string, handler MessageHandler) {
+	cs := consumer{
+		exchange:        exchange,
+		queue:           queue,
+		key:             key,
+		handler:         handler,
+		queueDurable:    false,
+		queueAutoDelete: true,
 	}
 	adder := consumeradder{
 		consumer: cs,
@@ -330,11 +354,11 @@ func (c *Client) initconsumer(cs *consumer) error {
 	)
 	_, err = channel.QueueDeclare(
 		cs.queue,
-		true,  //durable
-		false, //auto-delete
-		false, //internal
-		false, //no-wait
-		nil,   //args
+		cs.queueDurable,    //durable
+		cs.queueAutoDelete, //auto-delete
+		false,              //internal
+		false,              //no-wait
+		nil,                //args
 	)
 	err = channel.QueueBind(
 		cs.queue,

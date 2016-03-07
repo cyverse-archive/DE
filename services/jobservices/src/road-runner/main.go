@@ -474,7 +474,7 @@ func Wait(client *messaging.Client, dckr *Docker, seconds chan int64, exit chan 
 // messages on the given client.
 func RegisterTimeLimitDeltaListener(client *messaging.Client, timeTracker *TimeTracker, invID string) {
 	timeLimitDeltaKey := fmt.Sprintf("%s.%s", messaging.TimeLimitDeltaKey, invID)
-	client.AddConsumer(messaging.JobsExchange, fmt.Sprintf("road-runner-%s-tl-delta", invID), timeLimitDeltaKey, func(d amqp.Delivery) {
+	client.AddDeletableConsumer(messaging.JobsExchange, fmt.Sprintf("road-runner-%s-tl-delta", invID), timeLimitDeltaKey, func(d amqp.Delivery) {
 		d.Ack(false)
 		running(client, job, "Received delta request")
 		deltaMsg := &messaging.TimeLimitDelta{}
@@ -501,7 +501,7 @@ func RegisterTimeLimitDeltaListener(client *messaging.Client, timeTracker *TimeT
 // TimeLimitRequest messages on the given client.
 func RegisterTimeLimitRequestListener(client *messaging.Client, timeTracker *TimeTracker, invID string) {
 	timeLimitRequestKey := fmt.Sprintf("%s.%s", messaging.TimeLimitRequestsKey, invID)
-	client.AddConsumer(messaging.JobsExchange, fmt.Sprintf("road-runner-%s-tl-delta", invID), timeLimitRequestKey, func(d amqp.Delivery) {
+	client.AddDeletableConsumer(messaging.JobsExchange, fmt.Sprintf("road-runner-%s-tl-delta", invID), timeLimitRequestKey, func(d amqp.Delivery) {
 		d.Ack(false)
 		running(client, job, "Received time limit request")
 		timeLeft := int64(timeTracker.EndDate.Sub(time.Now())) / int64(time.Millisecond)
@@ -518,7 +518,7 @@ func RegisterTimeLimitRequestListener(client *messaging.Client, timeTracker *Tim
 // messages.
 func RegisterStopRequestListener(client *messaging.Client, exit chan messaging.StatusCode, invID string) {
 	stopsKey := fmt.Sprintf("%s.%s", messaging.StopsKey, invID)
-	client.AddConsumer(messaging.JobsExchange, fmt.Sprintf("road-runner-%s-stops-request", invID), stopsKey, func(d amqp.Delivery) {
+	client.AddDeletableConsumer(messaging.JobsExchange, fmt.Sprintf("road-runner-%s-stops-request", invID), stopsKey, func(d amqp.Delivery) {
 		d.Ack(false)
 		running(client, job, "Received stop request")
 		exit <- messaging.StatusKilled
