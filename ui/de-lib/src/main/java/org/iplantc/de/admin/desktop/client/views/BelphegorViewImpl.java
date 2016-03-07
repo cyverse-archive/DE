@@ -52,6 +52,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
     private ToolRequestView.Presenter toolReqPresenter;
     private ToolAdminView.Presenter toolAdminPresenter;
     private SystemMessageView.Presenter sysMsgPresenter;
+    private TemplateListingView.Presenter tempPresenter;
 
     @Inject
     public BelphegorViewImpl(final AdminAppsView.AdminPresenter presenter,
@@ -69,6 +70,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
         this.toolReqPresenter = toolReqPresenter;
         this.toolAdminPresenter = toolAdminPresenter;
         this.sysMsgPresenter = sysMsgPresenter;
+        this.tempPresenter = tempPresenter;
 
         initWidget(uiBinder.createAndBindUi(this));
         init(presenter,
@@ -150,6 +152,9 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
 
         systemMessagesPanel.ensureDebugId(baseID + Belphegor.Ids.SYSTEM_MESSAGE);
         sysMsgPresenter.setViewDebugId(baseID + Belphegor.Ids.SYSTEM_MESSAGE);
+
+        metadataPanel.ensureDebugId(baseID + Belphegor.Ids.METADATA);
+        tempPresenter.setViewDebugId(baseID + Belphegor.Ids.METADATA);
 
     }
 }

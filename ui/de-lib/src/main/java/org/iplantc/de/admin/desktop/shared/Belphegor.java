@@ -187,4 +187,19 @@ public interface Belphegor {
         String MESSAGE = ".message";
         String TYPE = ".type";
     }
+
+    interface MetadataIds {
+        String VIEW = ".view";
+        String ADD = ".addBtn";
+        String EDIT = ".editBtn";
+        String DELETE = ".deleteBtn";
+        String GRID = ".grid";
+        String EDIT_DIALOG = "metadataTemplateDialog";
+        String OK = ".okBtn";
+        String TEMPLATE_NAME = ".templateName";
+        String CHECK_DELETED = ".checkDeleted";
+        String DELETE_MSG_BOX = "deleteMetadataMsgBox";
+        String YES = ".yesBtn";
+        String NO = ".noBtn";
+    }
 }

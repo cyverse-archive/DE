@@ -1,5 +1,6 @@
 package org.iplantc.de.admin.desktop.client.metadata.view;
 
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 
 import com.google.gwt.core.client.GWT;
@@ -13,6 +14,7 @@ import com.google.inject.Inject;
 
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
+import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
@@ -24,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class TemplatesListingViewImpl implements IsWidget, TemplateListingView {
+public class TemplatesListingViewImpl extends Composite implements IsWidget, TemplateListingView {
 
     private static TemplatesListingViewImplUiBinder uiBinder = GWT.create(TemplatesListingViewImplUiBinder.class);
 
@@ -45,7 +47,6 @@ public class TemplatesListingViewImpl implements IsWidget, TemplateListingView {
     TemplateListingView.TemplateListingAppearance appearance;
 
     private final MetadataTemplateProperties props;
-    private final Widget widget;
     private Presenter presenter;
 
     @Inject
@@ -53,7 +54,17 @@ public class TemplatesListingViewImpl implements IsWidget, TemplateListingView {
                                     TemplateListingView.TemplateListingAppearance appearance) {
         this.props = props;
         this.appearance = appearance;
-        widget = uiBinder.createAndBindUi(this);
+        initWidget(uiBinder.createAndBindUi(this));
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        addBtn.ensureDebugId(baseID + Belphegor.MetadataIds.ADD);
+        editBtn.ensureDebugId(baseID + Belphegor.MetadataIds.EDIT);
+        delBtn.ensureDebugId(baseID + Belphegor.MetadataIds.DELETE);
+        grid.ensureDebugId(baseID + Belphegor.MetadataIds.GRID);
     }
 
     @Override
@@ -123,11 +134,6 @@ public class TemplatesListingViewImpl implements IsWidget, TemplateListingView {
     public void loadTemplates(List<MetadataTemplateInfo> result) {
         store.clear();
         store.addAll(result);
-    }
-
-    @Override
-    public Widget asWidget() {
-        return widget;
     }
 
     @Override

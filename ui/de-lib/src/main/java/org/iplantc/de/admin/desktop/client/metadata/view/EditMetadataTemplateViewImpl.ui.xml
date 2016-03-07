@@ -6,6 +6,7 @@
 	xmlns:menu="urn:import:com.sencha.gxt.widget.core.client.menu"
 	xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
 	xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+	xmlns:fields="urn:import:org.iplantc.de.apps.widgets.client.view.editors.widgets"
 	xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid">
 
 	<ui:with
@@ -46,7 +47,7 @@
           <form:FieldLabel text="Options">
             <form:widget>
               <g:HorizontalPanel>
-                <form:CheckBox ui:field="chkDeleted" boxLabel="Mark As Deleted" />
+                <fields:CheckBoxAdapter ui:field="chkDeleted" />
               </g:HorizontalPanel>
             </form:widget>
           </form:FieldLabel>

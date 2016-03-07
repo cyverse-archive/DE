@@ -3,6 +3,7 @@ package org.iplantc.de.admin.desktop.client.metadata.presenter;
 import org.iplantc.de.admin.desktop.client.metadata.service.MetadataTemplateAdminServiceFacade;
 import org.iplantc.de.admin.desktop.client.metadata.view.EditMetadataTemplateView;
 import org.iplantc.de.admin.desktop.client.metadata.view.TemplateListingView;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.MetadataTemplate;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
@@ -114,6 +115,13 @@ public class MetadataTemplatesPresenterImpl implements TemplateListingView.Prese
             
         });
         cmb.show();
+        setMsgBoxDebugIds(cmb);
+    }
+
+    private void setMsgBoxDebugIds(ConfirmMessageBox cmb) {
+        cmb.ensureDebugId(Belphegor.MetadataIds.DELETE_MSG_BOX);
+        cmb.getButton(PredefinedButton.YES).ensureDebugId(Belphegor.MetadataIds.DELETE_MSG_BOX + Belphegor.MetadataIds.YES);
+        cmb.getButton(PredefinedButton.NO).ensureDebugId(Belphegor.MetadataIds.DELETE_MSG_BOX + Belphegor.MetadataIds.NO);
     }
 
     @Override
@@ -150,6 +158,7 @@ public class MetadataTemplatesPresenterImpl implements TemplateListingView.Prese
                     }
                 });
                 id.show();
+                setDialogDebugIds(id);
 
             }
 
@@ -229,7 +238,18 @@ public class MetadataTemplatesPresenterImpl implements TemplateListingView.Prese
             }
         });
         d.show();
+        setDialogDebugIds(d);
 
+    }
+
+    @Override
+    public void setViewDebugId(String baseId) {
+        view.asWidget().ensureDebugId(baseId + Belphegor.MetadataIds.VIEW);
+    }
+
+    private void setDialogDebugIds(IPlantDialog dialog) {
+        dialog.ensureDebugId(Belphegor.MetadataIds.EDIT_DIALOG);
+        dialog.getOkButton().ensureDebugId(Belphegor.MetadataIds.EDIT_DIALOG + Belphegor.MetadataIds.OK);
     }
 
     private IPlantDialog createEditDialog() {
