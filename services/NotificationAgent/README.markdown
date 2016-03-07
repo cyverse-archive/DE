@@ -368,7 +368,22 @@ Marking a notification as seen prevents it from being returned by the
 `/unseen-messages` endpoint. The intent is for this endpoint to be called when
 the user has seen a notification for the first time. This services requires a `user`
 query parameter that provides the name of the user who is marking these messages as
-seen. This service accepts a request body in the following format:
+seen. This service accepts the following query parameters:
+
+<table>
+    <thead>
+        <tr><th>Name</th><th>Description</th><th>Required/Optional</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>user</td>
+            <td>The name of the user to mark notifications as seen for.</td>
+            <td>Required</td>
+        </tr>
+    </tbody>
+</table>
+
+This service accepts a request body in the following format.
 
 ```json
 {
@@ -402,6 +417,9 @@ $ curl -sd '
     "count": 0
 }
 ```
+
+Note that the UUIDs provided in the request body must be obtained from the
+message -> id element of the notification the user wishes to mark as seen.
 
 ### Marking All Notifications as Seen
 
@@ -445,8 +463,24 @@ $ curl -sd '
 
 "Deleting" a notification entails marking the notification as deleted in the
 notification database so that it won't be returned by either the `/messages`
-service or the `/unseen-messages` service. This service accepts a request body
-in the following format:
+service or the `/unseen-messages` service. This service accepts the following
+query parameters:
+
+<table>
+    <thead>
+        <tr><th>Name</th><th>Description</th><th>Required/Optional</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>user</td>
+            <td>The name of the user to delete notifications for.</td>
+            <td>Required</td>
+        </tr>
+    </tbody>
+</table>
+
+
+This service accepts a request body in the following format:
 
 ```json
 {

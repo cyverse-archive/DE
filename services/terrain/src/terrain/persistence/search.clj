@@ -103,7 +103,7 @@
      It returns the subset of the given tags that are owned by the given user."
   [^String user ^ISeq tag-ids]
   (try+
-    (let [query (query/filtered :query (query/term :id tag-ids) :filter (query/term :creator user))
+    (let [query (query/bool :must (query/term :id tag-ids) :filter (query/term :creator user))
           hits  (resp/hits-from (doc/search (connect) "data" "tag" :query query :_source false))]
       (map :_id hits))
     (catch [:status 404] {:keys []}
@@ -117,8 +117,7 @@
                                                       (str path \/))))
         filter-tag  (fn [tag] (query/term :id {:type  "tag"
                                                :id    tag
-                                               :path  "targets.id"
-                                               :cache false}))
+                                               :path  "targets.id"}))
         perm-filter (query/nested :path   "userPermissions"
                                   :filter (query/term "userPermissions.user" memberships))]
     (query/bool :must   (query/bool :must perm-filter :should (map filter-path in-folders))
@@ -141,7 +140,7 @@
    Returns:
      It returns the elastisch formatted query filtered for tags and user access."
   [^IPersistentMap query ^ISeq in-folders ^ISeq tags ^ISeq memberships]
-  (query/filtered :query query :filter (mk-filter in-folders tags memberships)))
+  (query/bool :must query :filter (mk-filter in-folders tags memberships)))
 
 
 (defn ^IPersistentMap mk-data-tags-filter
@@ -158,7 +157,7 @@
    Returns:
      It returns the elastisch formatted filter for tags and user access."
   [^ISeq in-folders ^ISeq tags ^ISeq memberships]
-  (query/filtered :filter (mk-filter in-folders tags memberships)))
+  (query/bool :filter (mk-filter in-folders tags memberships)))
 
 
 (defn- format-response

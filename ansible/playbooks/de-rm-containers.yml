@@ -1,7 +1,7 @@
 ---
 # - name: Remove iplant-data
 #   hosts: docker-ready:&systems
-#   sudo: true
+#   become: true
 #   gather_facts: false
 #   tags:
 #     - services
@@ -14,7 +14,7 @@
 
 - name: Remove anon-files
   hosts: anon-files:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -31,12 +31,12 @@
   post_tasks:
     - name: annihilate anon-files
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v {{anon_files.service_name_short}}
 
 - name: Remove apps
   hosts: apps:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -57,12 +57,12 @@
   post_tasks:
     - name: annihilate apps
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v {{apps.service_name_short}}
 
 - name: Remove clockwork
   hosts: clockwork:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -79,12 +79,12 @@
   post_tasks:
     - name: annihilate clockwork
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v {{clockwork.service_name_short}}
 
 - name: Remove clm
   hosts: condor-log-monitor:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -92,11 +92,11 @@
   post_tasks:
     - name: annihilate clm
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v {{condor_log_monitor.service_name_short}}
     - name: annihilate clm part 2
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v clm
     - name: annihilate clm configs
       ignore_errors: yes
@@ -105,7 +105,7 @@
 
 - name: Remove data-info
   hosts: data-info:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -122,12 +122,12 @@
   post_tasks:
     - name: annihilate data-info
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v {{data_info.service_name_short}}
 
 - name: Remove dewey
   hosts: dewey:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -144,12 +144,12 @@
   post_tasks:
     - name: annihilate dewey
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v {{dewey.service_name_short}}
 
 - name: Remove de-ui
   hosts: ui:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - ui
@@ -169,12 +169,12 @@
   post_tasks:
     - name: annihilate de-ui
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v {{de.service_name_short}}
 
 - name: Remove de-ui-nginx
   hosts: ui:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - ui
@@ -195,12 +195,12 @@
   post_tasks:
     - name: annihilate de-ui-nginx
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v {{de.http_server.service_name_short}}
 
 - name: Remove exim-sender
   hosts: exim-sender:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -213,16 +213,16 @@
   post_tasks:
     - name: annihilate exim-sender
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v {{exim.service_name_short}}
     - name: annihilate exim-sender part 2
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v exim
 
 - name: Remove info-typer
   hosts: info-typer:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -239,12 +239,12 @@
   post_tasks:
     - name: annihilate info-typer
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v {{info_typer.service_name_short}}
 
 - name: Remove infosquito
   hosts: infosquito:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -261,12 +261,12 @@
   post_tasks:
     - name: annihilate infosquito
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v {{infosquito.service_name_short}}
 
 - name: Remove iplant-email
   hosts: iplant-email:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -283,12 +283,12 @@
   post_tasks:
     - name: annihilate iplant-email
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v {{iplant_email.service_name_short}}
 
 - name: Remove iplant-groups
   hosts: iplant-groups:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -305,12 +305,12 @@
   post_tasks:
     - name: annihilate iplant-groups
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v {{iplant_groups.service_name_short}}
 
 - name: Remove job-status-recorder
   hosts: jexevents:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -351,11 +351,11 @@
   post_tasks:
     - name: annihilate jex-events
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v {{jexevents.service_name_short}}
     - name: annihilate jex-events part 2
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v jex-events
     - name: annihilate jex-events part 3
       ignore_errors: yes
@@ -368,7 +368,7 @@
 
 - name: Remove kifshare
   hosts: kifshare:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -385,12 +385,12 @@
   post_tasks:
     - name: annihilate kifshare
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v {{kifshare.service_name_short}}
 
 - name: Remove metadata
   hosts: metadata:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -407,12 +407,12 @@
   post_tasks:
     - name: annihilate metadata
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v {{metadata.service_name_short}}
 
 - name: Remove monkey
   hosts: monkey:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -429,12 +429,12 @@
   post_tasks:
     - name: annihilate monkey
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v {{monkey.service_name_short}}
 
 - name: Remove notification-agent
   hosts: notificationagent:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -451,12 +451,12 @@
   post_tasks:
     - name: annihilate notificationagent
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v {{notificationagent.service_name_short}}
 
 - name: Remove saved-searches
   hosts: saved-searches:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -473,12 +473,12 @@
   post_tasks:
     - name: annihilate saved-searches
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v {{saved_searches.service_name_short}}
 
 - name: Remove terrain
   hosts: terrain:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -499,12 +499,12 @@
   post_tasks:
     - name: annihilate terrain
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v {{terrain.service_name_short}}
 
 - name: Remove tree-urls
   hosts: tree-urls:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -521,12 +521,12 @@
   post_tasks:
     - name: annihilate tree-urls
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v {{tree_urls.service_name_short}}
 
 - name: Remove user-preferences
   hosts: user-preferences:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -543,12 +543,12 @@
   post_tasks:
     - name: annihilate user-preferences
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v {{user_preferences.service_name_short}}
 
 - name: Remove user-sessions
   hosts: user-sessions:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -565,5 +565,5 @@
   post_tasks:
     - name: annihilate user-sessions
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v {{user_sessions.service_name_short}}

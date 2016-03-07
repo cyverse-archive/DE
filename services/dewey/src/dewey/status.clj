@@ -19,4 +19,5 @@
 
 (defn start-jetty
   [listen-port]
+  (require 'ring.adapter.jetty)
   ((eval 'ring.adapter.jetty/run-jetty) #'dewey-handler {:port listen-port}))

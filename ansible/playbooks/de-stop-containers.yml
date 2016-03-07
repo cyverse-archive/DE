@@ -1,7 +1,7 @@
 ---
 - name: Stop anon-files
   hosts: anon-files:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -14,7 +14,7 @@
 
 - name: Stop apps
   hosts: apps:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -27,7 +27,7 @@
 
 - name: Stop clockwork
   hosts: clockwork:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -40,7 +40,7 @@
 
 - name: Stop clm
   hosts: condor-log-monitor:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -53,7 +53,7 @@
 
 - name: Stop data-info
   hosts: data-info:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -66,7 +66,7 @@
 
 - name: Stop dewey
   hosts: dewey:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -79,7 +79,7 @@
 
 - name: Stop de-ui
   hosts: ui:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - ui
@@ -91,7 +91,7 @@
 
 - name: Stop de-ui-nginx
   hosts: ui:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - ui
@@ -104,7 +104,7 @@
 
 - name: Stop exim-sender
   hosts: exim-sender:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -117,7 +117,7 @@
 
 - name: Stop info-typer
   hosts: info-typer:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -130,7 +130,7 @@
 
 - name: Stop infosquito
   hosts: infosquito:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -143,7 +143,7 @@
 
 - name: Stop iplant-email
   hosts: iplant-email:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -156,7 +156,7 @@
 
 - name: Stop iplant-groups
   hosts: iplant-groups:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -169,7 +169,7 @@
 
 - name: Stop job-status-to-apps-adapter
   hosts: jexevents:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -212,7 +212,7 @@
 
 - name: Stop kifshare
   hosts: kifshare:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -225,7 +225,7 @@
 
 - name: Stop metadata
   hosts: metadata:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -238,7 +238,7 @@
 
 - name: Stop monkey
   hosts: monkey:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -251,7 +251,7 @@
 
 - name: Stop notification-agent
   hosts: notificationagent:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -264,7 +264,7 @@
 
 - name: Stop saved-searches
   hosts: saved-searches:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -277,7 +277,7 @@
 
 - name: Stop terrain
   hosts: terrain:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -290,7 +290,7 @@
 
 - name: Stop tree-urls
   hosts: tree-urls:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -303,7 +303,7 @@
 
 - name: Stop user-preferences
   hosts: user-preferences:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -316,7 +316,7 @@
 
 - name: Stop user-sessions
   hosts: user-sessions:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services

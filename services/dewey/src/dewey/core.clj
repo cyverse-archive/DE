@@ -57,6 +57,7 @@
                                             (get props "dewey.amqp.exchange.name")
                                             (Boolean. (get props "dewey.amqp.exchange.durable"))
                                             (Boolean. (get props "dewey.amqp.exchange.auto-delete"))
+                                            (Integer. (get props "dewey.amqp.qos"))
                                             (partial curation/consume-msg irods-cfg es)
                                             "data-object.#"
                                             "collection.#")

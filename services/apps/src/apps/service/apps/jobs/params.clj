@@ -6,13 +6,13 @@
             [apps.persistence.app-metadata :as ap]
             [apps.service.util :as util]))
 
-(defn- get-job-submission-config
+(defn- get-job-submission
   [job]
   (let [submission (:submission job)]
     (when-not submission
       (throw+ {:type  :clojure-commons.exception/not-found
                :error "Job submission values could not be found."}))
-    (:config (cheshire/decode (.getValue submission) true))))
+    (cheshire/decode (.getValue submission) true)))
 
 (defn- load-mapped-params
   [app-id]
@@ -98,7 +98,7 @@
 
 (defn get-parameter-values
   [apps-client {:keys [app-id] :as job}]
-  (let [config (get-job-submission-config job)]
+  (let [config (:config (get-job-submission job))]
     (->> (.getParamDefinitions apps-client app-id)
          (remove-mapped-params app-id)
          (remove omit-param?)
@@ -127,6 +127,7 @@
 
 (defn get-job-relaunch-info
   [apps-client job]
-  (update-in (.getAppJobView apps-client (:app-id job))
-             [:groups]
-             (partial update-app-groups (get-job-submission-config job))))
+  (let [submission (get-job-submission job)]
+    (update-in (assoc (.getAppJobView apps-client (:app-id job)) :debug (:debug submission false))
+               [:groups]
+               (partial update-app-groups (:config submission)))))

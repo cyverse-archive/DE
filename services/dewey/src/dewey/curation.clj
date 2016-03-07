@@ -309,7 +309,7 @@
    Throws:
      It throws any exception perculating up from below."
   [irods-cfg es routing-key msg]
-  (log/debug "received message:  routing key =" routing-key ", message =" msg)
+  (log/info (format "[curation/consume-msg] [%s] [%s]" routing-key msg))
   (if-let [consume (resolve-consumer routing-key)]
     (try+
       (irods/with-jargon irods-cfg [irods]

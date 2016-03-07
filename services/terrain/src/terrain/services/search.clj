@@ -189,17 +189,6 @@
                :val    query-str}))))
 
 
-(defn- extract-tags
-  [user tags-str]
-  (try+
-    (if tags-str
-      (search/filter-user-tags user (map #(UUID/fromString %) (string/split tags-str #",")))
-      [])
-    (catch Throwable _
-      (throw+ {:type   :invalid-argument
-               :reason "must be a comma-separated list of UUIDs"
-               :arg    "tags"
-               :val    tags-str}))))
 
 
 (defn- qualify-name
@@ -207,6 +196,17 @@
   [name]
   (str name \# (cfg/irods-zone)))
 
+(defn- extract-tags
+  [user tags-str]
+  (try+
+    (if tags-str
+      (search/filter-user-tags (qualify-name user) (map #(UUID/fromString %) (string/split tags-str #",")))
+      [])
+    (catch Throwable _
+      (throw+ {:type   :invalid-argument
+               :reason "must be a comma-separated list of UUIDs"
+               :arg    "tags"
+               :val    tags-str}))))
 
 (defn add-timing
   [result start]

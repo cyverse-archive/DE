@@ -150,6 +150,10 @@
   [props config-valid configs]
   "info-typer.amqp.exchange.auto-delete")
 
+(cc/defprop-int amqp-qos
+  "The number of messages to allow to be delivered to this client at once without acknowledgement."
+  [props config-valid configs]
+  "info-typer.amqp.qos")
 
 (defn- exception-filters
   []
