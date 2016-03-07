@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+             xmlns:fields="urn:import:org.iplantc.de.apps.widgets.client.view.editors.widgets"
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container">
 
     <ui:with field="appearance"
@@ -75,14 +76,14 @@
         <container:child layoutData="{layoutData}">
             <form:FieldLabel text="{appearance.systemMsgDlgDismissibleLabel}">
                 <form:widget>
-                    <form:CheckBox ui:field="dismissible"/>
+                    <fields:CheckBoxAdapter ui:field="dismissible"/>
                 </form:widget>
             </form:FieldLabel>
         </container:child>
         <container:child layoutData="{layoutData}">
             <form:FieldLabel text="{appearance.systemMsgDlgLoginsDisabledLabel}">
                 <form:widget>
-                    <form:CheckBox ui:field="loginsDisabled"
+                    <fields:CheckBoxAdapter ui:field="loginsDisabled"
                                    enabled="false"/>
                 </form:widget>
             </form:FieldLabel>

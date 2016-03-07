@@ -170,4 +170,21 @@ public interface Belphegor {
         String YES = ".yesBtn";
         String NO = ".noBtn";
     }
+
+    interface SystemMessageIds {
+        String VIEW = ".view";
+        String ADD = ".addBtn";
+        String DELETE = ".deleteBtn";
+        String GRID = ".grid";
+        String EDIT_DIALOG = "systemMsgDialog";
+        String SUBMIT = ".submitBtn";
+        String ACTIVATION_DATE = ".activationDate";
+        String ACTIVATION_TIME = ".activationTime";
+        String DEACTIVATION_DATE = ".deactivationDate";
+        String DEACTIVATION_TIME = ".deactivationTime";
+        String DISMISSABLE = ".dismissable";
+        String LOGINS_DISABLED = ".loginsDisabled";
+        String MESSAGE = ".message";
+        String TYPE = ".type";
+    }
 }
