@@ -11,5 +11,6 @@ public interface CollaboratorsModule {
         String VIEW = ".view";
         String DELETE = ".delete";
         String DIALOG = "collaborators";
+        String OK = ".okBtn";
     }
 }
