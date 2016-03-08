@@ -19,7 +19,9 @@
 (def grouper-analysis-resource-name-fmt "iplant:de:%s:analyses:%s")
 
 (def ^:private permission-precedence
-  (into {} (map-indexed (fn [i v] (vector v i)) ["own" "write" "read"])))
+  {"own"   0
+   "write" 1
+   "read"  2})
 
 (defn get-permission-level
   ([perms id]
