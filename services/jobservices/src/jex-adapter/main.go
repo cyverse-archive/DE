@@ -73,22 +73,8 @@ func stop(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 	logcabin.Info.Printf("Invocation ID is %s\n", invID)
-	stopRequest := messaging.StopRequest{
-		Reason:       "User request",
-		Username:     "system",
-		InvocationID: invID,
-	}
-	logcabin.Info.Println("Marshalling stop request to JSON")
-	reqJSON, err := json.Marshal(stopRequest)
-	if err != nil {
-		logcabin.Error.Print(err)
-		writer.WriteHeader(http.StatusInternalServerError)
-		writer.Write([]byte(fmt.Sprintf("Error creating stop request JSON: %s", err.Error())))
-		return
-	}
 	logcabin.Info.Println("Sending stop request")
-	stopKey := fmt.Sprintf("%s.%s", messaging.StopsKey, invID)
-	err = client.Publish(stopKey, reqJSON)
+	err = client.SendStopRequest(invID, "root", "because I said to")
 	if err != nil {
 		logcabin.Error.Print(err)
 		writer.WriteHeader(http.StatusInternalServerError)
