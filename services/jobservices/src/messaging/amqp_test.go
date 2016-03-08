@@ -252,3 +252,21 @@ func TestCreateQueue(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestTimeLimitDeltaRequestKey(t *testing.T) {
+	invID := "test"
+	actual := TimeLimitDeltaRequestKey(invID)
+	expected := fmt.Sprintf("%s.%s", TimeLimitDeltaKey, invID)
+	if actual != expected {
+		t.Errorf("TimeLimitDeltaRequestKey returned %s instead of %s", actual, expected)
+	}
+}
+
+func TestStopRequestKey(t *testing.T) {
+	invID := "test"
+	actual := StopRequestKey(invID)
+	expected := fmt.Sprintf("%s.%s", StopsKey, invID)
+	if actual != expected {
+		t.Errorf("StopRequestKey returned %s instead of %s", actual, expected)
+	}
+}

@@ -158,12 +158,24 @@ type TimeLimitDelta struct {
 	Delta        string
 }
 
+// TimeLimitDeltaRequestKey returns the binding key formatted correctly for the
+// jobs exchange based on the InvocationID passed in.
+func TimeLimitDeltaRequestKey(invID string) string {
+	return fmt.Sprintf("%s.%s", TimeLimitDeltaKey, invID)
+}
+
 // NewStopRequest returns a *JobRequest that has been constructed to be a
 // stop request for a running job.
 func NewStopRequest() *StopRequest {
 	return &StopRequest{
 		Version: 0,
 	}
+}
+
+// StopRequestKey returns the binding key formatted correctly for the jobs
+// exchange based on the InvocationID passed in.
+func StopRequestKey(invID string) string {
+	return fmt.Sprintf("%s.%s", StopsKey, invID)
 }
 
 // NewLaunchRequest returns a *JobRequest that has been constructed to be a
