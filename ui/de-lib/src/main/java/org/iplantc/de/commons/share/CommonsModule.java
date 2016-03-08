@@ -7,5 +7,8 @@ package org.iplantc.de.commons.share;
 public interface CommonsModule {
     interface IDs {
         String ANNOUNCER_CLOSE = "announcer.close";
+        String HELP = ".helpBtn";
+        String CLOSE = ".closeBtn";
+        String CANCEL = ".cancelBtn";
     }
 }
