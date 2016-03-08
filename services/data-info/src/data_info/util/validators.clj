@@ -8,6 +8,7 @@
             [clj-jargon.item-info :as item]
             [clj-jargon.permissions :as perm]
             [clj-jargon.users :as user]
+            [clj-jargon.by-uuid :as uuid]
             [clojure-commons.error-codes :as error]
             [data-info.util.config :as cfg])
   (:import [clojure.lang IPersistentCollection]))
@@ -215,3 +216,9 @@
       (throw+ {:error_code error/ERR_NOT_OWNER
                :user user
                :paths (filterv #(not (belongs-to? %)) paths)}))))
+
+(defn all-uuids-exist
+  [cm uuids]
+  (when-not (every? #(uuid/get-path cm %) uuids)
+    (throw+ {:error_code error/ERR_DOES_NOT_EXIST
+             :ids      (filterv #(not (uuid/get-path cm  %1)) uuids)})))
