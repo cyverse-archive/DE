@@ -58,8 +58,9 @@ terrain.jex.base-url = {{ jex.base }}/
 # Tree viewer settings
 terrain.tree-viewer.base-url = {{ tree_parser_base }}
 
-# Elastic Search settings
-terrain.infosquito.es-url = {{ elasticsearch.base }}
+# Elasticsearch settings
+terrain.infosquito.es-url   = {{ elasticsearch.base }}
+terrain.infosquito.es-index = {{ elasticsearch.data_index }}
 
 # App execution settings
 terrain.job-exec.default-output-folder = {{ apps.out_dir }}
