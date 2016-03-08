@@ -122,6 +122,8 @@ public interface ToolRequestView extends IsWidget, IsMaskable {
 
         void go(HasOneWidget container);
 
+        void setViewDebugId(String baseId);
+
     }
 
     void setPresenter(Presenter presenter);

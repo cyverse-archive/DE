@@ -74,4 +74,30 @@ public interface Belphegor {
         String GENOME_EDITOR = "genomeEditorWindow";
         String SAVE_BTN = ".saveBtn";
     }
+
+    interface ToolRequestIds {
+        String VIEW = ".view";
+        String UPDATE = ".updateBtn";
+        String GRID = ".grid";
+        String DETAILS_PANEL = ".detailsPanel";
+        String ADDITIONAL_DATA_FILE = ".additionalData";
+        String ADDITIONAL_INFO = ".additionalInfo";
+        String ARCHITECTURE = ".architecture";
+        String CMD_LINE = ".cmdLine";
+        String DOC_URL = ".docUrl";
+        String MULTI_THREAD = ".multiThread";
+        String PHONE = ".phone";
+        String SOURCE_URL = ".sourceUrl";
+        String SUBMITTED_BY = ".submittedBy";
+        String TEST_DATA = ".testData";
+        String VERSION = ".version";
+        String CURRENT_STATUS = ".currentStatus";
+        String STATUS_COMBO = ".statusCombo";
+        String COMMENTS = ".comments";
+        String STATUS = ".status";
+        String TOOL_REQUEST_DIALOG = "toolRequestDialog";
+        String SUBMIT_BTN = ".submitBtn";
+        String DIALOG_VIEW = ".view";
+        String ATTRIBUTION = ".attribution";
+    }
 }

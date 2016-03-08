@@ -2,6 +2,7 @@ package org.iplantc.de.admin.desktop.client.toolRequest.presenter;
 
 import org.iplantc.de.admin.desktop.client.toolRequest.ToolRequestView;
 import org.iplantc.de.admin.desktop.client.toolRequest.service.ToolRequestServiceFacade;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.toolRequest.ToolRequest;
 import org.iplantc.de.client.models.toolRequest.ToolRequestDetails;
@@ -93,5 +94,10 @@ public class ToolRequestPresenterImpl implements ToolRequestView.Presenter {
                 ErrorHandler.post(caught);
             }
         });
+    }
+
+    @Override
+    public void setViewDebugId(String baseId) {
+        view.asWidget().ensureDebugId(baseId + Belphegor.ToolRequestIds.VIEW);
     }
 }

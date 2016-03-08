@@ -49,6 +49,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
     private TextButton menuButton;
     private AdminAppsView.AdminPresenter presenter;
     private RefGenomeView.Presenter refGenPresenter;
+    private ToolRequestView.Presenter toolReqPresenter;
 
     @Inject
     public BelphegorViewImpl(final AdminAppsView.AdminPresenter presenter,
@@ -63,6 +64,8 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
         this.appearance = appearance;
         this.presenter = presenter;
         this.refGenPresenter = refGenPresenter;
+        this.toolReqPresenter = toolReqPresenter;
+
         initWidget(uiBinder.createAndBindUi(this));
         init(presenter,
              refGenPresenter,
@@ -134,6 +137,9 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
 
         refGenomePanel.ensureDebugId(baseID + Belphegor.Ids.REFERENCE_GENOME);
         refGenPresenter.setViewDebugId(baseID + Belphegor.Ids.REFERENCE_GENOME);
+
+        toolRequestPanel.ensureDebugId(baseID + Belphegor.Ids.TOOL_REQUEST);
+        toolReqPresenter.setViewDebugId(baseID + Belphegor.Ids.TOOL_REQUEST);
 
     }
 }
