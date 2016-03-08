@@ -3,6 +3,7 @@
              xmlns:menu="urn:import:com.sencha.gxt.widget.core.client.menu"
              xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
              xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
              xmlns:search="urn:import:org.iplantc.de.analysis.client.views.widget">
 
     <ui:with field="appearance"
@@ -89,10 +90,13 @@
             </button:TextButton>
         </toolbar:child>
         <toolbar:child>
-            <button:TextButton ui:field="showAllTb"
-                               text="{appearance.showAll}"
-                               icon="{appearance.arrow_undoIcon}"
-                               enabled="false"/>
+            <toolbar:SeparatorToolItem />
+        </toolbar:child>
+        <toolbar:child>
+            <form:SimpleComboBox ui:field="filterCombo" allowBlank="true" forceSelection="true" triggerAction="ALL" />
+        </toolbar:child>
+        <toolbar:child>
+            <toolbar:SeparatorToolItem />
         </toolbar:child>
         <toolbar:child layoutData="{flexBoxData}">
             <search:AnalysisSearchField ui:field="searchField"
