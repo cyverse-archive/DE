@@ -113,6 +113,67 @@ func launch(writer http.ResponseWriter, request *http.Request) {
 		writer.Write([]byte(fmt.Sprintf("Failed to create job from json: %s", err.Error())))
 		return
 	}
+
+	// Create the time limit delta channel
+	timeLimitDeltaChannel, err := client.CreateQueue(
+		messaging.TimeLimitDeltaQueueName(job.InvocationID),
+		messaging.JobsExchange,
+		messaging.TimeLimitDeltaRequestKey(job.InvocationID),
+		true,
+		false,
+	)
+	if err != nil {
+		logcabin.Error.Print(err)
+		writer.WriteHeader(http.StatusInternalServerError)
+		writer.Write([]byte(fmt.Sprintf("Error creating time limit delta request queue: %s", err.Error())))
+	}
+	defer timeLimitDeltaChannel.Close()
+
+	// Create the time limit request channel
+	timeLimitRequestChannel, err := client.CreateQueue(
+		messaging.TimeLimitRequestQueueName(job.InvocationID),
+		messaging.JobsExchange,
+		messaging.TimeLimitRequestKey(job.InvocationID),
+		true,
+		false,
+	)
+	if err != nil {
+		logcabin.Error.Print(err)
+		writer.WriteHeader(http.StatusInternalServerError)
+		writer.Write([]byte(fmt.Sprintf("Error creating time limit request queue: %s", err.Error())))
+	}
+	defer timeLimitRequestChannel.Close()
+
+	// Create the time limit response channel
+	timeLimitResponseChannel, err := client.CreateQueue(
+		messaging.TimeLimitResponsesQueueName(job.InvocationID),
+		messaging.JobsExchange,
+		messaging.TimeLimitResponsesKey(job.InvocationID),
+		true,
+		false,
+	)
+	if err != nil {
+		logcabin.Error.Print(err)
+		writer.WriteHeader(http.StatusInternalServerError)
+		writer.Write([]byte(fmt.Sprintf("Error creating time limit response queue: %s", err.Error())))
+	}
+	defer timeLimitResponseChannel.Close()
+
+	// Create the stop request channel
+	stopRequestChannel, err := client.CreateQueue(
+		messaging.StopQueueName(job.InvocationID),
+		messaging.JobsExchange,
+		messaging.StopRequestKey(job.InvocationID),
+		true,
+		false,
+	)
+	if err != nil {
+		logcabin.Error.Print(err)
+		writer.WriteHeader(http.StatusInternalServerError)
+		writer.Write([]byte(fmt.Sprintf("Error creating stop request queue: %s", err.Error())))
+	}
+	defer stopRequestChannel.Close()
+
 	launchRequest := messaging.NewLaunchRequest(job)
 	if err != nil {
 		logcabin.Error.Print(err)

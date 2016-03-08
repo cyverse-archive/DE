@@ -253,6 +253,61 @@ func TestCreateQueue(t *testing.T) {
 	}
 }
 
+func TestQueueExists(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+	client := GetClient(t)
+	actual, err := client.CreateQueue("test_queue5", JobsExchange, "test_key5", true, false)
+	if err != nil {
+		t.Error(err)
+	}
+	if actual == nil {
+		t.Error("channel is nil")
+	}
+	exists, err := client.QueueExists("test_queue5")
+	if err != nil {
+		t.Error(err)
+	}
+	if !exists {
+		t.Error("Queue 'test_queue5' was not found")
+	}
+	if err = actual.Close(); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestDeleteQueue(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+	client := GetClient(t)
+	actual, err := client.CreateQueue("test_queue6", JobsExchange, "test_key5", true, false)
+	if err != nil {
+		t.Error(err)
+	}
+	if actual == nil {
+		t.Error("channel is nil")
+	}
+	exists, err := client.QueueExists("test_queue6")
+	if err != nil {
+		t.Error(err)
+	}
+	if !exists {
+		t.Error("Queue 'test_queue5' was not found")
+	}
+	if err = client.DeleteQueue("test_queue6"); err != nil {
+		t.Error(err)
+	}
+	exists, err = client.QueueExists("test_queue6")
+	if exists {
+		t.Error("Queue 'test_queue5' was found")
+	}
+	if err = actual.Close(); err != nil {
+		t.Error(err)
+	}
+}
+
 func TestTimeLimitRequestKey(t *testing.T) {
 	invID := "test"
 	actual := TimeLimitRequestKey(invID)

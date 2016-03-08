@@ -421,6 +421,31 @@ func (c *Client) CreateQueue(name, exchange, key string, durable, autoDelete boo
 	return channel, nil
 }
 
+// QueueExists returns true if the given queue name exists, false or an error
+// otherwise.
+func (c *Client) QueueExists(name string) (bool, error) {
+	channel, err := c.connection.Channel()
+	if err != nil {
+		return false, err
+	}
+	defer channel.Close()
+	if _, err = channel.QueueInspect(name); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+// DeleteQueue deletes the queue with the given name without regards to safety.
+func (c *Client) DeleteQueue(name string) error {
+	channel, err := c.connection.Channel()
+	if err != nil {
+		return err
+	}
+	defer channel.Close()
+	_, err = channel.QueueDelete(name, false, false, false)
+	return err
+}
+
 func (c *Client) initconsumer(cs *consumer) error {
 	channel, err := c.connection.Channel()
 	if err != nil {

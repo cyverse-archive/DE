@@ -188,6 +188,34 @@ func TestLaunch(t *testing.T) {
 	if recorder.Code != 200 {
 		t.Errorf("launch() didn't return a 200 status code: %d", recorder.Code)
 	}
+	deltaQueueExists, err := client.QueueExists(messaging.TimeLimitDeltaQueueName(job.InvocationID))
+	if err != nil {
+		t.Error(err)
+	}
+	if !deltaQueueExists {
+		t.Errorf("AMQP queue %s does not exist", messaging.TimeLimitDeltaQueueName(job.InvocationID))
+	}
+	requestQueueExists, err := client.QueueExists(messaging.TimeLimitRequestQueueName(job.InvocationID))
+	if err != nil {
+		t.Error(err)
+	}
+	if !requestQueueExists {
+		t.Errorf("AMQP queue %s does not exist", messaging.TimeLimitRequestQueueName(job.InvocationID))
+	}
+	responseQueueExists, err := client.QueueExists(messaging.TimeLimitResponsesQueueName(job.InvocationID))
+	if err != nil {
+		t.Error(err)
+	}
+	if !responseQueueExists {
+		t.Errorf("AMQP queue %s does not exist", messaging.TimeLimitResponsesQueueName(job.InvocationID))
+	}
+	stopQueueExists, err := client.QueueExists(messaging.StopQueueName(job.InvocationID))
+	if err != nil {
+		t.Error(err)
+	}
+	if !stopQueueExists {
+		t.Errorf("AMQP queue %s does not exist", messaging.StopQueueName(job.InvocationID))
+	}
 	<-exitChan
 }
 
