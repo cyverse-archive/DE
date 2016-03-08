@@ -48,6 +48,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
     @UiField(provided = true) BelphegorViewAppearance appearance;
     private TextButton menuButton;
     private AdminAppsView.AdminPresenter presenter;
+    private RefGenomeView.Presenter refGenPresenter;
 
     @Inject
     public BelphegorViewImpl(final AdminAppsView.AdminPresenter presenter,
@@ -61,6 +62,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
                              final BelphegorViewAppearance appearance) {
         this.appearance = appearance;
         this.presenter = presenter;
+        this.refGenPresenter = refGenPresenter;
         initWidget(uiBinder.createAndBindUi(this));
         init(presenter,
              refGenPresenter,
@@ -129,6 +131,9 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
 
         appsPanel.ensureDebugId(baseID + Belphegor.Ids.APPS);
         presenter.setViewDebugId(baseID + Belphegor.Ids.APPS);
+
+        refGenomePanel.ensureDebugId(baseID + Belphegor.Ids.REFERENCE_GENOME);
+        refGenPresenter.setViewDebugId(baseID + Belphegor.Ids.REFERENCE_GENOME);
 
     }
 }

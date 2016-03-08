@@ -68,6 +68,8 @@ public interface RefGenomeView extends IsWidget, IsMaskable {
 
         void editReferenceGenome(ReferenceGenome referenceGenome);
 
+        void setViewDebugId(String baseId);
+
     }
 
     void setReferenceGenomes(List<ReferenceGenome> refGenomes);

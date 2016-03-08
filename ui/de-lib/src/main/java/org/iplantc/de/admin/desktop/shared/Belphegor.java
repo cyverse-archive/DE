@@ -57,5 +57,21 @@ public interface Belphegor {
 
     interface RefGenomeIds {
 
+        String VIEW = ".view";
+        String ADD = ".addBtn";
+        String GRID = ".grid";
+        String NAME_FILTER = ".nameFilter";
+        String NAME_LABEL = ".nameLabel";
+        String PATH_LABEL = ".pathLabel";
+        String NAME = ".name";
+        String PATH = ".path";
+        String CREATED_BY = ".createdBy";
+        String LAST_MODIFIED_BY = ".lastModifiedBy";
+        String CREATED_DATE = ".createdDate";
+        String LAST_MODIFIED_DATE = ".lastModifiedDate";
+        String DELETED = ".deleted";
+        String EDITOR_VIEW = ".view";
+        String GENOME_EDITOR = "genomeEditorWindow";
+        String SAVE_BTN = ".saveBtn";
     }
 }
