@@ -86,7 +86,7 @@
   (http/put (grouper-url "groups" (grouper-user-group) "members" subject-id)
             {:query-params {:user grouper-user}}))
 
-(defn- retrieve-permissions
+(defn- retrieve-permissions*
   "Retrieves permission assignments from Grouper."
   [role subject attribute-def attribute-def-names]
   (->> {:user                grouper-user
@@ -100,15 +100,27 @@
        :body
        :assignments))
 
+(defn- retrieve-permissions
+  "Retrieves permission assignments from Grouper."
+  [role subject ids get-attribute-def to-attribute-resource-name]
+  (retrieve-permissions* role subject (get-attribute-def) (map to-attribute-resource-name ids)))
+
 (defn- retrieve-app-permissions
   "Retrieves app permission assignments from Grouper."
   ([subject app-ids]
      (retrieve-app-permissions nil subject app-ids))
   ([role subject app-ids]
-     (retrieve-permissions role subject (grouper-app-permission-def) (map grouper-app-resource-name app-ids))))
+     (retrieve-permissions role subject app-ids grouper-app-permission-def grouper-app-resource-name)))
 
-(defn- group-app-permissions
-  "Groups app permissions by app ID."
+(defn- retrieve-analysis-permissions
+  "Retrieves analysis permission assignments from Grouper."
+  ([subject analysis-ids]
+     (retrieve-analysis-permissions nil subject analysis-ids))
+  ([role subject analysis-ids]
+     (retrieve-permissions role subject analysis-ids grouper-analysis-permission-def grouper-analysis-resource-name)))
+
+(defn- group-permissions
+  "Groups permissions by resource ID. The resource ID must be a UUID."
   [perms]
   (group-by (comp uuidify id-from-resource :name :attribute_definition_name) perms))
 
@@ -117,12 +129,17 @@
   ([user]
      (load-app-permissions user nil))
   ([user app-ids]
-     (group-app-permissions (retrieve-app-permissions user app-ids))))
+     (group-permissions (retrieve-app-permissions user app-ids))))
 
 (defn list-app-permissions
   "Loads an app permission listing from Grouper."
   [app-ids]
-  (group-app-permissions (retrieve-app-permissions nil app-ids)))
+  (group-permissions (retrieve-app-permissions nil app-ids)))
+
+(defn list-analysis-permissions
+  "Loads an analysis permission listing from Grouper."
+  [analysis-ids]
+  (group-permissions (retrieve-analysis-permissions nil analysis-ids)))
 
 (defn- create-resource
   "Creates a new permission name in grouper."

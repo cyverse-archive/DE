@@ -281,6 +281,13 @@
       (limit (nil-if-zero row-limit))
       (select)))
 
+(defn list-jobs-by-id
+  "Gets a listing of jobs with the given identifiers."
+  [job-ids]
+  (-> (select* (job-base-query))
+      (where {:j.id [in (map uuidify job-ids)]})
+      (select)))
+
 (defn list-child-jobs
   "Lists the child jobs within a batch job."
   [batch-id]

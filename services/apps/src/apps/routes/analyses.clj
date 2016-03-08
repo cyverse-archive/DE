@@ -9,6 +9,7 @@
         [ring.util.http-response :only [ok]])
   (:require [apps.json :as json]
             [apps.service.apps :as apps]
+            [apps.routes.domain.permission :as perms]
             [apps.util.coercions :as coercions]))
 
 (defroutes* analyses
@@ -37,6 +38,16 @@
          parameters."
          (ok (coerce! AnalysisResponse
                   (apps/submit-job current-user body))))
+
+  (POST* "/permission-lister" []
+         :query [params SecuredQueryParams]
+         :body [body (describe perms/AnalysisIdList "The analysis permission listing request.")]
+         :return perms/AnalysisPermissionListing
+         :summary "List App Permissions"
+         :description "This endpoint allows the caller to list the permissions for one or more analyses.
+         The authenticated user must have ownership permission on every analysis in the request body for
+         this endpoint to succeed."
+         (ok (apps/list-job-permissions current-user (:analyses body))))
 
   (PATCH* "/:analysis-id" []
           :path-params [analysis-id :- AnalysisIdPathParam]
