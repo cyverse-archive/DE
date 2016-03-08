@@ -142,11 +142,35 @@ type TimeLimitRequest struct {
 	InvocationID string
 }
 
+// TimeLimitRequestKey returns the formatted binding key based on the passed in
+// job InvocationID.
+func TimeLimitRequestKey(invID string) string {
+	return fmt.Sprintf("%s.%s", TimeLimitRequestsKey, invID)
+}
+
+// TimeLimitRequestQueueName returns the formatted queue name for time limit
+// requests. It is based on the passed in job InvocationID.
+func TimeLimitRequestQueueName(invID string) string {
+	return fmt.Sprintf("road-runner-%s-tl-request", invID)
+}
+
 // TimeLimitResponse is the message that is sent by road-runner in response
 // to a TimeLimitRequest. It contains the current time limit from road-runner.
 type TimeLimitResponse struct {
 	InvocationID          string
 	MillisecondsRemaining int64
+}
+
+// TimeLimitResponsesKey returns the formatted binding key based on the passed in
+// job InvocationID.
+func TimeLimitResponsesKey(invID string) string {
+	return fmt.Sprintf("%s.%s", TimeLimitResponseKey, invID)
+}
+
+// TimeLimitResponsesQueueName returns the formatted queue name for time limit
+// responses. It is based on the passed in job InvocationID.
+func TimeLimitResponsesQueueName(invID string) string {
+	return fmt.Sprintf("road-runner-%s-tl-response", invID)
 }
 
 // TimeLimitDelta is the message that is sent to get road-runner to change its
@@ -520,8 +544,7 @@ func (c *Client) SendTimeLimitRequest(invID string) error {
 	if err != nil {
 		return err
 	}
-	key := fmt.Sprintf("%s.%s", TimeLimitRequestsKey, invID)
-	return c.Publish(key, msg)
+	return c.Publish(TimeLimitRequestKey(invID), msg)
 }
 
 // SendTimeLimitResponse sends out a message to the
@@ -536,8 +559,7 @@ func (c *Client) SendTimeLimitResponse(invID string, timeRemaining int64) error 
 	if err != nil {
 		return err
 	}
-	key := fmt.Sprintf("%s.%s", TimeLimitResponseKey, invID)
-	return c.Publish(key, msg)
+	return c.Publish(TimeLimitResponsesKey(invID), msg)
 }
 
 // SendTimeLimitDelta sends out a message to the
@@ -552,8 +574,7 @@ func (c *Client) SendTimeLimitDelta(invID, delta string) error {
 	if err != nil {
 		return err
 	}
-	key := fmt.Sprintf("%s.%s", TimeLimitDeltaKey, invID)
-	return c.Publish(key, msg)
+	return c.Publish(TimeLimitDeltaRequestKey(invID), msg)
 }
 
 // SendStopRequest sends out a message to the jobs.stops.<invocation_id> topic
@@ -567,6 +588,5 @@ func (c *Client) SendStopRequest(invID, user, reason string) error {
 	if err != nil {
 		return err
 	}
-	key := fmt.Sprintf("%s.%s", StopsKey, invID)
-	return c.Publish(key, msg)
+	return c.Publish(StopRequestKey(invID), msg)
 }

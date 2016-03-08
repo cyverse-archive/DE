@@ -131,7 +131,7 @@ func TestSendTimeLimitRequest(t *testing.T) {
 		actual = d.Body
 		coord <- 1
 	}
-	key := fmt.Sprintf("%s.%s", TimeLimitRequestsKey, "test")
+	key := TimeLimitRequestKey("test")
 	client.AddConsumer(JobsExchange, "test_queue1", key, handler)
 	client.SendTimeLimitRequest("test")
 	<-coord
@@ -157,7 +157,7 @@ func TestSendTimeLimitResponse(t *testing.T) {
 		actual = d.Body
 		coord <- 1
 	}
-	key := fmt.Sprintf("%s.%s", TimeLimitResponseKey, "test")
+	key := TimeLimitResponsesKey("test")
 	client.AddConsumer(JobsExchange, "test_queue2", key, handler)
 	client.SendTimeLimitResponse("test", 0)
 	<-coord
@@ -183,7 +183,7 @@ func TestSendTimeLimitDelta(t *testing.T) {
 		actual = d.Body
 		coord <- 1
 	}
-	key := fmt.Sprintf("%s.%s", TimeLimitDeltaKey, "test")
+	key := TimeLimitDeltaRequestKey("test")
 	client.AddConsumer(JobsExchange, "test_queue3", key, handler)
 	client.SendTimeLimitDelta("test", "10s")
 	<-coord
@@ -214,7 +214,7 @@ func TestSendStopRequest(t *testing.T) {
 		actual = d.Body
 		coord <- 1
 	}
-	key := fmt.Sprintf("%s.%s", StopsKey, invID)
+	key := StopRequestKey(invID)
 	client.AddConsumer(JobsExchange, "test_queue4", key, handler)
 	client.SendStopRequest(invID, "test_user", "this is a test")
 	<-coord
@@ -250,6 +250,42 @@ func TestCreateQueue(t *testing.T) {
 	}
 	if err = actual.Close(); err != nil {
 		t.Error(err)
+	}
+}
+
+func TestTimeLimitRequestKey(t *testing.T) {
+	invID := "test"
+	actual := TimeLimitRequestKey(invID)
+	expected := fmt.Sprintf("%s.%s", TimeLimitRequestsKey, invID)
+	if actual != expected {
+		t.Errorf("TimeLimitRequestKey returned %s instead of %s", actual, expected)
+	}
+}
+
+func TestTimeLimitRequestQueueName(t *testing.T) {
+	invID := "test"
+	actual := TimeLimitRequestQueueName(invID)
+	expected := fmt.Sprintf("road-runner-%s-tl-request", invID)
+	if actual != expected {
+		t.Errorf("TimeLimitRequestQueueName returned %s instead of %s", actual, expected)
+	}
+}
+
+func TestTimeLimitResponsesKey(t *testing.T) {
+	invID := "test"
+	actual := TimeLimitResponsesKey(invID)
+	expected := fmt.Sprintf("%s.%s", TimeLimitResponseKey, invID)
+	if actual != expected {
+		t.Errorf("TimeLimitResponsesKey returned %s instead of %s", actual, expected)
+	}
+}
+
+func TestTimeLimitResponsesQueueName(t *testing.T) {
+	invID := "test"
+	actual := TimeLimitResponsesQueueName(invID)
+	expected := fmt.Sprintf("road-runner-%s-tl-response", invID)
+	if actual != expected {
+		t.Errorf("TimeLimitResponsesQueueName returned %s instead of %s", actual, expected)
 	}
 }
 

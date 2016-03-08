@@ -74,7 +74,8 @@ func TestRegisterTimeLimitRequestListener(t *testing.T) {
 		actual = d.Body
 		coord <- 1
 	}
-	key := fmt.Sprintf("%s.%s", messaging.TimeLimitResponseKey, invID)
+
+	key := messaging.TimeLimitResponsesKey(invID)
 
 	// This will listen for the messages sent out as a response by RegisterTimeLimitRequestListener
 	client.AddConsumer(messaging.JobsExchange, "yay", key, handler)
