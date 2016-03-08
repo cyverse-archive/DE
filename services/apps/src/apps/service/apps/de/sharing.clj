@@ -23,7 +23,7 @@
   [user sharee app-id level success-fn failure-fn perms]
   (let [sharer-category (listings/get-category-id-for-app user app-id)
         sharee-category listings/shared-with-me-id]
-    (if (perms/lacks-permission-level perms "own" app-id)
+    (if (iplant-groups/lacks-permission-level perms "own" app-id)
       (failure-fn sharer-category sharee-category (app-sharing-msg :not-allowed app-id))
       (if-let [failure-reason (iplant-groups/share-app app-id sharee level)]
         (failure-fn sharer-category sharee-category failure-reason)
@@ -52,7 +52,7 @@
 (defn- unshare-accessible-app
   [user sharee app-id success-fn failure-fn perms]
   (let [sharer-category (listings/get-category-id-for-app user app-id)]
-    (if (perms/lacks-permission-level perms "own" app-id)
+    (if (iplant-groups/lacks-permission-level perms "own" app-id)
       (failure-fn sharer-category (app-sharing-msg :not-allowed app-id))
       (if-let [failure-reason (iplant-groups/unshare-app app-id sharee)]
         (failure-fn sharer-category failure-reason)

@@ -231,4 +231,7 @@
 
   (unshareAppWithUser [self app-names sharee app-id]
     (or (first (remove nil? (map #(.unshareAppWithUser % app-names sharee app-id) clients)))
-        (app-permissions/app-unsharing-failure app-names app-id nil (str "app ID " app-id " does not exist")))))
+        (app-permissions/app-unsharing-failure app-names app-id nil (str "app ID " app-id " does not exist"))))
+
+  (supportsJobSharing [_ job-step]
+    (.supportsJobSharing (util/apps-client-for-job-step clients job-step) job-step)))

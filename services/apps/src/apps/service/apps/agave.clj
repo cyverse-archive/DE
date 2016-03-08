@@ -17,6 +17,8 @@
 
 (def app-permission-rejection "Cannot list or modify the permissions of HPC apps with this service")
 
+(def analysis-permission-rejection "Cannot list or modify the permissions of HPC analyses with this service")
+
 (defn- reject-app-permission-request
   []
   (service/bad-request app-permission-rejection))
@@ -167,4 +169,7 @@
     (when (and (user-has-access-token?)
                (not (util/uuid? app-id)))
       (let [category (.hpcAppGroup agave)]
-        (app-permissions/app-unsharing-failure app-names app-id category app-permission-rejection)))))
+        (app-permissions/app-unsharing-failure app-names app-id category app-permission-rejection))))
+
+  (supportsJobSharing [_ _]
+    false))

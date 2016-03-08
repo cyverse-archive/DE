@@ -253,6 +253,15 @@
                :as               :stream
                :follow-redirects false}))
 
+(defn list-job-permissions
+  [body]
+  (client/post (apps-url "analyses" "permission-lister")
+               {:query-params     (secured-params)
+                :content-type     :json
+                :body             body
+                :as               :stream
+                :follow-redirects false}))
+
 (defn submit-job
   [submission]
   (client/post (apps-url "analyses")
