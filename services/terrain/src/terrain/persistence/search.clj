@@ -35,7 +35,7 @@
      ::cx/invalid-cfg - This is thrown if there is a problem with elasticsearch"
   [^IPersistentMap tag]
   (try+
-    (doc/create (connect) "data" "tag" tag :id (:id tag))
+    (doc/create (connect) (cfg/es-index) "tag" tag :id (:id tag))
     (catch [:status 404] {:keys []}
       (throw+ es-uninitialized))))
 
@@ -54,7 +54,7 @@
     (let [script "ctx._source.value = value;
                   ctx._source.description = description;
                   ctx._source.dateModified = dateModified"]
-      (doc/update-with-script (connect) "data" "tag" (str tag-id) script updates))
+      (doc/update-with-script (connect) (cfg/es-index) "tag" (str tag-id) script updates))
     (catch [:status 404] {:keys []}
       (throw+ es-uninitialized))))
 
@@ -72,7 +72,7 @@
   (try+
     (let [script "ctx._source.targets = targets"
           update {:targets (map #(assoc % :type (str (:type %))) targets)}]
-      (doc/update-with-script (connect) "data" "tag" (str tag-id) script update))
+      (doc/update-with-script (connect) (cfg/es-index) "tag" (str tag-id) script update))
     (catch [:status 404] {:keys []}
       (throw+ es-uninitialized))))
 
@@ -87,7 +87,7 @@
      ::cx/invalid-cfg - This is thrown if there is a problem with elasticsearch"
   [^UUID tag-id]
   (try+
-    (doc/delete (connect) "data" "tag" (str tag-id))
+    (doc/delete (connect) (cfg/es-index) "tag" (str tag-id))
     (catch [:status 404] {:keys []}
       (throw+ es-uninitialized))))
 
@@ -104,7 +104,7 @@
   [^String user ^ISeq tag-ids]
   (try+
     (let [query (query/bool :must (query/term :id tag-ids) :filter (query/term :creator user))
-          hits  (resp/hits-from (doc/search (connect) "data" "tag" :query query :_source false))]
+          hits  (resp/hits-from (doc/search (connect) (cfg/es-index) "tag" :query query :_source false))]
       (map :_id hits))
     (catch [:status 404] {:keys []}
       (throw+ es-uninitialized))))
@@ -187,7 +187,7 @@
      :invalid-query - This is thrown if the query string is invalid."
   [^ISeq types ^IPersistentMap query ^IPersistentMap sort ^Integer from ^Integer size]
   (try+
-    (let [resp (doc/search (connect) "data" (map name types)
+    (let [resp (doc/search (connect) (cfg/es-index) (map name types)
                  :query        query
                  :from         from
                  :size         size

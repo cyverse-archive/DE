@@ -261,6 +261,7 @@ elasticsearch:
   base: "http://{{ groups['elasticsearch'][0] }}"
   scroll_size: 1000
   cluster_name: elasticsearch
+  data_index: data
   heap_size:
   network_http_port:
   network_transport_tcp_port:

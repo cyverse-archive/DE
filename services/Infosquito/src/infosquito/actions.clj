@@ -21,4 +21,4 @@
   (let [icat-cfg ((comp icat/init props->icat-cfg) props)]
     (icat/with-icat icat-cfg
       (esc/purge-index props)
-      (icat/reindex icat-cfg))))
+      (icat/reindex icat-cfg props))))

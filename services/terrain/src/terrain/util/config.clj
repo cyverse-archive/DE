@@ -373,9 +373,14 @@
   "terrain.tree-viewer.base-url")
 
 (cc/defprop-str es-url
-  "The URL for Elastic Search"
+  "The URL for Elasticsearch"
   [props config-valid configs data-routes-enabled]
   "terrain.infosquito.es-url")
+
+(cc/defprop-str es-index
+  "The index name for Elasticsearch."
+  [props config-valid configs data-routes-enabled]
+  "terrain.infosquito.es-index")
 
 (cc/defprop-str jwt-private-signing-key
   "The path to the private key used for signing JWT assertions."
