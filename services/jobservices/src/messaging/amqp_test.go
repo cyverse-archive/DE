@@ -270,3 +270,21 @@ func TestStopRequestKey(t *testing.T) {
 		t.Errorf("StopRequestKey returned %s instead of %s", actual, expected)
 	}
 }
+
+func TestTimeLimitDeltaQueueName(t *testing.T) {
+	invID := "test"
+	actual := TimeLimitDeltaQueueName(invID)
+	expected := fmt.Sprintf("road-runner-%s-tl-delta", invID)
+	if actual != expected {
+		t.Errorf("TimeLimitDeltaQueueName returned %s instead of %s", actual, expected)
+	}
+}
+
+func TestStopQueueName(t *testing.T) {
+	invID := "test"
+	actual := StopQueueName(invID)
+	expected := fmt.Sprintf("road-runner-%s-stops-request", invID)
+	if actual != expected {
+		t.Errorf("StopQueueName returneed %s instead of %s", actual, expected)
+	}
+}

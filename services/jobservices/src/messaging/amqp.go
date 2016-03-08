@@ -164,6 +164,14 @@ func TimeLimitDeltaRequestKey(invID string) string {
 	return fmt.Sprintf("%s.%s", TimeLimitDeltaKey, invID)
 }
 
+// TimeLimitDeltaQueueName returns the correctly formatted queue name for time
+// limit delta requests. It's based on the passed in string, which is assumed to
+// be the InvocationID for a job, but there's no reason that is required to be
+// the case.
+func TimeLimitDeltaQueueName(invID string) string {
+	return fmt.Sprintf("road-runner-%s-tl-delta", invID)
+}
+
 // NewStopRequest returns a *JobRequest that has been constructed to be a
 // stop request for a running job.
 func NewStopRequest() *StopRequest {
@@ -176,6 +184,13 @@ func NewStopRequest() *StopRequest {
 // exchange based on the InvocationID passed in.
 func StopRequestKey(invID string) string {
 	return fmt.Sprintf("%s.%s", StopsKey, invID)
+}
+
+// StopQueueName returns the formatted queue name for job stop requests. It's
+// based on the passed in string, which is assumed to be the InvocationID for a
+// job, but there's no reason that is required to the case.
+func StopQueueName(invID string) string {
+	return fmt.Sprintf("road-runner-%s-stops-request", invID)
 }
 
 // NewLaunchRequest returns a *JobRequest that has been constructed to be a
