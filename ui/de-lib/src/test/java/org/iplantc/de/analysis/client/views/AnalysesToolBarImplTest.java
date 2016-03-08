@@ -127,6 +127,7 @@ public class AnalysesToolBarImplTest {
         when(mockAnalysis.getUserName()).thenReturn("user@iplantcollaborative.org");
         when(mockUserInfo.getFullUsername()).thenReturn("user@iplantcollaborative.org");
         when(mockSelectionEvent.getSelection()).thenReturn(Lists.newArrayList(mockAnalysis));
+        when(mockAnalysis.getStatus()).thenReturn(COMPLETED.toString());
         uut.onSelectionChanged(mockSelectionEvent);
 
         verify(goToFolderMiMock).setEnabled(eq(true));
@@ -157,7 +158,7 @@ public class AnalysesToolBarImplTest {
         when(mockSelectionEvent.getSelection()).thenReturn(Lists.newArrayList(mockAnalysis));
         when(mockAnalysis.getUserName()).thenReturn("user@iplantcollaborative.org");
         when(mockUserInfo.getFullUsername()).thenReturn("user@iplantcollaborative.org");
-
+        when(mockAnalysis.getStatus()).thenReturn(COMPLETED.toString());
         uut.onSelectionChanged(mockSelectionEvent);
 
         verify(goToFolderMiMock).setEnabled(eq(true));
@@ -183,11 +184,19 @@ public class AnalysesToolBarImplTest {
         };
         mockMenuItems(uut);
         final Analysis mockAnalysis = mock(Analysis.class);
+        final Analysis mockAnalysis2 = mock(Analysis.class);
         // Selected analysis' app is Enabled
         when(mockAnalysis.isAppDisabled()).thenReturn(false);
-        when(mockSelectionEvent.getSelection()).thenReturn(Lists.newArrayList(mockAnalysis, mock(Analysis.class)));
+        when(mockSelectionEvent.getSelection()).thenReturn(Lists.newArrayList(mockAnalysis, mockAnalysis2));
+
         when(mockAnalysis.getUserName()).thenReturn("user@iplantcollaborative.org");
         when(mockUserInfo.getFullUsername()).thenReturn("user@iplantcollaborative.org");
+        when(mockAnalysis.getStatus()).thenReturn(COMPLETED.toString());
+
+        when(mockAnalysis2.getUserName()).thenReturn("user@iplantcollaborative.org");
+        when(mockUserInfo.getFullUsername()).thenReturn("user@iplantcollaborative.org");
+        when(mockAnalysis2.getStatus()).thenReturn(FAILED.toString());
+
         uut.onSelectionChanged(mockSelectionEvent);
 
         verify(goToFolderMiMock).setEnabled(eq(false));
