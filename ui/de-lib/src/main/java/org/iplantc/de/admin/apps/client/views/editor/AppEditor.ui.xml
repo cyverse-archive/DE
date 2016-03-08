@@ -5,6 +5,7 @@
              xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
              xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
              xmlns:gxtButton="urn:import:com.sencha.gxt.widget.core.client.button"
+             xmlns:fields="urn:import:org.iplantc.de.apps.widgets.client.view.editors.widgets"
              xmlns:link="urn:import:org.iplantc.de.commons.client.widgets">
 
     <ui:with field="appearance"
@@ -65,8 +66,7 @@
                                      labelAlign="TOP"
                                      text="{appearance.tempDisable}">
                         <form:widget>
-                            <form:CheckBox ui:field="disabled"
-                                           boxLabel="{appearance.appDisabled}"/>
+                            <fields:CheckBoxAdapter ui:field="disabled"/>
                         </form:widget>
                     </form:FieldLabel>
                 </container:child>
@@ -117,4 +117,4 @@
             </container:VerticalLayoutContainer>
         </g:VerticalPanel>
     </gxt:Window>
-</ui:UiBinder> 
+</ui:UiBinder>

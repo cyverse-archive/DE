@@ -4,6 +4,7 @@ import org.iplantc.de.admin.apps.client.AdminAppsGridView;
 import org.iplantc.de.admin.apps.client.AdminAppsToolbarView;
 import org.iplantc.de.admin.apps.client.AdminAppsView;
 import org.iplantc.de.admin.apps.client.AdminCategoriesView;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.apps.client.AppCategoriesView;
 
 import com.google.gwt.core.client.GWT;
@@ -43,7 +44,16 @@ public class AdminAppViewImpl extends Composite implements AdminAppsView {
         initWidget(BINDER.createAndBindUi(this));
     }
 
-//    private void initDragAndDrop(AdminAppsView.AdminPresenter presenter) {
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        appCategoriesView.asWidget().ensureDebugId(baseID + Belphegor.AppIds.CATEGORIES);
+        toolBar.asWidget().ensureDebugId(baseID + Belphegor.AppIds.TOOLBAR);
+        appsGridView.asWidget().ensureDebugId(baseID + Belphegor.AppIds.GRID_VIEW);
+    }
+
+    //    private void initDragAndDrop(AdminAppsView.AdminPresenter presenter) {
 //        AppCategoryDnDHandler dndHandler = new AppCategoryDnDHandler(this, presenter);
 //
 //        DragSource gridDragSource = new DragSource(grid);

@@ -7,6 +7,7 @@ import org.iplantc.de.admin.desktop.client.refGenome.RefGenomeView;
 import org.iplantc.de.admin.desktop.client.systemMessage.SystemMessageView;
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
 import org.iplantc.de.admin.desktop.client.toolRequest.ToolRequestView;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.UserInfo;
@@ -45,6 +46,8 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
     @UiField SimpleContainer appsPanel, refGenomePanel, toolRequestPanel, systemMessagesPanel, metadataPanel,
             permIdPanel, toolAdminPanel;
     @UiField(provided = true) BelphegorViewAppearance appearance;
+    private TextButton menuButton;
+    private AdminAppsView.AdminPresenter presenter;
 
     @Inject
     public BelphegorViewImpl(final AdminAppsView.AdminPresenter presenter,
@@ -57,6 +60,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
                              final DEProperties toolIntProps,
                              final BelphegorViewAppearance appearance) {
         this.appearance = appearance;
+        this.presenter = presenter;
         initWidget(uiBinder.createAndBindUi(this));
         init(presenter,
              refGenPresenter,
@@ -66,6 +70,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
              tempPresenter,
              permIdPresenter,
              toolIntProps);
+        ensureDebugId(Belphegor.Ids.BELPHEGOR);
     }
 
     @UiFactory
@@ -110,10 +115,20 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
         String firstName = UserInfo.getInstance().getFirstName();
         String lastName = UserInfo.getInstance().getLastName();
         String menuLabel = (firstName != null && lastName != null) ? firstName + " " + lastName : username;
-        TextButton menuButton = new TextButton(menuLabel);
+        menuButton = new TextButton(menuLabel);
         menuButton.setMenu(userMenu);
 
         northCon.add(menuButton, new HtmlData("." + appearance.style().headerMenu()));
     }
 
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        menuButton.ensureDebugId(baseID + Belphegor.Ids.MENU_BUTTON);
+
+        appsPanel.ensureDebugId(baseID + Belphegor.Ids.APPS);
+        presenter.setViewDebugId(baseID + Belphegor.Ids.APPS);
+
+    }
 }
