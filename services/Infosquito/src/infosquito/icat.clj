@@ -5,11 +5,11 @@
             [clojure.string :as string]
             [clojure.tools.logging :as log]
             [clojure-commons.file-utils :as file]
+            [infosquito.props :as cfg]
             [infosquito.es :as es]
             [infosquito.es-if :as es-if]
             [infosquito.index :as index]))
 
-(def ^:private index "data")
 (def ^:private file-type "file")
 (def ^:private dir-type "folder")
 
@@ -289,7 +289,7 @@
 
 
 (defn index-entries
-  [indexer entry-type entries]
+  [indexer props entry-type entries]
   (log/debug "indexing" entry-type (map :path entries))
   (letfn [(log-failures [bulk-result]
             (doseq [{result :index} (:items bulk-result)]
@@ -301,7 +301,7 @@
            (filter has-id?)
            (map #(assoc % :_id (:id %)))
            (log/spy :trace)
-           (es-if/put-bulk indexer index entry-type)
+           (es-if/put-bulk indexer (cfg/get-es-index props) entry-type)
            log-failures)
       (catch Exception e
         (log/error e "failed to index" entry-type (map :path entries))))))
@@ -333,18 +333,18 @@
 
 
 (defn- index-collections
-  [cfg indexer]
+  [cfg props indexer]
   (log/info "indexing" (count-collections cfg) "collections")
-  (->> (partial index-entries indexer dir-type)
+  (->> (partial index-entries indexer props dir-type)
        (notifier (:notify? cfg) #(log/info %) (:notify-count cfg))
        (get-collections cfg))
   (log/info "collection indexing complete"))
 
 
 (defn- index-data-objects
-  [cfg indexer]
+  [cfg props indexer]
   (log/info "indexing" (count-data-objects cfg) "data objects")
-  (->> (partial index-entries indexer file-type)
+  (->> (partial index-entries indexer props file-type)
        (notifier (:notify? cfg) #(log/info %) (:notify-count cfg))
        (get-data-objects cfg))
   (log/info "data object indexing complete"))
@@ -371,7 +371,7 @@
 
 
 (defn reindex
-  [cfg]
+  [cfg props]
   (let [indexer (es/mk-indexer (:es-url cfg))]
-    (index-collections cfg indexer)
-    (index-data-objects cfg indexer)))
+    (index-collections cfg props indexer)
+    (index-data-objects cfg props indexer)))

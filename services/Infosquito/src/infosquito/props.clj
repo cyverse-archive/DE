@@ -12,6 +12,7 @@
   ["infosquito.es.host"
    "infosquito.es.port"
    "infosquito.es.scroll-size"
+   "infosquito.es.index"
    "infosquito.icat.host"
    "infosquito.icat.port"
    "infosquito.icat.user"
@@ -71,6 +72,9 @@
   [props]
   (get props "infosquito.es.scroll-size"))
 
+(defn get-es-index
+  [props]
+  (get props "infosquito.es.index"))
 
 (defn get-icat-host
   [props]
