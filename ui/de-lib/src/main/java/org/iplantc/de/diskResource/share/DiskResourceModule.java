@@ -82,9 +82,15 @@ public interface DiskResourceModule {
 
     interface MetadataIds {
 
+        String METADATA_WINDOW = "metadataWindow";
         String METADATA_VIEW = ".metadataView";
         String ADD_METADATA = ".addMetadata";
         String DELETE_METADATA = ".deleteMetadata";
         String TEMPLATES = ".templates";
+
+        String USER_METADATA = ".userMetadata";
+        String USER_METADATA_COLLAPSE = ".collapseBtn";
+        String METADATA_TEMPLATE = ".metadataTemplate";
+        String METADATA_TEMPLATE_COLLAPSE = ".collapseBtn";
     }
 }
