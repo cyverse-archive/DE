@@ -338,6 +338,38 @@ func (c *Client) AddDeletableConsumer(exchange, queue, key string, handler Messa
 	<-adder.latch
 }
 
+// CreateQueue creates a queue with the given name, durability, and auto-delete
+// settings. It then binds it to the given exchange with the provided key. This
+// function does not declare the exchange.
+func (c *Client) CreateQueue(name, exchange, key string, durable, autoDelete bool) (*amqp.Channel, error) {
+	channel, err := c.connection.Channel()
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err = channel.QueueDeclare(
+		name,
+		durable,
+		autoDelete,
+		false, //internal
+		false, //no wait
+		nil,   //args
+	); err != nil {
+		return nil, err
+	}
+
+	if err = channel.QueueBind(
+		name,
+		key,
+		exchange,
+		false, //no wait
+		nil,   //args
+	); err != nil {
+		return nil, err
+	}
+	return channel, nil
+}
+
 func (c *Client) initconsumer(cs *consumer) error {
 	channel, err := c.connection.Channel()
 	if err != nil {

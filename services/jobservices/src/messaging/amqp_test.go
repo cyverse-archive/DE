@@ -232,3 +232,23 @@ func TestSendStopRequest(t *testing.T) {
 		t.Errorf("Username was %s instead of %s", req.Username, "test_user")
 	}
 }
+
+func TestCreateQueue(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+	client := GetClient(t)
+	actual, err := client.CreateQueue("test_queue5", JobsExchange, "test_key5", true, false)
+	if err != nil {
+		t.Error(err)
+	}
+	if actual == nil {
+		t.Error("channel is nil")
+	}
+	if _, err = actual.QueueInspect("test_queue5"); err != nil {
+		t.Error(err)
+	}
+	if err = actual.Close(); err != nil {
+		t.Error(err)
+	}
+}
