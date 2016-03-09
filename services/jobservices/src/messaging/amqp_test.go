@@ -294,15 +294,63 @@ func TestDeleteQueue(t *testing.T) {
 		t.Error(err)
 	}
 	if !exists {
-		t.Error("Queue 'test_queue5' was not found")
+		t.Error("Queue 'test_queue6' was not found")
 	}
+
+	actual, err = client.CreateQueue("test_queue7", JobsExchange, "test_key6", true, false)
+	if err != nil {
+		t.Error(err)
+	}
+	if actual == nil {
+		t.Error("channel is nil")
+	}
+	exists, err = client.QueueExists("test_queue7")
+	if err != nil {
+		t.Error(err)
+	}
+	if !exists {
+		t.Error("Queue 'test_queue7' was not found")
+	}
+
+	actual, err = client.CreateQueue("test_queue8", JobsExchange, "test_key7", true, false)
+	if err != nil {
+		t.Error(err)
+	}
+	if actual == nil {
+		t.Error("channel is nil")
+	}
+	exists, err = client.QueueExists("test_queue8")
+	if err != nil {
+		t.Error(err)
+	}
+	if !exists {
+		t.Error("Queue 'test_queue8' was not found")
+	}
+
 	if err = client.DeleteQueue("test_queue6"); err != nil {
 		t.Error(err)
 	}
 	exists, err = client.QueueExists("test_queue6")
 	if exists {
-		t.Error("Queue 'test_queue5' was found")
+		t.Error("Queue 'test_queue6' was found")
 	}
+
+	if err = client.DeleteQueue("test_queue7"); err != nil {
+		t.Error(err)
+	}
+	exists, err = client.QueueExists("test_queue7")
+	if exists {
+		t.Error("Queue 'test_queue7' was found")
+	}
+
+	if err = client.DeleteQueue("test_queue8"); err != nil {
+		t.Error(err)
+	}
+	exists, err = client.QueueExists("test_queue8")
+	if exists {
+		t.Error("Queue 'test_queue8' was found")
+	}
+
 	if err = actual.Close(); err != nil {
 		t.Error(err)
 	}
