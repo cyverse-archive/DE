@@ -16,7 +16,7 @@
 		{
 			"importpath": "github.com/streadway/amqp",
 			"repository": "https://github.com/streadway/amqp",
-			"revision": "b4f3ceab0337f013208d31348b578d83c0064744",
+			"revision": "56eb08f0d1f9d90936ab1ab4e20ee9b9bf45ce26",
 			"branch": "master"
 		},
 		{
