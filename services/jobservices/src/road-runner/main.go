@@ -473,7 +473,7 @@ func Wait(client *messaging.Client, dckr *Docker, seconds chan int64, exit chan 
 // RegisterTimeLimitDeltaListener sets a function that listens for TimeLimitDelta
 // messages on the given client.
 func RegisterTimeLimitDeltaListener(client *messaging.Client, timeTracker *TimeTracker, invID string) {
-	client.AddConsumer(messaging.JobsExchange, messaging.TimeLimitDeltaQueueName(invID), messaging.TimeLimitDeltaRequestKey(invID), func(d amqp.Delivery) {
+	client.AddDeletableConsumer(messaging.JobsExchange, messaging.TimeLimitDeltaQueueName(invID), messaging.TimeLimitDeltaRequestKey(invID), func(d amqp.Delivery) {
 		d.Ack(false)
 		running(client, job, "Received delta request")
 		deltaMsg := &messaging.TimeLimitDelta{}
@@ -499,7 +499,7 @@ func RegisterTimeLimitDeltaListener(client *messaging.Client, timeTracker *TimeT
 // RegisterTimeLimitRequestListener sets a function that listens for
 // TimeLimitRequest messages on the given client.
 func RegisterTimeLimitRequestListener(client *messaging.Client, timeTracker *TimeTracker, invID string) {
-	client.AddConsumer(messaging.JobsExchange, messaging.TimeLimitRequestQueueName(invID), messaging.TimeLimitRequestKey(invID), func(d amqp.Delivery) {
+	client.AddDeletableConsumer(messaging.JobsExchange, messaging.TimeLimitRequestQueueName(invID), messaging.TimeLimitRequestKey(invID), func(d amqp.Delivery) {
 		d.Ack(false)
 		running(client, job, "Received time limit request")
 		timeLeft := int64(timeTracker.EndDate.Sub(time.Now())) / int64(time.Millisecond)
@@ -515,7 +515,7 @@ func RegisterTimeLimitRequestListener(client *messaging.Client, timeTracker *Tim
 // RegisterStopRequestListener sets a function that responses to StopRequest
 // messages.
 func RegisterStopRequestListener(client *messaging.Client, exit chan messaging.StatusCode, invID string) {
-	client.AddConsumer(messaging.JobsExchange, messaging.StopQueueName(invID), messaging.StopRequestKey(invID), func(d amqp.Delivery) {
+	client.AddDeletableConsumer(messaging.JobsExchange, messaging.StopQueueName(invID), messaging.StopRequestKey(invID), func(d amqp.Delivery) {
 		d.Ack(false)
 		running(client, job, "Received stop request")
 		exit <- messaging.StatusKilled
@@ -544,6 +544,7 @@ func main() {
 		logcabin.Error.Fatal(err)
 	}
 	defer client.Close()
+
 	client.SetupPublishing(messaging.JobsExchange)
 
 	if *jobFile == "" {
@@ -598,5 +599,5 @@ func main() {
 	go Wait(client, dckr, seconds, exit)
 	seconds <- job.TimeLimit
 	go Run(client, dckr, exit)
-	os.Exit(int(<-finalExit))
+	defer os.Exit(int(<-finalExit))
 }

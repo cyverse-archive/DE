@@ -105,8 +105,8 @@ func launch(writer http.ResponseWriter, request *http.Request) {
 		messaging.TimeLimitDeltaQueueName(job.InvocationID),
 		messaging.JobsExchange,
 		messaging.TimeLimitDeltaRequestKey(job.InvocationID),
-		true,
 		false,
+		true,
 	)
 	if err != nil {
 		logcabin.Error.Print(err)
@@ -120,8 +120,8 @@ func launch(writer http.ResponseWriter, request *http.Request) {
 		messaging.TimeLimitRequestQueueName(job.InvocationID),
 		messaging.JobsExchange,
 		messaging.TimeLimitRequestKey(job.InvocationID),
-		true,
 		false,
+		true,
 	)
 	if err != nil {
 		logcabin.Error.Print(err)
@@ -135,8 +135,8 @@ func launch(writer http.ResponseWriter, request *http.Request) {
 		messaging.TimeLimitResponsesQueueName(job.InvocationID),
 		messaging.JobsExchange,
 		messaging.TimeLimitResponsesKey(job.InvocationID),
-		true,
 		false,
+		true,
 	)
 	if err != nil {
 		logcabin.Error.Print(err)
@@ -150,8 +150,8 @@ func launch(writer http.ResponseWriter, request *http.Request) {
 		messaging.StopQueueName(job.InvocationID),
 		messaging.JobsExchange,
 		messaging.StopRequestKey(job.InvocationID),
-		true,
 		false,
+		true,
 	)
 	if err != nil {
 		logcabin.Error.Print(err)
