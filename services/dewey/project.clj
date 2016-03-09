@@ -40,4 +40,5 @@
   :resource-paths []
   :profiles {:dev     {:dependencies   [[midje "1.6.3"]]
                        :resource-paths ["dev-resource"]}
-             :uberjar {:aot :all}})
+             :uberjar {:aot :all}}
+  :jvm-opts ["-Dlogback.configurationFile=/etc/iplant/de/logging/dewey-logging.xml"])
