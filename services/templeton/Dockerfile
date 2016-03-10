@@ -1,6 +1,6 @@
 FROM jeanblanchard/alpine-glibc
 
-ADD bin/templeton /bin/
+ADD bin/templeton-linux-amd64 /bin/templeton
 
 ARG git_commit=unknown
 ARG buildenv_git_commit=unknown
