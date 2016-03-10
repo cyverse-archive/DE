@@ -216,7 +216,7 @@
   For the time being we'll deal with that by defaulting the permission level to the empty string,
   indicating that the user has no explicit permissions on the app."
   [app perms]
-  (assoc app :permission (or (perms/get-permission-level perms (:id app)) "")))
+  (assoc app :permission (or (iplant-groups/get-permission-level perms (:id app)) "")))
 
 (defn- format-app-listing
   "Formats certain app fields into types more suitable for the client."

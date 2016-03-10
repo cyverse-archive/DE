@@ -254,4 +254,7 @@
       (sharing/unshare-app-with-user
        user sharee (uuidify app-id)
        (partial app-permissions/app-unsharing-success app-names app-id)
-       (partial app-permissions/app-unsharing-failure app-names app-id)))))
+       (partial app-permissions/app-unsharing-failure app-names app-id))))
+
+  (supportsJobSharing [_ _]
+    true))

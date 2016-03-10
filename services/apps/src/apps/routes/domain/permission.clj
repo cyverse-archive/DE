@@ -63,3 +63,14 @@
 
 (defschema AppUnsharingResponse
   {:unsharing (describe [UserAppUnsharingResponseElement] "The list of app unsharing responses")})
+
+(defschema AnalysisIdList
+  {:analyses (describe [UUID] "A List of analysis IDs")})
+
+(defschema AnalysisPermissionListElement
+  {:id          (describe UUID "The analysis ID")
+   :name        (describe NonBlankString "The analysis name")
+   :permissions (describe [UserPermissionListElement] "The list of user permissions for the analysis")})
+
+(defschema AnalysisPermissionListing
+  {:analyses (describe [AnalysisPermissionListElement] "The list of analysis permissions")})

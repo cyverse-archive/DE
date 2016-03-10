@@ -98,6 +98,7 @@
   [{user :user validation :validation-behavior} {paths :paths uuids :ids}]
   (with-jargon (cfg/jargon-cfg) [cm]
     (validators/user-exists cm user)
+    (validators/all-uuids-exist cm uuids)
     (let [uuid-paths (map (juxt (comp keyword str) (partial uuid/get-path cm)) uuids)
           all-paths (into paths (map second uuid-paths))]
       (validators/all-paths-exist cm all-paths)
