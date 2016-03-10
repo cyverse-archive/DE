@@ -14,4 +14,4 @@
                  [slingshot "0.12.2"]]
   :plugins [[lein-marginalia "0.7.1"]
             [test2junit "1.1.3"]]
-  :manifest {"db-version" "2.5.0:20160222.01"})
+  :manifest {"db-version" "2.5.0:20160309.01"})
