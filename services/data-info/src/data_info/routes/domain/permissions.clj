@@ -15,4 +15,4 @@
   {:paths (describe [PermissionsEntry] "An array of objects describing files and their permissions")})
 
 (s/defschema DataItemPermissionsResponse
-  {:permissions (describe [UserPermission] "An array of objects describing user permissions.")})
+  (dissoc PermissionsEntry :path))

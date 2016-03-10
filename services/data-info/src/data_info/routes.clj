@@ -11,7 +11,7 @@
             [data-info.routes.data :as data-routes]
             [data-info.routes.exists :as exists-routes]
             [data-info.routes.filetypes :as filetypes-routes]
-            [data-info.routes.users :as users-routes]
+            [data-info.routes.permissions :as permission-routes]
             [data-info.routes.navigation :as navigation-routes]
             [data-info.routes.rename :as rename-routes]
             [data-info.routes.sharing :as sharing-routes]
@@ -51,7 +51,8 @@
     avus-routes/avus-routes
     exists-routes/existence-marker
     filetypes-routes/filetypes-operations
-    users-routes/permissions-gatherer
+    permission-routes/permissions-gatherer
+    permission-routes/data-item-permissions
     navigation-routes/navigation
     stat-routes/stat-gatherer
     sharing-routes/sharing-routes

@@ -22,7 +22,7 @@
     (let [path (ft/rm-last-slash (:path (uuids/path-for-uuid user data-id)))]
       (validators/user-exists cm user)
       (validators/path-readable cm user path)
-      {:permissions (filtered-user-perms cm user path)})))
+      {:user-permissions (filtered-user-perms cm user path)})))
 
 (with-pre-hook! #'list-permissions
   (fn [params data-id]
