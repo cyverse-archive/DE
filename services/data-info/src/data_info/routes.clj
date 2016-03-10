@@ -51,8 +51,7 @@
     avus-routes/avus-routes
     exists-routes/existence-marker
     filetypes-routes/filetypes-operations
-    permission-routes/permissions-gatherer
-    permission-routes/data-item-permissions
+    permission-routes/permissions-routes
     navigation-routes/navigation
     stat-routes/stat-gatherer
     sharing-routes/sharing-routes

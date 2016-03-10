@@ -6,7 +6,7 @@
             [data-info.services.permissions :as perms]
             [data-info.util.service :as svc]))
 
-(defroutes* permissions-gatherer
+(defroutes* permissions-routes
 
   (context* "/permissions-gatherer" []
     :tags ["bulk"]
@@ -22,9 +22,7 @@
 " The owner permissions are found in the normal stat return, e.g. from /stat-gatherer."
 (get-error-code-block
   "ERR_NOT_A_USER, ERR_DOES_NOT_EXIST, ERR_NOT_OWNER, ERR_NOT_READABLE"))
-      (svc/trap uri users/do-user-permissions params body))))
-
-(defroutes* data-item-permissions
+      (svc/trap uri users/do-user-permissions params body)))
 
   (context* "/data/:data-id" []
     :path-params [data-id :- DataIdPathParam]
