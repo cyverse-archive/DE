@@ -2,23 +2,15 @@
   (:use [clj-jargon.init :only [with-jargon]])
   (:require [clojure.tools.logging :as log]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
-            [clj-jargon.permissions :as perm]
+            [data-info.services.permissions :as perms]
             [data-info.util.config :as cfg]
             [data-info.util.logging :as dul]
             [data-info.util.validators :as validators]))
 
-(defn- filtered-user-perms
-  [cm user abspath]
-  (let [filtered-users (set (conj (cfg/perms-filter) user (cfg/irods-user)))]
-    (filter
-     #(not (contains? filtered-users (:user %1)))
-     (perm/list-user-perm cm abspath))))
-
-
 (defn- list-perm
   [cm user abspath]
   {:path abspath
-   :user-permissions (filtered-user-perms cm user abspath)})
+   :user-permissions (perms/filtered-user-perms cm user abspath)})
 
 (defn- list-perms
   [user abspaths]
