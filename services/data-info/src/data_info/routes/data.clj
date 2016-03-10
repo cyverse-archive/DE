@@ -2,6 +2,7 @@
   (:use [common-swagger-api.schema]
         [data-info.routes.domain.common]
         [data-info.routes.domain.data]
+        [data-info.routes.domain.permissions]
         [data-info.routes.domain.stats])
   (:require [data-info.services.create :as create]
             [data-info.services.metadata :as meta]
@@ -9,6 +10,7 @@
             [data-info.services.write :as write]
             [data-info.services.page-file :as page-file]
             [data-info.services.page-tabular :as page-tabular]
+            [data-info.services.permissions :as perms]
             [data-info.util.config :as cfg]
             [clojure-commons.error-codes :as ce]
             [data-info.util.service :as svc]
@@ -130,4 +132,13 @@ with characters in a runtime-configurable parameter. Currently, this parameter l
     "ERR_INVALID_JSON, ERR_EXISTS, ERR_DOES_NOT_EXIST, ERR_NOT_READABLE,"
     "ERR_NOT_WRITEABLE, ERR_NOT_A_USER, ERR_BAD_PATH_LENGTH, ERR_BAD_DIRNAME_LENGTH,"
     "ERR_BAD_BASENAME_LENGTH, ERR_TOO_MANY_RESULTS"))
-        (svc/trap uri meta/do-metadata-save data-id params body)))))
+        (svc/trap uri meta/do-metadata-save data-id params body))
+
+      (GET* "/permissions" [:as {uri :uri}]
+        :query [params StandardUserQueryParams]
+        :return DataItemPermissionsResponse
+        :summary "Lists Data Item Permissions"
+        :description (str
+  "Lists permissions for a data item."
+  (get-error-code-block "ERR_DOES_NOT_EXIST, ERR_NOT_READABLE, ERR_NOT_A_USER"))
+        (svc/trap uri perms/list-permissions params data-id)))))

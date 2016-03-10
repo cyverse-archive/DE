@@ -1,8 +1,7 @@
-(ns data-info.routes.domain.users
-  (:use [common-swagger-api.schema :only [describe]])
+(ns data-info.routes.domain.permissions
+  (:use [common-swagger-api.schema :only [describe]]
+        [data-info.routes.domain.common :only [PermissionEnum]])
   (:require [schema.core :as s]))
-
-(def PermissionEnum (s/enum :read :write :own))
 
 (s/defschema UserPermission
   {:user (describe String "The user's short username")
@@ -14,3 +13,6 @@
 
 (s/defschema PermissionsResponse
   {:paths (describe [PermissionsEntry] "An array of objects describing files and their permissions")})
+
+(s/defschema DataItemPermissionsResponse
+  {:permissions (describe [UserPermission] "An array of objects describing user permissions.")})

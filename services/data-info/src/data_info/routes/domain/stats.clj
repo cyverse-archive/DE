@@ -5,7 +5,6 @@
   (:import [java.util UUID]))
 
 (def DataTypeEnum (s/enum :file :dir))
-(def PermissionEnum (s/enum :read :write :own))
 (def DataItemIdParam (describe UUID "The UUID of this data item"))
 (def DataItemPathParam (describe NonBlankString "The IRODS paths to this data item"))
 

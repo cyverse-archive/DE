@@ -25,3 +25,4 @@
 
 (def ValidInfoTypesEnum (apply s/enum (hm/supported-formats)))
 (def ValidInfoTypesEnumPlusBlank (apply s/enum (conj (hm/supported-formats) "")))
+(def PermissionEnum (s/enum :read :write :own))
