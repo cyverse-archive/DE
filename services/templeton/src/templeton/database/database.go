@@ -66,9 +66,9 @@ func avuRecordFromRow(row *sql.Rows) (*model.AVURecord, error) {
 
 const _selectAVU = `
 	SELECT cast(id as varchar),
-	       attribute,
-	       value,
-	       unit,
+	       coalesce(attribute, ''),
+	       coalesce(value, ''),
+	       coalesce(unit, ''),
 	       cast(target_id as varchar),
 	       cast(target_type as varchar),
 	       created_by,
