@@ -512,6 +512,17 @@ func RegisterTimeLimitRequestListener(client *messaging.Client, timeTracker *Tim
 	})
 }
 
+// RegisterTimeLimitResponseListener sets a function that handles messages that
+// are sent on the jobs exchange with the key for time limit responses. This
+// service doesn't need these messages, this is just here to force the queue
+// to get cleaned up when road-runner exits.
+func RegisterTimeLimitResponseListener(client *messaging.Client, invID string) {
+	client.AddDeletableConsumer(messaging.JobsExchange, messaging.TimeLimitResponsesQueueName(invID), messaging.TimeLimitResponsesKey(invID), func(d amqp.Delivery) {
+		d.Ack(false)
+		logcabin.Info.Print(string(d.Body))
+	})
+}
+
 // RegisterStopRequestListener sets a function that responses to StopRequest
 // messages.
 func RegisterStopRequestListener(client *messaging.Client, exit chan messaging.StatusCode, invID string) {
@@ -595,6 +606,7 @@ func main() {
 	RegisterTimeLimitDeltaListener(client, timeTracker, job.InvocationID)
 	RegisterTimeLimitRequestListener(client, timeTracker, job.InvocationID)
 	RegisterStopRequestListener(client, exit, job.InvocationID)
+	RegisterTimeLimitResponseListener(client, job.InvocationID)
 
 	go Wait(client, dckr, seconds, exit)
 	seconds <- job.TimeLimit
