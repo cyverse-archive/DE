@@ -265,9 +265,6 @@ func main() {
 	// Could probably reuse the exit channel, but that's less explicit.
 	finalExit := make(chan messaging.StatusCode)
 
-	// The channel that additional seconds will be sent through for the time limit.
-	seconds := make(chan int64)
-
 	// Launch the go routine that will handle job exits by signal or timer.
 	go Exit(exit, finalExit)
 
@@ -291,7 +288,6 @@ func main() {
 	RegisterStopRequestListener(client, exit, job.InvocationID)
 	RegisterTimeLimitResponseListener(client, job.InvocationID)
 
-	seconds <- job.TimeLimit
 	go Run(client, dckr, exit)
 	exitCode := <-finalExit
 	os.Exit(int(exitCode))
