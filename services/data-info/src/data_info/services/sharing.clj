@@ -118,7 +118,9 @@
        3. Remove the user's read permissions for parent directories in which the user no longer has
           access to any other files or subdirectories."
   [cm user unshare-with fpath]
-  (let [base-dirs #{(ft/rm-last-slash (paths/user-home-dir user)) (trash-base-dir (:zone cm) user)}]
+  (let [trash-base (trash-base-dir (:zone cm) user)
+        path-base  (share-path-home fpath)
+        base-dirs #{path-base trash-base}]
     (log/warn "Removing permissions on" fpath "from" unshare-with "by" user)
     (remove-permissions cm unshare-with fpath)
 
@@ -128,9 +130,9 @@
 
     (log/warn "Removing read perms on parents of" fpath "from" unshare-with "by" user)
     (process-parent-dirs
-      (partial set-readable cm unshare-with false)
-      #(and (not (base-dirs %)) (not (contains-accessible-obj? cm unshare-with %)))
-      fpath)
+     (partial set-readable cm unshare-with false)
+     #(not (or (base-dirs %) (contains-accessible-obj? cm unshare-with %)))
+     fpath)
     {:user unshare-with :path fpath}))
 
 (defn unshare-path
