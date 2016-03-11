@@ -388,4 +388,30 @@ func TestCondorID(t *testing.T) {
 	if !found {
 		t.Errorf("The expected CondorID of %s was not found", expected)
 	}
+
+	invID = "b788569f-6948-4586-b5bd-5ea096986331"
+	expected = "1"
+	actual = CondorID(listing, invID)
+	found = false
+	for _, id := range actual {
+		if id == expected {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("The expected CondorID of %s was not found", expected)
+	}
+
+	invID = "eca67a7c-e745-4e98-b892-67a9948bc2cb"
+	expected = "3"
+	actual = CondorID(listing, invID)
+	found = false
+	for _, id := range actual {
+		if id == expected {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("The expected CondorID of %s was not found", expected)
+	}
 }
