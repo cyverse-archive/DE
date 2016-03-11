@@ -33,7 +33,7 @@
   [share-path]
   (string/join "/" (take 4 (string/split share-path #"\/"))))
 
-(defn- share-path
+(defn- share-path*
   "Shares a path with a user. This consists of the following steps:
 
        1. The parent directories up to the sharer's home directory need to be marked as readable
@@ -64,14 +64,18 @@
 
     {:user share-with :path fpath}))
 
+(defn share-path
+  [cm user share-with fpath perm]
+  (cond (= user share-with)                (skip-share share-with fpath :share-with-self)
+        (paths/in-trash? user fpath)       (skip-share share-with fpath :share-from-trash)
+        (shared? cm share-with fpath perm) (skip-share share-with fpath :already-shared)
+        :else                              (share-path* cm user share-with perm fpath)))
+
 (defn- share-paths
   [cm user share-withs fpaths perm]
   (for [share-with share-withs
         fpath      fpaths]
-    (cond (= user share-with)                (skip-share share-with fpath :share-with-self)
-          (paths/in-trash? user fpath)       (skip-share share-with fpath :share-from-trash)
-          (shared? cm share-with fpath perm) (skip-share share-with fpath :already-shared)
-          :else                              (share-path cm user share-with perm fpath))))
+    (share-path cm user share-with fpath perm)))
 
 (defn- share
   [cm user share-withs fpaths perm]
@@ -88,6 +92,52 @@
      :path        fpaths
      :skipped     (map #(dissoc % :skipped) (:skipped share-recs))
      :permission  perm}))
+
+(defn- remove-inherit-bit?
+  [cm user fpath]
+  (empty? (remove (comp (conj (set (cfg/irods-admins)) user) :user)
+                  (list-user-perms cm fpath))))
+
+(defn- unshare-dir
+  "Removes the inherit bit from a directory if the directory is no longer shared with any accounts
+   other than iRODS administrative accounts."
+  [cm user unshare-with fpath]
+  (when (remove-inherit-bit? cm user fpath)
+    (log/warn "Removing inherit bit on" fpath)
+    (remove-inherits cm fpath)))
+
+(defn- unshare-path*
+  "Removes permissions for a user to access a path.  This consists of several steps:
+
+       1. Remove the access permissions for the user.  This is done recursively in case the path
+          being unshared is a directory.
+
+       2. If the item being unshared is a directory, perform any directory-specific unsharing
+          steps that are required.
+
+       3. Remove the user's read permissions for parent directories in which the user no longer has
+          access to any other files or subdirectories."
+  [cm user unshare-with fpath]
+  (let [base-dirs #{(ft/rm-last-slash (paths/user-home-dir user)) (trash-base-dir (:zone cm) user)}]
+    (log/warn "Removing permissions on" fpath "from" unshare-with "by" user)
+    (remove-permissions cm unshare-with fpath)
+
+    (when (is-dir? cm fpath)
+      (log/warn "Unsharing directory" fpath "from" unshare-with "by" user)
+      (unshare-dir cm user unshare-with fpath))
+
+    (log/warn "Removing read perms on parents of" fpath "from" unshare-with "by" user)
+    (process-parent-dirs
+      (partial set-readable cm unshare-with false)
+      #(and (not (base-dirs %)) (not (contains-accessible-obj? cm unshare-with %)))
+      fpath)
+    {:user unshare-with :path fpath}))
+
+(defn unshare-path
+  [cm user unshare-with fpath]
+  (cond (= user unshare-with)           (skip-share unshare-with fpath :unshare-with-self)
+        (shared? cm unshare-with fpath) (unshare-path* cm user unshare-with fpath)
+        :else                           (skip-share unshare-with fpath :not-shared)))
 
 (defn- anon-file-url
   [p]

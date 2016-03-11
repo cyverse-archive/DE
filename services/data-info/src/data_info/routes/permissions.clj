@@ -28,11 +28,34 @@
     :path-params [data-id :- DataIdPathParam]
     :tags ["data-by-id"]
 
-    (GET* "/permissions" [:as {uri :uri}]
-      :query [params StandardUserQueryParams]
-      :return DataItemPermissionsResponse
-      :summary "Lists Data Item Permissions"
-      :description (str
-  "Lists permissions for a data item."
-  (get-error-code-block "ERR_DOES_NOT_EXIST, ERR_NOT_READABLE, ERR_NOT_A_USER"))
-      (svc/trap uri perms/list-permissions params data-id))))
+    (context* "/permissions" []
+
+      (GET* "/" [:as {uri :uri}]
+        :query [params StandardUserQueryParams]
+        :return DataItemPermissionsResponse
+        :summary "List Data Item Permissions"
+        :description (str
+"Lists permissions for a data item."
+(get-error-code-block "ERR_DOES_NOT_EXIST, ERR_NOT_READABLE, ERR_NOT_A_USER"))
+        (svc/trap uri perms/list-permissions params data-id))
+
+      (PUT* "/:share-with/:permission" [:as {uri :uri}]
+        :path-params [share-with :- (describe NonBlankString "The user to grant permissions to.")
+                      permission :- (describe PermissionEnum "The permission level to grant.")]
+        :query [params StandardUserQueryParams]
+        :return DataItemPermissionsResponse
+        :summary "Grant Data Item Permissions"
+        :description (str
+"Grants access to a data item."
+(get-error-code-block "ERR_DOES_NOT_EXIST, ERR_NOT_READABLE, ERR_NOT_A_USER", "ERR_NOT_OWNER"))
+        (svc/trap uri perms/add-permission params data-id share-with permission))
+
+      (DELETE* "/:unshare-with" [:as {uri :uri}]
+        :path-params [unshare-with :- (describe NonBlankString "The user whose permissions will be revoked.")]
+        :query [params StandardUserQueryParams]
+        :return DataItemPermissionsResponse
+        :summary "Revoke Data Item Permissions"
+        :description (str
+"Revokes access to a data item."
+(get-error-code-block "ERR_DOES_NOT_EXIST, ERR_NOT_READABLE, ERR_NOT_A_USER", "ERR_NOT_OWNER"))
+        (svc/trap uri perms/remove-permission params data-id unshare-with)))))
