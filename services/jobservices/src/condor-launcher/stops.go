@@ -51,6 +51,45 @@ func ExecCondorQ() ([]byte, error) {
 	return output, nil
 }
 
+// ExecCondorRm runs condor_rm, passing it the condor ID. Returns the output
+// of the command and passibly an error.
+func ExecCondorRm(condorID string) ([]byte, error) {
+	var (
+		output []byte
+		err    error
+	)
+	crPath, err := exec.LookPath("condor_rm")
+	logcabin.Info.Printf("condor_rm found at %s", crPath)
+	if err != nil {
+		return output, err
+	}
+	if !path.IsAbs(crPath) {
+		crPath, err = filepath.Abs(crPath)
+		if err != nil {
+			return output, err
+		}
+	}
+	pathEnv, err := configurate.C.String("condor.path_env_var")
+	if err != nil {
+		pathEnv = ""
+	}
+	condorConfig, err := configurate.C.String("condor.condor_config")
+	if err != nil {
+		condorConfig = ""
+	}
+	cmd := exec.Command(crPath, condorID)
+	cmd.Env = []string{
+		fmt.Sprintf("PATH=%s", pathEnv),
+		fmt.Sprintf("CONDOR_CONFIG=%s", condorConfig),
+	}
+	output, err = cmd.CombinedOutput()
+	logcabin.Info.Printf("condor_rm output for job %s:\n%s\n", condorID, output)
+	if err != nil {
+		return output, err
+	}
+	return output, nil
+}
+
 // CondorID looks up the HTCondor job ID for the given InvocationID. It does
 // so by executing condor_q and parsing the longform output.
 func CondorID(output []byte, invID string) []string {

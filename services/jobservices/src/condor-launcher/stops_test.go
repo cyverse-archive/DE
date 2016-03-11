@@ -1,6 +1,9 @@
 package main
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 var (
 	listing = []byte(`RecentBlockReadKbytes = 0
@@ -459,4 +462,17 @@ func TestExecCondorQ(t *testing.T) {
 	if !found {
 		t.Errorf("The expected CondorID of %s was not found", expected)
 	}
+}
+
+func TestExecCondorRm(t *testing.T) {
+	inittests(t)
+	actual, err := ExecCondorRm("foo")
+	if err != nil {
+		t.Error(err)
+	}
+	expected := []byte("CondorID foo was stopped\n")
+	if !reflect.DeepEqual(actual, expected) {
+		t.Errorf("ExecCondorRm returned '%s' instead of '%s'", actual, expected)
+	}
+
 }
