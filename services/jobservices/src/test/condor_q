@@ -1,9 +1,7 @@
-package main
+#!/bin/bash
 
-import "testing"
-
-var (
-	listing = []byte(`RecentBlockReadKbytes = 0
+read -r -d '' output << EOM
+RecentBlockReadKbytes = 0
 IpcJobId = "generated_script"
 BlockWrites = 0
 BlockWriteKbytes = 0
@@ -371,92 +369,7 @@ StartdPrincipal = "unauthenticated@unmapped/150.135.78.112"
 ResidentSetSize_RAW = 9488
 RequestDisk = 0
 OrigMaxHosts = 1
-RecentBlockReads = 0`)
-)
+RecentBlockReads = 0
+EOM
 
-func TestCondorID(t *testing.T) {
-	expected := "2"
-	invID := "63c5523d-d8a5-49bc-addc-99a73566cd89"
-	actual := CondorID(listing, invID)
-	found := false
-	for _, id := range actual {
-		if id == expected {
-			found = true
-		}
-	}
-	if !found {
-		t.Errorf("The expected CondorID of %s was not found", expected)
-	}
-
-	invID = "b788569f-6948-4586-b5bd-5ea096986331"
-	expected = "1"
-	actual = CondorID(listing, invID)
-	found = false
-	for _, id := range actual {
-		if id == expected {
-			found = true
-		}
-	}
-	if !found {
-		t.Errorf("The expected CondorID of %s was not found", expected)
-	}
-
-	invID = "eca67a7c-e745-4e98-b892-67a9948bc2cb"
-	expected = "3"
-	actual = CondorID(listing, invID)
-	found = false
-	for _, id := range actual {
-		if id == expected {
-			found = true
-		}
-	}
-	if !found {
-		t.Errorf("The expected CondorID of %s was not found", expected)
-	}
-}
-
-func TestExecCondorQ(t *testing.T) {
-	inittests(t)
-	output, err := ExecCondorQ()
-	if err != nil {
-		t.Error(err)
-	}
-	invID := "63c5523d-d8a5-49bc-addc-99a73566cd89"
-	actual := CondorID(output, invID)
-	expected := "2"
-	found := false
-	for _, id := range actual {
-		if id == expected {
-			found = true
-		}
-	}
-	if !found {
-		t.Errorf("The expected CondorID of %s was not found", expected)
-	}
-
-	invID = "b788569f-6948-4586-b5bd-5ea096986331"
-	expected = "1"
-	actual = CondorID(output, invID)
-	found = false
-	for _, id := range actual {
-		if id == expected {
-			found = true
-		}
-	}
-	if !found {
-		t.Errorf("The expected CondorID of %s was not found", expected)
-	}
-
-	invID = "eca67a7c-e745-4e98-b892-67a9948bc2cb"
-	expected = "3"
-	actual = CondorID(output, invID)
-	found = false
-	for _, id := range actual {
-		if id == expected {
-			found = true
-		}
-	}
-	if !found {
-		t.Errorf("The expected CondorID of %s was not found", expected)
-	}
-}
+printf "%s" "$output"

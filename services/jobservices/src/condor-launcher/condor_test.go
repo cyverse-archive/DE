@@ -40,6 +40,8 @@ func _inittests(t *testing.T, memoize bool) *model.Job {
 		configurate.C.Set("condor.porklock_tag", "test")
 		configurate.C.Set("condor.filter_files", "foo,bar,baz,blippy")
 		configurate.C.Set("condor.request_disk", "0")
+		configurate.C.Set("condor.path_env_var", "/path/to/path")
+		configurate.C.Set("condor.condor_config", "/condor/config")
 		data, err := JSONData()
 		if err != nil {
 			t.Error(err)
