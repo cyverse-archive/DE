@@ -3,6 +3,11 @@ package org.iplantc.de.client.services;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
 import org.iplantc.de.client.models.analysis.AnalysisStepsInfo;
+import org.iplantc.de.client.models.analysis.sharing.AnalysisSharingRequest;
+import org.iplantc.de.client.models.analysis.sharing.AnalysisUnsharingRequest;
+import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.apps.sharing.AppSharingRequestList;
+import org.iplantc.de.client.models.apps.sharing.AppUnSharingRequestList;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -58,9 +63,10 @@ public interface AnalysisServiceFacade {
      */
     void getAnalysisSteps(Analysis analysis, AsyncCallback<AnalysisStepsInfo> callback);
 
-    void shareAnalyses(List<Analysis> analysisList, AsyncCallback<String> callback);
+    void shareAnalyses(AnalysisSharingRequest request, AsyncCallback<String> callback);
 
-    void unshareAnalyses(List<Analysis> analysisList, AsyncCallback<String> callback);
+    void unshareAnalyses(AnalysisUnsharingRequest request, AsyncCallback<String> callback);
 
+    void getPermissions(List<Analysis> analyses, AsyncCallback<String> callback);
 
 }

@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.HasOneWidget;
 
 import com.sencha.gxt.core.shared.FastMap;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AnalysisSharingPresenter implements SharingPresenter {
@@ -57,6 +58,15 @@ public class AnalysisSharingPresenter implements SharingPresenter {
             resourcesMap.put(sr.getId(), new SharedResource(sr.getId(), sr.getName()));
         }
         return resourcesMap;
+    }
+
+    private List<String> buildAppsList(List<Sharing> shareList) {
+        List<String> anaIds = new ArrayList<>();
+        for (Sharing s : shareList) {
+            anaIds.add(s.getId());
+        }
+
+        return anaIds;
     }
 
     @Override
