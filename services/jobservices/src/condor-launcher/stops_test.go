@@ -1,8 +1,16 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
+	"io"
+	"messaging"
+	"os"
 	"reflect"
+	"strings"
 	"testing"
+
+	"github.com/streadway/amqp"
 )
 
 var (
@@ -474,5 +482,52 @@ func TestExecCondorRm(t *testing.T) {
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("ExecCondorRm returned '%s' instead of '%s'", actual, expected)
 	}
+}
 
+func TestStopHandler(t *testing.T) {
+	var (
+		coord      chan string
+		err        error
+		marshalled []byte
+	)
+	inittests(t)
+	stopMsg := messaging.StopRequest{
+		InvocationID: "b788569f-6948-4586-b5bd-5ea096986331",
+	}
+	if marshalled, err = json.Marshal(stopMsg); err != nil {
+		t.Error(err)
+	}
+	msg := amqp.Delivery{
+		Body: marshalled,
+	}
+	old := os.Stdout
+	defer func() {
+		os.Stdout = old
+	}()
+	r, w, err := os.Pipe()
+	if err != nil {
+		t.Error(err)
+	}
+	os.Stdout = w
+	coord = make(chan string)
+	go func() {
+		var buf bytes.Buffer
+		io.Copy(&buf, r)
+		coord <- buf.String()
+	}()
+	stopHandler(msg)
+	w.Close()
+	actual := <-coord
+	if !strings.Contains(actual, "Running condor_q...") {
+		t.Error("Logging output from stopHandler does not contain 'Running condor_q...'")
+	}
+	if !strings.Contains(actual, "Done running condor_q") {
+		t.Error("Logging output from stopHandler does not contain 'Done running condor_q'")
+	}
+	if !strings.Contains(actual, "Running 'condor_rm 1'") {
+		t.Error("Logging output from stopHandler does not contain \"Running 'condor_rm 1'\"")
+	}
+	if !strings.Contains(actual, "Output of 'condor_rm 1'") {
+		t.Error("Logging output from stopHandler does not contain \"Output of 'condor_rm 1'\"")
+	}
 }

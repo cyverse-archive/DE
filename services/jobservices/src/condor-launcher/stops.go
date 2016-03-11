@@ -44,7 +44,7 @@ func ExecCondorQ() ([]byte, error) {
 		fmt.Sprintf("CONDOR_CONFIG=%s", condorCfg),
 	}
 	output, err = cmd.CombinedOutput()
-	logcabin.Info.Printf("Output of condor_submit:\n%s\n", output)
+	logcabin.Info.Printf("Output of condor_q:\n%s\n", output)
 	if err != nil {
 		return output, err
 	}
@@ -130,15 +130,39 @@ func CondorID(output []byte, invID string) []string {
 	return retval
 }
 
-// RegisterStopHandler registers a handler for all stop requests.
-func RegisterStopHandler(client *messaging.Client) {
-	client.AddConsumer(messaging.JobsExchange, "condor-launcher-stops", messaging.StopRequestKey("*"), func(d amqp.Delivery) {
-		var err error
-		d.Ack(false)
-		stopRequest := &messaging.StopRequest{}
-		if err = json.Unmarshal(d.Body, stopRequest); err != nil {
-			logcabin.Error.Print(err)
+func stopHandler(d amqp.Delivery) {
+	var (
+		condorQOutput  []byte
+		condorRMOutput []byte
+		condorIDs      []string
+		invID          string
+		err            error
+	)
+	d.Ack(false)
+	stopRequest := &messaging.StopRequest{}
+	if err = json.Unmarshal(d.Body, stopRequest); err != nil {
+		logcabin.Error.Printf("Error unmarshalling message body:\n%s", err)
+		return
+	}
+	invID = stopRequest.InvocationID
+	logcabin.Info.Print("Running condor_q...")
+	if condorQOutput, err = ExecCondorQ(); err != nil {
+		logcabin.Error.Printf("Error running condor_q:\n%s", err)
+		return
+	}
+	logcabin.Info.Printf("Done running condor_q")
+	condorIDs = CondorID(condorQOutput, invID)
+	for _, condorID := range condorIDs {
+		logcabin.Info.Printf("Running 'condor_rm %s'", condorID)
+		if condorRMOutput, err = ExecCondorRm(condorID); err != nil {
+			logcabin.Error.Printf("Error running 'condor_rm %s':\n%s", condorID, err)
 			return
 		}
-	})
+		logcabin.Info.Printf("Output of 'condor_rm %s':\n%s", condorID, condorRMOutput)
+	}
+}
+
+// RegisterStopHandler registers a handler for all stop requests.
+func RegisterStopHandler(client *messaging.Client) {
+	client.AddConsumer(messaging.JobsExchange, "condor-launcher-stops", messaging.StopRequestKey("*"), stopHandler)
 }

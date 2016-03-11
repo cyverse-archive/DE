@@ -378,6 +378,10 @@ func main() {
 	defer client.Close()
 	client.SetupPublishing(messaging.JobsExchange)
 
+	go client.Listen()
+
+	RegisterStopHandler(client)
+
 	// Accept and handle messages sent out with the jobs.launches routing key.
 	client.AddConsumer(messaging.JobsExchange, "condor_launches", messaging.LaunchesKey, func(d amqp.Delivery) {
 		body := d.Body
@@ -419,5 +423,6 @@ func main() {
 			}
 		}
 	})
-	client.Listen()
+	spin := make(chan int)
+	<-spin
 }
