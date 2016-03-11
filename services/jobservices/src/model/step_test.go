@@ -174,22 +174,6 @@ func TestIsBackwardsCompatible(t *testing.T) {
 	_inittests(t, false)
 }
 
-func TestBackwardsCompatibleOptions(t *testing.T) {
-	s := inittests(t)
-	actual := s.Steps[0].BackwardsCompatibleOptions()
-	expected := []string{"-v", "/usr/local2/:/usr/local2", "-v", "/usr/local3/:/usr/local3/", "-v", "/data2/:/data2/"}
-	if !reflect.DeepEqual(actual, expected) {
-		t.Errorf("BackwardsCompatibleOptions() returned '%#v' instead of '%#v'", actual, expected)
-	}
-	s.Steps[0].Component.Container.Image.Name = "discoenv/test"
-	actual = s.Steps[0].BackwardsCompatibleOptions()
-	expected = []string{}
-	if !reflect.DeepEqual(actual, expected) {
-		t.Errorf("BackwardsCompatibleOptions() returned '%#v' instead of '%#v'", actual, expected)
-	}
-	_inittests(t, false)
-}
-
 func TestExecutable(t *testing.T) {
 	s := inittests(t)
 	actual := s.Steps[0].Executable()

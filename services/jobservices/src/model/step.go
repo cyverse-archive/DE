@@ -54,15 +54,6 @@ func (s *Step) IsBackwardsCompatible() bool {
 		strings.HasPrefix(img, "gims.iplantcollaborative.org:5000/backwards-compat")
 }
 
-// BackwardsCompatibleOptions returns a string with the options that are needed
-// for the image that provides backwards compatibility with pre-Docker tools.
-func (s *Step) BackwardsCompatibleOptions() []string {
-	if s.IsBackwardsCompatible() {
-		return []string{"-v", "/usr/local2/:/usr/local2", "-v", "/usr/local3/:/usr/local3/", "-v", "/data2/:/data2/"}
-	}
-	return []string{}
-}
-
 // Executable returns a string containing the executable path as it gets placed
 // inside the docker command-line.
 func (s *Step) Executable() string {

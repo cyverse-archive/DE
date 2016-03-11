@@ -23,15 +23,6 @@ type Docker struct {
 // that are run as part of a job.
 const WORKDIR = "/de-app-work"
 
-// USRLOCAL is the path to a directory on the host system that may contain tools.
-const USRLOCAL = "/usr/local"
-
-// USRLOCAL2 is the path to a directory on the host system that may contain tools.
-const USRLOCAL2 = "/usr/local2"
-
-// USRLOCAL3 is the path to a directory on the host system that may contain tools.
-const USRLOCAL3 = "/usr/local3"
-
 const (
 	typeLabel      = "org.iplantc.containertype"
 	inputContainer = iota
@@ -285,21 +276,6 @@ func (d *Docker) CreateContainerFromStep(step *model.Step, invID string) (*docke
 		docker.Mount{
 			Source:      wd,
 			Destination: step.Component.Container.WorkingDirectory(),
-			RW:          true,
-		},
-		docker.Mount{
-			Source:      USRLOCAL,
-			Destination: USRLOCAL,
-			RW:          true,
-		},
-		docker.Mount{
-			Source:      USRLOCAL2,
-			Destination: USRLOCAL2,
-			RW:          true,
-		},
-		docker.Mount{
-			Source:      USRLOCAL3,
-			Destination: USRLOCAL3,
 			RW:          true,
 		},
 	}
