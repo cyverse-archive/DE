@@ -154,7 +154,7 @@ public class PermanentIdRequestViewImpl extends Composite implements PermanentId
         ColumnConfig<PermanentIdRequest, String> nameCol = new ColumnConfig<>(pr_props.requestedBy(),
                                                                               appearance.nameColumnWidth(),
                                                                               appearance.nameColumnLabel());
-        ColumnConfig<PermanentIdRequest, String> pathCol = new ColumnConfig<>(pr_props.path(),
+        ColumnConfig<PermanentIdRequest, String> pathCol = new ColumnConfig<>(new FolderPathProvider(appearance),
                                                                               appearance.pathColumnWidth(),
                                                                               appearance.pathColumnLabel());
         ColumnConfig<PermanentIdRequest, Date> dateSubCol = new ColumnConfig<>(pr_props.dateSubmitted(),

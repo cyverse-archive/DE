@@ -75,6 +75,8 @@ public interface PermanentIdRequestView extends IsWidget, IsMaskable {
         String request();
 
         String userEmail();
+
+        String folderNotFound();
     }
 
     public interface Presenter {
@@ -102,6 +104,8 @@ public interface PermanentIdRequestView extends IsWidget, IsMaskable {
         String createPermIdSucess();
 
         String createPermIdFailure();
+
+        String folderNotFound(String path);
 
         String metadataSaveError();
 

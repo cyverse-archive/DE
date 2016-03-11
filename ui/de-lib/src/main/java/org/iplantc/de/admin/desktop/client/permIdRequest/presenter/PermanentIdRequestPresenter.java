@@ -5,6 +5,7 @@ import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdReques
 import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView.PermanentIdRequestPresenterAppearance;
 import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView.Presenter;
 import org.iplantc.de.admin.desktop.client.permIdRequest.views.UpdatePermanentIdRequestDialog;
+import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequest;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestAutoBeanFactory;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestDetails;
@@ -60,7 +61,13 @@ public class PermanentIdRequestPresenter implements Presenter {
 
     @Override
     public void fetchMetadata() {
-        view.fetchMetadata(selectedRequest.getFolder(), appearance, drsvc);
+        final Folder selectedFolder = selectedRequest.getFolder();
+        if (selectedFolder != null) {
+            view.fetchMetadata(selectedFolder, appearance, drsvc);
+        } else {
+            final String errMessage = appearance.folderNotFound(selectedRequest.getOriginalPath());
+            IplantAnnouncer.getInstance().schedule(new ErrorAnnouncementConfig(errMessage));
+        }
     }
 
     @Override

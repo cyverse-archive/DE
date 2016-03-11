@@ -133,4 +133,8 @@ public class PermanentIdRequestViewDefaultAppearance implements PermanentIdReque
         return displayStrings.userEmail();
     }
 
+    @Override
+    public String folderNotFound() {
+        return displayStrings.folderNotFound();
+    }
 }
