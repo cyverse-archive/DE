@@ -47,7 +47,7 @@
         :summary "Grant Data Item Permissions"
         :description (str
 "Grants access to a data item."
-(get-error-code-block "ERR_DOES_NOT_EXIST, ERR_NOT_READABLE, ERR_NOT_A_USER", "ERR_NOT_OWNER"))
+(get-error-code-block "ERR_DOES_NOT_EXIST, ERR_NOT_OWNER, ERR_NOT_A_USER"))
         (svc/trap uri perms/add-permission params data-id share-with permission))
 
       (DELETE* "/:unshare-with" [:as {uri :uri}]
@@ -57,5 +57,5 @@
         :summary "Revoke Data Item Permissions"
         :description (str
 "Revokes access to a data item."
-(get-error-code-block "ERR_DOES_NOT_EXIST, ERR_NOT_READABLE, ERR_NOT_A_USER", "ERR_NOT_OWNER"))
+(get-error-code-block "ERR_DOES_NOT_EXIST, ERR_NOT_OWNER, ERR_NOT_A_USER"))
         (svc/trap uri perms/remove-permission params data-id unshare-with)))))
