@@ -1,26 +1,26 @@
-(ns apps.clients.notifications.app-sharing
+(ns apps.clients.notifications.job-sharing
   (:use [apps.clients.notifications.common-sharing]
         [medley.core :only [remove-vals]])
   (:require [clojure.string :as string]))
 
-(def notification-type "apps")
-(def singular "app")
-(def plural "apps")
+(def notification-type "analyses")
+(def singular "analysis")
+(def plural "analyses")
 
-(defn- format-app
+(defn- format-analysis
   [category-keyword response]
-  (remove-vals nil? (assoc (select-keys response [:app_id :app_name])
+  (remove-vals nil? (assoc (select-keys response [:analysis_id :analysis_name])
                       :category_id (str (category-keyword response)))))
 
 (defn- format-payload
   [category-keyword action responses]
-  {:action action
-   :apps   (map (partial format-app category-keyword) responses)})
+  {:action   action
+   :analyses (map (partial format-analysis category-keyword) responses)})
 
 (defn- format-notification
   [category-keyword recipient formats action sharer sharee responses]
   (when (seq responses)
-    (let [response-desc  (string/join ", " (map :app_name responses))
+    (let [response-desc  (string/join ", " (map :analysis_name responses))
           response-count (count responses)]
       {:type    notification-type
        :user    recipient
@@ -37,7 +37,7 @@
   (format-notification :sharee_category sharee formats action sharer sharee responses))
 
 (defn format-sharing-notifications
-  "Formats sharing notifications for apps."
+  "Formats sharing notifications for analyses."
   [sharer sharee responses]
   (let [responses (group-by :success responses)]
     (remove nil?
@@ -46,7 +46,7 @@
              (format-sharer-notification failure-formats share-action sharer sharee (responses false))])))
 
 (defn format-unsharing-notifications
-  "Formats unsharing notifications for apps."
+  "Formats unsharing notifications for analyses."
   [sharer sharee responses]
   (let [responses (group-by :success responses)]
     (remove nil?

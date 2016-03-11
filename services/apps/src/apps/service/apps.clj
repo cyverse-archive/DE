@@ -360,3 +360,11 @@
 (defn list-job-permissions
   [user job-ids]
   (jobs/list-job-permissions (get-apps-client user) user job-ids))
+
+(defn share-jobs
+  [user sharing-requests]
+  {:sharing (jobs/share-jobs (get-apps-client user) user sharing-requests)})
+
+(defn can-access-app
+  [user username app-id required-level]
+  (.hasAppPermission (get-apps-client user) username app-id required-level))

@@ -45,11 +45,26 @@
          :return perms/AnalysisPermissionListing
          :summary "List App Permissions"
          :description "This endpoint allows the caller to list the permissions for one or more analyses.
-         The authenticated user must have ownership permission on every analysis in the request body for
-         this endpoint to succeed."
+         The authenticated user must have read permission on every analysis in the request body for this
+         endpoint to succeed."
          (ok (apps/list-job-permissions current-user (:analyses body))))
 
-  (PATCH* "/:analysis-id" []
+(POST* "/sharing" []
+         :query [params SecuredQueryParams]
+         :body [body (describe perms/AnalysisSharingRequest "The app sharing request.")]
+         :return perms/AnalysisSharingResponse
+         :summary "Add App Permissions"
+         :description "This endpoint allows the caller to share multiple analyses with multiple users. The
+         authenticated user must have ownership permission to every analysis in the request body for this
+         endpoint to fully succeed. Note: this is a potentially slow operation and the response is returned
+         synchronously. The DE UI handles this by allowing the user to continue working while the request is
+         being processed. When calling this endpoint, please be sure that the response timeout is long
+         enough. Using a response timeout that is too short will result in an exception on the client side.
+         On the server side, the result of the sharing operation when a connection is lost is undefined. It
+         may be worthwhile to repeat failed or timed out calls to this endpoint."
+         (ok (apps/share-jobs current-user (:sharing body))))
+
+(PATCH* "/:analysis-id" []
           :path-params [analysis-id :- AnalysisIdPathParam]
           :query       [params SecuredQueryParams]
           :body        [body AnalysisUpdate]

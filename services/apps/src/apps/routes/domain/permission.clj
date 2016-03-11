@@ -3,14 +3,15 @@
         [schema.core :only [defschema optional-key enum]])
   (:import [java.util UUID]))
 
-(def PermissionEnum (enum "read" "write" "own" ""))
+(def AppPermissionEnum (enum "read" "write" "own" ""))
+(def AnalysisPermissionEnum (enum "read" "own" ""))
 
 (defschema AppIdList
   {:apps (describe [NonBlankString] "A List of app IDs")})
 
 (defschema UserPermissionListElement
   {:user       (describe NonBlankString "The user ID")
-   :permission (describe PermissionEnum "The permission level assigned to the user")})
+   :permission (describe AppPermissionEnum "The permission level assigned to the user")})
 
 (defschema AppPermissionListElement
   {:id          (describe NonBlankString "The app ID")
@@ -22,7 +23,7 @@
 
 (defschema AppSharingRequestElement
   {:app_id     (describe NonBlankString "The app ID")
-   :permission (describe PermissionEnum "The requested permission level")})
+   :permission (describe AppPermissionEnum "The requested permission level")})
 
 (defschema AppSharingResponseElement
   (assoc AppSharingRequestElement
@@ -74,3 +75,27 @@
 
 (defschema AnalysisPermissionListing
   {:analyses (describe [AnalysisPermissionListElement] "The list of analysis permissions")})
+
+(defschema AnalysisSharingRequestElement
+  {:analysis_id (describe UUID "The analysis ID")
+   :permission  (describe AnalysisPermissionEnum "The requested permission level")})
+
+(defschema AnalysisSharingResponseElement
+  (assoc AnalysisSharingRequestElement
+    :analysis_name        (describe NonBlankString "The analysis name")
+    :success              (describe Boolean "A Boolean flag indicating whether the sharing request succeeded")
+    (optional-key :error) (describe ErrorResponse "Information about any error that may have occurred")))
+
+(defschema UserAnalysisSharingRequestElement
+  {:user     (describe NonBlankString "The user ID")
+   :analyses (describe [AnalysisSharingRequestElement] "The list of sharing requests for individual analyses")})
+
+(defschema UserAnalysisSharingResponseElement
+  (assoc UserAnalysisSharingRequestElement
+    :analyses (describe [AnalysisSharingResponseElement] "The list of analysis sharing responses for the user")))
+
+(defschema AnalysisSharingRequest
+  {:sharing (describe [UserAnalysisSharingRequestElement] "The list of sharing requests for individual users.")})
+
+(defschema AnalysisSharingResponse
+  {:sharing (describe [UserAnalysisSharingResponseElement] "The list of sharing responses for individual users.")})

@@ -68,4 +68,5 @@
   (unshareApps [_ unsharing-requests])
   (unshareAppsWithUser [_ app-names sharee app-ids])
   (unshareAppWithUser [_ app-names sharee app-id])
+  (hasAppPermission [_ username app-id required-level])
   (supportsJobSharing [_ _]))
