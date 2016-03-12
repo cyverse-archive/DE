@@ -179,6 +179,9 @@
    (POST "/analyses/permission-lister" [:as {:keys [body]}]
          (service/success-response (apps/list-job-permissions body)))
 
+   (POST "/analyses/sharing" [:as {:keys [body]}]
+         (service/success-response (apps/share-jobs body)))
+
    (PATCH "/analyses/:analysis-id" [analysis-id :as {body :body}]
           (service/success-response (apps/update-job analysis-id body)))
 
