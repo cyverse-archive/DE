@@ -34,6 +34,20 @@
    :error         {:error_code ce/ERR_BAD_REQUEST
                    :reason     reason}})
 
+(defn- job-unsharing-success
+  [job-id job]
+  {:analysis_id   job-id
+   :analysis_name (get-job-name job-id job)
+   :success       true})
+
+(defn- job-unsharing-failure
+  [job-id job reason]
+  {:analysis_id   job-id
+   :analysis_name (get-job-name job-id job)
+   :success       false
+   :error         {:error_code ce/ERR_BAD_REQUEST
+                   :reason     reason}})
+
 (defn- job-sharing-msg
   ([reason-code job-id]
    (job-sharing-msg reason-code job-id nil))
@@ -107,3 +121,50 @@
 (defn share-jobs
   [apps-client user sharing-requests]
   (mapv (partial share-jobs-with-user apps-client user) sharing-requests))
+
+(defn- unshare-output-folder
+  [sharer sharee {:keys [result-folder-path]}]
+  (try+
+   (data-info/unshare-path sharer result-folder-path sharee)
+   nil
+   (catch ce/clj-http-error? {:keys [body]}
+     (str "unable to unshare result folder: " (:error_code (service/parse-json body))))))
+
+;; The apps client isn't used at this time, but it will be once we extend analysis sharing
+;; to HPC apps.
+(defn- do-job-unsharing-steps
+  [apps-client sharer sharee job-id job]
+  (or (unshare-output-folder sharer sharee job)
+      (iplant-groups/unshare-analysis job-id sharee)))
+
+(defn- unshare-accessible-job
+  [apps-client sharer sharee job-id job]
+  (if-let [failure-reason (do-job-unsharing-steps apps-client sharer sharee job-id job)]
+    (job-unsharing-failure job-id job failure-reason)
+    (job-unsharing-success job-id job)))
+
+(defn- unshare-extant-job
+  [apps-client sharer sharee job-id job]
+  (if (has-analysis-permission (:shortUsername sharer) job-id "own")
+    (unshare-accessible-job apps-client sharer sharee job-id job)
+    (job-unsharing-failure job-id job (job-sharing-msg :not-found job-id))))
+
+(defn- unshare-job
+  [apps-client sharer sharee job-id]
+  (if-let [job (jp/get-job-by-id job-id)]
+    (try+
+     (unshare-extant-job apps-client sharer sharee job-id job)
+     (catch [:type ::permission-load-failure] {:keys [reason]}
+       (job-unsharing-failure job-id job (job-sharing-msg :load-failure job-id reason))))
+    (job-unsharing-failure job-id nil (job-sharing-msg :not-found job-id))))
+
+(defn- unshare-jobs-with-user
+  [apps-client sharer {sharee :user :keys [analyses]}]
+  (let [responses (mapv (partial unshare-job apps-client sharer sharee) analyses)]
+    (cn/send-analysis-unsharing-notifications (:shortUsername sharer) sharee responses)
+    {:user     sharee
+     :analyses responses}))
+
+(defn unshare-jobs
+  [apps-client user unsharing-requests]
+  (mapv (partial unshare-jobs-with-user apps-client user) unsharing-requests))

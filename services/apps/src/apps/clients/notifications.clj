@@ -133,3 +133,9 @@
   (->> (jsn/format-sharing-notifications sharer sharee responses)
        (map guarded-send-notification)
        dorun))
+
+(defn send-analysis-unsharing-notifications
+  [sharer sharee responses]
+  (->> (jsn/format-unsharing-notifications sharer sharee responses)
+       (map guarded-send-notification)
+       dorun))

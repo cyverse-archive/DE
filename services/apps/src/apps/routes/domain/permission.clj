@@ -95,7 +95,31 @@
     :analyses (describe [AnalysisSharingResponseElement] "The list of analysis sharing responses for the user")))
 
 (defschema AnalysisSharingRequest
-  {:sharing (describe [UserAnalysisSharingRequestElement] "The list of sharing requests for individual users.")})
+  {:sharing (describe [UserAnalysisSharingRequestElement] "The list of sharing requests for individual users")})
 
 (defschema AnalysisSharingResponse
-  {:sharing (describe [UserAnalysisSharingResponseElement] "The list of sharing responses for individual users.")})
+  {:sharing (describe [UserAnalysisSharingResponseElement] "The list of sharing responses for individual users")})
+
+(defschema AnalysisUnsharingRequestElement
+  {:analysis_id (describe UUID "The analysis ID")
+   :permission  (describe AnalysisPermissionEnum "The requested permission level")})
+
+(defschema AnalysisUnsharingResponseElement
+  {:analysis_id          (describe UUID "The analysis ID")
+   :analysis_name        (describe NonBlankString "The analysis name")
+   :success              (describe Boolean "A Boolean flag indicating whether the unsharing request succeeded")
+   (optional-key :error) (describe ErrorResponse "Information about any error that may have occurred")})
+
+(defschema UserAnalysisUnsharingRequestElement
+  {:user     (describe NonBlankString "The user ID")
+   :analyses (describe [UUID] "The identifiers of the analyses to unshare")})
+
+(defschema UserAnalysisUnsharingResponseElement
+  (assoc UserAnalysisUnsharingRequestElement
+    :analyses (describe [AnalysisUnsharingResponseElement] "The list of analysis unsharing responses for the user")))
+
+(defschema AnalysisUnsharingRequest
+  {:unsharing (describe [UserAnalysisUnsharingRequestElement] "The list of unsharing requests for individual users")})
+
+(defschema AnalysisUnsharingResponse
+  {:unsharing (describe [UserAnalysisUnsharingResponseElement] "The list of unsharing responses for individual users")})

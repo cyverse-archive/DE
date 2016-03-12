@@ -365,6 +365,6 @@
   [user sharing-requests]
   {:sharing (jobs/share-jobs (get-apps-client user) user sharing-requests)})
 
-(defn can-access-app
-  [user username app-id required-level]
-  (.hasAppPermission (get-apps-client user) username app-id required-level))
+(defn unshare-jobs
+  [user unsharing-requests]
+  {:unsharing (jobs/unshare-jobs (get-apps-client user) user unsharing-requests)})
