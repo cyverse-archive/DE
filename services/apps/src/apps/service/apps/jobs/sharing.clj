@@ -147,7 +147,7 @@
   [apps-client sharer sharee job-id job]
   (if (has-analysis-permission (:shortUsername sharer) job-id "own")
     (unshare-accessible-job apps-client sharer sharee job-id job)
-    (job-unsharing-failure job-id job (job-sharing-msg :not-found job-id))))
+    (job-unsharing-failure job-id job (job-sharing-msg :not-allowed job-id))))
 
 (defn- unshare-job
   [apps-client sharer sharee job-id]
