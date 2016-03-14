@@ -25,7 +25,7 @@
                                 [com.fasterxml.jackson.core/jackson-databind]
                                 [com.fasterxml.jackson.core/jackson-core]]]
                  [clojurewerkz/elastisch "2.0.0"]
-                 [com.novemberain/langohr "2.11.0"]
+                 [com.novemberain/langohr "3.5.1"]
                  [liberator "0.11.1"]
                  [compojure "1.1.8"]
                  [ring "1.4.0"]
