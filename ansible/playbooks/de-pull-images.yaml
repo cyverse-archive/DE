@@ -337,20 +337,21 @@
       service_name: "{{saved_searches.compose_service}}"
       service_name_short: "{{saved_searches.service_name_short}}"
 
-- name: Update templeton
-  hosts: templeton:&systems
+- name: Update templeton-periodic
+  hosts: templeton-periodic:&systems
   become: true
   gather_facts: false
   tags:
     - services
     - templeton
+    - templeton-periodic
   roles:
     - role: util-cfg-docker-pull-configs
-      service_name: "{{templeton.compose_service}}"
-      service_name_short: "{{templeton.service_name_short}}"
+      service_name: "{{templeton_periodic.compose_service}}"
+      service_name_short: "{{templeton_periodic.service_name_short}}"
     - role: util-cfg-docker-pull
-      service_name: "{{templeton.compose_service}}"
-      service_name_short: "{{templeton.service_name_short}}"
+      service_name: "{{templeton_periodic.compose_service}}"
+      service_name_short: "{{templeton_periodic.service_name_short}}"
 
 - name: Update terrain
   hosts: terrain:&systems
