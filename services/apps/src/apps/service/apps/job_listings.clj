@@ -43,7 +43,11 @@
            (assoc (->> (group-by batch-child-status children)
                        (map (fn [[k v]] [k (count v)]))
                        (into {}))
-             :total (count children)))))
+                  :total (count children)))))
+
+(defn- job-supports-sharing?
+  [apps-client {parent-id :parent_id :keys [id]}]
+  (and (nil? parent-id) (every? #(.supportsJobSharing apps-client %) (jp/list-representative-job-steps id))))
 
 (defn format-job
   [apps-client app-tables job]
@@ -66,8 +70,7 @@
     :parent_id       (:parent-id job)
     :batch           (:is-batch job)
     :batch_status    (when (:is-batch job) (format-batch-status (:id job)))
-    :can_share       (and (not (:is-batch job))
-                          (every? #(.supportsJobSharing apps-client %) (jp/list-job-steps (:id job))))}))
+    :can_share       (job-supports-sharing? apps-client job)}))
 
 (defn- list-jobs*
   [{:keys [username]} {:keys [limit offset sort-field sort-dir filter include-hidden]} types]
