@@ -17,6 +17,9 @@ public interface PermanentIdRequest extends HasId {
 
     Folder getFolder();
 
+    @PropertyName("original_path")
+    String getOriginalPath();
+
     @PropertyName("requested_by")
     String getRequestedBy();
 

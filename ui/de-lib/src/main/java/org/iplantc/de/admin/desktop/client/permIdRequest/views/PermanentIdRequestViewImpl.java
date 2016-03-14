@@ -1,10 +1,10 @@
 package org.iplantc.de.admin.desktop.client.permIdRequest.views;
 
+import org.iplantc.de.admin.desktop.client.permIdRequest.model.PermanentIdRequestPathProvider;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequest;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestAutoBeanFactory;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestType;
-import org.iplantc.de.client.models.identifiers.PermanentIdRequestUpdate;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 
 import com.google.gwt.core.client.GWT;
@@ -23,7 +23,6 @@ import com.sencha.gxt.widget.core.client.box.MessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent.DialogHideHandler;
-import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
@@ -154,7 +153,7 @@ public class PermanentIdRequestViewImpl extends Composite implements PermanentId
         ColumnConfig<PermanentIdRequest, String> nameCol = new ColumnConfig<>(pr_props.requestedBy(),
                                                                               appearance.nameColumnWidth(),
                                                                               appearance.nameColumnLabel());
-        ColumnConfig<PermanentIdRequest, String> pathCol = new ColumnConfig<>(pr_props.path(),
+        ColumnConfig<PermanentIdRequest, String> pathCol = new ColumnConfig<>(new PermanentIdRequestPathProvider(appearance),
                                                                               appearance.pathColumnWidth(),
                                                                               appearance.pathColumnLabel());
         ColumnConfig<PermanentIdRequest, Date> dateSubCol = new ColumnConfig<>(pr_props.dateSubmitted(),

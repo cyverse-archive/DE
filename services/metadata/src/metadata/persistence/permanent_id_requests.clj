@@ -26,6 +26,7 @@
             :target_id
             :target_type
             :requested_by
+            :original_path
             [:status_codes.name :status]
             [:statuses.date_assigned :status_date]
             [:statuses.updated_by])
@@ -44,12 +45,12 @@
     sort-field :sort-field
     sort-dir   :sort-dir}]
   (subselect [(list-permanent-id-requests-subselect user) :reqs]
-      (fields :id :type :target_id :target_type :requested_by
+      (fields :id :type :target_id :target_type :requested_by :original_path
               [(sqlfn :first :status_date) :date_submitted]
               [(sqlfn :last :status) :status]
               [(sqlfn :last :status_date) :date_updated]
               [(sqlfn :last :updated_by) :updated_by])
-      (group :id :type :target_id :target_type :requested_by)
+      (group :id :type :target_id :target_type :requested_by :original_path)
       (order (or sort-field :date_submitted) (or sort-dir :ASC))
       (limit row-limit)
       (offset row-offset)))
