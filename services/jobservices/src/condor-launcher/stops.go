@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"logcabin"
 	"messaging"
+	"model"
 	"os/exec"
 	"path"
 	"path/filepath"
@@ -44,7 +45,6 @@ func ExecCondorQ() ([]byte, error) {
 		fmt.Sprintf("CONDOR_CONFIG=%s", condorCfg),
 	}
 	output, err = cmd.CombinedOutput()
-	logcabin.Info.Printf("Output of condor_q:\n%s\n", output)
 	if err != nil {
 		return output, err
 	}
@@ -90,18 +90,26 @@ func ExecCondorRm(condorID string) ([]byte, error) {
 	return output, nil
 }
 
-// CondorID looks up the HTCondor job ID for the given InvocationID. It does
-// so by executing condor_q and parsing the longform output.
-func CondorID(output []byte, invID string) []string {
+type queueEntry struct {
+	CondorID     string
+	InvocationID string
+	IsHeld       bool
+}
+
+var (
+	condorIDKey  = []byte("ClusterId")
+	statusKey    = []byte("JobStatus")
+	newLineBytes = []byte("\n")
+	equalBytes   = []byte(" = ")
+	ipcUUIDBytes = []byte("IpcUuid")
+)
+
+func queueEntries(output []byte) []queueEntry {
 	var (
-		retval       []string
-		condorID     []byte
-		jobID        []byte
-		condorIDKey  = []byte("ClusterId")
-		newLineBytes = []byte("\n")
-		equalBytes   = []byte(" = ")
-		ipcUUIDBytes = []byte("IpcUuid")
-		invocationID = []byte(fmt.Sprintf("\"%s\"", invID))
+		retval   []queueEntry
+		condorID []byte
+		jobID    []byte
+		statusID []byte
 	)
 	chunks := bytes.Split(output, []byte("\n\n"))
 	for _, chunk := range chunks {
@@ -117,52 +125,126 @@ func CondorID(output []byte, invID string) []string {
 						condorID = bytes.TrimSpace(value)
 					case bytes.Equal(key, ipcUUIDBytes):
 						jobID = bytes.TrimSpace(value)
+					case bytes.Equal(key, statusKey):
+						statusID = bytes.TrimSpace(value)
 					}
 				}
 			}
 		}
-		if len(condorID) > 0 && len(jobID) > 0 {
-			if bytes.Equal(jobID, invocationID) {
-				retval = append(retval, string(bytes.Trim(condorID, "\"")))
-			}
+		newEntry := queueEntry{
+			CondorID:     string(condorID),
+			InvocationID: string(bytes.Trim(jobID, "\" ")),
+			IsHeld:       bytes.Equal(statusID, []byte("5")),
+		}
+		retval = append(retval, newEntry)
+	}
+	return retval
+}
+
+// queueEntriesByInvocationID returns a list of queueEntries for the given
+// invocation ID, which is stored in the "IpcUuid" field of the condor_q output.
+// This function does not call condor_q, it should be passed the output of the
+// condor_q command.
+func queueEntriesByInvocationID(output []byte, invID string) []queueEntry {
+	var retval []queueEntry
+	entries := queueEntries(output)
+	for _, entry := range entries {
+		if entry.InvocationID == invID {
+			retval = append(retval, entry)
 		}
 	}
 	return retval
 }
 
-func stopHandler(d amqp.Delivery) {
+func heldQueueEntries(output []byte) []queueEntry {
+	var retval []queueEntry
+	entries := queueEntries(output)
+	for _, entry := range entries {
+		if entry.IsHeld {
+			retval = append(retval, entry)
+		}
+	}
+	return retval
+}
+
+func killHeldJobs(client *messaging.Client) {
 	var (
-		condorQOutput  []byte
-		condorRMOutput []byte
-		condorIDs      []string
-		invID          string
-		err            error
+		err         error
+		cmdOutput   []byte
+		heldEntries []queueEntry
 	)
-	d.Ack(false)
-	stopRequest := &messaging.StopRequest{}
-	if err = json.Unmarshal(d.Body, stopRequest); err != nil {
-		logcabin.Error.Printf("Error unmarshalling message body:\n%s", err)
+	logcabin.Info.Print("Looking for jobs in the held state...")
+	if cmdOutput, err = ExecCondorQ(); err != nil {
+		logcabin.Error.Printf("Error running condor_q: %s", err)
 		return
 	}
-	invID = stopRequest.InvocationID
-	logcabin.Info.Print("Running condor_q...")
-	if condorQOutput, err = ExecCondorQ(); err != nil {
-		logcabin.Error.Printf("Error running condor_q:\n%s", err)
-		return
+	heldEntries = heldQueueEntries(cmdOutput)
+	logcabin.Info.Printf("There are %d jobs in the held state", len(heldEntries))
+	for _, entry := range heldEntries {
+		if entry.InvocationID != "" {
+			logcabin.Info.Printf("Sending stop request for invocation id %s", entry.InvocationID)
+			if err = client.SendStopRequest(
+				entry.InvocationID,
+				"admin",
+				"Job was in held state",
+			); err != nil {
+				logcabin.Error.Printf("Error sending stop request: %s", err)
+			}
+		}
 	}
-	logcabin.Info.Printf("Done running condor_q")
-	condorIDs = CondorID(condorQOutput, invID)
-	for _, condorID := range condorIDs {
-		logcabin.Info.Printf("Running 'condor_rm %s'", condorID)
-		if condorRMOutput, err = ExecCondorRm(condorID); err != nil {
-			logcabin.Error.Printf("Error running 'condor_rm %s':\n%s", condorID, err)
+}
+
+func stopHandler(client *messaging.Client) func(d amqp.Delivery) {
+	return func(d amqp.Delivery) {
+		var (
+			condorQOutput  []byte
+			condorRMOutput []byte
+			invID          string
+			err            error
+		)
+
+		d.Ack(false)
+		logcabin.Info.Println("in stopHandler")
+		stopRequest := &messaging.StopRequest{}
+		if err = json.Unmarshal(d.Body, stopRequest); err != nil {
+			logcabin.Error.Printf("Error unmarshalling message body:\n%s", err)
 			return
 		}
-		logcabin.Info.Printf("Output of 'condor_rm %s':\n%s", condorID, condorRMOutput)
+		invID = stopRequest.InvocationID
+		logcabin.Info.Print("Running condor_q...")
+		if condorQOutput, err = ExecCondorQ(); err != nil {
+			logcabin.Error.Printf("Error running condor_q:\n%s", err)
+			return
+		}
+		logcabin.Info.Printf("Done running condor_q")
+		entries := queueEntriesByInvocationID(condorQOutput, invID)
+		logcabin.Info.Printf("Number of entries for job %s is %d", invID, len(entries))
+		for _, entry := range entries {
+			if entry.CondorID == "" {
+				continue
+			}
+			condorID := entry.CondorID
+			logcabin.Info.Printf("Running 'condor_rm %s'", condorID)
+			if condorRMOutput, err = ExecCondorRm(condorID); err != nil {
+				logcabin.Error.Printf("Error running 'condor_rm %s':\n%s", condorID, err)
+				continue
+			}
+			fauxJob := model.New()
+			fauxJob.InvocationID = invID
+			update := &messaging.UpdateMessage{
+				Job:     fauxJob,
+				State:   messaging.FailedState,
+				Message: "Job was killed",
+			}
+			if err = client.PublishJobUpdate(update); err != nil {
+				logcabin.Error.Printf("Error publishing update for failed job:\n%s", err)
+			}
+			logcabin.Info.Printf("Output of 'condor_rm %s':\n%s", condorID, condorRMOutput)
+		}
 	}
 }
 
 // RegisterStopHandler registers a handler for all stop requests.
 func RegisterStopHandler(client *messaging.Client) {
-	client.AddConsumer(messaging.JobsExchange, "condor-launcher-stops", messaging.StopRequestKey("*"), stopHandler)
+	client.AddConsumer(messaging.JobsExchange, "condor-launcher-stops", messaging.StopRequestKey("*"), stopHandler(client))
 }

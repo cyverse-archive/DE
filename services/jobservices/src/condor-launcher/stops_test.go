@@ -388,10 +388,10 @@ RecentBlockReads = 0`)
 func TestCondorID(t *testing.T) {
 	expected := "2"
 	invID := "63c5523d-d8a5-49bc-addc-99a73566cd89"
-	actual := CondorID(listing, invID)
+	actual := queueEntriesByInvocationID(listing, invID)
 	found := false
-	for _, id := range actual {
-		if id == expected {
+	for _, entry := range actual {
+		if entry.CondorID == expected {
 			found = true
 		}
 	}
@@ -401,10 +401,10 @@ func TestCondorID(t *testing.T) {
 
 	invID = "b788569f-6948-4586-b5bd-5ea096986331"
 	expected = "1"
-	actual = CondorID(listing, invID)
+	actual = queueEntriesByInvocationID(listing, invID)
 	found = false
-	for _, id := range actual {
-		if id == expected {
+	for _, entry := range actual {
+		if entry.CondorID == expected {
 			found = true
 		}
 	}
@@ -414,10 +414,10 @@ func TestCondorID(t *testing.T) {
 
 	invID = "eca67a7c-e745-4e98-b892-67a9948bc2cb"
 	expected = "3"
-	actual = CondorID(listing, invID)
+	actual = queueEntriesByInvocationID(listing, invID)
 	found = false
-	for _, id := range actual {
-		if id == expected {
+	for _, entry := range actual {
+		if entry.CondorID == expected {
 			found = true
 		}
 	}
@@ -433,11 +433,11 @@ func TestExecCondorQ(t *testing.T) {
 		t.Error(err)
 	}
 	invID := "63c5523d-d8a5-49bc-addc-99a73566cd89"
-	actual := CondorID(output, invID)
+	actual := queueEntriesByInvocationID(output, invID)
 	expected := "2"
 	found := false
-	for _, id := range actual {
-		if id == expected {
+	for _, entries := range actual {
+		if entries.CondorID == expected {
 			found = true
 		}
 	}
@@ -447,10 +447,10 @@ func TestExecCondorQ(t *testing.T) {
 
 	invID = "b788569f-6948-4586-b5bd-5ea096986331"
 	expected = "1"
-	actual = CondorID(output, invID)
+	actual = queueEntriesByInvocationID(output, invID)
 	found = false
-	for _, id := range actual {
-		if id == expected {
+	for _, entry := range actual {
+		if entry.CondorID == expected {
 			found = true
 		}
 	}
@@ -460,10 +460,10 @@ func TestExecCondorQ(t *testing.T) {
 
 	invID = "eca67a7c-e745-4e98-b892-67a9948bc2cb"
 	expected = "3"
-	actual = CondorID(output, invID)
+	actual = queueEntriesByInvocationID(output, invID)
 	found = false
-	for _, id := range actual {
-		if id == expected {
+	for _, entry := range actual {
+		if entry.CondorID == expected {
 			found = true
 		}
 	}

@@ -44,6 +44,7 @@ import (
 	"path"
 	"path/filepath"
 	"text/template"
+	"time"
 
 	"github.com/streadway/amqp"
 )
@@ -72,6 +73,7 @@ output = script-output.log
 error = script-error.log
 log = condor.log
 request_disk = {{.RequestDisk}}
+kill_sig = 15
 +IpcUuid = "{{.InvocationID}}"
 +IpcJobId = "generated_script"
 +IpcUsername = "{{.Submitter}}"{{if .Group}}
@@ -337,6 +339,25 @@ func stop(s *model.Job) (string, error) {
 	return string(output), err
 }
 
+// startHeldTicker starts up the code that periodically fires and clean up held
+// jobs
+func startHeldTicker(client *messaging.Client) (*time.Ticker, error) {
+	d, err := time.ParseDuration("30s")
+	if err != nil {
+		return nil, err
+	}
+	t := time.NewTicker(d)
+	go func(t *time.Ticker, client *messaging.Client) {
+		for {
+			select {
+			case <-t.C:
+				killHeldJobs(client)
+			}
+		}
+	}(t, client)
+	return t, nil
+}
+
 // AppVersion prints version information to stdout
 func AppVersion() {
 	if appver != "" {
@@ -371,14 +392,22 @@ func main() {
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
+
 	client, err := messaging.NewClient(uri, true)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
 	defer client.Close()
+
 	client.SetupPublishing(messaging.JobsExchange)
 
 	go client.Listen()
+
+	ticker, err := startHeldTicker(client)
+	if err != nil {
+		logcabin.Error.Fatal(err)
+	}
+	logcabin.Info.Printf("Started up the held state ticker: %#v", ticker)
 
 	RegisterStopHandler(client)
 
@@ -423,6 +452,7 @@ func main() {
 			}
 		}
 	})
+
 	spin := make(chan int)
 	<-spin
 }

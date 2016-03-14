@@ -34,6 +34,7 @@ var (
 	builtby   string
 	job       *model.Job
 	dckr      *Docker
+	client    *messaging.Client
 )
 
 func signals() {
@@ -50,6 +51,9 @@ func signals() {
 		}
 		if dckr != nil && job != nil {
 			cleanup(job)
+		}
+		if client != nil && job != nil {
+			fail(client, job, fmt.Sprintf("Received signal %s", sig))
 		}
 		os.Exit(-1)
 	}()
