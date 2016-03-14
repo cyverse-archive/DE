@@ -3,6 +3,7 @@
         [slingshot.slingshot :only [try+]])
   (:require [clojure.tools.logging :as log]
             [clojure.string :as string]
+            [clojure-commons.error-codes :as ce]
             [clojure-commons.exception-util :as cxu]
             [kameleon.db :as db]
             [apps.clients.iplant-groups :as iplant-groups]
@@ -10,7 +11,10 @@
             [apps.persistence.jobs :as jp]
             [apps.service.apps.job-listings :as listings]
             [apps.service.apps.jobs.params :as job-params]
+            [apps.service.apps.jobs.permissions :as job-permissions]
+            [apps.service.apps.jobs.sharing :as job-sharing]
             [apps.service.apps.jobs.submissions :as submissions]
+            [apps.service.apps.jobs.util :as ju]
             [apps.util.service :as service]))
 
 (defn supports-job-type
@@ -109,12 +113,6 @@
     (sync-incomplete-job-status apps-client job step)
     (sync-complete-job-status job)))
 
-(defn- validate-job-existence
-  [job-ids]
-  (let [missing-ids (jp/list-non-existent-job-ids (set job-ids))]
-    (when-not (empty? missing-ids)
-      (service/not-found "jobs" job-ids))))
-
 (defn validate-job-ownership
   [username job-ids]
   (let [unowned-ids (map :id (jp/list-unowned-jobs username job-ids))]
@@ -123,7 +121,7 @@
 
 (defn- validate-jobs-for-user
   [username job-ids]
-  (validate-job-existence job-ids)
+  (ju/validate-job-existence job-ids)
   (validate-job-ownership username job-ids))
 
 (defn update-job
@@ -189,41 +187,14 @@
      (iplant-groups/register-analysis (:shortUsername user) (:id job-info))
      job-info)))
 
-(defn- validate-job-permission-level
-  [short-username perms required-level job-ids]
-  (doseq [job-id job-ids]
-    (let [user-perms (filter (comp (partial = short-username) :id :subject) (perms job-id))]
-      (when (iplant-groups/lacks-permission-level {job-id user-perms} required-level job-id)
-        (cxu/forbidden (str "insufficient privileges for analysis " job-id))))))
-
-(defn- validate-job-sharing-support
-  [apps-client job-ids]
-  (doseq [job-id   job-ids
-          job-step (jp/list-job-steps job-id)]
-    (when-not (.supportsJobSharing apps-client job-step)
-      (cxu/bad-request (str "analysis sharing not supported for " job-id)))))
-
-(defn- validate-jobs-for-permissions
-  [apps-client {short-username :shortUsername} perms required-level job-ids]
-  (validate-job-existence job-ids)
-  (validate-job-permission-level short-username perms required-level job-ids)
-  (validate-job-sharing-support apps-client job-ids))
-
-(defn- format-job-permission
-  [short-username perms {:keys [id job-name]}]
-  {:id          id
-   :name        job-name
-   :permissions (mapv iplant-groups/format-permission
-                      (remove (comp (partial = short-username) key)
-                              (group-by (comp :id :subject) (perms id))))})
-
-(defn- format-job-permission-listing
-  [{short-username :shortUsername} perms jobs]
-  {:analyses (mapv (partial format-job-permission short-username perms) jobs)})
-
 (defn list-job-permissions
-  [apps-client {:keys [username] :as user} job-ids]
-  (let [perms (iplant-groups/list-analysis-permissions job-ids)]
-    (transaction
-     (validate-jobs-for-permissions apps-client user perms "read" job-ids)
-     (format-job-permission-listing user perms (jp/list-jobs-by-id job-ids)))))
+  [apps-client user job-ids]
+  (job-permissions/list-job-permissions apps-client user job-ids))
+
+(defn share-jobs
+  [apps-client user sharing-requests]
+  (job-sharing/share-jobs apps-client user sharing-requests))
+
+(defn unshare-jobs
+  [apps-client user unsharing-requests]
+  (job-sharing/unshare-jobs apps-client user unsharing-requests))

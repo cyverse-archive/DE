@@ -138,6 +138,13 @@
   [app-ids]
   (group-permissions (retrieve-app-permissions nil app-ids)))
 
+(defn load-analysis-permissions
+  "Loads analysis permissions for a user from Grouper."
+  ([user]
+     (load-analysis-permissions user nil))
+  ([user analysis-ids]
+     (group-permissions (retrieve-analysis-permissions user analysis-ids))))
+
 (defn list-analysis-permissions
   "Loads an analysis permission listing from Grouper."
   [analysis-ids]
@@ -214,27 +221,33 @@
                     :content-type :json
                     :as           :json})))
 
+(defn- share-resource
+  "Shares a resource with a user."
+  [resource-name role-name subject-id level]
+  (http/put (grouper-url "attributes" resource-name "permissions" "memberships" role-name subject-id level)
+            {:query-params {:user grouper-user}
+             :form-params  {:allowed true}
+             :content-type :json
+             :as           :json})
+  nil)
+
+(defn- unshare-resource
+  "Unshares a resource with a user."
+  [resource-name role-name subject-id]
+  (http/delete (grouper-url "attributes" resource-name "permissions" "memberships" role-name subject-id)
+               {:query-params {:user grouper-user}
+                :as           :json})
+  nil)
+
 (defn- share-app*
   "Shares an app with a user."
   [app-id subject-id level]
-  (let [resource-name (grouper-app-resource-name app-id)
-        role-name     (grouper-user-group)]
-    (http/put (grouper-url "attributes" resource-name "permissions" "memberships" role-name subject-id level)
-              {:query-params {:user grouper-user}
-               :form-params  {:allowed true}
-               :content-type :json
-               :as           :json}))
-  nil)
+  (share-resource (grouper-app-resource-name app-id) (grouper-user-group) subject-id level))
 
 (defn- unshare-app*
   "Unshares an app with a user."
   [app-id subject-id]
-  (let [resource-name (grouper-app-resource-name app-id)
-        role-name     (grouper-user-group)]
-    (http/delete (grouper-url "attributes" resource-name "permissions" "memberships" role-name subject-id)
-                 {:query-params {:user grouper-user}
-                  :as           :json}))
-  nil)
+  (unshare-resource (grouper-app-resource-name app-id) (grouper-user-group) subject-id))
 
 (defn- get-error-reason
   "Attempts to extract the reason for an error from an iplant-groups response body."
@@ -270,3 +283,31 @@
   (let [analysis-resource-name (grouper-analysis-resource-name analysis-id)]
     (create-resource analysis-resource-name (grouper-analysis-permission-def))
     (grant-role-user-permission user (grouper-user-group) analysis-resource-name "own")))
+
+(defn- share-analysis*
+  [analysis-id subject-id level]
+  (share-resource (grouper-analysis-resource-name analysis-id) (grouper-user-group) subject-id level))
+
+(defn- unshare-analysis*
+  [analysis-id subject-id]
+  (unshare-resource (grouper-analysis-resource-name analysis-id) (grouper-user-group) subject-id))
+
+(defn share-analysis
+  "Shares an analysis with a user."
+  [analysis-id subject-id level]
+  (try+
+   (share-analysis* analysis-id subject-id level)
+   (catch clj-http-error? {:keys [status body]}
+     (let [reason (get-error-reason body status)]
+       (log/error (str "uanble to share " analysis-id " with " subject-id ": " reason)))
+     "the analysis sharing request failed")))
+
+(defn unshare-analysis
+  "Unshares an analysis with a user."
+  [analysis-id subject-id]
+  (try+
+   (unshare-analysis* analysis-id subject-id)
+   (catch clj-http-error? {:keys [status body]}
+     (let [reason (get-error-reason body status)]
+       (log/error (str "uanble to unshare " analysis-id " with " subject-id ": " reason)))
+     "the analysis unsharing request failed")))

@@ -171,5 +171,10 @@
       (let [category (.hpcAppGroup agave)]
         (app-permissions/app-unsharing-failure app-names app-id category app-permission-rejection))))
 
+  (hasAppPermission [_ username app-id required-level]
+    (when (and (user-has-access-token?)
+               (not (util/uuid? app-id)))
+      false))
+
   (supportsJobSharing [_ _]
     false))
