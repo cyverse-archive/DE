@@ -90,8 +90,9 @@
 
 (defn list-job
   [apps-client job-id]
-  (let [job-info (jp/get-job-by-id job-id)]
-    (format-job (.loadAppTables apps-client [(:app-id job-info)]) job-info)))
+  (let [job-info   (jp/get-job-by-id job-id)
+        app-tables (.loadAppTables apps-client [(:app-id job-info)])]
+    (format-job apps-client app-tables job-info)))
 
 (defn- format-job-step
   [step]
