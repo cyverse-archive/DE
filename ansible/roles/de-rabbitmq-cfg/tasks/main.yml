@@ -3,4 +3,4 @@
   rabbitmq_vhost: name=de state=present
 
 - name: set up the user
-  rabbitmq_user: user={{amqp_user}} password={{amqp_password}} vhost=de state=present configure_priv=.* read_priv=.* write_priv=.*
+  rabbitmq_user: user={{amqp_user}} password={{amqp_password}} vhost=de state=present configure_priv=.* read_priv=.* write_priv=.* tags="administrator"
