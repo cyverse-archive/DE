@@ -62,7 +62,10 @@
    (describe UUID "The identifier of the parent analysis.")
 
    (optional-key :batch_status)
-   (describe BatchStatus "A summary of the status of the batch.")})
+   (describe BatchStatus "A summary of the status of the batch.")
+
+   :can_share
+   (describe Boolean "Indicates whether or not the analysis can be shared.")})
 
 (defschema AnalysisList
   {:analyses  (describe [Analysis] "The list of analyses.")

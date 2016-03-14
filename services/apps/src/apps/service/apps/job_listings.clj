@@ -46,7 +46,7 @@
              :total (count children)))))
 
 (defn format-job
-  [app-tables job]
+  [apps-client app-tables job]
   (remove-nil-vals
    {:app_description (:app-description job)
     :app_id          (:app-id job)
@@ -65,7 +65,9 @@
     :app_disabled    (app-disabled? app-tables (:app-id job))
     :parent_id       (:parent-id job)
     :batch           (:is-batch job)
-    :batch_status    (when (:is-batch job) (format-batch-status (:id job)))}))
+    :batch_status    (when (:is-batch job) (format-batch-status (:id job)))
+    :can_share       (and (not (:is-batch job))
+                          (every? #(.supportsJobSharing apps-client %) (jp/list-job-steps (:id job))))}))
 
 (defn- list-jobs*
   [{:keys [username]} {:keys [limit offset sort-field sort-dir filter include-hidden]} types]
@@ -82,7 +84,7 @@
         types            (.getJobTypes apps-client)
         jobs             (list-jobs* user search-params types)
         app-tables       (.loadAppTables apps-client (map :app-id jobs))]
-    {:analyses  (map (partial format-job app-tables) jobs)
+    {:analyses  (map (partial format-job apps-client app-tables) jobs)
      :timestamp (str (System/currentTimeMillis))
      :total     (count-jobs user params types)}))
 
