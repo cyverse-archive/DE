@@ -1,5 +1,6 @@
-package org.iplantc.de.admin.desktop.client.permIdRequest.views;
+package org.iplantc.de.admin.desktop.client.permIdRequest.model;
 
+import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView.PermanentIdRequestViewAppearance;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequest;
 
 import com.sencha.gxt.core.client.ValueProvider;
@@ -7,11 +8,11 @@ import com.sencha.gxt.core.client.ValueProvider;
 /**
  * @author psarando
  */
-public class FolderPathProvider implements ValueProvider<PermanentIdRequest, String> {
+public class PermanentIdRequestPathProvider implements ValueProvider<PermanentIdRequest, String> {
 
-    private final PermanentIdRequestView.PermanentIdRequestViewAppearance appearance;
+    private final PermanentIdRequestViewAppearance appearance;
 
-    public FolderPathProvider(PermanentIdRequestView.PermanentIdRequestViewAppearance appearance) {
+    public PermanentIdRequestPathProvider(PermanentIdRequestViewAppearance appearance) {
         this.appearance = appearance;
     }
 
