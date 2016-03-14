@@ -140,7 +140,11 @@ type objectCursor struct {
 }
 
 func newObjectCursor(rows *sql.Rows) *objectCursor {
-	return &objectCursor{rows: rows, lastRow: &model.AVURecord{TargetId: ""}, moreRows: true, anyRows: false}
+	return &objectCursor{
+		rows:     rows,
+		lastRow:  &model.AVURecord{TargetId: ""},
+		moreRows: true,
+		anyRows:  false}
 }
 
 func (o *objectCursor) Next() ([]model.AVURecord, error) {
