@@ -35,7 +35,6 @@ func TestLogWriter(t *testing.T) {
 	r, w, err := os.Pipe()
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	os.Stdout = w
 	restore := func() {
@@ -47,19 +46,16 @@ func TestLogWriter(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 		os.Stdout = original
-		t.Fail()
 	}
 	w.Close()
 	var msg LogMessage
 	actualBytes, err := ioutil.ReadAll(r)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	err = json.Unmarshal(actualBytes, &msg)
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	actual := msg.Message
 	if actual != expected {

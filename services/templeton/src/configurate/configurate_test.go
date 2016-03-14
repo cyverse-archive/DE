@@ -11,7 +11,6 @@ func TestNew(t *testing.T) {
 	err := configurator()
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	if C == nil {
 		t.Errorf("configurate.New() returned nil")
@@ -22,12 +21,10 @@ func TestAMQPConfig(t *testing.T) {
 	err := configurator()
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	actual, err := C.String("amqp.uri")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	expected := "amqp://guest:guest@192.168.99.100:5672/"
 	if actual != expected {
@@ -39,12 +36,10 @@ func TestDBConfig(t *testing.T) {
 	err := configurator()
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	actual, err := C.String("db.uri")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	expected := "postgres://de:notprod@192.168.99.100:5432/metadata?sslmode=disable"
 	if actual != expected {
@@ -56,12 +51,10 @@ func TestESBase(t *testing.T) {
 	err := configurator()
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	actual, err := C.String("elasticsearch.base")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	expected := "http://localhost:9200"
 	if actual != expected {
@@ -73,12 +66,10 @@ func TestESIndex(t *testing.T) {
 	err := configurator()
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	actual, err := C.String("elasticsearch.index")
 	if err != nil {
 		t.Error(err)
-		t.Fail()
 	}
 	expected := "data"
 	if actual != expected {
