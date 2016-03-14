@@ -3,7 +3,7 @@
         [medley.core :only [remove-vals]])
   (:require [clojure.string :as string]))
 
-(def notification-type "analyses")
+(def notification-type "analysis")
 (def singular "analysis")
 (def plural "analyses")
 
