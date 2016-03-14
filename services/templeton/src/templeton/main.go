@@ -99,6 +99,38 @@ func loadDBConfig() {
 	}
 }
 
+func doFullMode(es *elasticsearch.Elasticer, d *database.Databaser) {
+	logger.Println("Full indexing mode selected.")
+
+	es.Reindex(d)
+}
+
+func doPeriodicMode(es *elasticsearch.Elasticer, d *database.Databaser, client *messaging.Client) {
+	logger.Println("Periodic indexing mode selected.")
+
+	go client.Listen()
+
+	// Accept and handle messages sent out with the index.all and index.templates routing keys
+	client.AddConsumer(messaging.ReindexExchange, "direct", "templeton.reindexAll", messaging.ReindexAllKey, func(del amqp.Delivery) {
+		es.Reindex(d)
+		del.Ack(false)
+	})
+	client.AddConsumer(messaging.ReindexExchange, "direct", "templeton.reindexTemplates", messaging.ReindexTemplatesKey, func(del amqp.Delivery) {
+		es.Reindex(d)
+		del.Ack(false)
+	})
+
+	// spinner in order to keep the program running since client.Listen() is in a goroutine.
+	spinner := make(chan int)
+	for {
+		select {
+		case <-spinner:
+			fmt.Println("Exiting")
+			break
+		}
+	}
+}
+
 func main() {
 	if *version {
 		AppVersion()
@@ -128,9 +160,7 @@ func main() {
 	}
 
 	if *mode == "full" {
-		logger.Println("Full indexing mode selected.")
-
-		es.Reindex(d)
+		doFullMode(es, d)
 		return
 	}
 
@@ -143,35 +173,12 @@ func main() {
 	defer client.Close()
 
 	if *mode == "periodic" {
-		logger.Println("Periodic indexing mode selected.")
-
-		go client.Listen()
-
-		// Accept and handle messages sent out with the index.all and index.templates routing keys
-		client.AddConsumer(messaging.ReindexExchange, "direct", "templeton.reindexAll", messaging.ReindexAllKey, func(del amqp.Delivery) {
-			es.Reindex(d)
-			del.Ack(false)
-		})
-		client.AddConsumer(messaging.ReindexExchange, "direct", "templeton.reindexTemplates", messaging.ReindexTemplatesKey, func(del amqp.Delivery) {
-			es.Reindex(d)
-			del.Ack(false)
-		})
-
-		// spinner in order to keep the program running since client.Listen() is in a goroutine.
-		spinner := make(chan int)
-		for {
-			select {
-			case <-spinner:
-				fmt.Println("Exiting")
-				break
-			}
-		}
+		doPeriodicMode(es, d, client)
 	}
 
 	if *mode == "incremental" {
 		logger.Println("Incremental indexing mode selected.")
 
 		// TODO: AMQP listener triggering incremental updates
-		return
 	}
 }
