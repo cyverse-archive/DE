@@ -355,9 +355,12 @@ public class DataSearchQueryBuilderTest {
     private String setMetadataAttributeQuery(final String givenQuery) {
         when(dsf.getMetadataAttributeQuery()).thenReturn(givenQuery);
         DataSearchQueryBuilder uut = new DataSearchQueryBuilder(dsf, userInfoMock);
-        return "{\"nested\":{\"query\":"
+        String nestedQuery = "{\"nested\":{\"query\":"
                 + uut.getSimpleQuery(DataSearchQueryBuilder.METADATA_ATTRIBUTE, givenQuery).getPayload()
                 + ",\"path\":\"metadata\"}}";
+        String fileQuery = "{\"has_child\":{\"query\":"+nestedQuery+",\"score_mode\":\"max\",\"type\":\"file_metadata\"}}";
+        String folderQuery = "{\"has_child\":{\"query\":"+nestedQuery+",\"score_mode\":\"max\",\"type\":\"folder_metadata\"}}";
+        return "{\"bool\":{\"should\":[" + nestedQuery + "," + fileQuery + "," + folderQuery + "]}}";
     }
 
     /**
@@ -366,9 +369,12 @@ public class DataSearchQueryBuilderTest {
     private String setMetadataValueQuery(final String givenQuery) {
         when(dsf.getMetadataValueQuery()).thenReturn(givenQuery);
         DataSearchQueryBuilder uut = new DataSearchQueryBuilder(dsf, userInfoMock);
-        return "{\"nested\":{\"query\":"
+        String nestedQuery = "{\"nested\":{\"query\":"
                 + uut.getSimpleQuery(DataSearchQueryBuilder.METADATA_VALUE, givenQuery).getPayload()
                 + ",\"path\":\"metadata\"}}";
+        String fileQuery = "{\"has_child\":{\"query\":"+nestedQuery+",\"score_mode\":\"max\",\"type\":\"file_metadata\"}}";
+        String folderQuery = "{\"has_child\":{\"query\":"+nestedQuery+",\"score_mode\":\"max\",\"type\":\"folder_metadata\"}}";
+        return "{\"bool\":{\"should\":[" + nestedQuery + "," + fileQuery + "," + folderQuery + "]}}";
     }
 
     /**
