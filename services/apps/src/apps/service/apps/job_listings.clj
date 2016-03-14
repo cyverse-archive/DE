@@ -3,6 +3,7 @@
         [apps.util.conversions :only [remove-nil-vals]])
   (:require [kameleon.db :as db]
             [apps.persistence.jobs :as jp]
+            [apps.service.apps.jobs.permissions :as job-permissions]
             [apps.service.util :as util]))
 
 (defn is-completed?
@@ -45,19 +46,15 @@
                        (into {}))
                   :total (count children)))))
 
-(defn- job-supports-sharing?
-  [apps-client {parent-id :parent_id :keys [id]}]
-  (and (nil? parent-id) (every? #(.supportsJobSharing apps-client %) (jp/list-representative-job-steps id))))
-
 (defn format-job
-  [apps-client app-tables job]
+  [apps-client app-tables {:keys [parent-id id] :as job}]
   (remove-nil-vals
    {:app_description (:app-description job)
     :app_id          (:app-id job)
     :app_name        (:app-name job)
     :description     (:description job)
     :enddate         (job-timestamp (:end-date job))
-    :id              (:id job)
+    :id              id
     :name            (:job-name job)
     :resultfolderid  (:result-folder-path job)
     :startdate       (job-timestamp (:start-date job))
@@ -67,10 +64,10 @@
     :notify          (:notify job false)
     :wiki_url        (:app-wiki-url job)
     :app_disabled    (app-disabled? app-tables (:app-id job))
-    :parent_id       (:parent-id job)
+    :parent_id       parent-id
     :batch           (:is-batch job)
-    :batch_status    (when (:is-batch job) (format-batch-status (:id job)))
-    :can_share       (job-supports-sharing? apps-client job)}))
+    :batch_status    (when (:is-batch job) (format-batch-status id))
+    :can_share       (and (nil? parent-id) (job-permissions/supports-job-sharing? apps-client id))}))
 
 (defn- list-jobs*
   [{:keys [username]} {:keys [limit offset sort-field sort-dir filter include-hidden]} types]

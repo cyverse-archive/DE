@@ -15,10 +15,11 @@
   (or job-name (str "analysis ID " job-id)))
 
 (def job-sharing-formats
-  {:not-found    "analysis ID {{analysis-id}} does not exist"
-   :load-failure "unable to load permissions for {{analysis-id}}: {{detail}}"
-   :not-allowed  "insufficient privileges for analysis ID {{analysis-id}}"
-   :is-subjob    "analysis sharing not supported for individual jobs within an HT batch"})
+  {:not-found     "analysis ID {{analysis-id}} does not exist"
+   :load-failure  "unable to load permissions for {{analysis-id}}: {{detail}}"
+   :not-allowed   "insufficient privileges for analysis ID {{analysis-id}}"
+   :is-subjob     "analysis sharing not supported for individual jobs within an HT batch"
+   :not-supported "analysis sharing is not supported for jobs of this type"})
 
 (defn- job-sharing-success
   [job-id job level]
@@ -81,6 +82,11 @@
   (when parent-id
     (job-sharing-msg :is-subjob id)))
 
+(defn- verify-support
+  [apps-client job-id]
+  (when-not (job-permissions/supports-job-sharing? apps-client job-id)
+    (job-sharing-msg :not-supported job-id)))
+
 (defn- share-app-for-job
   [apps-client sharer sharee job-id {:keys [app-id]}]
   (when-not (.hasAppPermission apps-client sharee app-id "read")
@@ -100,6 +106,7 @@
   [apps-client sharer sharee job-id job level]
   (or (verify-not-subjob job)
       (verify-accessible sharer job-id)
+      (verify-support apps-client job-id)
       (share-app-for-job apps-client sharer sharee job-id job)
       (share-output-folder sharer sharee job)
       (iplant-groups/share-analysis job-id sharee level)))
@@ -140,6 +147,7 @@
   [apps-client sharer sharee job-id job]
   (or (verify-not-subjob job)
       (verify-accessible sharer job-id)
+      (verify-support apps-client job-id)
       (unshare-output-folder sharer sharee job)
       (iplant-groups/unshare-analysis job-id sharee)))
 
