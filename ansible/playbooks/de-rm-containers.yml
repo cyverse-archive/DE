@@ -449,6 +449,32 @@
       become: true
       shell: docker rm -v {{saved_searches.service_name_short}}
 
+- name: Remove templeton
+  hosts: templeton:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - templeton
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{templeton.compose_service}}"
+      service_name_short: "{{templeton.service_name_short}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{templeton.compose_service}}"
+      service_name_short: "{{templeton.service_name_short}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "iplant_data_{{templeton.compose_service}}"
+      service_name_short: "iplant_data_{{templeton.service_name_short}}"
+  post_tasks:
+    - name: annihilate templeton
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{templeton.service_name_short}}
+
 - name: Remove terrain
   hosts: terrain:&systems
   become: true
