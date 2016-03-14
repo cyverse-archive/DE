@@ -592,6 +592,17 @@ saved_searches:
 
 search_default_limit: 200
 
+templeton:
+  host: "{{ groups['templeton'][0] }}"
+  port:
+  service_name: jexevents.service
+  service_name_short: templeton
+  compose_service: templeton
+  service_description: templeton service
+  image_name: templeton
+  container_name: templeton
+  log_file: templeton-docker.log
+
 tree_parser_base: http://portnoy.iplantcollaborative.org/parseTree
 
 tree_urls_log_file: /logs/tree-urls.log
