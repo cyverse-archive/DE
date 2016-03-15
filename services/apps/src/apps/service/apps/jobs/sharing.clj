@@ -102,6 +102,10 @@
    (catch ce/clj-http-error? {:keys [body]}
      (str "unable to share result folder: " (:error_code (service/parse-json body))))))
 
+(defn- process-child-jobs
+  [f job-id]
+  (first (remove nil? (map f (jp/list-child-jobs job-id)))))
+
 (defn- share-job*
   [apps-client sharer sharee job-id job level]
   (or (verify-not-subjob job)
@@ -109,7 +113,8 @@
       (verify-support apps-client job-id)
       (share-app-for-job apps-client sharer sharee job-id job)
       (share-output-folder sharer sharee job)
-      (iplant-groups/share-analysis job-id sharee level)))
+      (iplant-groups/share-analysis job-id sharee level)
+      (process-child-jobs #(iplant-groups/share-analysis (:id %) sharee level) job-id)))
 
 (defn- share-job
   [apps-client sharer sharee {job-id :analysis_id level :permission}]
@@ -149,7 +154,8 @@
       (verify-accessible sharer job-id)
       (verify-support apps-client job-id)
       (unshare-output-folder sharer sharee job)
-      (iplant-groups/unshare-analysis job-id sharee)))
+      (iplant-groups/unshare-analysis job-id sharee)
+      (process-child-jobs #(iplant-groups/unshare-analysis (:id %) sharee) job-id)))
 
 (defn- unshare-job
   [apps-client sharer sharee job-id]
