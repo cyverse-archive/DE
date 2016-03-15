@@ -2,6 +2,7 @@
   (:use [kameleon.uuids :only [uuidify]]
         [apps.util.conversions :only [remove-nil-vals]])
   (:require [kameleon.db :as db]
+            [apps.clients.iplant-groups :as iplant-groups]
             [apps.persistence.jobs :as jp]
             [apps.service.apps.jobs.permissions :as job-permissions]
             [apps.service.util :as util]))
@@ -70,23 +71,25 @@
     :can_share       (and (nil? parent-id) (job-permissions/supports-job-sharing? apps-client id))}))
 
 (defn- list-jobs*
-  [{:keys [username]} {:keys [limit offset sort-field sort-dir filter include-hidden]} types]
-  (jp/list-jobs-of-types username limit offset sort-field sort-dir filter include-hidden types))
+  [{:keys [username]} search-params types analysis-ids]
+  (jp/list-jobs-of-types username search-params types analysis-ids))
 
 (defn- count-jobs
-  [{:keys [username]} {:keys [filter include-hidden]} types]
-  (jp/count-jobs-of-types username filter include-hidden types))
+  [{:keys [username]} {:keys [filter include-hidden]} types analysis-ids]
+  (jp/count-jobs-of-types username filter include-hidden types analysis-ids))
 
 (defn list-jobs
   [apps-client user {:keys [sort-field] :as params}]
-  (let [default-sort-dir (if (nil? sort-field) :desc :asc)
+  (let [perms            (iplant-groups/load-analysis-permissions (:shortUsername user))
+        analysis-ids     (set (keys perms))
+        default-sort-dir (if (nil? sort-field) :desc :asc)
         search-params    (util/default-search-params params :startdate default-sort-dir)
         types            (.getJobTypes apps-client)
-        jobs             (list-jobs* user search-params types)
+        jobs             (list-jobs* user search-params types analysis-ids)
         app-tables       (.loadAppTables apps-client (map :app-id jobs))]
     {:analyses  (map (partial format-job apps-client app-tables) jobs)
      :timestamp (str (System/currentTimeMillis))
-     :total     (count-jobs user params types)}))
+     :total     (count-jobs user params types analysis-ids)}))
 
 (defn list-job
   [apps-client job-id]

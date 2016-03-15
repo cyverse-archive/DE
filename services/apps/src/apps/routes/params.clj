@@ -85,7 +85,15 @@
         To find jobs associated with a specific `parent_id`, the parameter value can be
         `[{\"field\":\"parent_id\",\"value\":\"b4c2f624-7cbd-496e-adad-5be8d0d3b941\"}]`.
         It's also possible to search for jobs without a parent using this parameter value:
-        `[{\"field\":\"parent_id\",\"value\":null}]`.")}))
+        `[{\"field\":\"parent_id\",\"value\":null}]`.
+        The 'ownership' field can be used to specify whether analyses that belong to the authenticated
+        user or analyses that are shared with the authenticated user should be listed. If the value is
+        `all` then all analyses that are visible to the user will be listed. If the value is `mine` then
+        only analyses that were submitted by the user will be listed. If the value is `theirs` then only
+        analyses that have been shared with the user will be listed. By default, all analyses are listed.
+        The `ownership` field is the only field for which only one filter value is supported. If multiple
+        `ownership` field values are specified then the first value specified is used. Here's an example:
+        `[{\"field\":\"ownership\",\"value\":\"mine\"}]`.")}))
 
 (s/defschema ToolSearchParams
   (merge SecuredPagingParams IncludeHiddenParams
