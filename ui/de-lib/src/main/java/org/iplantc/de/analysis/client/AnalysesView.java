@@ -186,7 +186,9 @@ public interface AnalysesView extends IsWidget,
 
         AnalysisFilter getCurrentFilter();
 
-        public void loadAnalyses(AnalysisFilter filter);
+        void loadAnalyses(AnalysisFilter filter);
+
+        void setFilterInView(AnalysisFilter filter);
     }
 
     void filterByAnalysisId(String id, String name);
@@ -196,5 +198,8 @@ public interface AnalysesView extends IsWidget,
     List<Analysis> getSelectedAnalyses();
 
     void setSelectedAnalyses(List<Analysis> selectedAnalyses);
+
+    void setFilterInView(AnalysisFilter filter);
+
 
 }

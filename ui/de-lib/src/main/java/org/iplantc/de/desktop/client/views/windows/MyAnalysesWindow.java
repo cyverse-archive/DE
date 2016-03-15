@@ -58,7 +58,7 @@ public class MyAnalysesWindow extends IplantWindowBase {
         if (config instanceof AnalysisWindowConfig) {
             AnalysisWindowConfig analysisWindowConfig = (AnalysisWindowConfig) config;
             presenter.setSelectedAnalyses(analysisWindowConfig.getSelectedAnalyses());
-            presenter.setCurrentFilter(((AnalysisWindowConfig)config).getFilter());
+            presenter.setFilterInView(((AnalysisWindowConfig)config).getFilter());
         }
     }
 

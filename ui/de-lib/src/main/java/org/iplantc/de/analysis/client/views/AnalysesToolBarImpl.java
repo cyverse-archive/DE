@@ -160,6 +160,7 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
         searchField.filterByAnalysisId(analysisId, name);
         //reset filter. Users need to set Filter to ALL to go back...
         filterCombo.setValue(null);
+        presenter.setCurrentFilter(null);
     }
 
     @Override
@@ -167,6 +168,7 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
         searchField.filterByParentId(analysisId);
         //reset filter. Users need to set Filter to ALL to go back...
         filterCombo.setValue(null);
+        presenter.setCurrentFilter(null);
     }
 
     @Override
@@ -339,6 +341,7 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
             filterCombo.setValue(AnalysisFilter.ALL);
         } else {
             filterCombo.setValue(null);
+            presenter.setCurrentFilter(null);
         }
     }
 
@@ -462,6 +465,11 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
 
     void applyFilter(AnalysisFilter filter) {
         presenter.setCurrentFilter(filter);
+    }
+
+    @Override
+    public void setFilterInView(AnalysisFilter filter) {
+        filterCombo.setValue(filter);
     }
 
     @UiHandler("shareCollabMI")
