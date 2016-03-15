@@ -14,6 +14,7 @@ import org.iplantc.de.analysis.client.views.dialogs.AnalysisSharingDialog;
 import org.iplantc.de.analysis.client.views.dialogs.AnalysisStepsInfoDialog;
 import org.iplantc.de.analysis.client.views.sharing.AnalysisSharingView;
 import org.iplantc.de.analysis.client.views.sharing.AnalysisSharingViewImpl;
+import org.iplantc.de.analysis.client.views.widget.AnalysisSearchField;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.diskResources.OpenFolderEvent;
 import org.iplantc.de.client.models.analysis.Analysis;
@@ -292,6 +293,11 @@ public class AnalysesPresenterImpl implements
     @Override
     public void loadAnalyses(AnalysisFilter filter) {
         FilterPagingLoadConfig config = loader.getLastLoadConfig();
+
+        FilterConfigBean idParentFilter = new FilterConfigBean();
+        idParentFilter.setField(AnalysisSearchField.PARENT_ID);
+        idParentFilter.setValue("");
+
         FilterConfigBean filterCb = new FilterConfigBean();
         config.getFilters().clear();
         switch (filter) {
@@ -309,6 +315,7 @@ public class AnalysesPresenterImpl implements
                 filterCb.setValue("mine");
                 break;
         }
+        config.getFilters().add(idParentFilter);
         config.getFilters().add(filterCb);
         config.setLimit(200);
         config.setOffset(0);
