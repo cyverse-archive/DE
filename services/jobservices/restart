@@ -1,6 +1,0 @@
-#!/bin/bash
-
-until $@; do
-        echo "Command exited with a status of" $?
-        sleep 1
-done
