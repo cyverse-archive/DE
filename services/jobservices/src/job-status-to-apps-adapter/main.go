@@ -21,6 +21,7 @@ import (
 	"flag"
 	"fmt"
 	"logcabin"
+	"messaging"
 	"net/http"
 	"os"
 	"time"
@@ -147,7 +148,7 @@ func (p *Propagator) Propagate(status *DBJobStatusUpdate) error {
 		Status: status.Status,
 		UUID:   status.ExternalID,
 	}
-	if jsu.Status == "Complete" || jsu.Status == "Failed" {
+	if jsu.Status == string(messaging.SucceededState) || jsu.Status == string(messaging.FailedState) {
 		jsu.CompletionDate = fmt.Sprintf("%d", time.Now().UnixNano()/int64(time.Millisecond))
 	}
 	jsuw := JobStatusUpdateWrapper{
