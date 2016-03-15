@@ -325,13 +325,22 @@ public class SharingPermissionsPanel implements IsWidget {
         return new ColumnModel<>(configs);
     }
 
-    public void setPermissionColumnVisibility(boolean visible) {
+    public void hidePermissionColumn() {
       for(ColumnConfig<Sharing, ?> cc: grid.getColumnModel().getColumns()) {
           if(cc.getHeader().asString().equals(appearance.permissionsColumnLabel())) {
-                cc.setHidden(visible);
+                cc.setHidden(true);
                 return;
           }
       }
+    }
+
+    public void showPermissionColumn() {
+        for(ColumnConfig<Sharing, ?> cc: grid.getColumnModel().getColumns()) {
+            if(cc.getHeader().asString().equals(appearance.permissionsColumnLabel())) {
+                cc.setHidden(false);
+                return;
+            }
+        }
     }
 
     public void setExplainPanelVisibility(boolean visible) {

@@ -6,16 +6,23 @@ import org.iplantc.de.analysis.client.events.OpenAppForRelaunchEvent;
 import org.iplantc.de.analysis.client.events.selection.AnalysisAppSelectedEvent;
 import org.iplantc.de.analysis.client.events.selection.AnalysisNameSelectedEvent;
 import org.iplantc.de.analysis.client.gin.factory.AnalysesViewFactory;
+import org.iplantc.de.analysis.client.models.AnalysisFilter;
 import org.iplantc.de.analysis.client.presenter.proxy.AnalysisRpcProxy;
+import org.iplantc.de.analysis.client.presenter.sharing.AnalysisSharingPresenter;
 import org.iplantc.de.analysis.client.views.AnalysisStepsView;
 import org.iplantc.de.analysis.client.views.dialogs.AnalysisSharingDialog;
 import org.iplantc.de.analysis.client.views.dialogs.AnalysisStepsInfoDialog;
+import org.iplantc.de.analysis.client.views.sharing.AnalysisSharingView;
+import org.iplantc.de.analysis.client.views.sharing.AnalysisSharingViewImpl;
 import org.iplantc.de.analysis.client.views.widget.AnalysisSearchField;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.diskResources.OpenFolderEvent;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.analysis.AnalysisStepsInfo;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
+import org.iplantc.de.client.sharing.SharingPresenter;
+import org.iplantc.de.client.util.JsonUtil;
+import org.iplantc.de.collaborators.client.util.CollaboratorsUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
@@ -75,7 +82,7 @@ public class AnalysesPresenterImpl implements
         public void onSuccess(String result) {
             SafeHtml msg = SafeHtmlUtils.fromString(appearance.analysisStopSuccess(ae.getName()));
             announcer.schedule(new SuccessAnnouncementConfig(msg, true, 3000));
-            loadAnalyses(false);
+            loadAnalyses(currentFilter);
         }
 
     }
@@ -177,6 +184,18 @@ public class AnalysesPresenterImpl implements
     @Inject
     Provider<AnalysisSharingDialog> aSharingDialogProvider;
 
+    @Inject
+    CollaboratorsUtil collaboratorsUtil;
+    @Inject
+    JsonUtil jsonUtil;
+
+    private AnalysisFilter currentFilter;
+
+    private SharingPresenter sharingPresenter;
+    private AnalysisSharingView sharingView;
+
+
+
     private final ListStore<Analysis> listStore;
 
     private final AnalysesView view;
@@ -201,6 +220,14 @@ public class AnalysesPresenterImpl implements
         this.view.addAnalysisNameSelectedEventHandler(this);
         this.view.addAnalysisAppSelectedEventHandler(this);
         this.view.addHTAnalysisExpandEventHandler(this);
+
+        //Set default filter to ALL
+      currentFilter = AnalysisFilter.ALL;
+    }
+
+    @Override
+    public void onShareSupportSelected(List<Analysis> currentSelection,boolean shareWithInput) {
+
     }
 
     @Override
@@ -221,7 +248,7 @@ public class AnalysesPresenterImpl implements
 
             @Override
             public void onSuccess(String arg0) {
-                loadAnalyses(false);
+                loadAnalyses(currentFilter);
             }
         });
     }
@@ -259,20 +286,37 @@ public class AnalysesPresenterImpl implements
         if (selectedAnalyses != null && !selectedAnalyses.isEmpty()) {
             handlerFirstLoad = loader.addLoadHandler(new FirstLoadHandler(selectedAnalyses));
         }
-        loadAnalyses(true);
+        loadAnalyses(AnalysisFilter.ALL);
         container.setWidget(view);
     }
 
-    void loadAnalyses(boolean resetFilters) {
+    @Override
+    public void loadAnalyses(AnalysisFilter filter) {
         FilterPagingLoadConfig config = loader.getLastLoadConfig();
-        if (resetFilters) {
-            // add only default filter
-            FilterConfigBean idParentFilter = new FilterConfigBean();
-            idParentFilter.setField(AnalysisSearchField.PARENT_ID);
-            idParentFilter.setValue("");
-            config.getFilters().clear();
-            config.getFilters().add(idParentFilter);
+
+        FilterConfigBean idParentFilter = new FilterConfigBean();
+        idParentFilter.setField(AnalysisSearchField.PARENT_ID);
+        idParentFilter.setValue("");
+
+        FilterConfigBean filterCb = new FilterConfigBean();
+        config.getFilters().clear();
+        switch (filter) {
+            case ALL:
+                filterCb.setField("ownership");
+                filterCb.setValue("all");
+                break;
+            case SHARED_WITH_ME:
+                filterCb.setField("ownership");
+                filterCb.setValue("theirs");
+                break;
+
+            case MY_ANALYSES:
+                filterCb.setField("ownership");
+                filterCb.setValue("mine");
+                break;
         }
+        config.getFilters().add(idParentFilter);
+        config.getFilters().add(filterCb);
         config.setLimit(200);
         config.setOffset(0);
         loader.load(config);
@@ -286,17 +330,36 @@ public class AnalysesPresenterImpl implements
 
     @Override
     public void onRefreshSelected() {
-        loadAnalyses(false);
+        loadAnalyses(currentFilter);
     }
 
     @Override
     public void onShowAllSelected() {
-        loadAnalyses(true);
+        loadAnalyses(AnalysisFilter.ALL);
     }
 
     @Override
     public void onShareSelected(List<Analysis> selected) {
-        aSharingDialogProvider.get().show(selected);
+        sharingView = new AnalysisSharingViewImpl();
+        sharingPresenter = new AnalysisSharingPresenter(analysisService,
+                                                        selected,
+                                                        sharingView,
+                                                        collaboratorsUtil,
+                                                        jsonUtil);
+        AnalysisSharingDialog asd = aSharingDialogProvider.get();
+        asd.setPresenter(sharingPresenter);
+        asd.show();
+    }
+
+    @Override
+    public void setCurrentFilter(AnalysisFilter filter) {
+       this.currentFilter = filter;
+       loadAnalyses(currentFilter);
+    }
+
+    @Override
+    public AnalysisFilter getCurrentFilter() {
+        return currentFilter;
     }
 
     @Override

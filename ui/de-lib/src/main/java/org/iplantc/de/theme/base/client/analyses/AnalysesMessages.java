@@ -75,4 +75,16 @@ public interface AnalysesMessages extends Messages {
     String stepType();
 
     String jobId();
+
+    String share();
+
+    String shareCollab();
+
+    String shareSupportMi();
+
+    String shareSupportConfirm();
+
+    String shareWithInput();
+
+    String shareOutputOnly();
 }
