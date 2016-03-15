@@ -11,8 +11,8 @@ import org.iplantc.de.client.models.analysis.AnalysisParameter;
 import org.iplantc.de.client.models.analysis.AnalysisParametersList;
 import org.iplantc.de.client.models.analysis.AnalysisStepsInfo;
 import org.iplantc.de.client.models.analysis.SimpleValue;
-import org.iplantc.de.client.models.analysis.sharing.AnalysisSharingRequest;
-import org.iplantc.de.client.models.analysis.sharing.AnalysisUnsharingRequest;
+import org.iplantc.de.client.models.analysis.sharing.AnalysisSharingRequestList;
+import org.iplantc.de.client.models.analysis.sharing.AnalysisUnsharingRequestList;
 import org.iplantc.de.client.models.apps.integration.ArgumentType;
 import org.iplantc.de.client.models.apps.integration.SelectionItem;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
@@ -296,7 +296,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
     }
 
     @Override
-    public void shareAnalyses(AnalysisSharingRequest request, AsyncCallback<String> callback) {
+    public void shareAnalyses(AnalysisSharingRequestList request, AsyncCallback<String> callback) {
         final String payload = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(request)).getPayload();
         GWT.log("analyis sharing request:" + payload);
         String address = ANALYSES + "/" + "sharing";
@@ -305,7 +305,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
     }
 
     @Override
-    public void unshareAnalyses(AnalysisUnsharingRequest request, AsyncCallback<String> callback) {
+    public void unshareAnalyses(AnalysisUnsharingRequestList request, AsyncCallback<String> callback) {
         final String payload = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(request)).getPayload();
         GWT.log("analysis un-sharing request:" + payload);
         String address = ANALYSES + "/" + "unsharing";
@@ -323,7 +323,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
             item.assign(idArr, idArr.size());
         }
 
-        idArr.assign(anaObj, "apps");
+        idArr.assign(anaObj, "analyses");
         String address = ANALYSES + "/" + "permission-lister";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(BaseServiceCallWrapper.Type.POST, address, anaObj.getPayload());
         deServiceFacade.getServiceData(wrapper, callback);

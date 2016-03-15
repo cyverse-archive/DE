@@ -82,9 +82,9 @@
                         <menu:MenuItem ui:field="shareCollabMI" enabled="false"
                                        text="{appearance.shareCollab}" icon="{appearance.shareIcon}"
                         />
-                        <menu:MenuItem ui:field="shareSupportMI" enabled="false"
+                       <!-- <menu:MenuItem ui:field="shareSupportMI" enabled="false"
                                        text="{appearance.shareSupport}" icon="{appearance.shareIcon}"
-                        />
+                        /> -->
                     </menu:Menu>
                 </button:menu>
             </button:TextButton>

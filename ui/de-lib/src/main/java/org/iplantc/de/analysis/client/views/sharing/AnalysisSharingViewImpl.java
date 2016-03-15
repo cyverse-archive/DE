@@ -61,7 +61,6 @@ public class AnalysisSharingViewImpl implements AnalysisSharingView {
     @Override
     public void addShareWidget(Widget widget) {
         container.add(widget);
-
     }
 
     @Override

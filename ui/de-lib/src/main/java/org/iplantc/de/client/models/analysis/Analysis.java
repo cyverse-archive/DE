@@ -81,4 +81,9 @@ public interface Analysis extends HasId, HasName {
 
     @PropertyName("username")
     String getUserName();
+
+    // key to determine whether share menu is enabled or not
+
+    @PropertyName("can_share")
+    public boolean isSharable();
 }

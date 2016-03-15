@@ -9,7 +9,15 @@ import com.google.web.bindery.autobean.shared.AutoBeanFactory;
 public interface AnalysisSharingAutoBeanFactory extends AutoBeanFactory {
 
 
-    AutoBean<AnalysisUserPermissionsList> resourceUserPermissionsList();
+    AutoBean<AnalysisUserPermissionsList> analysisUserPermissionsList();
 
-    AutoBean<AnalysisUserPermissions> resourceUserPermissions();
+    AutoBean<AnalysisPermission> analysisPermission();
+
+    AutoBean<AnalysisSharingRequest> AnalysisSharingRequest();
+
+    AutoBean<AnalysisUnsharingRequest> AnalysisUnsharingRequest();
+
+    AutoBean<AnalysisSharingRequestList> AnalysisSharingRequestList();
+
+    AutoBean<AnalysisUnsharingRequestList> AnalysisUnsharingRequestList();
 }

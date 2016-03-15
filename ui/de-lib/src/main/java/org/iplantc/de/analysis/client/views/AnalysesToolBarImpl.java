@@ -16,13 +16,14 @@ import org.iplantc.de.analysis.client.views.widget.AnalysisSearchField;
 import org.iplantc.de.analysis.shared.AnalysisModule;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.analysis.Analysis;
-import org.iplantc.de.client.models.analysis.AnalysisExecutionStatus;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
 import org.iplantc.de.commons.client.views.dialogs.IPlantPromptDialog;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -85,8 +86,10 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
     TextButton share_menu;
     @UiField
     MenuItem shareCollabMI;
-    @UiField
-    MenuItem shareSupportMI;
+
+    //hidden for now...
+    //@UiField
+    //MenuItem shareSupportMI;
 
     @UiField(provided = true)
     SimpleComboBox<AnalysisFilter> filterCombo;
@@ -135,12 +138,14 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
     private void onFilterChange(AnalysisFilter af) {
         switch (af) {
             case ALL:
-                onShowAllSelected();
+                applyFilter(AnalysisFilter.ALL);
                 break;
             case SHARED_WITH_ME:
+                applyFilter(AnalysisFilter.SHARED_WITH_ME);
                 break;
 
             case MY_ANALYSES:
+                applyFilter(AnalysisFilter.MY_ANALYSES);
                 break;
         }
     }
@@ -223,7 +228,7 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
         deleteMI.setEnabled(deleteEnabled);
         share_menu.setEnabled(shareEnabled);
         shareCollabMI.setEnabled(shareEnabled);
-        shareSupportMI.setEnabled(shareEnabled);
+       // shareSupportMI.setEnabled(shareEnabled);
         renameMI.setEnabled(renameEnabled);
         updateCommentsMI.setEnabled(updateCommentsEnabled);
     }
@@ -238,11 +243,11 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
         return true;
     }
 
-    private boolean isSharable(List<Analysis> selection) {
+     boolean isSharable(List<Analysis> selection) {
         for (Analysis a : selection) {
-            if (!(a.getStatus().equals(AnalysisExecutionStatus.COMPLETED.toString()) || a.getStatus()
-                                                                                         .equals(AnalysisExecutionStatus.FAILED
-                                                                                                         .toString()))) {
+            if ((!(a.getStatus().equals(COMPLETED.toString())
+                  || a.getStatus().equals(FAILED.toString()))
+                  || !( a.isSharable()))) {
                 return false;
             }
 
@@ -328,15 +333,15 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
     }
 
     //<editor-fold desc="Ui Handlers">
-/*    @UiHandler("searchField")
+    @UiHandler("searchField")
     void searchFieldKeyUp(KeyUpEvent event){
         if (Strings.isNullOrEmpty(searchField.getCurrentValue())) {
-            // disable show all since an empty search field would fire load all.
-            showTb.disable();
+            filterCombo.setValue(AnalysisFilter.ALL);
         } else {
-            showTb.enable();
+            filterCombo.setValue(null);
         }
-    }*/
+    }
+
 
     @UiHandler("cancelMI")
     void onCancelSelected(SelectionEvent<Item> event) {
@@ -455,9 +460,9 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
         presenter.onRefreshSelected();
     }
 
-    void onShowAllSelected() {
+    void applyFilter(AnalysisFilter filter) {
         searchField.clear();
-        presenter.onShowAllSelected();
+        presenter.loadAnalyses(filter);
     }
 
     @UiHandler("shareCollabMI")
@@ -465,7 +470,7 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
        presenter.onShareSelected(currentSelection);
     }
 
-    @UiHandler("shareSupportMI")
+  /**  @UiHandler("shareSupportMI")
     void onShareSupportSelected(SelectionEvent<Item> event) {
         ConfirmMessageBox messageBox = new ConfirmMessageBox(appearance.shareSupport(),
                                                              appearance.shareSupportConfirm());
@@ -494,6 +499,6 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
 
         messageBox.show();
 
-    }
+    } **/
 
 }

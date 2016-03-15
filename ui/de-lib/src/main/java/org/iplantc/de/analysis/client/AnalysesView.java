@@ -3,6 +3,7 @@ package org.iplantc.de.analysis.client;
 import org.iplantc.de.analysis.client.events.HTAnalysisExpandEvent;
 import org.iplantc.de.analysis.client.events.selection.AnalysisAppSelectedEvent;
 import org.iplantc.de.analysis.client.events.selection.AnalysisNameSelectedEvent;
+import org.iplantc.de.analysis.client.models.AnalysisFilter;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.theme.base.client.analyses.AnalysesViewDefaultAppearance.AnalysisInfoStyle;
 
@@ -180,6 +181,10 @@ public interface AnalysesView extends IsWidget,
         void getAnalysisStepInfo(Analysis value);
 
         void onShareSelected(List<Analysis> selected);
+
+        void setCurrentFilter(AnalysisFilter filter);
+
+        public void loadAnalyses(AnalysisFilter filter);
     }
 
     void filterByAnalysisId(String id, String name);
