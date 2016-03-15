@@ -3,6 +3,7 @@
              xmlns:menu="urn:import:com.sencha.gxt.widget.core.client.menu"
              xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
              xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
              xmlns:search="urn:import:org.iplantc.de.analysis.client.views.widget">
 
     <ui:with field="appearance"
@@ -31,10 +32,6 @@
                                        text="{appearance.relaunchAnalysis}"
                                        icon="{appearance.runIcon}"
                                        enabled="false"/>
-                 <!--       <menu:MenuItem ui:field="shareMI"
-                                       text="Share with Collaborators..."
-                                       icon="{appearance.shareIcon}"
-                                       enabled="false"/>  -->
                         <menu:MenuItem ui:field="viewJobInfoMI"
                                        text="{appearance.viewAnalysisStepInfo}"
                                        icon="{appearance.fileViewIcon}"
@@ -79,10 +76,27 @@
             <toolbar:SeparatorToolItem />
         </toolbar:child>
         <toolbar:child>
-            <button:TextButton ui:field="showAllTb"
-                               text="{appearance.showAll}"
-                               icon="{appearance.arrow_undoIcon}"
-                               enabled="false"/>
+            <button:TextButton ui:field="share_menu" text="{appearance.share}">
+                <button:menu>
+                    <menu:Menu ui:field="sharingMenu">
+                        <menu:MenuItem ui:field="shareCollabMI" enabled="false"
+                                       text="{appearance.shareCollab}" icon="{appearance.shareIcon}"
+                        />
+                       <!-- <menu:MenuItem ui:field="shareSupportMI" enabled="false"
+                                       text="{appearance.shareSupport}" icon="{appearance.shareIcon}"
+                        /> -->
+                    </menu:Menu>
+                </button:menu>
+            </button:TextButton>
+        </toolbar:child>
+        <toolbar:child>
+            <toolbar:SeparatorToolItem />
+        </toolbar:child>
+        <toolbar:child>
+            <form:SimpleComboBox ui:field="filterCombo" allowBlank="true" forceSelection="true" triggerAction="ALL" />
+        </toolbar:child>
+        <toolbar:child>
+            <toolbar:SeparatorToolItem />
         </toolbar:child>
         <toolbar:child layoutData="{flexBoxData}">
             <search:AnalysisSearchField ui:field="searchField"

@@ -47,6 +47,7 @@ public class MyAnalysesWindow extends IplantWindowBase {
         List<Analysis> selectedAnalyses = Lists.newArrayList();
         selectedAnalyses.addAll(presenter.getSelectedAnalyses());
         config.setSelectedAnalyses(selectedAnalyses);
+        config.setFilter(presenter.getCurrentFilter());
         return createWindowState(config);
     }
 
@@ -57,6 +58,7 @@ public class MyAnalysesWindow extends IplantWindowBase {
         if (config instanceof AnalysisWindowConfig) {
             AnalysisWindowConfig analysisWindowConfig = (AnalysisWindowConfig) config;
             presenter.setSelectedAnalyses(analysisWindowConfig.getSelectedAnalyses());
+            presenter.setCurrentFilter(((AnalysisWindowConfig)config).getFilter());
         }
     }
 

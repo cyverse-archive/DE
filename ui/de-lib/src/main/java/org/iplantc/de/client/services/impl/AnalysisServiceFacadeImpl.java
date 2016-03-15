@@ -11,6 +11,8 @@ import org.iplantc.de.client.models.analysis.AnalysisParameter;
 import org.iplantc.de.client.models.analysis.AnalysisParametersList;
 import org.iplantc.de.client.models.analysis.AnalysisStepsInfo;
 import org.iplantc.de.client.models.analysis.SimpleValue;
+import org.iplantc.de.client.models.analysis.sharing.AnalysisSharingRequestList;
+import org.iplantc.de.client.models.analysis.sharing.AnalysisUnsharingRequestList;
 import org.iplantc.de.client.models.apps.integration.ArgumentType;
 import org.iplantc.de.client.models.apps.integration.SelectionItem;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
@@ -18,12 +20,14 @@ import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.services.converters.StringToVoidCallbackConverter;
 import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.shared.services.BaseServiceCallWrapper;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -32,6 +36,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
@@ -289,5 +294,40 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
         deServiceFacade.getServiceData(wrapper, new StringAnalaysisStepInfoConverter(callback, factory));
 
     }
+
+    @Override
+    public void shareAnalyses(AnalysisSharingRequestList request, AsyncCallback<String> callback) {
+        final String payload = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(request)).getPayload();
+        GWT.log("analyis sharing request:" + payload);
+        String address = ANALYSES + "/" + "sharing";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, payload);
+        deServiceFacade.getServiceData(wrapper, callback);
+    }
+
+    @Override
+    public void unshareAnalyses(AnalysisUnsharingRequestList request, AsyncCallback<String> callback) {
+        final String payload = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(request)).getPayload();
+        GWT.log("analysis un-sharing request:" + payload);
+        String address = ANALYSES + "/" + "unsharing";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, payload);
+        deServiceFacade.getServiceData(wrapper, callback);
+    }
+
+    @Override
+    public void getPermissions(List<Analysis> analyses, AsyncCallback<String> callback) {
+        Splittable anaObj = StringQuoter.createSplittable();
+        Splittable idArr = StringQuoter.createIndexed();
+
+        for(Analysis a : analyses) {
+            Splittable item = StringQuoter.create(a.getId());
+            item.assign(idArr, idArr.size());
+        }
+
+        idArr.assign(anaObj, "analyses");
+        String address = ANALYSES + "/" + "permission-lister";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(BaseServiceCallWrapper.Type.POST, address, anaObj.getPayload());
+        deServiceFacade.getServiceData(wrapper, callback);
+    }
+
 }
 

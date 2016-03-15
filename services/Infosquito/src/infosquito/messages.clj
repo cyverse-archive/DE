@@ -48,11 +48,11 @@
 (defn- declare-queue
   [ch exchange queue-name]
   (lq/declare ch queue-name
-              :durable     true
-              :auto-delete false
-              :exclusive   false)
+              {:durable     true
+               :auto-delete false
+               :exclusive   false})
   (doseq [key ["index.all" "index.data"]]
-    (lq/bind ch queue-name exchange :routing-key key)))
+    (lq/bind ch queue-name exchange {:routing-key key})))
 
 (defn- reindex-handler
   [props ch {:keys [delivery-tag]} _]
@@ -70,8 +70,8 @@
  (let [exchange   (cfg/get-amqp-exchange-name props)
        queue-name (cfg/get-amqp-reindex-queue props)]
    (le/direct ch exchange
-     :durable     (cfg/amqp-exchange-durable? props)
-     :auto-delete (cfg/amqp-exchange-auto-delete? props))
+     {:durable     (cfg/amqp-exchange-durable? props)
+      :auto-delete (cfg/amqp-exchange-auto-delete? props)})
    (declare-queue ch exchange queue-name)
    (lc/blocking-subscribe ch queue-name (partial reindex-handler props))))
 

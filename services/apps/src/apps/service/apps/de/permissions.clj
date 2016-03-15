@@ -35,3 +35,8 @@
   (let [app-perms (iplant-groups/list-app-permissions app-ids)
         app-names (amp/get-app-names app-ids)]
     (map (partial format-app-permissions user app-perms app-names) app-ids)))
+
+(defn has-app-permission
+  [user app-id required-level]
+  (-> (iplant-groups/load-app-permissions user [app-id])
+      (iplant-groups/has-permission-level required-level app-id)))

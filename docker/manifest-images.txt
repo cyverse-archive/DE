@@ -16,6 +16,7 @@ monkey
 notificationagent
 porklock
 saved-searches
+templeton
 tree-urls
 user-preferences
 user-sessions

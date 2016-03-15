@@ -29,7 +29,6 @@ import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.button.TextButton;
-import com.sencha.gxt.widget.core.client.menu.Menu;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
 import org.junit.Before;
@@ -47,59 +46,36 @@ import java.util.List;
 @RunWith(GxtMockitoTestRunner.class)
 public class AppsViewToolbarImplTest {
     @Mock
-    AppAutoBeanFactory mockAppFactory;
-    @Mock
-    AppSearchAutoBeanFactory mockAppSearchFactory;
-    @Mock
-    AppServiceFacade mockAppService;
-    @Mock
-    UserInfo mockUserInfo;
-
-    @Mock
-    MenuItem mockAppRun;
-    @Mock
-    MenuItem mockCopyApp;
-    @Mock
-    MenuItem mockCopyWf;
-    @Mock
-    MenuItem mockCreateNewApp;
-    @Mock
-    MenuItem mockCreateWorkflow;
-    @Mock
-    MenuItem mockDeleteApp;
-    @Mock
-    MenuItem mockDeleteWf;
-    @Mock
-    MenuItem mockEditApp;
-    @Mock
-    MenuItem mockEditWf;
-    @Mock
-    MenuItem mockRequestTool;
-    @Mock
-    MenuItem mockWfRun;
-
-    @Mock
-    TextButton mockAppMenu;
-    @Mock
-    TextButton mockWfMenu;
-
-    @Mock
-    AutoBean<AppLoadConfig> mockLoadConfigAb;
-    @Mock
-    AppLoadConfig mockLoadConfig;
-    @Mock
-    AppsToolbarView.AppsToolbarAppearance mockAppearance;
-    @Mock
-    PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> mockLoader;
-    @Mock
-    List<App> currentSelectionMock;
-    @Mock
-    AppSearchField appSearchMock;
-    @Mock
-    Menu mockSharingMenu;
+    TextButton mockshare_menu;
     @Mock
     MenuItem mockShareCollab, mockSharePublic;
+    @Mock AppAutoBeanFactory mockAppFactory;
+    @Mock AppSearchAutoBeanFactory mockAppSearchFactory;
+    @Mock AppServiceFacade mockAppService;
+    @Mock UserInfo mockUserInfo;
 
+    @Mock MenuItem mockAppRun;
+    @Mock MenuItem mockCopyApp;
+    @Mock MenuItem mockCopyWf;
+    @Mock MenuItem mockCreateNewApp;
+    @Mock MenuItem mockCreateWorkflow;
+    @Mock MenuItem mockDeleteApp;
+    @Mock MenuItem mockDeleteWf;
+    @Mock MenuItem mockEditApp;
+    @Mock MenuItem mockEditWf;
+    @Mock MenuItem mockRequestTool;
+    @Mock MenuItem mockSubmitApp;
+    @Mock MenuItem mockWfRun;
+
+    @Mock TextButton mockAppMenu;
+    @Mock TextButton mockWfMenu;
+
+    @Mock AutoBean<AppLoadConfig> mockLoadConfigAb;
+    @Mock AppLoadConfig mockLoadConfig;
+    @Mock AppsToolbarView.AppsToolbarAppearance mockAppearance;
+    @Mock PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> mockLoader;
+    @Mock List<App> currentSelectionMock;
+    @Mock AppSearchField appSearchMock;
     private AppsViewToolbarImpl uut;
 
     @Before
@@ -124,7 +100,7 @@ public class AppsViewToolbarImplTest {
         uut.editWf = mockEditWf;
         uut.requestTool = mockRequestTool;
         uut.wfRun = mockWfRun;
-        uut.sharingMenu = mockSharingMenu;
+        uut.share_menu = mockshare_menu;
         uut.shareCollab = mockShareCollab;
         uut.sharePublic = mockSharePublic;
 
@@ -159,7 +135,7 @@ public class AppsViewToolbarImplTest {
                                mockEditWf,
                                mockRequestTool,
                                mockWfRun,
-                               mockSharingMenu,
+                               mockshare_menu,
                                mockShareCollab,
                                mockSharePublic);
     }
@@ -189,7 +165,7 @@ public class AppsViewToolbarImplTest {
                                mockEditWf,
                                mockRequestTool,
                                mockWfRun,
-                               mockSharingMenu,
+                               mockshare_menu,
                                mockSharePublic,
                                mockShareCollab);
     }
@@ -217,7 +193,7 @@ public class AppsViewToolbarImplTest {
         verify(mockEditWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
-        verify(mockSharingMenu).setEnabled(false);
+        verify(mockshare_menu).setEnabled(false);
         verify(mockSharePublic).setEnabled(false);
         verify(mockShareCollab).setEnabled(false);
 
@@ -235,7 +211,7 @@ public class AppsViewToolbarImplTest {
                                  mockEditWf,
                                  mockRequestTool,
                                  mockWfRun,
-                                 mockSharingMenu,
+                                 mockshare_menu,
                                  mockShareCollab,
                                  mockSharePublic);
 
@@ -275,7 +251,7 @@ public class AppsViewToolbarImplTest {
         verify(mockEditWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
-        verify(mockSharingMenu).setEnabled(false);
+        verify(mockshare_menu).setEnabled(false);
         verify(mockShareCollab).setEnabled(false);
         verify(mockSharePublic).setEnabled(false);
 
@@ -295,7 +271,7 @@ public class AppsViewToolbarImplTest {
                                  mockWfRun,
                                  mockSharePublic,
                                  mockShareCollab,
-                                 mockSharingMenu);
+                                 mockshare_menu);
         verifyZeroInteractions(appSearchMock);
     }
 
@@ -332,7 +308,7 @@ public class AppsViewToolbarImplTest {
         verify(mockEditWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(true);
         verify(mockWfRun).setEnabled(true);
-        verify(mockSharingMenu).setEnabled(false);
+        verify(mockshare_menu).setEnabled(false);
         verify(mockShareCollab).setEnabled(false);
         verify(mockSharePublic).setEnabled(false);
 
@@ -392,7 +368,7 @@ public class AppsViewToolbarImplTest {
         verify(mockEditWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
-        verify(mockSharingMenu).setEnabled(false);
+        verify(mockshare_menu).setEnabled(false);
         verify(mockShareCollab).setEnabled(false);
         verify(mockSharePublic).setEnabled(false);
 
@@ -452,7 +428,7 @@ public class AppsViewToolbarImplTest {
         verify(mockEditWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(true);
         verify(mockWfRun).setEnabled(true);
-        verify(mockSharingMenu).setEnabled(false);
+        verify(mockshare_menu).setEnabled(false);
         verify(mockShareCollab).setEnabled(false);
         verify(mockSharePublic).setEnabled(false);
 
@@ -508,7 +484,7 @@ public class AppsViewToolbarImplTest {
         verify(mockEditWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
-        verify(mockSharingMenu).setEnabled(true);
+        verify(mockshare_menu).setEnabled(true);
         verify(mockShareCollab).setEnabled(true);
         verify(mockSharePublic).setEnabled(true);
 
@@ -526,7 +502,7 @@ public class AppsViewToolbarImplTest {
                                  mockEditWf,
                                  mockRequestTool,
                                  mockWfRun,
-                                 mockSharingMenu,
+                                 mockshare_menu,
                                  mockShareCollab,
                                  mockSharePublic);
         verifyZeroInteractions(appSearchMock);
@@ -568,7 +544,7 @@ public class AppsViewToolbarImplTest {
         verify(mockEditWf).setEnabled(true);
         verify(mockCopyWf).setEnabled(true);
         verify(mockWfRun).setEnabled(true);
-        verify(mockSharingMenu).setEnabled(true);
+        verify(mockshare_menu).setEnabled(true);
         verify(mockShareCollab).setEnabled(true);
         verify(mockSharePublic).setEnabled(true);
 
@@ -587,7 +563,7 @@ public class AppsViewToolbarImplTest {
                                  mockRequestTool,
                                  mockWfRun,
                                  mockSharePublic,
-                                 mockSharingMenu,
+                                 mockshare_menu,
                                  mockShareCollab);
         verifyZeroInteractions(appSearchMock);
     }
@@ -629,7 +605,7 @@ public class AppsViewToolbarImplTest {
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
         verify(mockSharePublic).setEnabled(true);
-        verify(mockSharingMenu).setEnabled(true);
+        verify(mockshare_menu).setEnabled(true);
         verify(mockShareCollab).setEnabled(true);
 
         verifyNoMoreInteractions(mockAppMenu,
@@ -648,7 +624,7 @@ public class AppsViewToolbarImplTest {
                                  mockWfRun,
                                  mockSharePublic,
                                  mockShareCollab,
-                                 mockSharingMenu);
+                                 mockshare_menu);
         verifyZeroInteractions(appSearchMock);
     }
 
@@ -689,7 +665,7 @@ public class AppsViewToolbarImplTest {
         verify(mockCopyWf).setEnabled(true);
         verify(mockWfRun).setEnabled(true);
         verify(mockSharePublic).setEnabled(true);
-        verify(mockSharingMenu).setEnabled(true);
+        verify(mockshare_menu).setEnabled(true);
         verify(mockShareCollab).setEnabled(true);
 
         verifyNoMoreInteractions(mockAppMenu,
@@ -708,7 +684,7 @@ public class AppsViewToolbarImplTest {
                                  mockWfRun,
                                  mockShareCollab,
                                  mockSharePublic,
-                                 mockSharingMenu);
+                                 mockshare_menu);
         verifyZeroInteractions(appSearchMock);
     }
 
@@ -750,7 +726,7 @@ public class AppsViewToolbarImplTest {
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
         verify(mockSharePublic).setEnabled(false);
-        verify(mockSharingMenu).setEnabled(false);
+        verify(mockshare_menu).setEnabled(false);
         verify(mockShareCollab).setEnabled(false);
 
 
@@ -769,7 +745,7 @@ public class AppsViewToolbarImplTest {
                                  mockRequestTool,
                                  mockWfRun,
                                  mockSharePublic,
-                                 mockSharingMenu,
+                                 mockshare_menu,
                                  mockShareCollab);
         verifyZeroInteractions(appSearchMock);
     }
@@ -814,7 +790,7 @@ public class AppsViewToolbarImplTest {
         verify(mockCopyWf).setEnabled(true);
         verify(mockWfRun).setEnabled(true);
         verify(mockSharePublic).setEnabled(false);
-        verify(mockSharingMenu).setEnabled(false);
+        verify(mockshare_menu).setEnabled(false);
         verify(mockShareCollab).setEnabled(false);
 
         verifyNoMoreInteractions(mockAppMenu,
@@ -873,6 +849,7 @@ public class AppsViewToolbarImplTest {
         when(appMock.isPublic()).thenReturn(true);
         when(wfMock.getAppType()).thenReturn("DE");
 
+
         currentSelectionMock = spy(new ArrayList<App>());
         uut.currentSelection = currentSelectionMock;
         List<App> singleAppSelection = Lists.newArrayList(wfMock, appMock);
@@ -896,7 +873,7 @@ public class AppsViewToolbarImplTest {
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
         verify(mockSharePublic).setEnabled(false);
-        verify(mockSharingMenu).setEnabled(false);
+        verify(mockshare_menu).setEnabled(false);
         verify(mockShareCollab).setEnabled(false);
 
         verifyNoMoreInteractions(mockAppMenu,
@@ -915,7 +892,7 @@ public class AppsViewToolbarImplTest {
                                  mockWfRun,
                                  mockSharePublic,
                                  mockShareCollab,
-                                 mockSharingMenu);
+                                 mockshare_menu);
         verifyZeroInteractions(appSearchMock);
     }
 
@@ -945,13 +922,13 @@ public class AppsViewToolbarImplTest {
 
         App wfMock = mock(App.class);
         when(wfMock.getStepCount()).thenReturn(1);
-        when(wfMock.getPermission()).thenReturn(PermissionValue.read);
+        when(wfMock.getPermission()).thenReturn(PermissionValue.own);
         when(wfMock.getAppType()).thenReturn("DE");
         when(wfMock.getStepCount()).thenReturn(2);
         when(wfMock.isPublic()).thenReturn(false);
 
         App appMock = mock(App.class);
-        when(appMock.getPermission()).thenReturn(PermissionValue.read);
+        when(appMock.getPermission()).thenReturn(PermissionValue.own);
         when(appMock.getAppType()).thenReturn("DE");
         when(appMock.getStepCount()).thenReturn(1);
         when(appMock.isPublic()).thenReturn(false);
@@ -979,8 +956,8 @@ public class AppsViewToolbarImplTest {
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
         verify(mockSharePublic).setEnabled(false);
-        verify(mockSharingMenu).setEnabled(false);
-        verify(mockShareCollab).setEnabled(false);
+        verify(mockshare_menu).setEnabled(true);
+        verify(mockShareCollab).setEnabled(true);
 
         verifyNoMoreInteractions(mockAppMenu,
                                  mockWfMenu,
@@ -998,7 +975,7 @@ public class AppsViewToolbarImplTest {
                                  mockWfRun,
                                  mockShareCollab,
                                  mockSharePublic,
-                                 mockSharingMenu);
+                                 mockshare_menu);
         verifyZeroInteractions(appSearchMock);
     }
 
@@ -1028,12 +1005,12 @@ public class AppsViewToolbarImplTest {
 
         App wfMock = mock(App.class);
         when(wfMock.getStepCount()).thenReturn(1);
-        when(wfMock.getPermission()).thenReturn(PermissionValue.read);
+        when(wfMock.getPermission()).thenReturn(PermissionValue.own);
         when(wfMock.getStepCount()).thenReturn(2);
         when(wfMock.isPublic()).thenReturn(true);
 
         App appMock = mock(App.class);
-        when(appMock.getPermission()).thenReturn(PermissionValue.read);
+        when(appMock.getPermission()).thenReturn(PermissionValue.own);
         when(appMock.getAppType()).thenReturn("DE");
         when(appMock.getStepCount()).thenReturn(1);
         when(appMock.isPublic()).thenReturn(true);
@@ -1061,7 +1038,7 @@ public class AppsViewToolbarImplTest {
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
         verify(mockSharePublic).setEnabled(false);
-        verify(mockSharingMenu).setEnabled(false);
+        verify(mockshare_menu).setEnabled(false);
         verify(mockShareCollab).setEnabled(false);
 
         verifyNoMoreInteractions(mockAppMenu,
@@ -1080,7 +1057,7 @@ public class AppsViewToolbarImplTest {
                                  mockWfRun,
                                  mockShareCollab,
                                  mockSharePublic,
-                                 mockSharingMenu);
+                                 mockshare_menu);
         verifyZeroInteractions(appSearchMock);
     }
 
@@ -1122,6 +1099,7 @@ public class AppsViewToolbarImplTest {
         when(appMock.getAppType()).thenReturn("DE");
         when(appMock.isPublic()).thenReturn(false);
 
+
         currentSelectionMock = spy(new ArrayList<App>());
         uut.currentSelection = currentSelectionMock;
         List<App> singleAppSelection = Lists.newArrayList(wfMock, appMock);
@@ -1145,7 +1123,7 @@ public class AppsViewToolbarImplTest {
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
         verify(mockSharePublic).setEnabled(false);
-        verify(mockSharingMenu).setEnabled(false);
+        verify(mockshare_menu).setEnabled(false);
         verify(mockShareCollab).setEnabled(false);
 
 
@@ -1164,7 +1142,7 @@ public class AppsViewToolbarImplTest {
                                  mockRequestTool,
                                  mockWfRun,
                                  mockSharePublic,
-                                 mockSharingMenu,
+                                 mockshare_menu,
                                  mockShareCollab);
         verifyZeroInteractions(appSearchMock);
     }
@@ -1204,7 +1182,7 @@ public class AppsViewToolbarImplTest {
         verify(mockEditWf).setEnabled(false);
         verify(mockCopyWf).setEnabled(false);
         verify(mockWfRun).setEnabled(false);
-        verify(mockSharingMenu).setEnabled(false);
+        verify(mockshare_menu).setEnabled(false);
         verify(mockShareCollab).setEnabled(false);
         verify(mockSharePublic).setEnabled(false);
 
@@ -1224,7 +1202,7 @@ public class AppsViewToolbarImplTest {
                                  mockWfRun,
                                  mockSharePublic,
                                  mockShareCollab,
-                                 mockSharingMenu);
+                                 mockshare_menu);
         verifyZeroInteractions(appSearchMock);
     }
 
@@ -1263,7 +1241,7 @@ public class AppsViewToolbarImplTest {
         verify(mockEditWf).setEnabled(true);
         verify(mockCopyWf).setEnabled(true);
         verify(mockWfRun).setEnabled(true);
-        verify(mockSharingMenu).setEnabled(false);
+        verify(mockshare_menu).setEnabled(false);
         verify(mockShareCollab).setEnabled(false);
         verify(mockSharePublic).setEnabled(false);
 

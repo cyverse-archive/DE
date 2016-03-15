@@ -256,5 +256,9 @@
        (partial app-permissions/app-unsharing-success app-names app-id)
        (partial app-permissions/app-unsharing-failure app-names app-id))))
 
+  (hasAppPermission [_ username app-id required-level]
+    (when (util/uuid? app-id)
+      (perms/has-app-permission username (uuidify app-id) required-level)))
+
   (supportsJobSharing [_ _]
     true))

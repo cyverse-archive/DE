@@ -2,7 +2,9 @@
   (:use [kameleon.uuids :only [uuidify]]
         [apps.util.conversions :only [remove-nil-vals]])
   (:require [kameleon.db :as db]
+            [apps.clients.iplant-groups :as iplant-groups]
             [apps.persistence.jobs :as jp]
+            [apps.service.apps.jobs.permissions :as job-permissions]
             [apps.service.util :as util]))
 
 (defn is-completed?
@@ -43,17 +45,17 @@
            (assoc (->> (group-by batch-child-status children)
                        (map (fn [[k v]] [k (count v)]))
                        (into {}))
-             :total (count children)))))
+                  :total (count children)))))
 
 (defn format-job
-  [app-tables job]
+  [apps-client app-tables {:keys [parent-id id] :as job}]
   (remove-nil-vals
    {:app_description (:app-description job)
     :app_id          (:app-id job)
     :app_name        (:app-name job)
     :description     (:description job)
     :enddate         (job-timestamp (:end-date job))
-    :id              (:id job)
+    :id              id
     :name            (:job-name job)
     :resultfolderid  (:result-folder-path job)
     :startdate       (job-timestamp (:start-date job))
@@ -63,33 +65,37 @@
     :notify          (:notify job false)
     :wiki_url        (:app-wiki-url job)
     :app_disabled    (app-disabled? app-tables (:app-id job))
-    :parent_id       (:parent-id job)
+    :parent_id       parent-id
     :batch           (:is-batch job)
-    :batch_status    (when (:is-batch job) (format-batch-status (:id job)))}))
+    :batch_status    (when (:is-batch job) (format-batch-status id))
+    :can_share       (and (nil? parent-id) (job-permissions/supports-job-sharing? apps-client id))}))
 
 (defn- list-jobs*
-  [{:keys [username]} {:keys [limit offset sort-field sort-dir filter include-hidden]} types]
-  (jp/list-jobs-of-types username limit offset sort-field sort-dir filter include-hidden types))
+  [{:keys [username]} search-params types analysis-ids]
+  (jp/list-jobs-of-types username search-params types analysis-ids))
 
 (defn- count-jobs
-  [{:keys [username]} {:keys [filter include-hidden]} types]
-  (jp/count-jobs-of-types username filter include-hidden types))
+  [{:keys [username]} {:keys [filter include-hidden]} types analysis-ids]
+  (jp/count-jobs-of-types username filter include-hidden types analysis-ids))
 
 (defn list-jobs
   [apps-client user {:keys [sort-field] :as params}]
-  (let [default-sort-dir (if (nil? sort-field) :desc :asc)
+  (let [perms            (iplant-groups/load-analysis-permissions (:shortUsername user))
+        analysis-ids     (set (keys perms))
+        default-sort-dir (if (nil? sort-field) :desc :asc)
         search-params    (util/default-search-params params :startdate default-sort-dir)
         types            (.getJobTypes apps-client)
-        jobs             (list-jobs* user search-params types)
+        jobs             (list-jobs* user search-params types analysis-ids)
         app-tables       (.loadAppTables apps-client (map :app-id jobs))]
-    {:analyses  (map (partial format-job app-tables) jobs)
+    {:analyses  (map (partial format-job apps-client app-tables) jobs)
      :timestamp (str (System/currentTimeMillis))
-     :total     (count-jobs user params types)}))
+     :total     (count-jobs user params types analysis-ids)}))
 
 (defn list-job
   [apps-client job-id]
-  (let [job-info (jp/get-job-by-id job-id)]
-    (format-job (.loadAppTables apps-client [(:app-id job-info)]) job-info)))
+  (let [job-info   (jp/get-job-by-id job-id)
+        app-tables (.loadAppTables apps-client [(:app-id job-info)])]
+    (format-job apps-client app-tables job-info)))
 
 (defn- format-job-step
   [step]

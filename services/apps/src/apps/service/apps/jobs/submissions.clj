@@ -8,6 +8,7 @@
             [clojure-commons.file-utils :as ft]
             [kameleon.db :as db]
             [apps.clients.data-info :as data-info]
+            [apps.clients.iplant-groups :as iplant-groups]
             [apps.persistence.app-metadata :as ap]
             [apps.persistence.jobs :as jp]
             [apps.service.apps.job-listings :as job-listings]
@@ -205,9 +206,11 @@
       :output_dir (ft/path-join (:output_dir submission) job-suffix))))
 
 (defn- submit-job-in-batch
-  [apps-client submission paths-exist job-number path-map]
+  [apps-client user submission paths-exist job-number path-map]
   (when (every? (partial get paths-exist) (map keyword (vals path-map)))
-    (.submitJob apps-client (format-submission-in-batch submission job-number path-map))))
+    (let [job-info (.submitJob apps-client (format-submission-in-batch submission job-number path-map))]
+      (iplant-groups/register-analysis (:shortUsername user) (:id job-info))
+      job-info)))
 
 (defn- preprocess-batch-submission
   [submission output-dir parent-id]
@@ -228,7 +231,7 @@
         output-dir   (get-batch-output-dir user submission)
         batch-id     (save-batch user job-types app submission output-dir)
         submission   (preprocess-batch-submission submission output-dir batch-id)]
-    (dorun (map-indexed (partial submit-job-in-batch apps-client submission paths-exist) path-maps))
+    (dorun (map-indexed (partial submit-job-in-batch apps-client user submission paths-exist) path-maps))
     (-> (job-listings/list-job apps-client batch-id)
         (assoc :missing-paths (extract-missing-paths paths-exist))
         remove-nil-values)))

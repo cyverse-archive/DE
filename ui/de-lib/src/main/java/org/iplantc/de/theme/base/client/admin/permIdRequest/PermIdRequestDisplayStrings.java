@@ -54,4 +54,6 @@ public interface PermIdRequestDisplayStrings extends Messages {
     String statusUpdateSuccess();
 
     String userEmail();
+
+    String folderNotFound();
 }

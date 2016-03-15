@@ -1,6 +1,7 @@
 package org.iplantc.de.theme.base.client.admin.permIdRequest;
 
 import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView.PermanentIdRequestPresenterAppearance;
+import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import com.google.gwt.core.client.GWT;
 
@@ -8,13 +9,16 @@ public class PermanentIdRequestPresenterDefaultAppearance implements
                                                          PermanentIdRequestPresenterAppearance {
 
     private final PermIdRequestDisplayStrings displayStrings;
+    private final IplantErrorStrings errorStrings;
 
     public PermanentIdRequestPresenterDefaultAppearance() {
-        this(GWT.<PermIdRequestDisplayStrings> create(PermIdRequestDisplayStrings.class));
+        this(GWT.<PermIdRequestDisplayStrings>create(PermIdRequestDisplayStrings.class),
+             GWT.<IplantErrorStrings>create(IplantErrorStrings.class));
     }
 
-    public PermanentIdRequestPresenterDefaultAppearance(PermIdRequestDisplayStrings displayStrings) {
+    public PermanentIdRequestPresenterDefaultAppearance(PermIdRequestDisplayStrings displayStrings, IplantErrorStrings errorStrings) {
         this.displayStrings = displayStrings;
+        this.errorStrings = errorStrings;
     }
 
     @Override
@@ -25,6 +29,11 @@ public class PermanentIdRequestPresenterDefaultAppearance implements
     @Override
     public String createPermIdFailure() {
         return displayStrings.createPermIdFailure();
+    }
+
+    @Override
+    public String folderNotFound(String path) {
+        return errorStrings.folderNotFound(path);
     }
 
     @Override

@@ -25,5 +25,9 @@ public interface AnalysisModule {
         String BUTTON_REFRESH = ".refresh";
 
         String FIELD_SEARCH = ".search";
+
+        String SHARE_MENU =".share";
+        String SHARE_COLLAB = ".sharecollab";
+        String SHARE_SUPPORT =".sharesupport";
     }
 }

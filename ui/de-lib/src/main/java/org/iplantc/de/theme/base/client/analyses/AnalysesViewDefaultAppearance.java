@@ -277,4 +277,34 @@ public class AnalysesViewDefaultAppearance implements AnalysesView.Appearance {
     public ImageResource shareIcon() {
         return iplantResources.share();
     }
+
+    @Override
+    public String share() {
+        return analysesMessages.share();
+    }
+
+    @Override
+    public String shareCollab() {
+        return analysesMessages.shareCollab();
+    }
+
+    @Override
+    public String shareSupport() {
+        return analysesMessages.shareSupportMi();
+    }
+
+    @Override
+    public String shareSupportConfirm() {
+        return analysesMessages.shareSupportConfirm();
+    }
+
+    @Override
+    public String shareWithInput() {
+        return analysesMessages.shareWithInput();
+    }
+
+    @Override
+    public String shareOutputOnly() {
+        return analysesMessages.shareOutputOnly();
+    }
 }

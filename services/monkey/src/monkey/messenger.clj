@@ -42,11 +42,11 @@
   (let [exchange (props/amqp-exchange-name props)
         queue    (props/amqp-queue props)]
     (exchange/direct ch exchange
-      :durable     (props/amqp-exchange-durable? props)
-      :auto-delete (props/amqp-exchange-auto-delete? props))
-    (queue/declare ch queue :durable true)
+      {:durable     (props/amqp-exchange-durable? props)
+       :auto-delete (props/amqp-exchange-auto-delete? props)})
+    (queue/declare ch queue {:durable true})
     (doseq [key ["index.all" "index.tags"]]
-      (queue/bind ch queue exchange :routing-key key))
+      (queue/bind ch queue exchange {:routing-key key}))
     queue))
 
 

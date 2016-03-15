@@ -7,6 +7,7 @@
             [clojure.string :as string]
             [clojure.tools.logging :as log]
             [apps.clients.notifications.app-sharing :as asn]
+            [apps.clients.notifications.job-sharing :as jsn]
             [apps.persistence.tool-requests :as tp]
             [apps.util.config :as config]))
 
@@ -124,5 +125,17 @@
   "Sends app unsharing notifications."
   [sharer sharee responses]
   (->> (asn/format-unsharing-notifications sharer sharee responses)
+       (map guarded-send-notification)
+       dorun))
+
+(defn send-analysis-sharing-notifications
+  [sharer sharee responses]
+  (->> (jsn/format-sharing-notifications sharer sharee responses)
+       (map guarded-send-notification)
+       dorun))
+
+(defn send-analysis-unsharing-notifications
+  [sharer sharee responses]
+  (->> (jsn/format-unsharing-notifications sharer sharee responses)
        (map guarded-send-notification)
        dorun))

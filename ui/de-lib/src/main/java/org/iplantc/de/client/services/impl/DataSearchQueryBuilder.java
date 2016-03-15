@@ -43,6 +43,7 @@ public class DataSearchQueryBuilder {
     public static final String PATH = "path";
     public static final String METADATA2 = "metadata";
     public static final String NESTED2 = "nested";
+    public static final String HAS_CHILD = "has_child";
     public static final String FILE_SIZE = "fileSize";
     public static final String LABEL = "label";
     public static final String DATE_CREATED = "dateCreated";
@@ -188,19 +189,44 @@ public class DataSearchQueryBuilder {
         return toString();
     }
 
+    private Splittable metadataNested(String content, String field) {
+        // {"nested":{"path":"metadata","query":{"query_string":{"query":"*ipc* OR *attrib*","fields":["metadata.attribute"]}}}}
+        Splittable metadata = StringQuoter.createSplittable();
+
+        Splittable nested = addChild(metadata, NESTED2);
+        StringQuoter.create(METADATA2).assign(nested, PATH);
+
+        getSimpleQuery(field, content).assign(nested, QUERY2);
+        return metadata;
+    }
+
+    private Splittable childQuery(String type, Splittable innerQuery) {
+        // {"has_child": {"type": "...", "score_mode": "max", "query": {...}}
+        Splittable query = StringQuoter.createSplittable();
+        Splittable hasChild = addChild(query, HAS_CHILD);
+        StringQuoter.create(type).assign(hasChild, "type");
+        StringQuoter.create("max").assign(hasChild, "score_mode");
+        innerQuery.assign(hasChild, QUERY2);
+        return query;
+    }
+
     public DataSearchQueryBuilder metadataAttribute() {
         String content = dsf.getMetadataAttributeQuery();
         if (!Strings.isNullOrEmpty(content)) {
+            Splittable attr = StringQuoter.createSplittable();
+            Splittable attrBool = addChild(attr, BOOL);
+            Splittable attrShouldList = addArray(attrBool, "should");
 
-            // {"nested":{"path":"metadata","query":{"query_string":{"query":"*ipc* OR *attrib*","fields":["metadata.attribute"]}}}}
-            Splittable metadata = StringQuoter.createSplittable();
+            Splittable metadata = metadataNested(content, METADATA_ATTRIBUTE);
+            appendArrayItem(attrShouldList, metadata);
 
-            Splittable nested = addChild(metadata, NESTED2);
-            StringQuoter.create(METADATA2).assign(nested, PATH);
+            Splittable childFileQuery = childQuery("file_metadata", metadata.deepCopy());
+            appendArrayItem(attrShouldList, childFileQuery);
 
-            getSimpleQuery(METADATA_ATTRIBUTE, content).assign(nested, QUERY2);
+            Splittable childFolderQuery = childQuery("folder_metadata", metadata.deepCopy());
+            appendArrayItem(attrShouldList, childFolderQuery);
 
-            appendArrayItem(mustList, metadata);
+            appendArrayItem(mustList, attr);
         }
         return this;
     }
@@ -208,14 +234,20 @@ public class DataSearchQueryBuilder {
     public DataSearchQueryBuilder metadataValue() {
         String content = dsf.getMetadataValueQuery();
         if (!Strings.isNullOrEmpty(content)) {
-            // {"nested":{"path":"metadata","query":{"query_string":{"query":"*ipc* OR *attrib*","fields":["metadata.value"]}}}}
-            Splittable metadata = StringQuoter.createSplittable();
+            Splittable value = StringQuoter.createSplittable();
+            Splittable valueBool = addChild(value, BOOL);
+            Splittable valueShouldList = addArray(valueBool, "should");
 
-            Splittable nested = addChild(metadata, NESTED2);
-            StringQuoter.create(METADATA2).assign(nested, PATH);
-            getSimpleQuery(METADATA_VALUE, content).assign(nested, QUERY2);
+            Splittable metadata = metadataNested(content, METADATA_VALUE);
+            appendArrayItem(valueShouldList, metadata);
 
-            appendArrayItem(mustList, metadata);
+            Splittable childFileQuery = childQuery("file_metadata", metadata.deepCopy());
+            appendArrayItem(valueShouldList, childFileQuery);
+
+            Splittable childFolderQuery = childQuery("folder_metadata", metadata.deepCopy());
+            appendArrayItem(valueShouldList, childFolderQuery);
+
+            appendArrayItem(mustList, value);
         }
         return this;
     }
@@ -436,6 +468,7 @@ public class DataSearchQueryBuilder {
     }
 
     public Splittable getSimpleQuery(String field, String userEntry) {
+        // {"query": {"query_string": {"query": "*la* OR *foo*", "fields":["whatever"]}}}
         Splittable query = StringQuoter.createSplittable();
         Splittable simpleQuery = addChild(query, QUERY_STRING);
         String entry = applyImplicitAsteriskSearchText(applyOROperator(userEntry));

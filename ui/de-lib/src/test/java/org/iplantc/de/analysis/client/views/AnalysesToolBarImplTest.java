@@ -19,6 +19,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.iplantc.de.analysis.client.AnalysesView;
+import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.analysis.Analysis;
 
 import com.google.common.collect.Lists;
@@ -27,6 +28,7 @@ import com.google.gwtmockito.GxtMockitoTestRunner;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
+import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 
@@ -53,7 +55,16 @@ public class AnalysesToolBarImplTest {
     @Mock AnalysesView.Appearance appearanceMock;
     @Mock PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loaderMock;
     @Mock AnalysesView.Presenter presenterMock;
+    @Mock
+    UserInfo mockUserInfo;
     List<Analysis> currentSelectionMock;
+
+    @Mock
+    TextButton share_menuMock;
+    @Mock
+    MenuItem shareCollabMIMock;
+    //@Mock
+    //MenuItem shareSupportMIMock;
 
     private AnalysesToolBarImpl uut;
 
@@ -73,6 +84,10 @@ public class AnalysesToolBarImplTest {
         uut.renameMI = renameMiMock;
         uut.updateCommentsMI = updateCommentsMiMock;
         uut.currentSelection = currentSelectionMock;
+        uut.share_menu = share_menuMock;
+        uut.shareCollabMI = shareCollabMIMock;
+      //  uut.shareSupportMI = shareSupportMIMock;
+        uut.userInfo = mockUserInfo;
     }
 
     @Test public void testOnSelectionChanged_ZeroSelected() {
@@ -86,6 +101,9 @@ public class AnalysesToolBarImplTest {
         verify(deleteMiMock).setEnabled(eq(false));
         verify(renameMiMock).setEnabled(eq(false));
         verify(updateCommentsMiMock).setEnabled(eq(false));
+        verify(share_menuMock).setEnabled(eq(false));
+        verify(shareCollabMIMock).setEnabled(eq(false));
+     //   verify(shareSupportMIMock).setEnabled(eq(false));
     }
 
 
@@ -106,17 +124,19 @@ public class AnalysesToolBarImplTest {
         final Analysis mockAnalysis = mock(Analysis.class);
         // Selected analysis' app is Enabled
         when(mockAnalysis.isAppDisabled()).thenReturn(false);
-        when(mockAnalysis.getUserName()).thenReturn("");
+        when(mockAnalysis.getUserName()).thenReturn("user@iplantcollaborative.org");
+        when(mockUserInfo.getFullUsername()).thenReturn("user@iplantcollaborative.org");
         when(mockSelectionEvent.getSelection()).thenReturn(Lists.newArrayList(mockAnalysis));
+        when(mockAnalysis.getStatus()).thenReturn(COMPLETED.toString());
         uut.onSelectionChanged(mockSelectionEvent);
 
         verify(goToFolderMiMock).setEnabled(eq(true));
         verify(viewParamsMiMock).setEnabled(eq(true));
         verify(relaunchMock).setEnabled(eq(true));
-      //  verify(cancelMiMock).setEnabled(eq(true));
-     //   verify(deleteMiMock).setEnabled(eq(true));
-     //   verify(renameMiMock).setEnabled(eq(true));
-     //   verify(updateCommentsMiMock).setEnabled(eq(true));
+        verify(cancelMiMock).setEnabled(eq(true));
+        verify(deleteMiMock).setEnabled(eq(true));
+        verify(renameMiMock).setEnabled(eq(true));
+        verify(updateCommentsMiMock).setEnabled(eq(true));
     }
 
     @Test public void testOnSelectionChanged_OneSelected_appDisabled() {
@@ -136,16 +156,18 @@ public class AnalysesToolBarImplTest {
         // Selected analysis' app is disabled
         when(mockAnalysis.isAppDisabled()).thenReturn(true);
         when(mockSelectionEvent.getSelection()).thenReturn(Lists.newArrayList(mockAnalysis));
-        when(mockAnalysis.getUserName()).thenReturn("");
+        when(mockAnalysis.getUserName()).thenReturn("user@iplantcollaborative.org");
+        when(mockUserInfo.getFullUsername()).thenReturn("user@iplantcollaborative.org");
+        when(mockAnalysis.getStatus()).thenReturn(COMPLETED.toString());
         uut.onSelectionChanged(mockSelectionEvent);
 
         verify(goToFolderMiMock).setEnabled(eq(true));
         verify(viewParamsMiMock).setEnabled(eq(true));
         verify(relaunchMock).setEnabled(eq(false));
-       // verify(cancelMiMock).setEnabled(eq(true));
-      //  verify(deleteMiMock).setEnabled(eq(true));
-       // verify(renameMiMock).setEnabled(eq(true));
-       // verify(updateCommentsMiMock).setEnabled(eq(true));
+        verify(cancelMiMock).setEnabled(eq(true));
+        verify(deleteMiMock).setEnabled(eq(true));
+        verify(renameMiMock).setEnabled(eq(true));
+        verify(updateCommentsMiMock).setEnabled(eq(true));
     }
 
     @Test public void testOnSelectionChanged_ManySelected() {
@@ -162,19 +184,28 @@ public class AnalysesToolBarImplTest {
         };
         mockMenuItems(uut);
         final Analysis mockAnalysis = mock(Analysis.class);
+        final Analysis mockAnalysis2 = mock(Analysis.class);
         // Selected analysis' app is Enabled
         when(mockAnalysis.isAppDisabled()).thenReturn(false);
-        when(mockSelectionEvent.getSelection()).thenReturn(Lists.newArrayList(mockAnalysis, mock(Analysis.class)));
-        when(mockAnalysis.getUserName()).thenReturn("");
+        when(mockSelectionEvent.getSelection()).thenReturn(Lists.newArrayList(mockAnalysis, mockAnalysis2));
+
+        when(mockAnalysis.getUserName()).thenReturn("user@iplantcollaborative.org");
+        when(mockUserInfo.getFullUsername()).thenReturn("user@iplantcollaborative.org");
+        when(mockAnalysis.getStatus()).thenReturn(COMPLETED.toString());
+
+        when(mockAnalysis2.getUserName()).thenReturn("user@iplantcollaborative.org");
+        when(mockUserInfo.getFullUsername()).thenReturn("user@iplantcollaborative.org");
+        when(mockAnalysis2.getStatus()).thenReturn(FAILED.toString());
+
         uut.onSelectionChanged(mockSelectionEvent);
 
         verify(goToFolderMiMock).setEnabled(eq(false));
         verify(viewParamsMiMock).setEnabled(eq(false));
         verify(relaunchMock).setEnabled(eq(false));
-       // verify(cancelMiMock).setEnabled(eq(true));
-      //  verify(deleteMiMock).setEnabled(eq(true));
-       // verify(renameMiMock).setEnabled(eq(false));
-       // verify(updateCommentsMiMock).setEnabled(eq(false));
+        verify(cancelMiMock).setEnabled(eq(true));
+        verify(deleteMiMock).setEnabled(eq(true));
+        verify(renameMiMock).setEnabled(eq(false));
+        verify(updateCommentsMiMock).setEnabled(eq(false));
     }
 
     @Test public void testCanCancelSelection() {
@@ -236,5 +267,41 @@ public class AnalysesToolBarImplTest {
         when(mock3.getStatus()).thenReturn(COMPLETED.toString());
         when(mock4.getStatus()).thenReturn(CANCELED.toString());
         assertTrue("Selection should be deletable", uut.canDeleteSelection(Lists.newArrayList(mock1, mock2, mock3)));
+    }
+
+    @Test public void testCanShareSelection() {
+        Analysis mock1 = mock(Analysis.class);
+        Analysis mock2 = mock(Analysis.class);
+
+        when(mock1.getStatus()).thenReturn(SUBMITTED.toString());
+        when(mock2.getStatus()).thenReturn(RUNNING.toString());
+        when(mock1.isSharable()).thenReturn(true);
+        when(mock2.isSharable()).thenReturn(true);
+        assertFalse("Selection should not be sharable", uut.isSharable(Lists.newArrayList(mock1, mock2)));
+
+        when(mock1.getStatus()).thenReturn(COMPLETED.toString());
+        when(mock2.getStatus()).thenReturn(RUNNING.toString());
+        when(mock1.isSharable()).thenReturn(true);
+        when(mock2.isSharable()).thenReturn(true);
+        assertFalse("Selection should not be sharable", uut.isSharable(Lists.newArrayList(mock1, mock2)));
+
+        when(mock1.getStatus()).thenReturn(COMPLETED.toString());
+        when(mock2.getStatus()).thenReturn(FAILED.toString());
+        when(mock1.isSharable()).thenReturn(false);
+        when(mock2.isSharable()).thenReturn(false);
+        assertFalse("Selection should not be sharable", uut.isSharable(Lists.newArrayList(mock1, mock2)));
+
+        when(mock1.getStatus()).thenReturn(COMPLETED.toString());
+        when(mock2.getStatus()).thenReturn(FAILED.toString());
+        when(mock1.isSharable()).thenReturn(false);
+        when(mock2.isSharable()).thenReturn(true);
+        assertFalse("Selection should not be sharable", uut.isSharable(Lists.newArrayList(mock1, mock2)));
+
+        when(mock1.getStatus()).thenReturn(COMPLETED.toString());
+        when(mock2.getStatus()).thenReturn(FAILED.toString());
+        when(mock1.isSharable()).thenReturn(true);
+        when(mock2.isSharable()).thenReturn(true);
+        assertTrue("Selection should  be sharable", uut.isSharable(Lists.newArrayList(mock1, mock2)));
+
     }
 }

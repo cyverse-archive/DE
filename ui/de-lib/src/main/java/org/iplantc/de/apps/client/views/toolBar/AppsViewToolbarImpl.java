@@ -65,6 +65,9 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
     interface AppsViewToolbarUiBinder extends UiBinder<Widget, AppsViewToolbarImpl> {
     }
 
+
+    @UiField
+    TextButton share_menu;
     @UiField
     Menu sharingMenu;
     @UiField
@@ -278,7 +281,7 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
                 shareWithCollaboratorsMiEnabled = containsSharableApps(currentSelection);
         }
 
-        sharingMenu.setEnabled(submitAppEnabled || shareWithCollaboratorsMiEnabled);
+        share_menu.setEnabled(submitAppEnabled || shareWithCollaboratorsMiEnabled);
         deleteApp.setEnabled(deleteAppEnabled);
         editApp.setEnabled(editAppEnabled);
         sharePublic.setEnabled(submitAppEnabled);

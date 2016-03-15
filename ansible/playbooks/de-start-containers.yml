@@ -242,6 +242,20 @@
       service_name: "{{saved_searches.compose_service}}"
       service_name_short: "{{saved_searches.service_name_short}}"
 
+- name: Start templeton-periodic
+  hosts: templeton-periodic:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - templeton
+    - templeton-periodic
+  roles:
+    - role: util-cfg-docker-up
+      when: not parasitic
+      service_name: "{{templeton_periodic.compose_service}}"
+      service_name_short: "{{templeton_periodic.service_name_short}}"
+
 - name: Start terrain
   hosts: terrain:&systems
   become: true

@@ -1,49 +1,11 @@
 (ns apps.clients.notifications.app-sharing
-  (:use [clostache.parser :only [render]]
+  (:use [apps.clients.notifications.common-sharing]
         [medley.core :only [remove-vals]])
   (:require [clojure.string :as string]))
 
-(def grouping-threshold 10)
-
 (def notification-type "apps")
-(def share-action "share")
-(def unshare-action "unshare")
-
-(def sharer-success-formats
-  {:grouped   {:singular "{{count}} app has been {{action}}d with {{sharee}}."
-               :plural   "{{count}} apps have been {{action}}d with {{sharee}}."}
-   :ungrouped {:singular "The following app has been {{action}}d with {{sharee}}: {{apps}}"
-               :plural   "The following apps have been {{action}}d with {{sharee}}: {{apps}}"}})
-
-(def sharee-success-formats
-  {:grouped   {:singular "{{sharer}} has {{action}}d {{count}} app with you."
-               :plural   "{{sharer}} has {{action}}d {{count}} apps with you."}
-   :ungrouped {:singular "{{sharer}} has {{action}}d the following app with you: {{apps}}"
-               :plural   "{{sharer}} has {{action}}d the following apps with you: {{apps}}"}})
-
-(def failure-formats
-  {:grouped   {:singular "{{count}} app could not be {{action}}d with {{sharee}}."
-               :plural   "{{count}} apps could not be {{action}}d with {{sharee}}."}
-   :ungrouped {:singular "The following app could not be {{action}}d with {{sharee}}: {{apps}}"
-               :plural   "The following apps could not be {{action}}d with {{sharee}}: {{apps}}"}})
-
-(defn- format-numbered-string
-  [formats action sharer sharee response-desc response-count]
-  (let [fmt (formats (if (= response-count 1) :singular :plural))]
-    (render fmt {:action action
-                 :sharer sharer
-                 :sharee sharee
-                 :apps   response-desc
-                 :count  response-count})))
-
-(defn- format-subject
-  [formats action sharer sharee response-desc response-count]
-  (format-numbered-string (:grouped formats) action sharer sharee response-desc response-count))
-
-(defn- format-message
-  [formats action sharer sharee response-desc response-count]
-  (let [formats (formats (if (< response-count grouping-threshold) :ungrouped :grouped))]
-    (format-numbered-string formats action sharer sharee response-desc response-count)))
+(def singular "app")
+(def plural "apps")
 
 (defn- format-app
   [category-keyword response]
@@ -62,8 +24,8 @@
           response-count (count responses)]
       {:type    notification-type
        :user    recipient
-       :subject (format-subject formats action sharer sharee response-desc response-count)
-       :message (format-message formats action sharer sharee response-desc response-count)
+       :subject (format-subject formats singular plural action sharer sharee response-desc response-count)
+       :message (format-message formats singular plural action sharer sharee response-desc response-count)
        :payload (format-payload category-keyword action responses)})))
 
 (defn- format-sharer-notification

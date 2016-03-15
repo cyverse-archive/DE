@@ -9,6 +9,7 @@
             [dewey.amq :as amq]
             [dewey.curation :as curation]
             [dewey.status :as status]
+            [dewey.config :as cfg]
             [common-cli.core :as ccli]
             [me.raynes.fs :as fs]
             [service-logging.thread-context :as tc])
@@ -18,8 +19,8 @@
 
 (defn- init-es
   "Establishes a connection to elasticsearch"
-  [props]
-  (let [url  (URL. "http" (get props "dewey.es.host") (Integer. (get props "dewey.es.port")) "")
+  []
+  (let [url  (URL. "http" (cfg/es-host) (cfg/es-port) "")
         conn (try
                (es/connect(str url))
                (catch Exception e
@@ -32,72 +33,55 @@
       (do
         (log/info "Failed to find elasticsearch. Retrying...")
         (Thread/sleep 1000)
-        (recur props)))))
+        (recur)))))
 
 
 (defn- init-irods
-  [props]
-  (irods/init (get props "dewey.irods.host")
-              (get props "dewey.irods.port")
-              (get props "dewey.irods.user")
-              (get props "dewey.irods.password")
-              (get props "dewey.irods.home")
-              (get props "dewey.irods.zone")
-              (get props "dewey.irods.default-resource")))
+  []
+  (irods/init (cfg/irods-host)
+              (cfg/irods-port)
+              (cfg/irods-user)
+              (cfg/irods-pass)
+              (cfg/irods-home)
+              (cfg/irods-zone)
+              (cfg/irods-default-resource)))
 
 
 (defn- listen
-  [props irods-cfg es]
+  [irods-cfg es]
   (let [attached? (try
-                    (amq/attach-to-exchange (get props "dewey.amqp.host")
-                                            (Integer. (get props "dewey.amqp.port"))
-                                            (get props "dewey.amqp.user")
-                                            (get props "dewey.amqp.password")
-                                            (str "indexing." (get props "dewey.environment-name"))
-                                            (get props "dewey.amqp.exchange.name")
-                                            (Boolean. (get props "dewey.amqp.exchange.durable"))
-                                            (Boolean. (get props "dewey.amqp.exchange.auto-delete"))
-                                            (Integer. (get props "dewey.amqp.qos"))
+                    (amq/attach-to-exchange (cfg/amqp-host)
+                                            (cfg/amqp-port)
+                                            (cfg/amqp-user)
+                                            (cfg/amqp-pass)
+                                            (str "indexing." (cfg/environment-name))
+                                            (cfg/amqp-exchange)
+                                            (cfg/amqp-exchange-durable)
+                                            (cfg/amqp-exchange-autodelete)
+                                            (cfg/amqp-qos)
                                             (partial curation/consume-msg irods-cfg es)
                                             "data-object.#"
                                             "collection.#")
                     (log/info "Attached to the AMQP broker.")
                     true
                     (catch Exception e
-                      (log/debug (str e))
-                      (log/info "Failed to attach to the AMQP broker. Retrying...")
+                      (log/info e "Failed to attach to the AMQP broker. Retrying...")
                       false))]
     (when-not attached?
       (Thread/sleep 1000)
-      (recur props irods-cfg es))))
+      (recur irods-cfg es))))
 
 
 (defn- listen-for-status
-  [props]
+  []
   (.start
    (Thread.
-     (partial status/start-jetty (Integer/parseInt (get props "dewey.status.listen-port"))))))
-
-
-(defn- update-props
-  [load-props props]
-  (let [props-ref (ref props)]
-    (try+
-      (load-props props-ref)
-      (catch Object _
-        (log/error "Failed to load configuration parameters.")))
-    (when (.isEmpty @props-ref)
-      (throw+ {:type :cfg-problem :msg "Don't have any configuration parameters."}))
-    (when-not (= props @props-ref)
-      (config/log-config props-ref))
-    @props-ref))
-
+     (partial status/start-jetty (cfg/listen-port)))))
 
 (defn- run
-  [props-loader]
-  (let [props (update-props props-loader (Properties.))]
-    (listen-for-status props)
-    (listen props (init-irods props) (init-es props))))
+  []
+  (listen-for-status)
+  (listen (init-irods) (init-es)))
 
 
 (def svc-info
@@ -122,7 +106,10 @@
     (try+
      (let [{:keys [options arguments errors summary]} (ccli/handle-args svc-info args cli-options)]
        (when-not (fs/exists? (:config options))
-         (ccli/exit 1 (str "The config file does not exist.")))
-       (run (partial config/load-config-from-file (:config options))))
+         (ccli/exit 1 "The config file does not exist."))
+       (when-not (fs/readable? (:config options))
+         (ccli/exit 1 "The config file is not readable."))
+       (cfg/load-config-from-file (:config options))
+       (run))
       (catch Object _
         (log/error (:throwable &throw-context) "UNEXPECTED ERROR - EXITING")))))

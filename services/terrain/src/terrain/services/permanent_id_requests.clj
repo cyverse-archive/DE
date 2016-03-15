@@ -53,7 +53,11 @@
   ezid-metadata)
 
 (defn- validate-request-for-completion
-  [{:keys [permanent_id]}]
+  [{:keys [folder original_path permanent_id]}]
+  (when (empty? folder)
+    (throw+ {:type :clojure-commons.exception/not-found
+             :error "Folder not found."
+             :path original_path}))
   (when-not (empty? permanent_id)
     (throw+ {:type :clojure-commons.exception/bad-request
              :error "This Request appears to be completed, since it already has a Permanent ID."
@@ -194,11 +198,10 @@
         "Could not send permanent_id_request (" request-id ") notification to" user ":" subject))))
 
 (defn- send-update-notification
-  [{{:keys [username email]} :requested_by
-    :keys [id type folder history]
-    :or {folder {:path "unknown"}}}]
+  [{:keys [id type folder history] {:keys [username email]} :requested_by}]
   (let [{:keys [status comments]} (last history)
-        subject (str type " Request for " (ft/basename (:path folder)) " Status Changed to " status)]
+        folder-name (if folder (ft/basename (:path folder)) "unknown")
+        subject (str type " Request for " folder-name " Status Changed to " status)]
     (send-notification username email subject comments id)))
 
 (defn- request-type->shoulder
@@ -263,11 +266,19 @@
                 :unit ""}])
             (partial remove #(contains? remove-attrs (:attr %)))))))
 
+(defn- format-folder-details
+  [user folder-id]
+  (try+
+    (data-info/stat-by-uuid user folder-id)
+    (catch Object e
+      (log/warn e "Could not lookup folder details.")
+      nil)))
+
 (defn- format-perm-id-req-response
   [user {:keys [target_id] :as response}]
   (-> response
-      (dissoc :target_id :target_type :original_path)
-      (assoc :folder (data-info/stat-by-uuid user (uuidify target_id)))))
+      (dissoc :target_id :target_type)
+      (assoc :folder (format-folder-details user (uuidify target_id)))))
 
 (defn- format-requested-by
   [user {:keys [requested_by target_id] :as permanent-id-request}]

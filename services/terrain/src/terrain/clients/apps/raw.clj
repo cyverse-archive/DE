@@ -262,6 +262,24 @@
                 :as               :stream
                 :follow-redirects false}))
 
+(defn share-jobs
+  [body]
+  (client/post (apps-url "analyses" "sharing")
+               {:query-params     (secured-params)
+                :content-type     :json
+                :body             body
+                :as               :stream
+                :follow-redirects false}))
+
+(defn unshare-jobs
+  [body]
+  (client/post (apps-url "analyses" "unsharing")
+               {:query-params     (secured-params)
+                :content-type     :json
+                :body             body
+                :as               :stream
+                :follow-redirects false}))
+
 (defn submit-job
   [submission]
   (client/post (apps-url "analyses")

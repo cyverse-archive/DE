@@ -9,6 +9,7 @@
   (:require [cheshire.core :as cheshire]
             [clojure.set :as set]
             [clojure.string :as string]
+            [clojure-commons.exception-util :as cxu]
             [kameleon.jobs :as kj]
             [korma.core :as sql]))
 
@@ -86,13 +87,34 @@
   [{:keys [field value]}]
   {(filter-field->where-field field) (filter-value->where-value field value)})
 
+(defn- apply-standard-filter
+  "Applies 'standard' filters to a query. Standard filters are filters that search for fields that are
+   included in the job listing response body."
+  [query standard-filter]
+  (if (seq standard-filter)
+    (where query (apply or (map filter-map->where-clause standard-filter)))
+    query))
+
+(defn- apply-ownership-filter
+  "Applies an 'ownership' filter to a query. An ownership filter is any filter for which the field is
+   'ownership'. Only one ownership filter is supported in a single job query. If multiple ownership
+   filters are included then the first one wins."
+  [query username [ownership-filter & _]]
+  (if ownership-filter
+    (condp = (:value ownership-filter)
+      "all"    query
+      "mine"   (where query {:j.username username})
+      "theirs" (where query {:j.username [not= username]})
+      (cxu/bad-request (str "invalid ownership filter value: " (:value ownership-filter))))
+    query))
+
 (defn- add-job-query-filter-clause
   "Filters results returned by the given job query by adding a (where (or ...)) clause based on the
    given filter map."
-  [query filter]
-  (if (empty? filter)
-    query
-    (where query (apply or (map filter-map->where-clause filter)))))
+  [query username query-filter]
+  (let [ownership-filter? (fn [{:keys [field]}] (= field "ownership"))]
+    (-> (apply-standard-filter query (remove ownership-filter? query-filter))
+        (apply-ownership-filter username (filter ownership-filter? query-filter)))))
 
 (defn save-job
   "Saves information about a job in the database."
@@ -167,26 +189,18 @@
 
 (defn- count-jobs-base
   "The base query for counting the number of jobs in the database for a user."
-  [username include-hidden]
-  (-> (select* [:jobs :j])
-      (join [:users :u] {:j.user_id :u.id})
+  [include-hidden]
+  (-> (select* [:job_listings :j])
       (aggregate (count :*) :count)
-      (where {:u.username username})
       (add-internal-app-clause include-hidden)))
-
-(defn count-jobs
-  "Counts the number of undeleted jobs in the database for a user."
-  [username filter include-hidden]
-  ((comp :count first)
-   (select (add-job-query-filter-clause (count-jobs-base username include-hidden) filter)
-           (where {:j.deleted false}))))
 
 (defn count-jobs-of-types
   "Counts the number of undeleted jobs of the given types in the database for a user."
-  [username filter include-hidden types]
+  [username filter include-hidden types accessible-ids]
   ((comp :count first)
-   (select (add-job-query-filter-clause (count-jobs-base username include-hidden) filter)
+   (select (add-job-query-filter-clause (count-jobs-base include-hidden) username filter)
            (where {:j.deleted false})
+           (where {:j.id [in accessible-ids]})
            (where (not (exists (job-type-subselect types)))))))
 
 (defn- translate-sort-field
@@ -256,29 +270,21 @@
            (aggregate (max :step_number) :max-step)
            (where {:job_id job-id}))))
 
-(defn list-jobs
-  "Gets a list of jobs satisfying a query."
-  [username row-limit row-offset sort-field sort-order filter include-hidden]
-  (-> (select* (add-job-query-filter-clause (job-base-query) filter))
-      (where {:j.deleted  false
-              :j.username username})
-      (add-internal-app-clause include-hidden)
-      (order (translate-sort-field sort-field) sort-order)
-      (offset (nil-if-zero row-offset))
-      (limit (nil-if-zero row-limit))
-      (select)))
+(defn- add-order
+  [query {:keys [sort-field sort-dir]}]
+  (order query (translate-sort-field sort-field) sort-dir))
 
 (defn list-jobs-of-types
   "Gets a list of jobs that contain only steps of the given types."
-  [username row-limit row-offset sort-field sort-order filter include-hidden types]
-  (-> (select* (add-job-query-filter-clause (job-base-query) filter))
-      (where {:j.deleted  false
-              :j.username username})
+  [username search-params types accessible-ids]
+  (-> (select* (add-job-query-filter-clause (job-base-query) username (:filter search-params)))
+      (where {:j.deleted false})
+      (where {:j.id [in accessible-ids]})
       (where (not (exists (job-type-subselect types))))
-      (add-internal-app-clause include-hidden)
-      (order (translate-sort-field sort-field) sort-order)
-      (offset (nil-if-zero row-offset))
-      (limit (nil-if-zero row-limit))
+      (add-internal-app-clause (:include-hidden search-params))
+      (add-order search-params)
+      (offset (nil-if-zero (:offset search-params)))
+      (limit (nil-if-zero (:limit search-params)))
       (select)))
 
 (defn list-jobs-by-id
@@ -492,6 +498,22 @@
   (select (job-step-base-query)
           (where {:job_id job-id})
           (order :step_number)))
+
+(defn- child-job-subselect
+  [job-id]
+  (subselect :jobs
+             (fields :id)
+             (where {:parent_id job-id})
+             (limit 1)))
+
+(defn list-representative-job-steps
+  "Lists all of the job steps in a standalone job or all of the steps of one of the jobs in an HT batch. The purpose
+   of this function is to ensure that steps of every job type that are used in a job are listed. The analysis listing
+   code uses this function to determine whether or not a job can be shared."
+  [job-id]
+  (select (job-step-base-query)
+          (where (or {:job_id job-id}
+                     {:job_id [in (child-job-subselect job-id)]}))))
 
 (defn list-jobs-to-delete
   [ids]
