@@ -240,6 +240,7 @@
     - templeton-periodic
   roles:
     - role: util-cfg-docker-up
+      when: not parasitic
       service_name: "{{templeton_periodic.compose_service}}"
       service_name_short: "{{templeton_periodic.service_name_short}}"
 
