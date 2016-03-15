@@ -184,6 +184,8 @@ public interface AnalysesView extends IsWidget,
 
         void setCurrentFilter(AnalysisFilter filter);
 
+        AnalysisFilter getCurrentFilter();
+
         public void loadAnalyses(AnalysisFilter filter);
     }
 

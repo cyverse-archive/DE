@@ -347,6 +347,12 @@ public class AnalysesPresenterImpl implements
     @Override
     public void setCurrentFilter(AnalysisFilter filter) {
        this.currentFilter = filter;
+       loadAnalyses(currentFilter);
+    }
+
+    @Override
+    public AnalysisFilter getCurrentFilter() {
+        return currentFilter;
     }
 
     @Override

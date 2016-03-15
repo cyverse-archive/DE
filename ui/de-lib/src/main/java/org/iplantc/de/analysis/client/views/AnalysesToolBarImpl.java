@@ -461,8 +461,7 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
     }
 
     void applyFilter(AnalysisFilter filter) {
-        searchField.clear();
-        presenter.loadAnalyses(filter);
+        presenter.setCurrentFilter(filter);
     }
 
     @UiHandler("shareCollabMI")
