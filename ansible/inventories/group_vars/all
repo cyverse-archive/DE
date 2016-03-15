@@ -12,7 +12,7 @@ docker:
   log_driver: syslog
   tag: latest
   user: discoenv
-  version: 1.9.1
+  version: 1.10.2
   compose_path: /etc/docker-compose.yml
   registry:
     host: "{{ groups['docker-registry'][0] }}"
