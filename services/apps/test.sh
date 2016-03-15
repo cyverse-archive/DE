@@ -2,7 +2,7 @@
 
 set -e
 
-function error_exit {
+error_exit() {
     echo
     echo "TEST FAILED: $@" 1>&2
     exit 1
