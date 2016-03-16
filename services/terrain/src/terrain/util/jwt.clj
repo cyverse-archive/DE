@@ -64,8 +64,8 @@
 (defn validate-group-membership
   [handler allowed-groups-fn]
   (fn [request]
-    (let [allowed-groups (log/spy :warn (allowed-groups-fn))
-          actual-groups  (log/spy :warn (get-in request [:jwt-claims :org.iplantc.de:entitlement] []))]
+    (let [allowed-groups (allowed-groups-fn)
+          actual-groups  (get-in request [:jwt-claims :org.iplantc.de:entitlement] [])]
       (if (some (partial contains? (set allowed-groups)) actual-groups)
         (handler request)
         (resp/forbidden "You are not in one of the admin groups.")))))
