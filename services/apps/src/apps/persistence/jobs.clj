@@ -298,6 +298,7 @@
   "Lists the child jobs within a batch job."
   [batch-id]
   (select (job-base-query)
+          (fields :submission)
           (where {:parent_id batch-id})))
 
 (defn- add-job-type-clause

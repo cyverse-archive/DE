@@ -11,7 +11,7 @@
   (let [submission (:submission job)]
     (when-not submission
       (throw+ {:type  :clojure-commons.exception/not-found
-               :error "Job submission values could not be found."}))
+               :error (str "Job submission values could not be found for " (:id job))}))
     (cheshire/decode (.getValue submission) true)))
 
 (defn- load-mapped-params
@@ -131,3 +131,7 @@
     (update-in (assoc (.getAppJobView apps-client (:app-id job)) :debug (:debug submission false))
                [:groups]
                (partial update-app-groups (:config submission)))))
+
+(defn get-job-config
+  [job]
+  (:config (get-job-submission job)))

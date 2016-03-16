@@ -51,6 +51,10 @@
   [agave app-id]
   {:tools [(apps/format-tool-for-app (.getApp agave app-id))]})
 
+(defn get-app-input-ids
+  [agave app-id]
+  (mapv :id (:inputs (.getApp agave app-id))))
+
 (defn prepare-job-submission
   [agave submission]
   (jobs/prepare-submission agave (.getApp agave (:app_id submission)) submission))

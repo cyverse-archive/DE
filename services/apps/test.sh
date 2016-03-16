@@ -3,7 +3,7 @@
 set -e
 
 error_exit() {
-    echo
+    echo 1>&2
     echo "TEST FAILED: $@" 1>&2
     exit 1
 }
@@ -29,7 +29,7 @@ fi
 docker pull discoenv/buildenv || error_exit 'unable to pull the build environment image'
 
 # Check for syntax errors.
-docker run --rm -v $(pwd):/build -w /build discoenv/buildenv lein eastwood '{:exclude-namespaces [apps.protocols :test-paths] :linters [:wrong-arity :wrong-ns-form :wrong-pre-post :wrong-tag :misplaced-docstrings]}' \
+docker run --rm -v $(pwd):/build -w /build discoenv/buildenv lein eastwood \
     || error_exit 'lint errors were found'
 
 # Pull the DE database image.
@@ -54,4 +54,5 @@ docker run --rm -v $(pwd):/build -w /build --link $DBCONTAINER:postgres discoenv
     || error_exit 'there were unit test failures'
 
 # Display a success message.
+echo 1>&2
 echo "TEST SUCCEEDED" 1>&2

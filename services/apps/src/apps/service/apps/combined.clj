@@ -109,6 +109,11 @@
   (getAppUi [_ app-id]
     (.getAppUi (util/get-apps-client clients) app-id))
 
+  (getAppInputIds [_ app-id]
+    (->> (map #(.getAppInputIds % app-id) clients)
+         (remove nil?)
+         (first)))
+
   (addPipeline [self pipeline]
     (.formatPipelineTasks self (.addPipeline (util/get-apps-client clients) pipeline)))
 

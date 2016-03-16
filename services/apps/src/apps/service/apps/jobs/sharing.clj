@@ -5,8 +5,10 @@
             [apps.clients.iplant-groups :as iplant-groups]
             [apps.clients.notifications :as cn]
             [apps.persistence.jobs :as jp]
+            [apps.service.apps.jobs.params :as job-params]
             [apps.service.apps.jobs.permissions :as job-permissions]
             [apps.util.service :as service]
+            [clojure.string :as string]
             [clojure.tools.logging :as log]
             [clojure-commons.error-codes :as ce]))
 
@@ -102,9 +104,33 @@
    (catch ce/clj-http-error? {:keys [body]}
      (str "unable to share result folder: " (:error_code (service/parse-json body))))))
 
+(defn- share-input-file
+  [sharer sharee path]
+  (try+
+   (data-info/share-path sharer path sharee "read")
+   nil
+   (catch ce/clj-http-error? {:keys [body]}
+     (str "unable to share input file, " path ": " (:error_code (service/parse-json body))))))
+
 (defn- process-child-jobs
   [f job-id]
   (first (remove nil? (map f (jp/list-child-jobs job-id)))))
+
+(defn- list-job-inputs
+  [apps-client job]
+  (->> (mapv keyword (.getAppInputIds apps-client (:app-id job)))
+       (select-keys (job-params/get-job-config job))
+       vals
+       (remove string/blank?)))
+
+(defn- process-job-inputs
+  [f apps-client job]
+  (first (remove nil? (map f (list-job-inputs apps-client job)))))
+
+(defn- share-child-job
+  [apps-client sharer sharee level job]
+  (or (process-job-inputs (partial share-input-file sharer sharee) apps-client job)
+      (iplant-groups/share-analysis (:id job) sharee level)))
 
 (defn- share-job*
   [apps-client sharer sharee job-id job level]
@@ -114,7 +140,8 @@
       (share-app-for-job apps-client sharer sharee job-id job)
       (share-output-folder sharer sharee job)
       (iplant-groups/share-analysis job-id sharee level)
-      (process-child-jobs #(iplant-groups/share-analysis (:id %) sharee level) job-id)))
+      (process-job-inputs (partial share-input-file sharer sharee) apps-client job)
+      (process-child-jobs (partial share-child-job apps-client sharer sharee level) job-id)))
 
 (defn- share-job
   [apps-client sharer sharee {job-id :analysis_id level :permission}]
