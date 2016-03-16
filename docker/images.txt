@@ -17,7 +17,7 @@ kifshare
 apps
 metadata
 monkey
-notificationagent
+notification-agent
 porklock
 saved-searches
 sharkbait
