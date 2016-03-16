@@ -2,22 +2,25 @@
 @def footerHeight 30px;
 @def footerHeight10 40px;
 
+@def TEXTA_BOLD textaBold;
+@def TEXTA_REGULAR textaRegular;
+ 
+@font-face {
+    font-family: TextaBold;
+    src: TEXTA_BOLD format("opentype");
+}
+ 
+@font-face {
+    font-family: TextaRegular;
+    src: TEXTA_REGULAR format("opentype");
+}
+
 .deBody {
     position: fixed;
     top: 0;
     bottom: 0;
     right: 0;
     left: 0;
-}
-
-@font-face {
-    font-family: TextaRegular;
-    src: url(Texta_Font/Texta-Regular.otf);
-}
-
-@font-face {
-    font-family: TextaBold;
-    src: url(Texta_Font/Texta-Bold.otf);
 }
 
 @sprite .iplantHeader {
