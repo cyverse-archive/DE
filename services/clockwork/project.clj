@@ -42,4 +42,5 @@
   :profiles {:dev     {:resource-paths ["resources/test"]}
              :uberjar {:aot :all}}
   :main ^:skip-aot clockwork.core
+  :plugins [[test2junit "1.1.3"]]
   :uberjar-exclusions [#"BCKEY.SF"])
