@@ -121,6 +121,10 @@
     (when (util/uuid? app-id)
       (edit/get-app-ui user app-id)))
 
+  (getAppInputIds [_ app-id]
+    (when (util/uuid? app-id)
+      (listings/get-app-input-ids (uuidify app-id))))
+
   (addPipeline [_ pipeline]
     (pipeline-edit/add-pipeline user pipeline))
 

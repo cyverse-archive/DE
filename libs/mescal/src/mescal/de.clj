@@ -11,6 +11,7 @@
   (getAppDetails [_ app-id])
   (listAppTasks [_ app-id])
   (getAppToolListing [_ app-id])
+  (getAppInputIds [_ app-id])
   (submitJob [_ submission])
   (prepareJobSubmission [_ submission])
   (sendJobSubmission [_ submission])
@@ -42,6 +43,8 @@
     (v2/list-app-tasks agave app-id))
   (getAppToolListing [_ app-id]
     (v2/get-app-tool-listing agave app-id))
+  (getAppInputIds [_ app-id]
+    (v2/get-app-input-ids agave app-id))
   (submitJob [this submission]
     (->> (.prepareJobSubmission this submission)
          (.sendJobSubmission this)))
