@@ -11,5 +11,5 @@ COPY ./bin/job-status-recorder-linux-amd64 /bin/job-status-recorder
 COPY ./bin/job-status-to-apps-adapter-linux-amd64 /bin/job-status-to-apps-adapter
 COPY ./bin/jex-adapter-linux-amd64 /bin/jex-adapter
 COPY ./bin/de-job-killer-linux-amd64 /bin/de-job-killer
-COPY ./bin/slot-cacher /bin/slot-cacher
+COPY ./bin/slot-cacher-linux-amd64 /bin/slot-cacher
 CMD [ "/bin/sh" ]
