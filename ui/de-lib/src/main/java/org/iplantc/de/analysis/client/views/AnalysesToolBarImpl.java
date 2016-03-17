@@ -181,7 +181,7 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
         final boolean canCancelSelection = canCancelSelection(currentSelection);
         final boolean canDeleteSelection = canDeleteSelection(currentSelection);
         boolean isOwner = isOwner(currentSelection);
-        boolean isShare = isSharable(currentSelection);
+        boolean can_share = isSharable(currentSelection);
 
         boolean goToFolderEnabled, viewParamsEnabled, relaunchEnabled, cancelEnabled, deleteEnabled;
         boolean renameEnabled, updateCommentsEnabled, shareEnabled;
@@ -207,7 +207,7 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
 
                 renameEnabled = isOwner;
                 updateCommentsEnabled = isOwner;
-                shareEnabled = isOwner && isShare;
+                shareEnabled = isOwner && can_share;
                 break;
 
             default:
@@ -217,7 +217,7 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
                 relaunchEnabled = false;
                 cancelEnabled = canCancelSelection && isOwner;
                 deleteEnabled = canDeleteSelection && isOwner;
-                shareEnabled = isOwner && isShare;
+                shareEnabled = isOwner && can_share;
                 renameEnabled = false;
                 updateCommentsEnabled = false;
         }
