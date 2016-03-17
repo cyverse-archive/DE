@@ -173,16 +173,28 @@
    (catch ce/clj-http-error? {:keys [body]}
      (str "unable to unshare result folder: " (:error_code (service/parse-json body))))))
 
-;; The apps client isn't used at this time, but it will be once we extend analysis sharing
-;; to HPC apps.
+(defn- unshare-input-file
+  [sharer sharee path]
+  (try+
+   (data-info/unshare-path sharer path sharee)
+   nil
+   (catch ce/clj-http-error? {:keys [body]}
+     (str "unable to unshare input file: " (:error_code (service/parse-json body))))))
+
+(defn- unshare-child-job
+  [apps-client sharer sharee job]
+  (or (process-job-inputs (partial unshare-input-file sharer sharee) apps-client job)
+      (iplant-groups/unshare-analysis (:id job) sharee)))
+
 (defn- unshare-job*
   [apps-client sharer sharee job-id job]
   (or (verify-not-subjob job)
       (verify-accessible sharer job-id)
       (verify-support apps-client job-id)
       (unshare-output-folder sharer sharee job)
+      (process-job-inputs (partial unshare-input-file sharer sharee) apps-client job)
       (iplant-groups/unshare-analysis job-id sharee)
-      (process-child-jobs #(iplant-groups/unshare-analysis (:id %) sharee) job-id)))
+      (process-child-jobs (partial unshare-child-job apps-client sharer sharee) job-id)))
 
 (defn- unshare-job
   [apps-client sharer sharee job-id]
