@@ -374,9 +374,10 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     }
 
     @Override
-    public void moveDiskResources(final List<DiskResource> diskResources,
+    public void moveDiskResources(final Folder sourceFolder,
                                   final Folder destFolder,
-                                  AsyncCallback<DiskResourceMove> callback) {
+                                  final List<DiskResource> diskResources,
+                                  final AsyncCallback<DiskResourceMove> callback) {
 
         String address = deProperties.getDataMgmtBaseUrl() + "move"; //$NON-NLS-1$
 
@@ -393,42 +394,52 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
                 DiskResourceMove resourcesMoved = decode(DiskResourceMove.class, result);
                 // KLUDGE manually set destFolder until services are updated to return full dest info.
                 resourcesMoved.setDestination(destFolder);
-                moveFolders(resourcesMoved);
 
                 return resourcesMoved;
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                final DiskResourceMove resourcesMoved = convertFrom(result);
+
+                if (diskResourceUtil.containsFolder(diskResources)) {
+                    onFoldersMoved(sourceFolder, destFolder, resourcesMoved, callback);
+                } else {
+                    callback.onSuccess(resourcesMoved);
+                }
             }
         });
     }
 
-    private void moveFolders(DiskResourceMove resourcesMoved) {
-        if (resourcesMoved == null || resourcesMoved.getSources() == null) {
-            return;
+    private void onFoldersMoved(Folder sourceFolder,
+                                Folder destFolder,
+                                final DiskResourceMove resourcesMoved,
+                                final AsyncCallback<DiskResourceMove> callback) {
+        if (!diskResourceUtil.isDescendantOfFolder(destFolder, sourceFolder)) {
+            // The source folder is not under the destination, so it needs to be refreshed.
+            refreshFolderOnChildrenMoved(sourceFolder, resourcesMoved, callback);
         }
+        if (!diskResourceUtil.isDescendantOfFolder(sourceFolder, destFolder)) {
+            // The destination is not under the source folder, so it needs to be refreshed.
+            refreshFolderOnChildrenMoved(destFolder, resourcesMoved, callback);
+        }
+    }
 
-        Folder dest = findModel(resourcesMoved.getDestination());
-        for (String path : resourcesMoved.getSources()) {
-            Folder folder = findModelWithKey(path);
-            if (folder != null) {
-                Folder parent = getParent(folder);
+    private void refreshFolderOnChildrenMoved(Folder folder,
+                                              final DiskResourceMove resourcesMoved,
+                                              final AsyncCallback<DiskResourceMove> callback) {
+        refreshFolder(folder, new AsyncCallback<List<Folder>>() {
 
-                // Remove the folder and its children from the cache.
-                remove(folder);
-
-                // Remove the folder from its original parent.
-                if (parent != null && parent.getFolders() != null) {
-                    parent.getFolders().remove(folder);
-                }
-
-                // Move the folder and its children to dest in the cache, updating their paths first.
-                if (hasFoldersLoaded(dest)) {
-                    // Clone moved folder, so other views can still manage the folder in their stores.
-                    folder = decode(Folder.class, encode(folder));
-
-                    dest.getFolders().add(folder);
-                    moveFolderTree(folder, dest);
-                }
+            @Override
+            public void onSuccess(List<Folder> folders) {
+                callback.onSuccess(resourcesMoved);
             }
-        }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                callback.onFailure(throwable);
+            }
+        });
     }
 
     private void moveFolderTree(Folder folder, Folder dest) {
@@ -857,14 +868,14 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     }
 
     @Override
-    public void moveContents(String sourceFolderId,
+    public void moveContents(final Folder sourceFolder,
                              final Folder destFolder,
-                             AsyncCallback<DiskResourceMove> callback) {
+                             final AsyncCallback<DiskResourceMove> callback) {
         String address = deProperties.getDataMgmtBaseUrl() + "move-contents"; //$NON-NLS-1$
 
         DiskResourceMove request = factory.diskResourceMove().as();
         request.setDest(destFolder.getPath());
-        request.setSelectedFolderId(sourceFolderId);
+        request.setSourcePath(sourceFolder.getPath());
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode(request));
 
@@ -875,9 +886,14 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
                 DiskResourceMove resourcesMoved = decode(DiskResourceMove.class, result);
                 // KLUDGE manually set destFolder until services are updated to return full dest info.
                 resourcesMoved.setDestination(destFolder);
-                moveFolders(resourcesMoved);
 
                 return resourcesMoved;
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                // All sourceFolder contents were moved, which may contain a folder.
+                onFoldersMoved(sourceFolder, destFolder, convertFrom(result), callback);
             }
         });
 
