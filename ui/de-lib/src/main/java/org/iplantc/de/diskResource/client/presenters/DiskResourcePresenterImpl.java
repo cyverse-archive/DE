@@ -589,12 +589,9 @@ public class DiskResourcePresenterImpl implements
             parent = navigationPresenter.getParent(parent);
         }
 
-        boolean moveContents = gridViewPresenter.isSelectAllChecked();
+        DiskResourceMoveCallback callback = new DiskResourceMoveCallback(view);
 
-        DiskResourceMoveCallback callback =
-                new DiskResourceMoveCallback(view, moveContents, parent, targetFolder, resources);
-
-        if (moveContents) {
+        if (gridViewPresenter.isSelectAllChecked()) {
             diskResourceService.moveContents(parent, targetFolder, callback);
         } else {
             diskResourceService.moveDiskResources(parent, targetFolder, resources, callback);

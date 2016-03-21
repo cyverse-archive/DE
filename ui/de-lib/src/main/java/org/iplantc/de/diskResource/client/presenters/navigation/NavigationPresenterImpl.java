@@ -1,6 +1,7 @@
 package org.iplantc.de.diskResource.client.presenters.navigation;
 
 import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.events.diskResources.DiskResourcesMovedEvent;
 import org.iplantc.de.client.events.diskResources.FolderRefreshedEvent;
 import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.IsMaskable;
@@ -16,7 +17,6 @@ import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourceRenamedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourcesDeletedEvent;
-import org.iplantc.de.diskResource.client.events.DiskResourcesMovedEvent;
 import org.iplantc.de.diskResource.client.events.FolderCreatedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.events.RequestImportFromUrlEvent;
@@ -202,19 +202,20 @@ public class NavigationPresenterImpl implements
 
     @Override
     public void onDiskResourcesMoved(DiskResourcesMovedEvent event) {
+        if (event.isMoveContents()) {
+            // If a folder's contents was moved, then the src and dest folders will already be refreshed.
+            return;
+        }
+
         List<DiskResource> resourcesToMove = event.getResourcesToMove();
         Folder destinationFolder = event.getDestinationFolder();
         Folder srcFolder = event.getSrcFolder();
         Folder selectedFolder = getSelectedFolder();
-        if (!event.isMoveContents()) {
-            if (diskResourceUtil.contains(resourcesToMove, selectedFolder)) {
-                selectedFolderMovedFromNavTree(destinationFolder);
-            } else {
-                diskResourcesMovedFromGrid(resourcesToMove,
-                                           selectedFolder,
-                                           srcFolder,
-                                           destinationFolder);
-            }
+
+        if (diskResourceUtil.contains(resourcesToMove, selectedFolder)) {
+            selectedFolderMovedFromNavTree(destinationFolder);
+        } else {
+            diskResourcesMovedFromGrid(resourcesToMove, selectedFolder, srcFolder, destinationFolder);
         }
     }
 

@@ -8,6 +8,7 @@ import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
 
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.events.diskResources.DiskResourcesMovedEvent;
 import org.iplantc.de.client.events.diskResources.FolderRefreshedEvent;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasPaths;
@@ -385,6 +386,12 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         request.setDest(destFolder.getPath());
         request.setSources(diskResourceUtil.asStringPathList(diskResources));
 
+        // Fire this movedEvent after folder refreshes, so views can load correct folders from the cache.
+        final DiskResourcesMovedEvent movedEvent = new DiskResourcesMovedEvent(sourceFolder,
+                                                                               destFolder,
+                                                                               diskResources,
+                                                                               false);
+
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode(request));
 
         callService(wrapper, new AsyncCallbackConverter<String, DiskResourceMove>(callback) {
@@ -392,6 +399,14 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
             @Override
             protected DiskResourceMove convertFrom(String result) {
                 DiskResourceMove resourcesMoved = decode(DiskResourceMove.class, result);
+
+                /*
+                 * JDS Result should have a "sources" key
+                 * and a "dest" key.
+                 *
+                 * TODO JDS Verify returned keys to the objects we have already.
+                 */
+
                 // KLUDGE manually set destFolder until services are updated to return full dest info.
                 resourcesMoved.setDestination(destFolder);
 
@@ -403,8 +418,9 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
                 final DiskResourceMove resourcesMoved = convertFrom(result);
 
                 if (diskResourceUtil.containsFolder(diskResources)) {
-                    onFoldersMoved(sourceFolder, destFolder, resourcesMoved, callback);
+                    onFoldersMoved(sourceFolder, destFolder, resourcesMoved, callback, movedEvent);
                 } else {
+                    eventBus.fireEvent(movedEvent);
                     callback.onSuccess(resourcesMoved);
                 }
             }
@@ -414,24 +430,27 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     private void onFoldersMoved(Folder sourceFolder,
                                 Folder destFolder,
                                 final DiskResourceMove resourcesMoved,
-                                final AsyncCallback<DiskResourceMove> callback) {
+                                final AsyncCallback<DiskResourceMove> callback,
+                                final DiskResourcesMovedEvent movedEvent) {
         if (!diskResourceUtil.isDescendantOfFolder(destFolder, sourceFolder)) {
             // The source folder is not under the destination, so it needs to be refreshed.
-            refreshFolderOnChildrenMoved(sourceFolder, resourcesMoved, callback);
+            refreshFolderOnChildrenMoved(sourceFolder, resourcesMoved, callback, movedEvent);
         }
         if (!diskResourceUtil.isDescendantOfFolder(sourceFolder, destFolder)) {
             // The destination is not under the source folder, so it needs to be refreshed.
-            refreshFolderOnChildrenMoved(destFolder, resourcesMoved, callback);
+            refreshFolderOnChildrenMoved(destFolder, resourcesMoved, callback, movedEvent);
         }
     }
 
     private void refreshFolderOnChildrenMoved(Folder folder,
                                               final DiskResourceMove resourcesMoved,
-                                              final AsyncCallback<DiskResourceMove> callback) {
+                                              final AsyncCallback<DiskResourceMove> callback,
+                                              final DiskResourcesMovedEvent movedEvent) {
         refreshFolder(folder, new AsyncCallback<List<Folder>>() {
 
             @Override
             public void onSuccess(List<Folder> folders) {
+                eventBus.fireEvent(movedEvent);
                 callback.onSuccess(resourcesMoved);
             }
 
@@ -542,8 +561,8 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         getSubFolders(folder, new AsyncCallback<List<Folder>>() {
             @Override
             public void onSuccess(List<Folder> result) {
-                callback.onSuccess(result);
                 eventBus.fireEvent(new FolderRefreshedEvent(folder));
+                callback.onSuccess(result);
             }
 
             @Override
@@ -877,6 +896,12 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         request.setDest(destFolder.getPath());
         request.setSourcePath(sourceFolder.getPath());
 
+        // Fire this movedEvent after folder refreshes, so views can load correct folders from the cache.
+        final DiskResourcesMovedEvent movedEvent = new DiskResourcesMovedEvent(sourceFolder,
+                                                                               destFolder,
+                                                                               null,
+                                                                               true);
+
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode(request));
 
         callService(wrapper, new AsyncCallbackConverter<String, DiskResourceMove>(callback) {
@@ -893,7 +918,7 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
             @Override
             public void onSuccess(String result) {
                 // All sourceFolder contents were moved, which may contain a folder.
-                onFoldersMoved(sourceFolder, destFolder, convertFrom(result), callback);
+                onFoldersMoved(sourceFolder, destFolder, convertFrom(result), callback, movedEvent);
             }
         });
 

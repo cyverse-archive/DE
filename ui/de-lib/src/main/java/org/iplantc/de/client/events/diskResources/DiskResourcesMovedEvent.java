@@ -1,8 +1,8 @@
-package org.iplantc.de.diskResource.client.events;
+package org.iplantc.de.client.events.diskResources;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.diskResource.client.events.DiskResourcesMovedEvent.DiskResourcesMovedEventHandler;
+import org.iplantc.de.client.events.diskResources.DiskResourcesMovedEvent.DiskResourcesMovedEventHandler;
 
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
