@@ -7,6 +7,7 @@ import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.desktop.shared.DeModule;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.systemMessages.client.presenter.MessagesPresenter;
+import org.iplantc.de.systemMessages.shared.SystemMessages;
 
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
@@ -21,7 +22,6 @@ public final class SystemMessagesWindow extends IplantWindowBase {
 
     @Inject
     SystemMessagesWindow(final IplantDisplayStrings displayStrings) {
-        ensureDebugId(DeModule.WindowIds.SYSTEM_MESSAGES);
         setHeadingText(displayStrings.systemMessagesLabel());
         setWidth(computeDefaultWidth());
         setHeight(computeDefaultHeight());
@@ -33,6 +33,7 @@ public final class SystemMessagesWindow extends IplantWindowBase {
         this.presenter = new MessagesPresenter(((SystemMessagesWindowConfig)windowConfig).getSelectedMessage());
         presenter.go(this);
         super.show(windowConfig, tag, isMaximizable);
+        ensureDebugId(DeModule.WindowIds.SYSTEM_MESSAGES);
     }
 
     private static int computeDefaultHeight() {
@@ -61,4 +62,10 @@ public final class SystemMessagesWindow extends IplantWindowBase {
         super.doHide();
     }
 
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        presenter.setViewDebugId(baseID + SystemMessages.Ids.VIEW);
+    }
 }

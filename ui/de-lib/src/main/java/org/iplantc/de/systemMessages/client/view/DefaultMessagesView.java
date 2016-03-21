@@ -2,6 +2,7 @@ package org.iplantc.de.systemMessages.client.view;
 
 import org.iplantc.de.resources.client.SystemMessagesResources;
 import org.iplantc.de.systemMessages.client.events.DismissMessageEvent;
+import org.iplantc.de.systemMessages.shared.SystemMessages;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -233,5 +234,12 @@ final class DefaultMessagesView<M> extends Composite implements MessagesView<M> 
         }
     }
 
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        messagesPanel.ensureDebugId(baseID + SystemMessages.Ids.MESSAGES_PANEL);
+        noMessagesPanel.ensureDebugId(baseID + SystemMessages.Ids.NO_MESSAGES_PANEL);
+    }
 }
 
