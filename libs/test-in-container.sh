@@ -1,5 +1,8 @@
 #!/bin/sh
 
+set -e
+set -x
+
 DIR=$1
 CMD=$2
 
