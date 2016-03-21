@@ -27,4 +27,5 @@
   :main ^:skip-aot info-typer.core
   :profiles {:dev     {:resource-paths ["conf/test"]}
              :uberjar {:aot :all}}
+  :plugins [[test2junit "1.1.3"]]
   :uberjar-exclusions [#"LICENSE" #"NOTICE"])

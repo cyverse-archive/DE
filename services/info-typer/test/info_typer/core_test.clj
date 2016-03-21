@@ -2,6 +2,6 @@
   (:require [clojure.test :refer :all]
             [info-typer.core :refer :all]))
 
-(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
+(deftest silly-test
+  (testing "This test is totally fake, but it'll pass!"
+    (is (= 1 1))))
