@@ -16,3 +16,5 @@ pom.xml
 .nrepl-port
 .idea
 *.iml
+build.xml
+test2junit
