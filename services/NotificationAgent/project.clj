@@ -34,7 +34,8 @@
                  [korma "0.3.2"
                   :exclusions [c3p0]]]
   :plugins [[lein-ring "0.8.13"]
-            [lein-marginalia "0.7.0"]]
+            [lein-marginalia "0.7.0"]
+            [test2junit "1.1.3"]]
   :ring {:handler notification-agent.core/app
          :init notification-agent.core/load-config-from-file
          :port 31320}
