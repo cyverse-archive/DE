@@ -27,4 +27,5 @@
                  [org.iplantc/clojure-commons "5.2.6.0"]
                  [org.iplantc/common-cli "5.2.6.0"]
                  [org.iplantc/service-logging "5.2.6.0"]]
+  :plugins [[test2junit "1.1.3"]]
   :profiles {:dev {:resource-paths ["conf/test"]}})
