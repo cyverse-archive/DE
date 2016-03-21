@@ -7,7 +7,7 @@
       (string/trim (:out (sh "git" "rev-parse" "HEAD")))
       ""))
 
-(defproject org.iplantc/notificationagent "5.2.5.0"
+(defproject org.iplantc/notificationagent "5.2.6.0"
   :description "A web service for storing and forwarding notifications."
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"
@@ -22,10 +22,10 @@
                                [com.fasterxml.jackson.core/jackson-databind]
                                [com.fasterxml.jackson.core/jackson-core]]]
                  [compojure "1.4.0"]
-                 [org.iplantc/clojure-commons "5.2.5.0"]
-                 [org.iplantc/kameleon "5.2.5.0"]
-                 [org.iplantc/common-cli "5.2.5.0"]
-                 [org.iplantc/service-logging "5.2.5.0"]
+                 [org.iplantc/clojure-commons "5.2.6.0"]
+                 [org.iplantc/kameleon "5.2.6.0"]
+                 [org.iplantc/common-cli "5.2.6.0"]
+                 [org.iplantc/service-logging "5.2.6.0"]
                  [me.raynes/fs "1.4.6"]
                  [clj-http "2.0.0"]
                  [clj-time "0.11.0"]

@@ -7,7 +7,7 @@
       (string/trim (:out (sh "git" "rev-parse" "HEAD")))
       ""))
 
-(defproject org.iplantc/infosquito "5.2.5.0"
+(defproject org.iplantc/infosquito "5.2.6.0"
   :description "An ICAT database crawler used to index the contents of iRODS."
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"
@@ -29,7 +29,7 @@
                  [com.novemberain/langohr "3.5.1"]
                  [slingshot "0.10.3"]
                  [me.raynes/fs "1.4.6"]
-                 [org.iplantc/clojure-commons "5.2.5.0"]
-                 [org.iplantc/common-cli "5.2.5.0"]
-                 [org.iplantc/service-logging "5.2.5.0"]]
+                 [org.iplantc/clojure-commons "5.2.6.0"]
+                 [org.iplantc/common-cli "5.2.6.0"]
+                 [org.iplantc/service-logging "5.2.6.0"]]
   :profiles {:dev {:resource-paths ["dev-resources"]}})
