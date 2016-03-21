@@ -52,9 +52,6 @@
              "</div>"
            "</div>"))
 
-(fact "Calculate file size"
-      (calc-filesize {:filesize "1024"}) => "1 KB")
-
 (fact "File size details"
       (filesize {:filesize "1024"}) =>
       (str "<div id=\"size-detail\">"
