@@ -57,6 +57,7 @@ public class ManageCollaboratorsViewImpl extends Composite implements ManageColl
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
     private final CheckBoxSelectionModel<Collaborator> checkBoxModel;
     private MODE mode;
+    private String baseID;
 
     public ManageCollaboratorsViewImpl(final ListStore<Collaborator> store,
                                        final MODE mode) {
@@ -74,6 +75,9 @@ public class ManageCollaboratorsViewImpl extends Composite implements ManageColl
     @Override
     public void addCollaborators(List<Collaborator> models) {
         listStore.addAll(models);
+        for (int i = 0; i < listStore.size(); i++) {
+            grid.getView().getCell(i, 0).setId(baseID + CollaboratorsModule.Ids.CHECKBOX_ITEM + i);
+        }
     }
 
     @Override
@@ -157,8 +161,14 @@ public class ManageCollaboratorsViewImpl extends Composite implements ManageColl
     @Override
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
-        ((CollaboratorsColumnModel)cm).ensureDebugId(baseID);
+        this.baseID = baseID;
         deleteBtn.ensureDebugId(baseID + CollaboratorsModule.Ids.DELETE);
+        //Checkbox column config is at index 0
+        grid.getView().getHeader().getHead(0).getElement().setId(baseID + CollaboratorsModule.Ids.CHECKBOX_HEADER);
+        for (int i = 0; i < listStore.size(); i++) {
+            grid.getView().getCell(i, 0).setId(baseID + CollaboratorsModule.Ids.CHECKBOX_ITEM + i);
+        }
+        searchField.setViewDebugId(CollaboratorsModule.Ids.SEARCH_LIST);
     }
 
     @UiFactory

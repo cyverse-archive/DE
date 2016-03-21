@@ -12,5 +12,7 @@ public interface CollaboratorsModule {
         String DELETE = ".delete";
         String DIALOG = "collaborators";
         String OK = ".okBtn";
+        String CHECKBOX_ITEM = ".checkbox_";
+        String SEARCH_LIST = "collaboratorsSearchList";
     }
 }
