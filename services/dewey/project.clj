@@ -37,6 +37,7 @@
                  [org.iplantc/common-cli "5.2.6.0"]
                  [org.iplantc/service-logging "5.2.6.0"]
                  [me.raynes/fs "1.4.6"]]
+  :plugins [[lein-midje "3.1.1"]]
   :resource-paths []
   :profiles {:dev     {:dependencies   [[midje "1.6.3"]]
                        :resource-paths ["dev-resource"]}
