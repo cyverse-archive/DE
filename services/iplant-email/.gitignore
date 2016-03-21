@@ -10,3 +10,5 @@ bin
 \#*\#
 /target/
 /.settings
+build.xml
+test2junit

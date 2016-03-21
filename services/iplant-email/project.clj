@@ -28,5 +28,6 @@
                  [compojure "1.0.1"]
                  [org.iplantc/common-cli "5.2.6.0"]
                  [me.raynes/fs "1.4.6"]]
+  :plugins [[test2junit "1.1.3"]]
   :aot [iplant-email.core]
   :main iplant-email.core)

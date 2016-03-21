@@ -17,3 +17,5 @@
 /notificationagent.spec
 /.lein-repl-history
 /.settings
+build.xml
+test2junit

@@ -1,5 +1,6 @@
 (ns kifshare.test.ui-template
   (:use [kifshare.ui-template]
+        [hiccup.core]
         [midje.sweet])
   (:require [kifshare.config :as cfg]))
 
@@ -14,7 +15,7 @@
 
 (fact "AVU table row"
       (irods-avu-row {:attr "attr" :value "value" :unit "unit"}) =>
-      "<tr><td>attr</td><td>value</td><td>unit</td></tr>")
+      "<tr><td title=\"attr\">attr</td><td title=\"value\">value</td><td title=\"unit\">unit</td></tr>")
 
 (fact "AVU table"
       (irods-avu-table [{:attr "attr" :value "value" :unit "unit"}]) =>
@@ -31,11 +32,7 @@
                  "</tr>"
                "</thead>"
                "<tbody>"
-                 "<tr>"
-                   "<td>attr</td>"
-                   "<td>value</td>"
-                   "<td>unit</td>"
-                 "</tr>"
+                 (irods-avu-row {:attr "attr" :value "value" :unit "unit"}) ;; tested above, no need to double-test
                "</tbody>"
              "</table>"
              "<div class=\"section-spacer\"></div>"
@@ -51,9 +48,6 @@
                "<p>foo-blippy-bar</p>"
              "</div>"
            "</div>"))
-
-(fact "Calculate file size"
-      (calc-filesize {:filesize "1024"}) => "1 KB")
 
 (fact "File size details"
       (filesize {:filesize "1024"}) =>
@@ -99,7 +93,7 @@
   (str
    "<div id=\"irods-instructions\">"
      "<div id=\"irods-instructions-label\">"
-       "<h2>iRODS icommands</h2>"
+       "<h2 title=\"iRODS icommands\"><a>iRODS icommands</a>:</h2>"
      "</div>"
      "<div id=\"clippy-irods-instructions\">"
        "<input id=\"irods-command-line\" type=\"text\" value=\"\" />"
@@ -114,7 +108,7 @@
   (str
    "<div id=\"de-import-instructions\">"
      "<div id=\"de-import-instructions-label\">"
-       "<h2>DE Import URL</h2>"
+       "<h2 title=\"Discovery Environment Import URL\"><a>DE Import URL</a>:</h2>"
      "</div>"
      "<div id=\"clippy-import-instructions\">"
        "<input id=\"de-import-url\" type=\"text\" value=\"\" />"
@@ -129,7 +123,7 @@
   (str
    "<div id=\"wget-instructions\">"
      "<div id=\"wget-instructions-label\">"
-       "<p>Wget</p>"
+       "<p>Wget:</p>"
      "</div>"
      "<div id=\"clippy-wget-instructions\">"
        "<input id=\"wget-command-line\" type=\"text\" value=\"\" />"
@@ -140,7 +134,7 @@
    "</div>"
    "<div id=\"curl-instructions\">"
      "<div id=\"curl-instructions-label\">"
-       "<p>cURL</p>"
+       "<p>cURL:</p>"
      "</div>"
      "<div id=\"clippy-curl-instructions\">"
        "<input id=\"curl-command-line\" type=\"text\" value=\"\" />"
@@ -177,7 +171,7 @@
        "</div>"))
 
 (fact "details section"
-  (details {:filesize "1024" :lastmod "1024"}) =>
+  (html (details {:filesize "1024" :lastmod "1024"})) =>
   (re-pattern
    (str
     "<div id=\"details\">"
