@@ -29,7 +29,8 @@
                  [org.iplantc/service-logging "5.2.6.0"]
                  [ring/ring-core "1.4.0"]
                  [ring/ring-jetty-adapter "1.4.0"]]
-  :plugins [[lein-ring "0.9.6"]]
+  :plugins [[lein-ring "0.9.6"]
+            [test2junit "1.1.3"]]
   :profiles {:dev {:resource-paths ["conf/test"]}}
   ;; compojure-api route macros should not be AOT compiled:
   ;; https://github.com/metosin/compojure-api/issues/135#issuecomment-121388539
