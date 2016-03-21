@@ -12,7 +12,6 @@ import org.iplantc.de.analysis.client.presenter.sharing.AnalysisSharingPresenter
 import org.iplantc.de.analysis.client.views.AnalysisStepsView;
 import org.iplantc.de.analysis.client.views.dialogs.AnalysisSharingDialog;
 import org.iplantc.de.analysis.client.views.dialogs.AnalysisStepsInfoDialog;
-import org.iplantc.de.analysis.client.views.sharing.AnalysisSharingView;
 import org.iplantc.de.analysis.client.views.sharing.AnalysisSharingViewImpl;
 import org.iplantc.de.analysis.client.views.widget.AnalysisSearchField;
 import org.iplantc.de.client.events.EventBus;
@@ -20,7 +19,6 @@ import org.iplantc.de.client.events.diskResources.OpenFolderEvent;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.analysis.AnalysisStepsInfo;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
-import org.iplantc.de.client.sharing.SharingPresenter;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.collaborators.client.util.CollaboratorsUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -191,11 +189,6 @@ public class AnalysesPresenterImpl implements
 
     private AnalysisFilter currentFilter;
 
-    private SharingPresenter sharingPresenter;
-    private AnalysisSharingView sharingView;
-
-
-
     private final ListStore<Analysis> listStore;
 
     private final AnalysesView view;
@@ -323,6 +316,11 @@ public class AnalysesPresenterImpl implements
     }
 
     @Override
+    public void setFilterInView(AnalysisFilter filter) {
+        view.setFilterInView(filter);
+    }
+
+    @Override
     public void goToSelectedAnalysisFolder(final Analysis selectedAnalysis) {
         // Request disk resource window
         eventBus.fireEvent(new OpenFolderEvent(selectedAnalysis.getResultFolderId(), true));
@@ -340,8 +338,8 @@ public class AnalysesPresenterImpl implements
 
     @Override
     public void onShareSelected(List<Analysis> selected) {
-        sharingView = new AnalysisSharingViewImpl();
-        sharingPresenter = new AnalysisSharingPresenter(analysisService,
+        AnalysisSharingViewImpl sharingView = new AnalysisSharingViewImpl();
+        AnalysisSharingPresenter sharingPresenter = new AnalysisSharingPresenter(analysisService,
                                                         selected,
                                                         sharingView,
                                                         collaboratorsUtil,
@@ -353,8 +351,13 @@ public class AnalysesPresenterImpl implements
 
     @Override
     public void setCurrentFilter(AnalysisFilter filter) {
-       this.currentFilter = filter;
-       loadAnalyses(currentFilter);
+        if(filter == null) {
+            currentFilter =filter;
+            return;
+        } else if(!(filter.equals(this.currentFilter))) {
+            currentFilter = filter;
+            loadAnalyses(currentFilter);
+        }
     }
 
     @Override

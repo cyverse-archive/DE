@@ -76,6 +76,10 @@
     (when-not (util/uuid? app-id)
       (.getAppToolListing agave app-id)))
 
+  (getAppInputIds [_ app-id]
+    (when-not (util/uuid? app-id)
+      (.getAppInputIds agave app-id)))
+
   (formatPipelineTasks [_ pipeline]
     (pipelines/format-pipeline-tasks agave pipeline))
 

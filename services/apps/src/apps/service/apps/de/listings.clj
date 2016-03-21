@@ -441,3 +441,10 @@
   [{:keys [username]} app-id]
   (or (amp/get-category-id-for-app username app-id (workspace-favorites-app-category-index))
       shared-with-me-id))
+
+(defn get-app-input-ids
+  "Gets the list of parameter IDs corresponding to input files."
+  [app-id]
+  (->> (amp/get-app-parameters app-id)
+       (filter (comp amp/param-ds-input-types :type))
+       (mapv #(str (:step_id %) "_" (:id %)))))

@@ -63,7 +63,7 @@ public abstract class NotificationCallback implements AsyncCallback<String> {
                             PayloadAnalysis.class, payload).as();
                     String analysisAction = analysisPayload.getAction();
 
-                    if ("job_status_change".equals(analysisAction)) {
+                    if ("job_status_change".equals(analysisAction) || "share".equals(analysisAction)) {
                         msg.setContext(payload.getPayload());
                     } else {
                         GWT.log("Unhandled Analysis action type!!");

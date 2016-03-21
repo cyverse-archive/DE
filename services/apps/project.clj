@@ -31,6 +31,8 @@
                  [org.iplantc/service-logging "5.2.5.0"]
                  [me.raynes/fs "1.4.6"]
                  [mvxcvi/clj-pgp "0.8.0"]]
+  :eastwood {:exclude-namespaces [apps.protocols :test-paths]
+             :linters [:wrong-arity :wrong-ns-form :wrong-pre-post :wrong-tag :misplaced-docstrings]}
   :plugins [[lein-ring "0.9.6"]
             [lein-swank "1.4.4"]
             [test2junit "1.1.3"]

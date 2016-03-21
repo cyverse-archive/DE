@@ -30,6 +30,7 @@
   (getAppTaskListing [_ app-id])
   (getAppToolListing [_ app-id])
   (getAppUi [_ app-id])
+  (getAppInputIds [_ app-id])
   (addPipeline [_ pipeline])
   (formatPipelineTasks [_ pipeline])
   (updatePipeline [_ pipeline])

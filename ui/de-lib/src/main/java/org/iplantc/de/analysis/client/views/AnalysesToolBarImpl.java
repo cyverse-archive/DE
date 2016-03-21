@@ -160,6 +160,7 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
         searchField.filterByAnalysisId(analysisId, name);
         //reset filter. Users need to set Filter to ALL to go back...
         filterCombo.setValue(null);
+        presenter.setCurrentFilter(null);
     }
 
     @Override
@@ -167,6 +168,7 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
         searchField.filterByParentId(analysisId);
         //reset filter. Users need to set Filter to ALL to go back...
         filterCombo.setValue(null);
+        presenter.setCurrentFilter(null);
     }
 
     @Override
@@ -179,7 +181,7 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
         final boolean canCancelSelection = canCancelSelection(currentSelection);
         final boolean canDeleteSelection = canDeleteSelection(currentSelection);
         boolean isOwner = isOwner(currentSelection);
-        boolean isShare = isSharable(currentSelection);
+        boolean can_share = isSharable(currentSelection);
 
         boolean goToFolderEnabled, viewParamsEnabled, relaunchEnabled, cancelEnabled, deleteEnabled;
         boolean renameEnabled, updateCommentsEnabled, shareEnabled;
@@ -205,7 +207,7 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
 
                 renameEnabled = isOwner;
                 updateCommentsEnabled = isOwner;
-                shareEnabled = isOwner && isShare;
+                shareEnabled = isOwner && can_share;
                 break;
 
             default:
@@ -215,7 +217,7 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
                 relaunchEnabled = false;
                 cancelEnabled = canCancelSelection && isOwner;
                 deleteEnabled = canDeleteSelection && isOwner;
-                shareEnabled = isOwner && isShare;
+                shareEnabled = isOwner && can_share;
                 renameEnabled = false;
                 updateCommentsEnabled = false;
         }
@@ -339,6 +341,7 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
             filterCombo.setValue(AnalysisFilter.ALL);
         } else {
             filterCombo.setValue(null);
+            presenter.setCurrentFilter(null);
         }
     }
 
@@ -462,6 +465,11 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
 
     void applyFilter(AnalysisFilter filter) {
         presenter.setCurrentFilter(filter);
+    }
+
+    @Override
+    public void setFilterInView(AnalysisFilter filter) {
+        filterCombo.setValue(filter);
     }
 
     @UiHandler("shareCollabMI")

@@ -7,6 +7,7 @@ import org.iplantc.de.analysis.client.events.selection.AnalysisAppSelectedEvent;
 import org.iplantc.de.analysis.client.events.selection.AnalysisCommentSelectedEvent;
 import org.iplantc.de.analysis.client.events.selection.AnalysisNameSelectedEvent;
 import org.iplantc.de.analysis.client.gin.factory.AnalysisToolBarFactory;
+import org.iplantc.de.analysis.client.models.AnalysisFilter;
 import org.iplantc.de.analysis.client.views.dialogs.AnalysisCommentsDialog;
 import org.iplantc.de.analysis.shared.AnalysisModule;
 import org.iplantc.de.client.models.analysis.Analysis;
@@ -160,6 +161,11 @@ public class AnalysesViewImpl extends Composite implements AnalysesView,
                 grid.getView().ensureVisible(listStore.indexOf(selectedAnalyses.get(0)), 0, false);
             }
         }
+    }
+
+    @Override
+    public void setFilterInView(AnalysisFilter filter) {
+        toolBar.setFilterInView(filter);
     }
 
     @Override
