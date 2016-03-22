@@ -6,8 +6,8 @@ if [ -z "$DOCKER_USER" ]; then
 	DOCKER_USER=discoenv
 fi
 
-docker run --rm \
+docker run --rm -t \
 	-v $(pwd):/build \
 	-w /build \
 	$DOCKER_USER/buildenv:latest \
-	gb test -v
+	bash -c 'gb test -v | tee /dev/tty | go-junit-report > test-results.xml'
