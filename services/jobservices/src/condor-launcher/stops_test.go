@@ -13,6 +13,33 @@ import (
 	"github.com/streadway/amqp"
 )
 
+var client *messaging.Client
+
+func shouldrun() bool {
+	if os.Getenv("RUN_INTEGRATION_TESTS") != "" {
+		return true
+	}
+	return false
+}
+
+func GetClient(t *testing.T) *messaging.Client {
+	var err error
+	if client != nil {
+		return client
+	}
+	client, err = messaging.NewClient(messagingURI(), false)
+	if err != nil {
+		t.Error(err)
+	}
+	client.SetupPublishing(messaging.JobsExchange)
+	go client.Listen()
+	return client
+}
+
+func messagingURI() string {
+	return "amqp://guest:guest@rabbit:5672/"
+}
+
 var (
 	listing = []byte(`RecentBlockReadKbytes = 0
 IpcJobId = "generated_script"
@@ -490,6 +517,9 @@ func TestStopHandler(t *testing.T) {
 		err        error
 		marshalled []byte
 	)
+	if !shouldrun() {
+		return
+	}
 	inittests(t)
 	stopMsg := messaging.StopRequest{
 		InvocationID: "b788569f-6948-4586-b5bd-5ea096986331",
@@ -515,7 +545,8 @@ func TestStopHandler(t *testing.T) {
 		io.Copy(&buf, r)
 		coord <- buf.String()
 	}()
-	stopHandler(msg)
+	client := GetClient(t)
+	stopHandler(client)(msg)
 	w.Close()
 	actual := <-coord
 	if !strings.Contains(actual, "Running condor_q...") {

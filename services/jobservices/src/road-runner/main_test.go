@@ -10,8 +10,6 @@ import (
 	"github.com/streadway/amqp"
 )
 
-var client *messaging.Client
-
 func GetClient(t *testing.T) *messaging.Client {
 	var err error
 	if client != nil {

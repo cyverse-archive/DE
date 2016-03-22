@@ -4,11 +4,11 @@ import (
 	"configurate"
 	"fmt"
 	"io"
+	"logcabin"
 	"model"
 	"os"
 	"strconv"
 	"strings"
-	"logcabin"
 
 	"github.com/fsouza/go-dockerclient"
 )

@@ -73,7 +73,6 @@ output = script-output.log
 error = script-error.log
 log = condor.log
 request_disk = {{.RequestDisk}}
-kill_sig = 15
 +IpcUuid = "{{.InvocationID}}"
 +IpcJobId = "generated_script"
 +IpcUsername = "{{.Submitter}}"{{if .Group}}
