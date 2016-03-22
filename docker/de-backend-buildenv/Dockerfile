@@ -3,7 +3,7 @@ MAINTAINER John Wregglesworth <wregglej@gmail.com>
 ARG git_commit
 LABEL org.iplantc.de.buildenv.git-ref="$git_commit"
 
-ENV GOOS=linux GOARCH=amd64 GOVERSION=1.5.3
+ENV GOOS=linux GOARCH=amd64 GOVERSION=1.6
 ENV MVNVERSION=3.3.3
 ENV MVNURL=http://apache.claz.org/maven/maven-3/$MVNVERSION/binaries/apache-maven-$MVNVERSION-bin.tar.gz
 
