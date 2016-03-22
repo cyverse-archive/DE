@@ -13,8 +13,7 @@ import (
 )
 
 var (
-	EOS    = errors.New("EOS")
-	logger = logcabin.New()
+	EOS = errors.New("EOS")
 )
 
 // Databaser is a type used to interact with the database.
@@ -180,7 +179,7 @@ func (o *objectCursor) Next() ([]model.AVURecord, error) {
 	}
 	err := o.rows.Err()
 	if err == nil && !o.anyRows {
-		logger.Print("No metadata was found in the configured database.")
+		logcabin.Info.Print("No metadata was found in the configured database.")
 		return nil, EOS
 	}
 	return retval, err

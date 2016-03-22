@@ -10,10 +10,6 @@ import (
 	"templeton/model"
 )
 
-var (
-	logger = logcabin.New()
-)
-
 // Elasticer is a type used to interact with Elasticsearch
 type Elasticer struct {
 	es      *elastic.Client
@@ -78,7 +74,7 @@ func (e *Elasticer) PurgeType(d *database.Databaser, indexer *BulkIndexer, t str
 	for {
 		docs, err := scanner.Next()
 		if err == elastic.EOS {
-			logger.Printf("Finished all rows for purge of %s.", t)
+			logcabin.Info.Printf("Finished all rows for purge of %s.", t)
 			break
 		}
 		if err != nil {
@@ -89,15 +85,15 @@ func (e *Elasticer) PurgeType(d *database.Databaser, indexer *BulkIndexer, t str
 			for _, hit := range docs.Hits.Hits {
 				avus, err := d.GetObjectAVUs(hit.Id)
 				if err != nil {
-					logger.Printf("Error processing %s/%s: %s", t, hit.Id, err)
+					logcabin.Error.Printf("Error processing %s/%s: %s", t, hit.Id, err)
 					continue
 				}
 				if len(avus) == 0 {
-					logger.Printf("Deleting %s/%s", t, hit.Id)
+					logcabin.Info.Printf("Deleting %s/%s", t, hit.Id)
 					req := elastic.NewBulkDeleteRequest().Index(e.index).Type(t).Routing(hit.Id).Id(hit.Id)
 					err = indexer.Add(req)
 					if err != nil {
-						logger.Printf("Error enqueuing delete of %s/%s: %s", t, hit.Id, err)
+						logcabin.Error.Printf("Error enqueuing delete of %s/%s: %s", t, hit.Id, err)
 					}
 				}
 			}
@@ -113,13 +109,13 @@ func (e *Elasticer) PurgeIndex(d *database.Databaser) {
 
 	err := e.PurgeType(d, indexer, "file_metadata")
 	if err != nil {
-		logger.Fatal(err)
+		logcabin.Error.Fatal(err)
 		return
 	}
 
 	err = e.PurgeType(d, indexer, "folder_metadata")
 	if err != nil {
-		logger.Fatal(err)
+		logcabin.Error.Fatal(err)
 		return
 	}
 }
@@ -131,33 +127,33 @@ func (e *Elasticer) IndexEverything(d *database.Databaser) {
 
 	cursor, err := d.GetAllObjects()
 	if err != nil {
-		logger.Fatal(err)
+		logcabin.Error.Fatal(err)
 	}
 	defer cursor.Close()
 
 	for {
 		ids, err := cursor.Next()
 		if err == database.EOS {
-			logger.Print("Done all rows, finishing.")
+			logcabin.Info.Print("Done all rows, finishing.")
 			break
 		}
 		if err != nil {
-			logger.Print(err)
+			logcabin.Error.Print(err)
 			break
 		}
 
 		formatted, err := model.AVUsToIndexedObject(ids)
 		if err != nil {
-			logger.Print(err)
+			logcabin.Error.Print(err)
 			break
 		}
 		indexed_type := fmt.Sprintf("%s_metadata", ids[0].TargetType)
-		logger.Printf("Indexing %s/%s", indexed_type, formatted.ID)
+		logcabin.Info.Printf("Indexing %s/%s", indexed_type, formatted.ID)
 
 		req := elastic.NewBulkIndexRequest().Index(e.index).Type(indexed_type).Parent(formatted.ID).Id(formatted.ID).Doc(formatted)
 		err = indexer.Add(req)
 		if err != nil {
-			logger.Print(err)
+			logcabin.Error.Print(err)
 			break
 		}
 	}
