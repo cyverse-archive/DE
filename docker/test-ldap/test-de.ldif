@@ -1,0 +1,182 @@
+dn: ou=Users, dc=example, dc=org
+objectClass: organizationalUnit
+ou: Users
+
+dn: ou=Groups, dc=example, dc=org
+objectClass: organizationalUnit
+ou: Groups
+
+dn: cn=testde1, ou=Users, dc=example, dc=org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: testde1
+sn: testde1
+uid: testde1
+givenName: testde1
+mail: testde1@mail.org
+userPassword: testde1
+
+dn: cn=testde2, ou=Users, dc=example, dc=org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: testde2
+sn: testde2
+uid: testde2
+givenName: testde2
+mail: testde2@mail.org
+userPassword: testde2
+
+dn: cn=testde3, ou=Users, dc=example, dc=org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: testde3
+sn: testde3
+uid: testde3
+givenName: testde3
+mail: testde3@mail.org
+userPassword: testde3
+
+dn: cn=testde4, ou=Users, dc=example, dc=org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: testde4
+sn: testde4
+uid: testde4
+givenName: testde4
+mail: testde4@mail.org
+userPassword: testde4
+
+dn: cn=testde5, ou=Users, dc=example, dc=org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: testde5
+sn: testde5
+uid: testde5
+givenName: testde5
+mail: testde5@mail.org
+userPassword: testde5
+
+dn: cn=testde6, ou=Users, dc=example, dc=org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: testde6
+sn: testde6
+uid: testde6
+givenName: testde6
+mail: testde6@mail.org
+userPassword: testde6
+
+dn: cn=testde7, ou=Users, dc=example, dc=org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: testde7
+sn: testde7
+uid: testde7
+givenName: testde7
+mail: testde7@mail.org
+userPassword: testde7
+
+dn: cn=testde8, ou=Users, dc=example, dc=org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: testde8
+sn: testde8
+uid: testde8
+givenName: testde8
+mail: testde8@mail.org
+userPassword: testde8
+
+dn: cn=testde9, ou=Users, dc=example, dc=org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: testde9
+sn: testde9
+uid: testde9
+givenName: testde9
+mail: testde9@mail.org
+userPassword: testde9
+
+dn: cn=testde10, ou=Users, dc=example, dc=org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: testde10
+sn: testde10
+uid: testde10
+givenName: testde10
+mail: testde10@mail.org
+userPassword: testde10
+
+dn: cn=ROLE_group1, ou=Groups, dc=example, dc=org
+objectclass: posixGroup
+cn: group1
+objectClass: top
+gidNumber: 103
+memberUid: testde1
+memberUid: testde2
+memberUid: testde3
+memberUid: testde4
+memberUid: testde5
+memberUid: testde6
+memberUid: testde7
+memberUid: testde8
+memberUid: testde9
+memberUid: testde10
+
+dn: cn=ROLE_group2, ou=Groups, dc=example, dc=org
+objectclass: posixGroup
+cn: group2
+objectClass: top
+gidNumber: 102
+memberUid: testde8
+memberUid: testde9
+memberUid: testde10
+
+dn: cn=ROLE_group3, ou=Groups, dc=example, dc=org
+objectclass: posixGroup
+cn: group3
+objectClass: top
+gidNumber: 101
+memberUid: testde1
+memberUid: testde2
+memberUid: testde3
+
+dn: cn=ROLE_group4, ou=Groups, dc=example, dc=org
+objectclass: posixGroup
+cn: group4
+objectClass: top
+gidNumber: 100
+memberUid: testde4
+memberUid: testde5
+memberUid: testde6
+
+dn: cn=de_grouper, ou=Users, dc=example, dc=org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: de_grouper
+sn: de_grouper
+uid: de_grouper
+givenName: de_grouper
+mail: de_grouper@mail.org
+userPassword: de_grouper
