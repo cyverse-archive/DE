@@ -23,7 +23,7 @@
 
 (defn update-metadata-template-avus
   "Adds or Updates AVUs associated with a Metadata Template for the given user's data item."
-  [user-id data-id data-type template-id {avus :avus}]
+  [user-id data-id data-type template-id {avus :avus} & {:keys [publish-update] :or {publish-update true}}]
   (templates/validate-template-exists template-id)
   (let [avus (map (partial find-existing-metadata-template-avu data-id) avus)
         existing-avus (filter :id avus)
@@ -35,7 +35,7 @@
       (when (not-empty new-avus)
         (persistence/add-metadata-template-avus user-id new-avus data-type))
       (persistence/set-template-instances data-id template-id (map :id avus)))
-    (amqp/publish-metadata-update user-id data-id)
+    (when publish-update (amqp/publish-metadata-update user-id data-id))
     (persistence/metadata-template-avu-list data-id template-id)))
 
 (defn remove-metadata-template-avu
@@ -137,10 +137,10 @@
   "Sets AVUs for the given user's data item."
   [user-id data-id data-type {template-id :template_id avus :avus :as metadata}]
   (transaction
-    (let [avu-ids (set (map :id (:avus (when template-id
+    (let [avu-ids (set (map :id
+                            (:avus (when template-id
                                          (update-metadata-template-avus
-                                           user-id data-id data-type template-id metadata)))))]
+                                           user-id data-id data-type template-id metadata :publish-update false)))))]
       (persistence/remove-orphaned-avus data-id avu-ids)))
-  ;; this one will duplicate the one sent by update-metadata-template-avus but we want to catch any orphaned AVUs that were removed and make sure it's outside of a transaction
   (amqp/publish-metadata-update user-id data-id)
   (list-metadata-template-avus data-id))
