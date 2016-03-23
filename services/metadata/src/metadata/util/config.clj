@@ -74,6 +74,32 @@
   "metadata.db.password")
 ;;;End database connection information
 
+;;;AMQP connection information
+(cc/defprop-str amqp-host
+  "The hostname for the AMQP server"
+  [props config-valid configs]
+  "metadata.amqp.host")
+
+(cc/defprop-int amqp-port
+  "The port number for the AMQP server"
+  [props config-valid configs]
+  "metadata.amqp.port")
+
+(cc/defprop-str amqp-user
+  "The username for the AMQP server"
+  [props config-valid configs]
+  "metadata.amqp.user")
+
+(cc/defprop-str amqp-pass
+  "The password for the AMQP user"
+  [props config-valid configs]
+  "metadata.amqp.password")
+
+(cc/defprop-str amqp-exchange
+  "The exchange name for the AMQP server"
+  [props config-valid configs]
+  "metadata.amqp.exchange.name")
+
 (defn- validate-config
   "Validates the configuration settings after they've been loaded."
   []

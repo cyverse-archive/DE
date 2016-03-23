@@ -4,6 +4,7 @@
         [slingshot.slingshot :only [throw+]])
   (:require [clojure.tools.logging :as log]
             [clojure-commons.assertions :as assertions]
+            [metadata.amqp :as amqp]
             [metadata.persistence.avu :as persistence]
             [metadata.services.templates :as templates]))
 
@@ -34,6 +35,7 @@
       (when (not-empty new-avus)
         (persistence/add-metadata-template-avus user-id new-avus data-type))
       (persistence/set-template-instances data-id template-id (map :id avus)))
+    (amqp/publish-metadata-update user-id data-id)
     (persistence/metadata-template-avu-list data-id template-id)))
 
 (defn remove-metadata-template-avu
@@ -51,9 +53,11 @@
              :target_id data-id}
         existing-avu (persistence/find-existing-metadata-template-avu avu)]
     (if existing-avu
-      (transaction
-       (persistence/remove-avu-template-instances template-id [avu-id])
-       (persistence/remove-avu avu-id))
+      (do
+        (transaction
+          (persistence/remove-avu-template-instances template-id [avu-id])
+          (persistence/remove-avu avu-id))
+        (amqp/publish-metadata-update user-id data-id))
       (throw+ {:type :clojure-commons.exception/not-found
                :avu avu})))
   nil)
@@ -71,6 +75,7 @@
     (transaction
      (persistence/remove-avu-template-instances template-id avu-ids)
      (persistence/remove-avus avu-ids))
+    (amqp/publish-metadata-update user-id data-id)
     nil))
 
 (defn- find-metadata-template-attributes
@@ -135,5 +140,7 @@
     (let [avu-ids (set (map :id (:avus (when template-id
                                          (update-metadata-template-avus
                                            user-id data-id data-type template-id metadata)))))]
-      (persistence/remove-orphaned-avus data-id avu-ids))
-    (list-metadata-template-avus data-id)))
+      (persistence/remove-orphaned-avus data-id avu-ids)))
+  ;; this one will duplicate the one sent by update-metadata-template-avus but we want to catch any orphaned AVUs that were removed and make sure it's outside of a transaction
+  (amqp/publish-metadata-update user-id data-id)
+  (list-metadata-template-avus data-id))
