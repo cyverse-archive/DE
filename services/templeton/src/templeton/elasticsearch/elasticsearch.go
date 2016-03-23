@@ -132,7 +132,7 @@ func (e *Elasticer) IndexEverything(d *database.Databaser) {
 	defer cursor.Close()
 
 	for {
-		ids, err := cursor.Next()
+		avus, err := cursor.Next()
 		if err == database.EOS {
 			logcabin.Info.Print("Done all rows, finishing.")
 			break
@@ -142,12 +142,12 @@ func (e *Elasticer) IndexEverything(d *database.Databaser) {
 			break
 		}
 
-		formatted, err := model.AVUsToIndexedObject(ids)
+		formatted, err := model.AVUsToIndexedObject(avus)
 		if err != nil {
 			logcabin.Error.Print(err)
 			break
 		}
-		indexed_type := fmt.Sprintf("%s_metadata", ids[0].TargetType)
+		indexed_type := fmt.Sprintf("%s_metadata", avus[0].TargetType)
 		logcabin.Info.Printf("Indexing %s/%s", indexed_type, formatted.ID)
 
 		req := elastic.NewBulkIndexRequest().Index(e.index).Type(indexed_type).Parent(formatted.ID).Id(formatted.ID).Doc(formatted)
@@ -162,4 +162,40 @@ func (e *Elasticer) IndexEverything(d *database.Databaser) {
 func (e *Elasticer) Reindex(d *database.Databaser) {
 	e.PurgeIndex(d)
 	e.IndexEverything(d)
+}
+
+func (e *Elasticer) DeleteOne(id string) {
+	logcabin.Info.Printf("Deleting metadata for %s", id)
+	_, err := e.es.Delete().Index(e.index).Type("file_metadata,folder_metadata").Parent(id).Id(id).Do()
+	if err != nil {
+		logcabin.Error.Printf("Error deleting metadata for %s: %s", id, err)
+	}
+	return
+}
+
+// IndexOne takes a database and one ID and reindexes that one entity. It should not die or throw errors.
+func (e *Elasticer) IndexOne(d *database.Databaser, id string) {
+	avus, err := d.GetObjectAVUs(id)
+	if err != nil {
+		logcabin.Error.Print(err)
+		return
+	}
+
+	formatted, err := model.AVUsToIndexedObject(avus)
+	if err == model.NoAVUs {
+		e.DeleteOne(id)
+		return
+	}
+	if err != nil {
+		logcabin.Error.Print(err)
+		return
+	}
+
+	indexed_type := fmt.Sprintf("%s_metadata", avus[0].TargetType)
+	logcabin.Info.Printf("Indexing %s/%s", indexed_type, formatted.ID)
+	_, err = e.es.Index().Index(e.index).Type(indexed_type).Parent(formatted.ID).Id(formatted.ID).BodyJson(formatted).Do()
+	if err != nil {
+		logcabin.Error.Print(err)
+	}
+	return
 }
