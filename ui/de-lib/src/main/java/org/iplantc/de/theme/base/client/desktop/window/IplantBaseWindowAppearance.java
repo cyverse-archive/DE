@@ -5,6 +5,7 @@ import org.iplantc.de.desktop.client.views.windows.IplantWindowBase;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.DataResource;
 import com.google.gwt.resources.client.ImageResource;
 
 import com.sencha.gxt.widget.core.client.Header;
@@ -63,6 +64,14 @@ public class IplantBaseWindowAppearance implements IplantWindowBase.IplantWindow
 
         @Source("org/iplantc/de/theme/base/client/desktop/window/button_restore_hover.png")
         ImageResource restoreBtnHoverImage();
+
+        @DataResource.MimeType("font/opentype")
+        @Source("org/iplantc/de/theme/base/client/desktop/Texta_Font/Texta-Bold.otf")
+        DataResource textaBold();
+
+        @DataResource.MimeType("font/opentype")
+        @Source("org/iplantc/de/theme/base/client/desktop/Texta_Font/Texta-Regular.otf")
+        DataResource textaRegular();
     }
 
     private final IplantWindowResources resources;

@@ -7,6 +7,7 @@ import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.DataResource;
 import com.google.gwt.resources.client.ImageResource;
 
 import com.sencha.gxt.widget.core.client.button.IconButton.IconConfig;
@@ -63,6 +64,10 @@ public class BaseDesktopAppearance implements DesktopView.DesktopAppearance {
 
         @Source("org/iplantc/de/theme/base/client/desktop/user.png")
         ImageResource userPrefImg();
+
+        @DataResource.MimeType("font/opentype")
+        @Source("org/iplantc/de/theme/base/client/desktop/Texta_Font/Texta-Bold.otf")
+        DataResource textaBold();
     }
 
     private final DesktopResources resources;
