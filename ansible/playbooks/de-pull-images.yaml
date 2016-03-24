@@ -355,6 +355,24 @@
       service_name: "{{templeton_periodic.compose_service}}"
       service_name_short: "{{templeton_periodic.service_name_short}}"
 
+- name: Update templeton-incremental
+  hosts: templeton-incremental:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - templeton
+    - templeton-incremental
+  roles:
+    - role: util-cfg-docker-pull-configs
+      when: not parasitic
+      service_name: "{{templeton_incremental.compose_service}}"
+      service_name_short: "{{templeton_incremental.service_name_short}}"
+    - role: util-cfg-docker-pull
+      when: not parasitic
+      service_name: "{{templeton_incremental.compose_service}}"
+      service_name_short: "{{templeton_incremental.service_name_short}}"
+
 - name: Update terrain
   hosts: terrain:&systems
   become: true

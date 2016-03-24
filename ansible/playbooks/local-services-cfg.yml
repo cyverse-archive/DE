@@ -98,6 +98,11 @@
       dest: "{{service_conf_dir}}/templeton-periodic.yaml"
 
     - role: util-cfg-service
+      service_name_short: "{{templeton_incremental.service_name_short}}"
+      src: "templeton-incremental.yaml.j2"
+      dest: "{{service_conf_dir}}/templeton-incremental.yaml"
+
+    - role: util-cfg-service
       src: "ui/de-application.yaml.j2"
       dest: "{{service_conf_dir}}/de-application.yaml"
       service_name_short: "{{de.service_name_short}}"

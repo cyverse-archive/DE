@@ -603,6 +603,16 @@ templeton_periodic:
   container_name: templeton-periodic
   log_file: templeton-docker.log
 
+templeton_incremental:
+  host: "{{ groups['templeton-incremental'][0] }}"
+  port:
+  service_name_short: templeton-incremental
+  compose_service: templeton_incremental
+  service_description: templeton incremental service
+  image_name: templeton
+  container_name: templeton-incremental
+  log_file: templeton-docker.log
+
 tree_parser_base: http://portnoy.iplantcollaborative.org/parseTree
 
 tree_urls_log_file: /logs/tree-urls.log
