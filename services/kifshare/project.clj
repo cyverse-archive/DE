@@ -7,7 +7,7 @@
       (string/trim (:out (sh "git" "rev-parse" "HEAD")))
       ""))
 
-(defproject org.iplantc/kifshare "5.2.5.0"
+(defproject org.iplantc/kifshare "5.2.6.0"
   :description "CyVerse Quickshare for iRODS"
   :url "https://github.com/cyverse/DE"
 
@@ -20,12 +20,12 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/tools.logging "0.3.1"]
                  [medley "0.5.5"]
-                 [org.iplantc/clj-jargon "5.2.5.0"
+                 [org.iplantc/clj-jargon "5.2.6.0"
                    :exclusions [[org.slf4j/slf4j-log4j12]
                                 [log4j]]]
-                 [org.iplantc/service-logging "5.2.5.0"]
-                 [org.iplantc/clojure-commons "5.2.5.0"]
-                 [org.iplantc/common-cli "5.2.5.0"]
+                 [org.iplantc/service-logging "5.2.6.0"]
+                 [org.iplantc/clojure-commons "5.2.6.0"]
+                 [org.iplantc/common-cli "5.2.6.0"]
                  [me.raynes/fs "1.4.6"]
                  [cheshire "5.5.0"
                    :exclusions [[com.fasterxml.jackson.dataformat/jackson-dataformat-cbor]

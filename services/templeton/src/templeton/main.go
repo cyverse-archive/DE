@@ -16,7 +16,6 @@ import (
 )
 
 var (
-	logger             = logcabin.New()
 	version            = flag.Bool("version", false, "Print version information")
 	mode               = flag.String("mode", "", "One of 'periodic', 'incremental', or 'full'. Required except for --version.")
 	cfgPath            = flag.String("config", "", "Path to the configuration file. Required except for --version.")
@@ -31,6 +30,7 @@ var (
 
 func init() {
 	flag.Parse()
+	logcabin.Init("templeton", "templeton")
 }
 
 // AppVersion prints version information to stdout
@@ -67,7 +67,7 @@ func checkMode() {
 func initConfig(cfgPath string) {
 	err := configurate.Init(cfgPath)
 	if err != nil {
-		logger.Fatal(err)
+		logcabin.Error.Fatal(err)
 	}
 }
 
@@ -75,11 +75,11 @@ func loadElasticsearchConfig() {
 	var err error
 	elasticsearchBase, err = configurate.C.String("elasticsearch.base")
 	if err != nil {
-		logger.Fatal(err)
+		logcabin.Error.Fatal(err)
 	}
 	elasticsearchIndex, err = configurate.C.String("elasticsearch.index")
 	if err != nil {
-		logger.Fatal(err)
+		logcabin.Error.Fatal(err)
 	}
 }
 
@@ -87,7 +87,7 @@ func loadAMQPConfig() {
 	var err error
 	amqpURI, err = configurate.C.String("amqp.uri")
 	if err != nil {
-		logger.Fatal(err)
+		logcabin.Error.Fatal(err)
 	}
 }
 
@@ -95,18 +95,18 @@ func loadDBConfig() {
 	var err error
 	dbURI, err = configurate.C.String("db.uri")
 	if err != nil {
-		logger.Fatal(err)
+		logcabin.Error.Fatal(err)
 	}
 }
 
 func doFullMode(es *elasticsearch.Elasticer, d *database.Databaser) {
-	logger.Println("Full indexing mode selected.")
+	logcabin.Info.Println("Full indexing mode selected.")
 
 	es.Reindex(d)
 }
 
 func doPeriodicMode(es *elasticsearch.Elasticer, d *database.Databaser, client *messaging.Client) {
-	logger.Println("Periodic indexing mode selected.")
+	logcabin.Info.Println("Periodic indexing mode selected.")
 
 	go client.Listen()
 
@@ -149,14 +149,14 @@ func main() {
 	loadElasticsearchConfig()
 	es, err := elasticsearch.NewElasticer(elasticsearchBase, elasticsearchIndex)
 	if err != nil {
-		logger.Fatal(err)
+		logcabin.Error.Fatal(err)
 	}
 	defer es.Close()
 
 	loadDBConfig()
 	d, err := database.NewDatabaser(dbURI)
 	if err != nil {
-		logger.Fatal(err)
+		logcabin.Error.Fatal(err)
 	}
 
 	if *mode == "full" {
@@ -168,7 +168,7 @@ func main() {
 
 	client, err := messaging.NewClient(amqpURI, true)
 	if err != nil {
-		logger.Fatal(err)
+		logcabin.Error.Fatal(err)
 	}
 	defer client.Close()
 
@@ -177,7 +177,7 @@ func main() {
 	}
 
 	if *mode == "incremental" {
-		logger.Println("Incremental indexing mode selected.")
+		logcabin.Info.Println("Incremental indexing mode selected.")
 
 		// TODO: AMQP listener triggering incremental updates
 	}

@@ -1,6 +1,8 @@
+@def TEXTA_BOLD textaBold;
+
 @font-face {
     font-family: TextaBold;
-    src: url(../Texta_Font/Texta-Bold.otf);
+    src: TEXTA_BOLD format("opentype");
 }
 
 @sprite .restoreBtn {

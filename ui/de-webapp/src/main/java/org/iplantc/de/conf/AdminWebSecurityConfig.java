@@ -145,7 +145,7 @@ public class AdminWebSecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
             .antMatchers("/**/logout", "/**/logged-out", "/*.css", "/*.png").permitAll()
             .anyRequest().authenticated()
-            .anyRequest().hasAnyRole(authorizedGroups)
+            .anyRequest().hasAnyAuthority(authorizedGroups.split("\\s*,\\s*"))
             .and().exceptionHandling().authenticationEntryPoint(adminCasAuthenticationEntryPoint()).and()
             .exceptionHandling().accessDeniedPage("/access-denied");
         /*

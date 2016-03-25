@@ -1,4 +1,4 @@
-(defproject org.iplantc/mescal "5.2.5.0"
+(defproject org.iplantc/mescal "5.2.6.0"
   :description "A Clojure client library for the Agave API."
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD Standard License"
@@ -9,7 +9,7 @@
                  [clj-time "0.7.0"]
                  [com.cemerick/url "0.1.1"]
                  [medley "0.5.3"]
-                 [org.iplantc/authy "5.2.5.0"]
-                 [org.iplantc/clojure-commons "5.2.5.0"]
-                 [org.iplantc/service-logging "5.2.5.0"]
+                 [org.iplantc/authy "5.2.6.0"]
+                 [org.iplantc/clojure-commons "5.2.6.0"]
+                 [org.iplantc/service-logging "5.2.6.0"]
                  [slingshot "0.10.3"]])

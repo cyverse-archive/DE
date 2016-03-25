@@ -3,6 +3,7 @@ FROM discoenv/facepalm:dev
 COPY setup-pg-hbaconf.sh /docker-entrypoint-initdb.d/
 COPY setup-dev-database.sh /bin/setup-dev-database.sh
 COPY update-dev-database.sh /bin/update-dev-database.sh
+COPY setup-grouper-database.sh /bin/setup-grouper-database.sh
 COPY pgpass /root/.pgpass
 RUN chmod 0600 /root/.pgpass
 RUN mkdir /data
