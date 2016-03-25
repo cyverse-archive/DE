@@ -1,7 +1,7 @@
 FROM jeanblanchard/java:jdk-7
 MAINTAINER Dennis Roberts <dennis@cyverse.org>
 ARG git_commit=unknown
-LABEL org.iplantc.de.javabase.git-ref="$git_commit"
+LABEL org.iplantc.de.grouper.git-ref="$git_commit"
 
 # Copy the configuration files to temporary locations.
 RUN mkdir -p /tmp/configs/api /tmp/configs/ui /tmp/configs/ws
