@@ -18,9 +18,12 @@
   "Creates an instance of TicketAdminService, which provides
    access to utility methods for performing operations on tickets.
    Probably doesn't need to be called directly."
-  [cm user]
-  (let [tsf (TicketServiceFactoryImpl. (:accessObjectFactory cm))]
-    (.instanceTicketAdminService tsf (override-user-account cm user (temp-password cm user)))))
+  [cm username]
+  (let [tsf (TicketServiceFactoryImpl. (:accessObjectFactory cm))
+        user (if (= username (:user cm))
+                 (:irodsAccount cm)
+                 (override-user-account cm username (temp-password cm username)))]
+    (.instanceTicketAdminService tsf user)))
 
 (defn set-ticket-options
   "Sets the optional settings for a ticket, such as the expiration date
