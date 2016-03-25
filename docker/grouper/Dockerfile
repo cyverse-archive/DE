@@ -4,15 +4,7 @@ ARG git_commit=unknown
 LABEL org.iplantc.de.grouper.git-ref="$git_commit"
 
 # Copy the configuration files to temporary locations.
-RUN mkdir -p /tmp/configs/api /tmp/configs/ui /tmp/configs/ws
-COPY api/grouper.properties /tmp/configs/api
-COPY api/grouper.hibernate.properties /tmp/configs/api
-COPY api/grouper-loader.properties /tmp/configs/api
-COPY api/subject.properties /tmp/configs/api
-COPY api/log4j.properties /tmp/configs/api
-COPY ui/build.properties /tmp/configs/ui
-COPY ws/build.properties /tmp/configs/ws
-COPY ws/grouper-ws.properties /tmp/configs/ws
+COPY configs /tmp/configs
 
 # Environment variables for ant.
 ENV ANT_HOME /opt/apache-ant
