@@ -12,9 +12,9 @@ Ansible 2.x
 Role Variables
 --------------
 
-|   Variable              | required | default                 | choices | comments                                |
-|-------------------------|----------|-------------------------|---------|-----------------------------------------|
-| grouper_config_base_dir | no       | ""                      |         | The directory to place the files under. |
+|   Variable         | required | default | choices | comments                                |
+|--------------------|----------|---------|---------|-----------------------------------------|
+| grouper_config_dir | yes      |         |         | The directory to place the files under. |
 
 Dependencies
 ------------
@@ -26,7 +26,7 @@ Example Playbook
 
     - hosts: grouper
       vars:
-          grouper_config_base_dir: /path/to/config/base
+          grouper_config_dir: /path/to/config/base
       roles:
         - role: grouper-config
 

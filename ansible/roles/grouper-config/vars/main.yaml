@@ -1,1 +1,0 @@
-base: "{{ grouper_config_base_dir | default('') }}"
