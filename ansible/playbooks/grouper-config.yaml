@@ -1,0 +1,5 @@
+---
+- name: Configure Grouper
+  hosts: grouper
+  roles:
+      - role: grouper-config
