@@ -39,7 +39,7 @@
 (defn- init-irods
   []
   (irods/init (cfg/irods-host)
-              (cfg/irods-port)
+              (str (cfg/irods-port))
               (cfg/irods-user)
               (cfg/irods-pass)
               (cfg/irods-home)
