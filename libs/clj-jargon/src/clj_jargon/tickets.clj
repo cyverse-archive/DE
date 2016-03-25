@@ -14,7 +14,7 @@
                                     TicketClientSupport
                                     Ticket]))
 
-(defn ^TicketAdminService ticket-admin-service
+(defn- ^TicketAdminService ticket-admin-service
   "Creates an instance of TicketAdminService, which provides
    access to utility methods for performing operations on tickets.
    Probably doesn't need to be called directly."
@@ -68,6 +68,16 @@
    identifier."
   [cm user ticket-id]
   (.isTicketInUse (ticket-admin-service cm user) ticket-id))
+
+(defn ^Boolean public-ticket?
+  "Checks to see if the provided ticket ID is publicly accessible."
+  [cm user ticket-id]
+
+  (let [tas    (ticket-admin-service cm user)
+        groups (.listAllGroupRestrictionsForSpecifiedTicket tas ticket-id 0)]
+    (if (contains? (set groups) "public")
+      true
+      false)))
 
 (defn ^Ticket ticket-by-id
   "Looks up the ticket by the provided ticket-id string and
