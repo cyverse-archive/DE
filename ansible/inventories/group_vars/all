@@ -282,11 +282,8 @@ gpg_home_dir:
 group_config:
 
 grouper:
-  service_name: iplant-grouper.service
-  service_name_short: iplant-grouper
-  compose_service: iplant_grouper
-  service_description: Grouper UI and Web Services
-  image_name: iplant-grouper
+  compose_service: grouper
+  image_repo: "{{ docker.user }}/grouper:2.2.2"
   init_image: sharkbait
   log_driver: "{{ docker.log_driver }}"
   max_heap_size: 2048M
@@ -302,11 +299,8 @@ grouper:
     user:
     pass:
   http_server:
-    service_name: grouper-nginx.service
-    service_name_short: grouper-nginx
     compose_service: grouper_nginx
-    service_description: Grouper nginx
-    image_name: "{{ de.http_server.image_name }}"
+    image_repo: "{{ de.http_server.image_name }}"
     container_name: grouper-nginx
     log_driver: "{{ docker.log_driver }}"
     ssl:
