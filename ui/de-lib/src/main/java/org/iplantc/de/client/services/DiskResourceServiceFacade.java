@@ -97,21 +97,23 @@ public interface DiskResourceServiceFacade {
 
     /**
      * Calls the move folder and move file services for the list of given disk resource ids.
-     * 
-     * @param diskResources list of file and folder ids to move.
+     *
+     * @param sourceFolder the source folder of disk resources to move.
      * @param destFolder the destination folder where the disk resources will be moved.
+     * @param diskResources list of file and folder ids to move.
      */
-    void moveDiskResources(final List<DiskResource> diskResources,
+    void moveDiskResources(final Folder sourceFolder,
                            final Folder destFolder,
+                           final List<DiskResource> diskResources,
                            AsyncCallback<DiskResourceMove> callback);
 
     /**
      * Calls the move folder and move file services for moving contents of a given folder.
      * 
-     * @param sourceFolderId id of the source folder
+     * @param sourceFolder the source folder of disk resources to move.
      * @param destFolder the destination folder where the disk resources will be moved.
      */
-    void moveContents(final String sourceFolderId,
+    void moveContents(final Folder sourceFolder,
                       final Folder destFolder,
                       AsyncCallback<DiskResourceMove> callback);
 

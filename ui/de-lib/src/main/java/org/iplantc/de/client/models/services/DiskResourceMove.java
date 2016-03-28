@@ -29,11 +29,11 @@ public interface DiskResourceMove {
     /**
      * In case when contents of the folder needs to moved (i.e select all)
      * 
-     * @param id id of the parent folder
+     * @param path path of the parent folder
      */
     @PropertyName("source")
-    void setSelectedFolderId(String id);
+    void setSourcePath(String path);
     
     @PropertyName("source")
-    String getSelectedFolderId();
+    String getSourcePath();
 }
