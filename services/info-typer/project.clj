@@ -28,4 +28,5 @@
   :profiles {:dev     {:resource-paths ["conf/test"]}
              :uberjar {:aot :all}}
   :plugins [[test2junit "1.1.3"]]
-  :uberjar-exclusions [#"LICENSE" #"NOTICE"])
+  :uberjar-exclusions [#"LICENSE" #"NOTICE"]
+  :jvm-opts ["-Dlogback.configurationFile=/etc/iplant/de/logging/info-typer-logging.xml"])
