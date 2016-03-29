@@ -18,6 +18,12 @@ var (
 
 	//ReindexTemplatesKey is the routing/binding key for templates reindex messages.
 	ReindexTemplatesKey = "index.templates"
+
+	//IncrementalExchange is the name of the exchange that incremental update info is passed around on.
+	IncrementalExchange = "de"
+
+	//IncrementalKey is the routing/binding key for incremental updates
+	IncrementalKey = "metadata.update"
 )
 
 // MessageHandler defines a type for amqp.Delivery handlers.

@@ -4,6 +4,7 @@
         [slingshot.slingshot :only [throw+]])
   (:require [clojure.tools.logging :as log]
             [clojure-commons.assertions :as assertions]
+            [metadata.amqp :as amqp]
             [metadata.persistence.avu :as persistence]
             [metadata.services.templates :as templates]))
 
@@ -22,7 +23,7 @@
 
 (defn update-metadata-template-avus
   "Adds or Updates AVUs associated with a Metadata Template for the given user's data item."
-  [user-id data-id data-type template-id {avus :avus}]
+  [user-id data-id data-type template-id {avus :avus} & {:keys [publish-update] :or {publish-update true}}]
   (templates/validate-template-exists template-id)
   (let [avus (map (partial find-existing-metadata-template-avu data-id) avus)
         existing-avus (filter :id avus)
@@ -34,6 +35,7 @@
       (when (not-empty new-avus)
         (persistence/add-metadata-template-avus user-id new-avus data-type))
       (persistence/set-template-instances data-id template-id (map :id avus)))
+    (when publish-update (amqp/publish-metadata-update user-id data-id))
     (persistence/metadata-template-avu-list data-id template-id)))
 
 (defn remove-metadata-template-avu
@@ -51,9 +53,11 @@
              :target_id data-id}
         existing-avu (persistence/find-existing-metadata-template-avu avu)]
     (if existing-avu
-      (transaction
-       (persistence/remove-avu-template-instances template-id [avu-id])
-       (persistence/remove-avu avu-id))
+      (do
+        (transaction
+          (persistence/remove-avu-template-instances template-id [avu-id])
+          (persistence/remove-avu avu-id))
+        (amqp/publish-metadata-update user-id data-id))
       (throw+ {:type :clojure-commons.exception/not-found
                :avu avu})))
   nil)
@@ -71,6 +75,7 @@
     (transaction
      (persistence/remove-avu-template-instances template-id avu-ids)
      (persistence/remove-avus avu-ids))
+    (amqp/publish-metadata-update user-id data-id)
     nil))
 
 (defn- find-metadata-template-attributes
@@ -132,8 +137,10 @@
   "Sets AVUs for the given user's data item."
   [user-id data-id data-type {template-id :template_id avus :avus :as metadata}]
   (transaction
-    (let [avu-ids (set (map :id (:avus (when template-id
+    (let [avu-ids (set (map :id
+                            (:avus (when template-id
                                          (update-metadata-template-avus
-                                           user-id data-id data-type template-id metadata)))))]
-      (persistence/remove-orphaned-avus data-id avu-ids))
-    (list-metadata-template-avus data-id)))
+                                           user-id data-id data-type template-id metadata :publish-update false)))))]
+      (persistence/remove-orphaned-avus data-id avu-ids)))
+  (amqp/publish-metadata-update user-id data-id)
+  (list-metadata-template-avus data-id))
