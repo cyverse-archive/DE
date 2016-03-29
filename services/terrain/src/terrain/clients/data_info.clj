@@ -170,12 +170,10 @@
     (raw/move-single user path-uuid dest)))
 
 (defn move
-  "Uses the data-info single and bulk mover endpoints to move an item or many items into a new directory."
+  "Uses the data-info bulk mover endpoint to move items into a new directory."
   [{:keys [user]} {:keys [sources dest]}]
   (validators/not-superuser user)
-  (if (= 1 (count sources))
-    (move-single user (first sources) dest)
-    (raw/move-multi user sources dest)))
+  (raw/move-multi user sources dest))
 
 (defn move-contents
   "Uses the data-info set-children-directory-name endpoint to move the contents of one directory

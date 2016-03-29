@@ -11,16 +11,6 @@
         [ring.util.response :only [status]]
         [clojure-commons.error-codes]))
 
-(defn public-ticket?
-  [cm user ticket-id]
-  (log/debug "entered kifshare.tickets/public-ticket?")
-
-  (let [tas    (jtickets/ticket-admin-service cm user)
-        groups (.listAllGroupRestrictionsForSpecifiedTicket tas ticket-id 0)]
-    (if (contains? (set groups) "public")
-      true
-      false)))
-
 (defn check-ticket
   "Makes sure that the ticket actually exists, is not expired,
    and is not used up. Returns nil on success, throws an error
@@ -44,7 +34,7 @@
                  :ticket-id ticket-id
                  :num-uses (str (.getUsesLimit ticket-obj))})
 
-        (not (public-ticket? cm (username) ticket-id))
+        (not (jtickets/public-ticket? cm (username) ticket-id))
         (throw+ {:error_code ERR_TICKET_NOT_PUBLIC
                  :ticket-id ticket-id})))))
 

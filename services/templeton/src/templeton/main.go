@@ -6,11 +6,13 @@ import (
 	"messaging"
 
 	"configurate"
+	"encoding/json"
 	"fmt"
 	"os"
 
 	"templeton/database"
 	"templeton/elasticsearch"
+	"templeton/model"
 
 	"github.com/streadway/amqp"
 )
@@ -105,6 +107,18 @@ func doFullMode(es *elasticsearch.Elasticer, d *database.Databaser) {
 	es.Reindex(d)
 }
 
+// A spinner to keep the program running, since client.Listen() needs to be in a goroutine.
+func spin() {
+	spinner := make(chan int)
+	for {
+		select {
+		case <-spinner:
+			fmt.Println("Exiting")
+			break
+		}
+	}
+}
+
 func doPeriodicMode(es *elasticsearch.Elasticer, d *database.Databaser, client *messaging.Client) {
 	logcabin.Info.Println("Periodic indexing mode selected.")
 
@@ -120,15 +134,28 @@ func doPeriodicMode(es *elasticsearch.Elasticer, d *database.Databaser, client *
 		del.Ack(false)
 	})
 
-	// spinner in order to keep the program running since client.Listen() is in a goroutine.
-	spinner := make(chan int)
-	for {
-		select {
-		case <-spinner:
-			fmt.Println("Exiting")
-			break
+	spin()
+}
+
+func doIncrementalMode(es *elasticsearch.Elasticer, d *database.Databaser, client *messaging.Client) {
+	logcabin.Info.Println("Incremental indexing mode selected.")
+
+	go client.Listen()
+
+	client.AddConsumer(messaging.IncrementalExchange, "direct", "templeton.incremental", messaging.IncrementalKey, func(del amqp.Delivery) {
+		logcabin.Info.Printf("Recieved message: [%s] [%s]", del.RoutingKey, del.Body)
+
+		var m model.UpdateMessage
+		err := json.Unmarshal(del.Body, &m)
+		if err != nil {
+			logcabin.Error.Print(err)
+			del.Reject(!del.Redelivered)
 		}
-	}
+		es.IndexOne(d, m.ID)
+		del.Ack(false)
+	})
+
+	spin()
 }
 
 func main() {
@@ -177,8 +204,6 @@ func main() {
 	}
 
 	if *mode == "incremental" {
-		logcabin.Info.Println("Incremental indexing mode selected.")
-
-		// TODO: AMQP listener triggering incremental updates
+		doIncrementalMode(es, d, client)
 	}
 }

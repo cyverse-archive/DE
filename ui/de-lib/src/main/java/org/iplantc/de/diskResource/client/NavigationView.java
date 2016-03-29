@@ -100,6 +100,8 @@ public interface NavigationView extends IsWidget,
 
         Folder getFolderByPath(String path);
 
+        Folder getParent(Folder child);
+
         Folder getSelectedFolder();
 
         Folder getSelectedUploadFolder();

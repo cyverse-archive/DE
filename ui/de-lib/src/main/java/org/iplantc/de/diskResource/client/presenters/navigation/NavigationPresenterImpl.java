@@ -1,6 +1,7 @@
 package org.iplantc.de.diskResource.client.presenters.navigation;
 
 import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.events.diskResources.DiskResourcesMovedEvent;
 import org.iplantc.de.client.events.diskResources.FolderRefreshedEvent;
 import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.IsMaskable;
@@ -16,7 +17,6 @@ import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourceRenamedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourcesDeletedEvent;
-import org.iplantc.de.diskResource.client.events.DiskResourcesMovedEvent;
 import org.iplantc.de.diskResource.client.events.FolderCreatedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.events.RequestImportFromUrlEvent;
@@ -202,17 +202,20 @@ public class NavigationPresenterImpl implements
 
     @Override
     public void onDiskResourcesMoved(DiskResourcesMovedEvent event) {
+        if (event.isMoveContents()) {
+            // If a folder's contents was moved, then the src and dest folders will already be refreshed.
+            return;
+        }
+
         List<DiskResource> resourcesToMove = event.getResourcesToMove();
         Folder destinationFolder = event.getDestinationFolder();
+        Folder srcFolder = event.getSrcFolder();
         Folder selectedFolder = getSelectedFolder();
-        // moved contents only not the folder itself
-        if (event.isMoveContents()) {
-            reloadTreeStoreFolderChildren(destinationFolder);
-            reloadTreeStoreFolderChildren(selectedFolder);
-        } else if (resourcesToMove.contains(selectedFolder)) {
-            selectedFolderMovedFromNavTree(selectedFolder, destinationFolder);
+
+        if (diskResourceUtil.contains(resourcesToMove, selectedFolder)) {
+            selectedFolderMovedFromNavTree(destinationFolder);
         } else {
-            diskResourcesMovedFromGrid(resourcesToMove, selectedFolder, destinationFolder);
+            diskResourcesMovedFromGrid(resourcesToMove, selectedFolder, srcFolder, destinationFolder);
         }
     }
 
@@ -335,6 +338,11 @@ public class NavigationPresenterImpl implements
             }
         }
         return null;
+    }
+
+    @Override
+    public Folder getParent(Folder child) {
+        return treeStore.getParent(child);
     }
 
     @Override
@@ -494,53 +502,24 @@ public class NavigationPresenterImpl implements
 
     private void diskResourcesMovedFromGrid(List<DiskResource> resourcesToMove,
                                             Folder selectedFolder,
+                                            Folder srcFolder,
                                             Folder destinationFolder) {
-        if (diskResourceUtil.containsFolder(resourcesToMove)) {
-            // Refresh the destination folder, since it has gained a child.
-            if (diskResourceUtil.isDescendantOfFolder(destinationFolder, selectedFolder)) {
-                removeChildren(destinationFolder);
-            } else {
-                /*
-                 * Refresh the selected folder since it has lost a child. This will also reload the
-                 * selected folder's contents in the grid.
-                 */
-                reloadTreeStoreFolderChildren(selectedFolder);
-                // Refresh the destination folder since it has gained a child.
-                reloadTreeStoreFolderChildren(destinationFolder);
-                return;
+        // If a folder was moved, then the src and dest folders will already be refreshed.
+        if (!diskResourceUtil.containsFolder(resourcesToMove)) {
+            String selectedFolderId = selectedFolder.getId();
+            if (destinationFolder.getId().equals(selectedFolderId)
+                || srcFolder.getId().equals(selectedFolderId)) {
+                // Refresh the selected folder's contents.
+                setSelectedFolder((HasPath)selectedFolder);
             }
         }
-
-        // Refresh the selected folder's contents.
-        setSelectedFolder((HasPath)selectedFolder);
     }
 
-    private void selectedFolderMovedFromNavTree(Folder selectedFolder, Folder destinationFolder) {
-        /*
-         * If the selected folder happens to be one of the moved items, then view the destination by
-         * setting it as the selected folder.
-         */
-        Folder parentFolder = treeStore.getParent(selectedFolder);
-
-        if (diskResourceUtil.isDescendantOfFolder(parentFolder, destinationFolder)) {
-            /*
-             * The destination is under the parent, so if we prune the parent and set the destination as
-             * the selected folder, the parent will lazy-load down to the destination.
-             */
-            removeChildren(parentFolder);
-        } else if (diskResourceUtil.isDescendantOfFolder(destinationFolder, parentFolder)) {
-            /*
-             * The parent is under the destination, so we only need to view the destination folder's
-             * contents and refresh its children.
-             */
-            reloadTreeStoreFolderChildren(destinationFolder);
-        } else {
-            // Refresh the parent folder since it has lost a child.
-            reloadTreeStoreFolderChildren(parentFolder);
-            // Refresh the destination folder since it has gained a child.
-            reloadTreeStoreFolderChildren(destinationFolder);
-        }
-
+    /**
+     * If the selected folder happens to be one of the moved items, then view the destination by
+     * setting it as the selected folder.
+     */
+    private void selectedFolderMovedFromNavTree(Folder destinationFolder) {
         // View the destination folder's contents.
         setSelectedFolder((HasPath)destinationFolder);
     }

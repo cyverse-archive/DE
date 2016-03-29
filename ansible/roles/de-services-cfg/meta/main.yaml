@@ -127,6 +127,13 @@ dependencies:
       service_name_short: "{{templeton_periodic.service_name_short}}"
 
     - role: util-cfg-docker-pull-configs
+      service_name: "{{templeton_incremental.compose_service}}"
+      service_name_short: "{{templeton_incremental.service_name_short}}"
+    - role: util-cfg-docker-pull
+      service_name: "{{templeton_incremental.compose_service}}"
+      service_name_short: "{{templeton_incremental.service_name_short}}"
+
+    - role: util-cfg-docker-pull-configs
       service_name: "{{terrain.compose_service}}"
       service_name_short: "{{terrain.service_name_short}}"
     - role: util-cfg-docker-pull
