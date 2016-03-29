@@ -987,16 +987,6 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     }
 
     @Override
-    public void deleteMetadataTemplateAvus(DiskResource resource,
-                                           DiskResourceMetadataTemplate templateAvus,
-                                           AsyncCallback<String> callback) {
-        String address = deProperties.getDataMgmtBaseUrl() + resource.getId() + "/template-avus/" //$NON-NLS-1$
-                + templateAvus.getId();
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(DELETE, address);
-        callService(wrapper, callback);
-    }
-
-    @Override
     public void copyMetadata(String srcUUID,
                               Splittable paths,
                               boolean override,
@@ -1026,15 +1016,6 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.getPayload());
         callService(wrapper, callback);
-
-    }
-
-    @Override
-    public void uploadBulkMetadata(String template_id,
-                                   String destFolder,
-                                   boolean force,
-                                   AsyncCallback<String> callback) {
-        // TODO Auto-generated method stub
 
     }
 

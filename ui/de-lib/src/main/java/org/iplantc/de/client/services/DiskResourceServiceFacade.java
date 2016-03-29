@@ -310,10 +310,6 @@ public interface DiskResourceServiceFacade {
      */
     void shareWithAnonymous(final HasPaths diskResourcePaths, final AsyncCallback<String> callback);
 
-    void deleteMetadataTemplateAvus(final DiskResource resource,
-                                    final DiskResourceMetadataTemplate templateAvus,
-                                    final AsyncCallback<String> callback);
-
     /**
      * Copy metadata to list of files / folders
      * 
@@ -350,18 +346,6 @@ public interface DiskResourceServiceFacade {
     void createNcbiSraFolderStructure(Folder parentFolder,
                                       String[] foldersToCreate,
                                       AsyncCallback<String> callback);
-    
-    /**
-     * 
-     * @param template_id template to match when applying metadata
-     * @param destFolder folder containing files to which metadata will be applied
-     * @param force set true to overwrite metadata
-     * @param callback callback object
-     */
-    void uploadBulkMetadata(String template_id,
-                            String destFolder,
-                            boolean force,
-                            AsyncCallback<String> callback);
 
     /**
      * 
