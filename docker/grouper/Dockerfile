@@ -15,10 +15,11 @@ ENV ANT_URL $ANT_BASE/apache-ant-$ANT_VERSION-bin.tar.gz
 
 # Environment variables for tomcat.
 ENV CATALINA_HOME /opt/tomcat
+ENV TOMCAT_CONF /etc/tomcat
 ENV PATH $CATALINA_HOME/bin:$PATH
 ENV TOMCAT_MAJOR 7
-ENV TOMCAT_VERSION 7.0.68
-ENV TOMCAT_BASE https://www.apache.org/dist/tomcat
+ENV TOMCAT_VERSION 7.0.65
+ENV TOMCAT_BASE https://archive.apache.org/dist/tomcat
 ENV TOMCAT_TGZ apache-tomcat-$TOMCAT_VERSION.tar.gz
 ENV TOMCAT_TGZ_URL $TOMCAT_BASE/tomcat-$TOMCAT_MAJOR/v$TOMCAT_VERSION/bin/$TOMCAT_TGZ
 
@@ -76,6 +77,14 @@ RUN apk add --update curl \
     && mv "apache-tomcat-$TOMCAT_VERSION" "$CATALINA_HOME" \
     && cd "$CATALINA_HOME" \
     && rm bin/*.bat \
+    && mkdir -p "$TOMCAT_CONF" \
+    && mv "$CATALINA_HOME/conf/server.xml" "$TOMCAT_CONF/server.xml" \
+    && ln -s "$TOMCAT_CONF/server.xml" "$CATALINA_HOME/conf/server.xml" \
+    && mv "$CATALINA_HOME/conf/tomcat-users.xml" "$TOMCAT_CONF/tomcat-users.xml" \
+    && ln -s "$TOMCAT_CONF/tomcat-users.xml" "$CATALINA_HOME/conf/tomcat-users.xml" \
+    && rm -f "$CATALINA_HOME/bin/setenv.sh" \
+    && touch "$TOMCAT_CONF/setenv.sh" \
+    && ln -s "$TOMCAT_CONF/setenv.sh" "$CATALINA_HOME/bin/setenv.sh" \
     \
     && mkdir -p "$GROUPER_BASE" \
         "$GROUPER_LOGS" \
