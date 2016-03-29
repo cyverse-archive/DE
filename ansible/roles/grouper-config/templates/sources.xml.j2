@@ -81,6 +81,7 @@ Grouper's subject resolver configuration
       <param-name>SECURITY_AUTHENTICATION</param-name>
       <param-value>{{ grouper.subject_source.auth_type }}</param-value>
     </init-param>
+{% if grouper.subject_source.auth_type != 'None' %}
     <init-param>
       <param-name>SECURITY_PRINCIPAL</param-name>
       <param-value>{{ grouper.subject_source.principal }}</param-value>
@@ -89,6 +90,7 @@ Grouper's subject resolver configuration
       <param-name>SECURITY_CREDENTIALS</param-name>
       <param-value>{{ grouper.subject_source.credentials }}</param-value>
     </init-param>
+{% endif %}
     <init-param>
       <param-name>SubjectID_AttributeType</param-name>
       <param-value>uid</param-value>
