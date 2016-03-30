@@ -8,7 +8,7 @@ rabbit:
     container_name: rabbit
     net: jobservices
 dedb:
-    image: discoenv/unittest-dedb:jex-go
+    image: discoenv/unittest-dedb:dev
     container_name: dedb
     net: jobservices
 test:
