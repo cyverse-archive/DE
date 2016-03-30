@@ -1,0 +1,20 @@
+---
+- include: stop.yml
+  tags:
+    - condor-launcher
+    - stop
+
+- include: remove.yml
+  tags:
+    - condor-launcher
+    - remove
+
+- include: update.yml
+  tags:
+    - condor-launcher
+    - update
+
+- include:  start.yml
+  tags:
+    - condor-launcher
+    - start

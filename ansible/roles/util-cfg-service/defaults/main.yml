@@ -3,7 +3,7 @@
 service_conf_dir: "{{de_config_dir}}"
 service_cfg_file_name: "{{service_name_short}}.properties"
 group_name: "{{service_name_short}}"
-src: "{{service_name_short}}.properties.j2"
+src: "{{service_cfg_file_name}}.j2"
 dest: "{{service_conf_dir}}/{{service_cfg_file_name}}"
 group: root
 owner: root

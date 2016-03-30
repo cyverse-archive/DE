@@ -21,5 +21,10 @@ pom.xml
 .*.eld
 .nrepl-port
 apps.properties
+.hgignore
+CHANGELOG.md
+LICENSE
+README.md
+/doc/
 test2junit
 build.xml

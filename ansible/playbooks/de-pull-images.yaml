@@ -69,21 +69,6 @@
       service_name: "{{clockwork.compose_service}}"
       service_name_short: "{{clockwork.service_name_short}}"
 
-- name: Update clm
-  hosts: condor-log-monitor:&systems
-  become: true
-  gather_facts: false
-  tags:
-    - services
-    - condor-log-monitor
-  roles:
-    - role: util-cfg-docker-pull-configs
-      service_name: "{{condor_log_monitor.compose_service}}"
-      service_name_short: "{{condor_log_monitor.service_name_short}}"
-    - role: util-cfg-docker-pull
-      service_name: "{{condor_log_monitor.compose_service}}"
-      service_name_short: "{{condor_log_monitor.service_name_short}}"
-
 - name: Update data-info
   hosts: data-info:&systems
   become: true
@@ -245,20 +230,50 @@
       service_name: "{{iplant_groups.compose_service}}"
       service_name_short: "{{iplant_groups.service_name_short}}"
 
-- name: Update jex-events
-  hosts: jexevents:&systems
-  become: true
+- name: Update jex-adapter
+  hosts: jexevents
+  sudo: true
   gather_facts: false
   tags:
     - services
-    - jexevents
+    - jex-adapter
   roles:
     - role: util-cfg-docker-pull-configs
-      service_name: "{{jexevents.compose_service}}"
-      service_name_short: "{{jexevents.service_name_short}}"
+      service_name: jex_adapter
+      service_name_short: jex_adapter
     - role: util-cfg-docker-pull
-      service_name: "{{jexevents.compose_service}}"
-      service_name_short: "{{jexevents.service_name_short}}"
+      service_name: jex_adapter
+      service_name_short: jex_adapter
+
+- name: Update job-status-to-apps-adapter
+  hosts: jexevents
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - job-status-to-apps-adapter
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: job_status_to_apps_adapter
+      service_name_short: job_status_to_apps_adapter
+    - role: util-cfg-docker-pull
+      service_name: job_status_to_apps_adapter
+      service_name_short: job_status_to_apps_adapter
+
+- name: Update job-status-recorder
+  hosts: jexevents
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - job-status-recorder
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: job_status_recorder
+      service_name_short: job_status_recorder
+    - role: util-cfg-docker-pull
+      service_name: job_status_recorder
+      service_name_short: job_status_recorder
 
 - name: Update kifshare
   hosts: kifshare:&systems

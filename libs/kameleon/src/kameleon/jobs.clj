@@ -1,8 +1,10 @@
 (ns kameleon.jobs
   (:use [kameleon.entities]
-         [korma.core :exclude [update]]
-         [korma.db :only [transaction]]
-         [slingshot.slingshot :only [throw+]]))
+        [korma.core :exclude [update]]
+        [korma.db :only [transaction]]
+        [kameleon.uuids :only [uuidify]]
+        [kameleon.db :only [now-str]]
+        [slingshot.slingshot :only [throw+]]))
 
 (defn get-job-type-id
   "Fetches the primary key for the job type with the given name."
@@ -54,3 +56,41 @@
                                    :status
                                    :job_type_id
                                    :app_step_number]))))
+
+(defn job-updates
+  "Returns a list of all of the job status updates received for a job id"
+  [job-id]
+  (select job-status-updates
+          (where {:external_id [in (subselect :job_steps
+                                           (fields :external_id)
+                                           (where {:job_id (uuidify job-id)})
+                                           (modifier "DISTINCT"))]})))
+
+(defn job-step-updates
+  "Returns a list of all of the job update received for the job step"
+  [external-id]
+  (select job-status-updates
+          (where {:external_id external-id})
+          (order :sent_on :DESC)))
+
+(defn- update->date-completed
+  [update]
+  (let [status (clojure.string/lower-case (:status update))]
+    (cond
+      (= status "submitted") ""
+      (= status "running")   ""
+      (= status "completed") (str (:sent_on update))
+      (= status "failed")    (str (:sent_on update))
+      :else                  (str (:sent_on update)))))
+
+(defn get-job-state
+  "Returns a map in the following format:
+     {:status \"state\"
+      :enddate \"enddate\"}"
+  [external-id]
+  (let [state (first (job-step-updates external-id))]
+    (if state
+      {:status  (:state update)
+       :enddate (update->date-completed update)}
+      {:status "Failed"
+       :enddate (now-str)})))

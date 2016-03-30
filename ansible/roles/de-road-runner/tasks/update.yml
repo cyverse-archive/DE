@@ -1,0 +1,22 @@
+---
+- name: pull jobservices image
+  shell: docker pull discoenv/jobservices:{{docker.tag}}
+
+- name: pull config image
+  shell: docker pull gims.iplantcollaborative.org:5000/de-configs-{{environment_name}}:{{docker.tag}}
+
+- name: install road-runner
+  shell: docker run --rm -v /usr/local/bin:/road-runner --entrypoint "cp" discoenv/jobservices:{{docker.tag}} /bin/road-runner /road-runner/road-runner
+
+- name: remove config container
+  shell: docker rm -v road-runner-configs
+  ignore_errors: true
+
+- name: create config container
+  shell: docker run --name road-runner-configs gims.iplantcollaborative.org:5000/de-configs-{{environment_name}}:{{docker.tag}}
+
+- name: copy config to system
+  shell: docker run --rm -v /etc:/configs --volumes-from road-runner-configs alpine:3.2 cp /etc/iplant/de/jobservices.yml /configs/jobservices.yml
+
+- name: change permissions on jobservices.yml
+  file: path=/etc/jobservices.yml mode=0644

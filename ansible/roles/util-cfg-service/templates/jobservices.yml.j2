@@ -1,0 +1,28 @@
+amqp:
+  uri: amqp://{{amqp_user}}:{{amqp_password}}@{{amqp_broker.host}}:{{amqp_broker.port}}/de
+
+apps:
+  callbacks_uri: "{{apps.base}}/callbacks/de-job"
+
+condor:
+  condor_config: /etc/condor/condor_config
+  path_env_var: /opt/condor/bin/:/usr/bin/:/usr/local/bin/:/bin/
+  log_path: /tmp/
+  request_disk: 0
+  filter_files: .job.ad,.machine.ad,_condor_stderr,_condor_stdout,condor_exec.exe,.chirp_config,.chirp.config,logs/logs-stderr-output,logs/logs-stdout-output,config,job,iplant.cmd
+
+db:
+  uri: postgresql://{{db_user}}:{{db_password}}@{{db_host}}:{{db_port}}/{{db_name}}?sslmode=disable
+
+irods:
+  user: "{{irods.user}}"
+  pass: "{{irods.password}}"
+  host: "{{irods.host}}"
+  port: "{{irods.port}}"
+  base: "{{irods.home}}"
+  resc: "{{irods.default_resource}}"
+  zone: "{{irods.zone}}"
+
+porklock:
+  image: discoenv/porklock
+  tag: "{{docker.tag}}"

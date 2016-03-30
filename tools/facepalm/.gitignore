@@ -6,3 +6,7 @@ pom.xml
 .lein-deps-sum
 .lein-plugins
 *~
+database.tar.gz
+notification-db.tar.gz
+jex-db.tar.gz
+metadata-db.tar.gz

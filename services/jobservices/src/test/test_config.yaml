@@ -1,0 +1,46 @@
+amqp:
+  uri: amqp://guest:guest@rabbit:5672/
+  exchange:
+    name: jobs
+    type: topic
+    durable: true
+    autodelete: false
+    internal: false
+    exclusive: false
+    nowait: false
+
+porklock:
+  image: discoenv/echo
+  tag: latest
+
+manager:
+  listen_port: 31331
+  db_uri: postgres://de:notprod@jexdb:5432/jex?sslmode=disable
+  event_url: http://event.url.org
+  condor_mode_url: http://condor_mode_url.org
+
+monitor:
+  event_log: /path/to/event/log
+
+irods:
+  base: /iplant/home
+  user: wut
+  pass: wut
+  host: wut.iplantc.org
+  port: 1247
+  zone: iplant
+  resc: ""
+
+condor:
+  amqp:
+    launches_queue:
+      name: condor_launchers
+  porklock_image: discoenv/porklock
+  porklock_tag: dev
+  listen_port: 31330
+  log_path: /tmp/
+  filter_files: output-last-stderr
+  request_disk: 0
+  batch_group: batch_processing
+  condor_config: /etc/condor/condor_config
+  path_env_var: /usr/bin/:/usr/local/bin/:/bin/

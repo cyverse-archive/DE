@@ -1,6 +1,6 @@
 (ns apps.service.apps.de.jobs
   (:use [clojure-commons.file-utils :only [build-result-folder-path]]
-        [kameleon.jobs :only [get-job-type-id save-job save-job-step]]
+        [kameleon.jobs :only [get-job-type-id save-job save-job-step get-job-state]]
         [kameleon.queries :only [get-user-id]]
         [korma.core :only [sqlfn]]
         [korma.db :only [transaction]]
@@ -11,7 +11,6 @@
             [clojure.tools.logging :as log]
             [kameleon.db :as db]
             [apps.clients.jex :as jex]
-            [apps.clients.jex-events :as jex-events]
             [apps.persistence.app-metadata :as ap]
             [apps.persistence.jobs :as jp]
             [apps.service.apps.de.jobs.base :as jb]
@@ -144,7 +143,7 @@
 
 (defn get-job-step-status
   [{:keys [external-id]}]
-  (when-let [step (jex-events/get-job-state external-id)]
+  (when-let [step (get-job-state external-id)]
     {:status  (:status step)
      :enddate (:completion_date step)}))
 
