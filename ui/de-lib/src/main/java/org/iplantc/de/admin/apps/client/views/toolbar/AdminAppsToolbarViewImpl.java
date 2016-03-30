@@ -7,6 +7,7 @@ import org.iplantc.de.admin.apps.client.events.selection.DeleteCategorySelected;
 import org.iplantc.de.admin.apps.client.events.selection.MoveCategorySelected;
 import org.iplantc.de.admin.apps.client.events.selection.RenameCategorySelected;
 import org.iplantc.de.admin.apps.client.events.selection.RestoreAppSelected;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.BeforeAppSearchEvent;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
@@ -276,5 +277,19 @@ public class AdminAppsToolbarViewImpl extends Composite implements AdminAppsTool
     @UiFactory
     AppSearchField createAppSearchField() {
         return new AppSearchField(loader);
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        addCategory.ensureDebugId(baseID + Belphegor.AppIds.TOOLBAR_ADD);
+        categorizeApp.ensureDebugId(baseID + Belphegor.AppIds.TOOLBAR_CATEGORIZE);
+        deleteApp.ensureDebugId(baseID + Belphegor.AppIds.TOOLBAR_DELETEAPP);
+        deleteCat.ensureDebugId(baseID + Belphegor.AppIds.TOOLBAR_DELETECAT);
+        moveCategory.ensureDebugId(baseID + Belphegor.AppIds.TOOLBAR_MOVE);
+        renameCategory.ensureDebugId(baseID + Belphegor.AppIds.TOOLBAR_RENAME);
+        restoreApp.ensureDebugId(baseID + Belphegor.AppIds.TOOLBAR_RESTORE);
+        appSearch.setId(baseID + Belphegor.AppIds.TOOLBAR_SEARCH);
     }
 }

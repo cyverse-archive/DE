@@ -76,6 +76,8 @@ public interface AdminAppsView extends IsWidget {
         }
 
         void go(HasOneWidget container, HasId selectedAppCategory);
+
+        void setViewDebugId(String baseId);
     }
 
 }

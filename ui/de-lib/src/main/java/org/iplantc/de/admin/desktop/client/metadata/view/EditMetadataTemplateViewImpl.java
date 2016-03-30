@@ -1,6 +1,8 @@
 package org.iplantc.de.admin.desktop.client.metadata.view;
 
 import org.iplantc.de.admin.desktop.client.metadata.view.TemplateListingView.Presenter;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
+import org.iplantc.de.apps.widgets.client.view.editors.widgets.CheckBoxAdapter;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.MetadataTemplate;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateAttribute;
@@ -34,10 +36,11 @@ import com.sencha.gxt.core.client.resources.CommonStyles;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.StringLabelProvider;
-import com.sencha.gxt.dnd.core.client.GridDragSource;
-import com.sencha.gxt.dnd.core.client.GridDropTarget;
 import com.sencha.gxt.dnd.core.client.DND.Feedback;
 import com.sencha.gxt.dnd.core.client.DND.Operation;
+import com.sencha.gxt.dnd.core.client.GridDragSource;
+import com.sencha.gxt.dnd.core.client.GridDropTarget;
+import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
@@ -63,7 +66,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTemplateView {
+public class EditMetadataTemplateViewImpl extends Composite implements IsWidget, EditMetadataTemplateView {
 
     private static EditMetadataTemplateViewImplUiBinder uiBinder = GWT.create(EditMetadataTemplateViewImplUiBinder.class);
 
@@ -71,7 +74,6 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
                                                   UiBinder<Widget, EditMetadataTemplateViewImpl> {
     }
 
-    private final Widget widget;
     @UiField
     TextField tempName;
     @UiField
@@ -84,8 +86,7 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
     ColumnModel<MetadataTemplateAttribute> cm;
     @UiField
     VerticalLayoutContainer con;
-    @UiField
-    CheckBox chkDeleted;
+    @UiField CheckBoxAdapter chkDeleted;
 
     private final MetadataTemplateAttributeProperties mta_props;
     private Presenter presenter;
@@ -111,19 +112,28 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
         this.tasi_props = tasi_props;
         this.drFac = factory;
         this.appearance = appearance;
-        widget = uiBinder.createAndBindUi(this);
+        initWidget(uiBinder.createAndBindUi(this));
         createGridEditing();
         grid.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        chkDeleted.setText("Mark As Deleted");
         new GridDragSource<>(grid);
         GridDropTarget<MetadataTemplateAttribute> tar = new GridDropTarget<>(grid);
         tar.setAllowSelfAsSource(true);
         tar.setFeedback(Feedback.INSERT);
         tar.setOperation(Operation.MOVE);
+
+        ensureDebugId(Belphegor.MetadataIds.EDIT_DIALOG + Belphegor.MetadataIds.VIEW);
     }
 
     @Override
-    public Widget asWidget() {
-        return widget;
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        tempName.setId(baseID + Belphegor.MetadataIds.TEMPLATE_NAME);
+        addBtn.ensureDebugId(baseID + Belphegor.MetadataIds.ADD);
+        delBtn.ensureDebugId(baseID + Belphegor.MetadataIds.DELETE);
+        grid.ensureDebugId(baseID + Belphegor.MetadataIds.GRID);
+        chkDeleted.getCheckBox().ensureDebugId(baseID + Belphegor.MetadataIds.CHECK_DELETED);
     }
 
     @UiFactory

@@ -106,6 +106,8 @@ public interface SystemMessageView extends IsWidget, IsMaskable {
 
         void go(HasOneWidget container);
 
+        void setViewDebugId(String baseId);
+
         List<String> getAnnouncementTypes();
 
     }

@@ -2,6 +2,7 @@ package org.iplantc.de.pipelines.client.views;
 
 import org.iplantc.de.client.models.pipelines.Pipeline;
 import org.iplantc.de.client.models.pipelines.PipelineTask;
+import org.iplantc.de.pipelines.shared.Pipelines;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.GWT;
@@ -20,6 +21,7 @@ import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.SortDir;
 import com.sencha.gxt.data.shared.Store.StoreSortInfo;
+import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -32,7 +34,7 @@ import java.util.List;
  * @author psarando
  *
  */
-public class PipelineAppOrderViewImpl implements PipelineAppOrderView, Editor<Pipeline> {
+public class PipelineAppOrderViewImpl extends Composite implements PipelineAppOrderView, Editor<Pipeline> {
 
     @UiTemplate("PipelineAppOrderView.ui.xml")
     interface PipelineAppOrderUiBinder extends UiBinder<Widget, PipelineAppOrderViewImpl> {
@@ -40,16 +42,16 @@ public class PipelineAppOrderViewImpl implements PipelineAppOrderView, Editor<Pi
 
     private static PipelineAppOrderUiBinder uiBinder = GWT.create(PipelineAppOrderUiBinder.class);
     private static PipelineAppProperties pipelineAppProps = GWT.create(PipelineAppProperties.class);
-    private final Widget widget;
     private Presenter presenter;
 
     ListStoreEditor<PipelineTask> apps;
 
     public PipelineAppOrderViewImpl() {
-        widget = uiBinder.createAndBindUi(this);
+        initWidget(uiBinder.createAndBindUi(this));
 
         apps = new AppListStoreEditor(this);
         appOrderGrid.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
     }
 
     @UiField
@@ -99,11 +101,6 @@ public class PipelineAppOrderViewImpl implements PipelineAppOrderView, Editor<Pi
     }
 
     @Override
-    public Widget asWidget() {
-        return widget;
-    }
-
-    @Override
     public void setPresenter(Presenter presenter) {
         this.presenter = presenter;
     }
@@ -147,5 +144,12 @@ public class PipelineAppOrderViewImpl implements PipelineAppOrderView, Editor<Pi
         public void setDelegate(EditorDelegate<List<PipelineTask>> delegate) {
             this.delegate = delegate;
         }
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        appOrderGrid.ensureDebugId(baseID + Pipelines.Ids.APP_ORDER_GRID);
     }
 }

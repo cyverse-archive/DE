@@ -3,6 +3,7 @@ package org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs;
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
 import org.iplantc.de.admin.desktop.client.toolAdmin.events.SaveToolSelectedEvent;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.ToolAdminDetailsView;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.IsHideable;
 import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.client.models.tool.ToolAutoBeanFactory;
@@ -69,6 +70,8 @@ public class ToolAdminDetailsDialog extends IPlantDialog implements IsHideable,
     public void show(final Tool tool) {
         view.edit(tool);
         super.show();
+
+        ensureDebugId(Belphegor.ToolAdminIds.TOOL_ADMIN_DIALOG);
     }
 
     @Override
@@ -135,5 +138,14 @@ public class ToolAdminDetailsDialog extends IPlantDialog implements IsHideable,
         public void onSelect(SelectEvent event) {
             hide();
         }
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        getOkButton().ensureDebugId(baseID + Belphegor.ToolAdminIds.SAVE);
+
+        view.ensureDebugId(baseID + Belphegor.ToolAdminIds.DETAILS_VIEW);
     }
 }

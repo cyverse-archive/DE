@@ -1,6 +1,7 @@
 package org.iplantc.de.admin.desktop.client.toolRequest.view;
 
 import org.iplantc.de.admin.desktop.client.toolRequest.ToolRequestView;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.toolRequest.ToolRequest;
 import org.iplantc.de.client.models.toolRequest.ToolRequestAutoBeanFactory;
 import org.iplantc.de.client.models.toolRequest.ToolRequestStatus;
@@ -34,7 +35,7 @@ public class UpdateToolRequestDialog extends IPlantDialog {
     @UiTemplate("UpdateToolRequestPanel.ui.xml")
     interface UpdateToolRequestPanelUiBinder extends UiBinder<Widget, UpdateToolRequestDialog> {
     }
-
+    
     @UiField Label currentStatusLabel;
     @UiField SimpleComboBox<ToolRequestStatus> statusCombo;
     @UiField TextArea commentsEditor;
@@ -98,4 +99,21 @@ public class UpdateToolRequestDialog extends IPlantDialog {
         return trUpdate;
     }
 
+    @Override
+    public void show() {
+        super.show();
+        ensureDebugId(Belphegor.ToolRequestIds.TOOL_REQUEST_DIALOG);
+        getWidget().ensureDebugId(Belphegor.ToolRequestIds.TOOL_REQUEST_DIALOG + Belphegor.ToolRequestIds.VIEW);
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        getOkButton().ensureDebugId(baseID + Belphegor.ToolRequestIds.SUBMIT_BTN);
+        currentStatusLabel.ensureDebugId(baseID + Belphegor.ToolRequestIds.DIALOG_VIEW + Belphegor.ToolRequestIds.CURRENT_STATUS);
+        statusCombo.setId(baseID + Belphegor.ToolRequestIds.DIALOG_VIEW + Belphegor.ToolRequestIds.STATUS_COMBO);
+        commentsEditor.setId(baseID + Belphegor.ToolRequestIds.DIALOG_VIEW + Belphegor.ToolRequestIds.COMMENTS);
+        statusField.setId(baseID + Belphegor.ToolRequestIds.DIALOG_VIEW + Belphegor.ToolRequestIds.STATUS);
+    }
 }

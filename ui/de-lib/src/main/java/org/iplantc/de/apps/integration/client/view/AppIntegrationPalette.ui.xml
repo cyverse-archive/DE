@@ -25,7 +25,7 @@
 			<g:Image ui:field="group" resource="{icons.inputSection}"
 				styleName="{res.getStyle.grab}" />
 		</con:child>
-		<gxt:ContentPanel headingText="{strings.fileFolderCategoryTitle}"
+		<gxt:ContentPanel ui:field="fileFolderPanel" headingText="{strings.fileFolderCategoryTitle}"
 			collapsible="true" titleCollapse="true" expanded="true">
 			<gxt:tool>
 				<button:ToolButton ui:field="fileFolderCategoryHelpBtn" />
@@ -46,7 +46,7 @@
 			</con:VerticalLayoutContainer>
 		</gxt:ContentPanel>
 
-		<gxt:ContentPanel headingText="{strings.textNumericalInputCategoryTitle}"
+		<gxt:ContentPanel ui:field="textNumericalPanel" headingText="{strings.textNumericalInputCategoryTitle}"
 			collapsible="true" titleCollapse="true" expanded="true">
 			<gxt:tool>
 				<button:ToolButton ui:field="textNumericalInputCategoryHelpBtn" />
@@ -84,7 +84,7 @@
 			</con:VerticalLayoutContainer>
 		</gxt:ContentPanel>
 
-		<gxt:ContentPanel headingText="{strings.listsCategoryTitle}"
+		<gxt:ContentPanel ui:field="listPanel" headingText="{strings.listsCategoryTitle}"
 			collapsible="true" titleCollapse="true" expanded="true">
 			<gxt:tool>
 				<button:ToolButton ui:field="listsCategoryHelpBtn" />
@@ -111,7 +111,7 @@
 
 
 
-		<gxt:ContentPanel headingText="{strings.outputCategoryTitle}"
+		<gxt:ContentPanel ui:field="outputPanel" headingText="{strings.outputCategoryTitle}"
 			collapsible="true" titleCollapse="true" expanded="true">
 			<gxt:tool>
 				<button:ToolButton ui:field="outputCategoryHelpBtn" />
@@ -132,7 +132,7 @@
 			</con:VerticalLayoutContainer>
 		</gxt:ContentPanel>
 
-		<gxt:ContentPanel headingText="{strings.referenceGenomeCategoryTitle}"
+		<gxt:ContentPanel ui:field="referenceGenomePanel" headingText="{strings.referenceGenomeCategoryTitle}"
 			collapsible="true" titleCollapse="true" expanded="true">
 			<gxt:tool>
 				<button:ToolButton ui:field="referenceGenomeCategoryHelpBtn" />

@@ -67,7 +67,7 @@
 			</button:TextButton>
 		</toolbar:child>
           <toolbar:child>
-          <button:TextButton ui:field="share_menu" text="{appearance.share}">
+          <button:TextButton ui:field="shareMenuButton" text="{appearance.share}">
           <button:menu>
                    <menu:Menu ui:field="sharingMenu">
                                 <menu:MenuItem ui:field="shareCollab" enabled="false"

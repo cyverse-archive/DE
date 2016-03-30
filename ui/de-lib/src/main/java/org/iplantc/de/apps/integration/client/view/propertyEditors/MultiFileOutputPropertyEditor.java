@@ -149,6 +149,8 @@ public class MultiFileOutputPropertyEditor extends AbstractArgumentPropertyEdito
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
         label.ensureDebugId(baseID + PropertyPanelIds.LABEL);
+        isImplicit.getCheckBox().ensureDebugId(baseID + PropertyPanelIds.COMMAND_LINE);
+        doNotDisplay.getCheckBox().ensureDebugId(baseID + PropertyPanelIds.DO_NOT_DISPLAY);
         argumentOptionEditor.ensureDebugId(baseID + PropertyPanelIds.ARGUMENT_OPTION);
         requiredEditor.ensureDebugId(baseID + PropertyPanelIds.REQUIRED);
         omitIfBlank.ensureDebugId(baseID + PropertyPanelIds.OMIT_IF_BLANK);

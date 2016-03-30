@@ -2,6 +2,7 @@ package org.iplantc.de.admin.desktop.client.refGenome.presenter;
 
 import org.iplantc.de.admin.desktop.client.refGenome.RefGenomeView;
 import org.iplantc.de.admin.desktop.client.refGenome.service.ReferenceGenomeServiceFacade;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.apps.refGenome.ReferenceGenome;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
@@ -86,6 +87,11 @@ public class RefGenomePresenterImpl implements RefGenomeView.Presenter {
             }
         });
 
+    }
+
+    @Override
+    public void setViewDebugId(String baseId) {
+        view.asWidget().ensureDebugId(baseId + Belphegor.RefGenomeIds.VIEW);
     }
 
 }

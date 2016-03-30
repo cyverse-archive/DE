@@ -148,6 +148,8 @@ public class FolderOutputPropertyEditor extends AbstractArgumentPropertyEditor {
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
         label.ensureDebugId(baseID + PropertyPanelIds.LABEL);
+        isImplicit.getCheckBox().ensureDebugId(baseID + PropertyPanelIds.COMMAND_LINE);
+        defaultValueEditor.ensureDebugId(baseID + PropertyPanelIds.DEFAULT_VALUE);
         argumentOptionEditor.ensureDebugId(baseID + PropertyPanelIds.ARGUMENT_OPTION);
         doNotDisplay.ensureDebugId(baseID + PropertyPanelIds.DO_NOT_DISPLAY);
         requiredEditor.ensureDebugId(baseID + PropertyPanelIds.REQUIRED);

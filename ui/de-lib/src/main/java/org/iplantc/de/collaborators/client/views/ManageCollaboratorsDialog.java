@@ -41,13 +41,13 @@ public class ManageCollaboratorsDialog extends IPlantDialog {
         ManageCollaboratorsView view = new ManageCollaboratorsViewImpl(store, mode);
         p = new ManageCollaboratorsPresenter(view);
         p.go(this);
-        ensureDebugId(CollaboratorsModule.Ids.DIALOG);
     }
 
     @Override
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
         getWidget().ensureDebugId(baseID + CollaboratorsModule.Ids.VIEW);
+        getOkButton().ensureDebugId(baseID + CollaboratorsModule.Ids.OK);
     }
 
     private void initDialog() {
@@ -73,6 +73,13 @@ public class ManageCollaboratorsDialog extends IPlantDialog {
     protected void onHide() {
         p.cleanup();
         super.onHide();
+    }
+
+    @Override
+    public void show() {
+        super.show();
+
+        ensureDebugId(CollaboratorsModule.Ids.DIALOG);
     }
 
     public List<Collaborator> getSelectedCollaborators() {

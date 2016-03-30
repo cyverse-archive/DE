@@ -211,6 +211,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     private int unique_avu_id;
     private boolean valid;
     private MetadataView.Presenter presenter;
+    private String baseId;
 
     public DiskResourceMetadataViewImpl(boolean isEditable) {
 
@@ -228,7 +229,6 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         addMetadataButton.setEnabled(writable);
         deleteMetadataButton.disable();
         templateCombo.setEnabled(writable);
-        ensureDebugId(MetadataIds.METADATA_VIEW);
     }
 
     @Override
@@ -388,9 +388,12 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     @Override
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
+        this.baseId = baseID;
         addMetadataButton.ensureDebugId(baseID + MetadataIds.ADD_METADATA);
         deleteMetadataButton.ensureDebugId(baseID + MetadataIds.DELETE_METADATA);
         templateCombo.ensureDebugId(baseID + MetadataIds.TEMPLATES);
+
+        setUserMetadataDebugIds();
     }
 
     @UiFactory
@@ -526,6 +529,18 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         alc.setActiveWidget(templateForm);
         centerPanel.add(alc, new VerticalLayoutData(1, -1));
 
+        setTemplateFormDebugIds();
+        setUserMetadataDebugIds();
+    }
+
+    private void setUserMetadataDebugIds() {
+        userMetadataPanel.ensureDebugId(baseId + MetadataIds.USER_METADATA);
+        getCollapseBtn(userMetadataPanel).ensureDebugId(baseId + MetadataIds.USER_METADATA + MetadataIds.USER_METADATA_COLLAPSE);
+    }
+
+    private void setTemplateFormDebugIds() {
+        templateForm.ensureDebugId(baseId + MetadataIds.METADATA_TEMPLATE);
+        getCollapseBtn(templateForm).ensureDebugId(baseId + MetadataIds.METADATA_TEMPLATE + MetadataIds.METADATA_TEMPLATE_COLLAPSE);
     }
 
     private void buildTemplatePanel() {
@@ -766,6 +781,10 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         presenter.onTemplateSelected(templateInfo.getId());
         buildTemplateContainer();
         alc.mask(appearance.templateSelectedLoadingMask());
+    }
+
+    private Widget getCollapseBtn(ContentPanel panel) {
+        return panel.getHeader().getTool(0);
     }
 
 }

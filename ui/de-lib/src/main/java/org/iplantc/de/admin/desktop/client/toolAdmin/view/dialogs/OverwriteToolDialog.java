@@ -2,6 +2,7 @@ package org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs;
 
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews.ToolPublicAppListWindow;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.IsHideable;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppList;
@@ -57,5 +58,20 @@ public class OverwriteToolDialog extends IPlantDialog implements IsHideable {
         FlowLayoutContainer container = new FlowLayoutContainer();
         container.getScrollSupport().setScrollMode(ScrollSupport.ScrollMode.AUTO);
         return container;
+    }
+
+    @Override
+    public void show() {
+        super.show();
+
+        ensureDebugId(Belphegor.ToolAdminIds.OVERWRITE_TOOL_DIALOG);
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        getOkButton().ensureDebugId(baseID + Belphegor.ToolAdminIds.OKBTN);
+        publicAppListWindow.ensureDebugId(baseID + Belphegor.ToolAdminIds.PUBLIC_APPS);
     }
 }

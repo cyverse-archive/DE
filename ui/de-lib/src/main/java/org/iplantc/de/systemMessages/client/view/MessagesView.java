@@ -69,6 +69,8 @@ public interface MessagesView<M> extends IsWidget {
          * @param message the message to select
          */
         void handleSelectMessage(M message);
+
+        void setViewDebugId(String debugId);
     }
 
     /**
