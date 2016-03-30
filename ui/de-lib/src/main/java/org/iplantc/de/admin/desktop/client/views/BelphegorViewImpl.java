@@ -7,6 +7,7 @@ import org.iplantc.de.admin.desktop.client.refGenome.RefGenomeView;
 import org.iplantc.de.admin.desktop.client.systemMessage.SystemMessageView;
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
 import org.iplantc.de.admin.desktop.client.toolRequest.ToolRequestView;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.UserInfo;
@@ -45,6 +46,14 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
     @UiField SimpleContainer appsPanel, refGenomePanel, toolRequestPanel, systemMessagesPanel, metadataPanel,
             permIdPanel, toolAdminPanel;
     @UiField(provided = true) BelphegorViewAppearance appearance;
+    private TextButton menuButton;
+    private AdminAppsView.AdminPresenter presenter;
+    private RefGenomeView.Presenter refGenPresenter;
+    private ToolRequestView.Presenter toolReqPresenter;
+    private ToolAdminView.Presenter toolAdminPresenter;
+    private SystemMessageView.Presenter sysMsgPresenter;
+    private TemplateListingView.Presenter tempPresenter;
+    private PermanentIdRequestView.Presenter permIdPresenter;
 
     @Inject
     public BelphegorViewImpl(final AdminAppsView.AdminPresenter presenter,
@@ -57,6 +66,14 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
                              final DEProperties toolIntProps,
                              final BelphegorViewAppearance appearance) {
         this.appearance = appearance;
+        this.presenter = presenter;
+        this.refGenPresenter = refGenPresenter;
+        this.toolReqPresenter = toolReqPresenter;
+        this.toolAdminPresenter = toolAdminPresenter;
+        this.sysMsgPresenter = sysMsgPresenter;
+        this.tempPresenter = tempPresenter;
+        this.permIdPresenter = permIdPresenter;
+
         initWidget(uiBinder.createAndBindUi(this));
         init(presenter,
              refGenPresenter,
@@ -66,6 +83,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
              tempPresenter,
              permIdPresenter,
              toolIntProps);
+        ensureDebugId(Belphegor.Ids.BELPHEGOR);
     }
 
     @UiFactory
@@ -110,10 +128,37 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
         String firstName = UserInfo.getInstance().getFirstName();
         String lastName = UserInfo.getInstance().getLastName();
         String menuLabel = (firstName != null && lastName != null) ? firstName + " " + lastName : username;
-        TextButton menuButton = new TextButton(menuLabel);
+        menuButton = new TextButton(menuLabel);
         menuButton.setMenu(userMenu);
 
         northCon.add(menuButton, new HtmlData("." + appearance.style().headerMenu()));
     }
 
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        menuButton.ensureDebugId(baseID + Belphegor.Ids.MENU_BUTTON);
+
+        appsPanel.ensureDebugId(baseID + Belphegor.Ids.APPS);
+        presenter.setViewDebugId(baseID + Belphegor.Ids.APPS);
+
+        refGenomePanel.ensureDebugId(baseID + Belphegor.Ids.REFERENCE_GENOME);
+        refGenPresenter.setViewDebugId(baseID + Belphegor.Ids.REFERENCE_GENOME);
+
+        toolRequestPanel.ensureDebugId(baseID + Belphegor.Ids.TOOL_REQUEST);
+        toolReqPresenter.setViewDebugId(baseID + Belphegor.Ids.TOOL_REQUEST);
+
+        toolAdminPanel.ensureDebugId(baseID + Belphegor.Ids.TOOL_ADMIN);
+        toolAdminPresenter.setViewDebugId(baseID + Belphegor.Ids.TOOL_ADMIN);
+
+        systemMessagesPanel.ensureDebugId(baseID + Belphegor.Ids.SYSTEM_MESSAGE);
+        sysMsgPresenter.setViewDebugId(baseID + Belphegor.Ids.SYSTEM_MESSAGE);
+
+        metadataPanel.ensureDebugId(baseID + Belphegor.Ids.METADATA);
+        tempPresenter.setViewDebugId(baseID + Belphegor.Ids.METADATA);
+
+        permIdPanel.ensureDebugId(baseID + Belphegor.Ids.PERMID);
+        permIdPresenter.setViewDebugId(baseID + Belphegor.Ids.PERMID);
+    }
 }

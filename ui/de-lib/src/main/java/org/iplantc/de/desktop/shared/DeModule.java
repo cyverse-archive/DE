@@ -58,6 +58,8 @@ public interface DeModule {
         String REMEMBER_LAST_PATH = ".rememberLastPath";
         String SAVE_SESSION = ".saveSession";
         String DEFAULT_OUTPUT_FOLDER = ".defaultOutputFolder";
+        String BROWSE_OUTPUT_FOLDER = ".browseButton";
+        String DEFAULT_OUTPUT_FIELD = ".inputField";
     }
 
     interface WindowIds {

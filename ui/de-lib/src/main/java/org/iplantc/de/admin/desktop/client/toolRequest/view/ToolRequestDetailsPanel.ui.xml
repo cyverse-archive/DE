@@ -2,6 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
              xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
+             xmlns:fields="urn:import:org.iplantc.de.apps.widgets.client.view.editors.widgets"
              xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
 
     <ui:with field="appearance"
@@ -73,9 +74,9 @@
                 </form:FieldLabel>
             </container:child>
             <container:child layoutData="{layoutData}">
-                <form:CheckBox ui:field="multiThreadedEditor"
+                <fields:CheckBoxAdapter ui:field="multiThreadedEditor"
                                enabled="false"
-                               boxLabel="{appearance.multiThreadedLabel}"/>
+                               />
             </container:child>
             <container:child layoutData="{layoutData}">
                 <form:FieldLabel text="{appearance.phoneLabel}">

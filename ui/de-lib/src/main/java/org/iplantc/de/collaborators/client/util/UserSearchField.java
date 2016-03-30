@@ -49,6 +49,8 @@ public class UserSearchField implements IsWidget {
 
     private final UserSearchResultSelected.USER_SEARCH_EVENT_TAG tag;
 
+    private ListView<Collaborator, Collaborator> view;
+
     interface UserTemplate extends XTemplates {
         @XTemplate(source = "UserSearchResult.html")
         SafeHtml render(Collaborator c);
@@ -78,7 +80,7 @@ public class UserSearchField implements IsWidget {
 
         final UserTemplate template = GWT.create(UserTemplate.class);
 
-        ListView<Collaborator, Collaborator> view = buildView(store, template);
+        view = buildView(store, template);
 
         ComboBoxCell<Collaborator> cell = buildComboCell(store, view);
         initCombo(loader, cell);
@@ -182,6 +184,10 @@ public class UserSearchField implements IsWidget {
     @Override
     public Widget asWidget() {
         return combo;
+    }
+
+    public void setViewDebugId(String debugId) {
+        view.ensureDebugId(debugId);
     }
 
 }

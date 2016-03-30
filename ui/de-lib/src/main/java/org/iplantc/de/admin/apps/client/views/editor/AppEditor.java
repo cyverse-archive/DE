@@ -1,12 +1,13 @@
 package org.iplantc.de.admin.apps.client.views.editor;
 
 import org.iplantc.de.admin.apps.client.events.selection.SaveAppSelected;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
+import org.iplantc.de.apps.widgets.client.view.editors.widgets.CheckBoxAdapter;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppDoc;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.util.RegExp;
 import org.iplantc.de.commons.client.validators.BasicEmailValidator3;
-import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 
 import com.google.common.base.Strings;
@@ -28,7 +29,6 @@ import com.sencha.gxt.core.client.util.Format;
 import com.sencha.gxt.widget.core.client.Window;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
-import com.sencha.gxt.widget.core.client.form.CheckBox;
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.TextArea;
 import com.sencha.gxt.widget.core.client.form.TextField;
@@ -37,7 +37,7 @@ import com.sencha.gxt.widget.core.client.form.validator.RegExValidator;
 /**
  * @author jstroot
  */
-public class AppEditor implements Editor<App>, IsWidget, SaveAppSelected.HasSaveAppSelectedHandlers {
+public class AppEditor extends Window implements Editor<App>, IsWidget, SaveAppSelected.HasSaveAppSelectedHandlers {
 
     public interface AppEditorAppearance {
 
@@ -103,8 +103,7 @@ public class AppEditor implements Editor<App>, IsWidget, SaveAppSelected.HasSave
     TextField integratorEmail;
     @UiField
     FieldLabel integratorEmailFieldLabel;
-    @UiField
-    CheckBox disabled;
+    @UiField CheckBoxAdapter disabled;
     @UiField
     FieldLabel appDisabledCheckBoxLabel;
     @UiField
@@ -157,6 +156,7 @@ public class AppEditor implements Editor<App>, IsWidget, SaveAppSelected.HasSave
         appDocLbl.setHTML(appearance.appDocumentationLabel());
         window.setHeadingText(app.getName());
         docHelp.setHTML(appearance.docHelpHtml());
+        disabled.setText(appearance.appDisabled());
         if (this.doc != null) {
             appDoc.setValue(this.doc.getDocumentation());
         }
@@ -189,6 +189,7 @@ public class AppEditor implements Editor<App>, IsWidget, SaveAppSelected.HasSave
 
     public void show() {
         window.show();
+        ensureDebugId(Belphegor.AppIds.APP_EDITOR);
     }
 
     @UiHandler("saveButton")
@@ -214,6 +215,33 @@ public class AppEditor implements Editor<App>, IsWidget, SaveAppSelected.HasSave
     @UiHandler("cancelButton")
     void onCancelClick(SelectEvent event) {
         window.hide();
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        window.ensureDebugId(baseID + Belphegor.AppIds.EDITOR_WINDOW);
+        window.getHeader().getTool(0).ensureDebugId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.CLOSE_BTN);
+
+        name.setId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.NAME);
+        appNameFieldLabel.ensureDebugId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.NAME_LABEL);
+        integratorName.setId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.INTEGRATOR_NAME);
+        integratorNameFieldLabel.ensureDebugId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.INTEGRATOR_NAME_LABEL);
+        integratorEmail.setId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.INTEGRATOR_EMAIL);
+        integratorEmailFieldLabel.ensureDebugId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.INTEGRATOR_EMAIL_LABEL);
+        disabled.getCheckBox().ensureDebugId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.DISABLED);
+        appDisabledCheckBoxLabel.ensureDebugId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.DISABLED_LABEL);
+        description.setId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.DESCRIPTION);
+        appDescFieldLabel.ensureDebugId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.DESCRIPTION_LABEL);
+        wikiUrl.setId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.WIKI_URL);
+        wikiUrlFieldLabel.ensureDebugId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.WIKI_URL_LABEL);
+        saveButton.ensureDebugId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.SAVE);
+        cancelButton.ensureDebugId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.CANCEL);
+        appDoc.setId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.APP_DOC);
+        appDocLbl.ensureDebugId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.APP_DOC_LABEL);
+        docHelp.ensureDebugId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.DOC_HELP);
+        templateLink.ensureDebugId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.TEMPLATE_LINK);
     }
 
 }

@@ -559,4 +559,8 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
         dataDrop.addDragMoveHandler(this);
         dataDrop.addDropHandler(this);
     }
+
+    public void setInputFieldId(String id) {
+        input.setId(id);
+    }
 }

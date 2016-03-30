@@ -4,7 +4,6 @@ import org.iplantc.de.client.models.collaborators.Collaborator;
 import org.iplantc.de.collaborators.client.models.CollaboratorNameComparator;
 import org.iplantc.de.collaborators.client.models.CollaboratorProperties;
 import org.iplantc.de.collaborators.client.views.cells.NameCell;
-import org.iplantc.de.collaborators.shared.CollaboratorsModule;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.GWT;
@@ -63,15 +62,5 @@ public class CollaboratorsColumnModel extends ColumnModel<Collaborator> {
 
         return configs;
 
-    }
-
-
-    public void ensureDebugId(final String baseID) {
-        for(ColumnConfig<Collaborator, ?> cc : configs){
-            // If it is the checkbox column config
-            if(0 == configs.indexOf(cc)){
-                cc.setHeader(appearance.renderCheckBoxColumnHeader(baseID + CollaboratorsModule.Ids.CHECKBOX_HEADER));
-            }
-        }
     }
 }

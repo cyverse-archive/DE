@@ -2,6 +2,7 @@ package org.iplantc.de.admin.desktop.client.systemMessage.presenter;
 
 import org.iplantc.de.admin.desktop.client.systemMessage.SystemMessageView;
 import org.iplantc.de.admin.desktop.client.systemMessage.service.SystemMessageServiceFacade;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.systemMessages.SystemMessage;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
@@ -73,6 +74,11 @@ public class SystemMessagePresenterImpl implements SystemMessageView.Presenter {
                 ErrorHandler.post(caught);
             }
         });
+    }
+
+    @Override
+    public void setViewDebugId(String baseId) {
+        view.asWidget().ensureDebugId(baseId + Belphegor.SystemMessageIds.VIEW);
     }
 
 

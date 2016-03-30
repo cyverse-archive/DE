@@ -5,6 +5,7 @@ import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdReques
 import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView.PermanentIdRequestPresenterAppearance;
 import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView.Presenter;
 import org.iplantc.de.admin.desktop.client.permIdRequest.views.UpdatePermanentIdRequestDialog;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequest;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestAutoBeanFactory;
@@ -207,5 +208,10 @@ public class PermanentIdRequestPresenter implements Presenter {
             prsvc.getRequestDetails(selectedRequest.getId(), callback);
         }
 
+    }
+
+    @Override
+    public void setViewDebugId(String baseId) {
+        view.asWidget().ensureDebugId(baseId + Belphegor.PermIds.VIEW);
     }
 }

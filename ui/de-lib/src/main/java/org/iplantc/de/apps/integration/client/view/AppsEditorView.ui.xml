@@ -70,7 +70,7 @@
         
         <!-- Palette -->
         <con:west layoutData="{westData}">
-            <gxt:ContentPanel headingText="{appIntStrings.paletteHeader}">
+            <gxt:ContentPanel ui:field="palettePanel" headingText="{appIntStrings.paletteHeader}">
                 <gxt:tool>
                     <button:ToolButton ui:field="paletteContextualHelpBtn"/>
                 </gxt:tool>

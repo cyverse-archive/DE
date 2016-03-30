@@ -1,6 +1,7 @@
 package org.iplantc.de.admin.desktop.client.permIdRequest.views;
 
 import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView.PermanentIdRequestPresenterAppearance;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
@@ -73,6 +74,22 @@ public class MetadataDialog extends IPlantDialog {
         setSize("600px", "400px");
         getButton(PredefinedButton.OK).addSelectHandler(new OkSelectHandler());
         getButton(PredefinedButton.CANCEL).addSelectHandler(new CancelSelectHandler());
+
     }
 
+    @Override
+    public void show() {
+        super.show();
+
+        ensureDebugId(Belphegor.PermIds.METADATA_DIALOG);
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        getButton(PredefinedButton.OK).ensureDebugId(baseID + Belphegor.PermIds.OK);
+
+        metadataView.asWidget().ensureDebugId(baseID + Belphegor.PermIds.VIEW);
+    }
 }

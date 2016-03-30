@@ -77,6 +77,11 @@ public final class MessagesPresenter implements MessagesView.Presenter<Message> 
         markSeen(message);
     }
 
+    @Override
+    public void setViewDebugId(String debugId) {
+        view.asWidget().ensureDebugId(debugId);
+    }
+
     /**
      * Returns the Id of the currently selected message.
      * 

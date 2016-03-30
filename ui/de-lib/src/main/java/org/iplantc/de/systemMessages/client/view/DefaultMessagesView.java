@@ -1,7 +1,8 @@
 package org.iplantc.de.systemMessages.client.view;
 
-import org.iplantc.de.systemMessages.client.events.DismissMessageEvent;
 import org.iplantc.de.resources.client.SystemMessagesResources;
+import org.iplantc.de.systemMessages.client.events.DismissMessageEvent;
+import org.iplantc.de.systemMessages.shared.SystemMessages;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -81,6 +82,7 @@ final class DefaultMessagesView<M> extends Composite implements MessagesView<M> 
 
     private final MessageSummaryCell<M> summaryCell;
     private final Presenter<M> presenter;
+    private String HIDDEN_ATTRIBUTE = "hidden";
 
     /**
      * the constructor
@@ -175,6 +177,8 @@ final class DefaultMessagesView<M> extends Composite implements MessagesView<M> 
     @Override
     public void showMessages() {
         layout.setActiveWidget(messagesPanel);
+        messagesPanel.getElement().removeAttribute(HIDDEN_ATTRIBUTE);
+        noMessagesPanel.getElement().setAttribute(HIDDEN_ATTRIBUTE, HIDDEN_ATTRIBUTE);
     }
 
     /**
@@ -183,6 +187,8 @@ final class DefaultMessagesView<M> extends Composite implements MessagesView<M> 
     @Override
     public void showNoMessages() {
         layout.setActiveWidget(noMessagesPanel);
+        noMessagesPanel.getElement().removeAttribute(HIDDEN_ATTRIBUTE);
+        messagesPanel.getElement().setAttribute(HIDDEN_ATTRIBUTE, HIDDEN_ATTRIBUTE);
     }
 
     /**
@@ -228,5 +234,12 @@ final class DefaultMessagesView<M> extends Composite implements MessagesView<M> 
         }
     }
 
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        messagesPanel.ensureDebugId(baseID + SystemMessages.Ids.MESSAGES_PANEL);
+        noMessagesPanel.ensureDebugId(baseID + SystemMessages.Ids.NO_MESSAGES_PANEL);
+    }
 }
 

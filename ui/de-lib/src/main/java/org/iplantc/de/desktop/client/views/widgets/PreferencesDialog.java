@@ -181,7 +181,6 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
         addHelp(constructHelpView());
         add(vlc);
         editorDriver.initialize(this);
-        ensureDebugId(DeModule.PreferenceIds.PREFERENCES_DLG);
     }
 
     @Ignore
@@ -199,6 +198,7 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
         this.usValue = userSettings;
         editorDriver.edit(userSettings);
         show();
+        ensureDebugId(DeModule.PreferenceIds.PREFERENCES_DLG);
     }
 
     public boolean isValid() {
@@ -268,12 +268,15 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
         rememberLastPath.ensureDebugId(baseID + DeModule.PreferenceIds.REMEMBER_LAST_PATH);
         saveSession.ensureDebugId(baseID + DeModule.PreferenceIds.SAVE_SESSION);
         defaultOutputFolder.ensureDebugId(baseID + DeModule.PreferenceIds.DEFAULT_OUTPUT_FOLDER);
+        defaultOutputFolder.setInputFieldId(baseID + DeModule.PreferenceIds.DEFAULT_OUTPUT_FOLDER + DeModule.PreferenceIds.DEFAULT_OUTPUT_FIELD);
+        defaultOutputFolder.setBrowseButtonId(baseID + DeModule.PreferenceIds.DEFAULT_OUTPUT_FOLDER + DeModule.PreferenceIds.BROWSE_OUTPUT_FOLDER);
 
         appsShortCut.ensureDebugId(baseID + DeModule.PreferenceIds.APPS_SC);
         dataShortCut.ensureDebugId(baseID + DeModule.PreferenceIds.DATA_SC);
         analysesShortCut.ensureDebugId(baseID + DeModule.PreferenceIds.ANALYSES_SC);
         notifyShortCut.ensureDebugId(baseID + DeModule.PreferenceIds.NOTIFICATION_SC);
         closeShortCut.ensureDebugId(baseID + DeModule.PreferenceIds.CLOSE_SC);
+
     }
 
     @UiHandler({"appsShortCut", "dataShortCut", "analysesShortCut", "notifyShortCut", "closeShortCut"})

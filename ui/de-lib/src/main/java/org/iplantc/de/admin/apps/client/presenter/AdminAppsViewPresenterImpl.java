@@ -5,6 +5,7 @@ import org.iplantc.de.admin.apps.client.AdminAppsToolbarView;
 import org.iplantc.de.admin.apps.client.AdminAppsView;
 import org.iplantc.de.admin.apps.client.AdminCategoriesView;
 import org.iplantc.de.admin.apps.client.gin.factory.AdminAppsViewFactory;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.services.AppServiceFacade;
 
@@ -67,6 +68,11 @@ public class AdminAppsViewPresenterImpl implements AdminAppsView.AdminPresenter 
                    final HasId selectedAppCategory) {
         categoriesPresenter.go(selectedAppCategory);
         container.setWidget(view);
+    }
+
+    @Override
+    public void setViewDebugId(String baseId) {
+        view.asWidget().ensureDebugId(baseId + Belphegor.AppIds.VIEW);
     }
 
 

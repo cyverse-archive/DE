@@ -8,4 +8,5 @@
     <inherits name="org.iplantc.de.tags.Tags" />
 
     <source path="client"/>
+    <source path="share"/>
 </module>

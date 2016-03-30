@@ -3,6 +3,7 @@ package org.iplantc.de.pipelines.client.views;
 import org.iplantc.de.client.models.pipelines.Pipeline;
 import org.iplantc.de.client.models.pipelines.PipelineTask;
 import org.iplantc.de.pipelineBuilder.client.builder.PipelineCreator;
+import org.iplantc.de.pipelines.shared.Pipelines;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
 
@@ -20,6 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.sencha.gxt.core.client.util.ToggleGroup;
 import com.sencha.gxt.data.shared.ListStore;
+import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.button.ToggleButton;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
@@ -38,11 +40,10 @@ import java.util.List;
  * @author psarando
  *
  */
-public class PipelineViewImpl implements PipelineView {
+public class PipelineViewImpl extends Composite implements PipelineView {
 
     private static PipelineViewUiBinder uiBinder = GWT.create(PipelineViewUiBinder.class);
     private final Driver driver = GWT.create(Driver.class);
-    private final Widget widget;
     private Presenter presenter;
 
     @UiTemplate("PipelineView.ui.xml")
@@ -53,7 +54,7 @@ public class PipelineViewImpl implements PipelineView {
     }
 
     public PipelineViewImpl() {
-        widget = uiBinder.createAndBindUi(this);
+        initWidget(uiBinder.createAndBindUi(this));
         driver.initialize(this);
 
         ToggleGroup group = new ToggleGroup();
@@ -134,11 +135,6 @@ public class PipelineViewImpl implements PipelineView {
     @UiFactory
     public HtmlLayoutContainer buildHelpContainer() {
         return new HtmlLayoutContainer(I18N.DISPLAY.infoPnlTip());
-    }
-
-    @Override
-    public Widget asWidget() {
-        return widget;
     }
 
     @Override
@@ -329,5 +325,12 @@ public class PipelineViewImpl implements PipelineView {
         btn.setIcon(IplantResources.RESOURCES.exclamation());
         btn.setToolTip(error);
         btn.getToolTip().enable();
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        appOrderPanel.asWidget().ensureDebugId(baseID + Pipelines.Ids.APP_ORDER);
     }
 }

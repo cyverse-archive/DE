@@ -1,6 +1,8 @@
 package org.iplantc.de.admin.desktop.client.refGenome.view;
 
 import org.iplantc.de.admin.desktop.client.refGenome.RefGenomeView;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
+import org.iplantc.de.apps.widgets.client.view.editors.widgets.CheckBoxAdapter;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.refGenome.ReferenceGenome;
 import org.iplantc.de.client.models.apps.refGenome.ReferenceGenomeAutoBeanFactory;
@@ -14,7 +16,6 @@ import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.sencha.gxt.widget.core.client.Composite;
-import com.sencha.gxt.widget.core.client.form.CheckBox;
 import com.sencha.gxt.widget.core.client.form.DateField;
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.TextField;
@@ -38,7 +39,7 @@ class EditReferenceGenomeDialog extends Composite implements Editor<ReferenceGen
     @UiField FieldLabel nameLabel, pathLabel;
     @UiField TextField nameEditor, pathEditor, createdByEditor, lastModifiedByEditor;
     @UiField DateField createdDateEditor, lastModifiedDateEditor;
-    @UiField CheckBox deletedEditor;
+    @UiField CheckBoxAdapter deletedEditor;
     @UiField(provided = true) RefGenomeView.RefGenomeAppearance appearance = GWT.create(RefGenomeView.RefGenomeAppearance.class);
 
     static EditReferenceGenomeDialog addNewReferenceGenome() {
@@ -70,6 +71,7 @@ class EditReferenceGenomeDialog extends Composite implements Editor<ReferenceGen
 
         editorDriver.initialize(this);
         editorDriver.edit(refGenome);
+        ensureDebugId(Belphegor.RefGenomeIds.GENOME_EDITOR + Belphegor.RefGenomeIds.EDITOR_VIEW);
     }
 
     @Override
@@ -84,5 +86,20 @@ class EditReferenceGenomeDialog extends Composite implements Editor<ReferenceGen
 
     boolean hasErrors() {
         return editorDriver.hasErrors();
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        nameLabel.ensureDebugId(baseID + Belphegor.RefGenomeIds.NAME_LABEL);
+        pathLabel.ensureDebugId(baseID + Belphegor.RefGenomeIds.PATH_LABEL);
+        nameEditor.setId(baseID + Belphegor.RefGenomeIds.NAME);
+        pathEditor.setId(baseID + Belphegor.RefGenomeIds.PATH);
+        createdByEditor.setId(baseID + Belphegor.RefGenomeIds.CREATED_BY);
+        lastModifiedByEditor.setId(baseID + Belphegor.RefGenomeIds.LAST_MODIFIED_BY);
+        createdDateEditor.setId(baseID + Belphegor.RefGenomeIds.CREATED_DATE);
+        lastModifiedDateEditor.setId(baseID + Belphegor.RefGenomeIds.LAST_MODIFIED_DATE);
+        deletedEditor.getCheckBox().ensureDebugId(baseID + Belphegor.RefGenomeIds.DELETED);
     }
 }
