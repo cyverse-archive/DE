@@ -42,7 +42,7 @@
 
 (defn get-with-timeout
   [url]
-  (client/get url {:socket-timeout 1000 :conn-timeout 1000}))
+  (client/get url {:socket-timeout 10000 :conn-timeout 10000}))
 
 (defn perform-jex-check
   []
