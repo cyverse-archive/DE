@@ -258,6 +258,7 @@ environment_name:
 elasticsearch:
   host: "{{ groups['elasticsearch'][0] }}"
   port:
+  version: 2.3.0
   base: "http://{{ groups['elasticsearch'][0] }}"
   scroll_size: 1000
   cluster_name: elasticsearch
