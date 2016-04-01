@@ -1,5 +1,0 @@
-FROM discoenv/buildenv
-
-ADD intra-container-build.sh /bin/
-
-CMD ["intra-container-build.sh"]
