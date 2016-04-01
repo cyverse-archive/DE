@@ -16,7 +16,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/mitchellh/go-homedir.git"
+	"github.com/mitchellh/go-homedir"
 )
 
 var (
