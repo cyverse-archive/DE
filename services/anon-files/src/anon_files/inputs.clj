@@ -3,12 +3,11 @@
         [clj-jargon.item-ops]
         [clj-jargon.item-info]
         [clj-jargon.paging])
-  (:import [java.io InputStream]
-           [org.irods.jargon.core.pub.io IRODSFileFactory]))
+  (:import [java.io InputStream]))
 
 (defn chunk-stream
-  [{^IRODSFileFactory file-factory :fileFactory} ^String filepath start-byte end-byte]
-  (let [raf (.instanceIRODSRandomAccessFile file-factory filepath)
+  [cm ^String filepath start-byte end-byte]
+  (let [raf (random-access-file cm filepath)
         location (atom start-byte)]
     (.seek raf start-byte SEEK-CURRENT)
     (proxy [java.io.InputStream] []
