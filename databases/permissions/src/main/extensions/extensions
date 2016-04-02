@@ -1,0 +1,6 @@
+  /Users/dennis/cyverse/de/databases/permissions/src/main/extensions:
+  total used in directory 24 available 91678365
+  drwxr-xr-x  5 dennis  staff  170 Apr  1 16:39 .
+  drwxr-xr-x  8 dennis  staff  272 Apr  1 16:26 ..
+  -rw-r--r--  1 dennis  staff   91 Apr  1 16:30 subject_type_enum.sql
+  -rw-r--r--  1 dennis  staff   95 Apr  1 16:31 uuid.sql
