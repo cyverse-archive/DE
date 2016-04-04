@@ -2,6 +2,12 @@
 	"version": 0,
 	"dependencies": [
 		{
+			"importpath": "gopkg.in/olivere/elastic.v3",
+			"repository": "https://gopkg.in/olivere/elastic.v3",
+			"revision": "6d1954a560f885207ff84c32ed0aaaebf11ec599",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/dgrijalva/jwt-go",
 			"repository": "https://github.com/dgrijalva/jwt-go",
 			"revision": "f62f64ea222e5e6d6d86421b5507b0862a3ebf7f",
@@ -64,7 +70,7 @@
 		{
 			"importpath": "github.com/streadway/amqp",
 			"repository": "https://github.com/streadway/amqp",
-			"revision": "f4879ba28fffbb576743b03622a9ff20461826b2",
+			"revision": "56eb08f0d1f9d90936ab1ab4e20ee9b9bf45ce26",
 			"branch": "master"
 		},
 		{
