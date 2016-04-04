@@ -388,6 +388,10 @@ irods:
   admins: rodsadmin
   data_curators_group: data-curators
   bad_chars: \u0060\u0027\u000A\u0009
+  amqp_broker:
+    host: "{{ groups['amqp-brokers'][0] }}"
+    port:
+
 
 # Jex does not actually have a container. The container name is how most syslog entries
 # are identified. See rsyslog-config role.
