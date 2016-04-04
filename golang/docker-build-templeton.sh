@@ -15,7 +15,8 @@ GIT_COMMIT=$(git rev-parse HEAD)
 BUILD_USER=$(whoami)
 BUILDENV_GIT_COMMIT=$(docker inspect -f '{{ (index .Config.Labels "org.iplantc.de.buildenv.git-ref")}}' $DOCKER_USER/buildenv:latest)
 
-docker build --build-arg git_commit=$GIT_COMMIT \
+docker build -f templeton.docker \
+             --build-arg git_commit=$GIT_COMMIT \
              --build-arg buildenv_git_commit=$BUILDENV_GIT_COMMIT \
              --build-arg version=$VERSION \
              --pull --rm -t "$DOCKER_USER/$DOCKER_REPO:dev" .
