@@ -58,7 +58,7 @@ amqp_irods_connection_health_check_interval: 5000
 
 amqp_broker:
   host: "{{ groups['amqp-brokers'][0] }}"
-  port:
+  port: 5672
   condor_events:
     exchange: condor_events
     exchange_type: fanout
@@ -391,7 +391,7 @@ irods:
   bad_chars: \u0060\u0027\u000A\u0009
   amqp_broker:
     host: "{{ groups['amqp-brokers'][0] }}"
-    port:
+    port: 5672
 
 
 # Jex does not actually have a container. The container name is how most syslog entries
