@@ -1,6 +1,7 @@
 package org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews;
 
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.tool.ToolImplementation;
 import org.iplantc.de.commons.client.validators.BasicEmailValidator3;
 
@@ -48,4 +49,14 @@ public class ToolImplementationEditor extends Composite implements Editor<ToolIm
         return implementorEditor.isValid() && implementorEmailEditor.isValid();
     }
 
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        implementorLabel.ensureDebugId(baseID + Belphegor.ToolAdminIds.IMPLEMENTOR_LABEL);
+        implementorEmailLabel.ensureDebugId(baseID + Belphegor.ToolAdminIds.IMPLEMENTOR_EMAIL_LABEL);
+        implementorEditor.setId(baseID + Belphegor.ToolAdminIds.IMPLEMENTOR);
+        implementorEmailEditor.setId(baseID + Belphegor.ToolAdminIds.IMPLEMENTOR_EMAIL);
+        testEditor.ensureDebugId(baseID + Belphegor.ToolAdminIds.TEST_DATA);
+    }
 }

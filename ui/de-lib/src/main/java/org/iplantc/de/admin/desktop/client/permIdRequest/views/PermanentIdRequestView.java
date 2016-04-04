@@ -98,6 +98,8 @@ public interface PermanentIdRequestView extends IsWidget, IsMaskable {
         void createPermanentId();
 
         void getRequestDetails(AsyncCallback<PermanentIdRequestDetails> callback);
+
+        void setViewDebugId(String baseId);
     }
 
     public interface PermanentIdRequestPresenterAppearance {

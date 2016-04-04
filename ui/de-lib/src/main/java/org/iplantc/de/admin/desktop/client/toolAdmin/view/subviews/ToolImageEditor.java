@@ -1,6 +1,7 @@
 package org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews;
 
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.tool.ToolImage;
 import org.iplantc.de.commons.client.validators.UrlValidator;
 import org.iplantc.de.commons.client.widgets.EmptyStringValueChangeHandler;
@@ -49,4 +50,13 @@ public class ToolImageEditor extends Composite implements Editor<ToolImage> {
         return nameEditor.isValid() && urlEditor.isValid();
     }
 
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        nameLabel.ensureDebugId(baseID + Belphegor.ToolAdminIds.IMAGE_NAME_LABEL);
+        nameEditor.setId(baseID + Belphegor.ToolAdminIds.IMAGE_NAME);
+        tagEditor.setId(baseID + Belphegor.ToolAdminIds.IMAGE_TAG);
+        urlEditor.setId(baseID + Belphegor.ToolAdminIds.IMAGE_URL);
+    }
 }

@@ -1,6 +1,7 @@
 package org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews;
 
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.IsEditor;
@@ -125,4 +126,10 @@ public class ToolTestDataInputFilesListEditor extends Composite
         }
     }
 
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        grid.ensureDebugId(baseID + Belphegor.ToolAdminIds.INPUT_FILES_GRID);
+    }
 }

@@ -11,4 +11,5 @@
     <inherits name="org.iplantc.de.pipelineBuilder.PipelineBuilder" />
 
     <source path="client" />
+    <source path="shared" />
 </module>

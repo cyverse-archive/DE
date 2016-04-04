@@ -1,6 +1,7 @@
 package org.iplantc.de.admin.desktop.client.toolRequest.view;
 
 import org.iplantc.de.admin.desktop.client.toolRequest.ToolRequestView;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.toolRequest.ToolRequest;
 import org.iplantc.de.client.models.toolRequest.ToolRequestAutoBeanFactory;
 import org.iplantc.de.client.models.toolRequest.ToolRequestDetails;
@@ -165,4 +166,13 @@ public class ToolRequestViewImpl extends Composite implements ToolRequestView, S
         detailsPanel.edit(toolRequestDetails);
     }
 
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        updateBtn.ensureDebugId(baseID + Belphegor.ToolRequestIds.UPDATE);
+        grid.ensureDebugId(baseID + Belphegor.ToolRequestIds.GRID);
+        detailsPanel.ensureDebugId(baseID + Belphegor.ToolRequestIds.DETAILS_PANEL);
+
+    }
 }

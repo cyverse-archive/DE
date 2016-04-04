@@ -1,6 +1,7 @@
 package org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews;
 
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.tool.ToolTestData;
 
 import com.google.gwt.core.client.GWT;
@@ -81,5 +82,18 @@ public class ToolTestDataEditor extends Composite implements Editor<ToolTestData
         outputFilesEditor.deleteToolTestDataOutputFile();
     }
 
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
 
+        inputFilesLabel.ensureDebugId(baseID + Belphegor.ToolAdminIds.INPUT_FILES_LABEL);
+        addInputFileButton.ensureDebugId(baseID + Belphegor.ToolAdminIds.ADD_INPUT);
+        deleteInputFileButton.ensureDebugId(baseID + Belphegor.ToolAdminIds.DELETE_INPUT);
+        outputFilesLabel.ensureDebugId(baseID + Belphegor.ToolAdminIds.OUTPUT_FILES_LABEL);
+        addOutputFileButton.ensureDebugId(baseID + Belphegor.ToolAdminIds.ADD_OUTPUT);
+        deleteOutputFileButton.ensureDebugId(baseID + Belphegor.ToolAdminIds.DELETE_OUTPUT);
+
+        inputFilesEditor.ensureDebugId(baseID + Belphegor.ToolAdminIds.INPUT_FILES);
+        outputFilesEditor.ensureDebugId(baseID + Belphegor.ToolAdminIds.OUTPUT_FILES);
+    }
 }

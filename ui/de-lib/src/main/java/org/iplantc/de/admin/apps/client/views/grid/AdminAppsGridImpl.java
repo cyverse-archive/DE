@@ -1,6 +1,7 @@
 package org.iplantc.de.admin.apps.client.views.grid;
 
 import org.iplantc.de.admin.apps.client.AdminAppsGridView;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.BeforeAppSearchEvent;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
@@ -97,5 +98,12 @@ public class AdminAppsGridImpl extends ContentPanel implements AdminAppsGridView
     @UiFactory
     ColumnModel<App> createColumnModel() {
         return new AdminAppsColumnModel();
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        grid.asWidget().ensureDebugId(baseID + Belphegor.AppIds.GRID);
     }
 }

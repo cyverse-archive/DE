@@ -8,6 +8,7 @@ import org.iplantc.de.admin.desktop.client.toolAdmin.events.ToolSelectedEvent;
 import org.iplantc.de.admin.desktop.client.toolAdmin.model.ToolProperties;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.cells.ToolAdminNameCell;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs.ToolAdminDetailsDialog;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.commons.client.ErrorHandler;
 
@@ -36,6 +37,7 @@ import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -81,6 +83,7 @@ public class ToolAdminViewImpl extends Composite implements ToolAdminView {
     @UiField TextButton addButton;
     @UiField TextButton deleteButton;
     @UiField Grid<Tool> grid;
+    @UiField TextField filterField;
     @UiField(provided = true) ListStore<Tool> listStore;
     @UiField(provided = true) ToolAdminViewAppearance appearance;
     @Inject AsyncProvider<ToolAdminDetailsDialog> toolDetailsDialog;
@@ -100,6 +103,15 @@ public class ToolAdminViewImpl extends Composite implements ToolAdminView {
         grid.getSelectionModel().setSelectionMode(Style.SelectionMode.SINGLE);
     }
 
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        addButton.ensureDebugId(baseID + Belphegor.ToolAdminIds.ADD);
+        deleteButton.ensureDebugId(baseID + Belphegor.ToolAdminIds.DELETE);
+        filterField.setId(baseID + Belphegor.ToolAdminIds.FILTER);
+        grid.ensureDebugId(baseID + Belphegor.ToolAdminIds.GRID);
+    }
 
     @Override
     public HandlerRegistration addAddToolSelectedEventHandler(AddToolSelectedEvent.AddToolSelectedEventHandler handler) {
@@ -165,6 +177,7 @@ public class ToolAdminViewImpl extends Composite implements ToolAdminView {
             @Override
             public void onSuccess(final ToolAdminDetailsDialog result) {
                 result.show(tool);
+                result.ensureDebugId(Belphegor.ToolAdminIds.TOOL_ADMIN_DIALOG);
                 result.addSaveToolSelectedEventHandler(new SaveToolSelectedEvent.SaveToolSelectedEventHandler() {
                     @Override
                     public void onSaveToolSelected(SaveToolSelectedEvent event) {
@@ -188,6 +201,7 @@ public class ToolAdminViewImpl extends Composite implements ToolAdminView {
             @Override
             public void onSuccess(final ToolAdminDetailsDialog result) {
                 result.show();
+                result.ensureDebugId(Belphegor.ToolAdminIds.TOOL_ADMIN_DIALOG);
                 result.addSaveToolSelectedEventHandler(new SaveToolSelectedEvent.SaveToolSelectedEventHandler() {
                     @Override
                     public void onSaveToolSelected(SaveToolSelectedEvent event) {
@@ -219,7 +233,15 @@ public class ToolAdminViewImpl extends Composite implements ToolAdminView {
                 }
             });
             deleteMsgBox.show();
+            setDeleteMsgDebugId(deleteMsgBox);
+
         }
+    }
+
+    private void setDeleteMsgDebugId(ConfirmMessageBox deleteMsgBox) {
+        deleteMsgBox.getButton(Dialog.PredefinedButton.YES).ensureDebugId(
+                Belphegor.ToolAdminIds.CONFIRM_DELETE + Belphegor.ToolAdminIds.YES);
+        deleteMsgBox.getButton(Dialog.PredefinedButton.NO).ensureDebugId(Belphegor.ToolAdminIds.CONFIRM_DELETE + Belphegor.ToolAdminIds.NO);
     }
 
     public void toolSelected(Tool tool) {

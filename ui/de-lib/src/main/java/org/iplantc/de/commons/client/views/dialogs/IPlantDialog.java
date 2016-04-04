@@ -3,6 +3,7 @@ package org.iplantc.de.commons.client.views.dialogs;
 import org.iplantc.de.client.models.IsHideable;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.commons.client.widgets.ContextualHelpToolButton;
+import org.iplantc.de.commons.share.CommonsModule;
 
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.editor.client.Editor;
@@ -75,7 +76,7 @@ public class IPlantDialog extends Dialog implements IsHideable, IsMaskable {
 
     }
 
-    public ToolButton gelHelpToolButton() {
+    public ToolButton getHelpToolButton() {
         return helpTool;
     }
 
@@ -114,4 +115,26 @@ public class IPlantDialog extends Dialog implements IsHideable, IsMaskable {
         cancelButtonSelectHandlers.clear();
     }
 
+    @Override
+    /**
+     * NOTE: The IPlantDialog ensureDebugId() method should be called AFTER the show() method in order
+     * for the Close button to be accessed and given a debug id.
+     */
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        if (helpTool != null) {
+            helpTool.ensureDebugId(baseID + CommonsModule.IDs.HELP);
+        }
+
+        TextButton cancelBtn = getButton(PredefinedButton.CANCEL);
+        if (cancelBtn != null) {
+            cancelBtn.ensureDebugId(baseID + CommonsModule.IDs.CANCEL);
+        }
+
+        if (closeBtn != null) {
+            closeBtn.ensureDebugId(baseID + CommonsModule.IDs.CLOSE);
+        }
+        
+    }
 }

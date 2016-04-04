@@ -12,6 +12,7 @@ import org.iplantc.de.desktop.shared.DeModule;
 import org.iplantc.de.pipelines.client.presenter.PipelineViewPresenter;
 import org.iplantc.de.pipelines.client.views.PipelineView;
 import org.iplantc.de.pipelines.client.views.PipelineViewImpl;
+import org.iplantc.de.pipelines.shared.Pipelines;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.user.client.Command;
@@ -46,6 +47,7 @@ public class PipelineEditorWindow extends IplantWindowBase {
     private PipelineView.Presenter presenter;
     private boolean close_after_save;
     private String initPipelineJson;
+    private PipelineView view;
 
     @Inject
     PipelineEditorWindow(final IplantDisplayStrings displayStrings) {
@@ -55,15 +57,13 @@ public class PipelineEditorWindow extends IplantWindowBase {
         setSize("900", "500");
         setMinWidth(640);
         setMinHeight(440);
-
-        ensureDebugId(DeModule.WindowIds.WORKFLOW_EDITOR);
     }
 
     @Override
     public <C extends WindowConfig> void show(C windowConfig, String tag,
                                               boolean isMaximizable) {
 
-        PipelineView view = new PipelineViewImpl();
+        this.view = new PipelineViewImpl();
         presenter = new PipelineViewPresenter(view, new PublishCallbackCommand(), appsViewPresenter);
 
         if (windowConfig instanceof PipelineEditorWindowConfig) {
@@ -86,6 +86,8 @@ public class PipelineEditorWindow extends IplantWindowBase {
         presenter.go(this);
         close_after_save = false;
         super.show(windowConfig, tag, isMaximizable);
+
+        ensureDebugId(DeModule.WindowIds.WORKFLOW_EDITOR);
     }
 
     @Override
@@ -131,4 +133,12 @@ public class PipelineEditorWindow extends IplantWindowBase {
         });
         box.show();
     }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        view.asWidget().ensureDebugId(baseID + Pipelines.Ids.WORKFLOW_VIEW);
+    }
+
 }

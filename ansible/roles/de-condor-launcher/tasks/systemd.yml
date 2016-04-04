@@ -1,0 +1,20 @@
+---
+- debug: msg="Configuring condor-launcher systemd"
+
+- name: Disable condor-launcher
+  service: name=condor-launcher enabled=false
+  ignore_errors: true
+
+- name: Place systemd unit file
+  template:
+      src: "condor-launcher.service.j2"
+      dest: "/lib/systemd/system/condor-launcher.service"
+      group: "root"
+      owner: "root"
+      mode: 0644
+
+- name: Reload systemd
+  shell: systemctl daemon-reload
+
+- name: Enable condor-launcher.service
+  service: name=condor-launcher enabled=true

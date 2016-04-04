@@ -2,6 +2,7 @@ package org.iplantc.de.admin.desktop.client.systemMessage.view;
 
 import org.iplantc.de.admin.desktop.client.systemMessage.SystemMessageView;
 import org.iplantc.de.admin.desktop.client.systemMessage.view.cells.SystemMessageNameCell;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.systemMessages.SystemMessage;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 
@@ -67,6 +68,15 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
     }
 
     @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        addBtn.ensureDebugId(baseID + Belphegor.SystemMessageIds.ADD);
+        deleteBtn.ensureDebugId(baseID + Belphegor.SystemMessageIds.DELETE);
+        grid.ensureDebugId(baseID + Belphegor.SystemMessageIds.GRID);
+    }
+
+    @Override
     public void addSystemMessage(SystemMessage systemMessage) {
         store.add(systemMessage);
     }
@@ -104,6 +114,12 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
         });
         editSystemMessageDlg.add(editSystemMessagePanel);
         editSystemMessageDlg.show();
+        setDialogDebugIds(editSystemMessageDlg);
+    }
+
+    private void setDialogDebugIds(IPlantDialog dialog) {
+        dialog.ensureDebugId(Belphegor.SystemMessageIds.EDIT_DIALOG);
+        dialog.getOkButton().ensureDebugId(Belphegor.SystemMessageIds.EDIT_DIALOG + Belphegor.SystemMessageIds.SUBMIT);
     }
 
     @Override
@@ -158,6 +174,7 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
         createSystemMessageDlg.add(createSystemMessagePanel);
 
         createSystemMessageDlg.show();
+        setDialogDebugIds(createSystemMessageDlg);
     }
 
     @UiFactory

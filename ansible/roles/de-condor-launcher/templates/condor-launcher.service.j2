@@ -1,0 +1,9 @@
+[Unit]
+Description=Launches HTCondor jobs
+
+[Service]
+User=condor
+ExecStart=/usr/local/bin/condor-launcher --config /etc/jobservices.yml
+Restart=on-failure
+StartLimitInterval=60s
+StartLimitBurst=3

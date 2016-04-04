@@ -7,7 +7,7 @@
       (string/trim (:out (sh "git" "rev-parse" "HEAD")))
       ""))
 
-(defproject org.iplantc/sharkbait "5.2.5.0"
+(defproject org.iplantc/sharkbait "5.2.6.0"
   :description "Utility for initializing Grouper."
   :url "https://github.com/iPlantCollaborativeOpenSource/DE/"
   :license {:name "BSD"
@@ -22,8 +22,8 @@
                  [org.clojure/tools.logging "0.3.1"]
                  [org.hibernate/hibernate-core "3.6.10.Final"]
                  [org.hibernate/hibernate-ehcache "3.6.10.Final"]
-                 [org.iplantc/common-cli "5.2.5.0"]
-                 [org.iplantc/kameleon "5.2.5.0"]
+                 [org.iplantc/common-cli "5.2.6.0"]
+                 [org.iplantc/kameleon "5.2.6.0"]
                  [postgresql "9.3-1102.jdbc41"]]
   :main sharkbait.core
   :profiles {:uberjar {:aot :all}})

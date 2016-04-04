@@ -117,8 +117,10 @@ public class AppsEditorViewImpl extends Composite implements AppsEditorView {
     Provider<MultiFileOutputPropertyEditor> multiFileOutputProvider;
     @Inject
     Provider<MultiLineTextInputPropertyEditor> multiLineInputProvider;
+    @UiField ContentPanel palettePanel;
     @UiField(provided = true)
     AppIntegrationPalette palette;
+    @UiField ToolButton paletteContextualHelpBtn;
     @Inject
     Provider<ReferenceAnnotationPropertyEditor> refAnnotationProvider;
     @Inject
@@ -191,9 +193,16 @@ public class AppsEditorViewImpl extends Composite implements AppsEditorView {
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
         palette.ensureDebugId(baseID + AppIntegrationModule.Ids.PALETTE);
+        paletteContextualHelpBtn.ensureDebugId(baseID + AppIntegrationModule.Ids.PALETTE + AppIntegrationModule.Ids.PALETTE_HELP);
+        getCollapseBtn(palettePanel).ensureDebugId(baseID + AppIntegrationModule.Ids.PALETTE + AppIntegrationModule.Ids.COLLAPSE_BTN);
         toolbar.asWidget().ensureDebugId(baseID + AppIntegrationModule.Ids.TOOLBAR);
         cmdLinePreview.ensureDebugId(baseID + AppIntegrationModule.Ids.CMD_LINE_PREVIEW);
         appTemplatePropertyEditor.ensureDebugId(baseID);
+    }
+
+    private Widget getCollapseBtn(ContentPanel panel) {
+        int lastWidget = panel.getHeader().getToolCount() - 1;
+        return panel.getHeader().getTool(lastWidget);
     }
 
     @Override

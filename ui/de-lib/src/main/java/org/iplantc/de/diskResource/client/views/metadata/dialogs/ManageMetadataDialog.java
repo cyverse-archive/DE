@@ -9,6 +9,7 @@ import org.iplantc.de.diskResource.client.MetadataView;
 import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceMetadataUpdateCallback;
 import org.iplantc.de.diskResource.client.presenters.metadata.MetadataPresenterImpl;
 import org.iplantc.de.diskResource.client.views.metadata.DiskResourceMetadataViewImpl;
+import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Preconditions;
@@ -100,11 +101,20 @@ public class ManageMetadataDialog extends IPlantDialog {
         }
 
         super.show();
+        ensureDebugId(DiskResourceModule.MetadataIds.METADATA_WINDOW);
+
     }
 
     @Override
     public void show() throws UnsupportedOperationException {
         throw new UnsupportedOperationException("This method is not supported for this class. " +
                                                     "Use show(MetadataServiceFacade) instead.");
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        mdView.asWidget().ensureDebugId(baseID + DiskResourceModule.MetadataIds.METADATA_VIEW);
     }
 }

@@ -1,0 +1,27 @@
+---
+- name: create /var/log/condor-launcher
+  file: path=/var/log/condor-launcher owner=root group=root mode=0755 state=directory
+
+- name: pull jobservices image
+  shell: docker pull discoenv/jobservices:{{docker.tag}}
+
+- name: pull configs image
+  shell: docker pull gims.iplantcollaborative.org:5000/de-configs-{{environment_name}}:{{docker.tag}}
+
+- name: install condor-launcher
+  shell: docker run --rm -v /usr/local/bin:/condor-launcher --entrypoint "cp" discoenv/jobservices:{{docker.tag}} /bin/condor-launcher /condor-launcher/condor-launcher
+
+- name: remove config container
+  shell: docker rm -v condor-launcher-configs
+  ignore_errors: true
+
+- name: create config container
+  shell: docker run --name condor-launcher-configs gims.iplantcollaborative.org:5000/de-configs-{{environment_name}}:{{docker.tag}}
+
+- name: copy config to system
+  shell: docker run --rm -v /etc:/configs --volumes-from condor-launcher-configs alpine:3.2 cp /etc/iplant/de/jobservices.yml /configs/jobservices.yml
+
+- name: change permissions on jobservices.yml
+  file: path=/etc/jobservices.yml mode=0644
+
+- include: systemd.yml

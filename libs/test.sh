@@ -9,4 +9,4 @@ if [ -z $CMD ]; then
     CMD=test2junit
 fi
 
-docker run --rm -v $(pwd):/build -w /build discoenv/buildenv lein $CMD
+docker run --rm -v $(pwd)/../..:/build -w /build discoenv/buildenv ./libs/test-in-container.sh libs/$(basename $(pwd)) $CMD

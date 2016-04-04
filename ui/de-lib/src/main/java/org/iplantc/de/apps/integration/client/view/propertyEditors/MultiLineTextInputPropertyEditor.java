@@ -125,6 +125,7 @@ public class MultiLineTextInputPropertyEditor extends AbstractArgumentPropertyEd
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
         label.ensureDebugId(baseID + PropertyPanelIds.LABEL);
+        doNotDisplay.getCheckBox().ensureDebugId(baseID + PropertyPanelIds.DO_NOT_DISPLAY);
         argumentOptionEditor.ensureDebugId(baseID + PropertyPanelIds.ARGUMENT_OPTION);
         defaultValueEditor.ensureDebugId(baseID + PropertyPanelIds.DEFAULT_VALUE);
         requiredEditor.ensureDebugId(baseID + PropertyPanelIds.REQUIRED);

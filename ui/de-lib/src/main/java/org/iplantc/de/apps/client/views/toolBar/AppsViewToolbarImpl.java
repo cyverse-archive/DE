@@ -67,9 +67,9 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
 
 
     @UiField
-    TextButton share_menu;
-    @UiField
     Menu sharingMenu;
+    @UiField
+    TextButton shareMenuButton;
     @UiField
     MenuItem appRun;
     @UiField
@@ -281,7 +281,7 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
                 shareWithCollaboratorsMiEnabled = containsSharableApps(currentSelection);
         }
 
-        share_menu.setEnabled(submitAppEnabled || shareWithCollaboratorsMiEnabled);
+        shareMenuButton.setEnabled(submitAppEnabled || shareWithCollaboratorsMiEnabled);
         deleteApp.setEnabled(deleteAppEnabled);
         editApp.setEnabled(editAppEnabled);
         sharePublic.setEnabled(submitAppEnabled);
@@ -328,9 +328,10 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         copyApp.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_COPY_APP);
         editApp.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_EDIT_APP);
         deleteApp.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_DELETE_APP);
-        sharingMenu.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_SHARE_APP);
-        sharePublic.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_SHARE_APP_PUBLIC);
-        shareCollab.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_SHARE_APP_COLLAB);
+
+        shareMenuButton.ensureDebugId(baseID + Ids.MENU_ITEM_SHARE_APP);
+        sharePublic.ensureDebugId(baseID + Ids.MENU_ITEM_SHARE_APP + Ids.MENU_ITEM_SHARE_APP_PUBLIC);
+        shareCollab.ensureDebugId(baseID + Ids.MENU_ITEM_SHARE_APP + Ids.MENU_ITEM_SHARE_APP_COLLAB);
 
         wf_menu.ensureDebugId(baseID + Ids.MENU_ITEM_WF);
         wfRun.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_USE_WF);

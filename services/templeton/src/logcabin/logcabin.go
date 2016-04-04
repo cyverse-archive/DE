@@ -1,3 +1,5 @@
+// Package logcabin provides common logging functionality that can be used to
+// emit messages in the JSON format that we use for logstash/kibana.
 package logcabin
 
 import (
@@ -7,15 +9,50 @@ import (
 	"time"
 )
 
-// LoggerFunc adapts a function so it can be used as an io.Writer.
-type LoggerFunc func([]byte) (int, error)
+var (
+	Trace   *log.Logger
+	Info    *log.Logger
+	Warning *log.Logger
+	Error   *log.Logger
 
-func (l LoggerFunc) Write(logbuf []byte) (n int, err error) {
-	return l(logbuf)
+	Trace_Lincoln   *Lincoln
+	Info_Lincoln    *Lincoln
+	Warning_Lincoln *Lincoln
+	Error_Lincoln   *Lincoln
+
+	Service  string
+	Artifact string
+)
+
+// Log Level Constants
+const (
+	trace_lvl = "TRACE"
+	info_lvl  = "INFO"
+	warn_lvl  = "WARN"
+	err_lvl   = "ERR"
+)
+
+func init() {
+	Init("templeton", "default")
+}
+
+func Init(service, artifact string) {
+	Service = service
+	Artifact = artifact
+
+	Trace_Lincoln = &Lincoln{service, artifact, trace_lvl}
+	Info_Lincoln = &Lincoln{service, artifact, info_lvl}
+	Warning_Lincoln = &Lincoln{service, artifact, warn_lvl}
+	Error_Lincoln = &Lincoln{service, artifact, err_lvl}
+
+	Trace = log.New(Trace_Lincoln, "", log.Lshortfile)
+	Info = log.New(Info_Lincoln, "", log.Lshortfile)
+	Warning = log.New(Warning_Lincoln, "", log.Lshortfile)
+	Error = log.New(Error_Lincoln, "", log.Lshortfile)
 }
 
 // LogMessage represents a message that will be logged in JSON format.
-type LogMessage struct {
+type logMessage struct {
 	Service  string `json:"service"`
 	Artifact string `json:"art-id"`
 	Group    string `json:"group-id"`
@@ -24,49 +61,28 @@ type LogMessage struct {
 	Message  string `json:"message"`
 }
 
+// Lincoln is a logger for jex-events.
+type Lincoln struct {
+	service  string
+	artifact string
+	level    string
+}
+
 // NewLogMessage returns a pointer to a new instance of LogMessage.
-func NewLogMessage(message string) *LogMessage {
-	lm := &LogMessage{
-		Service:  "templeton",
-		Artifact: "templeton",
+func (l *Lincoln) newLogMessage(message string) *logMessage {
+	lm := &logMessage{
+		Service:  l.service,
+		Artifact: l.artifact,
 		Group:    "org.iplantc",
-		Level:    "INFO",
+		Level:    l.level,
 		Time:     time.Now().UnixNano() / int64(time.Millisecond),
 		Message:  message,
 	}
 	return lm
 }
 
-// LogWriter writes to stdout with a custom timestamp.
-func LogWriter(logbuf []byte) (n int, err error) {
-	m := NewLogMessage(string(logbuf[:]))
-	j, err := json.Marshal(m)
-	if err != nil {
-		return 0, err
-	}
-	j = append(j, []byte("\n")...)
-	return os.Stdout.Write(j)
-}
-
-// Lincoln is a logger for jex-events.
-type Lincoln struct {
-	*log.Logger
-}
-
-var (
-	logger *Lincoln
-)
-
-// New returns a pointer to a newly initialized Lincoln.
-func New() *Lincoln {
-	if logger == nil {
-		logger = &Lincoln{log.New(LoggerFunc(LogWriter), "", log.Lshortfile)}
-	}
-	return logger
-}
-
 func (l *Lincoln) Write(buf []byte) (n int, err error) {
-	m := NewLogMessage(string(buf[:]))
+	m := l.newLogMessage(string(buf[:]))
 	j, err := json.Marshal(m)
 	if err != nil {
 		return 0, err

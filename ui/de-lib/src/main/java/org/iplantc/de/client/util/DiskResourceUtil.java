@@ -205,6 +205,18 @@ public class DiskResourceUtil {
         return false;
     }
 
+    public <R extends DiskResource> boolean contains(Iterable<R> selection, R target) {
+        if (selection != null && target != null) {
+            for (DiskResource resource : selection) {
+                if (resource.getId().equals(target.getId())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     public <R extends DiskResource> boolean containsFolder(Iterable<R> selection) {
         for (DiskResource resource : selection) {
             if (resource instanceof Folder) {

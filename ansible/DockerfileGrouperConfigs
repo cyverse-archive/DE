@@ -1,0 +1,11 @@
+FROM tianon/true
+
+COPY config_files/etc/grouper /etc/grouper/
+COPY config_files/etc/nginx /etc/nginx/
+COPY config_files/etc/tomcat /etc/tomcat/
+COPY config_files/var/log/grouper /var/log/grouper/
+
+VOLUME /etc/grouper/
+VOLUME /etc/nginx/
+VOLUME /etc/tomcat/
+VOLUME /var/log/grouper

@@ -97,21 +97,23 @@ public interface DiskResourceServiceFacade {
 
     /**
      * Calls the move folder and move file services for the list of given disk resource ids.
-     * 
-     * @param diskResources list of file and folder ids to move.
+     *
+     * @param sourceFolder the source folder of disk resources to move.
      * @param destFolder the destination folder where the disk resources will be moved.
+     * @param diskResources list of file and folder ids to move.
      */
-    void moveDiskResources(final List<DiskResource> diskResources,
+    void moveDiskResources(final Folder sourceFolder,
                            final Folder destFolder,
+                           final List<DiskResource> diskResources,
                            AsyncCallback<DiskResourceMove> callback);
 
     /**
      * Calls the move folder and move file services for moving contents of a given folder.
      * 
-     * @param sourceFolderId id of the source folder
+     * @param sourceFolder the source folder of disk resources to move.
      * @param destFolder the destination folder where the disk resources will be moved.
      */
-    void moveContents(final String sourceFolderId,
+    void moveContents(final Folder sourceFolder,
                       final Folder destFolder,
                       AsyncCallback<DiskResourceMove> callback);
 
@@ -308,10 +310,6 @@ public interface DiskResourceServiceFacade {
      */
     void shareWithAnonymous(final HasPaths diskResourcePaths, final AsyncCallback<String> callback);
 
-    void deleteMetadataTemplateAvus(final DiskResource resource,
-                                    final DiskResourceMetadataTemplate templateAvus,
-                                    final AsyncCallback<String> callback);
-
     /**
      * Copy metadata to list of files / folders
      * 
@@ -348,18 +346,6 @@ public interface DiskResourceServiceFacade {
     void createNcbiSraFolderStructure(Folder parentFolder,
                                       String[] foldersToCreate,
                                       AsyncCallback<String> callback);
-    
-    /**
-     * 
-     * @param template_id template to match when applying metadata
-     * @param destFolder folder containing files to which metadata will be applied
-     * @param force set true to overwrite metadata
-     * @param callback callback object
-     */
-    void uploadBulkMetadata(String template_id,
-                            String destFolder,
-                            boolean force,
-                            AsyncCallback<String> callback);
 
     /**
      * 

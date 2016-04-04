@@ -40,11 +40,14 @@
   [url-to-scrub]
   (str (url/url url-to-scrub :path "/")))
 
+(defn get-with-timeout
+  [url]
+  (client/get url {:socket-timeout 10000 :conn-timeout 10000}))
 
 (defn perform-jex-check
   []
   (try
-    (let [s (:status (client/get (config/jex-base-url)))]
+    (let [s (:status (get-with-timeout (config/jex-base-url)))]
       (log/info "HTTP Status from JEX: " s)
       (<= 200 s 299))
     (catch Exception e
@@ -56,7 +59,7 @@
   []
   (try
     (let [base-url (scrub-url (config/apps-base))
-          s        (:status (client/get base-url))]
+          s        (:status (get-with-timeout base-url))]
       (log/info "HTTP Status from Apps: " s)
       (<= 200 s 299))
     (catch Exception e
@@ -68,7 +71,7 @@
   []
   (try
     (let [base-url (scrub-url (config/notificationagent-base))
-          s        (:status (client/get base-url))]
+          s        (:status (get-with-timeout base-url))]
       (log/info "HTTP Status from NotificationAgent: " s)
       (<= 200 s 299))
     (catch Exception e
@@ -80,7 +83,7 @@
   []
   (try
     (let [ezid-status-url (str (url/url (config/ezid-base-url) "status"))
-          status          (:body (client/get ezid-status-url))]
+          status          (:body (get-with-timeout ezid-status-url))]
       (log/info "HTTP Status from EZID: " status)
       status)
     (catch Exception e

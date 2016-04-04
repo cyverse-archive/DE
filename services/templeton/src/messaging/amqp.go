@@ -9,8 +9,6 @@ import (
 	"github.com/streadway/amqp"
 )
 
-var logger = logcabin.New()
-
 var (
 	//ReindexExchange is the name of the exchange that full-reindex info is passed around on.
 	ReindexExchange = "de"
@@ -20,6 +18,12 @@ var (
 
 	//ReindexTemplatesKey is the routing/binding key for templates reindex messages.
 	ReindexTemplatesKey = "index.templates"
+
+	//IncrementalExchange is the name of the exchange that incremental update info is passed around on.
+	IncrementalExchange = "de"
+
+	//IncrementalKey is the routing/binding key for incremental updates
+	IncrementalKey = "metadata.update"
 )
 
 // MessageHandler defines a type for amqp.Delivery handlers.
@@ -66,19 +70,19 @@ func NewClient(uri string, reconnect bool) (*Client, error) {
 	randomizer := rand.New(rand.NewSource(time.Now().UnixNano()))
 	c.uri = uri
 	c.Reconnect = reconnect
-	logger.Println("Attempting AMQP connection...")
+	logcabin.Info.Println("Attempting AMQP connection...")
 	var connection *amqp.Connection
 	var err error
 	if c.Reconnect {
 		for {
 			connection, err = amqp.Dial(c.uri)
 			if err != nil {
-				logger.Print(err)
+				logcabin.Error.Print(err)
 				waitFor := randomizer.Intn(10)
-				logger.Printf("Re-attempting connection in %d seconds", waitFor)
+				logcabin.Info.Printf("Re-attempting connection in %d seconds", waitFor)
 				time.Sleep(time.Duration(waitFor) * time.Second)
 			} else {
-				logger.Println("Successfully connected to the AMQP broker")
+				logcabin.Info.Println("Successfully connected to the AMQP broker")
 				break
 			}
 		}
@@ -87,7 +91,7 @@ func NewClient(uri string, reconnect bool) (*Client, error) {
 		if err != nil {
 			return nil, err
 		}
-		logger.Println("Successfully connected to the AMQP broker")
+		logcabin.Info.Println("Successfully connected to the AMQP broker")
 	}
 	c.connection = connection
 	c.consumersChan = make(chan consumeradder)
@@ -112,13 +116,13 @@ func (c *Client) Listen() {
 	for {
 		select {
 		case cs := <-c.consumersChan:
-			logger.Println("A new consumer is being added")
+			logcabin.Info.Println("A new consumer is being added")
 			c.initconsumer(&cs.consumer)
 			consumers = append(consumers, &cs.consumer)
-			logger.Println("Done adding a new consumer")
+			logcabin.Info.Println("Done adding a new consumer")
 			cs.latch <- 1
 		case err := <-c.errors:
-			logger.Printf("An error in the connection to the AMQP broker occurred:\n%s", err)
+			logcabin.Error.Printf("An error in the connection to the AMQP broker occurred:\n%s", err)
 			if c.Reconnect {
 				c, _ = NewClient(c.uri, c.Reconnect)
 				c.consumers = consumers

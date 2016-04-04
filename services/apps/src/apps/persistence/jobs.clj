@@ -46,7 +46,7 @@
 (defn status-follows?
   "Determines whether or not the new job status follows the old job status."
   [new-status old-status]
-  (> (job-status-order new-status) (job-status-order old-status)))
+  (>= (job-status-order new-status) (job-status-order old-status)))
 
 (defn completed?
   [job-status]

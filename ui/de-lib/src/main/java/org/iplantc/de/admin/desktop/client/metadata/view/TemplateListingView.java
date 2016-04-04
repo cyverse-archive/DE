@@ -4,7 +4,6 @@ import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -74,6 +73,8 @@ public interface TemplateListingView extends IsWidget, IsMaskable {
         void editTemplate(MetadataTemplateInfo template);
 
         void addTemplate();
+
+        void setViewDebugId(String baseId);
     }
 
     void loadTemplates(List<MetadataTemplateInfo> result);

@@ -1,0 +1,4 @@
+---
+- name: stop condor-launcher
+  service: name=condor-launcher state=stopped
+  ignore_errors: yes

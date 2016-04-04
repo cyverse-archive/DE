@@ -1,5 +1,7 @@
 package org.iplantc.de.admin.desktop.client.systemMessage.view;
 
+import org.iplantc.de.admin.desktop.shared.Belphegor;
+import org.iplantc.de.apps.widgets.client.view.editors.widgets.CheckBoxAdapter;
 import org.iplantc.de.client.models.systemMessages.SystemMessage;
 import org.iplantc.de.client.models.systemMessages.SystemMessageFactory;
 
@@ -23,7 +25,6 @@ import com.sencha.gxt.core.client.util.DateWrapper;
 import com.sencha.gxt.data.shared.StringLabelProvider;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
-import com.sencha.gxt.widget.core.client.form.CheckBox;
 import com.sencha.gxt.widget.core.client.form.DateField;
 import com.sencha.gxt.widget.core.client.form.SimpleComboBox;
 import com.sencha.gxt.widget.core.client.form.TextArea;
@@ -48,8 +49,8 @@ class EditCreateSystemMessageDialog extends Composite implements ValueAwareEdito
     @UiField @Path("deactivationTime") DateField deActivationDateField;
     @UiField @Ignore TimeField deActivationTimeField;
 
-    @UiField CheckBox dismissible;
-    @UiField CheckBox loginsDisabled;
+    @UiField CheckBoxAdapter dismissible;
+    @UiField CheckBoxAdapter loginsDisabled;
 
     @UiField(provided = true) @Ignore Date maxTime = new DateWrapper().clearTime().addHours(23).addSeconds(46).asDate();
 
@@ -76,6 +77,23 @@ class EditCreateSystemMessageDialog extends Composite implements ValueAwareEdito
         messageField.setHeight(200);
         editorDriver.initialize(this);
         editorDriver.edit(message);
+
+        ensureDebugId(Belphegor.SystemMessageIds.EDIT_DIALOG + Belphegor.SystemMessageIds.VIEW);
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        activationDateField.setId(baseID + Belphegor.SystemMessageIds.ACTIVATION_DATE);
+        activationTimeField.setId(baseID + Belphegor.SystemMessageIds.ACTIVATION_TIME);
+        deActivationDateField.setId(baseID + Belphegor.SystemMessageIds.DEACTIVATION_DATE);
+        deActivationTimeField.setId(baseID + Belphegor.SystemMessageIds.DEACTIVATION_TIME);
+        dismissible.getCheckBox().ensureDebugId(baseID + Belphegor.SystemMessageIds.DISMISSABLE);
+        loginsDisabled.getCheckBox().ensureDebugId(baseID + Belphegor.SystemMessageIds.LOGINS_DISABLED);
+        messageField.setId(baseID + Belphegor.SystemMessageIds.MESSAGE);
+        type.setId(baseID + Belphegor.SystemMessageIds.TYPE);
+
     }
 
     static EditCreateSystemMessageDialog createSystemMessage(List<String> announcementTypes) {

@@ -582,24 +582,19 @@ public class DiskResourcePresenterImpl implements
 
     @Override
     public void doMoveDiskResources(Folder targetFolder, List<DiskResource> resources) {
-        Folder parent = navigationPresenter.getSelectedFolder();
         view.mask(appearance.moveDiskResourcesLoadingMask());
+
+        Folder parent = navigationPresenter.getSelectedFolder();
+        if (diskResourceUtil.contains(resources, parent)) {
+            parent = navigationPresenter.getParent(parent);
+        }
+
+        DiskResourceMoveCallback callback = new DiskResourceMoveCallback(view);
+
         if (gridViewPresenter.isSelectAllChecked()) {
-            diskResourceService.moveContents(parent.getPath(),
-                                             targetFolder,
-                                             new DiskResourceMoveCallback(view,
-                                                                          true,
-                                                                          parent,
-                                                                          targetFolder,
-                                                                          resources));
+            diskResourceService.moveContents(parent, targetFolder, callback);
         } else {
-            diskResourceService.moveDiskResources(resources,
-                                                  targetFolder,
-                                                  new DiskResourceMoveCallback(view,
-                                                                               false,
-                                                                               parent,
-                                                                               targetFolder,
-                                                                               resources));
+            diskResourceService.moveDiskResources(parent, targetFolder, resources, callback);
         }
     }
 

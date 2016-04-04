@@ -1,6 +1,7 @@
 package org.iplantc.de.admin.desktop.client.permIdRequest.views;
 
 import org.iplantc.de.admin.desktop.client.permIdRequest.model.PermanentIdRequestPathProvider;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequest;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestAutoBeanFactory;
@@ -94,6 +95,16 @@ public class PermanentIdRequestViewImpl extends Composite implements PermanentId
         grid.getView().setEmptyText(appearance.noRows());
     }
 
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        updateBtn.ensureDebugId(baseID + Belphegor.PermIds.UPDATE);
+        metadataBtn.ensureDebugId(baseID + Belphegor.PermIds.METADATA);
+        createDOIBtn.ensureDebugId(baseID + Belphegor.PermIds.DOI);
+        grid.ensureDebugId(baseID + Belphegor.PermIds.GRID);
+    }
+
     @UiHandler("updateBtn")
     void onUpdateBtnClicked(SelectEvent event) {
        presenter.onUpdateRequest();
@@ -140,6 +151,14 @@ public class PermanentIdRequestViewImpl extends Composite implements PermanentId
             }
         });
         amb.show();
+        setMsgBoxDebugIds(amb);
+    }
+
+    private void setMsgBoxDebugIds(MessageBox amb) {
+        amb.ensureDebugId(Belphegor.PermIds.CREATE_DOI_MSG);
+        amb.getButton(PredefinedButton.CANCEL).ensureDebugId(Belphegor.PermIds.CREATE_DOI_MSG + Belphegor.PermIds.CANCEL);
+        amb.getButton(PredefinedButton.YES).ensureDebugId(Belphegor.PermIds.CREATE_DOI_MSG + Belphegor.PermIds.YES);
+        amb.getButton(PredefinedButton.NO).ensureDebugId(Belphegor.PermIds.CREATE_DOI_MSG + Belphegor.PermIds.NO);
     }
 
     @UiFactory

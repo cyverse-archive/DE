@@ -1,0 +1,86 @@
+---
+- name: ensure that /etc/grouper exists
+  file: path={{ grouper_config_dir }}/etc/grouper state=directory mode=0755
+  tags:
+    - config
+
+- name: ensure that /etc/tomcat exists
+  file: path={{ grouper_config_dir }}/etc/tomcat state=directory mode=0755
+  tags:
+    - config
+
+- name: ensure that /var/log/grouper exists
+  file: path={{ grouper_config_dir }}/var/log/grouper state=directory mode=0755
+  tags:
+    - config
+
+- name: ensure that /etc/nginx exists
+  file: path={{ grouper_config_dir }}/etc/nginx state=directory mode=0755
+  tags:
+    - config
+
+- name: generate grouper.properties
+  template: src=grouper.properties.j2 dest={{ grouper_config_dir }}/etc/grouper/grouper.properties mode=0644
+  tags:
+    - config
+    - config_grouper
+
+- name: generate grouper-ws.properties
+  template: src=grouper-ws.properties.j2 dest={{ grouper_config_dir }}/etc/grouper/grouper-ws.properties mode=0644
+  tags:
+    - config
+    - config_grouper
+
+- name: generate hibernate.properties
+  template: src=grouper.hibernate.properties.j2 dest={{ grouper_config_dir }}/etc/grouper/hibernate.properties mode=0644
+  tags:
+    - config
+    - config_grouper
+
+- name: generate loader.properties
+  template: src=grouper-loader.properties.j2 dest={{ grouper_config_dir }}/etc/grouper/loader.properties mode=0644
+  tags:
+    - config
+    - config_grouper
+
+- name: generate sources.xml
+  template: src=sources.xml.j2 dest={{ grouper_config_dir }}/etc/grouper/sources.xml mode=0644
+  tags:
+    - config
+    - config_grouper
+
+- name: generate subject.properties
+  template: src=subject.properties.j2 dest={{ grouper_config_dir }}/etc/grouper/subject.properties mode=0644
+  tags:
+    - config
+    - config_grouper
+
+- name: generate client.properties
+  template: src=grouper.client.properties.j2 dest={{ grouper_config_dir }}/etc/grouper/client.properties mode=0644
+  tags:
+    - config
+    - config_grouper
+
+- name: generate server.xml
+  template: src=server.xml.j2 dest={{ grouper_config_dir }}/etc/tomcat/server.xml mode=0644
+  tags:
+    - config
+    - config_tomcat
+
+- name: generate setenv.sh
+  template: src=setenv.sh.j2 dest={{ grouper_config_dir }}/etc/tomcat/setenv.sh mode=0644
+  tags:
+    - config
+    - config_tomcat
+
+- name: generate tomcat-users.xml
+  template: src=tomcat-users.xml.j2 dest={{ grouper_config_dir }}/etc/tomcat/tomcat-users.xml mode=0644
+  tags:
+    - config
+    - config_tomcat
+
+- name: configure nginx
+  template: src=nginx.conf.j2 dest={{ grouper_config_dir }}/etc/nginx/nginx.conf mode=0644
+  tags:
+    - config
+    - config_nginx

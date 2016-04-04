@@ -4,6 +4,7 @@
     <inherits name="org.iplantc.de.resources.ui-resources"/>
     <inherits name="org.iplantc.de.tools.requests.ToolRequests"/>
     <inherits name="org.iplantc.de.admin.apps.AdminApps" />
+    <inherits name="org.iplantc.de.apps.widgets.Widgets"/>
 
     <!-- Specify the paths for translatable code -->
     <source path='client' />

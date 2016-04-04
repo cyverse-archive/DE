@@ -45,11 +45,11 @@
   tags:
     - services
     - condor-log-monitor
-  roles:
-    - role: util-cfg-docker-stop
+  post_tasks:
+    - name: remove clm
       ignore_errors: yes
-      service_name: "{{condor_log_monitor.compose_service}}"
-      service_name_short: "{{condor_log_monitor.service_name_short}}"
+      sudo: yes
+      shell: docker kill clm
 
 - name: Stop data-info
   hosts: data-info:&systems
@@ -167,18 +167,48 @@
       service_name: "{{iplant_groups.compose_service}}"
       service_name_short: "{{iplant_groups.service_name_short}}"
 
-- name: Stop jex-events
+- name: Stop job-status-to-apps-adapter
   hosts: jexevents:&systems
   become: true
   gather_facts: false
   tags:
     - services
-    - jexevents
+    - job-status-to-apps-adapter
   roles:
     - role: util-cfg-docker-stop
       ignore_errors: yes
-      service_name: "{{jexevents.compose_service}}"
-      service_name_short: "{{jexevents.service_name_short}}"
+      service_name: job_status_to_apps_adapter
+      service_name_short: job_status_to_apps_adapter
+
+- name: Stop job-status-recorder
+  hosts: jexevents:&systems
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - job-status-recorder
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: job_status_recorder
+      service_name_short: job_status_recorder
+
+- name: Stop jex-events
+  hosts: jexevents:&systems
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - jexevents
+  post_tasks:
+    - name: stop jex-events
+      ignore_errors: yes
+      sudo: true
+      shell: docker kill jexevents
+    - name: stop jex-events part 2
+      ignore_errors: yes
+      sudo: true
+      shell: docker kill jex-events
 
 - name: Stop kifshare
   hosts: kifshare:&systems
@@ -258,6 +288,20 @@
       ignore_errors: yes
       service_name: "{{templeton_periodic.compose_service}}"
       service_name_short: "{{templeton_periodic.service_name_short}}"
+
+- name: Stop templeton-incremental
+  hosts: templeton-incremental:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - templeton
+    - templeton-incremental
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{templeton_incremental.compose_service}}"
+      service_name_short: "{{templeton_incremental.service_name_short}}"
 
 - name: Stop terrain
   hosts: terrain:&systems

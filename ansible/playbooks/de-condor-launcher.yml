@@ -1,0 +1,7 @@
+- name: Configure condor-launcher
+  hosts: jex
+  sudo: yes
+  tags:
+      - condor-launcher
+  roles:
+      - de-condor-launcher

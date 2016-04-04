@@ -14,13 +14,16 @@
                                     TicketClientSupport
                                     Ticket]))
 
-(defn ^TicketAdminService ticket-admin-service
+(defn- ^TicketAdminService ticket-admin-service
   "Creates an instance of TicketAdminService, which provides
    access to utility methods for performing operations on tickets.
    Probably doesn't need to be called directly."
-  [cm user]
-  (let [tsf (TicketServiceFactoryImpl. (:accessObjectFactory cm))]
-    (.instanceTicketAdminService tsf (override-user-account cm user (temp-password cm user)))))
+  [cm username]
+  (let [tsf (TicketServiceFactoryImpl. (:accessObjectFactory cm))
+        user (if (= username (:user cm))
+                 (:irodsAccount cm)
+                 (override-user-account cm username (temp-password cm username)))]
+    (.instanceTicketAdminService tsf user)))
 
 (defn set-ticket-options
   "Sets the optional settings for a ticket, such as the expiration date
@@ -65,6 +68,16 @@
    identifier."
   [cm user ticket-id]
   (.isTicketInUse (ticket-admin-service cm user) ticket-id))
+
+(defn ^Boolean public-ticket?
+  "Checks to see if the provided ticket ID is publicly accessible."
+  [cm user ticket-id]
+
+  (let [tas    (ticket-admin-service cm user)
+        groups (.listAllGroupRestrictionsForSpecifiedTicket tas ticket-id 0)]
+    (if (contains? (set groups) "public")
+      true
+      false)))
 
 (defn ^Ticket ticket-by-id
   "Looks up the ticket by the provided ticket-id string and

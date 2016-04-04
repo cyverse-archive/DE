@@ -1,0 +1,3 @@
+---
+- name: start condor-launcher
+  service: name=condor-launcher state=started

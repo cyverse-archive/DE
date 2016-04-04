@@ -89,15 +89,6 @@
   tags:
     - services
     - condor-log-monitor
-  roles:
-    - role: util-cfg-docker-rm-configs
-      ignore_errors: yes
-      service_name: "{{condor_log_monitor.compose_service}}"
-      service_name_short: "{{condor_log_monitor.service_name_short}}"
-    - role: util-cfg-docker-rm
-      ignore_errors: yes
-      service_name: "{{condor_log_monitor.compose_service}}"
-      service_name_short: "{{condor_log_monitor.service_name_short}}"
   post_tasks:
     - name: annihilate clm
       ignore_errors: yes
@@ -107,6 +98,10 @@
       ignore_errors: yes
       become: true
       shell: docker rm -v clm
+    - name: annihilate clm configs
+      ignore_errors: yes
+      sudo: true
+      shell: docker rm -v config_clm
 
 - name: Remove data-info
   hosts: data-info:&systems
@@ -313,22 +308,46 @@
       become: true
       shell: docker rm -v {{iplant_groups.service_name_short}}
 
-- name: Remove jex-events
+- name: Remove job-status-recorder
   hosts: jexevents:&systems
   become: true
   gather_facts: false
   tags:
     - services
-    - jexevents
+    - job-status-recorder
   roles:
     - role: util-cfg-docker-rm-configs
       ignore_errors: yes
-      service_name: "{{jexevents.compose_service}}"
-      service_name_short: "{{jexevents.service_name_short}}"
+      service_name: job_status_recorder
+      service_name_short: job_status_recorder
     - role: util-cfg-docker-rm
       ignore_errors: yes
-      service_name: "{{jexevents.compose_service}}"
-      service_name_short: "{{jexevents.service_name_short}}"
+      service_name: job_status_recorder
+
+- name: Remove job-status-to-apps-adapter
+  hosts: jexevents:&systems
+  sudo: true
+  gather_facts: fasle
+  tags:
+    - services
+    - job-status-to-apps-adapter
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: job_status_to_apps_adapter
+      service_name_short: job_status_to_apps_adapter
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: job_status_to_apps_adapter
+      service_name_short: job_status_to_apps_adapter
+
+- name: Remove jex-events
+  hosts: jexevents:&systems
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - jexevents
   post_tasks:
     - name: annihilate jex-events
       ignore_errors: yes
@@ -338,6 +357,14 @@
       ignore_errors: yes
       become: true
       shell: docker rm -v jex-events
+    - name: annihilate jex-events part 3
+      ignore_errors: yes
+      sudo: true
+      shell: docker rm -v config_jex_events
+    - name: annihilate jex-events part 4
+      ignore_errors: yes
+      sudo: true
+      shell: docker rm -v config_jexevents
 
 - name: Remove kifshare
   hosts: kifshare:&systems
@@ -471,6 +498,29 @@
       ignore_errors: yes
       become: true
       shell: docker rm -v {{templeton_periodic.service_name_short}}
+
+- name: Remove templeton_incremental
+  hosts: templeton-incremental:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - templeton
+    - templeton-incremental
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{templeton_incremental.compose_service}}"
+      service_name_short: "{{templeton_incremental.service_name_short}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{templeton_incremental.compose_service}}"
+      service_name_short: "{{templeton_incremental.service_name_short}}"
+  post_tasks:
+    - name: annihilate templeton_incremental
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{templeton_incremental.service_name_short}}
 
 - name: Remove terrain
   hosts: terrain:&systems

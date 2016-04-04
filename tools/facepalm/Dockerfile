@@ -1,9 +1,9 @@
 FROM postgres:9.2
 
-ADD https://everdene.iplantcollaborative.org/jenkins/job/databases-dev/lastSuccessfulBuild/artifact/databases/de-database-schema/database.tar.gz /
-ADD https://everdene.iplantcollaborative.org/jenkins/job/databases-dev/lastSuccessfulBuild/artifact/databases/jex-db/jex-db.tar.gz /
-ADD https://everdene.iplantcollaborative.org/jenkins/job/databases-dev/lastSuccessfulBuild/artifact/databases/metadata/metadata-db.tar.gz /
-ADD https://everdene.iplantcollaborative.org/jenkins/job/databases-dev/lastSuccessfulBuild/artifact/databases/notification-db/notification-db.tar.gz /
+COPY database.tar.gz /database.tar.gz
+COPY jex-db.tar.gz /jex-db.tar.gz
+COPY metadata-db.tar.gz /metadata-db.tar.gz
+COPY notification-db.tar.gz /notification-db.tar.gz
 
 RUN apt-get update && apt-get install -y \
   openjdk-7-jre-headless \

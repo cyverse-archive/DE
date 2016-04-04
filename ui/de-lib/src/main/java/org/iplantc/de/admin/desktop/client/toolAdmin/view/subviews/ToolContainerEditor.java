@@ -1,6 +1,7 @@
 package org.iplantc.de.admin.desktop.client.toolAdmin.view.subviews;
 
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.tool.ToolContainer;
 import org.iplantc.de.commons.client.widgets.EmptyStringValueChangeHandler;
 
@@ -64,6 +65,32 @@ public class ToolContainerEditor extends Composite implements Editor<ToolContain
     @Ignore
     @UiField FieldSet containerFieldSet;
     @UiField (provided = true) ToolAdminView.ToolAdminViewAppearance appearance;
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        nameEditor.setId(baseID + Belphegor.ToolAdminIds.CONTAINER_NAME);
+        workingDirectoryEditor.setId(baseID + Belphegor.ToolAdminIds.CONTAINER_WORKING_DIR);
+        entryPointEditor.setId(baseID + Belphegor.ToolAdminIds.CONTAINER_ENTRY_POINT);
+        memoryLimitEditor.setId(baseID + Belphegor.ToolAdminIds.CONTAINER_MEMORY);
+        cpuSharesEditor.setId(baseID + Belphegor.ToolAdminIds.CONTAINER_CPU);
+        networkModeEditor.setId(baseID + Belphegor.ToolAdminIds.CONTAINER_NETWORK_MODE);
+        containerDevicesLabel.ensureDebugId(baseID + Belphegor.ToolAdminIds.CONTAINER_DEVICES_LABEL);
+        addDeviceButton.ensureDebugId(baseID + Belphegor.ToolAdminIds.CONTAINER_DEVICES_ADD);
+        deleteDeviceButton.ensureDebugId(baseID + Belphegor.ToolAdminIds.CONTAINER_DEVICES_DELETE);
+        containerVolumesLabel.ensureDebugId(baseID + Belphegor.ToolAdminIds.CONTAINER_VOLUMES_LABEL);
+        addVolumesButton.ensureDebugId(baseID + Belphegor.ToolAdminIds.CONTAINER_VOLUMES_ADD);
+        deleteVolumesButton.ensureDebugId(baseID + Belphegor.ToolAdminIds.CONTAINER_VOLUMES_DELETE);
+        containerVolumesFromLabel.ensureDebugId(baseID + Belphegor.ToolAdminIds.CONTAINER_VOLUMES_FROM_LABEL);
+        addVolumesFromButton.ensureDebugId(baseID + Belphegor.ToolAdminIds.CONTAINER_VOLUMES_FROM_ADD);
+        deleteVolumesFromButton.ensureDebugId(baseID + Belphegor.ToolAdminIds.CONTAINER_VOLUMES_FROM_DELETE);
+
+        deviceListEditor.ensureDebugId(baseID + Belphegor.ToolAdminIds.TOOL_DEVICES);
+        containerVolumesEditor.ensureDebugId(baseID + Belphegor.ToolAdminIds.CONTAINER_VOLUMES);
+        containerVolumesFromEditor.ensureDebugId(baseID + Belphegor.ToolAdminIds.CONTAINER_VOLUMES_FROM);
+        imageEditor.ensureDebugId(baseID + Belphegor.ToolAdminIds.TOOL_IMAGE);
+    }
 
     @Inject
     public ToolContainerEditor(ToolAdminView.ToolAdminViewAppearance appearance,
