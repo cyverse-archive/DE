@@ -4,7 +4,6 @@
 
 - name: set up the user
   rabbitmq_user:
-  vars:
     user: "{{ amqp_broker.user }}"
     password: "{{ amqp_broker.password }}" 
     vhost: de 
