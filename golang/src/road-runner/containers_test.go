@@ -466,7 +466,7 @@ func TestRunStep(t *testing.T) {
 	if exists {
 		dc.NukeContainerByName(job.Steps[0].Component.Container.Name)
 	}
-	if _, err := os.Stat("logs"); os.IsNotExist(err) {
+	if _, err = os.Stat("logs"); os.IsNotExist(err) {
 		err = os.MkdirAll("logs", 0755)
 		if err != nil {
 			t.Error(err)
@@ -479,10 +479,10 @@ func TestRunStep(t *testing.T) {
 	if exitCode != 0 {
 		t.Errorf("RunStep's exit code was %d instead of 0\n", exitCode)
 	}
-	if _, err := os.Stat(job.Steps[0].Stdout("0")); os.IsNotExist(err) {
+	if _, err = os.Stat(job.Steps[0].Stdout("0")); os.IsNotExist(err) {
 		t.Error(err)
 	}
-	if _, err := os.Stat(job.Steps[0].Stderr("0")); os.IsNotExist(err) {
+	if _, err = os.Stat(job.Steps[0].Stderr("0")); os.IsNotExist(err) {
 		t.Error(err)
 	}
 	expected := "This is a test"
@@ -536,7 +536,7 @@ func TestDownloadInputs(t *testing.T) {
 	if exists {
 		dc.NukeContainerByName(cName)
 	}
-	if _, err := os.Stat("logs"); os.IsNotExist(err) {
+	if _, err = os.Stat("logs"); os.IsNotExist(err) {
 		err = os.MkdirAll("logs", 0755)
 		if err != nil {
 			t.Error(err)
@@ -549,10 +549,10 @@ func TestDownloadInputs(t *testing.T) {
 	if exitCode != 0 {
 		t.Errorf("DownloadInputs's exit code was %d instead of 0\n", exitCode)
 	}
-	if _, err := os.Stat(job.Steps[0].Config.Inputs[0].Stdout("0")); os.IsNotExist(err) {
+	if _, err = os.Stat(job.Steps[0].Config.Inputs[0].Stdout("0")); os.IsNotExist(err) {
 		t.Error(err)
 	}
-	if _, err := os.Stat(job.Steps[0].Config.Inputs[0].Stderr("0")); os.IsNotExist(err) {
+	if _, err = os.Stat(job.Steps[0].Config.Inputs[0].Stderr("0")); os.IsNotExist(err) {
 		t.Error(err)
 	}
 	expected := strings.Join(
@@ -609,7 +609,7 @@ func TestUploadOutputs(t *testing.T) {
 	if exists {
 		dc.NukeContainerByName(cName)
 	}
-	if _, err := os.Stat("logs"); os.IsNotExist(err) {
+	if _, err = os.Stat("logs"); os.IsNotExist(err) {
 		err = os.MkdirAll("logs", 0755)
 		if err != nil {
 			t.Error(err)
@@ -622,10 +622,10 @@ func TestUploadOutputs(t *testing.T) {
 	if exitCode != 0 {
 		t.Errorf("UploadOutputs exit code was %d instead of 0\n", exitCode)
 	}
-	if _, err := os.Stat("logs/logs-stdout-output"); os.IsNotExist(err) {
+	if _, err = os.Stat("logs/logs-stdout-output"); os.IsNotExist(err) {
 		t.Error(err)
 	}
-	if _, err := os.Stat("logs/logs-stderr-output"); os.IsNotExist(err) {
+	if _, err = os.Stat("logs/logs-stderr-output"); os.IsNotExist(err) {
 		t.Error(err)
 	}
 	expected := strings.Join(

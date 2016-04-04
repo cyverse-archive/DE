@@ -102,10 +102,10 @@ func TestStop(t *testing.T) {
 		t.Error(err)
 	}
 	defer client.Close()
-	client.AddConsumer(messaging.JobsExchange, "test_stop", stopKey, func(d amqp.Delivery) {
+	client.AddConsumer(messaging.JobsExchange, "topic", "test_stop", stopKey, func(d amqp.Delivery) {
 		d.Ack(false)
 		stopMsg := &messaging.StopRequest{}
-		err := json.Unmarshal(d.Body, stopMsg)
+		err = json.Unmarshal(d.Body, stopMsg)
 		if err != nil {
 			t.Error(err)
 		}
@@ -153,10 +153,10 @@ func TestLaunch(t *testing.T) {
 		t.Error(err)
 	}
 	defer client.Close()
-	client.AddConsumer(messaging.JobsExchange, "test_launch", messaging.LaunchesKey, func(d amqp.Delivery) {
+	client.AddConsumer(messaging.JobsExchange, "topic", "test_launch", messaging.LaunchesKey, func(d amqp.Delivery) {
 		d.Ack(false)
 		launch := &messaging.JobRequest{}
-		err := json.Unmarshal(d.Body, launch)
+		err = json.Unmarshal(d.Body, launch)
 		if err != nil {
 			t.Error(err)
 		}

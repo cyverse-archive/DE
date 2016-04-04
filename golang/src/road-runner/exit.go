@@ -72,7 +72,7 @@ func Exit(exit, finalExit chan messaging.StatusCode) {
 		logcabin.Warning.Printf("Received an exit code of %d, cleaning up", int(exitCode))
 		for _, dc := range job.DataContainers() {
 			logcabin.Info.Printf("Nuking image %s:%s", dc.Name, dc.Tag)
-			err := dckr.NukeImage(dc.Name, dc.Tag)
+			err = dckr.NukeImage(dc.Name, dc.Tag)
 			if err != nil {
 				logcabin.Error.Print(err)
 			}

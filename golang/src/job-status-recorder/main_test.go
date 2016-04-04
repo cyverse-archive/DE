@@ -67,7 +67,7 @@ func TestInsert(t *testing.T) {
 		sentFrom                          string
 	)
 	for rows.Next() {
-		err := rows.Scan(&status, &message, &sentFrom, &sentFromHostname, &sentOn)
+		err = rows.Scan(&status, &message, &sentFrom, &sentFromHostname, &sentOn)
 		if err != nil {
 			t.Error(err)
 		}
@@ -138,7 +138,7 @@ func TestMsg(t *testing.T) {
 		sentFrom                          string
 	)
 	for rows.Next() {
-		err := rows.Scan(&status, &message, &sentFrom, &sentFromHostname, &sentOn)
+		err = rows.Scan(&status, &message, &sentFrom, &sentFromHostname, &sentOn)
 		if err != nil {
 			t.Error(err)
 		}

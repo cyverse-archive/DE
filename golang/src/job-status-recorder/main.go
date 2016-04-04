@@ -188,7 +188,7 @@ func main() {
 	}
 	logcabin.Info.Println("Connected to the database")
 	go amqpClient.Listen()
-	amqpClient.AddConsumer(messaging.JobsExchange, "job_status_recorder", messaging.UpdatesKey, msg)
+	amqpClient.AddConsumer(messaging.JobsExchange, "topic", "job_status_recorder", messaging.UpdatesKey, msg)
 	spinner := make(chan int)
 	for {
 		select {

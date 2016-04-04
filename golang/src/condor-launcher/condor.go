@@ -411,7 +411,7 @@ func main() {
 	RegisterStopHandler(client)
 
 	// Accept and handle messages sent out with the jobs.launches routing key.
-	client.AddConsumer(messaging.JobsExchange, "condor_launches", messaging.LaunchesKey, func(d amqp.Delivery) {
+	client.AddConsumer(messaging.JobsExchange, "topic", "condor_launches", messaging.LaunchesKey, func(d amqp.Delivery) {
 		body := d.Body
 		d.Ack(false)
 		req := messaging.JobRequest{}

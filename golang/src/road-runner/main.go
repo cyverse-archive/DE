@@ -236,8 +236,7 @@ func main() {
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
-
-	client, err := messaging.NewClient(uri, true)
+	client, err = messaging.NewClient(uri, true)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}

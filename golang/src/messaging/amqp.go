@@ -32,6 +32,21 @@ var (
 	//JobsExchange is the name of the exchange that job related info is passed around.
 	JobsExchange = "jobs"
 
+	//ReindexExchange is the name of the exchange that full-reindex info is passed around on.
+	ReindexExchange = "de"
+
+	//IncrementalExchange is the name of the exchange that incremental update info is passed around on.
+	IncrementalExchange = "de"
+
+	//ReindexAllKey is the routing/binding key for full reindex messages.
+	ReindexAllKey = "index.all"
+
+	//ReindexTemplatesKey is the routing/binding key for templates reindex messages.
+	ReindexTemplatesKey = "index.templates"
+
+	//IncrementalKey is the routing/binding key for incremental updates
+	IncrementalKey = "metadata.update"
+
 	//LaunchesKey is the routing/binding key for job launch request messages.
 	LaunchesKey = "jobs.launches"
 
@@ -237,11 +252,12 @@ type aggregationMessage struct {
 
 type consumer struct {
 	exchange        string
+	exchangeType    string
 	queue           string
 	key             string
 	handler         MessageHandler
-	queueAutoDelete bool
 	queueDurable    bool
+	queueAutoDelete bool
 }
 
 type consumeradder struct {
@@ -349,11 +365,13 @@ func (c *Client) Close() {
 }
 
 // AddConsumer adds a consumer to the list of consumers that need to be created
-// each time the client is set up. Make sure that Listen() has been called
-// before calling this function.
-func (c *Client) AddConsumer(exchange, queue, key string, handler MessageHandler) {
+// each time the client is set up. Note that this just adds the consumers to a
+// list, it doesn't actually start handling messages yet. You need to call
+// Listen() for that.
+func (c *Client) AddConsumer(exchange, exchangeType, queue, key string, handler MessageHandler) {
 	cs := consumer{
 		exchange:        exchange,
+		exchangeType:    exchangeType,
 		queue:           queue,
 		key:             key,
 		handler:         handler,
@@ -452,13 +470,13 @@ func (c *Client) initconsumer(cs *consumer) error {
 		return err
 	}
 	err = channel.ExchangeDeclare(
-		cs.exchange, //name
-		"topic",     //kind
-		true,        //durable
-		false,       //auto-delete
-		false,       //internal
-		false,       //no-wait
-		nil,         //args
+		cs.exchange,     //name
+		cs.exchangeType, //kind
+		true,            //durable
+		false,           //auto-delete
+		false,           //internal
+		false,           //no-wait
+		nil,             //args
 	)
 	_, err = channel.QueueDeclare(
 		cs.queue,

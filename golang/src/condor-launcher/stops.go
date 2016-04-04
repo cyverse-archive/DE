@@ -246,5 +246,5 @@ func stopHandler(client *messaging.Client) func(d amqp.Delivery) {
 
 // RegisterStopHandler registers a handler for all stop requests.
 func RegisterStopHandler(client *messaging.Client) {
-	client.AddConsumer(messaging.JobsExchange, "condor-launcher-stops", messaging.StopRequestKey("*"), stopHandler(client))
+	client.AddConsumer(messaging.JobsExchange, "topic", "condor-launcher-stops", messaging.StopRequestKey("*"), stopHandler(client))
 }

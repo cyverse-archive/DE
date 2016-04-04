@@ -44,7 +44,7 @@ func Run(client *messaging.Client, dckr *Docker, exit chan messaging.StatusCode)
 		}
 	}
 
-	if _, err := os.Stat("iplant.cmd"); err != nil {
+	if _, err = os.Stat("iplant.cmd"); err != nil {
 		if err = os.Rename("iplant.cmd", "logs/iplant.cmd"); err != nil {
 			logcabin.Error.Print(err)
 		}
@@ -67,7 +67,7 @@ func Run(client *messaging.Client, dckr *Docker, exit chan messaging.StatusCode)
 	if status == messaging.Success {
 		for _, dc := range job.DataContainers() {
 			running(client, job, fmt.Sprintf("Creating data container %s-%s", dc.NamePrefix, job.InvocationID))
-			_, _, err := dckr.CreateDataContainer(&dc, job.InvocationID)
+			_, _, err = dckr.CreateDataContainer(&dc, job.InvocationID)
 			if err != nil {
 				logcabin.Error.Print(err)
 				status = messaging.StatusDockerPullFailed
@@ -92,14 +92,14 @@ func Run(client *messaging.Client, dckr *Docker, exit chan messaging.StatusCode)
 			running(client, job, fmt.Sprintf("Done pulling tool container %s:%s", ci.Name, ci.Tag))
 		}
 	}
-
+	var exitCode int
 	// If pulls didn't succeed then we can't guarantee that we've got the
 	// correct versions of the tools. Don't bother pulling in data in that case,
 	// things are already screwed up.
 	if status == messaging.Success {
 		for idx, input := range job.Inputs() {
 			running(client, job, fmt.Sprintf("Downloading %s", input.IRODSPath()))
-			exitCode, err := dckr.DownloadInputs(job, &input, idx)
+			exitCode, err = dckr.DownloadInputs(job, &input, idx)
 			if exitCode != 0 || err != nil {
 				if err != nil {
 					logcabin.Error.Print(err)
@@ -126,7 +126,7 @@ func Run(client *messaging.Client, dckr *Docker, exit chan messaging.StatusCode)
 					strings.Join(step.Arguments(), " "),
 				),
 			)
-			exitCode, err := dckr.RunStep(&step, job.InvocationID, idx)
+			exitCode, err = dckr.RunStep(&step, job.InvocationID, idx)
 			if exitCode != 0 || err != nil {
 				if err != nil {
 					logcabin.Error.Print(err)
@@ -166,7 +166,7 @@ func Run(client *messaging.Client, dckr *Docker, exit chan messaging.StatusCode)
 	// Always attempt to transfer outputs. There might be logs that can help
 	// debug issues when the job fails.
 	running(client, job, fmt.Sprintf("Beginning to upload outputs to %s", job.OutputDirectory()))
-	exitCode, err := dckr.UploadOutputs(job)
+	exitCode, err = dckr.UploadOutputs(job)
 	if exitCode != 0 || err != nil {
 		if err != nil {
 			logcabin.Error.Print(err)

@@ -76,7 +76,7 @@ func TestRegisterTimeLimitRequestListener(t *testing.T) {
 	key := messaging.TimeLimitResponsesKey(invID)
 
 	// This will listen for the messages sent out as a response by RegisterTimeLimitRequestListener
-	client.AddConsumer(messaging.JobsExchange, "yay", key, handler)
+	client.AddConsumer(messaging.JobsExchange, "topic", "yay", key, handler)
 
 	// Listen for time limit requests
 	RegisterTimeLimitRequestListener(client, timeTracker, invID)
