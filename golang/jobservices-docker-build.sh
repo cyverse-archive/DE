@@ -23,8 +23,8 @@ if [ -d ./bin ]; then
 fi
 
 docker run --rm \
-	-v $(pwd):/jobservices \
-	-w /jobservices \
+	-v $(pwd):/build \
+	-w /build \
 	$DOCKER_USER/buildenv:latest \
 	gb vendor restore
 
