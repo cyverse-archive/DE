@@ -26,7 +26,7 @@ public class DeController {
     private final Logger LOG = LoggerFactory.getLogger(DeController.class);
 
     @Value("${org.iplantc.discoveryenvironment.maintenance-file}") private String maintenanceFile;
-    @Value("&{org.iplantc.discoveryenvironment.environment.prod-deployment}") private String isProduction;
+    @Value("${org.iplantc.discoveryenvironment.environment.prod-deployment}") private String isProduction;
 
     @RequestMapping("/")
     public String redirectToDe(final HttpServletRequest request) throws MalformedURLException {
