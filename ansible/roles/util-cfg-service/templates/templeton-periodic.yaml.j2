@@ -1,5 +1,5 @@
 amqp:
-  uri: amqp://{{ amqp_user }}:{{ amqp_password }}@{{ amqp_broker.host }}:{{ amqp_broker.port }}/
+  uri: amqp://{{ amqp_broker.user }}:{{ amqp_broker.password }}@{{ amqp_broker.host }}:{{ amqp_broker.port }}/
 
 elasticsearch:
   base: http://{{ elasticsearch.host }}:{{ elasticsearch.port }}

@@ -18,8 +18,8 @@ info-typer.irods.use-trash   = true
 # AMQP settings
 info-typer.amqp.host                 = {{ irods.amqp_broker.host }}
 info-typer.amqp.port                 = {{ irods.amqp_broker.port }}
-info-typer.amqp.user                 = {{ amqp_user }}
-info-typer.amqp.pass                 = {{ amqp_password }}
+info-typer.amqp.user                 = {{ irods.amqp_broker.user }}
+info-typer.amqp.pass                 = {{ irods.amqp_broker.password }}
 info-typer.amqp.retry-sleep          = 10000
 info-typer.amqp.exchange             = {{ amqp_irods_exchange }}
 info-typer.amqp.exchange.type        = {{ amqp_irods_exchange_type }}

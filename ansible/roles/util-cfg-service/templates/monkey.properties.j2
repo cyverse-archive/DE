@@ -4,8 +4,8 @@ monkey.retry-period-ms       = 1000
 
 monkey.amqp.host     = {{ amqp_broker.host }}
 monkey.amqp.port     = {{ amqp_broker.port }}
-monkey.amqp.user     = {{ amqp_user }}
-monkey.amqp.password = {{ amqp_password }}
+monkey.amqp.user     = {{ amqp_broker.user }}
+monkey.amqp.password = {{ amqp_broker.password }}
 monkey.amqp.queue    = monkey
 
 monkey.amqp.exchange.name        = {{ amqp_de_exchange }}
