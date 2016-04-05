@@ -1,5 +1,5 @@
 {
-  "AMQPURI" : "amqp://{{ amqp_user }}:{{ amqp_password }}@{{ amqp_broker.host }}:{{ amqp_broker.port }}/",
+  "AMQPURI" : "amqp://{{ amqp_broker.user }}:{{ amqp_broker.password }}@{{ amqp_broker.host }}:{{ amqp_broker.port }}/",
   "EventLog" : "{{ condor_log_monitor_event_log }}",
   "ExchangeName" : "{{ amqp_broker.condor_events.exchange }}",
   "ExchangeType" : "{{ amqp_broker.condor_events.exchange_type }}",

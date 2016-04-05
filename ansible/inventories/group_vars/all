@@ -45,8 +45,6 @@ agave:
   client_key:
   client_secret:
 
-amqp_password:
-amqp_user:
 amqp_de_exchange:
 amqp_de_exchange_durable: true
 amqp_de_exchange_auto_delete: false
@@ -54,11 +52,12 @@ amqp_irods_exchange: irods
 amqp_irods_exchange_type: topic
 amqp_irods_exchange_durable: true
 amqp_irods_exchange_auto_delete: false
-amqp_irods_connection_health_check_interval: 5000
 
 amqp_broker:
   host: "{{ groups['amqp-brokers'][0] }}"
-  port:
+  port: 5672
+  user: guest
+  password: guest
   condor_events:
     exchange: condor_events
     exchange_type: fanout
@@ -390,8 +389,10 @@ irods:
   data_curators_group: data-curators
   bad_chars: \u0060\u0027\u000A\u0009
   amqp_broker:
-    host: "{{ groups['amqp-brokers'][0] }}"
-    port:
+    host: "{{ groups['irods-amqp-brokers'][0] }}"
+    port: 5672
+    user: guest
+    password: guest
 
 
 # Jex does not actually have a container. The container name is how most syslog entries

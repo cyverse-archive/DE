@@ -2,8 +2,8 @@ dewey.environment-name          = {{ environment_name }}
 
 dewey.amqp.host                 = {{ irods.amqp_broker.host }}
 dewey.amqp.port                 = {{ irods.amqp_broker.port }}
-dewey.amqp.user                 = {{ amqp_user }}
-dewey.amqp.password             = {{ amqp_password }}
+dewey.amqp.user                 = {{ irods.amqp_broker.user }}
+dewey.amqp.password             = {{ irods.amqp_broker.password }}
 dewey.amqp.exchange.name        = {{ amqp_irods_exchange }}
 dewey.amqp.exchange.durable     = {{ amqp_irods_exchange_durable }}
 dewey.amqp.exchange.auto-delete = {{ amqp_irods_exchange_auto_delete }}

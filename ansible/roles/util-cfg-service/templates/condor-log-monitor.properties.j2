@@ -1,6 +1,6 @@
 {
   "AMQPHost" : "{{ amqp_broker.host }}:{{ amqp_broker.port }}",
-  "AMQPUserPass" : "{{ amqp_user }}:{{ amqp_password }}",
+  "AMQPUserPass" : "{{ amqp_broker.user }}:{{ amqp_broker.password }}",
   "ExchangeName" : "{{ amqp_broker.condor_events.exchange }}",
   "ExchangeType" : "{{ amqp_broker.condor_events.exchange_type }}",
   "RoutingKey" : "{{ amqp_broker.condor_events.exchange_routing_key }}",
