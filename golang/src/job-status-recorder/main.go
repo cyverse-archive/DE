@@ -74,7 +74,9 @@ func insert(state, invID, msg, host, ip string, sentOn int64) (sql.Result, error
 }
 
 func msg(delivery amqp.Delivery) {
-	delivery.Ack(false)
+	if err := delivery.Ack(false); err != nil {
+		logcabin.Error.Print(err)
+	}
 	logcabin.Info.Println("Message received")
 	update := &messaging.UpdateMessage{}
 	err := json.Unmarshal(delivery.Body, update)
