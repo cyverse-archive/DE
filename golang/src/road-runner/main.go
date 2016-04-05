@@ -160,7 +160,7 @@ func (t *TimeTracker) ApplyDelta(deltaDuration time.Duration) error {
 // RegisterTimeLimitDeltaListener sets a function that listens for TimeLimitDelta
 // messages on the given client.
 func RegisterTimeLimitDeltaListener(client *messaging.Client, timeTracker *TimeTracker, invID string) {
-	client.AddDeletableConsumer(messaging.JobsExchange, messaging.TimeLimitDeltaQueueName(invID), messaging.TimeLimitDeltaRequestKey(invID), func(d amqp.Delivery) {
+	client.AddDeletableConsumer(messaging.JobsExchange, "topic", messaging.TimeLimitDeltaQueueName(invID), messaging.TimeLimitDeltaRequestKey(invID), func(d amqp.Delivery) {
 		d.Ack(false)
 		running(client, job, "Received delta request")
 		deltaMsg := &messaging.TimeLimitDelta{}
@@ -186,7 +186,7 @@ func RegisterTimeLimitDeltaListener(client *messaging.Client, timeTracker *TimeT
 // RegisterTimeLimitRequestListener sets a function that listens for
 // TimeLimitRequest messages on the given client.
 func RegisterTimeLimitRequestListener(client *messaging.Client, timeTracker *TimeTracker, invID string) {
-	client.AddDeletableConsumer(messaging.JobsExchange, messaging.TimeLimitRequestQueueName(invID), messaging.TimeLimitRequestKey(invID), func(d amqp.Delivery) {
+	client.AddDeletableConsumer(messaging.JobsExchange, "topic", messaging.TimeLimitRequestQueueName(invID), messaging.TimeLimitRequestKey(invID), func(d amqp.Delivery) {
 		d.Ack(false)
 		running(client, job, "Received time limit request")
 		timeLeft := int64(timeTracker.EndDate.Sub(time.Now())) / int64(time.Millisecond)
@@ -204,7 +204,7 @@ func RegisterTimeLimitRequestListener(client *messaging.Client, timeTracker *Tim
 // service doesn't need these messages, this is just here to force the queue
 // to get cleaned up when road-runner exits.
 func RegisterTimeLimitResponseListener(client *messaging.Client, invID string) {
-	client.AddDeletableConsumer(messaging.JobsExchange, messaging.TimeLimitResponsesQueueName(invID), messaging.TimeLimitResponsesKey(invID), func(d amqp.Delivery) {
+	client.AddDeletableConsumer(messaging.JobsExchange, "topic", messaging.TimeLimitResponsesQueueName(invID), messaging.TimeLimitResponsesKey(invID), func(d amqp.Delivery) {
 		d.Ack(false)
 		logcabin.Info.Print(string(d.Body))
 	})
@@ -213,7 +213,7 @@ func RegisterTimeLimitResponseListener(client *messaging.Client, invID string) {
 // RegisterStopRequestListener sets a function that responses to StopRequest
 // messages.
 func RegisterStopRequestListener(client *messaging.Client, exit chan messaging.StatusCode, invID string) {
-	client.AddDeletableConsumer(messaging.JobsExchange, messaging.StopQueueName(invID), messaging.StopRequestKey(invID), func(d amqp.Delivery) {
+	client.AddDeletableConsumer(messaging.JobsExchange, "topic", messaging.StopQueueName(invID), messaging.StopRequestKey(invID), func(d amqp.Delivery) {
 		d.Ack(false)
 		running(client, job, "Received stop request")
 		exit <- messaging.StatusKilled

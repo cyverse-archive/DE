@@ -390,9 +390,10 @@ func (c *Client) AddConsumer(exchange, exchangeType, queue, key string, handler 
 // created each time the client is set up. Unlike AddConsumer(), the new
 // consumer will have auto-delete set to true and durable set to false. Make
 // sure that Listen() has been called before calling this function.
-func (c *Client) AddDeletableConsumer(exchange, queue, key string, handler MessageHandler) {
+func (c *Client) AddDeletableConsumer(exchange, exchangeType, queue, key string, handler MessageHandler) {
 	cs := consumer{
 		exchange:        exchange,
+		exchangeType:    exchangeType,
 		queue:           queue,
 		key:             key,
 		handler:         handler,
