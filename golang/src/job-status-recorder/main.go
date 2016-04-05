@@ -190,11 +190,5 @@ func main() {
 	go amqpClient.Listen()
 	amqpClient.AddConsumer(messaging.JobsExchange, "topic", "job_status_recorder", messaging.UpdatesKey, msg)
 	spinner := make(chan int)
-	for {
-		select {
-		case <-spinner:
-			fmt.Println("Exiting")
-			break
-		}
-	}
+	<-spinner
 }
