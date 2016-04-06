@@ -6,6 +6,7 @@
             [clj-http.client :as client]
             [clojure.string :as string]
             [clojure.tools.logging :as log]
+            [notification-agent.amqp :as amqp]
             [notification-agent.db :as db])
   (:import [java.io IOException]))
 
@@ -54,35 +55,16 @@
   (db/insert-notification
    (or type "analysis") username subject created-date (cheshire/encode msg)))
 
-(defn- send-msg-to-recipient
-  "Forawards a message to a single recipient."
-  [url msg]
-  (log/debug "sending message to" url)
-  (try
-    (client/post url {:body msg})
-    (catch IOException e
-      (log/error e "unable to send message to" url))))
-
-(defn send-msg
-  "Forwards a message to zero or more recipients."
-  ([uuid msg]
-     (let [recipients (notification-recipients)
-           msg        (cheshire/encode (reformat-message uuid msg))]
-       (log/debug "forwarding message to" (count recipients) "recipients")
-       (dorun (map #(send-msg-to-recipient % msg) recipients))))
-  ([msg]
-     (send-msg nil msg)))
-
 (defn persist-and-send-msg
   "Persists a message in the notification database and sends it to any receivers
    and returns the state object."
-  [msg]
+  [{:keys [user] :as msg}]
   (let [uuid          (persist-msg msg)
         email-request (:email_request msg)]
     (log/debug "UUID of persisted message:" uuid)
     (when-not (nil? email-request)
       (.start (Thread. #(send-email-request uuid email-request))))
-    (send-msg uuid msg)))
+    (amqp/publish-msg user msg)))
 
 (defn- optional-insert-system-args
   [msg]
@@ -99,11 +81,9 @@
         ddate               (str (timestamp->millis (:deactivation_date msg)))
         message             (:message msg)
         insert-system-notif (partial db/insert-system-notification type ddate message)
-        sys-args            (optional-insert-system-args msg)]
-    {:system-notification
-     (if (pos? (count sys-args))
-       (apply insert-system-notif sys-args)
-       (insert-system-notif))}))
+        sys-args            (optional-insert-system-args msg)
+        sys-notification    (apply insert-system-notif sys-args)]
+    (amqp/publish-system-msg sys-notification)))
 
 (defn list-system-msgs
   [active-only type limit offset]
