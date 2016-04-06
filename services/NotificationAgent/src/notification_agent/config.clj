@@ -59,10 +59,40 @@
   [props config-valid configs]
   "notificationagent.email-url")
 
-(cc/defprop-optvec notification-recipients
-  "The list of URLs to send notifications to."
+(cc/defprop-str amqp-host
+  "The name of the host where the AMQP broker is running."
   [props config-valid configs]
-  "notificationagent.recipients")
+  "notificationagent.amqp.host")
+
+(cc/defprop-int amqp-port
+  "The port to use when connecting to the AMQP broker."
+  [props config-valid configs]
+  "notificationagent.amqp.port")
+
+(cc/defprop-str amqp-user
+  "The username to use when authenticating to the AMQP broker."
+  [props config-valid configs]
+  "notificationagent.amqp.user")
+
+(cc/defprop-str amqp-password
+  "The password to use when authenticating to the AMQP broker."
+  [props config-valid configs]
+  "notificationagent.amqp.password")
+
+(cc/defprop-str amqp-exchange-name
+  "The name of the AMQP exchange."
+  [props config-valid configs]
+  "notificationagent.amqp.exchange.name")
+
+(cc/defprop-boolean amqp-exchange-durable
+  "Indicates whether or not the AMQP exchange should be declared as durable."
+  [props config-valid configs]
+  "notificationagent.amqp.exchange.durable")
+
+(cc/defprop-boolean amqp-exchange-auto-delete
+  "Indicates whether or not the AMQP exchange should be declared as auto-delete."
+  [props config-valid configs]
+  "notificationagent.amqp.exchange.auto-delete")
 
 (cc/defprop-int listen-port
   "The port to listen to for incoming connections."
