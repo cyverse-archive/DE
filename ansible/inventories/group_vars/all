@@ -389,7 +389,7 @@ irods:
   data_curators_group: data-curators
   bad_chars: \u0060\u0027\u000A\u0009
   amqp_broker:
-    host: "{{ groups['irods-amqp-brokers'][0] }}"
+    host: "{{ groups['irods-amqp-brokers'][0] if groups['irods-amqp-brokers']|count else ''}}"
     port: 5672
     user: guest
     password: guest
