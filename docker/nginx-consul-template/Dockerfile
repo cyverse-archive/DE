@@ -1,5 +1,7 @@
 FROM nginx:alpine
 MAINTAINER Ian McEwen <mian@cyverse.org>
+ARG git_commit
+LABEL org.iplantc.de.nginx-consul-template.git-ref="$git_commit"
 
 ENV CONSUL_TEMPLATE_VERSION=0.14.0
 ENV CONSUL_CONNECT=localhost:8500
