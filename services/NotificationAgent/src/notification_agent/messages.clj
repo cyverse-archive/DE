@@ -64,7 +64,7 @@
     (log/debug "UUID of persisted message:" uuid)
     (when-not (nil? email-request)
       (.start (Thread. #(send-email-request uuid email-request))))
-    (amqp/publish-msg user msg)))
+    (amqp/publish-msg user (reformat-message uuid msg))))
 
 (defn- optional-insert-system-args
   [msg]
