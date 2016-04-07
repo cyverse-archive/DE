@@ -8,7 +8,7 @@ func TestConvertBlankSession(t *testing.T) {
 		Session: "",
 		UserID:  "test_user_id",
 	}
-	actual, err := convert(record)
+	actual, err := convert(record, false)
 	if err != nil {
 		t.Error(err)
 	}
@@ -23,7 +23,7 @@ func TestConvertUnparseableSession(t *testing.T) {
 		Session: "------------",
 		UserID:  "test_user_id",
 	}
-	actual, err := convert(record)
+	actual, err := convert(record, false)
 	if err == nil {
 		t.Fail()
 	}
@@ -38,7 +38,7 @@ func TestConvertEmbeddedSession(t *testing.T) {
 		Session: `{"session":{"foo":"bar"}}`,
 		UserID:  "test_user_id",
 	}
-	actual, err := convert(record)
+	actual, err := convert(record, false)
 	if err != nil {
 		t.Fail()
 	}
@@ -56,7 +56,7 @@ func TestConvertNormalSession(t *testing.T) {
 		Session: `{"foo":"bar"}`,
 		UserID:  "test_user_id",
 	}
-	actual, err := convert(record)
+	actual, err := convert(record, false)
 	if err != nil {
 		t.Fail()
 	}
