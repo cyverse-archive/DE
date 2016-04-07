@@ -5,7 +5,7 @@ events {
 http {
     upstream service {
       {{- range service (printf "%s.%s" (env "DE_ENV") (env "NGINX_PROXY_SERVICE_NAME")) }}
-      server {{.Address}}:{{.Port}} max_fails=3 fail_timeout=60 weight=1 {{- if not (.Tags.Contains (key (printf "%s/%s/color" (env "DE_ENV") (env "NGINX_PROXY_SERVICE_NAME"))))}} backup{{end}}; # {{.ID}} {{.Tags}}
+      server {{.Address}}:{{.Port}} max_fails=3 fail_timeout=60 weight=1 {{- if not (.Tags.Contains (key_or_default (printf "%s/%s/color" (env "DE_ENV") (env "NGINX_PROXY_SERVICE_NAME")) "green"))}} backup{{end}}; # {{.ID}} {{.Tags}}
       {{- else}}
       server 127.0.0.1:65535; # Force a 502. No {{env "DE_ENV"}}.{{env "NGINX_PROXY_SERVICE_NAME"}} services were found.
       {{- end}}
