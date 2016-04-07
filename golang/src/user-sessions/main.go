@@ -59,15 +59,29 @@ type UserSessionRecord struct {
 	UserID  string
 }
 
-func convert(record *UserSessionRecord) (map[string]interface{}, error) {
+// convert makes sure that the JSON has the correct format. "wrap" tells convert
+// whether to wrap the object in a map with "session" as the key.
+func convert(record *UserSessionRecord, wrap bool) (map[string]interface{}, error) {
 	var values map[string]interface{}
 	if record.Session != "" {
 		if err := json.Unmarshal([]byte(record.Session), &values); err != nil {
 			return nil, err
 		}
 	}
-	if _, ok := values["session"]; ok {
-		values = values["session"].(map[string]interface{})
+	// We don't want the return value wrapped in a session object, so unwrap it
+	// if it is wrapped.
+	if !wrap {
+		if _, ok := values["session"]; ok {
+			return values["session"].(map[string]interface{}), nil
+		}
+		return values, nil
+	}
+	// We do want the return value wrapped in a session object, so wrap it if it
+	// isn't already.
+	if _, ok := values["session"]; !ok {
+		newmap := make(map[string]interface{})
+		newmap["session"] = values
+		return newmap, nil
 	}
 	return values, nil
 }
@@ -181,7 +195,7 @@ func errored(writer http.ResponseWriter, msg string) {
 	logcabin.Error.Print(msg)
 }
 
-func (u *UserSessionsApp) getUserSessionForRequest(username string) ([]byte, error) {
+func (u *UserSessionsApp) getUserSessionForRequest(username string, wrap bool) ([]byte, error) {
 	sessions, err := u.getSessions(username)
 	if err != nil {
 		return nil, fmt.Errorf("Error getting sessions for username %s: %s", username, err)
@@ -190,7 +204,7 @@ func (u *UserSessionsApp) getUserSessionForRequest(username string) ([]byte, err
 	if len(sessions) >= 1 {
 		retval = sessions[0]
 	}
-	response, err := convert(&retval)
+	response, err := convert(&retval, wrap)
 	if err != nil {
 		return nil, fmt.Errorf("Error generating response for username %s: %s", username, err)
 	}
@@ -228,7 +242,7 @@ func (u *UserSessionsApp) GetRequest(writer http.ResponseWriter, r *http.Request
 		badRequest(writer, fmt.Sprintf("User %s does not exist", username))
 		return
 	}
-	jsoned, err := u.getUserSessionForRequest(username)
+	jsoned, err := u.getUserSessionForRequest(username, false)
 	if err != nil {
 		errored(writer, err.Error())
 	}
@@ -288,7 +302,7 @@ func (u *UserSessionsApp) PostRequest(writer http.ResponseWriter, r *http.Reques
 			return
 		}
 	}
-	jsoned, err := u.getUserSessionForRequest(username)
+	jsoned, err := u.getUserSessionForRequest(username, true)
 	if err != nil {
 		errored(writer, err.Error())
 		return
