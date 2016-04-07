@@ -247,7 +247,7 @@ type MessageHandler func(amqp.Delivery)
 
 type aggregationMessage struct {
 	handler  MessageHandler
-	delivery *amqp.Delivery
+	delivery amqp.Delivery
 }
 
 type consumer struct {
@@ -352,9 +352,9 @@ func (c *Client) Listen() {
 				os.Exit(-1)
 			}
 		case msg := <-c.aggregationChan:
-			go func() {
-				msg.handler(*msg.delivery)
-			}()
+			go func(deliveryMsg aggregationMessage) {
+				deliveryMsg.handler(deliveryMsg.delivery)
+			}(msg)
 		}
 	}
 }
@@ -511,7 +511,7 @@ func (c *Client) initconsumer(cs *consumer) error {
 		for msg := range d {
 			c.aggregationChan <- aggregationMessage{
 				handler:  cs.handler,
-				delivery: &msg,
+				delivery: msg,
 			}
 		}
 	}()
