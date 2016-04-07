@@ -52,7 +52,7 @@ type App interface {
 	DeleteRequest(http.ResponseWriter, *http.Request)
 }
 
-// UserPreferencesRecord represents a user preferences stored in the database
+// UserPreferencesRecord represents a user's preferences stored in the database
 type UserPreferencesRecord struct {
 	ID          string
 	Preferences string
@@ -60,7 +60,7 @@ type UserPreferencesRecord struct {
 }
 
 // convert makes sure that the JSON has the correct format. "wrap" tells convert
-// whether to wrap the object in a map with "session" as the key.
+// whether to wrap the object in a map with "preferences" as the key.
 func convert(record *UserPreferencesRecord, wrap bool) (map[string]interface{}, error) {
 	var values map[string]interface{}
 	if record.Preferences != "" {
@@ -68,7 +68,7 @@ func convert(record *UserPreferencesRecord, wrap bool) (map[string]interface{}, 
 			return nil, err
 		}
 	}
-	// We don't want the return value wrapped in a session object, so unwrap it
+	// We don't want the return value wrapped in a preferences object, so unwrap it
 	// if it is wrapped.
 	if !wrap {
 		if _, ok := values["preferences"]; ok {
@@ -76,7 +76,7 @@ func convert(record *UserPreferencesRecord, wrap bool) (map[string]interface{}, 
 		}
 		return values, nil
 	}
-	// We do want the return value wrapped in a session object, so wrap it if it
+	// We do want the return value wrapped in a preferences object, so wrap it if it
 	// isn't already.
 	if _, ok := values["preferences"]; !ok {
 		newmap := make(map[string]interface{})
@@ -99,7 +99,7 @@ func New(db *sql.DB) *UserPreferencesApp {
 	}
 }
 
-// hasSessions returns whether or not the given user has preferences already.
+// hasPreferences returns whether or not the given user has preferences already.
 func (u *UserPreferencesApp) hasPreferences(username string) (bool, error) {
 	query := `SELECT COUNT(p.*)
               FROM user_preferences p,
@@ -113,7 +113,7 @@ func (u *UserPreferencesApp) hasPreferences(username string) (bool, error) {
 	return count > 0, nil
 }
 
-// getSessions returns a []UserPreferencesRecord of all of the preferences associated
+// getPreferences returns a []UserPreferencesRecord of all of the preferences associated
 // with the provided username.
 func (u *UserPreferencesApp) getPreferences(username string) ([]UserPreferencesRecord, error) {
 	query := `SELECT p.id AS id,
@@ -212,7 +212,7 @@ func (u *UserPreferencesApp) getUserPreferencesForRequest(username string, wrap 
 	if len(response) > 0 {
 		jsoned, err = json.Marshal(response)
 		if err != nil {
-			return nil, fmt.Errorf("Error generating session JSON for user %s: %s", username, err)
+			return nil, fmt.Errorf("Error generating preferences JSON for user %s: %s", username, err)
 		}
 	} else {
 		jsoned = []byte("{}")
@@ -220,7 +220,7 @@ func (u *UserPreferencesApp) getUserPreferencesForRequest(username string, wrap 
 	return jsoned, nil
 }
 
-// GetRequest handles writing out a user's session as a response.
+// GetRequest handles writing out a user's preferences as a response.
 func (u *UserPreferencesApp) GetRequest(writer http.ResponseWriter, r *http.Request) {
 	var (
 		username   string
@@ -249,12 +249,12 @@ func (u *UserPreferencesApp) GetRequest(writer http.ResponseWriter, r *http.Requ
 	writer.Write(jsoned)
 }
 
-// PutRequest handles creating a new user session.
+// PutRequest handles creating new user preferences.
 func (u *UserPreferencesApp) PutRequest(writer http.ResponseWriter, r *http.Request) {
 	u.PostRequest(writer, r)
 }
 
-// PostRequest handles modifying an existing user session.
+// PostRequest handles modifying an existing user's preferences.
 func (u *UserPreferencesApp) PostRequest(writer http.ResponseWriter, r *http.Request) {
 	var (
 		username   string
@@ -277,7 +277,7 @@ func (u *UserPreferencesApp) PostRequest(writer http.ResponseWriter, r *http.Req
 		return
 	}
 	if hasPrefs, err = u.hasPreferences(username); err != nil {
-		errored(writer, fmt.Sprintf("Error checking session for user %s: %s", username, err))
+		errored(writer, fmt.Sprintf("Error checking preferences for user %s: %s", username, err))
 		return
 	}
 	var checked map[string]interface{}
@@ -310,7 +310,7 @@ func (u *UserPreferencesApp) PostRequest(writer http.ResponseWriter, r *http.Req
 	writer.Write(jsoned)
 }
 
-// DeleteRequest handles deleting a user session.
+// DeleteRequest handles deleting a user's preferences.
 func (u *UserPreferencesApp) DeleteRequest(writer http.ResponseWriter, r *http.Request) {
 	var (
 		username   string
