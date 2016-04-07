@@ -19,7 +19,7 @@ import (
 
 var (
 	version = flag.Bool("version", false, "Print the version information")
-	cfgPath = flag.String("config", "/etc/iplant/de/user-sessions.properties", "The path to the config file")
+	cfgPath = flag.String("config", "/etc/iplant/de/jobservices.yml", "The path to the config file")
 	port    = flag.String("port", "60000", "The port number to listen on")
 	gitref  string
 	appver  string
