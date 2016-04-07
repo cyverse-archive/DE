@@ -17,6 +17,7 @@ kifshare
 apps
 metadata
 monkey
+nginx-consul-template
 notification-agent
 porklock
 saved-searches
