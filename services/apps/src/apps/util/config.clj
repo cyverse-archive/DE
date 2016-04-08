@@ -234,11 +234,6 @@
   [props config-valid configs]
   "apps.iplant-groups.base-url")
 
-(cc/defprop-str jex-events-base-url
-  "The base URL for the JEX events service."
-  [props config-valid configs]
-  "apps.jex-events.base-url")
-
 (cc/defprop-int job-status-poll-interval
   "The job status polling interval in minutes."
   [props config-valid configs]
