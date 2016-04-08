@@ -27,6 +27,7 @@
    ["-h" "--help"]])
 
 (defroutes app
+  (GET "/" [] "Hello from anon-files.")
   (HEAD "/*" [:as req] (log/spy (handle-head-request req)))
   (GET "/*" [:as req] (log/spy (handle-request req)))
   (OPTIONS "/*" [:as req] (log/spy (handle-options-request req))))

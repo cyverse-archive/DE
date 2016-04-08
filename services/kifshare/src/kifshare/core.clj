@@ -34,6 +34,8 @@
       keep-alive))
 
 (defroutes kifshare-routes
+  (GET "/" [] "Hello from kifshare.")
+
   (GET "/favicon.ico" []
        (static-resp (cfg/favicon-path)))
 
