@@ -203,7 +203,6 @@
   :language :clojure
   :archive? true}
 
-
  "iplant-email"
  {:type     :service
   :path     "services/iplant-email"
@@ -217,16 +216,6 @@
  "iplant-groups"
  {:type     :service
   :path     "services/iplant-groups"
-  :build    :lein
-  :tarball? false
-  :uberjar? true
-  :install? false
-  :language :clojure
-  :archive? true}
-
- "JEX"
- {:type     :service
-  :path     "services/JEX"
   :build    :lein
   :tarball? false
   :uberjar? true
@@ -267,26 +256,6 @@
  "anon-files"
  {:type     :service
   :path     "services/anon-files"
-  :build    :lein
-  :tarball? false
-  :uberjar? true
-  :install? false
-  :language :clojure
-  :archive? true}
-
- "user-sessions"
- {:type     :service
-  :path     "services/user-sessions"
-  :build    :lein
-  :tarball? false
-  :uberjar? true
-  :install? false
-  :language :clojure
-  :archive? true}
-
- "user-preferences"
- {:type     :service
-  :path     "services/user-preferences"
   :build    :lein
   :tarball? false
   :uberjar? true
