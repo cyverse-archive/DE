@@ -1,5 +1,0 @@
-bin/
-pkg/
-.hg/
-.git/
-test-results.xml
