@@ -34,7 +34,6 @@ import java.util.logging.Logger;
  */
 class RuntimeCallbacks {
     static class GetRecentNotificationsCallback implements AsyncCallback<List<Notification>> {
-        private static final int NEW_NOTIFICATION_LIMIT = 10;
         private final DesktopView.Presenter.DesktopPresenterAppearance appearance;
         private final NotificationAutoBeanFactory notificationFactory;
         private final DesktopView view;
@@ -57,8 +56,7 @@ class RuntimeCallbacks {
 
         @Override
         public void onSuccess(List<Notification> result) {
-
-            // this callback shouldn't care if it has been called once or many times
+          // this callback shouldn't care if it has been called once or many times
             ListStore<NotificationMessage> nmStore = view.getNotificationStore();
             int numNewMessageNotifications = 0;
 
@@ -70,12 +68,12 @@ class RuntimeCallbacks {
                     nmStore.add(newMessage);
                     numNewMessageNotifications++;
                     if (!newMessage.isSeen()
-                            && numNewMessageNotifications < NEW_NOTIFICATION_LIMIT) {
+                            && numNewMessageNotifications < DesktopPresenterImpl.NEW_NOTIFICATION_LIMIT) {
                         displayNotificationPopup(newMessage);
                     }
                 }
             }
-            if (numNewMessageNotifications > NEW_NOTIFICATION_LIMIT) {
+            if (numNewMessageNotifications > DesktopPresenterImpl.NEW_NOTIFICATION_LIMIT) {
                 notifyInfo.display(appearance.newNotificationsAlert());
             }
         }

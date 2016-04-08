@@ -151,3 +151,15 @@ org.iplantc.discoveryenvironment.environment.prod-deployment = {{ prod_deploymen
 ###############################################################################
 # The Notification Polling Interval in Seconds
 org.iplantc.discoveryenvironment.notifications.poll-interval = {{ de.notification_poll }}
+
+############################################################################
+# AMQP Settings
+###########################################################################
+org.iplantc.discoveryenvironment.notification.amqp.host                 = {{ amqp_broker.host }}
+org.iplantc.discoveryenvironment.notification.amqp.port                 = {{ amqp_broker.port }}
+org.iplantc.discoveryenvironment.notification.amqp.user                 = {{ amqp_broker.user }}
+org.iplantc.discoveryenvironment.notification.amqp.password             = {{ amqp_broker.password }}
+org.iplantc.discoveryenvironment.notification.amqp.exchange.name        = {{ amqp_de_exchange }}
+org.iplantc.discoveryenvironment.notification.amqp.exchange.durable     = {{ amqp_de_exchange_durable }}
+org.iplantc.discoveryenvironment.notification.amqp.exchange.auto-delete = {{ amqp_de_exchange_auto_delete }}
+

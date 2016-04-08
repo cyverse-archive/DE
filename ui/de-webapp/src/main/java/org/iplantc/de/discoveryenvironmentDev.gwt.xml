@@ -1,5 +1,7 @@
 <module rename-to="discoveryenvironment">
     <inherits name="org.iplantc.de.discoveryenvironment" />
+    <!-- Other module inherits                                      -->
+    <inherits name="com.sksamuel.gwt.GwtWebsockets" />
 
     <!-- Super Dev Mode -->
     <add-linker name="xsiframe" />

@@ -37,4 +37,22 @@ public interface DEClientConstants extends Constants {
      */
     String deHelpFile();
 
+    /**
+     *   The  path for notification websocket url
+     * @return   path for notification websocket url
+     */
+    String notificationWS();
+
+    /**
+     *  The protocol for WebSocket
+     * @return
+     */
+    String wsProtocol();
+
+    /**
+     * The system messages websocket url
+     * @return
+     */
+    String sysmessageWS();
+
 }

@@ -2,14 +2,15 @@ package org.iplantc.de;
 
 import org.iplantc.de.conf.WebMvcConfig;
 
+import org.atmosphere.cpr.AtmosphereServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.context.embedded.ServletContextInitializer;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import java.io.IOException;
@@ -18,6 +19,8 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRegistration;
 
 /**
  * The entry point for the DE webapp.
@@ -28,7 +31,7 @@ import java.util.jar.Manifest;
 @EnableAutoConfiguration
 @ComponentScan
 public class Application extends AbstractAnnotationConfigDispatcherServletInitializer
-                         implements WebApplicationInitializer {
+                         implements ServletContextInitializer {
 
     private Environment environment;
     final static Logger LOG = LoggerFactory.getLogger(Application.class);
@@ -82,6 +85,17 @@ public class Application extends AbstractAnnotationConfigDispatcherServletInitia
             }
         }
     }
+
+    @Override
+    public void onStartup(ServletContext container) {
+        ServletRegistration.Dynamic dispatcher =
+                container.addServlet("AtmosphereServlet", new AtmosphereServlet());
+        dispatcher.setLoadOnStartup(0);
+        dispatcher.addMapping("/de/websocket");
+        dispatcher.setInitParameter("org.atmosphere.cpr.packages", "org.iplantc.de.server");
+        LOG.error("************** Started AtmosphereServlet ***********");
+    }
+
 
     @Override
     protected String[] getServletMappings() {
