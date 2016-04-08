@@ -1,0 +1,32 @@
+events {
+    worker_connections 4096;
+}
+
+http {
+{{- with $service_query := (printf "%s.%s" (env "DE_ENV") (env "NGINX_PROXY_SERVICE_NAME")) }}
+  {{- if service $service_query }}
+    upstream service {
+    {{- range service $service_query }}
+      server {{.Address}}:{{.Port}} max_fails=3 fail_timeout=60 weight=1 {{- if not (.Tags.Contains (key_or_default (printf "%s/%s/color" (env "DE_ENV") (env "NGINX_PROXY_SERVICE_NAME")) "green"))}} backup{{end}}; # {{.ID}} {{.Tags}}
+    {{- end }}
+    }
+
+    server {
+      listen {{env "NGINX_PROXY_PORT"}};
+
+      location / {
+        proxy_pass http://service;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+      }
+    }
+  {{- else }}
+    server {
+      listen {{env "NGINX_PROXY_PORT"}};
+
+      return 502;
+    }
+  {{- end }}
+{{- end }}
+}
