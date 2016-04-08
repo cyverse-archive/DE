@@ -31,7 +31,7 @@
                  [medley "0.7.0"]
                  [org.apache.tika/tika-core "1.11"]      ; provides org.apache.tika
                  [org.nexml.model/nexml "1.5-SNAPSHOT"]  ; provides org.nexml.model
-                 [org/forester "1.005" ]
+                 [org.biojava.thirdparty/forester "1.005" ]
                  [slingshot "0.12.2"]
                  [org.iplantc/clj-cas "5.2.6.0"]
                  [org.iplantc/clj-icat-direct "5.2.6.0"]
@@ -55,6 +55,8 @@
   :uberjar-exclusions [#".*[.]SF" #"LICENSE" #"NOTICE"]
   :repositories [["biojava"
                   {:url "http://www.biojava.org/download/maven"}]
+                 ["sonatype-releases"
+                  {:url "https://oss.sonatype.org/content/repositories/releases/"}]
                  ["local"
                   {:url "https://everdene.iplantcollaborative.org/maven/repository"
                    :checksum :ignore}]]
