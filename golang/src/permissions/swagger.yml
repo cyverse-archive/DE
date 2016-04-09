@@ -1,0 +1,39 @@
+consumes:
+- application/json
+definitions:
+  service_info:
+    type: object
+    required:
+      - description
+      - service
+      - version
+    properties:
+      description:
+        type: string
+        minLength: 1
+      service:
+        type: string
+        minLength: 1
+      version:
+        type: string
+        minLength: 1
+info:
+  description: Manages Permissions for the CyVerse Discovery Environment and related
+    applications
+  title: Permissions Service
+  version: 5.2.6.0
+paths:
+  /:
+    get:
+      tags:
+        - status
+      responses:
+        200:
+          description: service status information
+          schema:
+            $ref: "#/definitions/service_info"
+produces:
+- application/json
+schemes:
+- http
+swagger: "2.0"
