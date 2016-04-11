@@ -33,6 +33,7 @@
   "Retrieves notification messages."
   [user query]
   (let [body {:total           (str (db/count-matching-messages user query))
+              :unseen_total    (str (db/count-matching-messages user (assoc query :seen false)))
               :messages        (map reformat (db/find-matching-messages user query))
               :system-messages (db/get-active-system-notifications user)}]
     body))
