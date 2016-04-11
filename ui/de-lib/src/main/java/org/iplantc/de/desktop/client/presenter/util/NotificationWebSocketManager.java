@@ -18,7 +18,7 @@ public class NotificationWebSocketManager extends WebSocketManager{
 
     private static NotificationWebSocketManager instance;
 
-    private String socketUrl = deClientConstants.wsProtocol() + Window.Location.getHost()
+    private String socketUrl = getProtocol() + Window.Location.getHost()
                                + deClientConstants.notificationWS();
 
    private NotificationWebSocketManager() {
@@ -33,7 +33,4 @@ public class NotificationWebSocketManager extends WebSocketManager{
 
         return instance;
     }
-
-
-
 }

@@ -41,10 +41,9 @@ public abstract class MessageHandler extends WebSocketHandlerAdapter {
     @Override
     public void onOpen(WebSocket webSocket) throws IOException {
         notificationReceiver = new ReceiveNotificationsDirect();
-        logger.error("^^^^^^^^^Web socket connection opened!^^^^^");
-        logger.error("!!!!!!!!!new message!!!!!!!!!");
+        logger.info("^^^^^^^^^Web socket connection opened!^^^^^");
         String username = getUserName(webSocket);
-        logger.error("**************user info***********" + username);
+        logger.info("**************user info***********" + username);
 
         final Channel msgChannel = notificationReceiver.createChannel();
         String queue = bindQueue(username, msgChannel);
@@ -54,10 +53,10 @@ public abstract class MessageHandler extends WebSocketHandlerAdapter {
             @Override
             public void onDisconnect(AtmosphereResourceEvent event) {
                 if (event.isCancelled()) {
-                    logger.error("###########^^^^^^^^Browser {} unexpectedly disconnected",
+                    logger.error("unexpectedly disconnected",
                                  event.getResource().uuid());
                 } else if (event.isClosedByClient()) {
-                    logger.error("%%%%%%%%%%%%Browser {} closed the connection",
+                    logger.error("client closed the connection",
                                  event.getResource().uuid());
                 }
                 try {
@@ -82,7 +81,7 @@ public abstract class MessageHandler extends WebSocketHandlerAdapter {
 
     @Override
     public void onError(WebSocket webSocket, WebSocketProcessor.WebSocketException t) {
-        logger.error("^^^^^^^^^connection error!^^^^^");
+        logger.error("^^^^^^^^^websocket connection error!^^^^^");
     }
 
 
@@ -97,7 +96,7 @@ public abstract class MessageHandler extends WebSocketHandlerAdapter {
             public void handleDelivery(String consumerTag, Envelope envelope,
                                        AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String message = new String(body, "UTF-8");
-                logger.info("New message: " + message);
+                logger.info("New message to consume: " + message);
                 webSocket.write(message);
             }
         };

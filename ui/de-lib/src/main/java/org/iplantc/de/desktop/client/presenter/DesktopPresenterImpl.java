@@ -201,7 +201,6 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
             @Override
             public void onMessage(String msg) {
                 GWT.log("onMessage(): " + msg);
-               // Info.display("Notification", "onMessage(): " + msg);
                 processNotification(msg);
             }
 
@@ -224,7 +223,6 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
             @Override
             public void onMessage(String msg) {
                 GWT.log("onMessage(): " + msg);
-               // Info.display("Notification", "onMessage(): " + msg);
                 processSystemMessage(msg);
             }
 
@@ -242,9 +240,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
             eventBus.fireEvent(new NewSystemMessagesEvent());
         } catch (Exception e) {
             //ignore error and message as it not in json format
-            GWT.log(e.getMessage());
-            return;
-        }
+          }
     }
 
     private void processNotification(String msg) {
@@ -253,7 +249,6 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
              obj = JSONParser.parseStrict(msg).isObject();
         } catch (Exception e) {
             //ignore error and message as it not in json format
-            GWT.log(e.getMessage());
             return;
         }
         Number num = JsonUtil.getInstance().getNumber(obj, "total");
@@ -263,7 +258,6 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
         GWT.log("notifi-->" + notifi.toString());
         Notification n =
                 AutoBeanCodex.decode(notificationFactory, Notification.class, notifi.toString()).as();
-        GWT.log("message -->" + n.getMessage());
         if (n != null) {
             loadMessageInView(n);
         }
@@ -279,12 +273,6 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
             nmStore.add(newMessage);
                 displayNotificationPopup(newMessage);
         }
-         //Not sure if we need this logic anymore.
-        /*  if (total > NEW_NOTIFICATION_LIMIT) {
-            notifyInfo.display(appearance.newNotificationsAlert());
-        }*/
-
-
     }
 
 

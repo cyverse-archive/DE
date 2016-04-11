@@ -15,7 +15,7 @@ import com.google.gwt.user.client.Window.Location;
 public class SystemMessageWebSocketManager extends WebSocketManager {
     private static SystemMessageWebSocketManager instance;
 
-    private String socketUrl = deClientConstants.wsProtocol() + Window.Location.getHost()
+    private String socketUrl = getProtocol() + Window.Location.getHost()
                                + deClientConstants.sysmessageWS();
 
    private SystemMessageWebSocketManager() {

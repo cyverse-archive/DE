@@ -35,7 +35,7 @@ public class ReceiveNotificationsDirect {
      */
     public ReceiveNotificationsDirect() {
        connection = AMQPConnectionManager.getInstance().getConnection();
-       LOG.error("********** amqp Connection created created!!!!!!");
+       LOG.info("********** amqp Connection created created!!!!!!");
     }
 
     /**
@@ -46,7 +46,7 @@ public class ReceiveNotificationsDirect {
     public Channel createChannel() {
         try {
             Channel channel = connection.createChannel();
-            LOG.error("********** amqp channel created!");
+            LOG.info("********** amqp channel created!");
             return channel;
         } catch (IOException ioe) {
             ioe.printStackTrace();
@@ -74,11 +74,15 @@ public class ReceiveNotificationsDirect {
                                  props.getProperty(
                                          "org.iplantc.discoveryenvironment.notification.amqp.exchange.name"),
                                  routing_key);
-            LOG.error("******* Binding complete *******");
+            LOG.info("******* Binding complete *******");
             return queueName;
         } catch (IOException e) {
             e.printStackTrace();
-            LOG.error("***** IO Exception when binding queue*****");
+            LOG.error("***** IO Exception when binding queue *****");
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOG.error("******* Exception when binding queue *****");
             return null;
         }
 
@@ -99,6 +103,9 @@ public class ReceiveNotificationsDirect {
         } catch (IOException e) {
             e.printStackTrace();
             LOG.error("***** IO Exception when consuming message*****");
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOG.error("***** Exception when consuming message*****");
         }
     }
 
