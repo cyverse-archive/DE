@@ -149,12 +149,12 @@
                  :offset     0
                  :sort-field :timestamp
                  :sort-dir   :desc}
-        total   (db/count-matching-messages user query)
         results (->> (db/find-matching-messages user query)
                      (map reformat)
                      (sort-by #(get-in % [:message :timestamp])))]
-    {:total    (str total)
-     :messages results}))
+    {:total        (str (db/count-matching-messages user query))
+     :unseen_total (str (db/count-matching-messages user (assoc query :seen false)))
+     :messages     results}))
 
 (defn- get-sys-msgs-with
   [db-get query-params]
