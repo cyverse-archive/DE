@@ -8,6 +8,7 @@ import (
 	errors "github.com/go-swagger/go-swagger/errors"
 	httpkit "github.com/go-swagger/go-swagger/httpkit"
 
+	"permissions/restapi/impl"
 	"permissions/restapi/operations"
 	"permissions/restapi/operations/status"
 )
@@ -26,7 +27,7 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 
 	api.JSONProducer = httpkit.JSONProducer()
 
-	api.StatusGetHandler = status.GetHandlerFunc(StatusHandler)
+	api.StatusGetHandler = status.GetHandlerFunc(impl.BuildStatusHandler(SwaggerJSON))
 
 	api.ServerShutdown = func() {}
 

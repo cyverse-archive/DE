@@ -1,4 +1,4 @@
-package restapi
+package impl
 
 import (
 	"encoding/json"
@@ -18,11 +18,11 @@ type SwaggerSpec struct {
 	Info Info `json:"info"`
 }
 
-func serviceInfo() (*models.ServiceInfo, error) {
+func serviceInfo(swaggerJson json.RawMessage) (*models.ServiceInfo, error) {
 	var decoded SwaggerSpec
 
 	// Extract the service info from the Swagger JSON.
-	if err := json.Unmarshal(SwaggerJSON, &decoded); err != nil {
+	if err := json.Unmarshal(swaggerJson, &decoded); err != nil {
 		return nil, fmt.Errorf("unable to decode the Swagger JSON: %s", err)
 	}
 
@@ -31,17 +31,16 @@ func serviceInfo() (*models.ServiceInfo, error) {
 	return &models.ServiceInfo{&info.Description, &info.Title, &info.Version}, nil
 }
 
-func StatusHandler() middleware.Responder {
-	info, err := serviceInfo()
+func BuildStatusHandler(swaggerJson json.RawMessage) func() middleware.Responder {
 
-	// TODO: move the parsing outside of the status handler itself.
+	// Load the service info. Failure to do so will cause the service to abort.
+	info, err := serviceInfo(swaggerJson)
 	if err != nil {
 		panic(err)
 	}
 
-	return status.NewGetOK().WithPayload(info)
+	// Return the handler function.
+	return func() middleware.Responder {
+		return status.NewGetOK().WithPayload(info)
+	}
 }
-
-// TODO: Build a function that returns a handler function. This will allow us to only parse
-// the service info once, and it *should* ensure that any parsing errors that occur actually
-// take down the server.
