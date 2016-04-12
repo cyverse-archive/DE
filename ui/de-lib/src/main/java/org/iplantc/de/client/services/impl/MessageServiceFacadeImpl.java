@@ -9,6 +9,7 @@ import org.iplantc.de.client.models.notifications.Counts;
 import org.iplantc.de.client.models.notifications.Notification;
 import org.iplantc.de.client.models.notifications.NotificationAutoBeanFactory;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
+import org.iplantc.de.client.models.notifications.NotificationList;
 import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.services.PermIdRequestUserServiceFacade;
 import org.iplantc.de.client.services.callbacks.NotificationCallback;
@@ -90,7 +91,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
     }
 
     @Override
-    public void getRecentMessages(AsyncCallback<List<Notification>> callback) {
+    public void getRecentMessages(AsyncCallback<NotificationList> callback) {
         String address = deProperties.getMuleServiceBaseUrl()
                              + "notifications/last-ten-messages"; //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
@@ -121,15 +122,6 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
                                                             deleteIds.toString());
 
         deServiceFacade.getServiceData(wrapper, callback);
-    }
-
-    @Override
-    public <C extends NotificationCallback> void getRecentMessages(C callback) {
-        String address = deProperties.getMuleServiceBaseUrl()
-                             + "notifications/last-ten-messages"; //$NON-NLS-1$
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
-        deServiceFacade.getServiceData(wrapper, callback);
-
     }
 
     @Override

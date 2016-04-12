@@ -8,6 +8,9 @@
     <inherits name="com.google.gwt.inject.Inject"/>
     <inherits name="org.iplantc.de.resources.ui-resources"/>
 
+    <!-- Other module inherits                                      -->
+    <inherits name="com.sksamuel.gwt.GwtWebsockets" />
+
     <replace-with class="org.iplantc.de.shared.services.DefaultTimeSource">
         <when-type-is class="org.iplantc.de.shared.services.ProvidesTime"/>
     </replace-with>

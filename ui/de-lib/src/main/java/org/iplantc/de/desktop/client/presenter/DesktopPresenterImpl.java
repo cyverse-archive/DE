@@ -93,7 +93,6 @@ import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.WindowManager;
 import com.sencha.gxt.widget.core.client.box.AutoProgressMessageBox;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
-import com.sencha.gxt.widget.core.client.info.Info;
 
 import com.sksamuel.gwt.websockets.WebsocketListener;
 
@@ -106,9 +105,7 @@ import java.util.Map;
  */
 public class DesktopPresenterImpl implements DesktopView.Presenter {
 
-    private NotificationWebSocketManager notificationWebSocketManager;
 
-    private SystemMessageWebSocketManager systemMessageWebSocketManager;
 
     interface AuthErrors {
         String API_NAME = "api_name";
@@ -155,6 +152,9 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
     private final NewMessageView.Presenter systemMsgPresenter;
     private final DesktopView view;
     private final WindowManager windowManager;
+    private NotificationWebSocketManager notificationWebSocketManager;
+    private SystemMessageWebSocketManager systemMessageWebSocketManager;
+    private boolean loggedOut;
 
     public static final int NEW_NOTIFICATION_LIMIT = 10;
 
@@ -177,7 +177,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
         this.desktopWindowManager = desktopWindowManager;
         this.desktopWindowManager.setDesktopContainer(view.getDesktopContainer());
         this.ssp = new SaveSessionPeriodic(this);
-
+        this.loggedOut = false;
         this.view.setPresenter(this);
         globalEventHandler.setPresenter(this, this.view);
         windowEventHandler.setPresenter(this, desktopWindowManager);
@@ -185,17 +185,22 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
             this.view.ensureDebugId(DeModule.Ids.DESKTOP);
         }
 
-        InitNotificationWebSocket();
-        InitSystemMessageWebSocket();
+        initNotificationWebSocket();
+        initSystemMessageWebSocket();
     }
 
-    private void InitNotificationWebSocket() {
+    private void initNotificationWebSocket() {
         notificationWebSocketManager = NotificationWebSocketManager.getInstace();
         notificationWebSocketManager.openWebSocket(new WebsocketListener() {
 
             @Override
             public void onClose() {
                 GWT.log("Wesbsocket onClose()");
+                //if websocket connection closed unexpectedly, retry connection!
+                if(!loggedOut) {
+                    GWT.log("reconnecting...");
+                    notificationWebSocketManager.openWebSocket(this);
+                }
             }
 
             @Override
@@ -211,13 +216,18 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
         });
     }
 
-    private void InitSystemMessageWebSocket() {
+    private void initSystemMessageWebSocket() {
         systemMessageWebSocketManager = SystemMessageWebSocketManager.getInstace();
         systemMessageWebSocketManager.openWebSocket(new WebsocketListener() {
 
             @Override
             public void onClose() {
                 GWT.log("Wesbsocket onClose()");
+                //if websocket connection closed unexpectedly, retry connection!
+                if(!loggedOut) {
+                    GWT.log("reconnecting...");
+                    systemMessageWebSocketManager.openWebSocket(this);
+                }
             }
 
             @Override
@@ -301,11 +311,13 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
 
     @Override
     public void doLogout() {
+        loggedOut = true;
         // Need to stop polling
         messagePoller.stop();
 //        cleanUp();
         notificationWebSocketManager.closeWebSocket();
         systemMessageWebSocketManager.closeWebSocket();
+
         userSessionService.logout(new RuntimeCallbacks.LogoutCallback(userSessionService,
                                                      deClientConstants,
                                                      userSettings,
@@ -608,20 +620,8 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
         }
     }
 
-    /**
-     * This method is called by the periodic message task. It updates the store used by the
-     * user notification menu, and displays notification popups
-     */
-    void fetchRecentNotifications(int unseenNotificationCount) {
-        int currentUnseen = view.getUnseenNotificationCount();
-        if((unseenNotificationCount > 0)
-            && (unseenNotificationCount > currentUnseen)){
-            // Only fetch messages if necessary
-            messageServiceFacade.getRecentMessages(new RuntimeCallbacks.GetRecentNotificationsCallback(appearance, notificationFactory, view, notifyInfo));
-        }
-    }
 
-    void postBootstrap(final Panel panel) {
+   void postBootstrap(final Panel panel) {
         setBrowserContextMenuEnabled(deProperties.isContextClickEnabled());
         // Initialize keepalive timer
         String target = deProperties.getKeepaliveTarget();
@@ -629,15 +629,6 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
         if (target != null && !target.equals("") && interval > 0) {
             keepaliveTimer.start(target, interval);
         }
-
-        /*
-         * Start periodic message count polling
-         * Do an initial fetch of message counts, otherwise the initial count will not be fetched
-         * until after an entire poll-length of the MessagePoller's timer (15 seconds by default).
-         */
-    //    GetMessageCounts notificationCounts = new GetMessageCounts(eventBus, messageServiceFacade, view, this);
-    //    notificationCounts.run();
-    //    messagePoller.addTask(notificationCounts);
         messagePoller.start();
         initKBShortCuts();
         panel.add(view);

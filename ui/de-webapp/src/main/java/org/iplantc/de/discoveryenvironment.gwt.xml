@@ -9,8 +9,6 @@
     <inherits name="com.google.gwt.i18n.I18N"/>
     <inherits name="com.google.gwt.resources.Resources"/>
     <inherits name="com.google.gwt.user.Debug"/><!-- Turn on GWT debug IDs -->
-    <!-- Other module inherits                                      -->
-    <inherits name="com.sksamuel.gwt.GwtWebsockets" />
 
     <!-- GXT -->
     <inherits name='com.sencha.gxt.ui.GXT'/>

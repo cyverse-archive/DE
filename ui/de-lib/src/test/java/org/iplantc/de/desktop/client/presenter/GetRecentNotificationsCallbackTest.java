@@ -1,5 +1,6 @@
 package org.iplantc.de.desktop.client.presenter;
 
+import org.iplantc.de.client.models.notifications.NotificationList;
 import org.iplantc.de.desktop.client.DesktopView;
 import org.iplantc.de.client.models.notifications.Notification;
 import org.iplantc.de.client.models.notifications.NotificationAutoBeanFactory;
@@ -36,14 +37,10 @@ public class GetRecentNotificationsCallbackTest {
     @Mock ListStore<NotificationMessage> storeMock;
     @Mock DesktopView.Presenter.DesktopPresenterAppearance appearanceMock;
 
-    private RuntimeCallbacks.GetRecentNotificationsCallback uut;
+    private InitializationCallbacks.GetInitialNotificationsCallback uut;
 
     @Before public void setUp()  {
-
-        uut = new RuntimeCallbacks.GetRecentNotificationsCallback(appearanceMock,
-                                                                  factoryMock,
-                                                                  viewMock,
-                                                                  notifyInfoMock);
+        uut = new InitializationCallbacks.GetInitialNotificationsCallback(viewMock, appearanceMock, notifyInfoMock);
         when(viewMock.getNotificationStore()).thenReturn(storeMock);
     }
 
@@ -78,8 +75,14 @@ public class GetRecentNotificationsCallbackTest {
         mockResults.add(toolRequestMock);
         mockResults.add(newMock);
 
-        uut.onSuccess(mockResults);
-        verify(notifyInfoMock, times(5)).display(anyString());
+        NotificationList list = mock(NotificationList.class);
+
+        when(list.getNotifications()).thenReturn(mockResults);
+        when(list.getUnseenTotal()).thenReturn("5");
+
+
+        uut.onSuccess(list);
+        verify(viewMock).setUnseenNotificationCount(eq(5));
 
     }
 

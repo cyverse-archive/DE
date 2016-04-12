@@ -4,6 +4,7 @@ import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.notifications.Notification;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
+import org.iplantc.de.client.models.notifications.NotificationList;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
@@ -96,7 +97,7 @@ public class DesktopNotifications_PresenterTest {
         uut.messageServiceFacade = mock(MessageServiceFacade.class);
         uut.deProperties = mock(DEProperties.class);
         uut.postBootstrap(mock(Panel.class));
-        verify(uut.messageServiceFacade).getRecentMessages(Matchers.<AsyncCallback<List<Notification>>>any());
+        verify(uut.messageServiceFacade).getRecentMessages(Matchers.<AsyncCallback<NotificationList>>any());
         // TODO JDS Expand test to verify that notification store is updated
     }
 
