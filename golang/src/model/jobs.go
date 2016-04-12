@@ -2,6 +2,8 @@ package model
 
 import (
 	"configurate"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"path"
@@ -88,6 +90,7 @@ type Job struct {
 	Submitter          string         `json:"username"`
 	TimeLimit          int64          `json:"time_limit"`
 	Type               string         `json:"type"`
+	UserID             string         `json:"user_id"`
 	WikiURL            string         `json:"wiki_url"`
 }
 
@@ -153,6 +156,21 @@ func (s *Job) DirectoryName() string {
 		return s.Name
 	}
 	return fmt.Sprintf("%s-%s", s.Name, s.NowDate)
+}
+
+// UserIDForSubmission returns the cleaned up user ID for use in the iplant.cmd file. This
+// is dumb. Very, very dumb.
+func (s *Job) UserIDForSubmission() string {
+	var retval string
+	if s.UserID == "" {
+		hash := sha256.New()
+		hash.Write([]byte(s.Submitter))
+		md := hash.Sum(nil)
+		retval = hex.EncodeToString(md)
+	} else {
+		retval = s.UserID
+	}
+	return fmt.Sprintf("_%s", strings.Replace(retval, "-", "", -1))
 }
 
 // CondorLogDirectory returns the path to the directory containing condor logs on the

@@ -77,7 +77,7 @@ request_disk = {{.RequestDisk}}
 +IpcJobId = "generated_script"
 +IpcUsername = "{{.Submitter}}"{{if .Group}}
 +AccountingGroup = "{{.Group}}.{{.Submitter}}"{{end}}
-concurrency_limits = {{.Submitter}}
+concurrency_limits = {{.UserIDForSubmission}}
 {{with $x := index .Steps 0}}+IpcExe = "{{$x.Component.Name}}"{{end}}
 {{with $x := index .Steps 0}}+IpcExePath = "{{$x.Component.Location}}"{{end}}
 should_transfer_files = YES
