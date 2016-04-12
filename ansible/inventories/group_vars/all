@@ -324,7 +324,7 @@ grouper:
     base_url:
 
 icat:
-  host: "{{ groups['icat'][0] }}"
+  host: "{{ groups['icat'][0] if groups['icat']|count else ''}}"
   port: 5432
   user:
   password:

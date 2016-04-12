@@ -8,7 +8,9 @@
 {{jexdb_host}}:*:{{jexdb_db}}:{{jexdb_user}}:{{jexdb_password}}
 {{jexdb_host}}:*:*:{{db_admin}}:{{db_admin_password}}
 {{metadata_db_host}}:*:{{metadata_db_name}}:{{metadata_db_user}}:{{metadata_db_password}}
-{{icat.host}}:*:{{icat.db}}:{{icat.user}}:{{icat.password}}
+{% if icat.host %}
+    {{icat.host}}:*:{{icat.db}}:{{icat.user}}:{{icat.password}}
+{% endif %}
 {% if prod_dbs is defined and prod_dbs != None -%}
 {% for _, db in prod_dbs.iteritems() -%}
     {{db.host}}:*:{{db.name}}:{{db.user}}:{{db.password}}
