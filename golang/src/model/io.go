@@ -87,12 +87,6 @@ type StepOutput struct {
 	Type         string `json:"type"`
 }
 
-// Identifier returns a string with the output step's identifier. It's in the
-// format "output-<suffix>".
-func (o *StepOutput) Identifier(suffix string) string {
-	return fmt.Sprintf("output-%s", suffix)
-}
-
 // Source returns the path to the local filename for the output file.
 func (o *StepOutput) Source() string {
 	value := o.Name

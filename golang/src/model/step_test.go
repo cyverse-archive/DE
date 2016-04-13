@@ -469,16 +469,6 @@ func TestConfigOutput1Type(t *testing.T) {
 	}
 }
 
-func TestOutputIdentifier(t *testing.T) {
-	s := inittests(t)
-	output := s.Steps[0].Config.Outputs[0]
-	actual := output.Identifier("0-0")
-	expected := "output-0-0"
-	if actual != expected {
-		t.Errorf("Identifier() returned %s instead of %s", actual, expected)
-	}
-}
-
 func TestOutputSource(t *testing.T) {
 	s := inittests(t)
 	output := s.Steps[0].Config.Outputs[0]
