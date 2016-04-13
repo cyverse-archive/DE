@@ -39,7 +39,7 @@
          value ""}}
    order]
   (when (or (seq name) (seq value))
-    {:name  (str name)
+    {:name  name
      :value (str value)
      :order order}))
 
