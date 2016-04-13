@@ -234,22 +234,6 @@ func TestImageOption(t *testing.T) {
 	_inittests(t, false)
 }
 
-func TestEntryPointOption(t *testing.T) {
-	s := inittests(t)
-	actual := s.Steps[0].Component.Container.EntryPointOption()
-	expected := "--entrypoint=/bin/true"
-	if actual != expected {
-		t.Errorf("ImageOption() returned '%s' instead of '%s'", actual, expected)
-	}
-	s.Steps[0].Component.Container.EntryPoint = ""
-	actual = s.Steps[0].Component.Container.EntryPointOption()
-	expected = ""
-	if actual != expected {
-		t.Errorf("ImageOption() returned '%s' instead of '%s'", actual, expected)
-	}
-	_inittests(t, false)
-}
-
 func TestIsDEImage(t *testing.T) {
 	s := inittests(t)
 	actual := s.Steps[0].Component.Container.IsDEImage()

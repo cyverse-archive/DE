@@ -138,12 +138,3 @@ func (c *Container) Tag() string {
 func (c *Container) ImageOption() string {
 	return fmt.Sprintf("%s%s", c.Image.Name, c.Tag())
 }
-
-// EntryPointOption returns a docker command-line option that sets the
-// entrypoint.
-func (c *Container) EntryPointOption() string {
-	if c.EntryPoint != "" {
-		return fmt.Sprintf("--entrypoint=%s", c.EntryPoint)
-	}
-	return ""
-}
