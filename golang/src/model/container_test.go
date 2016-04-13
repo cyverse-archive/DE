@@ -211,29 +211,6 @@ func TestTag(t *testing.T) {
 	s = _inittests(t, false)
 }
 
-func TestImageOption(t *testing.T) {
-	s := inittests(t)
-	actual := s.Steps[0].Component.Container.ImageOption()
-	expected := "gims.iplantcollaborative.org:5000/backwards-compat:test"
-	if actual != expected {
-		t.Errorf("ImageOption() returned '%s' instead of '%s'", actual, expected)
-	}
-	s.Steps[0].Component.Container.Image.Name = "discoenv/test"
-	s.Steps[0].Component.Container.Image.Tag = "dev"
-	actual = s.Steps[0].Component.Container.ImageOption()
-	expected = "discoenv/test:dev"
-	if actual != expected {
-		t.Errorf("ImageOption() returned '%s' instead of '%s'", actual, expected)
-	}
-	s.Steps[0].Component.Container.Image.Tag = ""
-	actual = s.Steps[0].Component.Container.ImageOption()
-	expected = "discoenv/test"
-	if actual != expected {
-		t.Errorf("ImageOption() returned '%s' instead of '%s'", actual, expected)
-	}
-	_inittests(t, false)
-}
-
 func TestIsDEImage(t *testing.T) {
 	s := inittests(t)
 	actual := s.Steps[0].Component.Container.IsDEImage()
