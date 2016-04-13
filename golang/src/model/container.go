@@ -1,9 +1,6 @@
 package model
 
-import (
-	"configurate"
-	"fmt"
-)
+import "fmt"
 
 // Volume describes how a local path is mounted into a container.
 type Volume struct {
@@ -115,20 +112,4 @@ func (c *Container) IsDEImage() bool {
 		}
 	}
 	return found
-}
-
-// Tag returns a string containing the correct tag to use with this image. The
-// tag will be prefixed with a ':' unless the image is neither a DE image nor
-// has the Tag field set.
-func (c *Container) Tag() string {
-	tag, err := configurate.C.String("condor.porklock_tag")
-	if err != nil {
-		tag = ""
-	}
-	if c.IsDEImage() {
-		return fmt.Sprintf(":%s", tag)
-	} else if c.Image.Tag != "" {
-		return fmt.Sprintf(":%s", c.Image.Tag)
-	}
-	return ""
 }
