@@ -220,6 +220,22 @@ func (u *UserPreferencesApp) getUserPreferencesForRequest(username string, wrap 
 	return jsoned, nil
 }
 
+func handleNonUser(writer http.ResponseWriter, username string) {
+	var (
+		retval []byte
+		err    error
+	)
+	retval, err = json.Marshal(map[string]string{
+		"user": username,
+	})
+	if err != nil {
+		errored(writer, fmt.Sprintf("Error generating json for non-user %s", err))
+		return
+	}
+	badRequest(writer, string(retval))
+	return
+}
+
 // GetRequest handles writing out a user's preferences as a response.
 func (u *UserPreferencesApp) GetRequest(writer http.ResponseWriter, r *http.Request) {
 	var (
@@ -239,7 +255,7 @@ func (u *UserPreferencesApp) GetRequest(writer http.ResponseWriter, r *http.Requ
 		return
 	}
 	if !userExists {
-		badRequest(writer, fmt.Sprintf("User %s does not exist", username))
+		handleNonUser(writer, username)
 		return
 	}
 	jsoned, err := u.getUserPreferencesForRequest(username, false)
@@ -273,7 +289,7 @@ func (u *UserPreferencesApp) PostRequest(writer http.ResponseWriter, r *http.Req
 		return
 	}
 	if !userExists {
-		badRequest(writer, fmt.Sprintf("User %s does not exist", username))
+		handleNonUser(writer, username)
 		return
 	}
 	if hasPrefs, err = u.hasPreferences(username); err != nil {
@@ -329,7 +345,7 @@ func (u *UserPreferencesApp) DeleteRequest(writer http.ResponseWriter, r *http.R
 		return
 	}
 	if !userExists {
-		badRequest(writer, fmt.Sprintf("User %s does not exist", username))
+		handleNonUser(writer, username)
 		return
 	}
 	if hasPrefs, err = u.hasPreferences(username); err != nil {
