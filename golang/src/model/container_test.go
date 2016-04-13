@@ -173,19 +173,6 @@ func TestStepContainerWorkingDirectory(t *testing.T) {
 	}
 }
 
-func TestVolumeOptions(t *testing.T) {
-	s := _inittests(t, false)
-	actual := s.Steps[0].Component.Container.VolumeOptions()
-	expected := []string{"-v", "$(pwd):/work", "-v", "/host/path1:/container/path1", "-v", "/container/path2"}
-	if !reflect.DeepEqual(actual, expected) {
-		t.Errorf(
-			"The volume option was: \n\t%#v\nrather than:\n\t%#v",
-			actual,
-			expected,
-		)
-	}
-}
-
 func TestVolumesFromOptions(t *testing.T) {
 	s := inittests(t)
 	actual := s.Steps[0].Component.Container.VolumesFromOptions("test")

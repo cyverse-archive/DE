@@ -80,24 +80,6 @@ func (c *Container) WorkingDirectory() string {
 	return c.WorkingDir
 }
 
-// VolumeOptions returns a string containing the docker command-line options that
-// set all of the defined volumes.
-func (c *Container) VolumeOptions() []string {
-	retval := []string{"-v", fmt.Sprintf("$(pwd):%s", c.WorkingDirectory())}
-	if c.HasVolumes() {
-		for _, v := range c.Volumes {
-			if v.HostPath != "" {
-				retval = append(retval, "-v")
-				retval = append(retval, fmt.Sprintf("%s:%s", v.HostPath, v.ContainerPath))
-			} else {
-				retval = append(retval, "-v")
-				retval = append(retval, v.ContainerPath)
-			}
-		}
-	}
-	return retval
-}
-
 // DeviceOptions returns a string containing the docker command-line options
 // that set all of the defined devices.
 func (c *Container) DeviceOptions() []string {
