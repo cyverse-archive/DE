@@ -1,7 +1,5 @@
 package model
 
-import "fmt"
-
 // Volume describes how a local path is mounted into a container.
 type Volume struct {
 	HostPath      string `json:"host_path"`
@@ -75,13 +73,4 @@ func (c *Container) WorkingDirectory() string {
 		return "/de-app-work"
 	}
 	return c.WorkingDir
-}
-
-// CPUSharesOption returns a string containing the docker command-line option
-// that sets the number of cpu shares the container is allotted.
-func (c *Container) CPUSharesOption() string {
-	if c.CPUShares != "" {
-		return fmt.Sprintf("--cpu-shares=%s", c.CPUShares)
-	}
-	return ""
 }

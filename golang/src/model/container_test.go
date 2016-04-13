@@ -170,15 +170,6 @@ func TestStepContainerWorkingDirectory(t *testing.T) {
 	}
 }
 
-func TestCPUSharesOption(t *testing.T) {
-	s := inittests(t)
-	actual := s.Steps[0].Component.Container.CPUSharesOption()
-	expected := "--cpu-shares=2048"
-	if actual != expected {
-		t.Errorf("The container cpu shares was '%s' instead of '%s'", actual, expected)
-	}
-}
-
 func TestDevices(t *testing.T) {
 	s := inittests(t)
 	numdevices := len(s.Steps[0].Component.Container.Devices)
