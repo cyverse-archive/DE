@@ -489,16 +489,6 @@ func TestOutputStdout(t *testing.T) {
 	}
 }
 
-func TestOutputStderr(t *testing.T) {
-	s := inittests(t)
-	output := s.Steps[0].Config.Outputs[0]
-	actual := output.Stderr("0-0")
-	expected := "logs/logs-stderr-output-0-0"
-	if actual != expected {
-		t.Errorf("StepOuput.Stderr() returned %s instead of %s", actual, expected)
-	}
-}
-
 func TestOutputSource(t *testing.T) {
 	s := inittests(t)
 	output := s.Steps[0].Config.Outputs[0]

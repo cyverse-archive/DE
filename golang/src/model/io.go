@@ -99,12 +99,6 @@ func (o *StepOutput) Stdout(suffix string) string {
 	return path.Join("logs", fmt.Sprintf("logs-stdout-%s", o.Identifier(suffix)))
 }
 
-// Stderr returns the path to the output operation's stderr log. It's in the
-// format "logs/logs-stderr-<o.Identifier(suffix)>."
-func (o *StepOutput) Stderr(suffix string) string {
-	return path.Join("logs", fmt.Sprintf("logs-stderr-%s", o.Identifier(suffix)))
-}
-
 // Source returns the path to the local filename for the output file.
 func (o *StepOutput) Source() string {
 	value := o.Name
