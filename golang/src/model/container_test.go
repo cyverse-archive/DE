@@ -170,15 +170,6 @@ func TestStepContainerWorkingDirectory(t *testing.T) {
 	}
 }
 
-func TestNetworkModeOption(t *testing.T) {
-	s := inittests(t)
-	actual := s.Steps[0].Component.Container.NetworkModeOption()
-	expected := "--net=none"
-	if actual != expected {
-		t.Errorf("The container network mode was '%s' instead of '%s'", actual, expected)
-	}
-}
-
 func TestCPUSharesOption(t *testing.T) {
 	s := inittests(t)
 	actual := s.Steps[0].Component.Container.CPUSharesOption()

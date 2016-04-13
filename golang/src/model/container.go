@@ -80,15 +80,6 @@ func (c *Container) WorkingDirectory() string {
 	return c.WorkingDir
 }
 
-// NetworkModeOption returns a string containing the docker command-line option
-// that sets the container network mode.
-func (c *Container) NetworkModeOption() string {
-	if c.NetworkMode != "" {
-		return fmt.Sprintf("--net=%s", c.NetworkMode)
-	}
-	return "--net=bridge"
-}
-
 // CPUSharesOption returns a string containing the docker command-line option
 // that sets the number of cpu shares the container is allotted.
 func (c *Container) CPUSharesOption() string {
