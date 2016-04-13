@@ -34,6 +34,8 @@ project(':de-webapp') {
         compile("org.springframework:spring-webmvc:4.1.6.RELEASE")
         compile("org.springframework:spring-web:4.1.6.RELEASE")
         compile("com.fasterxml.jackson.core:jackson-databind:2.4.5")
+        compile('com.rabbitmq:amqp-client:3.6.0')
+
 
         providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
         providedRuntime("org.apache.tomcat.embed:tomcat-embed-jasper")

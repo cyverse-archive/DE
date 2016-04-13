@@ -4,6 +4,7 @@ import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.notifications.Notification;
+import org.iplantc.de.client.models.notifications.NotificationList;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -11,6 +12,7 @@ import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.desktop.client.DesktopView;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.inject.Provider;
@@ -81,7 +83,7 @@ class InitializationCallbacks {
         }
     }
 
-    static class GetInitialNotificationsCallback implements AsyncCallback<List<Notification>> {
+    static class GetInitialNotificationsCallback implements AsyncCallback<NotificationList> {
         private final DesktopView view;
         private final DesktopView.Presenter.DesktopPresenterAppearance appearance;
         private final IplantAnnouncer announcer;
@@ -102,9 +104,13 @@ class InitializationCallbacks {
         }
 
         @Override
-        public void onSuccess(List<Notification> result) {
+        public void onSuccess(NotificationList result) {
+            if(result != null) {
+                GWT.log("unseen count ^^^^^^" + result.getUnseenTotal());
+                view.setUnseenNotificationCount(Integer.parseInt(result.getUnseenTotal()));
+            }
             ListStore<NotificationMessage> store = view.getNotificationStore();
-            for (Notification n : result) {
+            for (Notification n : result.getNotifications()) {
                 store.add(n.getMessage());
             }
         }

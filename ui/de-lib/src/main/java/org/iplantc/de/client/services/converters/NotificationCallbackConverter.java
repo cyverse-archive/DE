@@ -20,19 +20,20 @@ import com.google.web.bindery.autobean.shared.Splittable;
 
 import java.util.List;
 
-public class NotificationCallbackConverter extends AsyncCallbackConverter<String, List<Notification>> {
+public class NotificationCallbackConverter extends AsyncCallbackConverter<String, NotificationList> {
     private final NotificationAutoBeanFactory notFactory;
 
-    public NotificationCallbackConverter(AsyncCallback<List<Notification>> callback,
+    public NotificationCallbackConverter(AsyncCallback<NotificationList> callback,
                                          final NotificationAutoBeanFactory notFactory) {
         super(callback);
         this.notFactory = notFactory;
     }
 
     @Override
-    protected List<Notification> convertFrom(String object) {
+    protected NotificationList convertFrom(String object) {
         AutoBean<NotificationList> bean = AutoBeanCodex.decode(notFactory, NotificationList.class, object);
-        List<Notification> notifications = bean.as().getNotifications();
+        NotificationList nList = bean.as();
+        List<Notification> notifications = nList.getNotifications();
         for (Notification n : notifications) {
             NotificationMessage msg = n.getMessage();
             msg.setSeen(n.isSeen());
@@ -107,6 +108,6 @@ public class NotificationCallbackConverter extends AsyncCallbackConverter<String
             }
         }
 
-        return notifications;
+        return nList;
     }
 }

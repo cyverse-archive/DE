@@ -6,6 +6,7 @@ import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.notifications.Notification;
 import org.iplantc.de.client.models.notifications.NotificationAutoBeanFactory;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
+import org.iplantc.de.client.models.notifications.NotificationList;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.client.models.notifications.payload.PayloadAnalysis;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
@@ -33,70 +34,6 @@ import java.util.logging.Logger;
  * @author jstroot
  */
 class RuntimeCallbacks {
-    static class GetRecentNotificationsCallback implements AsyncCallback<List<Notification>> {
-        private static final int NEW_NOTIFICATION_LIMIT = 10;
-        private final DesktopView.Presenter.DesktopPresenterAppearance appearance;
-        private final NotificationAutoBeanFactory notificationFactory;
-        private final DesktopView view;
-        private NotifyInfo notifyInfo;
-
-        public GetRecentNotificationsCallback(final DesktopView.Presenter.DesktopPresenterAppearance appearance,
-                                              final NotificationAutoBeanFactory notificationFactory,
-                                              final DesktopView view,
-                                              final NotifyInfo notifyInfo) {
-            this.appearance = appearance;
-            this.notificationFactory = notificationFactory;
-            this.view = view;
-            this.notifyInfo = notifyInfo;
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-
-        }
-
-        @Override
-        public void onSuccess(List<Notification> result) {
-
-            // this callback shouldn't care if it has been called once or many times
-            ListStore<NotificationMessage> nmStore = view.getNotificationStore();
-            int numNewMessageNotifications = 0;
-
-            for (Notification n : result) {
-                NotificationMessage newMessage = n.getMessage();
-
-                final NotificationMessage modelWithKey = nmStore.findModelWithKey(Long.toString(newMessage.getTimestamp()));
-                if (modelWithKey == null) {
-                    nmStore.add(newMessage);
-                    numNewMessageNotifications++;
-                    if (!newMessage.isSeen()
-                            && numNewMessageNotifications < NEW_NOTIFICATION_LIMIT) {
-                        displayNotificationPopup(newMessage);
-                    }
-                }
-            }
-            if (numNewMessageNotifications > NEW_NOTIFICATION_LIMIT) {
-                notifyInfo.display(appearance.newNotificationsAlert());
-            }
-        }
-
-        void displayNotificationPopup(NotificationMessage nm) {
-            if (NotificationCategory.ANALYSIS.equals(nm.getCategory())) {
-                PayloadAnalysis analysisPayload = AutoBeanCodex.decode(notificationFactory,
-                                                                       PayloadAnalysis.class,
-                                                                       nm.getContext()).as();
-                if ("Failed".equals(analysisPayload.getStatus())) { //$NON-NLS-1$
-                    notifyInfo.displayWarning(nm.getMessage());
-                } else {
-                    notifyInfo.display(nm.getMessage());
-                }
-            } else {
-                notifyInfo.display(nm.getMessage());
-            }
-        }
-
-    }
-
     static class GetUserSessionCallback implements AsyncCallback<List<WindowState>> {
         private final IplantAnnouncer announcer;
         private final DesktopPresenterImpl presenter;

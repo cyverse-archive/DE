@@ -14,4 +14,7 @@ import java.util.List;
 public interface NotificationList {
     @PropertyName("messages")
     List<Notification> getNotifications();
+
+    @PropertyName("unseen_total")
+    String getUnseenTotal();
 }

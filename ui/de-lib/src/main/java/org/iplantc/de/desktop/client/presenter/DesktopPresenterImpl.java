@@ -1,5 +1,7 @@
 package org.iplantc.de.desktop.client.presenter;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
@@ -14,9 +16,11 @@ import org.iplantc.de.client.models.analysis.AnalysesAutoBeanFactory;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.notifications.Notification;
 import org.iplantc.de.client.models.notifications.NotificationAutoBeanFactory;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
+import org.iplantc.de.client.models.notifications.payload.PayloadAnalysis;
 import org.iplantc.de.client.models.notifications.payload.PayloadApps;
 import org.iplantc.de.client.models.notifications.payload.PayloadAppsList;
 import org.iplantc.de.client.models.notifications.payload.PayloadRequest;
@@ -27,6 +31,7 @@ import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.collaborators.client.views.ManageCollaboratorsDialog;
 import org.iplantc.de.collaborators.client.views.ManageCollaboratorsView;
 import org.iplantc.de.commons.client.CommonUiConstants;
@@ -45,6 +50,8 @@ import org.iplantc.de.commons.client.views.window.configs.DiskResourceWindowConf
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.desktop.client.DesktopView;
 import org.iplantc.de.desktop.client.presenter.util.MessagePoller;
+import org.iplantc.de.desktop.client.presenter.util.NotificationWebSocketManager;
+import org.iplantc.de.desktop.client.presenter.util.SystemMessageWebSocketManager;
 import org.iplantc.de.desktop.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.desktop.shared.DeModule;
 import org.iplantc.de.fileViewers.client.callbacks.LoadGenomeInCoGeCallback;
@@ -52,19 +59,20 @@ import org.iplantc.de.notifications.client.events.WindowShowRequestEvent;
 import org.iplantc.de.notifications.client.utils.NotifyInfo;
 import org.iplantc.de.notifications.client.views.dialogs.RequestHistoryDialog;
 import org.iplantc.de.shared.services.PropertyServiceAsync;
+import org.iplantc.de.systemMessages.client.events.NewSystemMessagesEvent;
 import org.iplantc.de.systemMessages.client.view.NewMessageView;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.debug.client.DebugInfo;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Window;
@@ -80,10 +88,13 @@ import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import com.sencha.gxt.core.client.util.KeyNav;
+import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.WindowManager;
 import com.sencha.gxt.widget.core.client.box.AutoProgressMessageBox;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
+
+import com.sksamuel.gwt.websockets.WebsocketListener;
 
 import java.util.Collections;
 import java.util.List;
@@ -93,6 +104,8 @@ import java.util.Map;
  * @author jstroot
  */
 public class DesktopPresenterImpl implements DesktopView.Presenter {
+
+
 
     interface AuthErrors {
         String API_NAME = "api_name";
@@ -139,6 +152,11 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
     private final NewMessageView.Presenter systemMsgPresenter;
     private final DesktopView view;
     private final WindowManager windowManager;
+    private NotificationWebSocketManager notificationWebSocketManager;
+    private SystemMessageWebSocketManager systemMessageWebSocketManager;
+    private boolean loggedOut;
+
+    public static final int NEW_NOTIFICATION_LIMIT = 10;
 
     @Inject
     public DesktopPresenterImpl(final DesktopView view,
@@ -159,12 +177,127 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
         this.desktopWindowManager = desktopWindowManager;
         this.desktopWindowManager.setDesktopContainer(view.getDesktopContainer());
         this.ssp = new SaveSessionPeriodic(this);
-
+        this.loggedOut = false;
         this.view.setPresenter(this);
         globalEventHandler.setPresenter(this, this.view);
         windowEventHandler.setPresenter(this, desktopWindowManager);
         if (DebugInfo.isDebugIdEnabled()) {
             this.view.ensureDebugId(DeModule.Ids.DESKTOP);
+        }
+
+        initNotificationWebSocket();
+        initSystemMessageWebSocket();
+    }
+
+    private void initNotificationWebSocket() {
+        notificationWebSocketManager = NotificationWebSocketManager.getInstace();
+        notificationWebSocketManager.openWebSocket(new WebsocketListener() {
+
+            @Override
+            public void onClose() {
+                GWT.log("Wesbsocket onClose()");
+                //if websocket connection closed unexpectedly, retry connection!
+                if(!loggedOut) {
+                    GWT.log("reconnecting...");
+                    notificationWebSocketManager.openWebSocket(this);
+                }
+            }
+
+            @Override
+            public void onMessage(String msg) {
+                GWT.log("onMessage(): " + msg);
+                processNotification(msg);
+            }
+
+            @Override
+            public void onOpen() {
+                GWT.log("websocket onOpen()");
+            }
+        });
+    }
+
+    private void initSystemMessageWebSocket() {
+        systemMessageWebSocketManager = SystemMessageWebSocketManager.getInstace();
+        systemMessageWebSocketManager.openWebSocket(new WebsocketListener() {
+
+            @Override
+            public void onClose() {
+                GWT.log("Wesbsocket onClose()");
+                //if websocket connection closed unexpectedly, retry connection!
+                if(!loggedOut) {
+                    GWT.log("reconnecting...");
+                    systemMessageWebSocketManager.openWebSocket(this);
+                }
+            }
+
+            @Override
+            public void onMessage(String msg) {
+                GWT.log("onMessage(): " + msg);
+                processSystemMessage(msg);
+            }
+
+            @Override
+            public void onOpen() {
+                GWT.log("websocket onOpen()");
+            }
+        });
+    }
+
+    private void processSystemMessage(String msg){
+        JSONObject obj = null;
+        try {
+            obj = JSONParser.parseStrict(msg).isObject();
+            eventBus.fireEvent(new NewSystemMessagesEvent());
+        } catch (Exception e) {
+            //ignore error and message as it not in json format
+          }
+    }
+
+    private void processNotification(String msg) {
+        JSONObject obj = null;
+        try {
+             obj = JSONParser.parseStrict(msg).isObject();
+        } catch (Exception e) {
+            //ignore error and message as it not in json format
+            return;
+        }
+        Number num = JsonUtil.getInstance().getNumber(obj, "total");
+        view.setUnseenNotificationCount(num.intValue());
+        GWT.log("count -->" + num.intValue());
+        JSONObject notifi = JsonUtil.getInstance().getObject(obj, "message");
+        GWT.log("notifi-->" + notifi.toString());
+        Notification n =
+                AutoBeanCodex.decode(notificationFactory, Notification.class, notifi.toString()).as();
+        if (n != null) {
+            loadMessageInView(n);
+        }
+
+    }
+
+    private void loadMessageInView(Notification n) {
+        NotificationMessage newMessage = n.getMessage();
+        ListStore<NotificationMessage> nmStore = view.getNotificationStore();
+        final NotificationMessage modelWithKey =
+                nmStore.findModelWithKey(Long.toString(newMessage.getTimestamp()));
+        if (modelWithKey == null) {
+            nmStore.add(newMessage);
+                displayNotificationPopup(newMessage);
+        }
+    }
+
+
+    void displayNotificationPopup(NotificationMessage nm) {
+        if (NotificationCategory.ANALYSIS.equals(nm.getCategory())) {
+            PayloadAnalysis analysisPayload =
+                    AutoBeanCodex.decode(notificationFactory, PayloadAnalysis.class, nm.getContext())
+                                 .as();
+            if ("Failed".equals(analysisPayload.getStatus())) { //$NON-NLS-1$
+                notifyInfo.displayWarning(nm.getMessage());
+            } else {
+                notifyInfo.display(nm.getMessage());
+            }
+        } else {
+            notifyInfo.display(nm.getMessage());
         }
     }
 
@@ -178,9 +311,12 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
 
     @Override
     public void doLogout() {
+        loggedOut = true;
         // Need to stop polling
         messagePoller.stop();
 //        cleanUp();
+        notificationWebSocketManager.closeWebSocket();
+        systemMessageWebSocketManager.closeWebSocket();
 
         userSessionService.logout(new RuntimeCallbacks.LogoutCallback(userSessionService,
                                                      deClientConstants,
@@ -355,8 +491,8 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
 
             case PERMANENTIDREQUEST:
                 PayloadRequest request = AutoBeanCodex.decode(notificationFactory,
-                                                                  PayloadRequest.class,
-                                                                  context).as();
+                                                              PayloadRequest.class,
+                                                              context).as();
                 getRequestStatusHistory(request.getId(), NotificationCategory.PERMANENTIDREQUEST);
                 break;
             case TOOLREQUEST:
@@ -367,7 +503,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
                 List<RequestHistory> history = toolRequest.getHistory();
 
                 RequestHistoryDialog dlg = new RequestHistoryDialog(NotificationCategory.TOOLREQUEST.toString(),
-                        history);
+                                                                    history);
                 dlg.show();
 
                 break;
@@ -484,20 +620,8 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
         }
     }
 
-    /**
-     * This method is called by the periodic message task. It updates the store used by the
-     * user notification menu, and displays notification popups
-     */
-    void fetchRecentNotifications(int unseenNotificationCount) {
-        int currentUnseen = view.getUnseenNotificationCount();
-        if((unseenNotificationCount > 0)
-            && (unseenNotificationCount > currentUnseen)){
-            // Only fetch messages if necessary
-            messageServiceFacade.getRecentMessages(new RuntimeCallbacks.GetRecentNotificationsCallback(appearance, notificationFactory, view, notifyInfo));
-        }
-    }
 
-    void postBootstrap(final Panel panel) {
+   void postBootstrap(final Panel panel) {
         setBrowserContextMenuEnabled(deProperties.isContextClickEnabled());
         // Initialize keepalive timer
         String target = deProperties.getKeepaliveTarget();
@@ -505,15 +629,6 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
         if (target != null && !target.equals("") && interval > 0) {
             keepaliveTimer.start(target, interval);
         }
-
-        /*
-         * Start periodic message count polling
-         * Do an initial fetch of message counts, otherwise the initial count will not be fetched
-         * until after an entire poll-length of the MessagePoller's timer (15 seconds by default).
-         */
-        GetMessageCounts notificationCounts = new GetMessageCounts(eventBus, messageServiceFacade, view, this);
-        notificationCounts.run();
-        messagePoller.addTask(notificationCounts);
         messagePoller.start();
         initKBShortCuts();
         panel.add(view);
