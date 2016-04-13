@@ -93,12 +93,6 @@ func (o *StepOutput) Identifier(suffix string) string {
 	return fmt.Sprintf("output-%s", suffix)
 }
 
-// Stdout returns the path to the output operation's stdout log. It's in the
-// format "logs/logs-stdout-<o.Identifier(suffix)>"
-func (o *StepOutput) Stdout(suffix string) string {
-	return path.Join("logs", fmt.Sprintf("logs-stdout-%s", o.Identifier(suffix)))
-}
-
 // Source returns the path to the local filename for the output file.
 func (o *StepOutput) Source() string {
 	value := o.Name
