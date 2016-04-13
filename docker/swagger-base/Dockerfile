@@ -15,5 +15,4 @@ RUN apk add --update git \
     && rm -rf /var/cache/apk/*
 
 COPY index.html /docs/index.html
-WORKDIR /
 EXPOSE 60000
