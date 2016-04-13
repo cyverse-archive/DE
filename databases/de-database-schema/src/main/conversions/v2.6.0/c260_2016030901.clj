@@ -1,9 +1,9 @@
-(ns facepalm.c250-2016030901
+(ns facepalm.c260-2016030901
   (:use [korma.core]))
 
 (def ^:private version
   "The destination database version."
-  "2.5.0:20160309.01")
+  "2.6.0:20160309.01")
 
 (defn- add-container-volume-settings
   [settings-id]
