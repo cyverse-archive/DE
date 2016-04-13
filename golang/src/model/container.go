@@ -49,11 +49,6 @@ type Container struct {
 	WorkingDir  string         `json:"working_directory"`
 }
 
-// HasVolumes returns true if the container has volumes associated with it.
-func (c *Container) HasVolumes() bool {
-	return len(c.Volumes) > 0
-}
-
 // WorkingDirectory returns the container's working directory. Defaults to
 // /de-app-work if the job submission didn't specify one. Use this function
 // rather than accessing the field directly.
