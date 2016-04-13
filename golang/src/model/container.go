@@ -92,15 +92,6 @@ func (c *Container) DeviceOptions() []string {
 	return retval
 }
 
-// NameOption returns a string containing the docker command-line option
-// that sets the container name.
-func (c *Container) NameOption() []string {
-	if c.Name != "" {
-		return []string{"--name", fmt.Sprintf("%s", c.Name)}
-	}
-	return []string{}
-}
-
 // NetworkModeOption returns a string containing the docker command-line option
 // that sets the container network mode.
 func (c *Container) NetworkModeOption() string {

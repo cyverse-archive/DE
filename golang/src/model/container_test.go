@@ -173,15 +173,6 @@ func TestStepContainerWorkingDirectory(t *testing.T) {
 	}
 }
 
-func TestNameOption(t *testing.T) {
-	s := inittests(t)
-	actual := s.Steps[0].Component.Container.NameOption()
-	expected := []string{"--name", "test-name"}
-	if !reflect.DeepEqual(actual, expected) {
-		t.Errorf("The container name was '%s' when it should have been '%s'", actual, expected)
-	}
-}
-
 func TestNetworkModeOption(t *testing.T) {
 	s := inittests(t)
 	actual := s.Steps[0].Component.Container.NetworkModeOption()
