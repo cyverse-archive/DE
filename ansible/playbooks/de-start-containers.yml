@@ -230,6 +230,18 @@
       service_name: "{{notificationagent.compose_service}}"
       service_name_short: "{{notificationagent.service_name_short}}"
 
+- name: Start permissions
+  hosts: permissions:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - permissions
+  roles:
+    - role: util-cfg-docker-up
+      service_name: "{{permissions.compose_service}}"
+      service_name_short: "{{permissions.service_name_short}}"
+
 - name: Start saved-searches
   hosts: saved-searches:&systems
   become: true

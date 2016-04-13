@@ -1,3 +1,5 @@
+# -*- mode: yaml -*-
+
 ansible_ssh_port: 22
 global_config_dir: /etc/iplant
 de_config_dir: "{{ global_config_dir }}/de"
@@ -573,8 +575,10 @@ permanent_id:
       doi: "doi:10.5072/FK2"
 
 permissions:
-    host: "{{ groups['permissions'][0] if groups['permissions']|count else '' }}"
-    port:
+  host: "{{ groups['permissions'][0] if groups['permissions']|count else '' }}"
+  port:
+  compose_service: permissions
+  service_name_short: permissions
 
 pgp_keyring_path: "{{ gpg_home_dir }}/secring.gpg"
 pgp_key_password:
