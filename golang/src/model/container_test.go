@@ -179,15 +179,6 @@ func TestCPUSharesOption(t *testing.T) {
 	}
 }
 
-func TestMemoryLimitOption(t *testing.T) {
-	s := inittests(t)
-	actual := s.Steps[0].Component.Container.MemoryLimitOption()
-	expected := "--memory=2048M"
-	if actual != expected {
-		t.Errorf("The container memory limit was '%s' instead of '%s'", actual, expected)
-	}
-}
-
 func TestDevices(t *testing.T) {
 	s := inittests(t)
 	numdevices := len(s.Steps[0].Component.Container.Devices)

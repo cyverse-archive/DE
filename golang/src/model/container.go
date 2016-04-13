@@ -85,12 +85,3 @@ func (c *Container) CPUSharesOption() string {
 	}
 	return ""
 }
-
-// MemoryLimitOption returns a string containing the docker command-line option
-// that sets the maximum amount of host memory that the container may use.
-func (c *Container) MemoryLimitOption() string {
-	if c.MemoryLimit != "" {
-		return fmt.Sprintf("--memory=%s", c.MemoryLimit)
-	}
-	return ""
-}
