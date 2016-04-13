@@ -135,9 +135,6 @@ type StepConfig struct {
 // Use this to get the list of Params rather than accessing the field directory.
 func (c *StepConfig) Parameters() []StepParam {
 	sort.Sort(ByOrder(c.Params))
-	for _, p := range c.Params {
-		p.Value = quote(p.Value)
-	}
 	return c.Params
 }
 
@@ -176,7 +173,7 @@ func (p PreviewableStepParam) String() string {
 	var buffer bytes.Buffer
 	sort.Sort(ByOrder(p))
 	for _, param := range p {
-		buffer.WriteString(fmt.Sprintf("%s %s ", param.Name, quote(param.Value)))
+		buffer.WriteString(fmt.Sprintf("%s %s ", param.Name, param.Value))
 	}
 	return strings.TrimSpace(buffer.String())
 }
