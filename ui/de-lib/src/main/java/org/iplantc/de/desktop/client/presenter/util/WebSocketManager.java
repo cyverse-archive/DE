@@ -27,7 +27,7 @@ public class WebSocketManager {
     }
 
     public static String getProtocol() {
-        if(Window.Location.getProtocol().equalsIgnoreCase("HTTPS")) {
+        if(Window.Location.getProtocol().equalsIgnoreCase("HTTPS:")) {
             return deClientConstants.wssProtocol();
         }   else {
             return deClientConstants.wsProtocol();
