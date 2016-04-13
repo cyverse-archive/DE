@@ -80,12 +80,6 @@ func (c *Container) WorkingDirectory() string {
 	return c.WorkingDir
 }
 
-// WorkingDirectoryOption returns a string containing a Docker command-line option
-// setting the working directory.
-func (c *Container) WorkingDirectoryOption() []string {
-	return []string{"-w", c.WorkingDirectory()}
-}
-
 // VolumeOptions returns a string containing the docker command-line options that
 // set all of the defined volumes.
 func (c *Container) VolumeOptions() []string {

@@ -173,21 +173,6 @@ func TestStepContainerWorkingDirectory(t *testing.T) {
 	}
 }
 
-func TestStepContainerWorkingDirectoryOption(t *testing.T) {
-	s := _inittests(t, false)
-	actual := s.Steps[0].Component.Container.WorkingDirectoryOption()
-	expected := []string{"-w", "/work"}
-	if !reflect.DeepEqual(actual, expected) {
-		t.Errorf("WorkingDirectoryOption() returned %#v instead of %#v", actual, expected)
-	}
-	s.Steps[0].Component.Container.WorkingDir = ""
-	actual = s.Steps[0].Component.Container.WorkingDirectoryOption()
-	expected = []string{"-w", "/de-app-work"}
-	if !reflect.DeepEqual(actual, expected) {
-		t.Errorf("WorkingDirectoryOption() returned %#v instead of %#v", actual, expected)
-	}
-}
-
 func TestVolumeOptions(t *testing.T) {
 	s := _inittests(t, false)
 	actual := s.Steps[0].Component.Container.VolumeOptions()
