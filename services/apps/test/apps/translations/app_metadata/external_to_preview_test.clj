@@ -28,6 +28,34 @@
                :value "foo"
                :order 1}]}]}))))
 
+(deftest int-parameter
+  (is (= {:params
+          [{:name  "-f"
+            :value "27"
+            :order 1}]}
+         (translate-template
+          {:groups
+           [{:parameters
+             [{:id    "some-uuid"
+               :name  "-f"
+               :label "foo"
+               :value 27
+               :order 1}]}]}))))
+
+(deftest float-parameter
+  (is (= {:params
+          [{:name  "-f"
+            :value "2.7"
+            :order 1}]}
+         (translate-template
+          {:groups
+           [{:parameters
+             [{:id    "some-uuid"
+               :name  "-f"
+               :label "foo"
+               :value 2.7
+               :order 1}]}]}))))
+
 (deftest parameters-in-one-group
   (is (= {:params
           [{:name  "-f"

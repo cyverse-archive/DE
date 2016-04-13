@@ -25,7 +25,7 @@
      (default-prop-translation prop default-prop-value-fn))
   ([prop f]
      [{:name  (:name prop "--unnamed-parameter")
-       :value (f prop)
+       :value (str (f prop))
        :order (:order prop 0)}]))
 
 (defn- flag-prop-translation
@@ -40,7 +40,7 @@
    order]
   (when (or (seq name) (seq value))
     {:name  name
-     :value value
+     :value (str value)
      :order order}))
 
 (defn- tree-selection-prop-translation
