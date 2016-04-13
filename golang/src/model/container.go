@@ -92,18 +92,6 @@ func (c *Container) DeviceOptions() []string {
 	return retval
 }
 
-// VolumesFromOptions returns a string containing the docker command-line options
-// that set all of the defined volumes-from.
-func (c *Container) VolumesFromOptions(prefix string) []string {
-	retval := []string{}
-	if c.HasVolumesFrom() {
-		for _, vf := range c.VolumesFrom {
-			retval = append(retval, fmt.Sprintf("--volumes-from=%s-%s", prefix, vf.NamePrefix))
-		}
-	}
-	return retval
-}
-
 // NameOption returns a string containing the docker command-line option
 // that sets the container name.
 func (c *Container) NameOption() []string {

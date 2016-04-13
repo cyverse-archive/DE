@@ -173,15 +173,6 @@ func TestStepContainerWorkingDirectory(t *testing.T) {
 	}
 }
 
-func TestVolumesFromOptions(t *testing.T) {
-	s := inittests(t)
-	actual := s.Steps[0].Component.Container.VolumesFromOptions("test")
-	expected := []string{"--volumes-from=test-vf-prefix1", "--volumes-from=test-vf-prefix2"}
-	if !reflect.DeepEqual(actual, expected) {
-		t.Errorf("The volumes-from options were:\n\t%#v\ninstead of:\n\t%#v", actual, expected)
-	}
-}
-
 func TestNameOption(t *testing.T) {
 	s := inittests(t)
 	actual := s.Steps[0].Component.Container.NameOption()
