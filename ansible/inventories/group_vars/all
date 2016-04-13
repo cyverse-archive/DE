@@ -572,6 +572,10 @@ permanent_id:
       ark: "ark:/99999/fk4"
       doi: "doi:10.5072/FK2"
 
+permissions:
+    host: "{{ groups['permissions'][0] if groups['permissions']|count else '' }}"
+    port:
+
 pgp_keyring_path: "{{ gpg_home_dir }}/secring.gpg"
 pgp_key_password:
 
