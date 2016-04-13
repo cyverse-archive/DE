@@ -54,11 +54,6 @@ func (c *Container) HasVolumes() bool {
 	return len(c.Volumes) > 0
 }
 
-// HasDevices returns true if the container has devices associated with it.
-func (c *Container) HasDevices() bool {
-	return len(c.Devices) > 0
-}
-
 // WorkingDirectory returns the container's working directory. Defaults to
 // /de-app-work if the job submission didn't specify one. Use this function
 // rather than accessing the field directly.
