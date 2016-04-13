@@ -16,5 +16,6 @@ RUN unzip consul-template_${CONSUL_TEMPLATE_VERSION}_linux_amd64.zip \
 
 COPY run.sh /usr/local/bin/run.sh
 COPY nginx.conf.tmpl /templates/nginx.conf.tmpl
+COPY nginx.conf.dummy /etc/nginx/nginx.conf
 
 CMD ["/usr/local/bin/run.sh"]
