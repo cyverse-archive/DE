@@ -105,12 +105,6 @@ func (o *StepOutput) Stderr(suffix string) string {
 	return path.Join("logs", fmt.Sprintf("logs-stderr-%s", o.Identifier(suffix)))
 }
 
-// LogPath returns the path to the output operation's condor log file. It's in
-// the format "<parent>/logs/logs-condor-<o.Identifier(suffix)>"
-func (o *StepOutput) LogPath(parent, suffix string) string {
-	return path.Join(parent, "logs", fmt.Sprintf("logs-condor-%s", o.Identifier(suffix)))
-}
-
 // Source returns the path to the local filename for the output file.
 func (o *StepOutput) Source() string {
 	value := o.Name

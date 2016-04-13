@@ -499,16 +499,6 @@ func TestOutputStderr(t *testing.T) {
 	}
 }
 
-func TestOutputLogPath(t *testing.T) {
-	s := inittests(t)
-	output := s.Steps[0].Config.Outputs[0]
-	actual := output.LogPath("parent", "0-0")
-	expected := "parent/logs/logs-condor-output-0-0"
-	if actual != expected {
-		t.Errorf("StepOutput.LogPath() returned %s instead of %s", actual, expected)
-	}
-}
-
 func TestOutputSource(t *testing.T) {
 	s := inittests(t)
 	output := s.Steps[0].Config.Outputs[0]
