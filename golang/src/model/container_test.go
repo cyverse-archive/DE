@@ -1,9 +1,6 @@
 package model
 
-import (
-	"reflect"
-	"testing"
-)
+import "testing"
 
 func TestStepContainerID(t *testing.T) {
 	s := inittests(t)
@@ -289,10 +286,5 @@ func TestDevices(t *testing.T) {
 	}
 	if d2.ContainerPath != "/container/path2" {
 		t.Errorf("The second device's container path was '%s' instead of '/container/path1'", d2.ContainerPath)
-	}
-	actual := s.Steps[0].Component.Container.DeviceOptions()
-	expected := []string{"--device=/host/path1:/container/path1", "--device=/host/path2:/container/path2"}
-	if !reflect.DeepEqual(actual, expected) {
-		t.Errorf("The device option was:\n\t%s\nrather than:\n\t%s", actual, expected)
 	}
 }

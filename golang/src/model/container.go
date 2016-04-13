@@ -80,18 +80,6 @@ func (c *Container) WorkingDirectory() string {
 	return c.WorkingDir
 }
 
-// DeviceOptions returns a string containing the docker command-line options
-// that set all of the defined devices.
-func (c *Container) DeviceOptions() []string {
-	retval := []string{}
-	if c.HasDevices() {
-		for _, d := range c.Devices {
-			retval = append(retval, fmt.Sprintf("--device=%s:%s", d.HostPath, d.ContainerPath))
-		}
-	}
-	return retval
-}
-
 // NetworkModeOption returns a string containing the docker command-line option
 // that sets the container network mode.
 func (c *Container) NetworkModeOption() string {
