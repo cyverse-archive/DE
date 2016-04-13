@@ -509,16 +509,6 @@ func TestOutputLogPath(t *testing.T) {
 	}
 }
 
-func TestOutputArguments(t *testing.T) {
-	s := inittests(t)
-	output := s.Steps[0].Config.Outputs[0]
-	actual := output.Arguments("testuser", "/irods/dest/")
-	expected := "run --rm -a stdout -a stderr -v $(pwd):/de-app-work -w /de-app-work discoenv/porklock:test put --user testuser --source wc_out.txt --destination /irods/dest/ --config logs/irods-config"
-	if actual != expected {
-		t.Errorf("Arguments returned:\n\t%s\ninstead of:\n\t%s", actual, expected)
-	}
-}
-
 func TestOutputSource(t *testing.T) {
 	s := inittests(t)
 	output := s.Steps[0].Config.Outputs[0]

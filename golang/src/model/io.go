@@ -1,7 +1,6 @@
 package model
 
 import (
-	"configurate"
 	"fmt"
 	"path"
 	"strings"
@@ -110,18 +109,6 @@ func (o *StepOutput) Stderr(suffix string) string {
 // the format "<parent>/logs/logs-condor-<o.Identifier(suffix)>"
 func (o *StepOutput) LogPath(parent, suffix string) string {
 	return path.Join(parent, "logs", fmt.Sprintf("logs-condor-%s", o.Identifier(suffix)))
-}
-
-// Arguments returns the porklock settings needed for output operation.
-func (o *StepOutput) Arguments(username, dest string) string {
-	args := "run --rm -a stdout -a stderr -v $(pwd):/de-app-work -w /de-app-work discoenv/porklock:%s put --user %s --source %s --destination %s --config logs/irods-config"
-	tag, err := configurate.C.String("condor.porklock_tag")
-	if err != nil {
-		tag = ""
-	}
-	src := o.Name
-	d := dest
-	return fmt.Sprintf(args, tag, username, src, d)
 }
 
 // Source returns the path to the local filename for the output file.
