@@ -8,9 +8,10 @@ import (
 )
 
 func cleanup(job *model.Job) {
+	logcabin.Info.Printf("Performing aggressive clean up routine...")
 	for _, ci := range job.ContainerImages() {
 		logcabin.Info.Printf("Nuking image %s:%s", ci.Name, ci.Tag)
-		err := dckr.NukeImage(ci.Name, ci.Tag)
+		err := dckr.SafelyRemoveImage(ci.Name, ci.Tag)
 		if err != nil {
 			logcabin.Error.Print(err)
 		}
