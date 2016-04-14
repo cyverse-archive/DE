@@ -395,12 +395,6 @@ type CondorRawEvent struct {
 	DateTriggered time.Time
 }
 
-// CondorJobDep tracks dependencies between jobs.
-type CondorJobDep struct {
-	SuccessorID   string
-	PredecessorID string
-}
-
 // Version contains info about the version of the database in use.
 type Version struct {
 	ID      int64
