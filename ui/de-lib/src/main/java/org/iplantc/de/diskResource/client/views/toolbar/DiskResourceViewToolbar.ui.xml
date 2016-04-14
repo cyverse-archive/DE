@@ -189,7 +189,7 @@
         </toolbar:child>
 
         <toolbar:child>
-            <button:TextButton ui:field="metadataMenu" text="Metadata">
+            <button:TextButton ui:field="metadataMenu" text="{appearance.metadataMenuItem}">
                 <button:menu>
                     <menu:Menu>
                             <menu:MenuItem ui:field="bulkmetadataMi"
