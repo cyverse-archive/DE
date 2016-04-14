@@ -379,14 +379,6 @@ type CondorJobEvent struct {
 	DateTriggered    time.Time
 }
 
-// CondorEvent contains info about an event that Condor emitted.
-type CondorEvent struct {
-	ID          string
-	EventNumber string
-	EventName   string
-	EventDesc   string
-}
-
 // Version contains info about the version of the database in use.
 type Version struct {
 	ID      int64
