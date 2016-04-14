@@ -337,6 +337,21 @@
       service_name: "{{notificationagent.compose_service}}"
       service_name_short: "{{notificationagent.service_name_short}}"
 
+- name: Update permissions
+  hosts: permissions:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - permissions
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: "{{permissions.compose_service}}"
+      service_name_short: "{{permissions.service_name_short}}"
+    - role: util-cfg-docker-pull
+      service_name: "{{permissions.compose_service}}"
+      service_name_short: "{{permissions.service_name_short}}"
+
 - name: Update saved-searches
   hosts: saved-searches:&systems
   become: true

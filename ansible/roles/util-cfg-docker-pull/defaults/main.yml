@@ -1,2 +1,3 @@
 ---
 group_name: "{{service_name_short}}"
+docker_compose_path: "{{ docker.compose_path }}"

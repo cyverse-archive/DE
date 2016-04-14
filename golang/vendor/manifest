@@ -2,27 +2,40 @@
 	"version": 0,
 	"dependencies": [
 		{
-			"importpath": "gopkg.in/olivere/elastic.v3",
-			"repository": "https://gopkg.in/olivere/elastic.v3",
-			"revision": "6d1954a560f885207ff84c32ed0aaaebf11ec599",
+			"importpath": "bitbucket.org/pkg/inflect",
+			"repository": "https://bitbucket.org/pkg/inflect",
+			"revision": "8961c3750a47",
+			"branch": "default"
+		},
+		{
+			"importpath": "github.com/PuerkitoBio/purell",
+			"repository": "https://github.com/PuerkitoBio/purell",
+			"revision": "d69616f51cdfcd7514d6a380847a152dfc2a749d",
 			"branch": "master"
 		},
 		{
-			"importpath": "github.com/dgrijalva/jwt-go",
-			"repository": "https://github.com/dgrijalva/jwt-go",
-			"revision": "f62f64ea222e5e6d6d86421b5507b0862a3ebf7f",
-			"branch": "master"
-		},
-		{
-			"importpath": "github.com/mitchellh/go-homedir",
-			"repository": "https://github.com/mitchellh/go-homedir",
-			"revision": "d682a8f0cf139663a984ff12528da460ca963de9",
+			"importpath": "github.com/asaskevich/govalidator",
+			"repository": "https://github.com/asaskevich/govalidator",
+			"revision": "50f582311784a55b42018d88643ccfceadf7ab61",
 			"branch": "master"
 		},
 		{
 			"importpath": "github.com/codegangsta/negroni",
 			"repository": "https://github.com/codegangsta/negroni",
 			"revision": "c7477ad8e330bef55bf1ebe300cf8aa67c492d1b",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/davecgh/go-spew/spew",
+			"repository": "https://github.com/davecgh/go-spew",
+			"revision": "5215b55f46b2b919f50a1df0eaa5886afe4e3b3d",
+			"branch": "master",
+			"path": "/spew"
+		},
+		{
+			"importpath": "github.com/dgrijalva/jwt-go",
+			"repository": "https://github.com/dgrijalva/jwt-go",
+			"revision": "f62f64ea222e5e6d6d86421b5507b0862a3ebf7f",
 			"branch": "master"
 		},
 		{
@@ -38,6 +51,19 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/go-swagger/go-swagger",
+			"repository": "https://github.com/go-swagger/go-swagger",
+			"revision": "44597702368fb67a3686f860b08b21134ffbe657",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/go-swagger/scan-repo-boundary/makeplans",
+			"repository": "https://github.com/go-swagger/scan-repo-boundary",
+			"revision": "196ec52cfa1c96b45dd793dfa0fa3f8877b299da",
+			"branch": "master",
+			"path": "/makeplans"
+		},
+		{
 			"importpath": "github.com/gorilla/context",
 			"repository": "https://github.com/gorilla/context",
 			"revision": "1c83b3eabd45b6d76072b66b746c20815fb2872d",
@@ -50,9 +76,27 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/jessevdk/go-flags",
+			"repository": "https://github.com/jessevdk/go-flags",
+			"revision": "6b9493b3cb60367edd942144879646604089e3f7",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/lib/pq",
 			"repository": "https://github.com/lib/pq",
 			"revision": "83c4f410d0aed80a0f44bac6a576a7f2435791f3",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/mitchellh/go-homedir",
+			"repository": "https://github.com/mitchellh/go-homedir",
+			"revision": "d682a8f0cf139663a984ff12528da460ca963de9",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/naoina/denco",
+			"repository": "https://github.com/naoina/denco",
+			"revision": "9af2ba0e24214bac003821f4a501b131b2e04c75",
 			"branch": "master"
 		},
 		{
@@ -62,15 +106,41 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/opennota/urlesc",
+			"repository": "https://github.com/opennota/urlesc",
+			"revision": "5fa9ff0392746aeae1c4b37fcc42c65afa7a9587",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/pborman/uuid",
 			"repository": "https://github.com/pborman/uuid",
 			"revision": "ca53cad383cad2479bbba7f7a1a05797ec1386e4",
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/pmezard/go-difflib/difflib",
+			"repository": "https://github.com/pmezard/go-difflib",
+			"revision": "792786c7400a136282c1664665ae0a8db921c6c2",
+			"branch": "master",
+			"path": "/difflib"
+		},
+		{
 			"importpath": "github.com/streadway/amqp",
 			"repository": "https://github.com/streadway/amqp",
 			"revision": "56eb08f0d1f9d90936ab1ab4e20ee9b9bf45ce26",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/stretchr/testify/assert",
+			"repository": "https://github.com/stretchr/testify",
+			"revision": "0744955171b0b6e1871ff9d7366abc2b7a7fcec0",
+			"branch": "master",
+			"path": "/assert"
+		},
+		{
+			"importpath": "github.com/tylerb/graceful",
+			"repository": "https://github.com/tylerb/graceful",
+			"revision": "9a3d4236b03bb5d26f7951134d248f9d5510d599",
 			"branch": "master"
 		},
 		{
@@ -88,10 +158,58 @@
 			"path": "/ssh"
 		},
 		{
+			"importpath": "golang.org/x/net/context",
+			"repository": "https://go.googlesource.com/net",
+			"revision": "e45385e9b226f570b1f086bf287b25d3d4117776",
+			"branch": "master",
+			"path": "/context"
+		},
+		{
+			"importpath": "golang.org/x/net/netutil",
+			"repository": "https://go.googlesource.com/net",
+			"revision": "e45385e9b226f570b1f086bf287b25d3d4117776",
+			"branch": "master",
+			"path": "/netutil"
+		},
+		{
+			"importpath": "golang.org/x/tools/go/ast/astutil",
+			"repository": "https://go.googlesource.com/tools",
+			"revision": "b75b3f5cd5d50fbb1fb88ce784d2e7cca17bba8a",
+			"branch": "master",
+			"path": "/go/ast/astutil"
+		},
+		{
+			"importpath": "golang.org/x/tools/go/buildutil",
+			"repository": "https://go.googlesource.com/tools",
+			"revision": "b75b3f5cd5d50fbb1fb88ce784d2e7cca17bba8a",
+			"branch": "master",
+			"path": "/go/buildutil"
+		},
+		{
+			"importpath": "golang.org/x/tools/go/loader",
+			"repository": "https://go.googlesource.com/tools",
+			"revision": "b75b3f5cd5d50fbb1fb88ce784d2e7cca17bba8a",
+			"branch": "master",
+			"path": "/go/loader"
+		},
+		{
+			"importpath": "golang.org/x/tools/imports",
+			"repository": "https://go.googlesource.com/tools",
+			"revision": "b75b3f5cd5d50fbb1fb88ce784d2e7cca17bba8a",
+			"branch": "master",
+			"path": "/imports"
+		},
+		{
 			"importpath": "gopkg.in/natefinch/lumberjack.v2",
 			"repository": "https://gopkg.in/natefinch/lumberjack.v2",
 			"revision": "20b71e5b60d756d3d2f80def009790325acc2b23",
 			"branch": "v2.0"
+		},
+		{
+			"importpath": "gopkg.in/olivere/elastic.v3",
+			"repository": "https://gopkg.in/olivere/elastic.v3",
+			"revision": "6d1954a560f885207ff84c32ed0aaaebf11ec599",
+			"branch": "master"
 		},
 		{
 			"importpath": "gopkg.in/yaml.v2",
