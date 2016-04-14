@@ -401,15 +401,6 @@ type CondorJobDep struct {
 	PredecessorID string
 }
 
-// CondorJobStopRequest records a request to stop a job.
-type CondorJobStopRequest struct {
-	ID            string
-	JobID         string
-	Username      string
-	DateRequested time.Time
-	Reason        string
-}
-
 // Version contains info about the version of the database in use.
 type Version struct {
 	ID      int64
