@@ -410,12 +410,6 @@ type CondorJobStopRequest struct {
 	Reason        string
 }
 
-// LastCondorJobEvent records the last updated CondorJobEvent for a job.
-type LastCondorJobEvent struct {
-	JobID            string
-	CondorJobEventID string
-}
-
 // Version contains info about the version of the database in use.
 type Version struct {
 	ID      int64
