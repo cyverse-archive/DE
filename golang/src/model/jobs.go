@@ -368,10 +368,3 @@ func (m MetadataArgs) FileMetadataArguments() []string {
 	}
 	return retval
 }
-
-// Version contains info about the version of the database in use.
-type Version struct {
-	ID      int64
-	Version string
-	Applied time.Time
-}
