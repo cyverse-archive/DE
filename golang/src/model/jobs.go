@@ -387,14 +387,6 @@ type CondorEvent struct {
 	EventDesc   string
 }
 
-// CondorRawEvent contains the raw, unparsed event that was emitted from Condor.
-type CondorRawEvent struct {
-	ID            string
-	JobID         string
-	EventText     string
-	DateTriggered time.Time
-}
-
 // Version contains info about the version of the database in use.
 type Version struct {
 	ID      int64
