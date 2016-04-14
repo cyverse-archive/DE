@@ -1,0 +1,36 @@
+---
+- name: remove /var/log/jex
+  file: path=/var/log/jex state=absent
+  tags:
+    - jex
+
+- name: delete the jex docker image
+  shell: docker rmi {{docker.user}}/jex:{{docker.tag}}
+  ignore_errors: true
+  tags:
+    - jex
+
+- name: remove the /usr/local/lib/jex/ directory
+  file: path=/usr/local/lib/jex/ state=absent
+  tags:
+    - jex
+
+- name: remove the submitnerator.sh file
+  file: path=/usr/local/bin/submitnerator.sh state=absent
+  tags:
+    - jex
+
+- name: remove the /usr/local/bin/jex file
+  file: path=/usr/local/bin/jex state=absent
+  tags:
+    - jex
+
+- name: remove the /lib/systemd/system/jex.service file
+  file: path=/lib/systemd/system/jex.service state=absent
+  tags:
+    - jex
+
+- name: Reload systemd
+  shell: systemctl daemon-reload
+  tags:
+      -jex

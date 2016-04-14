@@ -1,0 +1,9 @@
+---
+- name: Remove the jex
+  hosts: jex:&systems
+  become: yes
+  gather_facts: false
+  tags:
+    - jex
+  roles:
+    - de-rm-jex
