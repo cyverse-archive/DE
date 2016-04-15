@@ -8,3 +8,4 @@ de-ansible.ipr
 de-ansible.iws
 *.swp
 ssh-configs.tar.gz
+*.retry
