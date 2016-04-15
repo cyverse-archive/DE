@@ -11,7 +11,7 @@
     DE_TAG: "{{docker.tag}}"
     DE_ENV: "{{environment_name}}"
     HOSTNAME: "{{inventory_hostname}}"
-  shell: "docker-compose -f {{docker_compose_path}} up -d --force-recreate {{service_name}}"
+  shell: "docker-compose -f {{docker_compose_path}} up -d {% if force_recreate|default(true) %}--force-recreate{% endif %} {{service_name}}"
   register: docker_up_v
   changed_when: docker_up_v.stdout.find('Image is up to date') == -1
   tags:
