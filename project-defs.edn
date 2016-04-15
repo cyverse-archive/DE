@@ -343,6 +343,16 @@
   :language :sql
   :archive? true}
 
+  "permissions-db"
+  {:type     :database
+   :path     "databases/permissions"
+   :build    :shell
+   :tarball? false
+   :uberjar? false
+   :install? false
+   :language :sql
+   :archive? true}
+
   "data-info"
   {:type     :service
    :path     "services/data-info"
