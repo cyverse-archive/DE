@@ -4,11 +4,11 @@ set -e
 set -x
 
 if [ -z "$DOCKER_USER" ]; then
-	DOCKER_USER=discoenv
+  DOCKER_USER=discoenv
 fi
 
 if [ -z "$DOCKER_REPO" ]; then
-	DOCKER_REPO=facepalm
+  DOCKER_REPO=facepalm
 fi
 
 if [ -z "$DOCKER_BRANCH" ]; then
@@ -21,11 +21,13 @@ DE_DB_DIR=$DB_DIR/de-database-schema
 JEX_DB_DIR=$DB_DIR/jex-db
 META_DB_DIR=$DB_DIR/metadata
 NOTIF_DB_DIR=$DB_DIR/notification-db
+PERMS_DB_DIR=$DB_DIR/permissions
 
 DE_DB_GZ=$DE_DB_DIR/database.tar.gz
 JEX_DB_GZ=$JEX_DB_DIR/jex-db.tar.gz
 META_DB_GZ=$META_DB_DIR/metadata-db.tar.gz
 NOTIF_DB_GZ=$NOTIF_DB_DIR/notification-db.tar.gz
+PERMS_DB_GZ=$PERMS_DB_DIR/permissions-db.tar.gz
 
 CURR=$(pwd)
 
@@ -45,10 +47,15 @@ cd $NOTIF_DB_DIR
 ./build.sh
 cd $CURR
 
+cd $PERMS_DB_DIR
+./build.sh
+cd $CURR
+
 cp $DE_DB_GZ .
 cp $JEX_DB_GZ .
 cp $META_DB_GZ .
 cp $NOTIF_DB_GZ .
+cp $PERMS_DB_GZ .
 
 VERSION=$(cat version | sed -e 's/^ *//' -e 's/ *$//')
 GIT_COMMIT=$(git rev-parse HEAD)
