@@ -15,6 +15,7 @@
       - { role: de-update-database-notifications, tags: ["notification-db"] }
       - { role: de-update-database-metadata, tags: ["metadata-db"] }
       - { role: de-update-database-jex, tags: ["jex-db"] }
+      - { role: de-update-database-permissions, tags: ["permissions"] }
 
       - role: util-notify-chat
         username: "DB Updater"
