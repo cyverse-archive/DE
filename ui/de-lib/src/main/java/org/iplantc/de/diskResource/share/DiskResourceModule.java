@@ -41,7 +41,7 @@ public interface DiskResourceModule {
         String MENU_ITEM_DELETE = ".delete";
         String MENU_ITEM_EDIT_FILE = ".editFile";
         String MENU_ITEM_EDIT_INFO_TYPE = ".editInfoType";
-        String MENU_ITEM_METADATA = ".metadata";
+        String METADATA_MENU = ".metadata";
         String MENU_ITEM_SIMPLE_DOWNLOAD = ".simpleDownload";
         String MENU_ITEM_BULK_DOWNLOAD = ".bulkDownload";
         String MENU_ITEM_SHARE_WITH_COLLABORATORS = ".shareWithCollaborators";
@@ -75,9 +75,8 @@ public interface DiskResourceModule {
         String MENU_ITEM_IMPORT_FROM_COGE = ".CogeImport";
 
         String MENU_ITEM_BULK_METADATA = ".bulkmetadata";
-
         String MENU_ITEM_REQUEST_DOI = ".requestdoi";
-
+        String MENU_ITEM_SELECTFILE = ".selectfile";
     }
 
     interface MetadataIds {

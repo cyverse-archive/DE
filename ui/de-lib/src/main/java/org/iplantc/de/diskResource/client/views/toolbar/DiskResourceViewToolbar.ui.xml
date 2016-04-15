@@ -1,235 +1,270 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
-	xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
-	xmlns:menu="urn:import:com.sencha.gxt.widget.core.client.menu"
-	xmlns:search="urn:import:org.iplantc.de.diskResource.client.views.search">
+             xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+             xmlns:menu="urn:import:com.sencha.gxt.widget.core.client.menu"
+             xmlns:search="urn:import:org.iplantc.de.diskResource.client.views.search">
 
-	<ui:with field="appearance"
-		type="org.iplantc.de.diskResource.client.ToolbarView.Appearance" />
-	<ui:with field="flexBoxData"
-		type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
-		<ui:attributes flex="3" />
-	</ui:with>
-
-
-	<toolbar:ToolBar>
-		<!-- Upload Menu -->
-		<toolbar:child>
-			<button:TextButton ui:field="uploadMenu"
-				text="{appearance.uploadMenu}">
-				<button:menu>
-					<menu:Menu>
-						<menu:MenuItem ui:field="simpleUploadMi"
-							text="{appearance.simpleUploadFromDesktop}" icon="{appearance.importDataIcon}" />
-						<menu:MenuItem ui:field="bulkUploadMi"
-							text="{appearance.bulkUploadFromDesktop}" icon="{appearance.importDataIcon}" />
-						<menu:MenuItem ui:field="importFromUrlMi"
-							text="{appearance.importFromUrlMenuItem}" icon="{appearance.importDataIcon}" />
-						<menu:MenuItem ui:field="importFromCogeMi"
-							text="{appearance.importFromCoge}" icon="{appearance.importDataIcon}" />
-					</menu:Menu>
-				</button:menu>
-			</button:TextButton>
-		</toolbar:child>
-
-		<!-- File Menu -->
-		<toolbar:child>
-			<button:TextButton ui:field="fileMenu" text="File">
-				<button:menu>
-					<menu:Menu>
-						<menu:MenuItem ui:field="newWindowMi" text="{appearance.newWindow}"
-							icon="{appearance.addIcon}" />
-						<menu:MenuItem ui:field="newWindowAtLocMi"
-							text="{appearance.newDataWindowAtLocMenuItem}" icon="{appearance.addIcon}" />
-						<menu:MenuItem ui:field="newFolderMi"
-							text="{appearance.newFolderMenuItem}" icon="{appearance.newFolderIcon}" />
-						<menu:MenuItem ui:field="duplicateMi"
-							text="{appearance.duplicateMenuItem}" enabled="false" visible="false" />
-						<menu:MenuItem ui:field="newFileMi" text="{appearance.newFileMenu}"
-							icon="{appearance.newFileMenuIcon}">
-							<menu:submenu>
-								<menu:Menu ui:field="newFileMenu">
-									<menu:MenuItem ui:field="createNcbiSraMi"
-										text="{appearance.sendToNcbiSraItem}" icon="{appearance.sendNcbiSraIcon}"
-										enabled="false" />
-									<menu:MenuItem ui:field="newPlainTextFileMi"
-										text="{appearance.newPlainTextFileMenuItem}" icon="{appearance.newPlainTexFileIcon}" />
-
-									<menu:MenuItem ui:field="newTabularDataFileMi"
-										text="{appearance.newTabularDataFileMenuItem}" visible="true"
-										icon="{appearance.newDelimitedFileIcon}" />
-
-									<menu:MenuItem ui:field="newPathListMi"
-										text="{appearance.newPathListMenuText}" icon="{appearance.newPathListMenuIcon}" />
-
-									<menu:MenuItem ui:field="newRFileMi"
-										text="{appearance.newRFileMenuItem}" visible="true"
-										icon="{appearance.newRFileIcon}" />
-
-									<menu:MenuItem ui:field="newPerlFileMi"
-										text="{appearance.newPerlFileMenuItem}" visible="true"
-										icon="{appearance.newPerlFileIcon}" />
-
-									<menu:MenuItem ui:field="newPythonFileMi"
-										text="{appearance.newPythonFileMenuItem}" visible="true"
-										icon="{appearance.newPythonFileIcon}" />
-
-									<menu:MenuItem ui:field="newShellScriptFileMi"
-										text="{appearance.newShellFileMenuItem}" visible="true"
-										icon="{appearance.newShellFileIcon}" />
-
-									<menu:MenuItem ui:field="newMdFileMi"
-										text="{appearance.newMdFileMenuItem}" visible="true"
-										icon="{appearance.newMdFileIcon}" />
-								</menu:Menu>
-							</menu:submenu>
-						</menu:MenuItem>
-						<menu:MenuItem ui:field="moveToTrashMi"
-							text="{appearance.moveToTrashMenuItem}" icon="{appearance.trashIcon}"
-							enabled="false" />
-					</menu:Menu>
-				</button:menu>
-			</button:TextButton>
-		</toolbar:child>
-
-		<!-- Edit Menu -->
-		<toolbar:child>
-			<button:TextButton ui:field="editMenu" text="{appearance.editMenu}">
-				<button:menu>
-					<menu:Menu>
-						<menu:MenuItem ui:field="renameMi"
-							text="{appearance.renameMenuItem}" icon="{appearance.fileRenameIcon}"
-							enabled="false" />
-						<menu:MenuItem ui:field="editFileMi"
-							text="{appearance.editFileMenuItem}" icon="{appearance.fileRenameIcon}"
-							enabled="false" />
-						<menu:MenuItem ui:field="editCommentsMi"
-							text="{appearance.editCommentsMenuItem}" enabled="false"
-							icon="{appearance.userCommentIcon}" />
-						<menu:MenuItem ui:field="editInfoTypeMi"
-							text="{appearance.editInfoTypeMenuItem}" icon="{appearance.infoIcon}"
-							enabled="false" />
-						<menu:MenuItem ui:field="moveMi" text="{appearance.moveMenuItem}"
-							icon="{appearance.editIcon}" enabled="false" />
-						<menu:MenuItem ui:field="metadataMi" text="Metadata"
-							icon="{appearance.metadataIcon}" enabled="false">
-							<menu:submenu>
-								<menu:Menu ui:field="metadataMenu">
-									<menu:MenuItem ui:field="bulkmetadataMi" text="{appearance.applyBulkMetadata}"
-										icon="{appearance.metadataIcon}" enabled="false">
-										<menu:submenu>
-											<menu:Menu>
-												<menu:MenuItem ui:field="selectmetadataMi"
-													text="{appearance.selectMetadata}" icon="{appearance.metadataIcon}"
-													/>
-											</menu:Menu>
-										</menu:submenu>
-									</menu:MenuItem>
-
-									<menu:MenuItem ui:field="editmetadataMi"
-										text="{appearance.metadataMenuItem}" icon="{appearance.metadataIcon}"
-										enabled="false" />
-
-									<menu:MenuItem ui:field="copymetadataMi"
-										text="{appearance.copyMetadataMenuItem}" icon="{appearance.metadataIcon}"
-										enabled="false" />
-
-									<menu:MenuItem ui:field="savemetadatami"
-										text="{appearance.saveMetadataMenuItem}" icon="{appearance.metadataIcon}"
-										enabled="false" />
-
-									<menu:MenuItem ui:field="doiMi"
-                                        text="{appearance.requestDOI}" icon="{appearance.metadataIcon}"
-                                        enabled="false" />
-
-								</menu:Menu>
-							</menu:submenu>
-						</menu:MenuItem>
-					</menu:Menu>
-				</button:menu>
-			</button:TextButton>
-		</toolbar:child>
-
-		<!-- Download Menu -->
-		<toolbar:child>
-			<button:TextButton ui:field="downloadMenu"
-				text="{appearance.downloadMenu}">
-				<button:menu>
-					<menu:Menu>
-						<menu:MenuItem ui:field="simpleDownloadMi"
-							text="{appearance.simpleDownloadMenuItem}" icon="{appearance.downloadIcon}"
-							enabled="false" />
-						<menu:MenuItem ui:field="bulkDownloadMi"
-							text="{appearance.bulkDownloadMenuItem}" icon="{appearance.downloadIcon}"
-							enabled="false" />
-					</menu:Menu>
-				</button:menu>
-			</button:TextButton>
-		</toolbar:child>
-
-		<!-- Share Menu -->
-		<toolbar:child>
-			<button:TextButton ui:field="shareMenu"
-				text="{appearance.shareMenu}">
-				<button:menu>
-					<menu:Menu>
-						<menu:MenuItem ui:field="shareWithCollaboratorsMi"
-							text="{appearance.shareWithCollaboratorsMenuItem}" icon="{appearance.shareWithCollaboratorsIcon}"
-							enabled="false" />
-						<menu:MenuItem ui:field="createPublicLinkMi"
-							text="{appearance.createPublicLinkMenuItem}" icon="{appearance.linkAddIcon}"
-							enabled="false" />
-						<menu:MenuItem ui:field="shareFolderLocationMi"
-							text="{appearance.shareFolderLocationMenuItem}" icon="{appearance.shareFolderLocationIcon}"
-							enabled="false" />
-						<menu:MenuItem ui:field="sendToCogeMi"
-							text="{appearance.sendToCogeMenuItem}" icon="{appearance.sendToCogeIcon}"
-							enabled="false" />
-						<menu:MenuItem ui:field="sendToEnsemblMi"
-							text="{appearance.sendToEnsemblMenuItem}" icon="{appearance.sendToEnsemblIcon}"
-							enabled="false" />
-						<menu:MenuItem ui:field="sendToTreeViewerMi"
-							text="{appearance.sendToTreeViewerMenuItem}" icon="{appearance.sendToTreeViewerIcon}"
-							enabled="false" />
-					</menu:Menu>
-				</button:menu>
-			</button:TextButton>
-		</toolbar:child>
-
-		<!-- Refresh button -->
-		<toolbar:child>
-			<button:TextButton ui:field="refreshButton" text="{appearance.refresh}"
-				icon="{appearance.refreshIcon}" enabled="false" />
-		</toolbar:child>
-
-		<!-- Data Search box -->
-		<toolbar:child layoutData="{flexBoxData}">
-			<search:DiskResourceSearchField
-				ui:field="searchField" />
-		</toolbar:child>
+    <ui:with field="appearance"
+             type="org.iplantc.de.diskResource.client.ToolbarView.Appearance"/>
+    <ui:with field="flexBoxData"
+             type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
+        <ui:attributes flex="3"/>
+    </ui:with>
 
 
-		<!-- Trash Menu -->
-		<toolbar:child>
-			<button:TextButton ui:field="trashMenu"
-				text="{appearance.trashMenu}">
-				<button:menu>
-					<menu:Menu>
-						<menu:MenuItem ui:field="openTrashMi"
-							text="{appearance.openTrashMenuItem}" icon="{appearance.openTrashIcon}" />
-						<menu:MenuItem ui:field="restoreMi" text="{appearance.restore}"
-							enabled="false" />
-						<menu:SeparatorMenuItem />
-						<menu:MenuItem ui:field="emptyTrashMi"
-							text="{appearance.emptyTrashMenuItem}" icon="{appearance.emptyTrashIcon}" />
-						<menu:MenuItem ui:field="deleteMi"
-							text="{appearance.deleteMenuItem}" icon="{appearance.deleteIcon}"
-							enabled="false" />
-					</menu:Menu>
-				</button:menu>
-			</button:TextButton>
-		</toolbar:child>
+    <toolbar:ToolBar>
+        <!-- Upload Menu -->
+        <toolbar:child>
+            <button:TextButton ui:field="uploadMenu"
+                               text="{appearance.uploadMenu}">
+                <button:menu>
+                    <menu:Menu>
+                        <menu:MenuItem ui:field="simpleUploadMi"
+                                       text="{appearance.simpleUploadFromDesktop}"
+                                       icon="{appearance.importDataIcon}"/>
+                        <menu:MenuItem ui:field="bulkUploadMi"
+                                       text="{appearance.bulkUploadFromDesktop}"
+                                       icon="{appearance.importDataIcon}"/>
+                        <menu:MenuItem ui:field="importFromUrlMi"
+                                       text="{appearance.importFromUrlMenuItem}"
+                                       icon="{appearance.importDataIcon}"/>
+                        <menu:MenuItem ui:field="importFromCogeMi"
+                                       text="{appearance.importFromCoge}"
+                                       icon="{appearance.importDataIcon}"/>
+                    </menu:Menu>
+                </button:menu>
+            </button:TextButton>
+        </toolbar:child>
 
-	</toolbar:ToolBar>
+        <!-- File Menu -->
+        <toolbar:child>
+            <button:TextButton ui:field="fileMenu" text="File">
+                <button:menu>
+                    <menu:Menu>
+                        <menu:MenuItem ui:field="newWindowMi" text="{appearance.newWindow}"
+                                       icon="{appearance.addIcon}"/>
+                        <menu:MenuItem ui:field="newWindowAtLocMi"
+                                       text="{appearance.newDataWindowAtLocMenuItem}"
+                                       icon="{appearance.addIcon}"/>
+                        <menu:MenuItem ui:field="newFolderMi"
+                                       text="{appearance.newFolderMenuItem}"
+                                       icon="{appearance.newFolderIcon}"/>
+                        <menu:MenuItem ui:field="duplicateMi"
+                                       text="{appearance.duplicateMenuItem}" enabled="false"
+                                       visible="false"/>
+                        <menu:MenuItem ui:field="newFileMi" text="{appearance.newFileMenu}"
+                                       icon="{appearance.newFileMenuIcon}">
+                            <menu:submenu>
+                                <menu:Menu ui:field="newFileMenu">
+                                    <menu:MenuItem ui:field="createNcbiSraMi"
+                                                   text="{appearance.sendToNcbiSraItem}"
+                                                   icon="{appearance.sendNcbiSraIcon}"
+                                                   enabled="false"/>
+                                    <menu:MenuItem ui:field="newPlainTextFileMi"
+                                                   text="{appearance.newPlainTextFileMenuItem}"
+                                                   icon="{appearance.newPlainTexFileIcon}"/>
+
+                                    <menu:MenuItem ui:field="newTabularDataFileMi"
+                                                   text="{appearance.newTabularDataFileMenuItem}"
+                                                   visible="true"
+                                                   icon="{appearance.newDelimitedFileIcon}"/>
+
+                                    <menu:MenuItem ui:field="newPathListMi"
+                                                   text="{appearance.newPathListMenuText}"
+                                                   icon="{appearance.newPathListMenuIcon}"/>
+
+                                    <menu:MenuItem ui:field="newRFileMi"
+                                                   text="{appearance.newRFileMenuItem}" visible="true"
+                                                   icon="{appearance.newRFileIcon}"/>
+
+                                    <menu:MenuItem ui:field="newPerlFileMi"
+                                                   text="{appearance.newPerlFileMenuItem}" visible="true"
+                                                   icon="{appearance.newPerlFileIcon}"/>
+
+                                    <menu:MenuItem ui:field="newPythonFileMi"
+                                                   text="{appearance.newPythonFileMenuItem}"
+                                                   visible="true"
+                                                   icon="{appearance.newPythonFileIcon}"/>
+
+                                    <menu:MenuItem ui:field="newShellScriptFileMi"
+                                                   text="{appearance.newShellFileMenuItem}"
+                                                   visible="true"
+                                                   icon="{appearance.newShellFileIcon}"/>
+
+                                    <menu:MenuItem ui:field="newMdFileMi"
+                                                   text="{appearance.newMdFileMenuItem}" visible="true"
+                                                   icon="{appearance.newMdFileIcon}"/>
+                                </menu:Menu>
+                            </menu:submenu>
+                        </menu:MenuItem>
+                        <menu:MenuItem ui:field="moveToTrashMi"
+                                       text="{appearance.moveToTrashMenuItem}"
+                                       icon="{appearance.trashIcon}"
+                                       enabled="false"/>
+                    </menu:Menu>
+                </button:menu>
+            </button:TextButton>
+        </toolbar:child>
+
+        <!-- Edit Menu -->
+        <toolbar:child>
+            <button:TextButton ui:field="editMenu" text="{appearance.editMenu}">
+                <button:menu>
+                    <menu:Menu>
+                        <menu:MenuItem ui:field="renameMi"
+                                       text="{appearance.renameMenuItem}"
+                                       icon="{appearance.fileRenameIcon}"
+                                       enabled="false"/>
+                        <menu:MenuItem ui:field="editFileMi"
+                                       text="{appearance.editFileMenuItem}"
+                                       icon="{appearance.fileRenameIcon}"
+                                       enabled="false"/>
+                        <menu:MenuItem ui:field="editCommentsMi"
+                                       text="{appearance.editCommentsMenuItem}" enabled="false"
+                                       icon="{appearance.userCommentIcon}"/>
+                        <menu:MenuItem ui:field="editInfoTypeMi"
+                                       text="{appearance.editInfoTypeMenuItem}"
+                                       icon="{appearance.infoIcon}"
+                                       enabled="false"/>
+                        <menu:MenuItem ui:field="moveMi" text="{appearance.moveMenuItem}"
+                                       icon="{appearance.editIcon}" enabled="false"/>
+                    </menu:Menu>
+                </button:menu>
+            </button:TextButton>
+        </toolbar:child>
+
+        <!-- Download Menu -->
+        <toolbar:child>
+            <button:TextButton ui:field="downloadMenu"
+                               text="{appearance.downloadMenu}">
+                <button:menu>
+                    <menu:Menu>
+                        <menu:MenuItem ui:field="simpleDownloadMi"
+                                       text="{appearance.simpleDownloadMenuItem}"
+                                       icon="{appearance.downloadIcon}"
+                                       enabled="false"/>
+                        <menu:MenuItem ui:field="bulkDownloadMi"
+                                       text="{appearance.bulkDownloadMenuItem}"
+                                       icon="{appearance.downloadIcon}"
+                                       enabled="false"/>
+                    </menu:Menu>
+                </button:menu>
+            </button:TextButton>
+        </toolbar:child>
+
+        <!-- Share Menu -->
+        <toolbar:child>
+            <button:TextButton ui:field="shareMenu"
+                               text="{appearance.shareMenu}">
+                <button:menu>
+                    <menu:Menu>
+                        <menu:MenuItem ui:field="shareWithCollaboratorsMi"
+                                       text="{appearance.shareWithCollaboratorsMenuItem}"
+                                       icon="{appearance.shareWithCollaboratorsIcon}"
+                                       enabled="false"/>
+                        <menu:MenuItem ui:field="createPublicLinkMi"
+                                       text="{appearance.createPublicLinkMenuItem}"
+                                       icon="{appearance.linkAddIcon}"
+                                       enabled="false"/>
+                        <menu:MenuItem ui:field="shareFolderLocationMi"
+                                       text="{appearance.shareFolderLocationMenuItem}"
+                                       icon="{appearance.shareFolderLocationIcon}"
+                                       enabled="false"/>
+                        <menu:MenuItem ui:field="sendToCogeMi"
+                                       text="{appearance.sendToCogeMenuItem}"
+                                       icon="{appearance.sendToCogeIcon}"
+                                       enabled="false"/>
+                        <menu:MenuItem ui:field="sendToEnsemblMi"
+                                       text="{appearance.sendToEnsemblMenuItem}"
+                                       icon="{appearance.sendToEnsemblIcon}"
+                                       enabled="false"/>
+                        <menu:MenuItem ui:field="sendToTreeViewerMi"
+                                       text="{appearance.sendToTreeViewerMenuItem}"
+                                       icon="{appearance.sendToTreeViewerIcon}"
+                                       enabled="false"/>
+                    </menu:Menu>
+                </button:menu>
+            </button:TextButton>
+        </toolbar:child>
+
+        <toolbar:child>
+            <button:TextButton ui:field="metadataMenu" text="{appearance.metadataMenuItem}">
+                <button:menu>
+                    <menu:Menu>
+                            <menu:MenuItem ui:field="bulkmetadataMi"
+                                           text="{appearance.applyBulkMetadata}"
+                                           icon="{appearance.metadataIcon}" enabled="false">
+                                <menu:submenu>
+                                    <menu:Menu>
+                                        <menu:MenuItem ui:field="selectmetadataMi"
+                                                       text="{appearance.selectMetadata}"
+                                                       icon="{appearance.metadataIcon}"
+                                        />
+                                    </menu:Menu>
+                                </menu:submenu>
+                            </menu:MenuItem>
+
+                            <menu:MenuItem ui:field="editmetadataMi"
+                                           text="{appearance.metadataMenuItem}"
+                                           icon="{appearance.metadataIcon}"
+                                           enabled="false"/>
+
+                            <menu:MenuItem ui:field="copymetadataMi"
+                                           text="{appearance.copyMetadataMenuItem}"
+                                           icon="{appearance.metadataIcon}"
+                                           enabled="false"/>
+
+                            <menu:MenuItem ui:field="savemetadatami"
+                                           text="{appearance.saveMetadataMenuItem}"
+                                           icon="{appearance.metadataIcon}"
+                                           enabled="false"/>
+
+                            <menu:MenuItem ui:field="doiMi"
+                                           text="{appearance.requestDOI}"
+                                           icon="{appearance.metadataIcon}"
+                                           enabled="false"/>
+
+                        </menu:Menu>
+                </button:menu>
+            </button:TextButton>
+        </toolbar:child>
+
+        <!-- Refresh button -->
+        <toolbar:child>
+            <button:TextButton ui:field="refreshButton" text="{appearance.refresh}"
+                               icon="{appearance.refreshIcon}" enabled="false"/>
+        </toolbar:child>
+
+        <!-- Data Search box -->
+        <toolbar:child layoutData="{flexBoxData}">
+            <search:DiskResourceSearchField
+                    ui:field="searchField"/>
+        </toolbar:child>
+
+
+        <!-- Trash Menu -->
+        <toolbar:child>
+            <button:TextButton ui:field="trashMenu"
+                               text="{appearance.trashMenu}">
+                <button:menu>
+                    <menu:Menu>
+                        <menu:MenuItem ui:field="openTrashMi"
+                                       text="{appearance.openTrashMenuItem}"
+                                       icon="{appearance.openTrashIcon}"/>
+                        <menu:MenuItem ui:field="restoreMi" text="{appearance.restore}"
+                                       enabled="false"/>
+                        <menu:SeparatorMenuItem/>
+                        <menu:MenuItem ui:field="emptyTrashMi"
+                                       text="{appearance.emptyTrashMenuItem}"
+                                       icon="{appearance.emptyTrashIcon}"/>
+                        <menu:MenuItem ui:field="deleteMi"
+                                       text="{appearance.deleteMenuItem}" icon="{appearance.deleteIcon}"
+                                       enabled="false"/>
+                    </menu:Menu>
+                </button:menu>
+            </button:TextButton>
+        </toolbar:child>
+
+    </toolbar:ToolBar>
 </ui:UiBinder>

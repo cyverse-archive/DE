@@ -96,10 +96,14 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
     @UiField
     TextButton refreshButton;
     @UiField
-    MenuItem renameMi, moveMi, deleteMi, editFileMi, editCommentsMi, editInfoTypeMi, metadataMi,
+    MenuItem renameMi, moveMi, deleteMi, editFileMi, editCommentsMi, editInfoTypeMi,
             savemetadatami,
  copymetadataMi, editmetadataMi, bulkmetadataMi,
  selectmetadataMi, doiMi;
+
+    @UiField
+    TextButton metadataMenu;
+
     @UiField
     MenuItem shareFolderLocationMi;
     @UiField
@@ -317,7 +321,6 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         editFileMi.setEnabled(editFileMiEnabled);
         editCommentsMi.setEnabled(editCommentsMiEnabled);
         editInfoTypeMi.setEnabled(editInfoTypeMiEnabled);
-        metadataMi.setEnabled(metadataMiEnabled);
         copymetadataMi.setEnabled(metadataMiEnabled);
         savemetadatami.setEnabled(metadataMiEnabled);
         bulkmetadataMi.setEnabled(metadataMiEnabled && isFolderSelect);
@@ -712,11 +715,15 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         moveMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_MOVE);
         editFileMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_EDIT_FILE);
         editInfoTypeMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_EDIT_INFO_TYPE);
-        metadataMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_METADATA);
-        copymetadataMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_METADATA
-                + Ids.MENU_ITEM_METADATA_COPY);
-        savemetadatami.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_METADATA
-                + Ids.MENU_ITEM_METADATA_SAVE);
+
+        // Metadata menu
+        metadataMenu.ensureDebugId(baseID + Ids.METADATA_MENU);
+        copymetadataMi.ensureDebugId(baseID + Ids.METADATA_MENU + Ids.MENU_ITEM_METADATA_COPY);
+        savemetadatami.ensureDebugId(baseID + Ids.METADATA_MENU + Ids.MENU_ITEM_METADATA_SAVE);
+        doiMi.ensureDebugId(baseID + Ids.METADATA_MENU + Ids.MENU_ITEM_REQUEST_DOI);
+        bulkmetadataMi.ensureDebugId(baseID + Ids.METADATA_MENU + Ids.MENU_ITEM_BULK_METADATA);
+        selectmetadataMi.ensureDebugId(
+                baseID + Ids.METADATA_MENU + Ids.MENU_ITEM_BULK_METADATA + Ids.MENU_ITEM_SELECTFILE);
 
         // Download menu
         simpleDownloadMi.ensureDebugId(baseID + Ids.DOWNLOAD_MENU + Ids.MENU_ITEM_SIMPLE_DOWNLOAD);
