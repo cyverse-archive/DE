@@ -1,12 +1,18 @@
 package restapi
 
 import (
+	"configurate"
 	"crypto/tls"
+	"database/sql"
+	"fmt"
+	"logcabin"
 	"net/http"
 	"strings"
 
 	errors "github.com/go-swagger/go-swagger/errors"
 	httpkit "github.com/go-swagger/go-swagger/httpkit"
+	swag "github.com/go-swagger/go-swagger/swag"
+	_ "github.com/lib/pq"
 
 	"permissions/restapi/impl"
 	"permissions/restapi/operations"
@@ -15,12 +21,68 @@ import (
 
 // This file is safe to edit. Once it exists it will not be overwritten
 
+// Command line options that aren't managed by go-swagger.
+var options struct {
+	CfgPath string `long:"config" default:"/etc/iplant/de/jobservices.yml" description:"The path to the config file"`
+}
+
+// Register the command-line options.
 func configureFlags(api *operations.PermissionsAPI) {
-	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
+	api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{
+		swag.CommandLineOptionsGroup{"Service Options", "", &options},
+	}
+}
+
+// Validate the custom command-line options.
+func validateOptions() error {
+	if options.CfgPath == "" {
+		return fmt.Errorf("--config must be set")
+	}
+
+	return nil
+}
+
+// The database connection.
+var db *sql.DB
+
+// Initialize the service.
+func initService() error {
+	if err := configurate.Init(options.CfgPath); err != nil {
+		return err
+	}
+
+	dburi, err := configurate.C.String("db.uri")
+	if err != nil {
+		return err
+	}
+	logcabin.Info.Printf("DB URI: %s\n", dburi)
+
+	db, err = sql.Open("postgres", dburi)
+	if err != nil {
+		return err
+	}
+
+	if err := db.Ping(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Clean up when the service exits.
+func cleanup() {
+	db.Close()
 }
 
 func configureAPI(api *operations.PermissionsAPI) http.Handler {
-	// configure the api here
+	if err := validateOptions(); err != nil {
+		logcabin.Error.Fatal(err)
+	}
+
+	if err := initService(); err != nil {
+		logcabin.Error.Fatal(err)
+	}
+
 	api.ServeError = errors.ServeError
 
 	api.JSONConsumer = httpkit.JSONConsumer()
@@ -29,7 +91,7 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 
 	api.StatusGetHandler = status.GetHandlerFunc(impl.BuildStatusHandler(SwaggerJSON))
 
-	api.ServerShutdown = func() {}
+	api.ServerShutdown = cleanup
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))
 }
