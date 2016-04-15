@@ -10,6 +10,7 @@
   environment:
     DE_TAG: "{{docker.tag}}"
     DE_ENV: "{{environment_name}}"
+    HOSTNAME: "{{ inventory_hostname }}"
   shell: "docker-compose -f {{docker_compose_path}} pull {{service_name}}"
   register: docker_pull_v
   changed_when: docker_pull_v.stdout.find('Image is up to date') == -1
