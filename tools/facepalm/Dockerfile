@@ -4,6 +4,7 @@ COPY database.tar.gz /database.tar.gz
 COPY jex-db.tar.gz /jex-db.tar.gz
 COPY metadata-db.tar.gz /metadata-db.tar.gz
 COPY notification-db.tar.gz /notification-db.tar.gz
+COPY permissions-db.tar.gz /permissions-db.tar.gz
 
 RUN apt-get update && apt-get install -y \
   openjdk-7-jre-headless \
