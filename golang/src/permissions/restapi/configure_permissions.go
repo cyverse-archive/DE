@@ -16,6 +16,7 @@ import (
 
 	"permissions/restapi/impl"
 	"permissions/restapi/operations"
+	"permissions/restapi/operations/resource_types"
 	"permissions/restapi/operations/status"
 )
 
@@ -90,6 +91,8 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 	api.JSONProducer = httpkit.JSONProducer()
 
 	api.StatusGetHandler = status.GetHandlerFunc(impl.BuildStatusHandler(SwaggerJSON))
+
+	api.ResourceTypesGetResourceTypesHandler = resourceTypes.GetHandlerFunc(impl.BuildResourceTypesGetHandler(db))
 
 	api.ServerShutdown = cleanup
 

@@ -14,6 +14,7 @@ import (
 	strfmt "github.com/go-swagger/go-swagger/strfmt"
 	"github.com/go-swagger/go-swagger/swag"
 
+	"permissions/restapi/operations/resource_types"
 	"permissions/restapi/operations/status"
 )
 
@@ -47,6 +48,8 @@ type PermissionsAPI struct {
 
 	// StatusGetHandler sets the operation handler for the get operation
 	StatusGetHandler status.GetHandler
+	// ResourceTypesGetResourceTypesHandler sets the operation handler for the get resource types operation
+	ResourceTypesGetResourceTypesHandler resource_types.GetResourceTypesHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -104,6 +107,10 @@ func (o *PermissionsAPI) Validate() error {
 
 	if o.StatusGetHandler == nil {
 		unregistered = append(unregistered, "status.GetHandler")
+	}
+
+	if o.ResourceTypesGetResourceTypesHandler == nil {
+		unregistered = append(unregistered, "resource_types.GetResourceTypesHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -183,6 +190,11 @@ func (o *PermissionsAPI) initHandlerCache() {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/"] = status.NewGet(o.context, o.StatusGetHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/resource_types"] = resource_types.NewGetResourceTypes(o.context, o.ResourceTypesGetResourceTypesHandler)
 
 }
 
