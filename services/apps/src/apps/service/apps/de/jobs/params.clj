@@ -6,6 +6,10 @@
             [apps.service.apps.de.jobs.util :as util]
             [apps.util.config :as config]))
 
+(defn stringify
+  [v]
+  (when-not (nil? v) (str v)))
+
 (def ^:private irods-home-pattern
   (memoize #(re-pattern (str "\\A\\Q" (string/replace (config/irods-home) #"/+\z" "")))))
 
@@ -34,7 +38,7 @@
      :property     filename
      :retain       (or retain? (:retain param))
      :type         (:type param)
-     :value        path}))
+     :value        (stringify path)}))
 
 (defn- build-inputs-for-param
   [config retain? param]
@@ -113,7 +117,7 @@
        {:id    (:id param)
         :name  opt-arg
         :order (:order param 0)
-        :value opt-val}))
+        :value (stringify opt-val)}))
   ([param param-value]
      (build-arg param (or (:name param) "") param-value)))
 
@@ -254,7 +258,7 @@
     {:id    (generated-param-ids id-key)
      :name  opt-arg
      :order order
-     :value opt-val}))
+     :value (stringify opt-val)}))
 
 (defn build-extra-fapi-args
   [user job-name output-dir]
