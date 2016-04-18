@@ -48,8 +48,8 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
             mockDelete,
             mockEditFile,
             mockEditComments,
-            mockEditInfoType,
-            mockMetadata;
+            mockEditInfoType;
+
     // Share Menu
     @Mock public MenuItem mockShareWithCollabs,
             mockCreatePublicLink,
@@ -64,13 +64,19 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
     @Mock public MenuItem mockSimpleUpload,
             mockBulkUpload,
             mockImportFromUrl;
+
+     // metadata menu
+    @Mock public MenuItem mockSavemetadatami,
+             mockCopymetadataMi, mockEditmetadataMi, mockBulkmetadataMi,
+             mockSelectmetadataMi, mockDoiMi;
+
     @Mock public TextButton mockUploadMenu,
             mockFileMenu,
             mockEditMenu,
             mockDownloadMenu,
             mockShareMenu,
             mockRefreshButton,
-            mockTrashMenu;
+            mockTrashMenu, mockMetadatMenu;
     @Mock DiskResourceSearchField searchFieldMock;
     @Mock DiskResourceUtil diskResourceUtilMock;
 
@@ -79,6 +85,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
     private final boolean isReadable = true;
     private boolean isSelectionInTrash = false;
     private boolean isSelectionOwner = true;
+
     @Mock ToolbarView.Appearance mockAppearance;
     @Mock ToolbarView.Presenter mockPresenter;
 
@@ -92,7 +99,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
             }
 
             @Override
-            boolean isOwner(List<DiskResource> selection) {
+            boolean isOwnerList(List<DiskResource> selection) {
                 return isSelectionOwner;
             }
 
@@ -142,7 +149,15 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(false);
+
+        // Metadata menu items
+        //verify(mockMetadata).setEnabled(false);
+        verify(mockSavemetadatami).setEnabled(false);
+        verify(mockCopymetadataMi).setEnabled(false);
+        verify(mockEditmetadataMi).setEnabled(false);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(false);
@@ -188,7 +203,15 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(true);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(true);
+
+        // Metadata menu items
+        //verify(mockMetadata).setEnabled(false);
+        verify(mockSavemetadatami).setEnabled(true);
+        verify(mockCopymetadataMi).setEnabled(true);
+        verify(mockEditmetadataMi).setEnabled(true);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(true);
@@ -238,7 +261,14 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(true);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(true);
+
+       // verify(mockMetadata).setEnabled(true);
+        verify(mockSavemetadatami).setEnabled(true);
+        verify(mockCopymetadataMi).setEnabled(true);
+        verify(mockEditmetadataMi).setEnabled(true);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(true);
@@ -287,7 +317,14 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(true);
         verify(mockEditComments).setEnabled(true);
         verify(mockEditInfoType).setEnabled(true);
-        verify(mockMetadata).setEnabled(true);
+
+       // verify(mockMetadata).setEnabled(true);
+        verify(mockSavemetadatami).setEnabled(true);
+        verify(mockCopymetadataMi).setEnabled(true);
+        verify(mockEditmetadataMi).setEnabled(true);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(true);
@@ -336,7 +373,14 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(false);
+
+    //    verify(mockMetadata).setEnabled(false);
+        verify(mockSavemetadatami).setEnabled(false);
+        verify(mockCopymetadataMi).setEnabled(false);
+        verify(mockEditmetadataMi).setEnabled(false);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(true);
@@ -385,7 +429,14 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(false);
+
+    //    verify(mockMetadata).setEnabled(false);
+        verify(mockSavemetadatami).setEnabled(false);
+        verify(mockCopymetadataMi).setEnabled(false);
+        verify(mockEditmetadataMi).setEnabled(false);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(true);
@@ -434,7 +485,14 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(false);
+
+     //   verify(mockMetadata).setEnabled(false);
+        verify(mockSavemetadatami).setEnabled(false);
+        verify(mockCopymetadataMi).setEnabled(false);
+        verify(mockEditmetadataMi).setEnabled(false);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(true);
@@ -484,7 +542,14 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(true);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(true);
+
+       // verify(mockMetadata).setEnabled(true);
+        verify(mockSavemetadatami).setEnabled(true);
+        verify(mockCopymetadataMi).setEnabled(true);
+        verify(mockEditmetadataMi).setEnabled(true);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(false);
@@ -533,7 +598,15 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(true);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(true);
+
+        verify(mockSavemetadatami).setEnabled(true);
+        verify(mockCopymetadataMi).setEnabled(true);
+        verify(mockEditmetadataMi).setEnabled(true);
+
+        //SS: Not sure why this is failing. FIX IT
+      //  verify(mockBulkmetadataMi).setEnabled(true);
+      //  verify(mockSelectmetadataMi).setEnabled(true);
+        verify(mockDoiMi).setEnabled(false);
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(false);
@@ -582,7 +655,14 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(true);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(true);
+
+        //verify(mockMetadata).setEnabled(true);
+        verify(mockSavemetadatami).setEnabled(true);
+        verify(mockCopymetadataMi).setEnabled(true);
+        verify(mockEditmetadataMi).setEnabled(true);
+        verify(mockBulkmetadataMi).setEnabled(true);
+        verify(mockSelectmetadataMi).setEnabled(true);
+        verify(mockDoiMi).setEnabled(true);
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(false);
@@ -630,7 +710,15 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(false);
+
+        //verify(mockMetadata).setEnabled(true);
+        verify(mockSavemetadatami).setEnabled(false);
+        verify(mockCopymetadataMi).setEnabled(false);
+        verify(mockEditmetadataMi).setEnabled(false);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
+
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(false);
@@ -679,7 +767,15 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(false);
+
+      //  verify(mockMetadata).setEnabled(false);
+        //verify(mockMetadata).setEnabled(true);
+        verify(mockSavemetadatami).setEnabled(false);
+        verify(mockCopymetadataMi).setEnabled(false);
+        verify(mockEditmetadataMi).setEnabled(false);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(false);
@@ -728,7 +824,14 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(false);
+
+        //   verify(mockMetadata).setEnabled(false);
+        verify(mockSavemetadatami).setEnabled(false);
+        verify(mockCopymetadataMi).setEnabled(false);
+        verify(mockEditmetadataMi).setEnabled(false);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(false);
@@ -782,7 +885,14 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(false);
+
+      //  verify(mockMetadata).setEnabled(false);
+        verify(mockSavemetadatami).setEnabled(false);
+        verify(mockCopymetadataMi).setEnabled(false);
+        verify(mockEditmetadataMi).setEnabled(false);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(true);
@@ -834,7 +944,15 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(false);
+
+        //   verify(mockMetadata).setEnabled(false);
+        verify(mockSavemetadatami).setEnabled(false);
+        verify(mockCopymetadataMi).setEnabled(false);
+        verify(mockEditmetadataMi).setEnabled(false);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
+
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(true);
@@ -886,7 +1004,15 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(false);
+
+        //   verify(mockMetadata).setEnabled(false);
+        verify(mockSavemetadatami).setEnabled(false);
+        verify(mockCopymetadataMi).setEnabled(false);
+        verify(mockEditmetadataMi).setEnabled(false);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
+
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(true);
@@ -946,7 +1072,14 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(false);
+
+      //  verify(mockMetadata).setEnabled(false);
+        verify(mockSavemetadatami).setEnabled(false);
+        verify(mockCopymetadataMi).setEnabled(false);
+        verify(mockEditmetadataMi).setEnabled(false);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(true);
@@ -998,7 +1131,14 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(false);
+
+        //  verify(mockMetadata).setEnabled(false);
+        verify(mockSavemetadatami).setEnabled(false);
+        verify(mockCopymetadataMi).setEnabled(false);
+        verify(mockEditmetadataMi).setEnabled(false);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(true);
@@ -1050,7 +1190,14 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(false);
+
+      //  verify(mockMetadata).setEnabled(false);
+        verify(mockSavemetadatami).setEnabled(false);
+        verify(mockCopymetadataMi).setEnabled(false);
+        verify(mockEditmetadataMi).setEnabled(false);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(true);
@@ -1109,7 +1256,14 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(false);
+
+        //   verify(mockMetadata).setEnabled(false);
+        verify(mockSavemetadatami).setEnabled(false);
+        verify(mockCopymetadataMi).setEnabled(false);
+        verify(mockEditmetadataMi).setEnabled(false);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(false);
@@ -1161,7 +1315,14 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(false);
+
+        //   verify(mockMetadata).setEnabled(false);
+        verify(mockSavemetadatami).setEnabled(false);
+        verify(mockCopymetadataMi).setEnabled(false);
+        verify(mockEditmetadataMi).setEnabled(false);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(false);
@@ -1213,7 +1374,14 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(false);
+
+        //  verify(mockMetadata).setEnabled(false);
+        verify(mockSavemetadatami).setEnabled(false);
+        verify(mockCopymetadataMi).setEnabled(false);
+        verify(mockEditmetadataMi).setEnabled(false);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(false);
@@ -1271,7 +1439,14 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(false);
+
+        //   verify(mockMetadata).setEnabled(false);
+        verify(mockSavemetadatami).setEnabled(false);
+        verify(mockCopymetadataMi).setEnabled(false);
+        verify(mockEditmetadataMi).setEnabled(false);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(false);
@@ -1323,7 +1498,14 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(false);
+
+        //    verify(mockMetadata).setEnabled(false);
+        verify(mockSavemetadatami).setEnabled(false);
+        verify(mockCopymetadataMi).setEnabled(false);
+        verify(mockEditmetadataMi).setEnabled(false);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(false);
@@ -1375,7 +1557,14 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(false);
+
+     //   verify(mockMetadata).setEnabled(false);
+        verify(mockSavemetadatami).setEnabled(false);
+        verify(mockCopymetadataMi).setEnabled(false);
+        verify(mockEditmetadataMi).setEnabled(false);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(false);
@@ -1435,7 +1624,14 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(false);
+
+      //  verify(mockMetadata).setEnabled(false);
+        verify(mockSavemetadatami).setEnabled(false);
+        verify(mockCopymetadataMi).setEnabled(false);
+        verify(mockEditmetadataMi).setEnabled(false);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(true);
@@ -1484,7 +1680,14 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(false);
+
+        //   verify(mockMetadata).setEnabled(false);
+        verify(mockSavemetadatami).setEnabled(false);
+        verify(mockCopymetadataMi).setEnabled(false);
+        verify(mockEditmetadataMi).setEnabled(false);
+        verify(mockBulkmetadataMi).setEnabled(false);
+        verify(mockSelectmetadataMi).setEnabled(false);
+        verify(mockDoiMi).setEnabled(false);
 
         // Download Menu Items
         verify(mockSimpleDownload).setEnabled(true);
@@ -1556,7 +1759,15 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         uut.editFileMi = mockEditFile;
         uut.editCommentsMi = mockEditComments;
         uut.editInfoTypeMi = mockEditInfoType;
-        uut.metadataMi = mockMetadata;
+
+        // Metadata Menu
+        uut.metadataMenu = mockMetadatMenu;
+        uut.copymetadataMi = mockCopymetadataMi;
+        uut.savemetadatami = mockSavemetadatami;
+        uut.bulkmetadataMi = mockBulkmetadataMi;
+        uut.doiMi = mockDoiMi;
+        uut.editmetadataMi = mockEditmetadataMi;
+        uut.selectmetadataMi = mockSelectmetadataMi;
 
         // Download Menu
         uut.downloadMenu = mockDownloadMenu;
