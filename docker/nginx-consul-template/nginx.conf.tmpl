@@ -3,6 +3,8 @@ events {
 }
 
 http {
+    client_max_body_size 0;
+
 {{- with $service_query := (printf "%s.%s" (env "DE_ENV") (env "NGINX_PROXY_SERVICE_NAME")) }}
   {{- if service $service_query }}
     upstream service {
