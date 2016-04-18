@@ -8,6 +8,7 @@
             [metadata.routes.comments :as comment-routes]
             [metadata.routes.permanent-id-requests :as perm-id-routes]
             [metadata.routes.favorites :as favorites-routes]
+            [metadata.routes.ontologies :as ontology-routes]
             [metadata.routes.status :as status-routes]
             [metadata.routes.tags :as tag-routes]
             [metadata.routes.templates :as template-routes]
@@ -30,6 +31,7 @@
             {:name "data-comments", :description "Comments on Data Items"}
             {:name "app-comments", :description "Comments on Apps"}
             {:name "favorites", :description "Favorite Resources"}
+            {:name "ontologies", :description "Ontology Hierarchies"}
             {:name "admin-data-comments", :description "Admin Data Item Comment Management"}
             {:name "admin-app-comments", :description "Admin App Comment Management"}
             {:name "tags", :description "Tags Management"}
@@ -51,6 +53,7 @@
     comment-routes/admin-data-comment-routes
     comment-routes/admin-app-comment-routes
     favorites-routes/favorites
+    ontology-routes/ontologies
     tag-routes/filesystem-tags
     tag-routes/tags
     template-routes/templates

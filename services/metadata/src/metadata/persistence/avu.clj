@@ -6,6 +6,26 @@
 
 (def ^:private data-types [(db/->enum-val "file") (db/->enum-val "folder")])
 
+(defn filter-targets-by-attr-values
+  "Finds the given targets that have the given attribute and any of the given values."
+  [target-types target-ids attribute values]
+  (select :avus
+          (modifier "DISTINCT")
+          (fields :target_id
+                  :target_type)
+          (where {:target_id   [in target-ids]
+                  :target_type [in (map db/->enum-val target-types)]
+                  :attribute   attribute
+                  :value       [in values]})))
+
+(defn get-avus-by-attr
+  "Finds all existing AVUs by the given targets and the given set of attributes."
+  [target-types target-ids attribute]
+  (select :avus
+          (where {:attribute   attribute
+                  :target_id   [in target-ids]
+                  :target_type [in (map db/->enum-val target-types)]})))
+
 (defn get-existing-metadata-template-avus-by-attr
   "Finds all existing AVUs by the given data-id and the given set of attributes."
   [data-id attributes]
