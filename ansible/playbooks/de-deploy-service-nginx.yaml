@@ -1,0 +1,365 @@
+---
+
+- name: Update anon-files-nginx
+  hosts: anon-files:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - anon-files
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: "{{anon_files.compose_service}}_nginx"
+      service_name_short: "{{anon_files.service_name_short}}_nginx"
+
+- name: Update apps-nginx
+  hosts: apps:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - apps
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: "{{apps.compose_service}}_nginx"
+      service_name_short: "{{apps.service_name_short}}_nginx"
+
+- name: Update data-info-nginx
+  hosts: data-info:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - data-info
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: "{{data_info.compose_service}}_nginx"
+      service_name_short: "{{data_info.service_name_short}}_nginx"
+
+- name: Update iplant-email-nginx
+  hosts: iplant-email:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - iplant-email
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: "{{iplant_email.compose_service}}_nginx"
+      service_name_short: "{{iplant_email.service_name_short}}_nginx"
+
+- name: Update iplant-groups-nginx
+  hosts: iplant-groups:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - iplant-groups
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: "{{iplant_groups.compose_service}}_nginx"
+      service_name_short: "{{iplant_groups.service_name_short}}_nginx"
+
+- name: Update jex-adapter-nginx
+  hosts: jexevents
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - jex-adapter
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: jex_adapter_nginx
+      service_name_short: jex_adapter_nginx
+
+- name: Update kifshare-nginx
+  hosts: kifshare:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - kifshare
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: "{{kifshare.compose_service}}_nginx"
+      service_name_short: "{{kifshare.service_name_short}}_nginx"
+
+- name: Update metadata-nginx
+  hosts: metadata:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - metadata
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: "{{metadata.compose_service}}_nginx"
+      service_name_short: "{{metadata.service_name_short}}_nginx"
+
+- name: Update notification-agent-nginx
+  hosts: notificationagent:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - notificationagent
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: "{{notificationagent.compose_service}}_nginx"
+      service_name_short: "{{notificationagent.service_name_short}}_nginx"
+
+- name: Update permissions-nginx
+  hosts: permissions:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - permissions
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: "{{permissions.compose_service}}_nginx"
+      service_name_short: "{{permissions.service_name_short}}_nginx"
+
+- name: Update saved-searches-nginx
+  hosts: saved-searches:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - saved-searches
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: "{{saved_searches.compose_service}}_nginx"
+      service_name_short: "{{saved_searches.service_name_short}}_nginx"
+
+- name: Update terrain-nginx
+  hosts: terrain:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - terrain
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: "{{terrain.compose_service}}_nginx"
+      service_name_short: "{{terrain.service_name_short}}_nginx"
+
+- name: Update tree-urls-nginx
+  hosts: tree-urls:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - tree-urls
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: "{{tree_urls.compose_service}}_nginx"
+      service_name_short: "{{tree_urls.service_name_short}}_nginx"
+
+- name: Update user-preferences-nginx
+  hosts: user-preferences:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - user-preferences
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: "{{user_preferences.compose_service}}_nginx"
+      service_name_short: "{{user_preferences.service_name_short}}_nginx"
+
+- name: Update user-sessions-nginx
+  hosts: user-sessions:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - user-sessions
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: "{{user_sessions.compose_service}}_nginx"
+      service_name_short: "{{user_sessions.service_name_short}}_nginx"
+
+########################################################################
+# These can all just use 'up' because there aren't config images to worry about
+########################################################################
+
+- name: Start anon-files-nginx
+  hosts: anon-files:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - anon-files
+  roles:
+    - role: util-cfg-docker-up
+      service_name: "{{anon_files.compose_service}}_nginx"
+      service_name_short: "{{anon_files.service_name_short}}_nginx"
+
+- name: Start apps-nginx
+  hosts: apps:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - apps
+  roles:
+    - role: util-cfg-docker-up
+      service_name: "{{apps.compose_service}}_nginx"
+      service_name_short: "{{apps.service_name_short}}_nginx"
+
+- name: Start data-info-nginx
+  hosts: data-info:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - data-info
+  roles:
+    - role: util-cfg-docker-up
+      service_name: "{{data_info.compose_service}}_nginx"
+      service_name_short: "{{data_info.service_name_short}}_nginx"
+
+- name: Start iplant-email-nginx
+  hosts: iplant-email:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - iplant-email
+  roles:
+    - role: util-cfg-docker-up
+      service_name: "{{iplant_email.compose_service}}_nginx"
+      service_name_short: "{{iplant_email.service_name_short}}_nginx"
+
+- name: Start iplant-groups-nginx
+  hosts: iplant-groups:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - iplant-groups
+  roles:
+    - role: util-cfg-docker-up
+      service_name: "{{iplant_groups.compose_service}}_nginx"
+      service_name_short: "{{iplant_groups.service_name_short}}_nginx"
+
+- name: Start jex-adapter-nginx
+  hosts: jexevents
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - jex-adapter
+  roles:
+    - role: util-cfg-docker-up
+      service_name: jex_adapter_nginx
+      service_name_short: jex_adapter_nginx
+
+- name: Start kifshare-nginx
+  hosts: kifshare:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - kifshare
+  roles:
+    - role: util-cfg-docker-up
+      service_name: "{{kifshare.compose_service}}_nginx"
+      service_name_short: "{{kifshare.service_name_short}}_nginx"
+
+- name: Start metadata-nginx
+  hosts: metadata:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - metadata
+  roles:
+    - role: util-cfg-docker-up
+      service_name: "{{metadata.compose_service}}_nginx"
+      service_name_short: "{{metadata.service_name_short}}_nginx"
+
+- name: Start notification-agent-nginx
+  hosts: notificationagent:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - notificationagent
+  roles:
+    - role: util-cfg-docker-up
+      service_name: "{{notificationagent.compose_service}}_nginx"
+      service_name_short: "{{notificationagent.service_name_short}}_nginx"
+
+- name: Start permissions-nginx
+  hosts: permissions:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - permissions
+  roles:
+    - role: util-cfg-docker-up
+      service_name: "{{permissions.compose_service}}_nginx"
+      service_name_short: "{{permissions.service_name_short}}_nginx"
+
+- name: Start saved-searches-nginx
+  hosts: saved-searches:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - saved-searches
+  roles:
+    - role: util-cfg-docker-up
+      service_name: "{{saved_searches.compose_service}}_nginx"
+      service_name_short: "{{saved_searches.service_name_short}}_nginx"
+
+- name: Start terrain-nginx
+  hosts: terrain:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - terrain
+  roles:
+    - role: util-cfg-docker-up
+      service_name: "{{terrain.compose_service}}_nginx"
+      service_name_short: "{{terrain.service_name_short}}_nginx"
+
+- name: Start tree-urls-nginx
+  hosts: tree-urls:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - tree-urls
+  roles:
+    - role: util-cfg-docker-up
+      service_name: "{{tree_urls.compose_service}}_nginx"
+      service_name_short: "{{tree_urls.service_name_short}}_nginx"
+
+- name: Start user-preferences-nginx
+  hosts: user-preferences:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - user-preferences
+  roles:
+    - role: util-cfg-docker-up
+      service_name: "{{user_preferences.compose_service}}_nginx"
+      service_name_short: "{{user_preferences.service_name_short}}_nginx"
+
+- name: Start user-sessions-nginx
+  hosts: user-sessions:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - user-sessions
+  roles:
+    - role: util-cfg-docker-up
+      service_name: "{{user_sessions.compose_service}}_nginx"
+      service_name_short: "{{user_sessions.service_name_short}}_nginx"
