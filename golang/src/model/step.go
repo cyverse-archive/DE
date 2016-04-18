@@ -66,13 +66,13 @@ func (s *Step) Executable() string {
 // Arguments returns a []string containing all of the options passed to the
 // docker run command for this step in the submission.
 func (s *Step) Arguments() []string {
-	allLines := []string{s.Executable()}
+	allLines := []string{strings.TrimSpace(s.Executable())}
 	for _, p := range s.Config.Parameters() {
 		if p.Name != "" {
-			allLines = append(allLines, p.Name)
+			allLines = append(allLines, strings.TrimSpace(p.Name))
 		}
 		if p.Value != "" {
-			allLines = append(allLines, p.Value)
+			allLines = append(allLines, strings.TrimSpace(p.Value))
 		}
 	}
 	var cmdLine []string
