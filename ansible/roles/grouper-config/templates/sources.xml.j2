@@ -125,7 +125,7 @@ Grouper's subject resolver configuration
         <param>
             <param-name>base</param-name>
             <param-value>
-                ou=people,dc=iplantcollaborative,dc=org
+                {{ ldap.dn_lookup.base }}
             </param-value>
         </param>
     </search>
@@ -147,7 +147,7 @@ Grouper's subject resolver configuration
         <param>
             <param-name>base</param-name>
             <param-value>
-                ou=people,dc=iplantcollaborative,dc=org
+                {{ ldap.dn_lookup.base }}
             </param-value>
         </param>
     </search>
@@ -169,7 +169,7 @@ Grouper's subject resolver configuration
          <param>
             <param-name>base</param-name>
             <param-value>
-                ou=people,dc=iplantcollaborative,dc=org
+                {{ ldap.dn_lookup.base }}
             </param-value>
         </param>
     </search>
