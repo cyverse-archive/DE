@@ -96,10 +96,8 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
     @UiField
     TextButton refreshButton;
     @UiField
-    MenuItem renameMi, moveMi, deleteMi, editFileMi, editCommentsMi, editInfoTypeMi,
-            savemetadatami,
- copymetadataMi, editmetadataMi, bulkmetadataMi,
- selectmetadataMi, doiMi;
+    MenuItem renameMi, moveMi, deleteMi, editFileMi, editCommentsMi, editInfoTypeMi, savemetadatami,
+            copymetadataMi, editmetadataMi, bulkmetadataMi, selectmetadataMi, doiMi;
 
     @UiField
     TextButton metadataMenu;
@@ -254,7 +252,8 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
 
         boolean duplicateMiEnabled, addToSideBarMiEnabled, moveToTrashMiEnabled;
 
-        boolean renameMiEnabled, moveMiEnabled, deleteMiEnabled, editFileMiEnabled, editCommentsMiEnabled, editInfoTypeMiEnabled, metadataMiEnabled;
+        boolean renameMiEnabled, moveMiEnabled, deleteMiEnabled, editFileMiEnabled, editCommentsMiEnabled
+                ,editInfoTypeMiEnabled, metadataMiEnabled;
 
         boolean simpleDownloadMiEnabled, bulkDownloadMiEnabled;
         boolean sendToCogeMiEnabled, sendToEnsemblMiEnabled, sendToTreeViewerMiEnabled;
@@ -266,7 +265,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         selectedDiskResources = event.getSelection();
         final boolean isSelectionEmpty = selectedDiskResources.isEmpty();
         final boolean isSingleSelection = selectedDiskResources.size() == 1;
-        final boolean isOwner = isOwner(selectedDiskResources);
+        final boolean isOwner = isOwnerList(selectedDiskResources);
         final boolean isSelectionInTrash = isSelectionInTrash(selectedDiskResources);
         final boolean isFolderSelect = !isSelectionEmpty
                 && selectedDiskResources.get(0) instanceof Folder;
@@ -283,8 +282,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
                 && isReadable(selectedDiskResources.get(0));
         editInfoTypeMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash
                 && containsFile(selectedDiskResources) && isOwner;
-        metadataMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash
-                && isReadable(selectedDiskResources.get(0));
+        metadataMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash;
 
         simpleDownloadMiEnabled = !isSelectionEmpty && containsFile(selectedDiskResources);
         bulkDownloadMiEnabled = !isSelectionEmpty;
@@ -321,11 +319,15 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         editFileMi.setEnabled(editFileMiEnabled);
         editCommentsMi.setEnabled(editCommentsMiEnabled);
         editInfoTypeMi.setEnabled(editInfoTypeMiEnabled);
-        copymetadataMi.setEnabled(metadataMiEnabled);
-        savemetadatami.setEnabled(metadataMiEnabled);
-        bulkmetadataMi.setEnabled(metadataMiEnabled && isFolderSelect);
-        doiMi.setEnabled(metadataMiEnabled && isFolderSelect);
-        editmetadataMi.setEnabled(metadataMiEnabled);
+
+        copymetadataMi.setEnabled(metadataMiEnabled && isReadable(selectedDiskResources.get(0)));
+        savemetadatami.setEnabled(metadataMiEnabled && isReadable(selectedDiskResources.get(0)) );
+        bulkmetadataMi.setEnabled(
+                metadataMiEnabled && isFolderSelect && (isOwner || isWritable(selectedDiskResources)));
+        selectmetadataMi.setEnabled(
+                metadataMiEnabled && isFolderSelect && (isOwner || isWritable(selectedDiskResources)));
+        doiMi.setEnabled(metadataMiEnabled && isFolderSelect && isOwner);
+        editmetadataMi.setEnabled(metadataMiEnabled && isReadable(selectedDiskResources.get(0)));
 
         simpleDownloadMi.setEnabled(simpleDownloadMiEnabled);
         bulkDownloadMi.setEnabled(bulkDownloadMiEnabled);
@@ -763,12 +765,20 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         return true;
     }
 
-    boolean isOwner(final List<DiskResource> selection) {
+    boolean isOwnerList(final List<DiskResource> selection) {
         return diskResourceUtil.isOwner(selection);
+    }
+
+    boolean isOwner(final DiskResource item) {
+       return diskResourceUtil.isOwner(item);
     }
 
     boolean isReadable(final DiskResource item) {
         return diskResourceUtil.isReadable(item);
+    }
+
+    boolean isWritable(final List<DiskResource> selection) {
+        return selection.size()> 0 && diskResourceUtil.isWritable(selection.get(0));
     }
 
     boolean isSelectionInTrash(final List<DiskResource> selection) {

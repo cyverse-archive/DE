@@ -31,7 +31,7 @@ public class DiskResourceViewToolbar_onFolderSelectedTest {
             mockNewWindowAtLoc,
             mockNewFolder,
             mockDuplicate,
- mockNewFileMi,
+            mockNewFileMi,
             mockMoveToTrash;
     // Trash Menu
     @Mock public MenuItem mockOpenTrash,
@@ -43,8 +43,8 @@ public class DiskResourceViewToolbar_onFolderSelectedTest {
             mockDelete,
             mockEditFile,
             mockEditComments,
-            mockEditInfoType,
-            mockMetadata;
+            mockEditInfoType;
+
     // Share Menu
     @Mock public MenuItem mockShareWithCollabs,
             mockCreatePublicLink,
@@ -82,7 +82,7 @@ public class DiskResourceViewToolbar_onFolderSelectedTest {
             }
 
             @Override
-            boolean isOwner(List<DiskResource> selection) {
+            boolean isOwnerList(List<DiskResource> selection) {
                 return isSelectionOwner;
             }
 
@@ -366,7 +366,6 @@ public class DiskResourceViewToolbar_onFolderSelectedTest {
         verify(mockEditFile, never()).setEnabled(anyBoolean());
         verify(mockEditComments, never()).setEnabled(anyBoolean());
         verify(mockEditInfoType, never()).setEnabled(anyBoolean());
-        verify(mockMetadata, never()).setEnabled(anyBoolean());
 
         // Download Menu Items
         verify(mockSimpleDownload, never()).setEnabled(anyBoolean());
@@ -409,7 +408,6 @@ public class DiskResourceViewToolbar_onFolderSelectedTest {
         uut.editFileMi = mockEditFile;
         uut.editCommentsMi = mockEditComments;
         uut.editInfoTypeMi = mockEditInfoType;
-        uut.metadataMi = mockMetadata;
 
         // Download Menu
         uut.downloadMenu = mockDownloadMenu;
