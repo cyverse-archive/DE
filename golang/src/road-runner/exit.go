@@ -1,6 +1,7 @@
 package main
 
 import (
+	"dockerops"
 	"logcabin"
 	"messaging"
 	"model"
@@ -17,7 +18,7 @@ func cleanup(job *model.Job) {
 		}
 	}
 	logcabin.Info.Println("Finding all input containers")
-	inputContainers, err := dckr.ContainersWithLabel(typeLabel, strconv.Itoa(inputContainer), true)
+	inputContainers, err := dckr.ContainersWithLabel(dockerops.TypeLabel, strconv.Itoa(dockerops.InputContainer), true)
 	if err != nil {
 		logcabin.Error.Print(err)
 		inputContainers = []string{}
@@ -30,10 +31,9 @@ func cleanup(job *model.Job) {
 		}
 	}
 	logcabin.Info.Println("Finding all step containers")
-	stepContainers, err := dckr.ContainersWithLabel(typeLabel, strconv.Itoa(stepContainer), true)
+	stepContainers, err := dckr.ContainersWithLabel(dockerops.TypeLabel, strconv.Itoa(dockerops.StepContainer), true)
 	if err != nil {
 		logcabin.Error.Print(err)
-		inputContainers = []string{}
 	}
 	for _, sc := range stepContainers {
 		logcabin.Info.Printf("Nuking step container %s", sc)
@@ -43,10 +43,9 @@ func cleanup(job *model.Job) {
 		}
 	}
 	logcabin.Info.Println("Finding all data containers")
-	dataContainers, err := dckr.ContainersWithLabel(typeLabel, strconv.Itoa(dataContainer), true)
+	dataContainers, err := dckr.ContainersWithLabel(dockerops.TypeLabel, strconv.Itoa(dockerops.DataContainer), true)
 	if err != nil {
 		logcabin.Error.Print(err)
-		inputContainers = []string{}
 	}
 	for _, dc := range dataContainers {
 		logcabin.Info.Printf("Nuking data container %s", dc)

@@ -8,6 +8,7 @@ package main
 
 import (
 	"configurate"
+	"dockerops"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -33,7 +34,7 @@ var (
 	appver    string
 	builtby   string
 	job       *model.Job
-	dckr      *Docker
+	dckr      *dockerops.Docker
 	client    *messaging.Client
 )
 
@@ -256,7 +257,7 @@ func main() {
 		logcabin.Error.Fatal(err)
 	}
 
-	dckr, err = NewDocker(*dockerURI)
+	dckr, err = dockerops.NewDocker(*dockerURI)
 	if err != nil {
 		fail(client, job, "Failed to connect to local docker socket")
 		logcabin.Error.Fatal(err)

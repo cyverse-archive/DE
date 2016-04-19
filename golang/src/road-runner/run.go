@@ -1,6 +1,7 @@
 package main
 
 import (
+	"dockerops"
 	"fmt"
 	"logcabin"
 	"messaging"
@@ -19,7 +20,7 @@ func Environment(job *model.Job) []string {
 }
 
 // Run executes the job, and returns the exit code on the exit channel.
-func Run(client *messaging.Client, dckr *Docker, exit chan messaging.StatusCode) {
+func Run(client *messaging.Client, dckr *dockerops.Docker, exit chan messaging.StatusCode) {
 	status := messaging.Success
 	host, err := os.Hostname()
 	if err != nil {

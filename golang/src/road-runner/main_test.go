@@ -1,14 +1,79 @@
 package main
 
 import (
+	"configurate"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"messaging"
+	"model"
+	"os"
 	"testing"
 	"time"
 
 	"github.com/streadway/amqp"
 )
+
+var (
+	s *model.Job
+)
+
+func shouldrun() bool {
+	if os.Getenv("RUN_INTEGRATION_TESTS") != "" {
+		return true
+	}
+	return false
+}
+
+func uri() string {
+	return "http://dind:2375"
+}
+
+func JSONData() ([]byte, error) {
+	f, err := os.Open("../test/test_runner.json")
+	if err != nil {
+		return nil, err
+	}
+	c, err := ioutil.ReadAll(f)
+	if err != nil {
+		return nil, err
+	}
+	return c, err
+}
+
+func _inittests(t *testing.T, memoize bool) *model.Job {
+	if s == nil || !memoize {
+		configurate.Init("../test/test_config.json")
+		configurate.C.Set("irods.base", "/path/to/irodsbase")
+		configurate.C.Set("irods.host", "hostname")
+		configurate.C.Set("irods.port", "1247")
+		configurate.C.Set("irods.user", "user")
+		configurate.C.Set("irods.pass", "pass")
+		configurate.C.Set("irods.zone", "test")
+		configurate.C.Set("irods.resc", "")
+		configurate.C.Set("condor.log_path", "/path/to/logs")
+		configurate.C.Set("condor.porklock_tag", "test")
+		configurate.C.Set("condor.filter_files", "foo,bar,baz,blippy")
+		configurate.C.Set("condor.request_disk", "0")
+		data, err := JSONData()
+		if err != nil {
+			t.Error(err)
+		}
+		s, err = model.NewFromData(data)
+		if err != nil {
+			t.Error(err)
+		}
+		err = configurate.Init("../test/test_config.yaml")
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+	return s
+}
+
+func inittests(t *testing.T) *model.Job {
+	return _inittests(t, true)
+}
 
 func GetClient(t *testing.T) *messaging.Client {
 	var err error
