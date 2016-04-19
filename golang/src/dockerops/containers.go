@@ -168,6 +168,26 @@ func (d *Docker) NukeImage(name, tag string) error {
 	return d.Client.RemoveImageExtended(imageName, opts)
 }
 
+// Images will returns a list of the repo tags for all the images currently
+// downloaded.
+func (d *Docker) Images() ([]string, error) {
+	opts := docker.ListImagesOptions{
+		All: true,
+	}
+	apiImages, err := d.Client.ListImages(opts)
+	if err != nil {
+		return nil, err
+	}
+	var retval []string
+	for _, img := range apiImages {
+		repos := img.RepoTags
+		for _, r := range repos {
+			retval = append(retval, r)
+		}
+	}
+	return retval, nil
+}
+
 // Pull will pull an image indicated by name and tag. Name is in the format
 // "registry/repository". If the name doesn't contain a / then the registry
 // is assumed to be "base" and the provided name will be set to repository.
