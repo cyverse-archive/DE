@@ -1,7 +1,5 @@
 ---
 
-- include: de-stop-containers-cleanup.yaml
-
 - include: de-stop-containers-color.yaml
   when: color is defined
 
@@ -9,3 +7,5 @@
   when: color is undefined
 
 - include: de-stop-containers-uncolored.yaml
+
+- include: de-stop-containers-cleanup.yaml

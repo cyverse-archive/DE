@@ -1,7 +1,5 @@
 ---
 
-- include: de-rm-containers-cleanup.yaml
-
 - include: de-rm-containers-color.yaml
   when: color is defined
 
@@ -9,3 +7,5 @@
   when: color is undefined
 
 - include: de-rm-containers-uncolored.yaml
+
+- include: de-rm-containers-cleanup.yaml
