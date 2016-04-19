@@ -1,0 +1,145 @@
+---
+- name: Stop clockwork
+  hosts: clockwork:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - clockwork
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{clockwork.compose_service}}"
+
+- name: Stop dewey
+  hosts: dewey:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - dewey
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{dewey.compose_service}}"
+
+- name: Stop de-ui
+  hosts: ui:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - ui
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{de.compose_service}}"
+
+- name: Stop de-ui-nginx
+  hosts: ui:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - ui
+    - de-ui-nginx
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{de.http_server.compose_service}}"
+
+- name: Stop exim-sender
+  hosts: exim-sender:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - exim-sender
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{exim.compose_service}}"
+
+- name: Stop info-typer
+  hosts: info-typer:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - info-typer
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{info_typer.compose_service}}"
+
+- name: Stop infosquito
+  hosts: infosquito:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - infosquito
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{infosquito.compose_service}}"
+
+- name: Stop job-status-to-apps-adapter
+  hosts: jexevents:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - job-status-to-apps-adapter
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: job_status_to_apps_adapter
+
+- name: Stop job-status-recorder
+  hosts: jexevents:&systems
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - job-status-recorder
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: job_status_recorder
+
+- name: Stop monkey
+  hosts: monkey:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - monkey
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{monkey.compose_service}}"
+
+- name: Stop templeton-periodic
+  hosts: templeton-periodic:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - templeton
+    - templeton-periodic
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{templeton_periodic.compose_service}}"
+
+- name: Stop templeton-incremental
+  hosts: templeton-incremental:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - templeton
+    - templeton-incremental
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{templeton_incremental.compose_service}}"

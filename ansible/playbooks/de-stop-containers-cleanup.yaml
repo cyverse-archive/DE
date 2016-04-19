@@ -1,0 +1,30 @@
+---
+- name: Stop clm
+  hosts: condor-log-monitor:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - condor-log-monitor
+  post_tasks:
+    - name: remove clm
+      ignore_errors: yes
+      sudo: yes
+      shell: docker kill clm
+
+- name: Stop jex-events
+  hosts: jexevents:&systems
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - jexevents
+  post_tasks:
+    - name: stop jex-events
+      ignore_errors: yes
+      sudo: true
+      shell: docker kill jexevents
+    - name: stop jex-events part 2
+      ignore_errors: yes
+      sudo: true
+      shell: docker kill jex-events

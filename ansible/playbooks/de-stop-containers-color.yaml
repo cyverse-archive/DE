@@ -1,0 +1,179 @@
+---
+- name: Stop anon-files
+  hosts: anon-files:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - anon-files
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{anon_files.compose_service}}_{{color}}"
+
+- name: Stop apps
+  hosts: apps:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - apps
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{apps.compose_service}}_{{color}}"
+
+- name: Stop data-info
+  hosts: data-info:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - data-info
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{data_info.compose_service}}_{{color}}"
+
+- name: Stop iplant-email
+  hosts: iplant-email:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - iplant-email
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{iplant_email.compose_service}}_{{color}}"
+
+- name: Stop iplant-groups
+  hosts: iplant-groups:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - iplant-groups
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{iplant_groups.compose_service}}_{{color}}"
+
+- name: Stop jex-adapter
+  hosts: jexevents
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - jex-adapter
+  roles:
+    - role: util-cfg-docker-stop
+      service_name: jex_adapter_{{color}}
+
+- name: Stop kifshare
+  hosts: kifshare:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - kifshare
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{kifshare.compose_service}}_{{color}}"
+
+- name: Stop metadata
+  hosts: metadata:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - metadata
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{metadata.compose_service}}_{{color}}"
+
+- name: Stop notification-agent
+  hosts: notificationagent:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - notificationagent
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{notificationagent.compose_service}}_{{color}}"
+
+- name: Stop permissions
+  hosts: permissions:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - permissions
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{permissions.compose_service}}_{{color}}"
+
+- name: Stop saved-searches
+  hosts: saved-searches:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - saved-searches
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{saved_searches.compose_service}}_{{color}}"
+
+- name: Stop terrain
+  hosts: terrain:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - terrain
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{terrain.compose_service}}_{{color}}"
+
+- name: Stop tree-urls
+  hosts: tree-urls:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - tree-urls
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{tree_urls.compose_service}}_{{color}}"
+
+- name: Stop user-preferences
+  hosts: user-preferences:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - user-preferences
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{user_preferences.compose_service}}_{{color}}"
+
+- name: Stop user-sessions
+  hosts: user-sessions:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - user-sessions
+  roles:
+    - role: util-cfg-docker-stop
+      ignore_errors: yes
+      service_name: "{{user_sessions.compose_service}}_{{color}}"
