@@ -47,3 +47,40 @@ func (o *GetResourceTypesOK) WriteResponse(rw http.ResponseWriter, producer http
 		}
 	}
 }
+
+/*GetResourceTypesInternalServerError resource type listing
+
+swagger:response getResourceTypesInternalServerError
+*/
+type GetResourceTypesInternalServerError struct {
+
+	// In: body
+	Payload *models.ErrorOut `json:"body,omitempty"`
+}
+
+// NewGetResourceTypesInternalServerError creates GetResourceTypesInternalServerError with default headers values
+func NewGetResourceTypesInternalServerError() *GetResourceTypesInternalServerError {
+	return &GetResourceTypesInternalServerError{}
+}
+
+// WithPayload adds the payload to the get resource types internal server error response
+func (o *GetResourceTypesInternalServerError) WithPayload(payload *models.ErrorOut) *GetResourceTypesInternalServerError {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the get resource types internal server error response
+func (o *GetResourceTypesInternalServerError) SetPayload(payload *models.ErrorOut) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *GetResourceTypesInternalServerError) WriteResponse(rw http.ResponseWriter, producer httpkit.Producer) {
+
+	rw.WriteHeader(500)
+	if o.Payload != nil {
+		if err := producer.Produce(rw, o.Payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}

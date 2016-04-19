@@ -24,7 +24,7 @@ import (
 
 // Command line options that aren't managed by go-swagger.
 var options struct {
-	CfgPath string `long:"config" default:"/etc/iplant/de/jobservices.yml" description:"The path to the config file"`
+	CfgPath string `long:"config" default:"/etc/iplant/de/permissions.yaml" description:"The path to the config file"`
 }
 
 // Register the command-line options.
@@ -72,6 +72,7 @@ func initService() error {
 
 // Clean up when the service exits.
 func cleanup() {
+	logcabin.Info.Printf("Closing the database connection.")
 	db.Close()
 }
 
@@ -92,7 +93,8 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 
 	api.StatusGetHandler = status.GetHandlerFunc(impl.BuildStatusHandler(SwaggerJSON))
 
-	api.ResourceTypesGetResourceTypesHandler = resourceTypes.GetHandlerFunc(impl.BuildResourceTypesGetHandler(db))
+	api.ResourceTypesGetResourceTypesHandler =
+		resource_types.GetResourceTypesHandlerFunc(impl.BuildResourceTypesGetHandler(db))
 
 	api.ServerShutdown = cleanup
 
