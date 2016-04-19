@@ -1,0 +1,297 @@
+---
+
+- name: Remove anon-files
+  hosts: anon-files:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - anon-files
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{anon_files.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{anon_files.compose_service}}"
+  post_tasks:
+    - name: annihilate anon-files
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{anon_files.service_name_short}}
+
+- name: Remove apps
+  hosts: apps:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - apps
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{apps.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{apps.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "iplant_data_{{apps.compose_service}}"
+  post_tasks:
+    - name: annihilate apps
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{apps.service_name_short}}
+
+- name: Remove data-info
+  hosts: data-info:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - data-info
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{data_info.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{data_info.compose_service}}"
+  post_tasks:
+    - name: annihilate data-info
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{data_info.service_name_short}}
+
+- name: Remove iplant-email
+  hosts: iplant-email:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - iplant-email
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{iplant_email.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{iplant_email.compose_service}}"
+  post_tasks:
+    - name: annihilate iplant-email
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{iplant_email.service_name_short}}
+
+- name: Remove iplant-groups
+  hosts: iplant-groups:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - iplant-groups
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{iplant_groups.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{iplant_groups.compose_service}}"
+  post_tasks:
+    - name: annihilate iplant-groups
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{iplant_groups.service_name_short}}
+
+- name: Remove jex-adapter
+  hosts: jexevents
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - jex-adapter
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "jex_adapter"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "jex_adapter"
+
+- name: Remove kifshare
+  hosts: kifshare:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - kifshare
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{kifshare.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{kifshare.compose_service}}"
+  post_tasks:
+    - name: annihilate kifshare
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{kifshare.service_name_short}}
+
+- name: Remove metadata
+  hosts: metadata:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - metadata
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{metadata.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{metadata.compose_service}}"
+  post_tasks:
+    - name: annihilate metadata
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{metadata.service_name_short}}
+
+- name: Remove notification-agent
+  hosts: notificationagent:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - notificationagent
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{notificationagent.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{notificationagent.compose_service}}"
+  post_tasks:
+    - name: annihilate notificationagent
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{notificationagent.service_name_short}}
+
+- name: Remove permissions
+  hosts: permissions:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - permissions
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{permissions.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{permissions.compose_service}}"
+
+- name: Remove saved-searches
+  hosts: saved-searches:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - saved-searches
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{saved_searches.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{saved_searches.compose_service}}"
+  post_tasks:
+    - name: annihilate saved-searches
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{saved_searches.service_name_short}}
+
+- name: Remove terrain
+  hosts: terrain:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - terrain
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{terrain.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{terrain.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "iplant_data_{{terrain.compose_service}}"
+  post_tasks:
+    - name: annihilate terrain
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{terrain.service_name_short}}
+
+- name: Remove tree-urls
+  hosts: tree-urls:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - tree-urls
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{tree_urls.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{tree_urls.compose_service}}"
+  post_tasks:
+    - name: annihilate tree-urls
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{tree_urls.service_name_short}}
+
+- name: Remove user-preferences
+  hosts: user-preferences:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - user-preferences
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{user_preferences.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{user_preferences.compose_service}}"
+  post_tasks:
+    - name: annihilate user-preferences
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{user_preferences.service_name_short}}
+
+- name: Remove user-sessions
+  hosts: user-sessions:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - user-sessions
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{user_sessions.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{user_sessions.compose_service}}"
+  post_tasks:
+    - name: annihilate user-sessions
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{user_sessions.service_name_short}}

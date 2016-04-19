@@ -1,0 +1,239 @@
+---
+
+- name: Remove clockwork
+  hosts: clockwork:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - clockwork
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{clockwork.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{clockwork.compose_service}}"
+  post_tasks:
+    - name: annihilate clockwork
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{clockwork.service_name_short}}
+
+- name: Remove dewey
+  hosts: dewey:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - dewey
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{dewey.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{dewey.compose_service}}"
+  post_tasks:
+    - name: annihilate dewey
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{dewey.service_name_short}}
+
+- name: Remove de-ui
+  hosts: ui:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - ui
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{de.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{de.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "iplant_data_{{de.compose_service}}"
+  post_tasks:
+    - name: annihilate de-ui
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{de.service_name_short}}
+
+- name: Remove de-ui-nginx
+  hosts: ui:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - ui
+    - de-ui-nginx
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{de.http_server.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{de.http_server.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "iplant_data_{{de.http_server.compose_service}}"
+  post_tasks:
+    - name: annihilate de-ui-nginx
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{de.http_server.service_name_short}}
+
+- name: Remove exim-sender
+  hosts: exim-sender:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - exim-sender
+  roles:
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{exim.compose_service}}"
+  post_tasks:
+    - name: annihilate exim-sender
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{exim.service_name_short}}
+    - name: annihilate exim-sender part 2
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v exim
+
+- name: Remove info-typer
+  hosts: info-typer:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - info-typer
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{info_typer.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{info_typer.compose_service}}"
+  post_tasks:
+    - name: annihilate info-typer
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{info_typer.service_name_short}}
+
+- name: Remove infosquito
+  hosts: infosquito:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - infosquito
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{infosquito.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{infosquito.compose_service}}"
+  post_tasks:
+    - name: annihilate infosquito
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{infosquito.service_name_short}}
+
+- name: Remove job-status-recorder
+  hosts: jexevents:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - job-status-recorder
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: job_status_recorder
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: job_status_recorder
+
+- name: Remove job-status-to-apps-adapter
+  hosts: jexevents:&systems
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - job-status-to-apps-adapter
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: job_status_to_apps_adapter
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: job_status_to_apps_adapter
+
+- name: Remove monkey
+  hosts: monkey:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - monkey
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{monkey.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{monkey.compose_service}}"
+  post_tasks:
+    - name: annihilate monkey
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{monkey.service_name_short}}
+
+- name: Remove templeton_periodic
+  hosts: templeton-periodic:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - templeton
+    - templeton-periodic
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{templeton_periodic.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{templeton_periodic.compose_service}}"
+  post_tasks:
+    - name: annihilate templeton_periodic
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{templeton_periodic.service_name_short}}
+
+- name: Remove templeton_incremental
+  hosts: templeton-incremental:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - templeton
+    - templeton-incremental
+  roles:
+    - role: util-cfg-docker-rm-configs
+      ignore_errors: yes
+      service_name: "{{templeton_incremental.compose_service}}"
+    - role: util-cfg-docker-rm
+      ignore_errors: yes
+      service_name: "{{templeton_incremental.compose_service}}"
+  post_tasks:
+    - name: annihilate templeton_incremental
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v {{templeton_incremental.service_name_short}}

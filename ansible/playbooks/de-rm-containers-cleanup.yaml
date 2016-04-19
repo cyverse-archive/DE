@@ -1,0 +1,47 @@
+---
+
+- name: Remove clm
+  hosts: condor-log-monitor:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - condor-log-monitor
+  post_tasks:
+    - name: annihilate clm
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v condor-log-monitor
+    - name: annihilate clm part 2
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v clm
+    - name: annihilate clm configs
+      ignore_errors: yes
+      sudo: true
+      shell: docker rm -v config_clm
+
+- name: Remove jex-events
+  hosts: jexevents:&systems
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - jexevents
+  post_tasks:
+    - name: annihilate jex-events
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v jexevents
+    - name: annihilate jex-events part 2
+      ignore_errors: yes
+      become: true
+      shell: docker rm -v jex-events
+    - name: annihilate jex-events part 3
+      ignore_errors: yes
+      sudo: true
+      shell: docker rm -v config_jex_events
+    - name: annihilate jex-events part 4
+      ignore_errors: yes
+      sudo: true
+      shell: docker rm -v config_jexevents
