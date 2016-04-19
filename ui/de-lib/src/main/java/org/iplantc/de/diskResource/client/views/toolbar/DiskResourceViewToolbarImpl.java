@@ -267,11 +267,11 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         final boolean isSingleSelection = selectedDiskResources.size() == 1;
         final boolean isOwner = isOwnerList(selectedDiskResources);
         final boolean isWriteable = isWritable();
-        DiskResource first_item = getFirstDiskResource();
-        final boolean isReadable = !isSelectionEmpty && isReadable(first_item);
+        DiskResource firstItem = getFirstDiskResource();
+        final boolean isReadable = !isSelectionEmpty && isReadable(firstItem);
         final boolean isSelectionInTrash = isSelectionInTrash(selectedDiskResources);
         final boolean isFolderSelect = !isSelectionEmpty
-                                       && first_item instanceof Folder;
+                                       && firstItem instanceof Folder;
 
         duplicateMiEnabled = !isSelectionEmpty && isOwner && !isSelectionInTrash;
         moveToTrashMiEnabled = !isSelectionEmpty && isOwner && !isSelectionInTrash;
@@ -282,7 +282,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         editFileMiEnabled = !isSelectionEmpty && isSingleSelection
                 && containsFile(selectedDiskResources) && isOwner && !isSelectionInTrash;
         editCommentsMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash
-                && isReadable(first_item);
+                && isReadable;
         editInfoTypeMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash
                 && containsFile(selectedDiskResources) && isOwner;
         metadataMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash;
@@ -323,14 +323,14 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         editCommentsMi.setEnabled(editCommentsMiEnabled);
         editInfoTypeMi.setEnabled(editInfoTypeMiEnabled);
 
-        copymetadataMi.setEnabled(metadataMiEnabled && isReadable(first_item));
-        savemetadatami.setEnabled(metadataMiEnabled && isReadable(first_item) );
+        copymetadataMi.setEnabled(metadataMiEnabled && isReadable);
+        savemetadatami.setEnabled(metadataMiEnabled && isReadable);
         bulkmetadataMi.setEnabled(
                 metadataMiEnabled && isFolderSelect && (isOwner || isWriteable));
         selectmetadataMi.setEnabled(
                 metadataMiEnabled && isFolderSelect && (isOwner || isWriteable));
         doiMi.setEnabled(metadataMiEnabled && isFolderSelect && isOwner);
-        editmetadataMi.setEnabled(metadataMiEnabled && isReadable(first_item));
+        editmetadataMi.setEnabled(metadataMiEnabled && isReadable);
 
         simpleDownloadMi.setEnabled(simpleDownloadMiEnabled);
         bulkDownloadMi.setEnabled(bulkDownloadMiEnabled);
