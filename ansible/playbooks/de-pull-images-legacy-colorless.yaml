@@ -1,0 +1,219 @@
+---
+
+- name: Update anon-files
+  hosts: anon-files:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - anon-files
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: "{{anon_files.compose_service}}"
+
+    - role: util-cfg-docker-pull
+      service_name: "{{anon_files.compose_service}}"
+
+- name: Update apps
+  hosts: apps:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - apps
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: "{{apps.compose_service}}"
+    - role: util-cfg-docker-pull
+      service_name: "{{apps.compose_service}}"
+
+- name: Update iplant-data-apps
+  hosts: apps:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - iplant-data
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: "iplant_data_{{apps.compose_service}}"
+
+- name: Update data-info
+  hosts: data-info:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - data-info
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: "{{data_info.compose_service}}"
+    - role: util-cfg-docker-pull
+      service_name: "{{data_info.compose_service}}"
+
+- name: Update iplant-email
+  hosts: iplant-email:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - iplant-email
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: "{{iplant_email.compose_service}}"
+    - role: util-cfg-docker-pull
+      service_name: "{{iplant_email.compose_service}}"
+
+- name: Update iplant-groups
+  hosts: iplant-groups:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - iplant-groups
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: "{{iplant_groups.compose_service}}"
+    - role: util-cfg-docker-pull
+      service_name: "{{iplant_groups.compose_service}}"
+
+- name: Update jex-adapter
+  hosts: jexevents
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - jex-adapter
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: jex_adapter
+    - role: util-cfg-docker-pull
+      service_name: jex_adapter
+
+- name: Update kifshare
+  hosts: kifshare:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - kifshare
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: "{{kifshare.compose_service}}"
+    - role: util-cfg-docker-pull
+      service_name: "{{kifshare.compose_service}}"
+
+- name: Update metadata
+  hosts: metadata:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - metadata
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: "{{metadata.compose_service}}"
+    - role: util-cfg-docker-pull
+      service_name: "{{metadata.compose_service}}"
+
+- name: Update notification-agent
+  hosts: notificationagent:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - notificationagent
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: "{{notificationagent.compose_service}}"
+    - role: util-cfg-docker-pull
+      service_name: "{{notificationagent.compose_service}}"
+
+- name: Update permissions
+  hosts: permissions:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - permissions
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: "{{permissions.compose_service}}"
+    - role: util-cfg-docker-pull
+      service_name: "{{permissions.compose_service}}"
+
+- name: Update saved-searches
+  hosts: saved-searches:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - saved-searches
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: "{{saved_searches.compose_service}}"
+    - role: util-cfg-docker-pull
+      service_name: "{{saved_searches.compose_service}}"
+
+- name: Update terrain
+  hosts: terrain:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - terrain
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: "{{terrain.compose_service}}"
+    - role: util-cfg-docker-pull
+      service_name: "{{terrain.compose_service}}"
+
+- name: Update iplant-data-terrain
+  hosts: terrain:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - iplant-data
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: "iplant_data_{{terrain.compose_service}}"
+
+- name: Update tree-urls
+  hosts: tree-urls:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - tree-urls
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: "{{tree_urls.compose_service}}"
+    - role: util-cfg-docker-pull
+      service_name: "{{tree_urls.compose_service}}"
+
+- name: Update user-preferences
+  hosts: user-preferences:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - user-preferences
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: "{{user_preferences.compose_service}}"
+    - role: util-cfg-docker-pull
+      service_name: "{{user_preferences.compose_service}}"
+
+- name: Update user-sessions
+  hosts: user-sessions:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - user-sessions
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: "{{user_sessions.compose_service}}"
+    - role: util-cfg-docker-pull
+      service_name: "{{user_sessions.compose_service}}"

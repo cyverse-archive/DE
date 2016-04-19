@@ -1,0 +1,190 @@
+---
+
+- name: Update clockwork
+  hosts: clockwork:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - clockwork
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: "{{clockwork.compose_service}}"
+    - role: util-cfg-docker-pull
+      service_name: "{{clockwork.compose_service}}"
+
+- name: Update dewey
+  hosts: dewey:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - dewey
+  roles:
+    - role: util-cfg-docker-pull-configs
+      when: not parasitic
+      service_name: "{{dewey.compose_service}}"
+    - role: util-cfg-docker-pull
+      when: not parasitic
+      service_name: "{{dewey.compose_service}}"
+
+- name: Update de-ui
+  hosts: ui:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - ui
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: "{{de.compose_service}}"
+    - role: util-cfg-docker-pull
+      service_name: "{{de.compose_service}}"
+
+- name: Update iplant-data-de-ui
+  hosts: ui:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - iplant-data
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: "iplant_data_{{de.compose_service}}"
+
+- name: Update de-ui-nginx
+  hosts: ui:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - ui
+    - de-ui-nginx
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: "{{de.http_server.compose_service}}"
+    - role: util-cfg-docker-pull
+      service_name: "{{de.http_server.compose_service}}"
+
+- name: Update iplant-data-de-ui-nginx
+  hosts: ui:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - iplant-data
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: "iplant_data_{{de.http_server.compose_service}}"
+
+- name: Update exim-sender
+  hosts: exim-sender:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - exim-sender
+  roles:
+    - role: util-cfg-docker-pull
+      service_name: "{{exim.compose_service}}"
+
+- name: Update info-typer
+  hosts: info-typer:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - info-typer
+  roles:
+    - role: util-cfg-docker-pull-configs
+      when: not parasitic
+      service_name: "{{info_typer.compose_service}}"
+    - role: util-cfg-docker-pull
+      when: not parasitic
+      service_name: "{{info_typer.compose_service}}"
+
+- name: Update infosquito
+  hosts: infosquito:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - infosquito
+  roles:
+    - role: util-cfg-docker-pull-configs
+      when: not parasitic
+      service_name: "{{infosquito.compose_service}}"
+    - role: util-cfg-docker-pull
+      when: not parasitic
+      service_name: "{{infosquito.compose_service}}"
+
+- name: Update job-status-to-apps-adapter
+  hosts: jexevents
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - job-status-to-apps-adapter
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: job_status_to_apps_adapter
+    - role: util-cfg-docker-pull
+      service_name: job_status_to_apps_adapter
+
+- name: Update job-status-recorder
+  hosts: jexevents
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - job-status-recorder
+  roles:
+    - role: util-cfg-docker-pull-configs
+      service_name: job_status_recorder
+    - role: util-cfg-docker-pull
+      service_name: job_status_recorder
+
+- name: Update monkey
+  hosts: monkey:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - monkey
+  roles:
+    - role: util-cfg-docker-pull-configs
+      when: not parasitic
+      service_name: "{{monkey.compose_service}}"
+    - role: util-cfg-docker-pull
+      when: not parasitic
+      service_name: "{{monkey.compose_service}}"
+
+- name: Update templeton-periodic
+  hosts: templeton-periodic:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - templeton
+    - templeton-periodic
+  roles:
+    - role: util-cfg-docker-pull-configs
+      when: not parasitic
+      service_name: "{{templeton_periodic.compose_service}}"
+    - role: util-cfg-docker-pull
+      when: not parasitic
+      service_name: "{{templeton_periodic.compose_service}}"
+
+- name: Update templeton-incremental
+  hosts: templeton-incremental:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - templeton
+    - templeton-incremental
+  roles:
+    - role: util-cfg-docker-pull-configs
+      when: not parasitic
+      service_name: "{{templeton_incremental.compose_service}}"
+    - role: util-cfg-docker-pull
+      when: not parasitic
+      service_name: "{{templeton_incremental.compose_service}}"
