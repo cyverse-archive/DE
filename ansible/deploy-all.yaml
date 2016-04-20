@@ -20,8 +20,7 @@
 - include: playbooks/de-rabbitmq-cfg.yml
 - include: playbooks/de-condor-launcher.yml
 - include: playbooks/de-road-runner.yml
-- include: playbooks/de-pull-images.yaml
-- include: playbooks/de-stop-containers.yml
-- include: playbooks/de-rm-containers.yml
-- include: playbooks/de-start-containers.yml
+- include: playbooks/de-deploy-services.yaml
+- include: playbooks/de-stop-containers-cleanup.yaml
+- include: playbooks/de-rm-containers-cleanup.yaml
 - include: playbooks/de-rm-jex.yaml
