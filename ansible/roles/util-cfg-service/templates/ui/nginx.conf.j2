@@ -90,6 +90,18 @@ http {
         }
 
         location / {
+            gzip on;
+            gzip_http_version 1.1;
+            gzip_vary on;
+            gzip_comp_level 6;
+            gzip_proxied any;
+            gzip_types text/plain text/html text/css application/json application/javascript application/x-javascript text/javascript text/xml application/xml application/rss+xml application/atom+xml application/rdf+xml;
+
+            # make sure gzip doesn't lose large gzipped js/css files
+            gzip_buffers 16 8k;
+
+            gzip_disable "msie6";
+
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
