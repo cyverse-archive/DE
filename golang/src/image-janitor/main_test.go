@@ -2,8 +2,29 @@ package main
 
 import (
 	"configurate"
+	"dockerops"
+	"os"
 	"testing"
 )
+
+func shouldrun() bool {
+	if os.Getenv("RUN_INTEGRATION_TESTS") != "" {
+		return true
+	}
+	return false
+}
+
+func uri() string {
+	return "http://dind:2375"
+}
+
+func Client() (*dockerops.Docker, error) {
+	client, err := dockerops.NewDocker(uri())
+	if err != nil {
+		return nil, err
+	}
+	return client, nil
+}
 
 func inittests(t *testing.T) {
 	configurate.Init("../test/test_config.yaml")
@@ -154,5 +175,23 @@ func TestRemovableImages(t *testing.T) {
 	expected := "not-listed"
 	if actual != expected {
 		t.Errorf("Removable image was %s instead of %s", actual, expected)
+	}
+}
+
+func TestRemoveImage(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+	client, err := Client()
+	if err != nil {
+		t.Error(err)
+	}
+	err = client.Pull("alpine", "latest")
+	if err != nil {
+		t.Error(err)
+	}
+	err = removeImage(client, "alpine:latest")
+	if err != nil {
+		t.Error(err)
 	}
 }
