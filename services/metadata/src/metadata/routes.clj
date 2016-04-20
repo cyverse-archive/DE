@@ -32,6 +32,7 @@
             {:name "app-comments", :description "Comments on Apps"}
             {:name "favorites", :description "Favorite Resources"}
             {:name "ontologies", :description "Ontology Hierarchies"}
+            {:name "admin-ontologies", :description "Ontology Hierarchy Administration"}
             {:name "admin-data-comments", :description "Admin Data Item Comment Management"}
             {:name "admin-app-comments", :description "Admin App Comment Management"}
             {:name "tags", :description "Tags Management"}
@@ -54,6 +55,7 @@
     comment-routes/admin-app-comment-routes
     favorites-routes/favorites
     ontology-routes/ontologies
+    ontology-routes/admin-ontologies
     tag-routes/filesystem-tags
     tag-routes/tags
     template-routes/templates

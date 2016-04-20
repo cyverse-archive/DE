@@ -16,26 +16,6 @@
           :description "Lists Ontology details saved in the database."
           (ok (service/get-ontology-details-listing)))
 
-    (POST* "/" []
-           :query [{:keys [user]} StandardUserQueryParams]
-           :multipart-params [ontology-xml :- String]
-           :middlewares [service/wrap-multipart-xml-parser]
-           :return OntologyDetails
-           :summary "Save an Ontology"
-           :description "Saves an Ontology XML document in the database."
-           (ok (service/save-ontology-xml user ontology-xml)))
-
-    (PUT* "/:ontology-version/:root-iri" []
-          :path-params [ontology-version :- OntologyVersionParam
-                        root-iri :- OntologyHierarchyRootParam]
-          :query [{:keys [user]} StandardUserQueryParams]
-          :return OntologyHierarchy
-          :summary "Save an Ontology Hierarchy"
-          :description
-          "Save an Ontology Hierarchy, parsed from the Ontology XML stored with the given
-           `ontology-version`, rooted at the given `root-iri`."
-          (ok (service/save-hierarchy user ontology-version root-iri)))
-
     (GET* "/:ontology-version/:root-iri" []
           :path-params [ontology-version :- OntologyVersionParam
                         root-iri :- OntologyHierarchyRootParam]
@@ -68,3 +48,27 @@
            "Filters the given target IDs by returning a list of any that are not associated with any
             Ontology classes of the hierarchy rooted at the given `root-iri`."
            (ok (service/filter-unclassified-targets ontology-version root-iri target-types target-ids)))))
+
+(defroutes* admin-ontologies
+  (context* "/admin/ontologies" []
+    :tags ["admin-ontologies"]
+
+    (POST* "/" []
+           :query [{:keys [user]} StandardUserQueryParams]
+           :multipart-params [ontology-xml :- String]
+           :middlewares [service/wrap-multipart-xml-parser]
+           :return OntologyDetails
+           :summary "Save an Ontology"
+           :description "Saves an Ontology XML document in the database."
+           (ok (service/save-ontology-xml user ontology-xml)))
+
+    (PUT* "/:ontology-version/:root-iri" []
+          :path-params [ontology-version :- OntologyVersionParam
+                        root-iri :- OntologyHierarchyRootParam]
+          :query [{:keys [user]} StandardUserQueryParams]
+          :return OntologyHierarchy
+          :summary "Save an Ontology Hierarchy"
+          :description
+          "Save an Ontology Hierarchy, parsed from the Ontology XML stored with the given
+           `ontology-version`, rooted at the given `root-iri`."
+          (ok (service/save-hierarchy user ontology-version root-iri)))))
