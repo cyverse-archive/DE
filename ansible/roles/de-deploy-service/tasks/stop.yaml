@@ -1,0 +1,16 @@
+---
+
+- debug: msg="Stopping {{stop_service_name}}"
+  tags:
+      - docker_stop
+
+- name: stop the {{stop_service_name}} container
+  environment:
+    DE_TAG: "{{docker.tag}}"
+    DE_ENV: "{{environment_name}}"
+    HOSTNAME: "{{inventory_hostname}}"
+  shell: "docker-compose -f {{docker_compose_path}} stop {{stop_service_name}}"
+  register: docker_up_v
+  changed_when: docker_up_v.stdout.find('Image is up to date') == -1
+  tags:
+    - docker_stop

@@ -1,0 +1,9 @@
+---
+
+- debug: msg="Deploying {{service_name}}"
+
+- include: "colored.yaml"
+  when: deploy_use_color
+
+- include: "uncolored.yaml"
+  when: not deploy_use_color

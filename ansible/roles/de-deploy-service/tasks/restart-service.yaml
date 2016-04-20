@@ -1,0 +1,50 @@
+---
+- include: pull.yaml
+  vars:
+    pull_service_name: "config_{{restart_service_name}}"
+  tags:
+      - docker_pull_configs
+  when: has_configs|default(true)
+
+- include: pull.yaml
+  vars:
+    pull_service_name: "iplant_data_{{restart_service_name}}"
+  tags:
+      - docker_pull_iplant_data
+  when: has_iplant_data|default(false)
+
+- include: pull.yaml
+  vars:
+    pull_service_name: "{{restart_service_name}}"
+  tags:
+      - docker_pull_service
+
+- include: stop.yaml
+  vars:
+    stop_service_name: "{{restart_service_name}}"
+  when: has_configs|default(true) or has_iplant_data|default(false)
+
+- include: rm.yaml
+  vars:
+    rm_service_name: "config_{{restart_service_name}}"
+  tags:
+    - docker_rm_configs
+  when: has_configs|default(true)
+
+- include: rm.yaml
+  vars:
+    rm_service_name: "iplant_data_{{restart_service_name}}"
+  tags:
+    - docker_rm_iplant_data
+  when: has_iplant_data|default(false)
+
+- include: rm.yaml
+  vars:
+    rm_service_name: "{{restart_service_name}}"
+  tags:
+    - docker_rm_service
+  when: has_configs|default(true) or has_iplant_data|default(false)
+
+- include: up.yaml
+  vars:
+    up_service_name: "{{restart_service_name}}"

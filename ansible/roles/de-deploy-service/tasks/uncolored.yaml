@@ -1,0 +1,5 @@
+---
+
+- include: restart-service.yaml
+  vars:
+    restart_service_name: "{{service_name}}"

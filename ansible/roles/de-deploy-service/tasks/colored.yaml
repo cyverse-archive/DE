@@ -1,0 +1,27 @@
+---
+
+- debug: msg="Determining color of {{service_name}}"
+
+- name: get {{service_name_short}} color
+  environment:
+    DE_TAG: "{{docker.tag}}"
+    DE_ENV: "{{environment_name}}"
+    HOSTNAME: "{{inventory_hostname}}"
+  shell: "curl -f http://localhost:8500/v1/kv/{{environment_name}}/{{service_name_short}}/color?raw || printf 'green'"
+  args:
+    warn: no
+  register: service_color_check
+
+- debug: msg="Color of {{service_name}} is {{service_color_check.stdout_lines[0]}}"
+
+- include: swap-service.yaml
+  vars:
+      current_color: "green"
+      other_color: "blue"
+  when: service_color_check.stdout_lines[0] == 'green'
+
+- include: swap-service.yaml
+  vars:
+      current_color: "blue"
+      other_color: "green"
+  when: service_color_check.stdout_lines[0] == 'blue'
