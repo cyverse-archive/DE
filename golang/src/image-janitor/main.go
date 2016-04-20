@@ -11,6 +11,7 @@ import (
 	"os"
 	"path"
 	"regexp"
+	"strings"
 )
 
 var (
@@ -105,6 +106,23 @@ func removableImages(jobImages, dockerImages []string) []string {
 		}
 	}
 	return retval
+}
+
+func removeImage(client *dockerops.Docker, image string) error {
+	var (
+		err       error
+		parts     []string
+		name, tag string
+	)
+	parts = strings.Split(image, ":")
+	if len(parts) > 1 {
+		name = parts[0]
+		tag = parts[1]
+		if err = client.SafelyRemoveImage(name, tag); err != nil {
+			return err
+		}
+	}
+	return err
 }
 
 func main() {
