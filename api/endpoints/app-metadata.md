@@ -13,6 +13,9 @@ title: DE API Documentation
     * [Deleting Categories](#deleting-categories)
     * [Deleting a Category by ID](#deleting-a-category-by-id)
     * [Updating an App Category](#updating-an-app-category)
+    * [Save an Ontology XML Document](#save-an-ontology-xml-document)
+    * [Save an Ontology Hierarchy](#save-an-ontology-hierarchy)
+    * [Listing Ontologies and Ontology Hierarchies](#listing-ontologies-and-ontology-hierarchies)
     * [Listing Tasks in an App](#listing-tasks-in-an-app)
     * [Categorizing Apps](#categorizing-apps)
     * [Creating an App for the Current User](#creating-an-app-for-the-current-user)
@@ -125,6 +128,37 @@ Delegates to apps: PATCH /admin/apps/categories/{category-id}
 
 This endpoint is a passthrough to the apps endpoint using the same path.
 Please see the apps service documentation for more information.
+
+## Save an Ontology XML Document
+
+Secured Endpoint: POST /admin/ontologies
+
+Delegates to metadata: POST /admin/ontologies
+
+This endpoint is a passthrough to the metadata endpoint using the same path.
+Please see the metadata service documentation for more information.
+
+## Save an Ontology Hierarchy
+
+Secured Endpoint: POST /admin/ontologies/{ontology-version}/{root-iri}
+
+Delegates to metadata: POST /admin/ontologies/{ontology-version}/{root-iri}
+
+This endpoint is a passthrough to the metadata endpoint using the same path.
+Please see the metadata service documentation for more information.
+
+## Listing Ontologies and Ontology Hierarchies
+
+Secured Endpoint: GET /ontologies
+
+Delegates to metadata: GET /ontologies
+
+Secured Endpoint: GET /ontologies/{ontology-version}/{root-iri}
+
+Delegates to metadata: GET /ontologies/{ontology-version}/{root-iri}
+
+These endpoints are passthroughs to the metadata endpoints using the same paths.
+Please see the metadata service documentation for more information.
 
 ## Listing Tasks in an App
 
