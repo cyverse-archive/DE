@@ -1,4 +1,4 @@
-package org.iplantc.de.admin.desktop.client.ontologies.model;
+package org.iplantc.de.apps.client.gin;
 
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 

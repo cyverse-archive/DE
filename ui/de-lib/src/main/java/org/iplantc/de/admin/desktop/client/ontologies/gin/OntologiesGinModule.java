@@ -2,7 +2,7 @@ package org.iplantc.de.admin.desktop.client.ontologies.gin;
 
 import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
 import org.iplantc.de.admin.desktop.client.ontologies.gin.factory.OntologiesViewFactory;
-import org.iplantc.de.admin.desktop.client.ontologies.model.OntologyHierarchyTreeStoreProvider;
+import org.iplantc.de.apps.client.gin.OntologyHierarchyTreeStoreProvider;
 import org.iplantc.de.admin.desktop.client.ontologies.presenter.OntologiesPresenterImpl;
 import org.iplantc.de.admin.desktop.client.ontologies.service.OntologyServiceFacade;
 import org.iplantc.de.admin.desktop.client.ontologies.service.impl.OntologyServiceFacadeImpl;

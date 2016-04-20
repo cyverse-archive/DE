@@ -6,10 +6,10 @@ import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PUT;
 
 import org.iplantc.de.admin.desktop.client.ontologies.service.OntologyServiceFacade;
-import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.OntologyHierarchyCallbackConverter;
-import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.OntologyHierarchyListCallbackConverter;
-import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.OntologyListCallbackConverter;
-import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.OntologyVersionCallbackConverter;
+import org.iplantc.de.client.services.converters.OntologyHierarchyCallbackConverter;
+import org.iplantc.de.client.services.converters.OntologyHierarchyListCallbackConverter;
+import org.iplantc.de.client.services.converters.OntologyListCallbackConverter;
+import org.iplantc.de.client.services.converters.OntologyVersionCallbackConverter;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppList;
 import org.iplantc.de.client.models.avu.Avu;

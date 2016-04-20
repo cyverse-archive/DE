@@ -125,4 +125,10 @@ public interface AppsMessages extends Messages {
     String shareCollab();
 
     String sharePublic();
+
+    String workspaceTab();
+
+    String operationTab();
+
+    String topicTab();
 }

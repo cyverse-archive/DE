@@ -1,4 +1,4 @@
-package org.iplantc.de.admin.desktop.client.ontologies.service.callbacks;
+package org.iplantc.de.client.services.converters;
 
 import org.iplantc.de.client.models.ontologies.Ontology;
 import org.iplantc.de.client.models.ontologies.OntologyAutoBeanFactory;

@@ -4,6 +4,7 @@ import org.iplantc.de.apps.client.AppCategoriesView;
 import org.iplantc.de.apps.client.AppsGridView;
 import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.apps.client.AppsView;
+import org.iplantc.de.apps.client.OntologyHierarchiesView;
 import org.iplantc.de.apps.shared.AppsModule.Ids;
 
 import com.google.gwt.core.client.GWT;
@@ -15,6 +16,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 import com.sencha.gxt.widget.core.client.Composite;
+import com.sencha.gxt.widget.core.client.TabPanel;
 
 /**
  * @author jstroot
@@ -25,16 +27,20 @@ public class AppsViewImpl extends Composite implements AppsView {
     }
 
     @UiField(provided = true) final AppsToolbarView toolBar;
+    @UiField TabPanel categoryTabs;
     @UiField(provided = true) final AppCategoriesView appCategoriesView;
+//    private final OntologyHierarchiesView hierarchiesView;
     @UiField(provided = true) final AppsGridView appsGridView;
 
     private static final MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     @Inject
     protected AppsViewImpl(@Assisted final AppCategoriesView.Presenter categoriesPresenter,
+                           @Assisted final OntologyHierarchiesView.Presenter hierarchiesPresenter,
                            @Assisted final AppsGridView.Presenter gridPresenter,
                            @Assisted final AppsToolbarView.Presenter toolbarPresenter) {
         this.appCategoriesView = categoriesPresenter.getView();
+//        this.hierarchiesView = hierarchiesPresenter.getView();
         this.appsGridView = gridPresenter.getView();
         this.toolBar = toolbarPresenter.getView();
 
@@ -58,6 +64,10 @@ public class AppsViewImpl extends Composite implements AppsView {
 //        return listStore.get(index);
 //    }
 
+    @Override
+    public TabPanel getCategoryTabPanel() {
+        return categoryTabs;
+    }
 
     @Override
     public void hideAppMenu() {
@@ -128,7 +138,7 @@ public class AppsViewImpl extends Composite implements AppsView {
         super.onEnsureDebugId(baseID);
         toolBar.asWidget().ensureDebugId(baseID + Ids.MENU_BAR);
         appsGridView.asWidget().ensureDebugId(baseID);
-        appCategoriesView.asWidget().ensureDebugId(baseID);
+//        appCategoriesView.asWidget().ensureDebugId(baseID);
     }
 
 }

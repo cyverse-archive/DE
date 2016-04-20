@@ -23,6 +23,11 @@
         <when-type-is class="org.iplantc.de.apps.client.AppCategoriesView.AppCategoriesAppearance"/>
     </replace-with>
 
+    <!-- Hierarchies -->
+    <replace-with class="org.iplantc.de.theme.base.client.apps.hierarchies.OntologyHierarchiesDefaultAppearance">
+        <when-type-is class="org.iplantc.de.apps.client.OntologyHierarchiesView.OntologyHierarchiesAppearance"/>
+    </replace-with>
+
     <!-- Cells -->
     <replace-with class="org.iplantc.de.theme.base.client.apps.cells.AppCommentCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.apps.client.views.grid.cells.AppCommentCell.AppCommentCellAppearance"/>

@@ -1,0 +1,6 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+             xmlns:gxt='urn:import:com.sencha.gxt.widget.core.client'
+             xmlns:tree="urn:import:com.sencha.gxt.widget.core.client.tree">
+
+    <tree:Tree ui:field="tree"/>
+</ui:UiBinder>

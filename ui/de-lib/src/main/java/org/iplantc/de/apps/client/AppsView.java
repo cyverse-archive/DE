@@ -8,6 +8,7 @@ import org.iplantc.de.client.models.apps.AppCategory;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
+import com.sencha.gxt.widget.core.client.TabPanel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 
 /**
@@ -44,6 +45,8 @@ public interface AppsView extends IsWidget,
 
         void setViewDebugId(String baseId);
     }
+
+    TabPanel getCategoryTabPanel();
 
     void hideAppMenu();
 

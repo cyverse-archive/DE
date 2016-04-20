@@ -43,6 +43,12 @@ public interface AppCategoriesView extends IsWidget,
         void setTreeIcons(TreeStyle style);
 
         String copyAppSuccessMessage(String appName);
+
+        String workspaceTab();
+
+        String operationTab();
+
+        String topicTab();
     }
 
     /**

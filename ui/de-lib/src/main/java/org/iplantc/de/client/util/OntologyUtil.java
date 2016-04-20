@@ -42,11 +42,15 @@ public class OntologyUtil {
 
     public void addUnclassifiedChild(List<OntologyHierarchy> children) {
         for (OntologyHierarchy child : children){
-            OntologyHierarchy unclassified = factory.getHierarchy().as();
-            unclassified.setLabel(UNCLASSIFIED_LABEL);
-            unclassified.setIri(child.getIri() + UNCLASSIFIED_IRI_APPEND);
-            child.getSubclasses().add(unclassified);
+            addUnclassifiedChild(child);
         }
+    }
+
+    public void addUnclassifiedChild(OntologyHierarchy child) {
+        OntologyHierarchy unclassified = factory.getHierarchy().as();
+        unclassified.setLabel(UNCLASSIFIED_LABEL);
+        unclassified.setIri(child.getIri() + UNCLASSIFIED_IRI_APPEND);
+        child.getSubclasses().add(unclassified);
     }
 
     public boolean isUnclassified(OntologyHierarchy hierarchy) {

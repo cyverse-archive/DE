@@ -1,4 +1,12 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+             xmlns:gxt='urn:import:com.sencha.gxt.widget.core.client'
              xmlns:tree="urn:import:com.sencha.gxt.widget.core.client.tree">
+    <ui:with field="appearance"
+             type="org.iplantc.de.apps.client.AppCategoriesView.AppCategoriesAppearance"/>
+    <ui:with field="workspaceTabConfig"
+             type="com.sencha.gxt.widget.core.client.TabItemConfig">
+        <ui:attributes text="{appearance.workspaceTab}"/>
+    </ui:with>
+
     <tree:Tree ui:field="tree"/>
 </ui:UiBinder>

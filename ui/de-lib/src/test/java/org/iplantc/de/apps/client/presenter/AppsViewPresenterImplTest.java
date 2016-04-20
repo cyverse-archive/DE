@@ -40,11 +40,12 @@ public class AppsViewPresenterImplTest {
         uut = new AppsViewPresenterImpl(viewFactoryMock,
                                         categoriesPresenterMock,
                                         gridPresenterMock,
-                                        toolbarPresenterMock);
+                                        toolbarPresenterMock, ontologyHierarchiesPresenter);
     }
 
     @Test public void testConstructorEventHandlerWiring() {
         verify(viewFactoryMock).create(eq(categoriesPresenterMock),
+                                       hierarchiesPresenter,
                                        eq(gridPresenterMock),
                                        eq(toolbarPresenterMock));
 
