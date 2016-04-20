@@ -12,10 +12,12 @@ import (
 	"path"
 	"regexp"
 	"strings"
+	"time"
 )
 
 var (
 	version       = flag.Bool("version", false, "Print version information.")
+	interval      = flag.String("interval", "1m", "Time between clean up attempts.")
 	cfgPath       = flag.String("config", "/etc/jobservices.yml", "Path to the config.")
 	readFrom      = flag.String("read-from", "/opt/image-janitor", "The directory that job files are read from.")
 	dockerURI     = flag.String("docker", "unix:///var/run/docker.sock", "The URI for connecting to docker.")
@@ -151,14 +153,27 @@ func removeUnusedImages(client *dockerops.Docker, readFrom string) {
 }
 
 func main() {
+	var (
+		err           error
+		timerDuration time.Duration
+	)
 	if *version {
 		AppVersion()
 		os.Exit(0)
 	}
+	if _, err = os.Open(*readFrom); err != nil {
+		logcabin.Error.Fatal(err)
+	}
+	if timerDuration, err = time.ParseDuration(*interval); err != nil {
+		logcabin.Error.Fatal(err)
+	}
 	if *cfgPath == "" {
 		logcabin.Error.Fatal("--config must be set.")
 	}
-	err := configurate.Init(*cfgPath)
+	if _, err = os.Open(*cfgPath); err != nil {
+		logcabin.Error.Fatal(*cfgPath)
+	}
+	err = configurate.Init(*cfgPath)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
@@ -166,5 +181,11 @@ func main() {
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
-	removeUnusedImages(client, *readFrom)
+	timer := time.NewTicker(timerDuration)
+	for {
+		select {
+		case <-timer.C:
+			removeUnusedImages(client, *readFrom)
+		}
+	}
 }
