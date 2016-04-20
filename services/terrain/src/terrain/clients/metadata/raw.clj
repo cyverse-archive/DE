@@ -10,6 +10,10 @@
   [& components]
   (str (apply curl/url (config/metadata-base) components)))
 
+(defn- metadata-url-encoded
+  [& components]
+  (str (apply curl/url (config/metadata-base) (map curl/url-encode components))))
+
 (defn resolve-data-type
   "Returns a type converted from the type field of a stat result to a type expected by the
    metadata service endpoints."
@@ -192,6 +196,28 @@
 (defn admin-delete-template
   [template-id]
   (http/delete (metadata-url "admin" "templates" template-id) (delete-options)))
+
+(defn list-ontologies
+  []
+  (http/get (metadata-url "ontologies") (get-options)))
+
+(defn get-ontology-hierarchy
+  [ontology-version root-iri]
+  (http/get (metadata-url-encoded "ontologies" ontology-version root-iri) (get-options)))
+
+(defn upload-ontology
+  [filename content-type istream]
+  (http/post (metadata-url "admin" "ontologies")
+             {:query-params     (user-params {})
+              :multipart        [{:part-name "ontology-xml"
+                                  :name      filename
+                                  :mime-type content-type
+                                  :content   istream}]
+              :follow-redirects false}))
+
+(defn save-ontology-hierarchy
+  [ontology-version root-iri]
+  (http/put (metadata-url-encoded "admin" "ontologies" ontology-version root-iri) (get-options)))
 
 (defn list-permanent-id-requests
   [params]

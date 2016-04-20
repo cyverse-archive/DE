@@ -5,6 +5,8 @@
         [terrain.util])
   (:require [clojure.tools.logging :as log]
             [terrain.clients.apps.raw :as apps]
+            [terrain.clients.metadata :as metadata]
+            [terrain.clients.metadata.raw :as metadata-client]
             [terrain.util.config :as config]
             [terrain.util.service :as service]))
 
@@ -18,6 +20,31 @@
 
     (GET "/apps/categories/:category-id" [category-id :as {params :params}]
          (service/success-response (apps/apps-in-category category-id params)))))
+
+(defn app-ontology-routes
+  []
+  (optional-routes
+   [#(and (config/app-routes-enabled)
+          (config/metadata-routes-enabled))]
+
+   (GET "/ontologies" []
+     (service/success-response (metadata-client/list-ontologies)))
+
+   (GET "/ontologies/:ontology-version/:root-iri" [ontology-version root-iri]
+     (service/success-response (metadata-client/get-ontology-hierarchy ontology-version root-iri)))))
+
+(defn admin-ontology-routes
+  []
+  (optional-routes
+   [#(and (config/admin-routes-enabled)
+          (config/app-routes-enabled)
+          (config/metadata-routes-enabled))]
+
+   (POST "/ontologies" [:as request]
+     (service/success-response (metadata/upload-ontology request)))
+
+   (PUT "/ontologies/:ontology-version/:root-iri" [ontology-version root-iri]
+     (service/success-response (metadata-client/save-ontology-hierarchy ontology-version root-iri)))))
 
 (defn admin-category-routes
   []
