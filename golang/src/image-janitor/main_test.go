@@ -127,3 +127,32 @@ func TestJobImages(t *testing.T) {
 		t.Error("Did not find the fake-image image")
 	}
 }
+
+func TestRemovableImages(t *testing.T) {
+	inittests(t)
+	paths, err := jobFiles("../test/")
+	if err != nil {
+		t.Error(err)
+	}
+	listing, err := jobs(paths)
+	if err != nil {
+		t.Error(err)
+	}
+	jImages := jobImages(listing)
+	dImages := []string{
+		"gims.iplantcollaborative.org:5000/backwards-compat:latest",
+		"gims.iplantcollaborative.org:5000/fake-image:latest",
+		"not-listed",
+	}
+	rImages := removableImages(jImages, dImages)
+	actualLength := len(rImages)
+	expectedLength := 1
+	if actualLength != expectedLength {
+		t.Errorf("The number of removable images was %d instead of %d", actualLength, expectedLength)
+	}
+	actual := rImages[0]
+	expected := "not-listed"
+	if actual != expected {
+		t.Errorf("Removable image was %s instead of %s", actual, expected)
+	}
+}
