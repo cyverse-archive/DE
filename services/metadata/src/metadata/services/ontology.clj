@@ -71,6 +71,20 @@
   [ontology-version root-iri]
   {:hierarchy (format-hierarchy ontology-version root-iri)})
 
+(defn- filter-new-classes
+  [ontology-version hierarchy]
+  (let [classes         (util/hierarchy->class-set hierarchy)
+        found-class-ids (set (map :iri (ont-db/get-classes ontology-version)))]
+    (remove #(contains? found-class-ids (:iri %)) classes)))
+
+(defn- filter-new-hierarchy-pairs
+  [ontology-version hierarchy]
+  (let [class-subclass-pairs  (util/hierarchy->class-subclass-pairs hierarchy)
+        format-db-class-pairs #(vector (:class_iri %) (:subclass_iri %))
+        found-hierarchy-pairs (set (map format-db-class-pairs
+                                        (ont-db/get-ontology-hierarchy-pairs ontology-version)))]
+    (sets/difference class-subclass-pairs found-hierarchy-pairs)))
+
 (defn save-hierarchy
   "Adds the given ontology hierarchies to the database."
   [user ontology-version root-iri]
@@ -78,11 +92,13 @@
    (let [ontology-xml (ont-db/get-ontology-xml ontology-version)
          ontology (util/parse-ontology-xml ontology-xml)
          hierarchy (util/build-hierarchy ontology root-iri)
-         classes (util/hierarchy->class-set hierarchy)
-         class-subclass-pairs (util/hierarchy->class-subclass-pairs hierarchy)]
+         new-classes (filter-new-classes ontology-version hierarchy)
+         new-hierarchies (filter-new-hierarchy-pairs ontology-version hierarchy)]
      (log/info user "adding" ontology-version "hierarchy" root-iri)
-     (ont-db/add-classes ontology-version classes)
-     (ont-db/add-hierarchies ontology-version class-subclass-pairs)))
+     (when-not (empty? new-classes)
+       (ont-db/add-classes ontology-version new-classes))
+     (when-not (empty? new-hierarchies)
+       (ont-db/add-hierarchies ontology-version new-hierarchies))))
   (get-hierarchy ontology-version root-iri))
 
 (defn filter-hierarchy

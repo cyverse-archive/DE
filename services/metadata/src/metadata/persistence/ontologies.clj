@@ -30,6 +30,14 @@
     (when-not (empty? class-values)
       (insert :ontology_classes (values class-values)))))
 
+(defn get-classes
+  [ontology-version]
+  (select :ontology_classes
+          (fields :iri
+                  :label
+                  :description)
+          (where {:ontology_version ontology-version})))
+
 (defn- format-class-subclass-pair
   [ontology-version [class-iri subclass-iri]]
   {:ontology_version ontology-version
@@ -41,6 +49,12 @@
   (when-not (empty? class-subclass-pairs)
     (let [hierarchy-values (map (partial format-class-subclass-pair ontology-version) class-subclass-pairs)]
       (insert :ontology_hierarchies (values hierarchy-values)))))
+
+(defn get-ontology-hierarchy-pairs
+  [ontology-version]
+  (select :ontology_hierarchies
+          (fields :class_iri :subclass_iri)
+          (where {:ontology_version ontology-version})))
 
 (defn get-ontology-class-hierarchy
   "Gets the class hierarchy rooted at the class with the given IRI."
