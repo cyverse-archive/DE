@@ -142,28 +142,45 @@ func removeImage(client *dockerops.Docker, image string) error {
 // removeUnusedImages removes all of the images returned by removeImage() from
 // the connected Docker Engine.
 func removeUnusedImages(client *dockerops.Docker, readFrom string) {
+	logcabin.Info.Println("Removing unused Docker images")
 	listing, err := jobFiles(readFrom)
 	if err != nil {
 		logcabin.Error.Print(err)
 		return
+	}
+	for _, f := range listing {
+		logcabin.Info.Printf("Job file %s found in %s", f, readFrom)
 	}
 	jobList, err := jobs(listing)
 	if err != nil {
 		logcabin.Error.Print(err)
 		return
 	}
+	for _, j := range jobList {
+		logcabin.Info.Printf("Job %s found in %s", j.InvocationID, readFrom)
+	}
 	imagesFromJobs := jobImages(jobList)
+	for _, i := range imagesFromJobs {
+		logcabin.Info.Printf("Image %s is referenced in a job", i)
+	}
 	imagesFromDocker, err := client.Images()
 	if err != nil {
 		logcabin.Error.Print(err)
 		return
 	}
+	for _, d := range imagesFromDocker {
+		logcabin.Info.Printf("Image %s was listed by Docker", d)
+	}
 	rmables := removableImages(imagesFromJobs, imagesFromDocker)
 	for _, removableImage := range rmables {
+		logcabin.Info.Printf("Removing image %s...", removableImage)
 		if err = removeImage(client, removableImage); err != nil {
-			logcabin.Error.Print(err)
+			logcabin.Error.Printf("Error removing image %s: %s", removableImage, err)
+		} else {
+			logcabin.Info.Printf("Done removing image %s", removableImage)
 		}
 	}
+	logcabin.Info.Println("Done removing unused Docker images")
 }
 
 func main() {
@@ -178,12 +195,15 @@ func main() {
 	if _, err = os.Open(*readFrom); err != nil {
 		logcabin.Error.Fatal(err)
 	}
+	logcabin.Info.Printf("Parsing interval %s", *interval)
 	if timerDuration, err = time.ParseDuration(*interval); err != nil {
 		logcabin.Error.Fatal(err)
 	}
+	logcabin.Info.Printf("Successfully parsed interval %s", *interval)
 	if *cfgPath == "" {
 		logcabin.Error.Fatal("--config must be set.")
 	}
+	logcabin.Info.Printf("Reading config from %s", *cfgPath)
 	if _, err = os.Open(*cfgPath); err != nil {
 		logcabin.Error.Fatal(*cfgPath)
 	}
@@ -191,10 +211,13 @@ func main() {
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
+	logcabin.Info.Printf("Done reading config from %s", *cfgPath)
+	logcabin.Info.Printf("Connecting to Docker at %s", *dockerURI)
 	client, err := dockerops.NewDocker(*dockerURI)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
+	logcabin.Info.Printf("Done connecting to Docker at %s", *dockerURI)
 	timer := time.NewTicker(timerDuration)
 	for {
 		select {
