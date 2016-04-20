@@ -93,8 +93,13 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 
 	api.StatusGetHandler = status.GetHandlerFunc(impl.BuildStatusHandler(SwaggerJSON))
 
-	api.ResourceTypesGetResourceTypesHandler =
-		resource_types.GetResourceTypesHandlerFunc(impl.BuildResourceTypesGetHandler(db))
+	api.ResourceTypesGetResourceTypesHandler = resource_types.GetResourceTypesHandlerFunc(
+		impl.BuildResourceTypesGetHandler(db),
+	)
+
+	api.ResourceTypesPutResourceTypesHandler = resource_types.PutResourceTypesHandlerFunc(
+		impl.BuildResourceTypesPutHandler(db),
+	)
 
 	api.ServerShutdown = cleanup
 

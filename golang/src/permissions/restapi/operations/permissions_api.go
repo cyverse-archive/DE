@@ -50,6 +50,8 @@ type PermissionsAPI struct {
 	StatusGetHandler status.GetHandler
 	// ResourceTypesGetResourceTypesHandler sets the operation handler for the get resource types operation
 	ResourceTypesGetResourceTypesHandler resource_types.GetResourceTypesHandler
+	// ResourceTypesPutResourceTypesHandler sets the operation handler for the put resource types operation
+	ResourceTypesPutResourceTypesHandler resource_types.PutResourceTypesHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -111,6 +113,10 @@ func (o *PermissionsAPI) Validate() error {
 
 	if o.ResourceTypesGetResourceTypesHandler == nil {
 		unregistered = append(unregistered, "resource_types.GetResourceTypesHandler")
+	}
+
+	if o.ResourceTypesPutResourceTypesHandler == nil {
+		unregistered = append(unregistered, "resource_types.PutResourceTypesHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -195,6 +201,11 @@ func (o *PermissionsAPI) initHandlerCache() {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/resource_types"] = resource_types.NewGetResourceTypes(o.context, o.ResourceTypesGetResourceTypesHandler)
+
+	if o.handlers["PUT"] == nil {
+		o.handlers[strings.ToUpper("PUT")] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/resource_types"] = resource_types.NewPutResourceTypes(o.context, o.ResourceTypesPutResourceTypesHandler)
 
 }
 
