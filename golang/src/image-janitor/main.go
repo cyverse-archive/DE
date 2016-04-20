@@ -125,6 +125,31 @@ func removeImage(client *dockerops.Docker, image string) error {
 	return err
 }
 
+func removeUnusedImages(client *dockerops.Docker, readFrom string) {
+	listing, err := jobFiles(readFrom)
+	if err != nil {
+		logcabin.Error.Print(err)
+		return
+	}
+	jobList, err := jobs(listing)
+	if err != nil {
+		logcabin.Error.Print(err)
+		return
+	}
+	imagesFromJobs := jobImages(jobList)
+	imagesFromDocker, err := client.Images()
+	if err != nil {
+		logcabin.Error.Print(err)
+		return
+	}
+	rmables := removableImages(imagesFromJobs, imagesFromDocker)
+	for _, removableImage := range rmables {
+		if err = removeImage(client, removableImage); err != nil {
+			logcabin.Error.Print(err)
+		}
+	}
+}
+
 func main() {
 	if *version {
 		AppVersion()
@@ -141,30 +166,5 @@ func main() {
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
-	listing, err := jobFiles(*readFrom)
-	if err != nil {
-		logcabin.Error.Fatal(err)
-	}
-	for _, entry := range listing {
-		fmt.Println(entry)
-	}
-	jobList, err := jobs(listing)
-	if err != nil {
-		logcabin.Error.Print(err)
-	}
-	for _, j := range jobList {
-		fmt.Println(j.InvocationID)
-	}
-	imagesFromJobs := jobImages(jobList)
-	for _, imageName := range imagesFromJobs {
-		fmt.Println(imageName)
-	}
-	imagesFromDocker, err := client.Images()
-	if err != nil {
-		logcabin.Error.Fatal(err)
-	}
-	rmables := removableImages(imagesFromJobs, imagesFromDocker)
-	for _, removableImage := range rmables {
-		fmt.Println(removableImage)
-	}
+	removeUnusedImages(client, *readFrom)
 }

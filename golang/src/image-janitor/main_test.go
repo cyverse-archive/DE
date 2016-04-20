@@ -194,4 +194,45 @@ func TestRemoveImage(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+	images, err := client.Images()
+	if err != nil {
+		t.Error(err)
+	}
+	found := false
+	for _, i := range images {
+		if i == "alpine:latest" {
+			found = true
+		}
+	}
+	if found {
+		t.Error("alpine:latest was found")
+	}
+}
+
+func TestRemoveUnusedImages(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+	client, err := Client()
+	if err != nil {
+		t.Error(err)
+	}
+	err = client.Pull("alpine", "latest")
+	if err != nil {
+		t.Error(err)
+	}
+	removeUnusedImages(client, "../test/")
+	images, err := client.Images()
+	if err != nil {
+		t.Error(err)
+	}
+	found := false
+	for _, i := range images {
+		if i == "alpine:latest" {
+			found = true
+		}
+	}
+	if found {
+		t.Error("alpine:latest was found")
+	}
 }
