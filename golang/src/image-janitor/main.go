@@ -44,6 +44,8 @@ func AppVersion() {
 	}
 }
 
+// jobFiles lists the files in the directory that have a filename matching the
+// filenameRegex pattern.
 func jobFiles(dir string) ([]string, error) {
 	var retval []string
 	entries, err := ioutil.ReadDir(dir)
@@ -61,6 +63,8 @@ func jobFiles(dir string) ([]string, error) {
 	return retval, nil
 }
 
+// jobs returns a list of model.Job's that were read from the file paths passed
+// in.
 func jobs(filepaths []string) ([]model.Job, error) {
 	var retval []model.Job
 	for _, filepath := range filepaths {
@@ -77,6 +81,8 @@ func jobs(filepaths []string) ([]model.Job, error) {
 	return retval, nil
 }
 
+// jobImages returns a uniquified list of container images referenced in the
+// model.Job's that were passed in.
 func jobImages(jobs []model.Job) []string {
 	unique := make(map[string]bool)
 	for _, job := range jobs {
@@ -93,6 +99,10 @@ func jobImages(jobs []model.Job) []string {
 	return retval
 }
 
+// removableImages takes in a list of images referred to in the jobs and a list
+// of images returned by Docker and returns the ones that can be safely removed.
+// Images are considered safe if they're listed in the Docker images but not
+// in the job images.
 func removableImages(jobImages, dockerImages []string) []string {
 	imageMap := make(map[string]bool)
 	for _, di := range dockerImages {
@@ -110,6 +120,8 @@ func removableImages(jobImages, dockerImages []string) []string {
 	return retval
 }
 
+// removeImage uses the dockerops.Docker client to safely remove the specified
+// image.
 func removeImage(client *dockerops.Docker, image string) error {
 	var (
 		err       error
@@ -127,6 +139,8 @@ func removeImage(client *dockerops.Docker, image string) error {
 	return err
 }
 
+// removeUnusedImages removes all of the images returned by removeImage() from
+// the connected Docker Engine.
 func removeUnusedImages(client *dockerops.Docker, readFrom string) {
 	listing, err := jobFiles(readFrom)
 	if err != nil {
