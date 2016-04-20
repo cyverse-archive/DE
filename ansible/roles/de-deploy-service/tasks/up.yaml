@@ -11,6 +11,6 @@
     HOSTNAME: "{{inventory_hostname}}"
   shell: "docker-compose -f {{docker_compose_path}} up -d {% if force_recreate|default(true) %}--force-recreate{% endif %} {{up_service_name}}"
   register: docker_up_v
-  changed_when: docker_up_v.stdout.find('Image is up to date') == -1
+  changed_when: docker_up_v.stdout.find('is up to date') == -1
   tags:
     - docker_up
