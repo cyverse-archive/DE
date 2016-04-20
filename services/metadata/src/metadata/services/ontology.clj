@@ -56,6 +56,11 @@
   [ontology-version]
   (ont-db/get-ontology-details ontology-version))
 
+(defn get-ontology-details-listing
+  "Fetches a list of Ontology details, excluding their XML."
+  []
+  {:ontologies (ont-db/list-ontologies)})
+
 (defn save-ontology-xml
   "Saves the given Ontology XML in the database, along with its parsed IRI, and a version based on that
   IRI, the ontology version, and the current date/time."

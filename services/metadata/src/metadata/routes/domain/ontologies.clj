@@ -13,6 +13,9 @@
    :created_by (describe NonBlankString "The user who uploaded this Ontology")
    :created_on (describe Date "The date this Ontology was uploaded")})
 
+(s/defschema OntologyDetailsList
+  {:ontologies (describe [OntologyDetails] "List of saved Ontologies")})
+
 (s/defschema OntologyClass
   {:iri
    (describe String "The unique IRI for this Ontology Class")

@@ -24,6 +24,14 @@
                          :created_on)
                  (where {:version ontology-version}))))
 
+(defn list-ontologies
+  []
+  (select :ontologies
+          (fields :version
+                  :iri
+                  :created_by
+                  :created_on)))
+
 (defn add-classes
   [ontology-version classes]
   (let [class-values (map #(assoc % :ontology_version ontology-version) classes)]

@@ -9,6 +9,13 @@
   (context* "/ontologies" []
     :tags ["ontologies"]
 
+    (GET* "/" []
+          :query [{:keys [user]} StandardUserQueryParams]
+          :return OntologyDetailsList
+          :summary "List Ontology Details"
+          :description "Lists Ontology details saved in the database."
+          (ok (service/get-ontology-details-listing)))
+
     (POST* "/" []
            :query [{:keys [user]} StandardUserQueryParams]
            :multipart-params [ontology-xml :- String]
