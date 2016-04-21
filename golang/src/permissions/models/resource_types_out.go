@@ -10,13 +10,13 @@ import (
 	"github.com/go-swagger/go-swagger/httpkit/validate"
 )
 
-/*ResourceTypesOut resource types out
+/*ResourceTypesOut A list of resource types.
 
 swagger:model resource_types_out
 */
 type ResourceTypesOut struct {
 
-	/* resource types
+	/* The list of resource types.
 
 	Required: true
 	*/

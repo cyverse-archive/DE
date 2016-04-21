@@ -11,7 +11,7 @@ import (
 	"permissions/models"
 )
 
-/*PutResourceTypesCreated add resource type
+/*PutResourceTypesCreated Created
 
 swagger:response putResourceTypesCreated
 */
@@ -48,7 +48,7 @@ func (o *PutResourceTypesCreated) WriteResponse(rw http.ResponseWriter, producer
 	}
 }
 
-/*PutResourceTypesBadRequest add resource type
+/*PutResourceTypesBadRequest Bad Request
 
 swagger:response putResourceTypesBadRequest
 */
@@ -85,7 +85,7 @@ func (o *PutResourceTypesBadRequest) WriteResponse(rw http.ResponseWriter, produ
 	}
 }
 
-/*PutResourceTypesInternalServerError add resource type
+/*PutResourceTypesInternalServerError put resource types internal server error
 
 swagger:response putResourceTypesInternalServerError
 */

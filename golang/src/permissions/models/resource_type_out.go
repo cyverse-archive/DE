@@ -10,17 +10,17 @@ import (
 	"github.com/go-swagger/go-swagger/httpkit/validate"
 )
 
-/*ResourceTypeOut resource type out
+/*ResourceTypeOut An outgoing resource type.
 
 swagger:model resource_type_out
 */
 type ResourceTypeOut struct {
 
-	/* description
+	/* A brief description of the resource type.
 	 */
 	Description string `json:"description,omitempty"`
 
-	/* id
+	/* The resource type identifier.
 
 	Required: true
 	Max Length: 36
@@ -28,7 +28,7 @@ type ResourceTypeOut struct {
 	*/
 	ID *string `json:"id"`
 
-	/* name
+	/* The name of the resource type.
 
 	Required: true
 	Min Length: 1

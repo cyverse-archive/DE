@@ -10,17 +10,17 @@ import (
 	"github.com/go-swagger/go-swagger/httpkit/validate"
 )
 
-/*ResourceTypeIn resource type in
+/*ResourceTypeIn An incoming resource type.
 
 swagger:model resource_type_in
 */
 type ResourceTypeIn struct {
 
-	/* description
+	/* A brief description of the resource type.
 	 */
 	Description string `json:"description,omitempty"`
 
-	/* name
+	/* The name of the resource type.
 
 	Required: true
 	Min Length: 1

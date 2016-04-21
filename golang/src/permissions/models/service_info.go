@@ -16,21 +16,21 @@ swagger:model service_info
 */
 type ServiceInfo struct {
 
-	/* description
+	/* A brief description of the service.
 
 	Required: true
 	Min Length: 1
 	*/
 	Description *string `json:"description"`
 
-	/* service
+	/* The name of the service.
 
 	Required: true
 	Min Length: 1
 	*/
 	Service *string `json:"service"`
 
-	/* version
+	/* The service's version number.
 
 	Required: true
 	Min Length: 1

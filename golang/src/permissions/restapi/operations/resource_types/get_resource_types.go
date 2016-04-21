@@ -29,7 +29,9 @@ func NewGetResourceTypes(ctx *middleware.Context, handler GetResourceTypesHandle
 
 /*GetResourceTypes swagger:route GET /resource_types resource_types getResourceTypes
 
-GetResourceTypes get resource types API
+List Resource Types
+
+Lists resource types known to the permissions service. A resource type represents a class of resources to which permissions may be applied. For example, the Discovery environment has apps collectively defined as a single resource type in the permissions service.
 
 */
 type GetResourceTypes struct {

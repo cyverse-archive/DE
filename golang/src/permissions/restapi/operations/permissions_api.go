@@ -32,7 +32,7 @@ func NewPermissionsAPI(spec *spec.Document) *PermissionsAPI {
 	return o
 }
 
-/*PermissionsAPI Manages Permissions for the CyVerse Discovery Environment and related applications */
+/*PermissionsAPI Manages Permissions for the CyVerse Discovery Environment and related applications. */
 type PermissionsAPI struct {
 	spec            *spec.Document
 	context         *middleware.Context

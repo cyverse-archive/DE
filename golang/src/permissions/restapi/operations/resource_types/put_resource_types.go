@@ -29,7 +29,9 @@ func NewPutResourceTypes(ctx *middleware.Context, handler PutResourceTypesHandle
 
 /*PutResourceTypes swagger:route PUT /resource_types resource_types putResourceTypes
 
-PutResourceTypes put resource types API
+Add a Resource Type
+
+Adds a resource type to the list of available resource types. The name of the resource type must be unique.
 
 */
 type PutResourceTypes struct {

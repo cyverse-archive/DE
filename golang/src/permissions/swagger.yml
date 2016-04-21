@@ -1,13 +1,15 @@
 consumes:
-- application/json
+  - application/json
 definitions:
   error_out:
     type: object
+    description: "The standard format for an error response body."
     required:
       - reason
     properties:
       reason:
         type: string
+        description: "The reason for the error."
         minLength: 1
   service_info:
     type: object
@@ -18,80 +20,102 @@ definitions:
     properties:
       description:
         type: string
+        description: "A brief description of the service."
         minLength: 1
       service:
         type: string
+        description: "The name of the service."
         minLength: 1
       version:
         type: string
+        description: "The service's version number."
         minLength: 1
   resource_type_in:
     type: object
+    description: "An incoming resource type."
     required:
       - name
     properties:
       name:
         type: string
+        description: "The name of the resource type."
         minLength: 1
       description:
         type: string
+        description: "A brief description of the resource type."
   resource_type_out:
     type: object
+    description: "An outgoing resource type."
     required:
       - id
       - name
     properties:
       id:
         type: string
+        description: "The resource type identifier."
         minLength: 36
         maxLength: 36
       name:
         type: string
+        description: "The name of the resource type."
         minLength: 1
       description:
         type: string
+        description: "A brief description of the resource type."
   resource_types_out:
     type: object
+    description: "A list of resource types."
     required:
       - resource_types
     properties:
       resource_types:
         type: array
+        description: "The list of resource types."
         items:
           $ref: "#/definitions/resource_type_out"
 info:
-  description: Manages Permissions for the CyVerse Discovery Environment and related
-    applications
-  title: Permissions Service
-  version: 5.2.6.0
+  description: >-
+    Manages Permissions for the CyVerse Discovery Environment and related applications.
+  title: "Permissions Service"
+  version: "5.2.6.0"
 paths:
   /:
     get:
       tags:
         - status
+      summary: "Service Status Information"
+      description: >-
+        Displays general information about the service and can be used to determine whether or not the service is
+        running.
       responses:
         200:
-          description: service status information
+          description: "Success"
           schema:
             $ref: "#/definitions/service_info"
   /resource_types:
     get:
       tags:
         - resource_types
+      summary: "List Resource Types"
+      description: >-
+        Lists resource types known to the permissions service. A resource type represents a class of resources to
+        which permissions may be applied. For example, the Discovery environment has apps collectively defined as
+        a single resource type in the permissions service.
       responses:
         200:
-          description: resource type listing
+          description: "Success"
           schema:
             $ref: "#/definitions/resource_types_out"
         500:
-          description: resource type listing
-          schema:
-            $ref: "#/definitions/error_out"
+          $ref: "#/responses/internal_server_error"
     put:
       tags:
         - resource_types
+      summary: "Add a Resource Type"
+      description: >-
+        Adds a resource type to the list of available resource types. The name of the resource type must be unique.
       parameters:
-        - description: The resource type to add.
+        - description: "The resource type to add."
           in: body
           name: "resource_type_in"
           required: True
@@ -99,19 +123,27 @@ paths:
             $ref: "#/definitions/resource_type_in"
       responses:
         201:
-          description: add resource type
+          description: "Created"
           schema:
             $ref: "#/definitions/resource_type_out"
         400:
-          description: add resource type
-          schema:
-            $ref: "#/definitions/error_out"
+          $ref: "#/responses/bad_request"
         500:
-          description: add resource type
-          schema:
-            $ref: "#/definitions/error_out"
+          $ref: "#/responses/internal_server_error"
 produces:
-- application/json
+  - application/json
+responses:
+  bad_request:
+    description: "Bad Request"
+    schema:
+      $ref: "#/definitions/error_out"
+  internal_server_error:
+    schema:
+      $ref: "#/definitions/error_out"
+  not_found:
+    description: "Not Found"
+    schema:
+      $ref: "#/definitions/error_out"
 schemes:
-- http
+  - http
 swagger: "2.0"

@@ -11,7 +11,7 @@ import (
 	"permissions/models"
 )
 
-/*GetResourceTypesOK resource type listing
+/*GetResourceTypesOK Success
 
 swagger:response getResourceTypesOK
 */
@@ -48,7 +48,7 @@ func (o *GetResourceTypesOK) WriteResponse(rw http.ResponseWriter, producer http
 	}
 }
 
-/*GetResourceTypesInternalServerError resource type listing
+/*GetResourceTypesInternalServerError get resource types internal server error
 
 swagger:response getResourceTypesInternalServerError
 */

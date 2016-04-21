@@ -10,13 +10,13 @@ import (
 	"github.com/go-swagger/go-swagger/httpkit/validate"
 )
 
-/*ErrorOut error out
+/*ErrorOut The standard format for an error response body.
 
 swagger:model error_out
 */
 type ErrorOut struct {
 
-	/* reason
+	/* The reason for the error.
 
 	Required: true
 	Min Length: 1
