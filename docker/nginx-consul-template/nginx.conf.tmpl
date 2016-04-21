@@ -1,3 +1,9 @@
+# We're an nginx for {{env "NGINX_PROXY_SERVICE_NAME"}} on port {{env "NGINX_PROXY_PORT"}}
+# Here's what consul thinks of us (assuming we're registered as {{env "NGINX_PROXY_SERVICE_NAME"}}-nginx:
+{{- range service (printf "%s-nginx" (env "NGINX_PROXY_SERVICE_NAME")) "any" }}
+# {{.ID}} {{.Address}}:{{.Port}} {{.Tags}} {{range .Checks}}({{.CheckID}} {{.Status}}: {{.Output}}){{end}}
+{{- end }}
+
 events {
     worker_connections 4096;
 }
