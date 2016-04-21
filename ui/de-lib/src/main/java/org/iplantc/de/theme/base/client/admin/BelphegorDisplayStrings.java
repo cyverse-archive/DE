@@ -86,4 +86,6 @@ public interface BelphegorDisplayStrings extends Messages {
     String toolAdmin();
 
     String updateDocumentationSuccess();
+
+    String ontologies();
 }
