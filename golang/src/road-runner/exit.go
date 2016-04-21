@@ -10,13 +10,6 @@ import (
 
 func cleanup(job *model.Job) {
 	logcabin.Info.Printf("Performing aggressive clean up routine...")
-	for _, ci := range job.ContainerImages() {
-		logcabin.Info.Printf("Nuking image %s:%s", ci.Name, ci.Tag)
-		err := dckr.SafelyRemoveImage(ci.Name, ci.Tag)
-		if err != nil {
-			logcabin.Error.Print(err)
-		}
-	}
 	logcabin.Info.Println("Finding all input containers")
 	inputContainers, err := dckr.ContainersWithLabel(dockerops.TypeLabel, strconv.Itoa(dockerops.InputContainer), true)
 	if err != nil {
@@ -101,20 +94,6 @@ func Exit(exit, finalExit chan messaging.StatusCode) {
 		for _, jc := range jobContainers {
 			logcabin.Info.Printf("Nuking container %s", jc)
 			err = dckr.NukeContainer(jc)
-			if err != nil {
-				logcabin.Error.Print(err)
-			}
-		}
-		for _, dc := range job.DataContainers() {
-			logcabin.Info.Printf("Safely removing image %s:%s", dc.Name, dc.Tag)
-			err := dckr.SafelyRemoveImage(dc.Name, dc.Tag)
-			if err != nil {
-				logcabin.Error.Print(err)
-			}
-		}
-		for _, ci := range job.ContainerImages() {
-			logcabin.Info.Printf("Safely removing image %s:%s", ci.Name, ci.Tag)
-			err := dckr.SafelyRemoveImage(ci.Name, ci.Tag)
 			if err != nil {
 				logcabin.Error.Print(err)
 			}

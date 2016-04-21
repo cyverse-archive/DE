@@ -13,12 +13,14 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"logcabin"
 	"messaging"
 	"model"
 	"os"
 	"os/signal"
+	"path"
 	"syscall"
 	"time"
 
@@ -29,6 +31,7 @@ var (
 	version   = flag.Bool("version", false, "Print the version information")
 	jobFile   = flag.String("job", "", "The path to the job description file")
 	cfgPath   = flag.String("config", "", "The path to the config file")
+	writeTo   = flag.String("write-to", "/opt/image-janitor", "The directory to copy job files to.")
 	dockerURI = flag.String("docker", "unix:///var/run/docker.sock", "The URI for connecting to docker.")
 	gitref    string
 	appver    string
@@ -221,7 +224,31 @@ func RegisterStopRequestListener(client *messaging.Client, exit chan messaging.S
 	})
 }
 
+func copyJobFile(uuid, from, toDir string) error {
+	inputReader, err := os.Open(from)
+	if err != nil {
+		return nil
+	}
+	outputFilePath := path.Join(toDir, fmt.Sprintf("%s.json", uuid))
+	outputWriter, err := os.Create(outputFilePath)
+	if err != nil {
+		return nil
+	}
+	if _, err := io.Copy(outputWriter, inputReader); err != nil {
+		return err
+	}
+	return nil
+}
+
+func deleteJobFile(uuid, toDir string) {
+	filePath := path.Join(toDir, fmt.Sprintf("%s.json", uuid))
+	if err := os.Remove(filePath); err != nil {
+		logcabin.Error.Print(err)
+	}
+}
+
 func main() {
+	var err error
 	if *version {
 		AppVersion()
 		os.Exit(0)
@@ -229,22 +256,15 @@ func main() {
 	if *cfgPath == "" {
 		logcabin.Error.Fatal("--config must be set.")
 	}
-	err := configurate.Init(*cfgPath)
+	logcabin.Info.Printf("Reading config from %s", *cfgPath)
+	if _, err = os.Open(*cfgPath); err != nil {
+		logcabin.Error.Fatal(*cfgPath)
+	}
+	err = configurate.Init(*cfgPath)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
-	uri, err := configurate.C.String("amqp.uri")
-	if err != nil {
-		logcabin.Error.Fatal(err)
-	}
-	client, err = messaging.NewClient(uri, true)
-	if err != nil {
-		logcabin.Error.Fatal(err)
-	}
-	defer client.Close()
-
-	client.SetupPublishing(messaging.JobsExchange)
-
+	logcabin.Info.Printf("Done reading config from %s", *cfgPath)
 	if *jobFile == "" {
 		logcabin.Error.Fatal("--job must be set.")
 	}
@@ -256,6 +276,24 @@ func main() {
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
+	if _, err = os.Open(*writeTo); err != nil {
+		logcabin.Error.Fatal(err)
+	}
+	if err = copyJobFile(job.InvocationID, *jobFile, *writeTo); err != nil {
+		logcabin.Error.Fatal(err)
+	}
+	defer deleteJobFile(job.InvocationID, *writeTo)
+	uri, err := configurate.C.String("amqp.uri")
+	if err != nil {
+		logcabin.Error.Fatal(err)
+	}
+	client, err = messaging.NewClient(uri, true)
+	if err != nil {
+		logcabin.Error.Fatal(err)
+	}
+	defer client.Close()
+
+	client.SetupPublishing(messaging.JobsExchange)
 
 	dckr, err = dockerops.NewDocker(*dockerURI)
 	if err != nil {

@@ -8,6 +8,7 @@ import (
 	"messaging"
 	"model"
 	"os"
+	"path"
 	"testing"
 	"time"
 
@@ -223,5 +224,38 @@ func TestApplyDelta(t *testing.T) {
 	secondDate := tt.EndDate
 	if !secondDate.After(firstDate) {
 		t.Errorf("The date after ApplyDelta() was %s, which isn't later than %s", secondDate.String(), firstDate.String())
+	}
+}
+
+func TestCopyJobFile(t *testing.T) {
+	uuid := "00000000-0000-0000-0000-000000000000"
+	from := path.Join("../test", uuid)
+	to := "/tmp"
+	err := copyJobFile(uuid, from, to)
+	if err != nil {
+		t.Error(err)
+	}
+	tmpPath := path.Join(to, fmt.Sprintf("%s.json", uuid))
+	if _, err := os.Open(tmpPath); err != nil {
+		t.Error(err)
+	} else {
+		if err = os.Remove(tmpPath); err != nil {
+			t.Error(err)
+		}
+	}
+}
+
+func TestDeleteJobFile(t *testing.T) {
+	uuid := "00000000-0000-0000-0000-000000000000"
+	from := path.Join("../test", uuid)
+	to := "/tmp"
+	err := copyJobFile(uuid, from, to)
+	if err != nil {
+		t.Error(err)
+	}
+	deleteJobFile(uuid, to)
+	tmpPath := path.Join(to, fmt.Sprintf("%s.json", uuid))
+	if _, err := os.Open(tmpPath); err == nil {
+		t.Errorf("tmpPath %s existed after deleteJobFile() was called", tmpPath)
 	}
 }
