@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"configurate"
 	"dockerops"
 	"flag"
@@ -173,15 +174,37 @@ func removeUnusedImages(client *dockerops.Docker, readFrom string) {
 		logcabin.Info.Printf("Image %s was listed by Docker", d)
 	}
 	rmables := removableImages(imagesFromJobs, imagesFromDocker)
+	excludes, err := readExcludes(readFrom)
+	if err != nil {
+		logcabin.Error.Println(err)
+	}
 	for _, removableImage := range rmables {
-		logcabin.Info.Printf("Removing image %s...", removableImage)
-		if err = removeImage(client, removableImage); err != nil {
-			logcabin.Error.Printf("Error removing image %s: %s", removableImage, err)
+		if _, ok := excludes[removableImage]; !ok {
+			logcabin.Info.Printf("Removing image %s...", removableImage)
+			if err = removeImage(client, removableImage); err != nil {
+				logcabin.Error.Printf("Error removing image %s: %s", removableImage, err)
+			} else {
+				logcabin.Info.Printf("Done removing image %s", removableImage)
+			}
 		} else {
-			logcabin.Info.Printf("Done removing image %s", removableImage)
+			logcabin.Info.Printf("Skipping removal of %s", removableImage)
 		}
 	}
 	logcabin.Info.Println("Done removing unused Docker images")
+}
+
+func readExcludes(readFrom string) (map[string]bool, error) {
+	retval := make(map[string]bool)
+	excludesPath := path.Join(readFrom, "excludes")
+	excludesBytes, err := ioutil.ReadFile(excludesPath)
+	if err != nil {
+		return retval, err
+	}
+	lines := bytes.Split(excludesBytes, []byte("\n"))
+	for _, line := range lines {
+		retval[string(line)] = true
+	}
+	return retval, nil
 }
 
 func main() {
@@ -193,9 +216,11 @@ func main() {
 		AppVersion()
 		os.Exit(0)
 	}
-	if _, err = os.Open(*readFrom); err != nil {
+	r, err := os.Open(*readFrom)
+	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
+	r.Close()
 	logcabin.Info.Printf("Parsing interval %s", *interval)
 	if timerDuration, err = time.ParseDuration(*interval); err != nil {
 		logcabin.Error.Fatal(err)
@@ -205,9 +230,10 @@ func main() {
 		logcabin.Error.Fatal("--config must be set.")
 	}
 	logcabin.Info.Printf("Reading config from %s", *cfgPath)
-	if _, err = os.Open(*cfgPath); err != nil {
+	if r, err = os.Open(*cfgPath); err != nil {
 		logcabin.Error.Fatal(*cfgPath)
 	}
+	r.Close()
 	err = configurate.Init(*cfgPath)
 	if err != nil {
 		logcabin.Error.Fatal(err)
