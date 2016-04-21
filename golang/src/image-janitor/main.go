@@ -113,7 +113,8 @@ func removableImages(jobImages, dockerImages []string) []string {
 	}
 	var retval []string
 	for img, isRemovable := range imageMap {
-		if isRemovable {
+
+		if isRemovable && img != "<none>:<none>" {
 			retval = append(retval, img)
 		}
 	}
@@ -130,8 +131,8 @@ func removeImage(client *dockerops.Docker, image string) error {
 	)
 	parts = strings.Split(image, ":")
 	if len(parts) > 1 {
-		name = parts[0]
-		tag = parts[1]
+		name = strings.Join(parts[0:len(parts)-1], ":")
+		tag = parts[len(parts)-1]
 		if err = client.SafelyRemoveImage(name, tag); err != nil {
 			return err
 		}
