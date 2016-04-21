@@ -50,6 +50,12 @@
     <replace-with class="org.iplantc.de.theme.base.client.admin.toolAdmin.cells.ToolAdminViewCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.admin.desktop.client.toolAdmin.view.cells.ToolAdminNameCell.ToolAdminNameCellAppearance" />
     </replace-with>
+
+    <!--Ontologies-->
+    <replace-with class="org.iplantc.de.theme.base.client.admin.ontologies.OntologiesViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.desktop.client.ontologies.OntologiesView.OntologiesViewAppearance" />
+    </replace-with>
+
     
     <!--  Metadata -->
      <replace-with class="org.iplantc.de.theme.base.client.admin.metadata.DefaultTemplateListingAppearance">
