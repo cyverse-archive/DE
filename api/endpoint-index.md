@@ -106,7 +106,7 @@ title: DE API Documentation
 * [GET /favorites/filesystem](endpoints/favorites.html#listing-stat-info-for-favorite-data)
 * [PATCH /filesystem/entry/{entry-id}/comments/{comment-id}](endpoints/comments.html#retractingreadmitting-a-comment)
 * [GET /ontologies](endpoints/app-metadata.html#listing-ontologies-and-ontology-hierarchies)
-* [GET /ontologies/{ontology-version}/{root-iri}](endpoints/app-metadata.html#listing-ontologies-and-ontology-hierarchies)
+* [GET /ontologies/{ontology-version}](endpoints/app-metadata.html#listing-ontologies-and-ontology-hierarchies)
 * [GET /permanent-id-requests](endpoints/permanent-id-requests.html#list-permanent-id-requests)
 * [POST /permanent-id-requests](endpoints/permanent-id-requests.html#create-a-permanent-id-request)
 * [GET /permanent-id-requests/status-codes](endpoints/permanent-id-requests.html#list-permanent-id-request-status-codes)

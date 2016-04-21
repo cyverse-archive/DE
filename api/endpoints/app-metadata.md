@@ -153,9 +153,9 @@ Secured Endpoint: GET /ontologies
 
 Delegates to metadata: GET /ontologies
 
-Secured Endpoint: GET /ontologies/{ontology-version}/{root-iri}
+Secured Endpoint: GET /ontologies/{ontology-version}
 
-Delegates to metadata: GET /ontologies/{ontology-version}/{root-iri}
+Delegates to metadata: GET /ontologies/{ontology-version}
 
 These endpoints are passthroughs to the metadata endpoints using the same paths.
 Please see the metadata service documentation for more information.
