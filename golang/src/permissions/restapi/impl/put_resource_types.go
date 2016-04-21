@@ -18,7 +18,6 @@ func BuildResourceTypesPutHandler(db *sql.DB) func(resource_types.PutResourceTyp
 		// Start a transaction for this request.
 		tx, err := db.Begin()
 		if err != nil {
-			tx.Rollback()
 			reason := err.Error()
 			return resource_types.NewPutResourceTypesInternalServerError().WithPayload(&models.ErrorOut{&reason})
 		}
@@ -32,7 +31,7 @@ func BuildResourceTypesPutHandler(db *sql.DB) func(resource_types.PutResourceTyp
 		}
 		if duplicate != nil {
 			tx.Rollback()
-			reason := fmt.Sprintf("a resource type named %s already exists", resourceTypeIn.Name)
+			reason := fmt.Sprintf("a resource type named %s already exists", *resourceTypeIn.Name)
 			return resource_types.NewPutResourceTypesBadRequest().WithPayload(&models.ErrorOut{&reason})
 		}
 

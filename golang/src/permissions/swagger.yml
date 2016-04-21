@@ -130,6 +130,38 @@ paths:
           $ref: "#/responses/bad_request"
         500:
           $ref: "#/responses/internal_server_error"
+  /resource_types/{id}:
+    parameters:
+      - name: id
+        type: string
+        description: "The resource type ID."
+        in: path
+        required: True
+    post:
+      tags:
+        - resource_types
+      summary: "Update a Resource Type"
+      description: >-
+        Updates the name or description of a resource type. The new name of the resource type must be unique if one
+        is provided.
+      parameters:
+        - description: "The new name and description of the resource type."
+          in: body
+          name: "resource_type_in"
+          required: True
+          schema:
+            $ref: "#/definitions/resource_type_in"
+      responses:
+        200:
+          description: "Updated"
+          schema:
+            $ref: "#/definitions/resource_type_out"
+        400:
+          $ref: "#/responses/bad_request"
+        404:
+          $ref: "#/responses/not_found"
+        500:
+          $ref: "#/responses/internal_server_error"
 produces:
   - application/json
 responses:

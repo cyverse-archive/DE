@@ -50,6 +50,8 @@ type PermissionsAPI struct {
 	StatusGetHandler status.GetHandler
 	// ResourceTypesGetResourceTypesHandler sets the operation handler for the get resource types operation
 	ResourceTypesGetResourceTypesHandler resource_types.GetResourceTypesHandler
+	// ResourceTypesPostResourceTypesIDHandler sets the operation handler for the post resource types ID operation
+	ResourceTypesPostResourceTypesIDHandler resource_types.PostResourceTypesIDHandler
 	// ResourceTypesPutResourceTypesHandler sets the operation handler for the put resource types operation
 	ResourceTypesPutResourceTypesHandler resource_types.PutResourceTypesHandler
 
@@ -113,6 +115,10 @@ func (o *PermissionsAPI) Validate() error {
 
 	if o.ResourceTypesGetResourceTypesHandler == nil {
 		unregistered = append(unregistered, "resource_types.GetResourceTypesHandler")
+	}
+
+	if o.ResourceTypesPostResourceTypesIDHandler == nil {
+		unregistered = append(unregistered, "resource_types.PostResourceTypesIDHandler")
 	}
 
 	if o.ResourceTypesPutResourceTypesHandler == nil {
@@ -201,6 +207,11 @@ func (o *PermissionsAPI) initHandlerCache() {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/resource_types"] = resource_types.NewGetResourceTypes(o.context, o.ResourceTypesGetResourceTypesHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers[strings.ToUpper("POST")] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/resource_types/{id}"] = resource_types.NewPostResourceTypesID(o.context, o.ResourceTypesPostResourceTypesIDHandler)
 
 	if o.handlers["PUT"] == nil {
 		o.handlers[strings.ToUpper("PUT")] = make(map[string]http.Handler)
