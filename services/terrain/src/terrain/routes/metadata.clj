@@ -30,8 +30,8 @@
    (GET "/ontologies" []
      (service/success-response (metadata-client/list-ontologies)))
 
-   (GET "/ontologies/:ontology-version/:root-iri" [ontology-version root-iri]
-     (service/success-response (metadata-client/get-ontology-hierarchy ontology-version root-iri)))))
+   (GET "/ontologies/:ontology-version" [ontology-version]
+     (service/success-response (metadata-client/get-ontology-hierarchies ontology-version)))))
 
 (defn admin-ontology-routes
   []

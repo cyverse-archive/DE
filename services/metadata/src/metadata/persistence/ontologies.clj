@@ -64,6 +64,16 @@
           (fields :class_iri :subclass_iri)
           (where {:ontology_version ontology-version})))
 
+(defn get-ontology-hierarchy-roots
+  [ontology-version]
+  (select :ontology_hierarchies
+          (modifier "DISTINCT")
+          (fields :class_iri)
+          (where {:ontology_version ontology-version
+                  :class_iri [not-in (subselect :ontology_hierarchies
+                                                (fields :subclass_iri)
+                                                (where {:ontology_version ontology-version}))]})))
+
 (defn get-ontology-class-hierarchy
   "Gets the class hierarchy rooted at the class with the given IRI."
   [ontology-version root-iri]

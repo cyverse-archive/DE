@@ -16,14 +16,13 @@
           :description "Lists Ontology details saved in the database."
           (ok (service/get-ontology-details-listing)))
 
-    (GET* "/:ontology-version/:root-iri" []
-          :path-params [ontology-version :- OntologyVersionParam
-                        root-iri :- OntologyHierarchyRootParam]
+    (GET* "/:ontology-version" []
+          :path-params [ontology-version :- OntologyVersionParam]
           :query [{:keys [user]} StandardUserQueryParams]
-          :return OntologyHierarchy
-          :summary "Get an Ontology Hierarchy"
-          :description "Gets an Ontology Hierarchy rooted at the given `root-iri`."
-          (ok (service/get-hierarchy ontology-version root-iri)))
+          :return OntologyHierarchyList
+          :summary "Get Ontology Hierarchies"
+          :description "List Ontology Hierarchies saved for the given `ontology-version`."
+          (ok (service/list-hierarchies ontology-version)))
 
     (POST* "/:ontology-version/:root-iri/filter" []
            :path-params [ontology-version :- OntologyVersionParam

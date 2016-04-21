@@ -201,9 +201,9 @@
   []
   (http/get (metadata-url "ontologies") (get-options)))
 
-(defn get-ontology-hierarchy
-  [ontology-version root-iri]
-  (http/get (metadata-url-encoded "ontologies" ontology-version root-iri) (get-options)))
+(defn get-ontology-hierarchies
+  [ontology-version]
+  (http/get (metadata-url-encoded "ontologies" ontology-version) (get-options)))
 
 (defn upload-ontology
   [filename content-type istream]

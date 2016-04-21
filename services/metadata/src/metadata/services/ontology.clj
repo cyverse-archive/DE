@@ -76,6 +76,12 @@
   [ontology-version root-iri]
   {:hierarchy (format-hierarchy ontology-version root-iri)})
 
+(defn list-hierarchies
+  "Lists Ontology Hierarchies saved for the given ontology-version."
+  [ontology-version]
+  (let [roots (ont-db/get-ontology-hierarchy-roots ontology-version)]
+    {:hierarchies (map (comp (partial format-hierarchy ontology-version) :class_iri) roots)}))
+
 (defn- filter-new-classes
   [ontology-version hierarchy]
   (let [classes         (util/hierarchy->class-set hierarchy)

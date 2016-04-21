@@ -34,6 +34,9 @@
 (s/defschema OntologyHierarchy
   {:hierarchy (describe (s/maybe OntologyClassHierarchy) "An Ontology Class hierarchy")})
 
+(s/defschema OntologyHierarchyList
+  {:hierarchies (describe [OntologyClassHierarchy] "A list of Ontology Class hierarchies")})
+
 (s/defschema OntologyHierarchyFilterRequest
   {:target-ids
    (describe [UUID] "List of IDs to filter the hierarchy")
