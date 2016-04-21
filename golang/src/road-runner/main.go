@@ -282,7 +282,7 @@ func main() {
 	if err = copyJobFile(job.InvocationID, *jobFile, *writeTo); err != nil {
 		logcabin.Error.Fatal(err)
 	}
-	defer deleteJobFile(job.InvocationID, *writeTo)
+
 	uri, err := configurate.C.String("amqp.uri")
 	if err != nil {
 		logcabin.Error.Fatal(err)
@@ -332,5 +332,6 @@ func main() {
 
 	go Run(client, dckr, exit)
 	exitCode := <-finalExit
+	deleteJobFile(job.InvocationID, *writeTo)
 	os.Exit(int(exitCode))
 }
