@@ -12,4 +12,5 @@ COPY ./bin/job-status-to-apps-adapter-linux-amd64 /bin/job-status-to-apps-adapte
 COPY ./bin/jex-adapter-linux-amd64 /bin/jex-adapter
 COPY ./bin/de-job-killer-linux-amd64 /bin/de-job-killer
 COPY ./bin/slot-cacher-linux-amd64 /bin/slot-cacher
+COPY ./bin/image-janitor-linux-amd64 /bin/image-janitor
 CMD [ "/bin/sh" ]
