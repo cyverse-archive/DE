@@ -197,10 +197,6 @@
   [template-id]
   (http/delete (metadata-url "admin" "templates" template-id) (delete-options)))
 
-(defn list-ontologies
-  []
-  (http/get (metadata-url "ontologies") (get-options)))
-
 (defn get-ontology-hierarchies
   [ontology-version]
   (http/get (metadata-url-encoded "ontologies" ontology-version) (get-options)))

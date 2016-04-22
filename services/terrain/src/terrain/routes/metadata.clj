@@ -3,8 +3,7 @@
         [terrain.services.file-listing]
         [terrain.services.metadata.apps]
         [terrain.util])
-  (:require [clojure.tools.logging :as log]
-            [terrain.clients.apps.raw :as apps]
+  (:require [terrain.clients.apps.raw :as apps]
             [terrain.clients.metadata :as metadata]
             [terrain.clients.metadata.raw :as metadata-client]
             [terrain.util.config :as config]
@@ -27,11 +26,11 @@
    [#(and (config/app-routes-enabled)
           (config/metadata-routes-enabled))]
 
-   (GET "/ontologies" []
-     (service/success-response (metadata-client/list-ontologies)))
+   (GET "/apps/hierarchies" []
+     (service/success-response (apps/get-app-category-hierarchies)))
 
-   (GET "/ontologies/:ontology-version" [ontology-version]
-     (service/success-response (metadata-client/get-ontology-hierarchies ontology-version)))))
+   (GET "/apps/hierarchies/:root-iri" [root-iri]
+     (service/success-response (apps/get-app-category-hierarchy root-iri)))))
 
 (defn admin-ontology-routes
   []
@@ -40,8 +39,20 @@
           (config/app-routes-enabled)
           (config/metadata-routes-enabled))]
 
+   (GET "/ontologies" []
+     (service/success-response (apps/list-ontologies)))
+
    (POST "/ontologies" [:as request]
      (service/success-response (metadata/upload-ontology request)))
+
+   (GET "/ontologies/:ontology-version" [ontology-version]
+     (service/success-response (metadata-client/get-ontology-hierarchies ontology-version)))
+
+   (POST "/ontologies/:ontology-version" [ontology-version]
+     (service/success-response (apps/set-ontology-version ontology-version)))
+
+   (GET "/ontologies/:ontology-version/:root-iri" [ontology-version root-iri]
+     (service/success-response (apps/get-app-category-hierarchy ontology-version root-iri)))
 
    (PUT "/ontologies/:ontology-version/:root-iri" [ontology-version root-iri]
      (service/success-response (metadata-client/save-ontology-hierarchy ontology-version root-iri)))))

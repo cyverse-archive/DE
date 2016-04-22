@@ -1,9 +1,10 @@
 (ns apps.routes.admin
   (:use [common-swagger-api.schema]
+        [common-swagger-api.schema.ontologies]
         [apps.metadata.reference-genomes :only [add-reference-genome
-                                                      delete-reference-genome
-                                                      replace-reference-genomes
-                                                      update-reference-genome]]
+                                                delete-reference-genome
+                                                replace-reference-genomes
+                                                update-reference-genome]]
         [apps.metadata.tool-requests]
         [apps.routes.domain.app]
         [apps.routes.domain.app.category]
@@ -14,6 +15,8 @@
         [apps.util.coercions :only [coerce!]]
         [ring.util.http-response :only [ok]])
   (:require [apps.service.apps :as apps]
+            [apps.service.apps.de.admin :as admin]
+            [apps.service.apps.de.listings :as listings]
             [apps.util.config :as config]))
 
 (defroutes* admin-tool-requests
@@ -161,6 +164,43 @@
           :description "This service renames or moves an App Category to a new parent Category, depending
           on the fields included in the request."
           (ok (apps/admin-update-category current-user (assoc body :id category-id)))))
+
+(defroutes* admin-ontologies
+
+  (GET* "/" []
+        :query [params SecuredQueryParams]
+        :return ActiveOntologyDetailsList
+        :summary "List Ontology Details"
+        :description
+"Lists Ontology details saved in the metadata service.
+
+#### Delegates to metadata service
+    GET /ontologies"
+        (ok (admin/list-ontologies current-user)))
+
+  (POST* "/:ontology-version" []
+         :path-params [ontology-version :- OntologyVersionParam]
+         :query [params SecuredQueryParams]
+         :return AppCategoryOntologyVersionDetails
+         :summary "Set Active Ontology Version"
+         :description
+         "Sets the active `ontology-version` to use in non-admin endpoints when querying the ontology
+          endpoints of the metadata service."
+         (ok (admin/set-category-ontology-version current-user ontology-version)))
+
+  (GET* "/:ontology-version/:root-iri" []
+        :path-params [ontology-version :- OntologyVersionParam
+                      root-iri :- OntologyHierarchyRootParam]
+        :query [params SecuredQueryParams]
+        :summary "Get App Category Hierarchy"
+        :description
+"Gets the list of app categories that are visible to the user for the given `ontology-version`,
+ rooted at the given `root-iri`.
+
+#### Delegates to metadata service
+    POST /ontologies/{ontology-version}/{root-iri}/filter
+Please see the metadata service documentation for response information."
+        (listings/get-app-hierarchy current-user ontology-version root-iri)))
 
 (defroutes* reference-genomes
   (POST* "/" []

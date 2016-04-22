@@ -12,6 +12,10 @@
   [& components]
   (str (apply curl/url (config/apps-base) components)))
 
+(defn- apps-url-encoded
+  [& components]
+  (str (apply curl/url (config/apps-base) (map curl/url-encode components))))
+
 (defn get-all-workflow-elements
   [params]
   (client/get (apps-url "apps" "elements")
@@ -23,6 +27,39 @@
   [element-type params]
   (client/get (apps-url "apps" "elements" element-type)
               {:query-params     (secured-params params [:include-hidden])
+               :as               :stream
+               :follow-redirects false}))
+
+(defn list-ontologies
+  []
+  (client/get (apps-url "admin" "ontologies")
+              {:query-params     (secured-params)
+               :as               :stream
+               :follow-redirects false}))
+
+(defn set-ontology-version
+  [ontology-version]
+  (client/post (apps-url-encoded "admin" "ontologies" ontology-version)
+               {:query-params     (secured-params)
+                :as               :stream
+                :follow-redirects false}))
+
+(defn get-app-category-hierarchy
+  ([ontology-version root-iri]
+   (client/get (apps-url-encoded "admin" "ontologies" ontology-version root-iri)
+               {:query-params     (secured-params)
+                :as               :stream
+                :follow-redirects false}))
+  ([root-iri]
+   (client/get (apps-url-encoded "apps" "hierarchies" root-iri)
+               {:query-params     (secured-params)
+                :as               :stream
+                :follow-redirects false})))
+
+(defn get-app-category-hierarchies
+  []
+  (client/get (apps-url "apps" "hierarchies")
+              {:query-params     (secured-params)
                :as               :stream
                :follow-redirects false}))
 

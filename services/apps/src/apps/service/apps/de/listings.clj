@@ -13,7 +13,9 @@
         [apps.util.conversions :only [to-long remove-nil-vals]]
         [apps.workspace])
   (:require [apps.clients.iplant-groups :as iplant-groups]
+            [apps.clients.metadata :as metadata-client]
             [apps.persistence.app-metadata :refer [get-app get-app-tools] :as amp]
+            [apps.persistence.categories :as db-categories]
             [apps.service.apps.de.permissions :as perms]
             [cemerick.url :as curl]))
 
@@ -24,6 +26,22 @@
 (def default-sort-params
   {:sort-field :lower_case_name
    :sort-dir   :ASC})
+
+(defn- get-visible-app-ids
+  [shortUsername]
+  (set (keys (iplant-groups/load-app-permissions shortUsername))))
+
+(defn- get-active-hierarchy-version
+  []
+  (let [version (db-categories/get-active-hierarchy-version)]
+    (when-not version
+      (throw+ {:type  :clojure-commons.exception/not-found
+               :error "An app hierarchy version has not been set."}))
+    version))
+
+(defn list-hierarchies
+  [{:keys [username]}]
+  (metadata-client/list-hierarchies username (get-active-hierarchy-version)))
 
 (defn- fix-sort-params
   [params]
@@ -142,13 +160,20 @@
   "Retrieves the list of app groups that are visible to all users, the current user's app groups, or
    both, depending on the :public param."
   [user {:keys [public] :as params}]
-  (let [perms  (iplant-groups/load-app-permissions (:shortUsername user))
-        params (assoc params :app-ids (set (keys perms)))]
+  (let [app-ids (get-visible-app-ids (:shortUsername user))
+        params  (assoc params :app-ids app-ids)]
     (if (contains? params :public)
       (if-not public
         (get-workspace-app-groups user params)
         (get-visible-app-groups-for-workspace nil user params))
       (get-visible-app-groups user params))))
+
+(defn get-app-hierarchy
+  ([user root-iri]
+   (get-app-hierarchy user (get-active-hierarchy-version) root-iri))
+  ([{:keys [username shortUsername]} ontology-version root-iri]
+   (let [app-ids (get-visible-app-ids shortUsername)]
+     (metadata-client/filter-hierarchy username ontology-version root-iri app-ids))))
 
 (defn get-admin-app-groups
   "Retrieves the list of app groups that are accessible to administrators. This includes all public

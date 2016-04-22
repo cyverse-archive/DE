@@ -1,11 +1,13 @@
 (ns apps.routes.apps.categories
   (:use [common-swagger-api.schema]
+        [common-swagger-api.schema.ontologies]
         [apps.routes.domain.app.category]
         [apps.routes.params]
         [apps.user :only [current-user]]
         [apps.util.coercions :only [coerce!]]
         [ring.util.http-response :only [ok]])
   (:require [apps.service.apps :as apps]
+            [apps.service.apps.de.listings :as listings]
             [apps.util.service :as service]
             [compojure.route :as route]))
 
@@ -32,3 +34,29 @@
                  (apps/list-apps-in-category current-user category-id params))))
 
   (route/not-found (service/unrecognized-path-response)))
+
+(defroutes* app-hierarchies
+
+  (GET* "/" []
+        :query [params SecuredQueryParams]
+        :summary "List App Hierarchies"
+        :description
+"Lists all hierarchies saved for the active ontology version.
+
+#### Delegates to metadata service
+    GET /ontologies/{ontology-version}
+Please see the metadata service documentation for response information."
+        (listings/list-hierarchies current-user))
+
+  (GET* "/:root-iri" []
+        :path-params [root-iri :- OntologyHierarchyRootParam]
+        :query [params SecuredQueryParams]
+        :summary "List App Category Hierarchy"
+        :description
+"Gets the list of app categories that are visible to the user for the active ontology version,
+ rooted at the given `root-iri`.
+
+#### Delegates to metadata service
+    POST /ontologies/{ontology-version}/{root-iri}/filter
+Please see the metadata service documentation for response information."
+        (listings/get-app-hierarchy current-user root-iri)))

@@ -37,6 +37,7 @@
      :tags [{:name "service-info", :description "Service Status Information"}
             {:name "callbacks", :description "General callback functions"}
             {:name "app-categories", :description "App Category endpoints."}
+            {:name "app-hierarchies", :description "App Hierarchy endpoints."}
             {:name "app-element-types", :description "App Element endpoints."}
             {:name "apps", :description "App endpoints."}
             {:name "pipelines", :description "Pipeline endpoints."}
@@ -51,6 +52,7 @@
             {:name "collaborator-routes", :description "Collaborator Information Routes"}
             {:name "admin-apps", :description "Admin App endpoints."}
             {:name "admin-categories", :description "Admin App Category endpoints."}
+            {:name "admin-ontologies", :description "Admin App Ontology endpoints."}
             {:name "admin-container-images", :description "Admin Tool Docker Images endpoints."}
             {:name "admin-data-containers", :description "Admin Docker Data Container endpoints."}
             {:name "admin-tools", :description "Admin Tool endpoints."}
@@ -77,6 +79,9 @@
     (context* "/apps/categories" []
       :tags ["app-categories"]
       app-category-routes/app-categories)
+    (context* "/apps/hierarchies" []
+      :tags ["app-hierarchies"]
+      app-category-routes/app-hierarchies)
     (context* "/apps/elements" []
       :tags ["app-element-types"]
       app-element-routes/app-elements)
@@ -119,6 +124,9 @@
     (context* "/admin/apps/categories" []
       :tags ["admin-categories"]
       admin-routes/admin-categories)
+    (context* "/admin/ontologies" []
+      :tags ["admin-ontologies"]
+      admin-routes/admin-ontologies)
     (context* "/admin/reference-genomes" []
       :tags ["admin-reference-genomes"]
       admin-routes/reference-genomes)
