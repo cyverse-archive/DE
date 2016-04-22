@@ -229,7 +229,7 @@ func TestApplyDelta(t *testing.T) {
 
 func TestCopyJobFile(t *testing.T) {
 	uuid := "00000000-0000-0000-0000-000000000000"
-	from := path.Join("../test", uuid)
+	from := path.Join("../test", fmt.Sprintf("%s.json", uuid))
 	to := "/tmp"
 	err := copyJobFile(uuid, from, to)
 	if err != nil {
@@ -247,7 +247,7 @@ func TestCopyJobFile(t *testing.T) {
 
 func TestDeleteJobFile(t *testing.T) {
 	uuid := "00000000-0000-0000-0000-000000000000"
-	from := path.Join("../test", uuid)
+	from := path.Join("../test", fmt.Sprintf("%s.json", uuid))
 	to := "/tmp"
 	err := copyJobFile(uuid, from, to)
 	if err != nil {

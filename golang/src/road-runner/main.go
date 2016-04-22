@@ -227,12 +227,12 @@ func RegisterStopRequestListener(client *messaging.Client, exit chan messaging.S
 func copyJobFile(uuid, from, toDir string) error {
 	inputReader, err := os.Open(from)
 	if err != nil {
-		return nil
+		return err
 	}
 	outputFilePath := path.Join(toDir, fmt.Sprintf("%s.json", uuid))
 	outputWriter, err := os.Create(outputFilePath)
 	if err != nil {
-		return nil
+		return err
 	}
 	if _, err := io.Copy(outputWriter, inputReader); err != nil {
 		return err
