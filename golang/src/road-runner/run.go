@@ -30,11 +30,6 @@ func Run(client *messaging.Client, dckr *dockerops.Docker, exit chan messaging.S
 	// let everyone know the job is running
 	running(client, job, fmt.Sprintf("Job %s is running on host %s", job.InvocationID, host))
 
-	err = os.Mkdir("logs", 0755)
-	if err != nil {
-		logcabin.Error.Print(err)
-	}
-
 	transferTrigger, err := os.Create("logs/de-transfer-trigger.log")
 	if err != nil {
 		logcabin.Error.Print(err)
