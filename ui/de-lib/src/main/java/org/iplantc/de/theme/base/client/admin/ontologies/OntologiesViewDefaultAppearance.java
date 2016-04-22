@@ -57,4 +57,59 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     public ImageResource addIcon() {
         return iplantResources.add();
     }
+
+    @Override
+    public String ontologyListDialogName() {
+        return displayStrings.ontologyListDialogName();
+    }
+
+    @Override
+    public String ontologyList() {
+        return displayStrings.ontologyList();
+    }
+
+    @Override
+    public int iriColumnWidth() {
+        return 100;
+    }
+
+    @Override
+    public String iriColumnLabel() {
+        return displayStrings.iriColumnLabel();
+    }
+
+    @Override
+    public int versionColumnWidth() {
+        return 100;
+    }
+
+    @Override
+    public String versionColumnLabel() {
+        return displayStrings.versionColumnLabel();
+    }
+
+    @Override
+    public int createdByColumnWidth() {
+        return 100;
+    }
+
+    @Override
+    public String createdByColumnLabel() {
+        return displayStrings.createdByColumnLabel();
+    }
+
+    @Override
+    public int createdOnColumnWidth() {
+        return 100;
+    }
+
+    @Override
+    public String createdOnColumnLabel() {
+        return displayStrings.createdOnColumnLabel();
+    }
+
+    @Override
+    public String setActiveVersion() {
+        return displayStrings.setActiveVersion();
+    }
 }
