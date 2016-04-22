@@ -3,7 +3,7 @@
 {{- range service (printf "%s-nginx" (env "NGINX_PROXY_SERVICE_NAME")) "any" }}
 # {{.ID}} {{.Address}}:{{.Port}} {{.Tags}}
 {{- range .Checks }}
-# * ({{.CheckID}} {{.Status}}: {{.Output}})
+# * ({{.CheckID}} {{.Status}}: {{.Output | replaceAll "\n" "\n#"}})
 {{- end }}
 {{- end }}
 
