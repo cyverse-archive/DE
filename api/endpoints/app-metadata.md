@@ -138,27 +138,52 @@ Delegates to metadata: POST /admin/ontologies
 This endpoint is a passthrough to the metadata endpoint using the same path.
 Please see the metadata service documentation for more information.
 
+## Set Active Ontology Version
+
+Secured Endpoint: POST /admin/ontologies/{ontology-version}
+
+Delegates to apps: POST /admin/ontologies/{ontology-version}
+
+This endpoint is a passthrough to the apps endpoint using the same path.
+Please see the metadata service documentation for more information.
+
 ## Save an Ontology Hierarchy
 
-Secured Endpoint: POST /admin/ontologies/{ontology-version}/{root-iri}
+Secured Endpoint: PUT /admin/ontologies/{ontology-version}/{root-iri}
 
-Delegates to metadata: POST /admin/ontologies/{ontology-version}/{root-iri}
+Delegates to metadata: PUT /admin/ontologies/{ontology-version}/{root-iri}
 
 This endpoint is a passthrough to the metadata endpoint using the same path.
 Please see the metadata service documentation for more information.
 
 ## Listing Ontologies and Ontology Hierarchies
 
-Secured Endpoint: GET /ontologies
+### Apps passthroughs
 
-Delegates to metadata: GET /ontologies
+Secured Endpoint: GET /admin/ontologies
 
-Secured Endpoint: GET /ontologies/{ontology-version}
+Delegates to apps: GET /admin/ontologies
 
-Delegates to metadata: GET /ontologies/{ontology-version}
+Secured Endpoint: GET /admin/ontologies/{ontology-version}/{root-iri}
 
-These endpoints are passthroughs to the metadata endpoints using the same paths.
-Please see the metadata service documentation for more information.
+Delegates to apps: GET /admin/ontologies/{ontology-version}/{root-iri}
+
+Secured Endpoint: GET /apps/hierarchies
+
+Delegates to apps: GET /apps/hierarchies
+
+Secured Endpoint: GET /apps/hierarchies/{root-iri}
+
+Delegates to apps: GET /apps/hierarchies/{root-iri}
+
+### Metadata passthroughs
+
+Secured Endpoint: GET /admin/ontologies/{ontology-version}
+
+Delegates to metadata: GET /admin/ontologies/{ontology-version}
+
+These endpoints are passthroughs to the apps and metadata endpoints using the same paths.
+Please see the corresponding service documentation for more information.
 
 ## Listing Tasks in an App
 
