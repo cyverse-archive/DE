@@ -159,6 +159,14 @@ func (d *Docker) SafelyRemoveImage(name, tag string) error {
 	return d.Client.RemoveImageExtended(imageName, opts)
 }
 
+// SafelyRemoveImageByID will delete the image referenced by its ID.
+func (d *Docker) SafelyRemoveImageByID(id string) error {
+	opts := docker.RemoveImageOptions{
+		Force: false,
+	}
+	return d.Client.RemoveImageExtended(id, opts)
+}
+
 // NukeImage will delete the image with force set to true.
 func (d *Docker) NukeImage(name, tag string) error {
 	opts := docker.RemoveImageOptions{
@@ -184,6 +192,24 @@ func (d *Docker) Images() ([]string, error) {
 		for _, r := range repos {
 			retval = append(retval, r)
 		}
+	}
+	return retval, nil
+}
+
+// DanglingImages will return a list of IDs for all dangling images.
+func (d *Docker) DanglingImages() ([]string, error) {
+	opts := docker.ListImagesOptions{
+		Filters: map[string][]string{
+			"dangling": {"true"},
+		},
+	}
+	apiImages, err := d.Client.ListImages(opts)
+	if err != nil {
+		return nil, err
+	}
+	var retval []string
+	for _, img := range apiImages {
+		retval = append(retval, img.ID)
 	}
 	return retval, nil
 }
