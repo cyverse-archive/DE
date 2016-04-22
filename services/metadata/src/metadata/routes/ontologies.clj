@@ -1,5 +1,6 @@
 (ns metadata.routes.ontologies
   (:use [common-swagger-api.schema]
+        [common-swagger-api.schema.ontologies]
         [metadata.routes.domain.common]
         [metadata.routes.domain.ontologies]
         [ring.util.http-response :only [ok]])
