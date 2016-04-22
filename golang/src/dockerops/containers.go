@@ -369,14 +369,7 @@ func (d *Docker) Attach(container *docker.Container, stdout, stderr io.Writer, s
 	return err
 }
 
-func createFile(path string) (*os.File, error) {
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		return os.Create(path)
-	}
-	return os.Open(path)
-}
-
-func (d *Docker) runContainer(container *docker.Container, opts *docker.CreateContainerOptions, stdoutFile, stderrFile *os.File) (int, error) {
+func (d *Docker) runContainer(container *docker.Container, opts *docker.CreateContainerOptions, stdoutFile, stderrFile io.Writer) (int, error) {
 	var err error
 	successChan := make(chan struct{})
 	go func() {
@@ -408,12 +401,12 @@ func (d *Docker) RunStep(step *model.Step, invID string, idx int) (int, error) {
 	if err != nil {
 		return -1, err
 	}
-	stdoutFile, err := createFile(step.Stdout(stepIdx))
+	stdoutFile, err := os.Create(step.Stdout(stepIdx))
 	if err != nil {
 		return -1, err
 	}
 	defer stdoutFile.Close()
-	stderrFile, err := createFile(step.Stderr(stepIdx))
+	stderrFile, err := os.Create(step.Stderr(stepIdx))
 	if err != nil {
 		return -1, err
 	}
@@ -474,12 +467,12 @@ func (d *Docker) DownloadInputs(job *model.Job, input *model.StepInput, idx int)
 	if err != nil {
 		return -1, err
 	}
-	stdoutFile, err := createFile(input.Stdout(inputIdx))
+	stdoutFile, err := os.Create(input.Stdout(inputIdx))
 	if err != nil {
 		return -1, err
 	}
 	defer stdoutFile.Close()
-	stderrFile, err := createFile(input.Stderr(inputIdx))
+	stderrFile, err := os.Create(input.Stderr(inputIdx))
 	if err != nil {
 		return -1, err
 	}
@@ -537,12 +530,12 @@ func (d *Docker) UploadOutputs(job *model.Job) (int, error) {
 	if err != nil {
 		return -1, err
 	}
-	stdoutFile, err := createFile("logs/logs-stdout-output")
+	stdoutFile, err := os.Create("logs/logs-stdout-output")
 	if err != nil {
 		return -1, err
 	}
 	defer stdoutFile.Close()
-	stderrFile, err := createFile("logs/logs-stderr-output")
+	stderrFile, err := os.Create("logs/logs-stderr-output")
 	if err != nil {
 		return -1, err
 	}
