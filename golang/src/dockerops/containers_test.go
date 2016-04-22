@@ -1,4 +1,4 @@
-package main
+package dockerops
 
 import (
 	"bytes"

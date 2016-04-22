@@ -1,4 +1,4 @@
-package main
+package dockerops
 
 import (
 	"configurate"
@@ -24,11 +24,20 @@ type Docker struct {
 const WORKDIR = "/de-app-work"
 
 const (
-	typeLabel      = "org.iplantc.containertype"
-	inputContainer = iota
-	dataContainer
-	stepContainer
-	outputContainer
+	// TypeLabel is the label key applied to every container.
+	TypeLabel = "org.iplantc.containertype"
+
+	// InputContainer is the value used in the TypeLabel for input containers.
+	InputContainer = iota
+
+	// DataContainer is the value used in the TypeLabel for data containers.
+	DataContainer
+
+	// StepContainer is the value used in the TypeLabel for step containers.
+	StepContainer
+
+	// OutputContainer is the value used in the TypeLabel for output containers.
+	OutputContainer
 )
 
 // NewDocker returns a *Docker that connects to the docker client listening at
@@ -159,6 +168,26 @@ func (d *Docker) NukeImage(name, tag string) error {
 	return d.Client.RemoveImageExtended(imageName, opts)
 }
 
+// Images will returns a list of the repo tags for all the images currently
+// downloaded.
+func (d *Docker) Images() ([]string, error) {
+	opts := docker.ListImagesOptions{
+		All: true,
+	}
+	apiImages, err := d.Client.ListImages(opts)
+	if err != nil {
+		return nil, err
+	}
+	var retval []string
+	for _, img := range apiImages {
+		repos := img.RepoTags
+		for _, r := range repos {
+			retval = append(retval, r)
+		}
+	}
+	return retval, nil
+}
+
 // Pull will pull an image indicated by name and tag. Name is in the format
 // "registry/repository". If the name doesn't contain a / then the registry
 // is assumed to be "base" and the provided name will be set to repository.
@@ -279,9 +308,9 @@ func (d *Docker) CreateContainerFromStep(step *model.Step, invID string) (*docke
 			RW:          true,
 		},
 	}
+	var e bool
 	for _, lm := range localMounts {
-		e, err := pathExists(lm.Source)
-		if err != nil || !e {
+		if e, err = pathExists(lm.Source); err != nil || !e {
 			continue
 		}
 		createConfig.Mounts = append(createConfig.Mounts, lm)
@@ -310,7 +339,7 @@ func (d *Docker) CreateContainerFromStep(step *model.Step, invID string) (*docke
 
 	createConfig.Labels = make(map[string]string)
 	createConfig.Labels[model.DockerLabelKey] = invID
-	createConfig.Labels[typeLabel] = strconv.Itoa(stepContainer)
+	createConfig.Labels[TypeLabel] = strconv.Itoa(StepContainer)
 
 	createHostConfig.LogConfig = docker.LogConfig{Type: "none"}
 	createOpts.Config = createConfig
@@ -340,14 +369,7 @@ func (d *Docker) Attach(container *docker.Container, stdout, stderr io.Writer, s
 	return err
 }
 
-func createFile(path string) (*os.File, error) {
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		return os.Create(path)
-	}
-	return os.Open(path)
-}
-
-func (d *Docker) runContainer(container *docker.Container, opts *docker.CreateContainerOptions, stdoutFile, stderrFile *os.File) (int, error) {
+func (d *Docker) runContainer(container *docker.Container, opts *docker.CreateContainerOptions, stdoutFile, stderrFile io.Writer) (int, error) {
 	var err error
 	successChan := make(chan struct{})
 	go func() {
@@ -379,12 +401,12 @@ func (d *Docker) RunStep(step *model.Step, invID string, idx int) (int, error) {
 	if err != nil {
 		return -1, err
 	}
-	stdoutFile, err := createFile(step.Stdout(stepIdx))
+	stdoutFile, err := os.Create(step.Stdout(stepIdx))
 	if err != nil {
 		return -1, err
 	}
 	defer stdoutFile.Close()
-	stderrFile, err := createFile(step.Stderr(stepIdx))
+	stderrFile, err := os.Create(step.Stderr(stepIdx))
 	if err != nil {
 		return -1, err
 	}
@@ -431,7 +453,7 @@ func (d *Docker) CreateDownloadContainer(job *model.Job, input *model.StepInput,
 	)
 	opts.Config.Labels = make(map[string]string)
 	opts.Config.Labels[model.DockerLabelKey] = invID
-	opts.Config.Labels[typeLabel] = strconv.Itoa(inputContainer)
+	opts.Config.Labels[TypeLabel] = strconv.Itoa(InputContainer)
 	opts.Config.Cmd = input.Arguments(job.Submitter, job.FileMetadata)
 	container, err := d.Client.CreateContainer(opts)
 	return container, &opts, err
@@ -445,12 +467,12 @@ func (d *Docker) DownloadInputs(job *model.Job, input *model.StepInput, idx int)
 	if err != nil {
 		return -1, err
 	}
-	stdoutFile, err := createFile(input.Stdout(inputIdx))
+	stdoutFile, err := os.Create(input.Stdout(inputIdx))
 	if err != nil {
 		return -1, err
 	}
 	defer stdoutFile.Close()
-	stderrFile, err := createFile(input.Stderr(inputIdx))
+	stderrFile, err := os.Create(input.Stderr(inputIdx))
 	if err != nil {
 		return -1, err
 	}
@@ -496,7 +518,7 @@ func (d *Docker) CreateUploadContainer(job *model.Job) (*docker.Container, *dock
 	)
 	opts.Config.Labels = make(map[string]string)
 	opts.Config.Labels[model.DockerLabelKey] = job.InvocationID
-	opts.Config.Labels[typeLabel] = strconv.Itoa(outputContainer)
+	opts.Config.Labels[TypeLabel] = strconv.Itoa(OutputContainer)
 	opts.Config.Cmd = job.FinalOutputArguments()
 	container, err := d.Client.CreateContainer(opts)
 	return container, &opts, err
@@ -508,12 +530,12 @@ func (d *Docker) UploadOutputs(job *model.Job) (int, error) {
 	if err != nil {
 		return -1, err
 	}
-	stdoutFile, err := createFile("logs/logs-stdout-output")
+	stdoutFile, err := os.Create("logs/logs-stdout-output")
 	if err != nil {
 		return -1, err
 	}
 	defer stdoutFile.Close()
-	stderrFile, err := createFile("logs/logs-stderr-output")
+	stderrFile, err := os.Create("logs/logs-stderr-output")
 	if err != nil {
 		return -1, err
 	}
@@ -532,7 +554,7 @@ func (d *Docker) CreateDataContainer(vf *model.VolumesFrom, invID string) (*dock
 	opts.HostConfig.LogConfig = docker.LogConfig{Type: "none"}
 	opts.Config.Labels = make(map[string]string)
 	opts.Config.Labels[model.DockerLabelKey] = invID
-	opts.Config.Labels[typeLabel] = strconv.Itoa(dataContainer)
+	opts.Config.Labels[TypeLabel] = strconv.Itoa(DataContainer)
 	if vf.HostPath != "" || vf.ContainerPath != "" {
 		mount := docker.Mount{}
 		if vf.HostPath != "" {
