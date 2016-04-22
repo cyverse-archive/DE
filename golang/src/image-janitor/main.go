@@ -30,6 +30,7 @@ var (
 
 func init() {
 	flag.Parse()
+	logcabin.Init("image-janitor", "image-janitor")
 }
 
 // AppVersion prints version information to stdout
