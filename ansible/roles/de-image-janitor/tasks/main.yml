@@ -1,0 +1,20 @@
+---
+- include: stop.yml
+  tags:
+    - image-janitor
+    - stop
+
+- include: remove.yml
+  tags:
+    - image-janitor
+    - remove
+
+- include: update.yml
+  tags:
+    - image-janitor
+    - update
+
+- include:  start.yml
+  tags:
+    - image-janitor
+    - start

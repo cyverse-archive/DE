@@ -1,0 +1,10 @@
+---
+- name: remove binary
+  file: path=/usr/local/bin/image-janitor state=absent
+
+- name: remove systemd file
+  file: path=/lib/systemd/system/image-janitor.service state=absent
+
+- name: reload systemd
+  sudo: true
+  shell: systemctl daemon-reload

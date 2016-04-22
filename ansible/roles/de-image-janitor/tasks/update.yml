@@ -1,0 +1,33 @@
+---
+- name: create /var/log/image-janitor
+  file: path=/var/log/image-janitor owner=root group=root mode=0755 state=directory
+
+- name: create /opt/image-janitor
+  file: path=/opt/image-janitor owner=condor group=condor mode=0755 state=directory
+
+- name: place /opt/image-janitor/excludes file
+  template: src=excludes.j2 dest=/opt/image-janitor/excludes owner=condor group=condor mode=0644
+
+- name: pull jobservices image
+  shell: docker pull discoenv/jobservices:{{docker.tag}}
+
+- name: pull configs image
+  shell: docker pull gims.iplantcollaborative.org:5000/de-configs-{{environment_name}}:{{docker.tag}}
+
+- name: install image-janitor
+  shell: docker run --rm -v /usr/local/bin:/image-janitor --entrypoint "cp" discoenv/jobservices:{{docker.tag}} /bin/image-janitor /image-janitor/image-janitor
+
+- name: remove config container
+  shell: docker rm -v image-janitor-configs
+  ignore_errors: true
+
+- name: create config container
+  shell: docker run --name image-janitor-configs gims.iplantcollaborative.org:5000/de-configs-{{environment_name}}:{{docker.tag}}
+
+- name: copy config to system
+  shell: docker run --rm -v /etc:/configs --volumes-from image-janitor-configs alpine:3.2 cp /etc/iplant/de/jobservices.yml /configs/jobservices.yml
+
+- name: change permissions on jobservices.yml
+  file: path=/etc/jobservices.yml mode=0644
+
+- include: systemd.yml

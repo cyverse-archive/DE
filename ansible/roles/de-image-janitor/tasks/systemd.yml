@@ -1,0 +1,20 @@
+---
+- debug: msg="Configuring image-janitor systemd"
+
+- name: Disable image-janitor
+  service: name=image-janitor enabled=false
+  ignore_errors: true
+
+- name: Place systemd unit file
+  template:
+      src: "image-janitor.service.j2"
+      dest: "/lib/systemd/system/image-janitor.service"
+      group: "root"
+      owner: "root"
+      mode: 0644
+
+- name: Reload systemd
+  shell: systemctl daemon-reload
+
+- name: Enable image-janitor.service
+  service: name=image-janitor enabled=true

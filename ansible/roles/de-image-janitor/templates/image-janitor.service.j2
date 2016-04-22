@@ -1,0 +1,9 @@
+[Unit]
+Description=Cleans up job related images
+
+[Service]
+User=condor
+ExecStart=/usr/local/bin/image-janitor --config /etc/jobservices.yml
+Restart=on-failure
+StartLimitInterval=60s
+StartLimitBurst=3
