@@ -23,4 +23,12 @@ public interface OntologyDisplayStrings extends Messages{
     String createdOnColumnLabel();
 
     String setActiveVersion();
+
+    String fileUploadMaxSizeWarning();
+
+    String reset();
+
+    String fileUploadFailed(String file);
+
+    String fileUploadSuccess(String file);
 }
