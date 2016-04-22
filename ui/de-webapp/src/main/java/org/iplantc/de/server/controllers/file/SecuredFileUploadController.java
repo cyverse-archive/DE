@@ -48,6 +48,7 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class SecuredFileUploadController {
 
+    private final Logger logger = LoggerFactory.getLogger(SecuredFileUploadController.class);
     public static final int ENTITY_TOO_LARGE = 413;
     private final Logger API_REQUEST_LOG = LoggerFactory.getLogger(API_METRICS_LOGGER);
     private final AppLoggerUtil loggerUtil = AppLoggerUtil.getInstance();
@@ -55,6 +56,8 @@ public class SecuredFileUploadController {
     @Autowired private JwtBuilder jwtBuilder;
 
     @Value("${org.iplantc.services.file-io.secured.file-upload}") String securedFileUploadUrl;
+    @Value("${org.iplantc.services.admin.ontologies}") String ontologyFileUploadUrl;
+
 
     @RequestMapping(value = "/de/secured/fileUpload", method = RequestMethod.POST)
     public ResponseEntity<Object> doSecureFileUpload(@RequestParam("dest") final String dest,
@@ -105,6 +108,56 @@ public class SecuredFileUploadController {
 
         return response;
     }
+
+    @RequestMapping(value = "/de/secured/ontologyFileUpload", method = RequestMethod.POST)
+    public ResponseEntity<Object> doSecureOntologyFileUpload(
+            @RequestParam("file") final MultipartFile file, HttpServletRequest request)
+            throws IOException, URISyntaxException, ServletException {
+
+
+        final HttpPost post = new HttpPost(ontologyFileUploadUrl);
+        logger.info("ontology url &&&&&&&&&&&& " + ontologyFileUploadUrl + " &&&&&&&&&&&");
+        try {
+            post.setHeader(DESecurityConstants.JWT_CUSTOM_HEADER, jwtBuilder.buildJwt(request));
+            post.setEntity(buildMultipartEntity(file));
+            prepareForRequest(post, ontologyFileUploadUrl.toString());
+        } catch (JoseException e) {
+            logger.error("exception ----->" + e.getMessage());
+            API_REQUEST_LOG.error("GET " + ontologyFileUploadUrl.toString(), e);
+            MDC.remove(RESPONSE_KEY);
+            throw new IOException("unable to generate JWT", e);
+        }
+
+        // Send the request.
+        CloseableHttpClient client = HttpClients.createDefault();
+        ResponseEntity<Object> response = null;
+        try {
+            final long requestStartTime = System.currentTimeMillis();
+            final CloseableHttpResponse incomingResponse =
+                    loggerUtil.copyRequestIdHeader(post, client.execute(post));
+            final long responseRecvTime = System.currentTimeMillis();
+            final String responseJson = loggerUtil.createMdcResponseMapJson(incomingResponse,
+                                                                            BaseServiceCallWrapper.Type.GET,
+                                                                            ontologyFileUploadUrl.toString(),
+                                                                            null,
+                                                                            responseRecvTime
+                                                                            - requestStartTime);
+            MDC.put(RESPONSE_KEY, responseJson);
+            API_REQUEST_LOG.info("POST {}", ontologyFileUploadUrl.toString());
+            logger.info(
+                    "ontology file upload response  ^^^^^^^^^^^^" + response.getStatusCode().toString()
+                    + " ^^^^^^^^^");
+        } catch (Exception e) {
+            logger.info("**** unable to upload ontology file ****");
+            API_REQUEST_LOG.error("POST " + ontologyFileUploadUrl.toString(), e);
+        } finally {
+            MDC.remove(RESPONSE_KEY);
+            client.close();
+        }
+
+        return response;
+    }
+
 
     /**
      * Prepares for request processing. The request URI needs to be reassembled and stored in the
