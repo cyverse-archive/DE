@@ -192,6 +192,18 @@ func removeUnusedImages(client *dockerops.Docker, readFrom string) {
 		}
 	}
 	logcabin.Info.Println("Done removing unused Docker images")
+	danglingImages, err := client.DanglingImages()
+	if err != nil {
+		logcabin.Error.Println(err)
+	}
+	for _, di := range danglingImages {
+		logcabin.Info.Printf("Removing dangling image %s", di)
+		if err = client.SafelyRemoveImageByID(di); err != nil {
+			logcabin.Error.Println(err)
+		} else {
+			logcabin.Info.Printf("Done removing dangling image %s", di)
+		}
+	}
 }
 
 func readExcludes(readFrom string) (map[string]bool, error) {
