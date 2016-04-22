@@ -10,4 +10,17 @@ public interface OntologyDisplayStrings extends Messages{
     @Key("addOntology")
     String addOntology();
 
+    String ontologyListDialogName();
+
+    String ontologyList();
+
+    String iriColumnLabel();
+
+    String versionColumnLabel();
+
+    String createdByColumnLabel();
+
+    String createdOnColumnLabel();
+
+    String setActiveVersion();
 }

@@ -28,6 +28,11 @@
                                        text="{appearance.addOntology}"
                                        icon="{appearance.addIcon}"/>
                 </toolbar:child>
+                <toolbar:child>
+                    <button:TextButton ui:field="viewVersions"
+                                       text="{appearance.ontologyList}"
+                                       icon="{appearance.addIcon}"/>
+                </toolbar:child>
             </toolbar:ToolBar>
         </container:north>
         <container:center layoutData="{centerData}">
