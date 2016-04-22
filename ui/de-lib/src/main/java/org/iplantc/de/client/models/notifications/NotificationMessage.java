@@ -31,8 +31,10 @@ public interface NotificationMessage extends HasId{
     @PropertyName("timestamp")
     long getTimestamp();
 
+    @PropertyName("type")
     NotificationCategory getCategory();
 
+    @PropertyName("type")
     void setCategory(NotificationCategory type);
 
     String getContext();
