@@ -162,6 +162,22 @@ paths:
           $ref: "#/responses/not_found"
         500:
           $ref: "#/responses/internal_server_error"
+    delete:
+      tags:
+        - resource_types
+      summary: "Delete a Resource Type"
+      description: >-
+        Removes a resource type from the database. A resource type may only be removed if there are no resources
+        associated with it.
+      responses:
+        200:
+          description: "Deleted"
+        400:
+          $ref: "#/responses/bad_request"
+        404:
+          $ref: "#/responses/not_found"
+        500:
+          $ref: "#/responses/internal_server_error"
 produces:
   - application/json
 responses:

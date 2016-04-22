@@ -53,9 +53,9 @@ func BuildResourceTypesIDPostHandler(db *sql.DB) func(resource_types.PostResourc
 		if err != nil {
 			tx.Rollback()
 			reason := err.Error()
-			return resource_types.NewPutResourceTypesInternalServerError().WithPayload(&models.ErrorOut{&reason})
+			return resource_types.NewPostResourceTypesIDInternalServerError().WithPayload(&models.ErrorOut{&reason})
 		}
 		tx.Commit()
-		return resource_types.NewPutResourceTypesCreated().WithPayload(resourceTypeOut)
+		return resource_types.NewPostResourceTypesIDOK().WithPayload(resourceTypeOut)
 	}
 }

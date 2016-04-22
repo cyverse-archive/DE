@@ -46,6 +46,8 @@ type PermissionsAPI struct {
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer httpkit.Producer
 
+	// ResourceTypesDeleteResourceTypesIDHandler sets the operation handler for the delete resource types ID operation
+	ResourceTypesDeleteResourceTypesIDHandler resource_types.DeleteResourceTypesIDHandler
 	// StatusGetHandler sets the operation handler for the get operation
 	StatusGetHandler status.GetHandler
 	// ResourceTypesGetResourceTypesHandler sets the operation handler for the get resource types operation
@@ -107,6 +109,10 @@ func (o *PermissionsAPI) Validate() error {
 
 	if o.JSONProducer == nil {
 		unregistered = append(unregistered, "JSONProducer")
+	}
+
+	if o.ResourceTypesDeleteResourceTypesIDHandler == nil {
+		unregistered = append(unregistered, "resource_types.DeleteResourceTypesIDHandler")
 	}
 
 	if o.StatusGetHandler == nil {
@@ -197,6 +203,11 @@ func (o *PermissionsAPI) initHandlerCache() {
 	if o.handlers == nil {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
+
+	if o.handlers["DELETE"] == nil {
+		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/resource_types/{id}"] = resource_types.NewDeleteResourceTypesID(o.context, o.ResourceTypesDeleteResourceTypesIDHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)

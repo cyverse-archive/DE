@@ -157,3 +157,27 @@ func UpdateResourceType(
 
 	return &resourceTypeOut, nil
 }
+
+func DeleteResourceType(tx *sql.Tx, id *string) error {
+
+	// Update the database.
+	statement := "DELETE FROM resource_types WHERE id = $1"
+	result, err := tx.Exec(statement, id)
+	if err != nil {
+		return err
+	}
+
+	// Verify that a row was deleted.
+	count, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if count == 0 {
+		return fmt.Errorf("no resource types deleted for id %s", *id)
+	}
+	if count > 1 {
+		return fmt.Errorf("multiple resource types deleted for id %s", *id)
+	}
+
+	return nil
+}
