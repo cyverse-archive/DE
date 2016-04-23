@@ -338,3 +338,8 @@
       (where (not (exists (is-visible-app-subselect workspace favorites-group-index :l.id))))
       (add-app-id-where-clause params)
       select first :count))
+
+(defn list-apps-by-id
+  "Lists all apps with an ID in the the given app-ids list."
+  [workspace favorites-group-index app-ids params]
+  (select (get-app-listing-base-query workspace favorites-group-index (assoc params :app-ids app-ids))))

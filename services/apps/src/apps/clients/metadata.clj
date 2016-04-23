@@ -1,4 +1,5 @@
 (ns apps.clients.metadata
+  (:use [kameleon.uuids :only [uuidify]])
   (:require [cemerick.url :as curl]
             [cheshire.core :as json]
             [clj-http.client :as http]
@@ -40,3 +41,13 @@
   (http/post (metadata-url-encoded "ontologies" ontology-version root-iri "filter")
              (post-options (json/encode {:target-ids app-ids :target-types ["app"]})
                            {:user username})))
+
+(defn filter-unclassified
+  [username ontology-version root-iri app-ids]
+  (->> (http/post (metadata-url-encoded "ontologies" ontology-version root-iri "filter-unclassified")
+                  (post-options (json/encode {:target-ids app-ids :target-types ["app"]})
+                                {:user username}))
+       :body
+       util/parse-json
+       :target-ids
+       (map uuidify)))

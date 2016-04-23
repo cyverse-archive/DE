@@ -63,6 +63,18 @@
                :as               :stream
                :follow-redirects false}))
 
+(defn get-unclassified-app-listing
+  ([ontology-version root-iri params]
+   (client/get (apps-url-encoded "admin" "ontologies" ontology-version root-iri "unclassified")
+               {:query-params     (secured-params params apps-sort-params)
+                :as               :stream
+                :follow-redirects false}))
+  ([root-iri params]
+   (client/get (apps-url-encoded "apps" "hierarchies" root-iri "unclassified")
+               {:query-params     (secured-params params apps-sort-params)
+                :as               :stream
+                :follow-redirects false})))
+
 (defn get-app-categories
   [params]
   (client/get (apps-url "apps" "categories")

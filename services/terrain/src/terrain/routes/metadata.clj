@@ -30,7 +30,10 @@
      (service/success-response (apps/get-app-category-hierarchies)))
 
    (GET "/apps/hierarchies/:root-iri" [root-iri]
-     (service/success-response (apps/get-app-category-hierarchy root-iri)))))
+     (service/success-response (apps/get-app-category-hierarchy root-iri)))
+
+   (GET "/apps/hierarchies/:root-iri/unclassified" [root-iri :as {params :params}]
+     (service/success-response (apps/get-unclassified-app-listing root-iri params)))))
 
 (defn admin-ontology-routes
   []
@@ -55,7 +58,10 @@
      (service/success-response (apps/get-app-category-hierarchy ontology-version root-iri)))
 
    (PUT "/ontologies/:ontology-version/:root-iri" [ontology-version root-iri]
-     (service/success-response (metadata-client/save-ontology-hierarchy ontology-version root-iri)))))
+     (service/success-response (metadata-client/save-ontology-hierarchy ontology-version root-iri)))
+
+   (GET "/ontologies/:ontology-version/:root-iri/unclassified" [ontology-version root-iri :as {params :params}]
+     (service/success-response (apps/get-unclassified-app-listing ontology-version root-iri params)))))
 
 (defn admin-category-routes
   []

@@ -1,6 +1,7 @@
 (ns apps.routes.apps.categories
   (:use [common-swagger-api.schema]
         [common-swagger-api.schema.ontologies]
+        [apps.routes.domain.app :only [AppListing]]
         [apps.routes.domain.app.category]
         [apps.routes.params]
         [apps.user :only [current-user]]
@@ -59,4 +60,17 @@ Please see the metadata service documentation for response information."
 #### Delegates to metadata service
     POST /ontologies/{ontology-version}/{root-iri}/filter
 Please see the metadata service documentation for response information."
-        (listings/get-app-hierarchy current-user root-iri)))
+        (listings/get-app-hierarchy current-user root-iri))
+
+  (GET* "/:root-iri/unclassified" [root-iri]
+        :path-params [root-iri :- OntologyHierarchyRootParam]
+        :query [params AppListingPagingParams]
+        :return AppListing
+        :summary "List Unclassified Apps"
+        :description
+"Lists all of the apps that are visible to the user that are not under the given app category or any of
+ its subcategories.
+
+#### Delegates to metadata service
+    POST /ontologies/{ontology-version}/{root-iri}/filter-unclassified"
+        (ok (coerce! AppListing (listings/get-unclassified-app-listing current-user root-iri params)))))

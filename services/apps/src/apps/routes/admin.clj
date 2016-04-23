@@ -200,7 +200,22 @@
 #### Delegates to metadata service
     POST /ontologies/{ontology-version}/{root-iri}/filter
 Please see the metadata service documentation for response information."
-        (listings/get-app-hierarchy current-user ontology-version root-iri)))
+        (listings/get-app-hierarchy current-user ontology-version root-iri))
+
+  (GET* "/:ontology-version/:root-iri/unclassified" [root-iri]
+        :path-params [ontology-version :- OntologyVersionParam
+                      root-iri :- OntologyHierarchyRootParam]
+        :query [params AppListingPagingParams]
+        :return AppListing
+        :summary "List Unclassified Apps"
+        :description
+"Lists all of the apps that are visible to the user that are not under the given `root-iri`, or any of
+ its subcategories, for the given `ontology-version`.
+
+#### Delegates to metadata service
+    POST /ontologies/{ontology-version}/{root-iri}/filter-unclassified"
+        (ok (coerce! AppListing
+                     (listings/get-unclassified-app-listing current-user ontology-version root-iri params)))))
 
 (defroutes* reference-genomes
   (POST* "/" []

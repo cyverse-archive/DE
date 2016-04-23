@@ -254,6 +254,21 @@
       (assoc :can_favor true :can_rate true :app_type "DE")
       (remove-nil-vals)))
 
+(defn get-unclassified-app-listing
+  ([user root-iri params]
+   (get-unclassified-app-listing user (get-active-hierarchy-version) root-iri params))
+  ([{:keys [username shortUsername]} ontology-version root-iri params]
+   (let [workspace       (get-optional-workspace username)
+         faves-index     (workspace-favorites-app-category-index)
+         perms           (iplant-groups/load-app-permissions shortUsername)
+         app-ids         (set (keys perms))
+         app-listing-ids (metadata-client/filter-unclassified username ontology-version root-iri app-ids)
+         total           (count app-listing-ids)
+         app-listing     (list-apps-by-id workspace faves-index app-listing-ids (fix-sort-params params))
+         app-listing     (map (partial format-app-listing perms) app-listing)]
+     {:app_count total
+      :apps app-listing})))
+
 (defn- list-apps-in-virtual-group
   "Formats a listing for a virtual group."
   [user workspace group-id perms params]
