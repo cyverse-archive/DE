@@ -75,7 +75,7 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
 
     @Override
     public int iriColumnWidth() {
-        return 100;
+        return 75;
     }
 
     @Override
@@ -85,7 +85,7 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
 
     @Override
     public int versionColumnWidth() {
-        return 100;
+        return 150;
     }
 
     @Override
@@ -95,7 +95,7 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
 
     @Override
     public int createdByColumnWidth() {
-        return 100;
+        return 30;
     }
 
     @Override
@@ -105,7 +105,7 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
 
     @Override
     public int createdOnColumnWidth() {
-        return 100;
+        return 75;
     }
 
     @Override

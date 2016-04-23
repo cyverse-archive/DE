@@ -6,9 +6,13 @@ import org.iplantc.de.admin.desktop.client.ontologies.presenter.OntologiesPresen
 import org.iplantc.de.admin.desktop.client.ontologies.service.OntologyServiceFacade;
 import org.iplantc.de.admin.desktop.client.ontologies.service.impl.OntologyServiceFacadeImpl;
 import org.iplantc.de.admin.desktop.client.ontologies.views.OntologiesViewImpl;
+import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.gwt.inject.client.assistedinject.GinFactoryModuleBuilder;
+import com.google.inject.TypeLiteral;
+
+import com.sencha.gxt.data.shared.TreeStore;
 
 /**
  * @author aramsey
@@ -16,6 +20,8 @@ import com.google.gwt.inject.client.assistedinject.GinFactoryModuleBuilder;
 public class OntologiesGinModule extends AbstractGinModule {
     @Override
     protected void configure() {
+        bind(new TypeLiteral<TreeStore<OntologyHierarchy>>() {})
+                .toProvider(OntologyHierarchyTreeStoreProvider.class);
         install(new GinFactoryModuleBuilder().implement(OntologiesView.class, OntologiesViewImpl.class).build(
                 OntologiesViewFactory.class));
         bind(OntologiesView.Presenter.class).to(OntologiesPresenterImpl.class);

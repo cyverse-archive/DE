@@ -3,6 +3,7 @@
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
              xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
              xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
+             xmlns:tree="urn:import:com.sencha.gxt.widget.core.client.tree"
              xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
              xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
 
@@ -33,10 +34,13 @@
                                        text="{appearance.ontologyList}"
                                        icon="{appearance.addIcon}"/>
                 </toolbar:child>
+                <toolbar:child>
+                    <form:SimpleComboBox ui:field="ontologyDropDown"/>
+                </toolbar:child>
             </toolbar:ToolBar>
         </container:north>
         <container:center layoutData="{centerData}">
-
+            <tree:Tree ui:field="tree"/>
         </container:center>
     </container:BorderLayoutContainer>
 </ui:UiBinder>
