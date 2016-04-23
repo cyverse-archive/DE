@@ -1,4 +1,4 @@
-FROM postgres:9.2
+FROM postgres:9.5
 
 COPY database.tar.gz /database.tar.gz
 COPY jex-db.tar.gz /jex-db.tar.gz
@@ -8,7 +8,7 @@ COPY permissions-db.tar.gz /permissions-db.tar.gz
 
 RUN apt-get update && apt-get install -y \
   openjdk-7-jre-headless \
-  postgresql-client-9.3 \
+  postgresql-client-9.5 \
   && rm -rf /var/lib/apt/lists/*
 
 ARG git_commit=unknown
