@@ -32,6 +32,7 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
 
     private final String ONTOLOGY = "org.iplantc.services.ontologies";
     private final String ONTOLOGY_ADMIN = "org.iplantc.services.admin.ontologies";
+    private final String APPS = "org.iplantc.services.apps.hierarchies";
     @Inject OntologyAutoBeanFactory factory;
     @Inject private DiscEnvApiService deService;
 
@@ -62,7 +63,7 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
     @Override
     public void getOntologies(AsyncCallback<List<Ontology>> callback) {
 
-        String address = ONTOLOGY;
+        String address = ONTOLOGY_ADMIN;
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, new OntologyListCallbackConverter(callback, factory));
@@ -71,7 +72,7 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
 
     @Override
     public void getOntologyHierarchies(String version, AsyncCallback<List<OntologyHierarchy>> callback) {
-        String address = ONTOLOGY + "/" + version;
+        String address = APPS;
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, new OntologyHierarchyListCallbackConverter(callback, factory));
