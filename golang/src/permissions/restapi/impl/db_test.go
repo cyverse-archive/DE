@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"os"
 	"testing"
+
+	_ "github.com/lib/pq"
 )
 
 func shouldrun() bool {
@@ -11,7 +13,19 @@ func shouldrun() bool {
 }
 
 func dburi() string {
-	return "postgres://de:notprod@dedb:5432/de?sslmode=disable"
+	return "postgres://de:notprod@dedb:5432/permissions?sslmode=disable"
+}
+
+func truncateTables(db *sql.DB) error {
+
+	// Truncate all tables.
+	stmt := "TRUNCATE permissions, permission_levels, subjects, resources, resource_types"
+	_, err := db.Exec(stmt)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func initdb(t *testing.T) *sql.DB {
@@ -23,5 +37,10 @@ func initdb(t *testing.T) *sql.DB {
 	if err != nil {
 		t.Error(err)
 	}
+
+	if err := truncateTables(db); err != nil {
+		t.Error(err)
+	}
+
 	return db
 }
