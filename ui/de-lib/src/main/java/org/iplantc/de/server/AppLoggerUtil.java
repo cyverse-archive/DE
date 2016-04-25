@@ -141,6 +141,9 @@ public class AppLoggerUtil {
     }
 
     private Map<String, String> getQueryStringMap(final String queryString){
+        if (Strings.isNullOrEmpty(queryString)){
+            return null;
+        }
         final Map<String, String> queryStringMap = Maps.newHashMap();
         String[] params = queryString.split("&");
         for(String param : params){
