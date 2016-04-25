@@ -1,4 +1,5 @@
 - hosts: services
   sudo: true
+  gather_facts: false
   roles:
     - de-docker-network

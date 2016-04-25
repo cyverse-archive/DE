@@ -1,6 +1,7 @@
 - name: Configure image-janitor
   hosts: condor:&systems
   sudo: yes
+  gather_facts: false
   tags:
       - image-janitor
   roles:

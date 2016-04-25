@@ -2,6 +2,7 @@
 - name: Configure RabbitMQ
   hosts: amqp-brokers
   sudo: true
+  gather_facts: false
   tags:
     - rabbitmq
     - config

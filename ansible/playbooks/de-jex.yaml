@@ -2,6 +2,7 @@
 - name: Configure JEX
   hosts: jex:&systems
   become: yes
+  gather_facts: false
   tags:
       - jex
   pre_tasks:
@@ -9,4 +10,3 @@
         file: path=/etc/iplant/de state=directory owner=root group=root mode=0755
   roles:
       - de-jex
-
