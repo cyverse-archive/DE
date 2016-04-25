@@ -26,7 +26,7 @@ func main() {
 
 	parser := flags.NewParser(server, flags.Default)
 	parser.ShortDescription = `Permissions Service`
-	parser.LongDescription = `Manages Permissions for the CyVerse Discovery Environment and related applications`
+	parser.LongDescription = `Manages Permissions for the CyVerse Discovery Environment and related applications.`
 
 	server.ConfigureFlags()
 	for _, optsGroup := range api.CommandLineOptionsGroups {

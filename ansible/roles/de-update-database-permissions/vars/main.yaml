@@ -1,0 +1,11 @@
+---
+fmode: "{{facepalm_mode|default('update')}}"
+tgz_name: permissions-db.tar.gz
+tgz_flag: "-f {{tgz_name}}"
+curr_db_host: "{{permissions_db_host}}"
+curr_db_port: "{{permissions_db_port|default(5432)}}"
+curr_db_user: "{{permissions_db_user}}"
+curr_db_password: "{{permissions_db_password}}"
+curr_db_name: "{{permissions_db_name}}"
+curr_db_admin: "{{permissions_db_admin}}"
+curr_db_admin_password: "{{permissions_db_admin_password}}"

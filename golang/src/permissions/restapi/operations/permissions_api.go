@@ -14,6 +14,7 @@ import (
 	strfmt "github.com/go-swagger/go-swagger/strfmt"
 	"github.com/go-swagger/go-swagger/swag"
 
+	"permissions/restapi/operations/resource_types"
 	"permissions/restapi/operations/status"
 )
 
@@ -31,7 +32,7 @@ func NewPermissionsAPI(spec *spec.Document) *PermissionsAPI {
 	return o
 }
 
-/*PermissionsAPI Manages Permissions for the CyVerse Discovery Environment and related applications */
+/*PermissionsAPI Manages Permissions for the CyVerse Discovery Environment and related applications. */
 type PermissionsAPI struct {
 	spec            *spec.Document
 	context         *middleware.Context
@@ -45,8 +46,16 @@ type PermissionsAPI struct {
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer httpkit.Producer
 
+	// ResourceTypesDeleteResourceTypesIDHandler sets the operation handler for the delete resource types ID operation
+	ResourceTypesDeleteResourceTypesIDHandler resource_types.DeleteResourceTypesIDHandler
 	// StatusGetHandler sets the operation handler for the get operation
 	StatusGetHandler status.GetHandler
+	// ResourceTypesGetResourceTypesHandler sets the operation handler for the get resource types operation
+	ResourceTypesGetResourceTypesHandler resource_types.GetResourceTypesHandler
+	// ResourceTypesPostResourceTypesIDHandler sets the operation handler for the post resource types ID operation
+	ResourceTypesPostResourceTypesIDHandler resource_types.PostResourceTypesIDHandler
+	// ResourceTypesPutResourceTypesHandler sets the operation handler for the put resource types operation
+	ResourceTypesPutResourceTypesHandler resource_types.PutResourceTypesHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -102,8 +111,24 @@ func (o *PermissionsAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
+	if o.ResourceTypesDeleteResourceTypesIDHandler == nil {
+		unregistered = append(unregistered, "resource_types.DeleteResourceTypesIDHandler")
+	}
+
 	if o.StatusGetHandler == nil {
 		unregistered = append(unregistered, "status.GetHandler")
+	}
+
+	if o.ResourceTypesGetResourceTypesHandler == nil {
+		unregistered = append(unregistered, "resource_types.GetResourceTypesHandler")
+	}
+
+	if o.ResourceTypesPostResourceTypesIDHandler == nil {
+		unregistered = append(unregistered, "resource_types.PostResourceTypesIDHandler")
+	}
+
+	if o.ResourceTypesPutResourceTypesHandler == nil {
+		unregistered = append(unregistered, "resource_types.PutResourceTypesHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -179,10 +204,30 @@ func (o *PermissionsAPI) initHandlerCache() {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
 
+	if o.handlers["DELETE"] == nil {
+		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/resource_types/{id}"] = resource_types.NewDeleteResourceTypesID(o.context, o.ResourceTypesDeleteResourceTypesIDHandler)
+
 	if o.handlers["GET"] == nil {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/"] = status.NewGet(o.context, o.StatusGetHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/resource_types"] = resource_types.NewGetResourceTypes(o.context, o.ResourceTypesGetResourceTypesHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers[strings.ToUpper("POST")] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/resource_types/{id}"] = resource_types.NewPostResourceTypesID(o.context, o.ResourceTypesPostResourceTypesIDHandler)
+
+	if o.handlers["PUT"] == nil {
+		o.handlers[strings.ToUpper("PUT")] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/resource_types"] = resource_types.NewPutResourceTypes(o.context, o.ResourceTypesPutResourceTypesHandler)
 
 }
 

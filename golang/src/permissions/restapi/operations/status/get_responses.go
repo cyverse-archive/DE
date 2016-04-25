@@ -11,7 +11,7 @@ import (
 	"permissions/models"
 )
 
-/*GetOK service status information
+/*GetOK Success
 
 swagger:response getOK
 */

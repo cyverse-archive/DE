@@ -1,6 +1,6 @@
 /*Package restapi Permissions Service
 
-Manages Permissions for the CyVerse Discovery Environment and related applications
+Manages Permissions for the CyVerse Discovery Environment and related applications.
 
 
     Schemes:
