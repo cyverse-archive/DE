@@ -144,6 +144,7 @@ public class SecuredFileUploadController {
                                                                             - requestStartTime);
             MDC.put(RESPONSE_KEY, responseJson);
             API_REQUEST_LOG.info("POST {}", ontologyFileUploadUrl.toString());
+            response = formatResponse(incomingResponse);
             logger.info(
                     "ontology file upload response  ^^^^^^^^^^^^" + response.getStatusCode().toString()
                     + " ^^^^^^^^^");
