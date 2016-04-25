@@ -464,4 +464,7 @@ public interface IplantResources extends ClientBundle,
 
     @Source("user_comment.png")
     ImageResource userComment();
+
+    @Source("arrow_undo.png")
+    ImageResource arrowUndoIcon();
 }

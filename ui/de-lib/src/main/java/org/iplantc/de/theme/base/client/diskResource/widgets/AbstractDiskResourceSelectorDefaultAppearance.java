@@ -85,7 +85,7 @@ public class AbstractDiskResourceSelectorDefaultAppearance implements AbstractDi
     }
 
     interface Resources extends ClientBundle {
-        @Source("../arrow_undo.png")
+        @Source("org/iplantc/de/resources/client/arrow_undo.png")
         ImageResource arrowUndo();
 
         @Source("AbstractDiskResourceSelector.css")
