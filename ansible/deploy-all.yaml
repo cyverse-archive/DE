@@ -18,6 +18,7 @@
 # Services
 ############################################
 - include: playbooks/de-docker-network.yml
+- include: playbooks/de-rm-jex.yaml
 - include: playbooks/de-rabbitmq-cfg.yml
 - include: playbooks/de-condor-launcher.yml
 - include: playbooks/de-image-janitor.yaml
