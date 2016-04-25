@@ -1,12 +1,12 @@
 package org.iplantc.de.theme.base.client.diskResource.dialogs;
 
 import org.iplantc.de.diskResource.client.views.dialogs.SimpleFileUploadDialog;
+import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.theme.base.client.diskResource.DiskResourceMessages;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -25,31 +25,25 @@ public class SimpleFileUploadDialogDefaultAppearance implements SimpleFileUpload
         SafeHtml destinationPathLabel(String destPath, String parentPath);
     }
 
-    public interface SimpleFileUploadAppearanceResources extends ClientBundle {
-
-        @Source("../arrow_undo.png")
-        ImageResource arrowUndoIcon();
-    }
-
     private final DiskResourceMessages diskResourceMessages;
     private final IplantDisplayStrings iplantDisplayStrings;
     private final IplantErrorStrings iplantErrorStrings;
     private final Templates templates;
-    private final SimpleFileUploadAppearanceResources resources;
+    private final IplantResources resources;
 
     public SimpleFileUploadDialogDefaultAppearance() {
         this(GWT.<DiskResourceMessages> create(DiskResourceMessages.class),
              GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class),
              GWT.<IplantErrorStrings> create(IplantErrorStrings.class),
              GWT.<Templates> create(Templates.class),
-             GWT.<SimpleFileUploadAppearanceResources> create(SimpleFileUploadAppearanceResources.class));
+             GWT.<IplantResources> create(IplantResources.class));
     }
 
     SimpleFileUploadDialogDefaultAppearance(final DiskResourceMessages diskResourceMessages,
                                             final IplantDisplayStrings iplantDisplayStrings,
                                             final IplantErrorStrings iplantErrorStrings,
                                             final Templates templates,
-                                            final SimpleFileUploadAppearanceResources resources) {
+                                            final IplantResources resources) {
         this.diskResourceMessages = diskResourceMessages;
         this.iplantDisplayStrings = iplantDisplayStrings;
         this.iplantErrorStrings = iplantErrorStrings;
