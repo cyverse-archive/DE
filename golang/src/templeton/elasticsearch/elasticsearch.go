@@ -10,6 +10,14 @@ import (
 	"templeton/model"
 )
 
+var (
+	// knownTypes is a mapping which stores known types to index
+	knownTypes = map[string]bool{
+		"file":   true,
+		"folder": true,
+	}
+)
+
 // Elasticer is a type used to interact with Elasticsearch
 type Elasticer struct {
 	es      *elastic.Client
@@ -142,19 +150,21 @@ func (e *Elasticer) IndexEverything(d *database.Databaser) {
 			break
 		}
 
-		formatted, err := model.AVUsToIndexedObject(avus)
-		if err != nil {
-			logcabin.Error.Print(err)
-			break
-		}
-		indexed_type := fmt.Sprintf("%s_metadata", avus[0].TargetType)
-		logcabin.Info.Printf("Indexing %s/%s", indexed_type, formatted.ID)
+		if knownTypes[avus[0].TargetType] {
+			formatted, err := model.AVUsToIndexedObject(avus)
+			if err != nil {
+				logcabin.Error.Print(err)
+				break
+			}
+			indexed_type := fmt.Sprintf("%s_metadata", avus[0].TargetType)
+			logcabin.Info.Printf("Indexing %s/%s", indexed_type, formatted.ID)
 
-		req := elastic.NewBulkIndexRequest().Index(e.index).Type(indexed_type).Parent(formatted.ID).Id(formatted.ID).Doc(formatted)
-		err = indexer.Add(req)
-		if err != nil {
-			logcabin.Error.Print(err)
-			break
+			req := elastic.NewBulkIndexRequest().Index(e.index).Type(indexed_type).Parent(formatted.ID).Id(formatted.ID).Doc(formatted)
+			err = indexer.Add(req)
+			if err != nil {
+				logcabin.Error.Print(err)
+				break
+			}
 		}
 	}
 }
@@ -181,21 +191,23 @@ func (e *Elasticer) IndexOne(d *database.Databaser, id string) {
 		return
 	}
 
-	formatted, err := model.AVUsToIndexedObject(avus)
-	if err == model.NoAVUs {
-		e.DeleteOne(id)
-		return
-	}
-	if err != nil {
-		logcabin.Error.Print(err)
-		return
-	}
+	if knownTypes[avus[0].TargetType] {
+		formatted, err := model.AVUsToIndexedObject(avus)
+		if err == model.NoAVUs {
+			e.DeleteOne(id)
+			return
+		}
+		if err != nil {
+			logcabin.Error.Print(err)
+			return
+		}
 
-	indexed_type := fmt.Sprintf("%s_metadata", avus[0].TargetType)
-	logcabin.Info.Printf("Indexing %s/%s", indexed_type, formatted.ID)
-	_, err = e.es.Index().Index(e.index).Type(indexed_type).Parent(formatted.ID).Id(formatted.ID).BodyJson(formatted).Do()
-	if err != nil {
-		logcabin.Error.Print(err)
+		indexed_type := fmt.Sprintf("%s_metadata", avus[0].TargetType)
+		logcabin.Info.Printf("Indexing %s/%s", indexed_type, formatted.ID)
+		_, err = e.es.Index().Index(e.index).Type(indexed_type).Parent(formatted.ID).Id(formatted.ID).BodyJson(formatted).Do()
+		if err != nil {
+			logcabin.Error.Print(err)
+		}
 	}
 	return
 }
