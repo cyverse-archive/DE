@@ -30,13 +30,17 @@
                  [clj-http "2.1.0"]
                  [clj-time "0.11.0"]
                  [slingshot "0.12.2"]
+                 [clojurewerkz/quartzite "2.0.0"]
                  [com.mchange/c3p0 "0.9.5.2"]
                  [com.novemberain/langohr "3.5.1"]
                  [korma "0.4.2"
                   :exclusions [c3p0]]]
+  :eastwood {:exclude-namespaces [:test-paths]
+             :linters [:wrong-arity :wrong-ns-form :wrong-pre-post :wrong-tag :misplaced-docstrings]}
   :plugins [[lein-ring "0.8.13"]
             [lein-marginalia "0.7.0"]
-            [test2junit "1.1.3"]]
+            [test2junit "1.1.3"]
+            [jonase/eastwood "0.2.3"]]
   :ring {:handler notification-agent.core/app
          :init notification-agent.core/load-config-from-file
          :port 31320}

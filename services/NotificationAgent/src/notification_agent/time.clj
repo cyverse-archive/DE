@@ -1,5 +1,5 @@
 (ns notification-agent.time
- (:use [clj-time.core :only (default-time-zone now)]
+ (:use [clj-time.core :only (default-time-zone now before?)]
        [clj-time.format :only (formatter parse unparse)]
        [notification-agent.common :only [string->long]])
  (:require [clojure.string :as string])
@@ -56,8 +56,18 @@
         (re-matches #"\d+" timestamp) (Long/parseLong timestamp)
         :else                         (.getMillis (parse-timestamp timestamp))))
 
+(defn timestamp->datetime
+  "Converts a timestamp to an instance of org.joda.time.DateTime."
+  [timestamp]
+  (DateTime. (timestamp->millis timestamp)))
+
 (defn pg-timestamp->millis
   "Converts a PostgreSQL timestamp to the number of milliseconds since the epoch.
    Returns a string."
   [pg-timestamp]
   (str (.getTime pg-timestamp)))
+
+(defn past?
+  "Returns true if a timestamp is in the past."
+  [timestamp]
+  (before? timestamp (now)))

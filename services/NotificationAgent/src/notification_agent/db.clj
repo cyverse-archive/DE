@@ -340,7 +340,12 @@
 (defn get-system-notification-by-uuid
   "Selects system notifications that have a uuid of 'uuid'."
   [uuid]
-  (-> (select system_notifications (where {:uuid (parse-uuid uuid)})) first system-map))
+  (some-> (select system_notifications (where {:uuid (parse-uuid uuid)})) first system-map))
+
+(defn list-future-system-notifications
+  "Lists system notifications that become active in the future."
+  []
+  (map system-map (select system_notifications (where {:activation_date [>= (sqlfn now)]}))))
 
 (defn- for-ack-state-above
   [query inf-state]
@@ -568,6 +573,17 @@
    (update system_notifications
            (set-fields (system-notification-update-map update-values))
            (where {:uuid (parse-uuid uuid)}))))
+
+(defn- system-notif-id-subselect
+  [uuid]
+  (subselect system_notifications
+             (fields :id)
+             (where {:uuid (parse-uuid uuid)})))
+
+(defn delete-system-notification-acks
+  [uuid]
+  (delete system_notification_acknowledgments
+          (where {:system_notification_id (system-notif-id-subselect uuid)})))
 
 (defn- system-notif-id
   [uuid]

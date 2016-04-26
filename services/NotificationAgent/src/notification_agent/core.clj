@@ -20,6 +20,7 @@
             [clojure-commons.exception :as cx]
             [notification-agent.config :as config]
             [notification-agent.db :as db]
+            [notification-agent.scheduler :as scheduler]
             [common-cli.core :as ccli]
             [me.raynes.fs :as fs]
             [service-logging.thread-context :as tc]
@@ -115,7 +116,8 @@
 
 (defn- init-service
   []
-  (db/define-database))
+  (db/define-database)
+  (scheduler/init))
 
 (defn- iplant-conf-dir-file
   [filename]
