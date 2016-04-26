@@ -3,6 +3,7 @@
         [slingshot.slingshot :only [throw+ try+]])
   (:require [clojure.string :as string]
             [clojure.tools.logging :as log]
+            [clojure.walk :as walk]
             [cemerick.url :as url]
             [cheshire.core :as json]
             [me.raynes.fs :as fs]
@@ -286,8 +287,11 @@
    Returns:
      It returns a path-stat map containing an additional UUID field."
   [^String user ^UUID uuid]
-  (uuids/path-for-uuid user uuid))
-
+  (-> (raw/collect-stats user :ids [uuid])
+      :body
+      json/decode
+      (get-in ["ids" uuid])
+      walk/keywordize-keys))
 
 (defn ^ISeq stats-by-uuids-paged
   "Resolves the stat info for the entities with the given UUIDs. The results are paged.
