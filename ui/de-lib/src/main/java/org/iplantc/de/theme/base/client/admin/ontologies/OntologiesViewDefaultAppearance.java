@@ -157,4 +157,9 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     public String fileUploadSuccess(String file) {
         return displayStrings.fileUploadSuccess(file);
     }
+
+    @Override
+    public ImageResource refreshIcon() {
+        return iplantResources.refresh();
+    }
 }

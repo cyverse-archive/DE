@@ -61,6 +61,8 @@ public interface OntologiesView extends IsWidget,
         String fileUploadsFailed(String strings);
 
         String fileUploadSuccess(String value);
+
+        ImageResource refreshIcon();
     }
 
     interface Presenter {
