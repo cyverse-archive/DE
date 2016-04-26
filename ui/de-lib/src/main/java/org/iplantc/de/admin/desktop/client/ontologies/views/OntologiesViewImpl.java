@@ -104,6 +104,9 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         final SimpleComboBox<Ontology> ontologySimpleComboBox = new SimpleComboBox<Ontology>(new LabelProvider<Ontology>() {
             @Override
             public String getLabel(Ontology item) {
+                if (item.isActive()){
+                    return "*(DE)* " + item.getVersion();
+                }
                 return item.getVersion();
             }
         });

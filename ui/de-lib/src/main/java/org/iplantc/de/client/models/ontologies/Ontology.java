@@ -26,4 +26,7 @@ public interface Ontology {
     @PropertyName("created_on")
     void setCreatedOn(String date);
 
+    @PropertyName("active")
+    boolean isActive();
+
 }
