@@ -7,7 +7,8 @@
             [clojure.string :as string]
             [clojure.tools.logging :as log]
             [notification-agent.amqp :as amqp]
-            [notification-agent.db :as db])
+            [notification-agent.db :as db]
+            [notification-agent.scheduler :as scheduler])
   (:import [java.io IOException]))
 
 (defn- fix-timestamp
@@ -83,7 +84,7 @@
         insert-system-notif (partial db/insert-system-notification type ddate message)
         sys-args            (optional-insert-system-args msg)
         sys-notification    (apply insert-system-notif sys-args)]
-    (amqp/publish-system-msg sys-notification)))
+    (scheduler/schedule-system-message sys-notification)))
 
 (defn list-system-msgs
   [active-only type limit offset]
@@ -96,7 +97,10 @@
 
 (defn update-system-msg
   [uuid update-map]
-  {:system-notification (db/update-system-notification uuid update-map)})
+  (let [system-msg (db/update-system-notification uuid update-map)]
+    (db/delete-system-notification-acks uuid)
+    (scheduler/reschedule-system-message system-msg)
+    {:system-notification system-msg}))
 
 (defn delete-system-msg
   [uuid]

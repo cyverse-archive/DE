@@ -1,5 +1,5 @@
 (ns notification-agent.time
- (:use [clj-time.core :only (default-time-zone now)]
+ (:use [clj-time.core :only (default-time-zone now before?)]
        [clj-time.format :only (formatter parse unparse)]
        [notification-agent.common :only [string->long]])
  (:require [clojure.string :as string])
@@ -66,3 +66,8 @@
    Returns a string."
   [pg-timestamp]
   (str (.getTime pg-timestamp)))
+
+(defn past?
+  "Returns true if a timestamp is in the past."
+  [timestamp]
+  (before? timestamp (now)))

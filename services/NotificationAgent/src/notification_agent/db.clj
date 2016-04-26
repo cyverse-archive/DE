@@ -574,6 +574,17 @@
            (set-fields (system-notification-update-map update-values))
            (where {:uuid (parse-uuid uuid)}))))
 
+(defn- system-notif-id-subselect
+  [uuid]
+  (subselect system_notifications
+             (fields :id)
+             (where {:uuid (parse-uuid uuid)})))
+
+(defn delete-system-notification-acks
+  [uuid]
+  (delete system_notification_acknowledgments
+          (where {:system_notification_id (system-notif-id-subselect uuid)})))
+
 (defn- system-notif-id
   [uuid]
   (:id (first (select system_notifications (where {:uuid (parse-uuid uuid)})))))

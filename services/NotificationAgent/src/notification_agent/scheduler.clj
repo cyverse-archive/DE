@@ -34,6 +34,14 @@
                           (t/start-at (nt/timestamp->datetime activation-date))
                           (t/with-schedule (ss/schedule (ss/ignore-misfires)))))))
 
+(defn reschedule-system-message
+  "Reschedules a system message. This involves removing any triggers for the message and scheduling a new
+   trigger for the message, provided that the message hasn't been deactivated."
+  [{uuid :uuid deactivation-date :deactivation_date :as msg}]
+  (qs/delete-trigger @scheduler (t/key (str uuid) "system-msg"))
+  (when-not (nt/past? (nt/timestamp->datetime deactivation-date))
+    (schedule-system-message msg)))
+
 (defn init
   []
   (ref-set scheduler (qs/start (qs/initialize)))
