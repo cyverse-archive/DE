@@ -14,14 +14,44 @@ import java.util.List;
  */
 public interface OntologyServiceFacade {
 
+    /**
+     * Upload an ontology XML and save it
+     * @param ontologyXML
+     * @param callback
+     */
     void saveOntology(String ontologyXML, AsyncCallback<Ontology> callback);
 
+    /**
+     * Save a hierarchy root (Topic, Operation, .etc) from a version of an ontology (required in order to do any
+     * editing of an ontology)
+     * @param version
+     * @param root
+     * @param callback
+     */
     void saveOntologyHierarchy(String version, String root, AsyncCallback<OntologyHierarchy> callback);
 
+    /**
+     * Get a list of all ontology versions that are available
+     * @param callback
+     */
     void getOntologies(AsyncCallback<List<Ontology>> callback);
 
+
+    /**
+     * Get the list of hierarchies and their subclasses for a specific version of an ontology
+     * @param version
+     * @param callback
+     */
     void getOntologyHierarchies(String version, AsyncCallback<List<OntologyHierarchy>> callback);
 
+    /**
+     * Get the list of ontology hierarchies for a specific version of an ontology at the specified root IRI
+     * with a set of target IDs.
+     * @param version
+     * @param root
+     * @param filter
+     * @param callback
+     */
     void filterOntologyHierarchies(String version, String root, OntologyHierarchyFilterReq filter, AsyncCallback<List<OntologyHierarchy>> callback);
 
     /**
@@ -30,6 +60,15 @@ public interface OntologyServiceFacade {
      * @param callback
      */
     void filterActiveOntologyHierarchies(String root, AsyncCallback<List<OntologyHierarchy>> callback);
+
+    /**
+     * Filter a list of target-ids from a specific ontology version at the specified root down to
+     * the orphaned target-ids
+     * @param version
+     * @param root
+     * @param filter
+     * @param callback
+     */
     void filterUnclassifiedTargets(String version, String root, OntologyHierarchyFilterReq filter, AsyncCallback<List<String>> callback);
 
     /**
