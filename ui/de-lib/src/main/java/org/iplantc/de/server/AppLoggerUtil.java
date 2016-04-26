@@ -3,8 +3,10 @@ package org.iplantc.de.server;
 import static org.iplantc.de.server.AppLoggerConstants.REQUEST_ID_HEADER;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import com.google.common.net.InetAddresses;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,6 +41,27 @@ public class AppLoggerUtil {
             INSTANCE = new AppLoggerUtil();
         }
         return INSTANCE;
+    }
+
+    /**
+     * Adds the specified header name and ip address to the given request, performing validation on
+     * the given ipAddress.
+     *
+     * @param request to which the new header is added.
+     * @param headerName the name of the new header.
+     * @param ipAddress the IP address to add to the new header.
+     * @param <T> Basic request object
+     * @return the given request with the new header added.
+     */
+    public <T extends HttpRequestBase> T addIpHeader(T request,
+                                                     final String headerName,
+                                                     final String ipAddress) {
+        Preconditions.checkArgument(InetAddresses.isInetAddress(ipAddress),
+                                    "The given ip address is invalid: " + ipAddress);
+
+        request.addHeader(headerName, ipAddress);
+
+        return request;
     }
 
     public <T extends HttpRequestBase> T addRequestIdHeader(T request) {

@@ -73,6 +73,6 @@ public class JwtUrlConnector extends BaseUrlConnector implements UrlConnector {
 
         // Update the message headers.
         c.addHeader(DESecurityConstants.JWT_CUSTOM_HEADER, jwt);
-        return copyUserAgent(request, c);
+        return forwardHttpHeaders(request, c);
     }
 }

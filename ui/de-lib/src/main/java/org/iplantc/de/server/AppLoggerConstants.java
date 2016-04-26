@@ -29,7 +29,6 @@ public interface AppLoggerConstants {
      */
     String USERINFO_KEY = "user-info";
 
-
     String RESPONSE_KEY = "response";
 
     String REQUEST_KEY = "request";
@@ -37,6 +36,7 @@ public interface AppLoggerConstants {
     String USER_IP_KEY = "clientip";
 
     String USER_IP_HEADER_NAME = "x-real-ip";
+    String FWDED_FOR_IP_HEADER_NAME = "x-forwarded-for";
     String REQUEST_ID_HEADER = "X-DE-request-id";
     String REQUEST_ID_HEADER_FWD = "X-DE-forwarded-request-id";
 }

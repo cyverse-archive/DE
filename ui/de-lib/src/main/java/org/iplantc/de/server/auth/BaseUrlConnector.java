@@ -1,7 +1,10 @@
 package org.iplantc.de.server.auth;
 
-import org.iplantc.de.server.AppLoggerConstants;
+import static org.iplantc.de.server.AppLoggerConstants.FWDED_FOR_IP_HEADER_NAME;
+import static org.iplantc.de.server.AppLoggerConstants.USER_IP_HEADER_NAME;
 import org.iplantc.de.server.AppLoggerUtil;
+
+import com.google.common.base.Strings;
 
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -11,8 +14,6 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.client.utils.URIBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -24,6 +25,8 @@ import javax.servlet.http.HttpServletRequest;
  * Performs actions common to most URL connectors.
  */
 abstract class BaseUrlConnector implements UrlConnector {
+
+    private AppLoggerUtil appLoggerUtil = AppLoggerUtil.getInstance();
 
     /**
      * Disables redirects for an HTTP request.
@@ -121,16 +124,41 @@ abstract class BaseUrlConnector implements UrlConnector {
     }
 
     /**
-     * Copies the User-Agent header from the incoming HTTP servlet request to an outgoing
+     * Copies headers from the incoming HTTP servlet request to an outgoing
      * HttpRequestBase.
-     * 
+     *
+     * Forwards the following headers:
+     *   -- User-Agent
+     *   -- x-real-ip
+     *   -- x-forwarded-for
+     *
+     * Also creates a unique request id header.
+     *
      * @param req the incoming servlet request.
      * @param c the outgoing HttpEntityEnclosingRequestBase.
      * @return the outgoing request.
      */
-    protected <T extends HttpRequestBase> T copyUserAgent(HttpServletRequest req, T c) {
+    protected <T extends HttpRequestBase> T forwardHttpHeaders(HttpServletRequest req, T c) {
+        // Forward user-agent header
         c.addHeader("User-Agent", req.getHeader("User-Agent"));
-        T ret = AppLoggerUtil.getInstance().addRequestIdHeader(c);
+
+        // Create and add unique request ID header
+        T ret = appLoggerUtil.addRequestIdHeader(c);
+
+        // Forward real IP headers
+        final String realIp = req.getHeader(USER_IP_HEADER_NAME);
+        final String forwardedForIp = req.getHeader(FWDED_FOR_IP_HEADER_NAME);
+        if(!Strings.isNullOrEmpty(realIp)){
+            ret = appLoggerUtil.addIpHeader(c,
+                                            USER_IP_HEADER_NAME,
+                                            realIp);
+        }
+        if(!Strings.isNullOrEmpty(forwardedForIp)){
+            ret = appLoggerUtil.addIpHeader(c,
+                                            FWDED_FOR_IP_HEADER_NAME,
+                                            forwardedForIp);
+        }
+
         return ret;
     }
 }
