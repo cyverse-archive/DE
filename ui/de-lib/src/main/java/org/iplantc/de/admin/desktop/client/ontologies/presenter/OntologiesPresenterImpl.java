@@ -67,7 +67,22 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     @Override
     public void onSelectOntologyVersion(SelectOntologyVersionEvent event) {
+        treeStore.clear();
+        // Get TOPIC hierarchy
+        serviceFacade.getOntologyHierarchies(event.getSelectedOntology().getVersion(), properties.getEdamTopicIri(), new AsyncCallback<List<OntologyHierarchy>>() {
+                                                 @Override
+                                                 public void onFailure(Throwable caught) {
+                                                     ErrorHandler.post(caught);
+                                                 }
+
+                                                 @Override
+                                                 public void onSuccess(List<OntologyHierarchy> result) {
+                                                     addHierarchies(null, result);
+            }
+        });
+        // Get OPERATION hierarchy
         serviceFacade.getOntologyHierarchies(event.getSelectedOntology().getVersion(),
+                                             properties.getEdamOperationIri(),
                                              new AsyncCallback<List<OntologyHierarchy>>() {
                                                  @Override
                                                  public void onFailure(Throwable caught) {
@@ -76,10 +91,9 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
                                                  @Override
                                                  public void onSuccess(List<OntologyHierarchy> result) {
-                                                     treeStore.clear();
                                                      addHierarchies(null, result);
-            }
-        });
+                                                 }
+                                             });
     }
 
     private void addHierarchies(OntologyHierarchy parent, List<OntologyHierarchy> children) {

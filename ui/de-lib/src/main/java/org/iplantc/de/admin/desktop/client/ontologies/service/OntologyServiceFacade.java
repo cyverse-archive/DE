@@ -38,11 +38,17 @@ public interface OntologyServiceFacade {
 
 
     /**
-     * Get the list of hierarchies and their subclasses for a specific version of an ontology
-     * @param version
+     * Get the saved hierarchy at the given root IRI for the specified version of the ontology
      * @param callback
      */
-    void getOntologyHierarchies(String version, AsyncCallback<List<OntologyHierarchy>> callback);
+    void getOntologyHierarchies(String version, String root, AsyncCallback<List<OntologyHierarchy>> callback);
+
+
+    /**
+     * Get the list of hierarchies and their subclasses for the active version of an ontology
+     * @param callback
+     */
+    void getActiveOntologyHierarchies(AsyncCallback<List<OntologyHierarchy>> callback);
 
     /**
      * Get the list of ontology hierarchies for a specific version of an ontology at the specified root IRI
