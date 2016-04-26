@@ -44,5 +44,5 @@
 
 (defn init
   []
-  (ref-set scheduler (qs/start (qs/initialize)))
+  (dosync (ref-set scheduler (qs/start (qs/initialize))))
   (dorun (map schedule-system-message (db/list-future-system-notifications))))
