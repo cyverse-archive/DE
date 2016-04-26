@@ -19,4 +19,6 @@ public interface OntologyAutoBeanFactory extends AutoBeanFactory {
     AutoBean<OntologyList> getOntologyList();
 
     AutoBean<TargetIDList> getTargetIdList();
+
+    AutoBean<OntologyVersionDetail> getVersionDetail();
 }
