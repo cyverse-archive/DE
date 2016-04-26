@@ -7,7 +7,7 @@
       (string/trim (:out (sh "git" "rev-parse" "HEAD")))
       ""))
 
-(defproject org.iplantc/iplant-groups "5.2.6.0"
+(defproject org.iplantc/iplant-groups "5.2.7.0"
   :description "A REST front-end for Grouper."
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"
@@ -22,11 +22,11 @@
                  [medley "0.7.0"]
                  [metosin/compojure-api "0.24.2"]
                  [me.raynes/fs "1.4.6"]
-                 [org.iplantc/clojure-commons "5.2.6.0"]
-                 [org.iplantc/common-cfg "5.2.6.0"]
-                 [org.iplantc/common-cli "5.2.6.0"]
-                 [org.iplantc/common-swagger-api "5.2.6.0"]
-                 [org.iplantc/service-logging "5.2.6.0"]
+                 [org.iplantc/clojure-commons "5.2.7.0"]
+                 [org.iplantc/common-cfg "5.2.7.0"]
+                 [org.iplantc/common-cli "5.2.7.0"]
+                 [org.iplantc/common-swagger-api "5.2.7.0"]
+                 [org.iplantc/service-logging "5.2.7.0"]
                  [ring/ring-core "1.4.0"]
                  [ring/ring-jetty-adapter "1.4.0"]]
   :plugins [[lein-ring "0.9.6"]
