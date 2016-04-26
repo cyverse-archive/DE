@@ -81,8 +81,20 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
 
     }
 
+
     @Override
-    public void getOntologyHierarchies(String version, AsyncCallback<List<OntologyHierarchy>> callback) {
+    public void getOntologyHierarchies(String version,
+                                       String root,
+                                       AsyncCallback<List<OntologyHierarchy>> callback) {
+        String address = ONTOLOGY_ADMIN + "/" + version + "/" + root;
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
+        deService.getServiceData(wrapper, new OntologyHierarchyListCallbackConverter(callback, factory));
+
+    }
+
+    @Override
+    public void getActiveOntologyHierarchies(AsyncCallback<List<OntologyHierarchy>> callback) {
         String address = APPS_HIERARCHIES;
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
