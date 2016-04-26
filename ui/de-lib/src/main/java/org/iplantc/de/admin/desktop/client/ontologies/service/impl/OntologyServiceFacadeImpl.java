@@ -9,11 +9,13 @@ import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.Ontology
 import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.OntologyHierarchyCallbackConverter;
 import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.OntologyHierarchyListCallbackConverter;
 import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.OntologyListCallbackConverter;
+import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.OntologyVersionCallbackConverter;
 import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.TargetIdCallbackConverter;
 import org.iplantc.de.client.models.ontologies.Ontology;
 import org.iplantc.de.client.models.ontologies.OntologyAutoBeanFactory;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchyFilterReq;
+import org.iplantc.de.client.models.ontologies.OntologyVersionDetail;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -32,7 +34,7 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
 
     private final String ONTOLOGY = "org.iplantc.services.ontologies";
     private final String ONTOLOGY_ADMIN = "org.iplantc.services.admin.ontologies";
-    private final String APPS = "org.iplantc.services.apps.hierarchies";
+    private final String APPS_HIERARCHIES = "org.iplantc.services.apps.hierarchies";
     @Inject OntologyAutoBeanFactory factory;
     @Inject private DiscEnvApiService deService;
 
@@ -71,8 +73,17 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
     }
 
     @Override
+    public void setActiveOntologyVersion(String version, AsyncCallback<OntologyVersionDetail> callback) {
+        String address = ONTOLOGY_ADMIN + "/" + version;
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(PUT, address);
+        deService.getServiceData(wrapper, new OntologyVersionCallbackConverter(callback, factory));
+
+    }
+
+    @Override
     public void getOntologyHierarchies(String version, AsyncCallback<List<OntologyHierarchy>> callback) {
-        String address = APPS;
+        String address = APPS_HIERARCHIES;
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, new OntologyHierarchyListCallbackConverter(callback, factory));
@@ -89,6 +100,17 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
         final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(filter));
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode.getPayload());
+        deService.getServiceData(wrapper, new OntologyHierarchyListCallbackConverter(callback, factory));
+
+    }
+
+    @Override
+    public void filterActiveOntologyHierarchies(String root,
+                                                AsyncCallback<List<OntologyHierarchy>> callback) {
+
+        String address = APPS_HIERARCHIES + "/" + root;
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, new OntologyHierarchyListCallbackConverter(callback, factory));
 
     }
