@@ -30,6 +30,7 @@
                  [clj-http "2.1.0"]
                  [clj-time "0.11.0"]
                  [slingshot "0.12.2"]
+                 [clojurewerkz/quartzite "2.0.0"]
                  [com.mchange/c3p0 "0.9.5.2"]
                  [com.novemberain/langohr "3.5.1"]
                  [korma "0.4.2"

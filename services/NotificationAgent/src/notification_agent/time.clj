@@ -56,6 +56,11 @@
         (re-matches #"\d+" timestamp) (Long/parseLong timestamp)
         :else                         (.getMillis (parse-timestamp timestamp))))
 
+(defn timestamp->datetime
+  "Converts a timestamp to an instance of org.joda.time.DateTime."
+  [timestamp]
+  (DateTime. (timestamp->millis timestamp)))
+
 (defn pg-timestamp->millis
   "Converts a PostgreSQL timestamp to the number of milliseconds since the epoch.
    Returns a string."
