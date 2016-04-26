@@ -569,10 +569,10 @@
       :logins_disabled - Boolean
       :message - The message that's displayed in the notification."
   [uuid update-values]
-  (system-map
-   (update system_notifications
-           (set-fields (system-notification-update-map update-values))
-           (where {:uuid (parse-uuid uuid)}))))
+  (update system_notifications
+          (set-fields (system-notification-update-map update-values))
+          (where {:uuid (parse-uuid uuid)}))
+  (get-system-notification-by-uuid uuid))
 
 (defn- system-notif-id-subselect
   [uuid]
