@@ -158,63 +158,63 @@
 
 (cc/defprop-str agave-base-url
   "The base URL to use when connecting to Agave."
-  [props config-valid configs]
+  [props config-valid configs agave-enabled]
   "apps.agave.base-url")
 
 (cc/defprop-str agave-key
   "The API key to use when authenticating to Agave."
-  [props config-valid configs]
+  [props config-valid configs agave-enabled]
   "apps.agave.key")
 
 (cc/defprop-str agave-secret
   "The API secret to use when authenticating to Agave."
-  [props config-valid configs]
+  [props config-valid configs agave-enabled]
   "apps.agave.secret")
 
 (cc/defprop-str agave-oauth-base
   "The base URL for the Agave OAuth 2.0 endpoints."
-  [props config-valid configs]
+  [props config-valid configs agave-enabled]
   "apps.agave.oauth-base")
 
 (cc/defprop-int agave-oauth-refresh-window
   "The number of minutes before a token expires to refresh it."
-  [props config-valid configs]
+  [props config-valid configs agave-enabled]
   "apps.agave.oauth-refresh-window")
 
 (cc/defprop-str agave-redirect-uri
   "The redirect URI used after Agave authorization."
-  [props config-valid configs]
+  [props config-valid configs agave-enabled]
   "apps.agave.redirect-uri")
 
 (cc/defprop-str agave-callback-base
   "The base URL for receiving job status update callbacks from Agave."
-  [props config-valid configs]
+  [props config-valid configs agave-enabled]
   "apps.agave.callback-base")
 
 (cc/defprop-optstr agave-storage-system
   "The storage system that Agave should use when interacting with the DE."
-  [props config-valid configs]
+  [props config-valid configs agave-enabled]
   "apps.agave.storage-system"
   "data.iplantcollaborative.org")
 
 (cc/defprop-int agave-read-timeout
   "The maximum amount of time to wait for a response from Agave in milliseconds."
-  [props config-valid configs]
+  [props config-valid configs agave-enabled]
   "apps.agave.read-timeout")
 
 (cc/defprop-int agave-page-length
   "The maximum number of entities to receive from a single Agave service call."
-  [props config-valid configs]
+  [props config-valid configs agave-enabled]
   "apps.agave.page-length")
 
 (cc/defprop-str pgp-keyring-path
   "The path to the PGP keyring file."
-  [props config-valid configs]
+  [props config-valid configs agave-enabled]
   "apps.pgp.keyring-path")
 
 (cc/defprop-str pgp-key-password
   "The password used to unlock the PGP key."
-  [props config-valid configs]
+  [props config-valid configs agave-enabled]
   "apps.pgp.key-password")
 
 (def data-info-base
