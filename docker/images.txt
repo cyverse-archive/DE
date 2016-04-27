@@ -12,7 +12,7 @@ info-typer
 infosquito
 iplant-email
 iplant-groups
-jex
+jobservices
 kifshare
 apps
 metadata

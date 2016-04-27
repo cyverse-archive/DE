@@ -1,14 +1,14 @@
 ---
 - name: create the vhost
-  rabbitmq_vhost: name=de state=present
+  rabbitmq_vhost: name=de-{{environment_name}} state=present
 
 - name: set up the user
   rabbitmq_user:
     user: "{{ amqp_broker.user }}"
-    password: "{{ amqp_broker.password }}" 
-    vhost: de 
-    state: present 
-    configure_priv: .* 
-    read_priv: .* 
-    write_priv: .* 
+    password: "{{ amqp_broker.password }}"
+    vhost: de-{{environment_name}}
+    state: present
+    configure_priv: .*
+    read_priv: .*
+    write_priv: .*
     tags: administrator
