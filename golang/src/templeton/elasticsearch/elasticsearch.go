@@ -150,12 +150,13 @@ func (e *Elasticer) IndexEverything(d *database.Databaser) {
 			break
 		}
 
+		formatted, err := model.AVUsToIndexedObject(avus)
+		if err != nil {
+			logcabin.Error.Print(err)
+			break
+		}
+
 		if knownTypes[avus[0].TargetType] {
-			formatted, err := model.AVUsToIndexedObject(avus)
-			if err != nil {
-				logcabin.Error.Print(err)
-				break
-			}
 			indexed_type := fmt.Sprintf("%s_metadata", avus[0].TargetType)
 			logcabin.Info.Printf("Indexing %s/%s", indexed_type, formatted.ID)
 
@@ -176,9 +177,11 @@ func (e *Elasticer) Reindex(d *database.Databaser) {
 
 func (e *Elasticer) DeleteOne(id string) {
 	logcabin.Info.Printf("Deleting metadata for %s", id)
-	_, err := e.es.Delete().Index(e.index).Type("file_metadata,folder_metadata").Parent(id).Id(id).Do()
-	if err != nil {
-		logcabin.Error.Printf("Error deleting metadata for %s: %s", id, err)
+	_, fileErr := e.es.Delete().Index(e.index).Type("file_metadata").Parent(id).Id(id).Do()
+	_, folderErr := e.es.Delete().Index(e.index).Type("folder_metadata").Parent(id).Id(id).Do()
+	if fileErr != nil && folderErr != nil {
+		logcabin.Error.Printf("Error deleting file metadata for %s: %s", id, fileErr)
+		logcabin.Error.Printf("Error deleting folder metadata for %s: %s", id, folderErr)
 	}
 	return
 }
@@ -191,17 +194,17 @@ func (e *Elasticer) IndexOne(d *database.Databaser, id string) {
 		return
 	}
 
-	if knownTypes[avus[0].TargetType] {
-		formatted, err := model.AVUsToIndexedObject(avus)
-		if err == model.NoAVUs {
-			e.DeleteOne(id)
-			return
-		}
-		if err != nil {
-			logcabin.Error.Print(err)
-			return
-		}
+	formatted, err := model.AVUsToIndexedObject(avus)
+	if err == model.NoAVUs {
+		e.DeleteOne(id)
+		return
+	}
+	if err != nil {
+		logcabin.Error.Print(err)
+		return
+	}
 
+	if knownTypes[avus[0].TargetType] {
 		indexed_type := fmt.Sprintf("%s_metadata", avus[0].TargetType)
 		logcabin.Info.Printf("Indexing %s/%s", indexed_type, formatted.ID)
 		_, err = e.es.Index().Index(e.index).Type(indexed_type).Parent(formatted.ID).Id(formatted.ID).BodyJson(formatted).Do()
