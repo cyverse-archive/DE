@@ -5,7 +5,6 @@ import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PUT;
 
 import org.iplantc.de.admin.desktop.client.ontologies.service.OntologyServiceFacade;
-import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.OntologyCallbackConverter;
 import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.OntologyHierarchyCallbackConverter;
 import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.OntologyHierarchyListCallbackConverter;
 import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.OntologyListCallbackConverter;
@@ -41,16 +40,7 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
     @Inject
     OntologyServiceFacadeImpl() {
     }
-
-    @Override
-    public void saveOntology(String ontologyXML, AsyncCallback<Ontology> callback) {
-        String address = ONTOLOGY_ADMIN;
-
-        final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(ontologyXML));
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode.getPayload());
-        deService.getServiceData(wrapper, new OntologyCallbackConverter(callback, factory));
-    }
-
+    
     @Override
     public void saveOntologyHierarchy(String version,
                                       String root,

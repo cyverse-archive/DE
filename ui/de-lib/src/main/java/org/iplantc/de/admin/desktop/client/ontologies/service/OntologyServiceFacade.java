@@ -14,20 +14,6 @@ import java.util.List;
  */
 public interface OntologyServiceFacade {
 
-    /**
-     * Upload an ontology XML and save it
-     * @param ontologyXML
-     * @param callback
-     */
-    void saveOntology(String ontologyXML, AsyncCallback<Ontology> callback);
-
-    /**
-     * Save a hierarchy root (Topic, Operation, .etc) from a version of an ontology (required in order to do any
-     * editing of an ontology)
-     * @param version
-     * @param root
-     * @param callback
-     */
     void saveOntologyHierarchy(String version, String root, AsyncCallback<OntologyHierarchy> callback);
 
     /**
