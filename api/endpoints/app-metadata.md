@@ -415,7 +415,19 @@ Secured Endpoint: GET /apps/categories/{group-id}
 
 Delegates to apps: GET /apps/categories/{group-id}
 
-This endpoint is a passthrough to the apps endpoint using the same path.
+Secured Endpoint: GET /admin/ontologies/{ontology-version}/{root-iri}/unclassified
+
+Delegates to apps: GET /admin/ontologies/{ontology-version}/{root-iri}/unclassified
+
+Secured Endpoint: GET /apps/hierarchies/{class-iri}/apps
+
+Delegates to apps: GET /apps/hierarchies/{class-iri}/apps
+
+Secured Endpoint: GET /apps/hierarchies/{root-iri}/unclassified
+
+Delegates to apps: GET /apps/hierarchies/{root-iri}/unclassified
+
+These endpoints are passthroughs to the apps endpoints using the same paths.
 Please see the apps service documentation for more information.
 
 ## Listing Tools in an App
