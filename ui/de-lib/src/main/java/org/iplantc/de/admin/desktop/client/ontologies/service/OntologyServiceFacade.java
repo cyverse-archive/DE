@@ -27,7 +27,7 @@ public interface OntologyServiceFacade {
      * Get the saved hierarchy at the given root IRI for the specified version of the ontology
      * @param callback
      */
-    void getOntologyHierarchies(String version, String root, AsyncCallback<List<OntologyHierarchy>> callback);
+    void getOntologyHierarchies(String version, AsyncCallback<List<OntologyHierarchy>> callback);
 
 
     /**
