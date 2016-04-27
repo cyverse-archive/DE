@@ -3,10 +3,12 @@ package org.iplantc.de.admin.desktop.client.ontologies.views;
 import org.iplantc.de.admin.apps.client.AdminAppsGridView;
 import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
 import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.ViewOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.EdamUploadDialog;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.OntologyListDialog;
+import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.PublishOntologyDialog;
 import org.iplantc.de.apps.client.AppCategoriesView;
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.events.EventBus;
@@ -29,7 +31,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
-
+import com.sencha.gxt.core.client.Style;
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.LabelProvider;
 import com.sencha.gxt.data.shared.TreeStore;
@@ -40,6 +42,7 @@ import com.sencha.gxt.widget.core.client.container.CardLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.CenterLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.form.SimpleComboBox;
+import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 
 import java.util.List;
@@ -65,11 +68,13 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @UiField CardLayoutContainer cards;
     @UiField CenterLayoutContainer noTreePanel, emptyTreePanel;
     @UiField ContentPanel treePanel;
+    @UiField TextButton publishButton;
     @Inject EventBus eventBus;
     @Inject DEClientConstants clientConstants;
 
     @Inject AsyncProvider<OntologyListDialog> listDialog;
     private TreeStore<OntologyHierarchy> treeStore;
+    private Ontology activeOntology;
 
     @Inject
     public OntologiesViewImpl(OntologiesViewAppearance appearance,
@@ -82,6 +87,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         this.gridView = gridView;
 
         initWidget(uiBinder.createAndBindUi(this));
+        viewVersionsClicked(new SelectEvent());
 
     }
 
@@ -98,6 +104,11 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @Override
     public HandlerRegistration addHierarchySelectedEventHandler(HierarchySelectedEvent.HierarchySelectedEventHandler handler) {
         return addHandler(handler, HierarchySelectedEvent.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addPublishOntologyClickEventHandler(PublishOntologyClickEvent.PublishOntologyClickEventHandler handler) {
+        return addHandler(handler, PublishOntologyClickEvent.TYPE);
     }
 
     @Override
@@ -123,6 +134,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
             @Override
             public String getLabel(Ontology item) {
                 if (item.isActive()){
+                    activeOntology = item;
                     return item.getVersion() + "  <--- *(DE)*";
                 }
                 return item.getVersion();
@@ -141,6 +153,15 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @UiHandler("viewVersions")
     void viewVersionsClicked(SelectEvent event) {
         fireEvent(new ViewOntologyVersionEvent());
+    }
+
+    @UiHandler("publishButton")
+    void publishButtonClicked(SelectEvent event) {
+        Ontology editedOntology = ontologyDropDown.getCurrentValue();
+        if (editedOntology != null){
+            new PublishOntologyDialog(appearance, editedOntology, activeOntology, this);
+        }
+
     }
 
     @UiHandler("addButton")

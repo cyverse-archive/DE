@@ -56,7 +56,9 @@
                                        icon="{appearance.addIcon}"/>
                 </toolbar:child>
                 <toolbar:child>
-                    <form:SimpleComboBox ui:field="ontologyDropDown"/>
+                    <button:TextButton ui:field="publishButton"
+                                       text="{appearance.publishOntology}"
+                                       icon="{appearance.publishIcon}"/>
                 </toolbar:child>
             </toolbar:ToolBar>
         </container:north>

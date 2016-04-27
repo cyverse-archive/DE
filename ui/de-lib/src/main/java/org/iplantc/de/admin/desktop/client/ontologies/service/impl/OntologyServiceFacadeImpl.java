@@ -73,7 +73,7 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
     public void setActiveOntologyVersion(String version, AsyncCallback<OntologyVersionDetail> callback) {
         String address = ONTOLOGY_ADMIN + "/" + URL.encodeQueryString(version);
 
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(PUT, address);
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, "{}");
         deService.getServiceData(wrapper, new OntologyVersionCallbackConverter(callback, factory));
 
     }

@@ -1,6 +1,7 @@
 package org.iplantc.de.admin.desktop.client.ontologies;
 
 import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.ViewOntologyVersionEvent;
 import org.iplantc.de.client.models.ontologies.Ontology;
@@ -17,7 +18,8 @@ import java.util.List;
 public interface OntologiesView extends IsWidget,
                                         ViewOntologyVersionEvent.HasViewOntologyVersionEventHandlers,
                                         SelectOntologyVersionEvent.HasSelectOntologyVersionEventHandlers,
-                                        HierarchySelectedEvent.HasHierarchySelectedEventHandlers {
+                                        HierarchySelectedEvent.HasHierarchySelectedEventHandlers,
+                                        PublishOntologyClickEvent.HasPublishOntologyClickEventHandlers {
 
     void showOntologyVersions(List<Ontology> result);
 
@@ -69,6 +71,16 @@ public interface OntologiesView extends IsWidget,
         String fileUploadSuccess(String value);
 
         ImageResource refreshIcon();
+
+        String publishOntology();
+
+        ImageResource publishIcon();
+
+        String activeOntologyLabel();
+
+        String editedOntologyLabel();
+
+        String setActiveOntologySuccess();
     }
 
     interface Presenter {

@@ -81,6 +81,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         view.addViewOntologyVersionEventHandler(this);
         view.addSelectOntologyVersionEventHandler(this);
         view.addHierarchySelectedEventHandler(this);
+        view.addPublishOntologyClickEventHandler(this);
     }
 
 

@@ -31,4 +31,12 @@ public interface OntologyDisplayStrings extends Messages{
     String fileUploadFailed(String file);
 
     String fileUploadSuccess(String file);
+
+    String publishOntology();
+
+    String activeOntologyLabel();
+
+    String editedOntologyLabel();
+
+    String setActiveOntologySuccess();
 }

@@ -162,4 +162,29 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     public ImageResource refreshIcon() {
         return iplantResources.refresh();
     }
+
+    @Override
+    public String publishOntology() {
+        return displayStrings.publishOntology();
+    }
+
+    @Override
+    public ImageResource publishIcon() {
+        return iplantResources.publish();
+    }
+
+    @Override
+    public String activeOntologyLabel() {
+        return displayStrings.activeOntologyLabel();
+    }
+
+    @Override
+    public String editedOntologyLabel() {
+        return displayStrings.editedOntologyLabel();
+    }
+
+    @Override
+    public String setActiveOntologySuccess() {
+        return displayStrings.setActiveOntologySuccess();
+    }
 }
