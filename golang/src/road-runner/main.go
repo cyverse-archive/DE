@@ -311,24 +311,24 @@ func main() {
 	go Exit(exit, finalExit)
 
 	//The default time limt for the jobs.
-	defaultDuration, err := time.ParseDuration("48h")
-	if err != nil {
-		fail(client, job, "Failed to parse default duration")
-		logcabin.Error.Fatal(err)
-	}
+	// defaultDuration, err := time.ParseDuration("48h")
+	// if err != nil {
+	// 	fail(client, job, "Failed to parse default duration")
+	// 	logcabin.Error.Fatal(err)
+	// }
 
 	//Set up the self destruct timer. All this does is fire off a message on the
 	//exit channel that is listened to in the goroutine running Exit().
-	timeTracker := NewTimeTracker(defaultDuration, func() {
-		exit <- messaging.StatusTimeLimit
-	})
+	// timeTracker := NewTimeTracker(defaultDuration, func() {
+	// 	exit <- messaging.StatusTimeLimit
+	// })
 
 	go client.Listen()
 
-	RegisterTimeLimitDeltaListener(client, timeTracker, job.InvocationID)
-	RegisterTimeLimitRequestListener(client, timeTracker, job.InvocationID)
+	// RegisterTimeLimitDeltaListener(client, timeTracker, job.InvocationID)
+	// RegisterTimeLimitRequestListener(client, timeTracker, job.InvocationID)
 	RegisterStopRequestListener(client, exit, job.InvocationID)
-	RegisterTimeLimitResponseListener(client, job.InvocationID)
+	// RegisterTimeLimitResponseListener(client, job.InvocationID)
 
 	err = os.Mkdir("logs", 0755)
 	if err != nil {
