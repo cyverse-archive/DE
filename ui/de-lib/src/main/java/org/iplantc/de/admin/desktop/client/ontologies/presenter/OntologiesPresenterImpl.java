@@ -64,6 +64,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
             @Override
             public void onSuccess(List<Ontology> result) {
+                Collections.reverse(result);
                 view.showOntologyVersions(result);
             }
         });

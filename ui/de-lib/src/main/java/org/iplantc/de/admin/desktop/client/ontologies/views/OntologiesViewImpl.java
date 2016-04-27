@@ -82,20 +82,8 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
     @Override
     public void showOntologyVersions(final List<Ontology> ontologies) {
-
-        ontologyDropDown.add(ontologies);
-
-//        listDialog.get(new AsyncCallback<OntologyListDialog>() {
-//            @Override
-//            public void onFailure(Throwable caught) {
-//                ErrorHandler.post(caught);
-//            }
-//
-//            @Override
-//            public void onSuccess(OntologyListDialog result) {
-//                result.show(ontologies);
-//            }
-//        });
+        ontologyDropDown.clear();
+        ontologyDropDown.getStore().replaceAll(ontologies);
     }
 
 
@@ -105,7 +93,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
             @Override
             public String getLabel(Ontology item) {
                 if (item.isActive()){
-                    return "*(DE)* " + item.getVersion();
+                    return item.getVersion() + "  <--- *(DE)*";
                 }
                 return item.getVersion();
             }
@@ -116,7 +104,6 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
             @Override
             public void onSelection(SelectionEvent<Ontology> event) {
                 fireEvent(new SelectOntologyVersionEvent(event.getSelectedItem()));
-                ontologySimpleComboBox.redraw();
             }
         });
         return ontologySimpleComboBox;
