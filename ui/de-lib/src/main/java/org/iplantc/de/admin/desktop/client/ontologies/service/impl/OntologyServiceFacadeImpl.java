@@ -18,6 +18,7 @@ import org.iplantc.de.client.models.ontologies.OntologyVersionDetail;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
@@ -45,7 +46,7 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
     public void saveOntologyHierarchy(String version,
                                       String root,
                                       AsyncCallback<OntologyHierarchy> callback) {
-        String address = ONTOLOGY_ADMIN + "/" + version + "/" + root;
+        String address = ONTOLOGY_ADMIN + "/" + URL.encodeQueryString(version) + "/" + URL.encodeQueryString(root);
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PUT, address);
         deService.getServiceData(wrapper, new OntologyHierarchyCallbackConverter(callback, factory));
@@ -64,7 +65,7 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
 
     @Override
     public void setActiveOntologyVersion(String version, AsyncCallback<OntologyVersionDetail> callback) {
-        String address = ONTOLOGY_ADMIN + "/" + version;
+        String address = ONTOLOGY_ADMIN + "/" + URL.encodeQueryString(version);
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PUT, address);
         deService.getServiceData(wrapper, new OntologyVersionCallbackConverter(callback, factory));
@@ -74,9 +75,9 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
 
     @Override
     public void getOntologyHierarchies(String version,
-                                       String root,
                                        AsyncCallback<List<OntologyHierarchy>> callback) {
-        String address = ONTOLOGY_ADMIN + "/" + version + "/" + root;
+
+        String address = ONTOLOGY_ADMIN + "/" + URL.encodeQueryString(version);
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, new OntologyHierarchyListCallbackConverter(callback, factory));
@@ -97,7 +98,7 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
                                           String root,
                                           OntologyHierarchyFilterReq filter,
                                           AsyncCallback<List<OntologyHierarchy>> callback) {
-        String address = ONTOLOGY + "/" + version + "/" + root + "/" + "filter";
+        String address = ONTOLOGY + "/" + URL.encodeQueryString(version) + "/" + URL.encodeQueryString(root) + "/" + "filter";
 
         final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(filter));
 
@@ -110,7 +111,7 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
     public void filterActiveOntologyHierarchies(String root,
                                                 AsyncCallback<List<OntologyHierarchy>> callback) {
 
-        String address = APPS_HIERARCHIES + "/" + root;
+        String address = APPS_HIERARCHIES + "/" + URL.encodeQueryString(root);
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, new OntologyHierarchyListCallbackConverter(callback, factory));
@@ -122,7 +123,7 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
                                           String root,
                                           OntologyHierarchyFilterReq filter,
                                           AsyncCallback<List<String>> callback) {
-        String address = ONTOLOGY + "/" + version + "/" + root + "/" + "filter-unclassified";
+        String address = ONTOLOGY + "/" + URL.encodeQueryString(version) + "/" + URL.encodeQueryString(root) + "/" + "filter-unclassified";
 
         final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(filter));
 
