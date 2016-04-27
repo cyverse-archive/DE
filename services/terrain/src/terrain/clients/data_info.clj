@@ -353,19 +353,6 @@
     (throw+ {:error_code error/ERR_NOT_FOUND :uuid data-id})))
 
 
-(defn ^Boolean owns?
-  "Indicates if a file or folder is owned by a given user.
-
-   Parameters:
-     user       - the username of the user
-     data-path - The absolute path to the file or folder
-
-   Returns:
-     It returns true if the user own the data item, otherwise false."
-  [^String user ^String data-path]
-  (users/owns? user data-path))
-
-
 (defn ^String resolve-data-type
   "Given filesystem id, it returns the type of data item it is, file or folder.
 
