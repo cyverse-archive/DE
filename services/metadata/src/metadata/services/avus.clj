@@ -144,3 +144,9 @@
       (persistence/remove-orphaned-avus data-id avu-ids)))
   (amqp/publish-metadata-update user-id data-id)
   (list-metadata-template-avus data-id))
+
+(defn filter-targets-by-attr-value
+  "Filters the given target IDs by returning a list of any that have the given attr and value applied."
+  [attr value target-types target-ids]
+  {:target-ids (map :target_id
+                    (persistence/filter-targets-by-attr-values target-types target-ids attr [value]))})

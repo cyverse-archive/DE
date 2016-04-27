@@ -190,7 +190,7 @@
 
   (GET* "/:ontology-version/:root-iri" []
         :path-params [ontology-version :- OntologyVersionParam
-                      root-iri :- OntologyHierarchyRootParam]
+                      root-iri :- OntologyClassIRIParam]
         :query [params SecuredQueryParams]
         :summary "Get App Category Hierarchy"
         :description
@@ -204,7 +204,7 @@ Please see the metadata service documentation for response information."
 
   (GET* "/:ontology-version/:root-iri/unclassified" [root-iri]
         :path-params [ontology-version :- OntologyVersionParam
-                      root-iri :- OntologyHierarchyRootParam]
+                      root-iri :- OntologyClassIRIParam]
         :query [params AppListingPagingParams]
         :return AppListing
         :summary "List Unclassified Apps"

@@ -99,3 +99,7 @@
 
 (defschema ActiveOntologyDetailsList
   {:ontologies (describe [ActiveOntologyDetails] "List of available Ontologies")})
+
+(defschema OntologyAppListingPagingParams
+  (merge AppListingPagingParams
+         {:attr (describe String "The metadata attribute that stores the given class IRI")}))

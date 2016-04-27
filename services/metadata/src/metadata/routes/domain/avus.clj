@@ -69,3 +69,8 @@ with any of the attributes found in any of the Metadata Template AVUs associated
 
 (s/defschema DataItemList
   {:filesystem (describe [DataItem] "A list of file and folder items")})
+
+(s/defschema FilterTargetByAvuRequest
+  (merge TargetFilterRequest
+         {:attr  (describe String "The Attribute's name")
+          :value (describe String "The Attribute's value")}))

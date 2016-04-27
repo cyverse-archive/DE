@@ -4,7 +4,7 @@
   (:import [java.util Date]))
 
 (def OntologyVersionParam (describe String "The unique version of the Ontology"))
-(def OntologyHierarchyRootParam (describe String "The Class IRI with which to root the hierarchy"))
+(def OntologyClassIRIParam (describe String "A unique Class IRI"))
 
 (s/defschema OntologyDetails
   {:iri        (describe String "The unique IRI for this Ontology")

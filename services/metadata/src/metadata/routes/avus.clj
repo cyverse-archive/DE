@@ -6,6 +6,19 @@
   (:require [metadata.services.avus :as avus]))
 
 (defroutes* avus
+  (context* "/avus" []
+    :tags ["avus"]
+
+    (POST* "/filter-targets" []
+           :query [{:keys [user]} StandardUserQueryParams]
+           :body [{:keys [attr value target-types target-ids]} FilterTargetByAvuRequest]
+           :return TargetIDList
+           :summary "Filter Targets by AVU"
+           :description
+           "Filters the given target IDs by returning a list of any that have metadata with the given
+            `attr` and `value`."
+           (ok (avus/filter-targets-by-attr-value attr value target-types target-ids))))
+
   (context* "/filesystem/data/:data-id/avus" []
     :tags ["avus"]
 

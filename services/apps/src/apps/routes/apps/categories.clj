@@ -50,7 +50,7 @@ Please see the metadata service documentation for response information."
         (listings/list-hierarchies current-user))
 
   (GET* "/:root-iri" []
-        :path-params [root-iri :- OntologyHierarchyRootParam]
+        :path-params [root-iri :- OntologyClassIRIParam]
         :query [params SecuredQueryParams]
         :summary "List App Category Hierarchy"
         :description
@@ -62,8 +62,20 @@ Please see the metadata service documentation for response information."
 Please see the metadata service documentation for response information."
         (listings/get-app-hierarchy current-user root-iri))
 
-  (GET* "/:root-iri/unclassified" [root-iri]
-        :path-params [root-iri :- OntologyHierarchyRootParam]
+  (GET* "/:class-iri/apps" []
+        :path-params [class-iri :- OntologyClassIRIParam]
+        :query [{:keys [attr] :as params} OntologyAppListingPagingParams]
+        :return AppListing
+        :summary "List Apps in a Category"
+        :description
+"Lists all of the apps within an app category that are visible to the user.
+
+#### Delegates to metadata service
+    POST /avus/filter-targets"
+        (ok (coerce! AppListing (apps/list-apps-with-metadata current-user attr class-iri params))))
+
+  (GET* "/:root-iri/unclassified" []
+        :path-params [root-iri :- OntologyClassIRIParam]
         :query [params AppListingPagingParams]
         :return AppListing
         :summary "List Unclassified Apps"

@@ -1,5 +1,5 @@
 (ns apps.service.util
-  (:use [apps.transformers :only [string->long]]
+  (:use [apps.transformers :only [param->long]]
         [apps.util.conversions :only [remove-nil-vals]]
         [kameleon.uuids :only [uuidify]])
   (:require [clojure.string :as string])
@@ -21,14 +21,14 @@
 
 (defn apply-offset
   [res params]
-  (let [offset (string->long (:offset params "0"))]
+  (let [offset (param->long (:offset params "0"))]
     (if (pos? offset)
       (update-in res [:apps] (partial drop offset))
       res)))
 
 (defn apply-limit
   [res params]
-  (let [limit (string->long (:limit params "0"))]
+  (let [limit (param->long (:limit params "0"))]
     (if (pos? limit)
       (update-in res [:apps] (partial take limit))
       res)))

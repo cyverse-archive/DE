@@ -2,8 +2,7 @@
   (:use [common-swagger-api.schema]
         [common-swagger-api.schema.ontologies]
         [metadata.routes.domain.common])
-  (:require [schema.core :as s])
-  (:import [java.util UUID]))
+  (:require [schema.core :as s]))
 
 (s/defschema OntologyDetailsList
   {:ontologies (describe [OntologyDetails] "List of saved Ontologies")})
@@ -28,10 +27,3 @@
 
 (s/defschema OntologyHierarchyList
   {:hierarchies (describe [OntologyClassHierarchy] "A list of Ontology Class hierarchies")})
-
-(s/defschema OntologyHierarchyFilterRequest
-  {:target-ids
-   (describe [UUID] "List of IDs to filter the hierarchy")
-
-   :target-types
-   (describe [TargetTypeEnum] "The types of the given IDs")})

@@ -32,6 +32,9 @@
    (GET "/apps/hierarchies/:root-iri" [root-iri]
      (service/success-response (apps/get-app-category-hierarchy root-iri)))
 
+   (GET "/apps/hierarchies/:class-iri/apps" [class-iri :as {params :params}]
+     (service/success-response (apps/get-hierarchy-app-listing class-iri params)))
+
    (GET "/apps/hierarchies/:root-iri/unclassified" [root-iri :as {params :params}]
      (service/success-response (apps/get-unclassified-app-listing root-iri params)))))
 

@@ -5,8 +5,7 @@
         [kameleon.util :only [query-spy]]
         [kameleon.util.search]
         [kameleon.app-groups :only [get-visible-root-app-group-ids]])
-  (:require [clojure.tools.logging :as log]
-            [clojure.string :as str]))
+  (:require [clojure.string :as str]))
 
 (defn get-app-listing
   "Retrieves all app listing fields from the database for the given App ID."
@@ -342,4 +341,5 @@
 (defn list-apps-by-id
   "Lists all apps with an ID in the the given app-ids list."
   [workspace favorites-group-index app-ids params]
-  (select (get-app-listing-base-query workspace favorites-group-index (assoc params :app-ids app-ids))))
+  (when-not (empty? app-ids)
+    (select (get-app-listing-base-query workspace favorites-group-index (assoc params :app-ids app-ids)))))

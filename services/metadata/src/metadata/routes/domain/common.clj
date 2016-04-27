@@ -21,3 +21,10 @@
 
 (s/defschema DataIdList
   {:filesystem (describe [UUID] "A list of UUIDs, each for a file or folder")})
+
+(s/defschema TargetFilterRequest
+  {:target-ids
+   (describe [UUID] "List of IDs to filter")
+
+   :target-types
+   (describe [TargetTypeEnum] "The types of the given IDs")})

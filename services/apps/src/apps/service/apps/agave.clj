@@ -46,6 +46,10 @@
     (when (= category-id (uuidify (:id (.hpcAppGroup agave))))
       (listings/list-apps agave category-id params)))
 
+  (listAppsWithMetadata [_ attr value params]
+    (when (user-has-access-token?)
+      (listings/list-apps-with-ontology agave value params)))
+
   (searchApps [_ search-term params]
     (when (user-has-access-token?)
       (listings/search-apps agave search-term params)))

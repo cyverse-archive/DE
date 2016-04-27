@@ -1,11 +1,13 @@
 (ns mescal.core
-  (:require [mescal.agave-v2 :as v2]))
+  (:require [clojure.string :as string]
+            [mescal.agave-v2 :as v2]))
 
 (defprotocol AgaveClient
   "A client for the Agave API."
   (listSystems [_])
   (getSystemInfo [_ system-name])
   (listApps [_] [_ app-ids])
+  (listAppsWithOntology [_ term])
   (getApp [_ app-id])
   (submitJob [_ submission])
   (listJobs [_] [_ job-ids])
@@ -28,12 +30,19 @@
     (v2/get-system-info base-url token-info-fn timeout system-name))
   (listApps [_]
     (v2/check-access-token token-info-fn timeout)
-    (v2/list-apps base-url token-info-fn timeout page-len))
+    (v2/list-apps base-url token-info-fn timeout {:page-len page-len}))
   (listApps [_ app-ids]
     (v2/check-access-token token-info-fn timeout)
     (if (> (count app-ids) max-query-items)
-      (v2/list-apps base-url token-info-fn timeout page-len)
-      (v2/list-apps base-url token-info-fn timeout page-len app-ids)))
+      (v2/list-apps base-url token-info-fn timeout {:page-len page-len})
+      (v2/list-apps base-url token-info-fn timeout {:page-len page-len
+                                                    :id.in    (string/join "," app-ids)})))
+  (listAppsWithOntology [_ term]
+    (v2/check-access-token token-info-fn timeout)
+    ;; Not yet supported
+    nil
+    #_(v2/list-apps base-url token-info-fn timeout {:page-len      page-len
+                                                    :ontology.like (str "*" term "*")}))
   (getApp [_ app-id]
     (v2/check-access-token token-info-fn timeout)
     (v2/get-app base-url token-info-fn timeout app-id))

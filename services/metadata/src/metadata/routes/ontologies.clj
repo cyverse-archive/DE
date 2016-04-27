@@ -27,9 +27,9 @@
 
     (POST* "/:ontology-version/:root-iri/filter" []
            :path-params [ontology-version :- OntologyVersionParam
-                         root-iri :- OntologyHierarchyRootParam]
+                         root-iri :- OntologyClassIRIParam]
            :query [{:keys [user]} StandardUserQueryParams]
-           :body [{:keys [target-types target-ids]} OntologyHierarchyFilterRequest]
+           :body [{:keys [target-types target-ids]} TargetFilterRequest]
            :return OntologyHierarchy
            :summary "Filter an Ontology Hierarchy"
            :description
@@ -39,9 +39,9 @@
 
     (POST* "/:ontology-version/:root-iri/filter-unclassified" []
            :path-params [ontology-version :- OntologyVersionParam
-                         root-iri :- OntologyHierarchyRootParam]
+                         root-iri :- OntologyClassIRIParam]
            :query [{:keys [user]} StandardUserQueryParams]
-           :body [{:keys [target-types target-ids]} OntologyHierarchyFilterRequest]
+           :body [{:keys [target-types target-ids]} TargetFilterRequest]
            :return TargetIDList
            :summary "Filter Unclassified Targets"
            :description
@@ -64,7 +64,7 @@
 
     (PUT* "/:ontology-version/:root-iri" []
           :path-params [ontology-version :- OntologyVersionParam
-                        root-iri :- OntologyHierarchyRootParam]
+                        root-iri :- OntologyClassIRIParam]
           :query [{:keys [user]} StandardUserQueryParams]
           :return OntologyHierarchy
           :summary "Save an Ontology Hierarchy"

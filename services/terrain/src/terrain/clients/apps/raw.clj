@@ -63,6 +63,13 @@
                :as               :stream
                :follow-redirects false}))
 
+(defn get-hierarchy-app-listing
+  [class-iri params]
+  (client/get (apps-url-encoded "apps" "hierarchies" class-iri "apps")
+              {:query-params     (secured-params params (conj apps-sort-params :attr))
+               :as               :stream
+               :follow-redirects false}))
+
 (defn get-unclassified-app-listing
   ([ontology-version root-iri params]
    (client/get (apps-url-encoded "admin" "ontologies" ontology-version root-iri "unclassified")
