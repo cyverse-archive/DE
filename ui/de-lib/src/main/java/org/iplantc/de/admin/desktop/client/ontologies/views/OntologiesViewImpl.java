@@ -1,10 +1,12 @@
 package org.iplantc.de.admin.desktop.client.ontologies.views;
 
+import org.iplantc.de.admin.apps.client.AdminAppsGridView;
 import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.ViewOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.EdamUploadDialog;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.OntologyListDialog;
+import org.iplantc.de.apps.client.AppCategoriesView;
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
@@ -54,6 +56,8 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @UiField TextButton viewVersions;
     @UiField(provided = true) OntologiesViewAppearance appearance;
     @UiField Tree<OntologyHierarchy, String> tree;
+    @UiField(provided = true) AppCategoriesView categoriesView;
+    @UiField(provided = true) AdminAppsGridView gridView;
     @Inject EventBus eventBus;
     @Inject DEClientConstants clientConstants;
 
@@ -62,9 +66,13 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
     @Inject
     public OntologiesViewImpl(OntologiesViewAppearance appearance,
-                              @Assisted TreeStore<OntologyHierarchy> treeStore) {
+                              @Assisted TreeStore<OntologyHierarchy> treeStore,
+                              @Assisted AppCategoriesView categoriesView,
+                              @Assisted AdminAppsGridView gridView) {
         this.appearance = appearance;
         this.treeStore = treeStore;
+        this.categoriesView = categoriesView;
+        this.gridView = gridView;
 
         initWidget(uiBinder.createAndBindUi(this));
 

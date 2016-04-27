@@ -1,5 +1,7 @@
 package org.iplantc.de.admin.desktop.client.ontologies.presenter;
 
+import org.iplantc.de.admin.apps.client.AdminAppsGridView;
+import org.iplantc.de.admin.apps.client.AdminCategoriesView;
 import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
@@ -8,9 +10,14 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.ViewOntologyVersion
 import org.iplantc.de.admin.desktop.client.ontologies.gin.factory.OntologiesViewFactory;
 import org.iplantc.de.admin.desktop.client.ontologies.service.OntologyServiceFacade;
 import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.ontologies.Ontology;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
+import org.iplantc.de.client.models.ontologies.OntologyVersionDetail;
+import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.commons.client.ErrorHandler;
+import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
@@ -18,6 +25,7 @@ import com.google.inject.Inject;
 
 import com.sencha.gxt.data.shared.TreeStore;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,19 +38,33 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                                                 PublishOntologyClickEvent.PublishOntologyClickEventHandler {
 
     @Inject DEProperties properties;
+    @Inject IplantAnnouncer announcer;
     private OntologiesView view;
     private OntologyServiceFacade serviceFacade;
     private final TreeStore<OntologyHierarchy> treeStore;
-    private OntologiesViewFactory factory;
+    private OntologiesView.OntologiesViewAppearance appearance;
+    private AdminCategoriesView.Presenter categoriesPresenter;
+    private AdminAppsGridView.Presenter gridPresenter;
 
     @Inject
     public OntologiesPresenterImpl(OntologyServiceFacade serviceFacade,
                                    final TreeStore<OntologyHierarchy> treeStore,
-                                   OntologiesViewFactory factory) {
+                                   OntologiesViewFactory factory,
+                                   OntologiesView.OntologiesViewAppearance appearance,
+                                   AdminCategoriesView.Presenter categoriesPresenter,
+                                   AdminAppsGridView.Presenter gridPresenter) {
         this.serviceFacade = serviceFacade;
         this.treeStore = treeStore;
-        this.factory = factory;
-        this.view = factory.create(treeStore);
+        this.appearance = appearance;
+
+        this.categoriesPresenter = categoriesPresenter;
+        this.gridPresenter = gridPresenter;
+
+        this.view = factory.create(treeStore, categoriesPresenter.getView(), gridPresenter.getView());
+
+        categoriesPresenter.getView().addAppCategorySelectedEventHandler(gridPresenter);
+        categoriesPresenter.getView().addAppCategorySelectedEventHandler(gridPresenter.getView());
+        gridPresenter.addStoreRemoveHandler(categoriesPresenter);
 
         view.addViewOntologyVersionEventHandler(this);
         view.addSelectOntologyVersionEventHandler(this);
@@ -51,6 +73,9 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     @Override
     public void go(HasOneWidget container) {
+        HasId betaGroup = CommonModelUtils.getInstance().createHasIdFromString(DEProperties.getInstance().getDefaultBetaCategoryId());
+
+        categoriesPresenter.go(betaGroup);
         container.setWidget(view);
     }
 
