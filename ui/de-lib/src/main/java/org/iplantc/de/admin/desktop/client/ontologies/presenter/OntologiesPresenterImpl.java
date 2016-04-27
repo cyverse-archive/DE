@@ -1,6 +1,8 @@
 package org.iplantc.de.admin.desktop.client.ontologies.presenter;
 
 import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
+import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.ViewOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.gin.factory.OntologiesViewFactory;
@@ -23,7 +25,9 @@ import java.util.List;
  */
 public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                                                 ViewOntologyVersionEvent.ViewOntologyVersionEventHandler,
-                                                SelectOntologyVersionEvent.SelectOntologyVersionEventHandler {
+                                                SelectOntologyVersionEvent.SelectOntologyVersionEventHandler,
+                                                SaveOntologyHierarchyEvent.SaveOntologyHierarchyEventHandler,
+                                                PublishOntologyClickEvent.PublishOntologyClickEventHandler {
 
     @Inject DEProperties properties;
     private OntologiesView view;
@@ -110,5 +114,53 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         for (OntologyHierarchy hierarchy : children) {
             addHierarchies(hierarchy, hierarchy.getSubclasses());
         }
+    }
+
+    @Override
+    public void onSaveOntologyHierarchy(SaveOntologyHierarchyEvent event) {
+        //Save TOPIC hierarchy
+        serviceFacade.saveOntologyHierarchy(event.getOntology().getVersion(),
+                                            properties.getEdamTopicIri(),
+                                            new AsyncCallback<OntologyHierarchy>() {
+                                                @Override
+                                                public void onFailure(Throwable caught) {
+                                                    ErrorHandler.post(caught);
+                                                }
+
+                                                @Override
+                                                public void onSuccess(OntologyHierarchy result) {
+                                                    //TODO
+                                                }
+                                            });
+
+        //Save OPERATION hierarchy
+        serviceFacade.saveOntologyHierarchy(event.getOntology().getVersion(),
+                                            properties.getEdamOperationIri(),
+                                            new AsyncCallback<OntologyHierarchy>() {
+                                                @Override
+                                                public void onFailure(Throwable caught) {
+                                                    ErrorHandler.post(caught);
+                                                }
+
+                                                @Override
+                                                public void onSuccess(OntologyHierarchy result) {
+                                                    //TODO
+                                                }
+                                            });
+    }
+
+    @Override
+    public void onPublishOntologyClick(PublishOntologyClickEvent event) {
+        serviceFacade.setActiveOntologyVersion(event.getNewActiveOntology().getVersion(), new AsyncCallback<OntologyVersionDetail>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+            }
+
+            @Override
+            public void onSuccess(OntologyVersionDetail result) {
+                announcer.schedule(new SuccessAnnouncementConfig(appearance.setActiveOntologySuccess()));
+            }
+        });
     }
 }
