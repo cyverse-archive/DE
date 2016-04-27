@@ -160,6 +160,7 @@ public class EdamUploadDialog extends IPlantDialog {
         if (Strings.isNullOrEmpty(results2)) {
             IplantAnnouncer.getInstance()
                            .schedule(new SuccessAnnouncementConfig(appearance.fileUploadSuccess(fuf.getValue())));
+            hide();
         } else {
             IplantAnnouncer.getInstance()
                            .schedule(new ErrorAnnouncementConfig(appearance.fileUploadsFailed(fuf.getValue())));
