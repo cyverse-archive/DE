@@ -17,3 +17,5 @@ func CountResourcesOfType(tx *sql.Tx, resourceTypeId *string) (int64, error) {
 	}
 	return count, nil
 }
+
+// TODO: add another test for an attempt to delete a resource type that is associated with a resource

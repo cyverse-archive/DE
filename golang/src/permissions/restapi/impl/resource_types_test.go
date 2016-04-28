@@ -10,6 +10,8 @@ import (
 	middleware "github.com/go-swagger/go-swagger/httpkit/middleware"
 )
 
+const FAKE_ID = "1A960034-969A-46A7-B6B5-3F1866258CAB"
+
 func addResourceTypeAttempt(db *sql.DB, name, description string) middleware.Responder {
 
 	// build the request handler.
@@ -51,6 +53,21 @@ func modifyResourceTypeAttempt(db *sql.DB, id, name, description string) middlew
 func modifyResourceType(db *sql.DB, id string, name string, description string) *models.ResourceTypeOut {
 	responder := modifyResourceTypeAttempt(db, id, name, description)
 	return responder.(*resource_types.PostResourceTypesIDOK).Payload
+}
+
+func deleteResourceTypeAttempt(db *sql.DB, id string) middleware.Responder {
+
+	// Build the request handler.
+	handler := BuildResourceTypesIDDeleteHandler(db)
+
+	// Attempt to remove the resource type from the database.
+	params := resource_types.DeleteResourceTypesIDParams{ID: id}
+	return handler(params)
+}
+
+func deleteResourceType(db *sql.DB, id string) {
+	responder := deleteResourceTypeAttempt(db, id)
+	_ = responder.(*resource_types.DeleteResourceTypesIDOK)
 }
 
 func TestAddResourceType(t *testing.T) {
@@ -191,12 +208,11 @@ func TestModifyNonExistentResourceType(t *testing.T) {
 	db := initdb(t)
 
 	// Attempt to modify a non-existent resource type.
-	id := "1A960034-969A-46A7-B6B5-3F1866258CAB"
-	responder := modifyResourceTypeAttempt(db, id, "n", "d")
+	responder := modifyResourceTypeAttempt(db, FAKE_ID, "n", "d")
 	errorOut := responder.(*resource_types.PostResourceTypesIDNotFound).Payload
 
 	// Verify that we got the expected error message.
-	expected := fmt.Sprintf("resource type %s not found", id)
+	expected := fmt.Sprintf("resource type %s not found", FAKE_ID)
 	if *errorOut.Reason != expected {
 		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
 	}
@@ -220,6 +236,63 @@ func TestModifyDuplicateResourceType(t *testing.T) {
 
 	// Verify that we got the expected error message.
 	expected := fmt.Sprintf("another resource type named %s already exists", *rt1.Name)
+	if *errorOut.Reason != expected {
+		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
+	}
+}
+
+func TestDeleteResourceType(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+
+	// Create two resource types.
+	rt1 := addResourceType(db, "rt1", "rt1")
+	rt2 := addResourceType(db, "rt2", "rt2")
+
+	// Delete the second resource type.
+	deleteResourceType(db, *rt2.ID)
+
+	// List the resource types.
+	resourceTypesOut := listResourceTypes(db)
+
+	// Verify the number of resource types in the response.
+	resourceTypes := resourceTypesOut.ResourceTypes
+	if len(resourceTypes) != 1 {
+		t.Fatalf("unexpected number of resource types listed: %d", len(resourceTypes))
+		return
+	}
+
+	// Verify the resource type values.
+	listed := resourceTypes[0]
+	if *listed.ID != *rt1.ID {
+		t.Errorf("unexpected resource type ID listed: %s", *listed.ID)
+	}
+	if *listed.Name != *rt1.Name {
+		t.Errorf("unexpected resource type name listed: %s", *listed.Name)
+	}
+	if listed.Description != rt1.Description {
+		t.Errorf("unexpected resource type description listed: %s", listed.Description)
+	}
+}
+
+func TestDeleteNonExistentResourceType(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+
+	// Attempt to delete a non-existent resource type.
+	responder := deleteResourceTypeAttempt(db, FAKE_ID)
+	errorOut := responder.(*resource_types.DeleteResourceTypesIDNotFound).Payload
+
+	// Verify that we got the expected error message.
+	expected := fmt.Sprintf("resource type %s not found", FAKE_ID)
 	if *errorOut.Reason != expected {
 		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
 	}
