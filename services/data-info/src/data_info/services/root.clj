@@ -15,6 +15,7 @@
 
 (defn- get-root
   [cm user root-path]
+  (validators/path-readable cm user root-path) ;; CORE-7638; otherwise a 'nil' permission can pop up and cause issues
   (-> (stat/path-stat cm user root-path)
       (select-keys [:id :label :path :date-created :date-modified :permission])))
 
