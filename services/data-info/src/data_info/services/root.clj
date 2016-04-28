@@ -18,24 +18,22 @@
   (-> (stat/path-stat cm user root-path)
       (select-keys [:id :label :path :date-created :date-modified :permission])))
 
-(defn- get-trash-root
-  [cm user]
-  (let [trash-path (paths/user-trash-path user)]
-    (when (not (exists? cm trash-path))
-      (log/info "[get-trash-root] Creating" trash-path "for" user)
-      (ops/mkdirs cm trash-path)
-      (log/info "[get-trash-root] Setting own perms on" trash-path "for" user)
-      (set-permission cm user trash-path :own))
+(defn- make-root
+  [cm user root-path]
+  (when-not (exists? cm root-path)
+    (log/info "[make-root] Creating" root-path "for" user)
+    (ops/mkdirs cm root-path))
 
-    (when (not (owns? cm user trash-path))
-      (log/info "[get-trash-root] Setting own perms on" trash-path "for" user)
-      (set-permission cm user trash-path :own))
+  (when-not (owns? cm user root-path)
+    (log/info "[make-root] Setting own permissions on" root-path "for" user)
+    (set-permission cm user root-path :own))
 
-    (get-root cm user trash-path)))
+  (get-root cm user root-path))
 
 (defn root-listing
   [user]
   (let [uhome          (paths/user-home-dir user)
+        utrash         (paths/user-trash-path user)
         community-data (ft/rm-last-slash (cfg/community-data))
         irods-home     (ft/rm-last-slash (cfg/irods-home))]
     (log/debug "[root-listing]" "for" user)
@@ -45,7 +43,7 @@
                 [(get-root cm user uhome)
                  (get-root cm user community-data)
                  (get-root cm user irods-home)
-                 (get-trash-root cm user)])})))
+                 (make-root cm user utrash)])})))
 
 (defn do-root-listing
   [user]
