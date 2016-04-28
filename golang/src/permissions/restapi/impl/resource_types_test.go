@@ -297,3 +297,5 @@ func TestDeleteNonExistentResourceType(t *testing.T) {
 		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
 	}
 }
+
+// TODO: add another test for an attempt to delete a resource type that is associated with a resource
