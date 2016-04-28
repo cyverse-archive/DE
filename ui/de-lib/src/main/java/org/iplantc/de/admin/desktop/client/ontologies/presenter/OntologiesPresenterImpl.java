@@ -119,7 +119,13 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
                                                  @Override
                                                  public void onSuccess(List<OntologyHierarchy> result) {
-                                                     addHierarchies(null, result);
+                                                     if (result.size() == 0) {
+                                                         view.showEmptyTreePanel();
+                                                     }
+                                                     else {
+                                                         addHierarchies(null, result);
+                                                         view.showTreePanel();
+                                                     }
             }
         });
 

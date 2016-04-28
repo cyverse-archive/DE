@@ -4,6 +4,7 @@
              xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
              xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
              xmlns:apps="urn:import:org.iplantc.de.apps.client"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:adminApps="urn:import:org.iplantc.de.admin.apps.client"
              xmlns:tree="urn:import:com.sencha.gxt.widget.core.client.tree"
              xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
@@ -60,9 +61,17 @@
             </toolbar:ToolBar>
         </container:north>
         <container:west layoutData="{westData}">
-            <gxt:ContentPanel>
-                <tree:Tree ui:field="tree"/>
-            </gxt:ContentPanel>
+            <container:CardLayoutContainer ui:field="cards">
+                <container:CenterLayoutContainer ui:field="noTreePanel">
+                    <g:Label text="No ontology version selected."/>
+                </container:CenterLayoutContainer>
+                <gxt:ContentPanel ui:field="treePanel">
+                    <tree:Tree ui:field="tree"/>
+                </gxt:ContentPanel>
+                <container:CenterLayoutContainer ui:field="emptyTreePanel">
+                    <g:Label text="No hierarchies saved for this ontology version."/>
+                </container:CenterLayoutContainer>
+            </container:CardLayoutContainer>
         </container:west>
         <container:east layoutData="{eastData}">
             <gxt:ContentPanel headingText="OLD">
