@@ -34,7 +34,10 @@ import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.LabelProvider;
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.widget.core.client.Composite;
+import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.container.CardLayoutContainer;
+import com.sencha.gxt.widget.core.client.container.CenterLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.form.SimpleComboBox;
 import com.sencha.gxt.widget.core.client.tree.Tree;
@@ -59,6 +62,9 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @UiField Tree<OntologyHierarchy, String> tree;
     @UiField(provided = true) AppCategoriesView categoriesView;
     @UiField(provided = true) AdminAppsGridView gridView;
+    @UiField CardLayoutContainer cards;
+    @UiField CenterLayoutContainer noTreePanel, emptyTreePanel;
+    @UiField ContentPanel treePanel;
     @Inject EventBus eventBus;
     @Inject DEClientConstants clientConstants;
 
@@ -98,6 +104,16 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     public void showOntologyVersions(final List<Ontology> ontologies) {
         ontologyDropDown.clear();
         ontologyDropDown.getStore().replaceAll(ontologies);
+    }
+
+    @Override
+    public void showEmptyTreePanel() {
+        cards.setActiveWidget(emptyTreePanel);
+    }
+
+    @Override
+    public void showTreePanel() {
+        cards.setActiveWidget(treePanel);
     }
 
 

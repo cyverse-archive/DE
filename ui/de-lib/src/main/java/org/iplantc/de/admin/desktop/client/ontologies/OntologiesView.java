@@ -21,6 +21,10 @@ public interface OntologiesView extends IsWidget,
 
     void showOntologyVersions(List<Ontology> result);
 
+    void showEmptyTreePanel();
+
+    void showTreePanel();
+
     interface OntologiesViewAppearance {
         String addOntology();
 
