@@ -3,6 +3,7 @@
         [slingshot.slingshot :only [throw+ try+]])
   (:require [clojure.string :as string]
             [clojure.tools.logging :as log]
+            [clojure.walk :as walk]
             [cemerick.url :as url]
             [cheshire.core :as json]
             [me.raynes.fs :as fs]
@@ -286,8 +287,11 @@
    Returns:
      It returns a path-stat map containing an additional UUID field."
   [^String user ^UUID uuid]
-  (uuids/path-for-uuid user uuid))
-
+  (-> (raw/collect-stats user :ids [uuid])
+      :body
+      json/decode
+      (get-in ["ids" uuid])
+      walk/keywordize-keys))
 
 (defn ^ISeq stats-by-uuids-paged
   "Resolves the stat info for the entities with the given UUIDs. The results are paged.
@@ -347,19 +351,6 @@
   [^String user ^UUID data-id]
   (when-not (uuid-accessible? user data-id)
     (throw+ {:error_code error/ERR_NOT_FOUND :uuid data-id})))
-
-
-(defn ^Boolean owns?
-  "Indicates if a file or folder is owned by a given user.
-
-   Parameters:
-     user       - the username of the user
-     data-path - The absolute path to the file or folder
-
-   Returns:
-     It returns true if the user own the data item, otherwise false."
-  [^String user ^String data-path]
-  (users/owns? user data-path))
 
 
 (defn ^String resolve-data-type

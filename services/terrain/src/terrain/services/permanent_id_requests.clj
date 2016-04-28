@@ -73,8 +73,8 @@
     target-type))
 
 (defn- validate-owner
-  [user {:keys [id path] :as data-item}]
-  (when-not (data-info/owns? user path)
+  [user {:keys [id permission] :as data-item}]
+  (when-not (= (keyword permission) :own)
     (throw+ {:type :clojure-commons.exception/not-owner
              :error "User does not own given folder."
              :user user
