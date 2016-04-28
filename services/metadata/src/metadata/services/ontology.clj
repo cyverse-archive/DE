@@ -91,9 +91,7 @@
 (defn- filter-new-hierarchy-pairs
   [ontology-version hierarchy]
   (let [class-subclass-pairs  (util/hierarchy->class-subclass-pairs hierarchy)
-        format-db-class-pairs #(vector (:class_iri %) (:subclass_iri %))
-        found-hierarchy-pairs (set (map format-db-class-pairs
-                                        (ont-db/get-ontology-hierarchy-pairs ontology-version)))]
+        found-hierarchy-pairs (set (ont-db/get-ontology-hierarchy-pairs ontology-version))]
     (sets/difference class-subclass-pairs found-hierarchy-pairs)))
 
 (defn save-hierarchy

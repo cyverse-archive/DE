@@ -46,16 +46,10 @@
                   :description)
           (where {:ontology_version ontology-version})))
 
-(defn- format-class-subclass-pair
-  [ontology-version [class-iri subclass-iri]]
-  {:ontology_version ontology-version
-   :class_iri        class-iri
-   :subclass_iri     subclass-iri})
-
 (defn add-hierarchies
   [ontology-version class-subclass-pairs]
   (when-not (empty? class-subclass-pairs)
-    (let [hierarchy-values (map (partial format-class-subclass-pair ontology-version) class-subclass-pairs)]
+    (let [hierarchy-values (map #(assoc % :ontology_version ontology-version) class-subclass-pairs)]
       (insert :ontology_hierarchies (values hierarchy-values)))))
 
 (defn get-ontology-hierarchy-pairs
