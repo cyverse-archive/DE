@@ -10,11 +10,16 @@ import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.Ontology
 import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.OntologyListCallbackConverter;
 import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.OntologyVersionCallbackConverter;
 import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.TargetIdCallbackConverter;
+import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.apps.AppList;
 import org.iplantc.de.client.models.ontologies.Ontology;
 import org.iplantc.de.client.models.ontologies.OntologyAutoBeanFactory;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchyFilterReq;
+import org.iplantc.de.client.models.ontologies.OntologyMetadata;
 import org.iplantc.de.client.models.ontologies.OntologyVersionDetail;
+import org.iplantc.de.client.services.AppServiceFacade;
+import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -37,6 +42,7 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
     private final String APPS_HIERARCHIES = "org.iplantc.services.apps.hierarchies";
     @Inject OntologyAutoBeanFactory factory;
     @Inject private DiscEnvApiService deService;
+    @Inject AppServiceFacade.AppServiceAutoBeanFactory svcFactory;
 
     @Inject
     OntologyServiceFacadeImpl() {
@@ -70,6 +76,20 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PUT, address);
         deService.getServiceData(wrapper, new OntologyVersionCallbackConverter(callback, factory));
 
+    }
+
+    @Override
+    public void getAppsByHierarchy(String iri, OntologyMetadata metadata, AsyncCallback<List<App>> callback) {
+        String address = APPS_HIERARCHIES + "/" + URL.encodeQueryString(iri) + "/apps" + "?attr=" + metadata.getAttr();
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
+        deService.getServiceData(wrapper, new AsyncCallbackConverter<String, List<App>>(callback) {
+            @Override
+            protected List<App> convertFrom(String object) {
+                List<App> apps = AutoBeanCodex.decode(svcFactory, AppList.class, object).as().getApps();
+                return apps;
+            }
+        });
     }
 
 

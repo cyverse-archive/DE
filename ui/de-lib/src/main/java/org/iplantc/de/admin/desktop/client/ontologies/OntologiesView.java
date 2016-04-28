@@ -1,5 +1,6 @@
 package org.iplantc.de.admin.desktop.client.ontologies;
 
+import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.ViewOntologyVersionEvent;
 import org.iplantc.de.client.models.ontologies.Ontology;
@@ -15,7 +16,8 @@ import java.util.List;
  */
 public interface OntologiesView extends IsWidget,
                                         ViewOntologyVersionEvent.HasViewOntologyVersionEventHandlers,
-                                        SelectOntologyVersionEvent.HasSelectOntologyVersionEventHandlers {
+                                        SelectOntologyVersionEvent.HasSelectOntologyVersionEventHandlers,
+                                        HierarchySelectedEvent.HasHierarchySelectedEventHandlers {
 
     void showOntologyVersions(List<Ontology> result);
 

@@ -1,8 +1,10 @@
 package org.iplantc.de.admin.desktop.client.ontologies.service;
 
+import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.ontologies.Ontology;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchyFilterReq;
+import org.iplantc.de.client.models.ontologies.OntologyMetadata;
 import org.iplantc.de.client.models.ontologies.OntologyVersionDetail;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -70,4 +72,11 @@ public interface OntologyServiceFacade {
      */
     void setActiveOntologyVersion(String version, AsyncCallback<OntologyVersionDetail> callback);
 
+    /**
+     * Get the list of apps that belong to the specified class iri and metadata attribute
+     * @param iri
+     * @param metadata
+     * @param callback
+     */
+    void getAppsByHierarchy(String iri, OntologyMetadata metadata, AsyncCallback<List<App>> callback);
 }

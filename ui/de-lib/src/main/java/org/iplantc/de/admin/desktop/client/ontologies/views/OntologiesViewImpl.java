@@ -2,6 +2,7 @@ package org.iplantc.de.admin.desktop.client.ontologies.views;
 
 import org.iplantc.de.admin.apps.client.AdminAppsGridView;
 import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
+import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.ViewOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.EdamUploadDialog;
@@ -89,6 +90,11 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     @Override
+    public HandlerRegistration addHierarchySelectedEventHandler(HierarchySelectedEvent.HierarchySelectedEventHandler handler) {
+        return addHandler(handler, HierarchySelectedEvent.TYPE);
+    }
+
+    @Override
     public void showOntologyVersions(final List<Ontology> ontologies) {
         ontologyDropDown.clear();
         ontologyDropDown.getStore().replaceAll(ontologies);
@@ -150,6 +156,17 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
                 return null;
             }
         });
+
+        ontologyTree.getSelectionModel().setSelectionMode(Style.SelectionMode.SINGLE);
+        ontologyTree.getSelectionModel().addSelectionChangedHandler(new SelectionChangedEvent.SelectionChangedHandler<OntologyHierarchy>() {
+            @Override
+            public void onSelectionChanged(SelectionChangedEvent<OntologyHierarchy> event) {
+                if (event.getSelection().size() == 1) {
+                    fireEvent(new HierarchySelectedEvent(event.getSelection().get(0)));
+                }
+            }
+        });
+
         return ontologyTree;
     }
 
