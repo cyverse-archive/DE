@@ -20,7 +20,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.resources.client.ImageResource;
@@ -266,8 +265,8 @@ public class SimpleFileUploadDialog extends IPlantDialog {
                 Splittable split = StringQuoter.split(results);
                 if (split == null) {
                     IplantAnnouncer.getInstance()
-                                   .schedule(new ErrorAnnouncementConfig(appearance.fileUploadsFailed(Lists.newArrayList(
-                                           field.getValue()))));
+                                   .schedule(new ErrorAnnouncementConfig(appearance.fileUploadsFailed(
+                                           Lists.newArrayList(field.getValue()))));
                 } else {
                     if (split.isUndefined("file") || (split.get("file") == null)) {
                         field.markInvalid(appearance.fileUploadsFailed(Lists.newArrayList(field.getValue())));
@@ -279,10 +278,9 @@ public class SimpleFileUploadDialog extends IPlantDialog {
                     }
                 }
             } catch (Exception e) {
-                ErrorHandler.post(appearance.fileUploadsFailed(
-                        Lists.newArrayList(field.getValue())), new Throwable(results2));
+                ErrorHandler.post(appearance.fileUploadsFailed(Lists.newArrayList(field.getValue())),
+                                  new Throwable(results2));
             }
-
 
 
         }
