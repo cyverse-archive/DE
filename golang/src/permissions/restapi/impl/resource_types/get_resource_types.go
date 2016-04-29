@@ -1,4 +1,4 @@
-package impl
+package resource_types
 
 import (
 	"database/sql"

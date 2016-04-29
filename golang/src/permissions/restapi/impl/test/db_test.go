@@ -1,4 +1,4 @@
-package impl
+package test
 
 import (
 	"database/sql"
