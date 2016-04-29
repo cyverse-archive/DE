@@ -1,6 +1,7 @@
 package org.iplantc.de.admin.apps.client.views.grid;
 
 import org.iplantc.de.admin.apps.client.AdminAppsGridView;
+import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEvent;
 import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.BeforeAppSearchEvent;
@@ -73,6 +74,11 @@ public class AdminAppsGridImpl extends ContentPanel implements AdminAppsGridView
     public void onAppCategorySelectionChanged(AppCategorySelectionChangedEvent event) {
         // FIXME Move to appearance
         setHeadingText(Joiner.on(" >> ").join(event.getGroupHierarchy()));
+    }
+
+    @Override
+    public void onHierarchySelected(HierarchySelectedEvent event) {
+        setHeadingText(Joiner.on(" >> ").join(event.getPath()));
     }
 
     @Override
