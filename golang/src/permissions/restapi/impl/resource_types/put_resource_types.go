@@ -42,7 +42,13 @@ func BuildResourceTypesPutHandler(db *sql.DB) func(resource_types.PutResourceTyp
 			reason := err.Error()
 			return resource_types.NewPutResourceTypesInternalServerError().WithPayload(&models.ErrorOut{&reason})
 		}
-		tx.Commit()
+
+		if err := tx.Commit(); err != nil {
+			tx.Rollback()
+			reason := err.Error()
+			return resource_types.NewPutResourceTypesInternalServerError().WithPayload(&models.ErrorOut{&reason})
+		}
+
 		return resource_types.NewPutResourceTypesCreated().WithPayload(resourceTypeOut)
 	}
 }

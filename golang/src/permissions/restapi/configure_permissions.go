@@ -17,9 +17,11 @@ import (
 
 	"permissions/restapi/operations"
 	"permissions/restapi/operations/resource_types"
+	"permissions/restapi/operations/resources"
 	"permissions/restapi/operations/status"
 
 	resource_types_impl "permissions/restapi/impl/resource_types"
+	resources_impl "permissions/restapi/impl/resources"
 	status_impl "permissions/restapi/impl/status"
 )
 
@@ -114,6 +116,10 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 
 	api.ResourceTypesDeleteResourceTypesIDHandler = resource_types.DeleteResourceTypesIDHandlerFunc(
 		resource_types_impl.BuildResourceTypesIDDeleteHandler(db),
+	)
+
+	api.ResourcesAddResourceHandler = resources.AddResourceHandlerFunc(
+		resources_impl.BuildAddResourceHandler(db),
 	)
 
 	api.ServerShutdown = cleanup

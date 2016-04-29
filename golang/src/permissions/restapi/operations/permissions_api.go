@@ -15,6 +15,7 @@ import (
 	"github.com/go-swagger/go-swagger/swag"
 
 	"permissions/restapi/operations/resource_types"
+	"permissions/restapi/operations/resources"
 	"permissions/restapi/operations/status"
 )
 
@@ -56,6 +57,8 @@ type PermissionsAPI struct {
 	ResourceTypesPostResourceTypesIDHandler resource_types.PostResourceTypesIDHandler
 	// ResourceTypesPutResourceTypesHandler sets the operation handler for the put resource types operation
 	ResourceTypesPutResourceTypesHandler resource_types.PutResourceTypesHandler
+	// ResourcesAddResourceHandler sets the operation handler for the add resource operation
+	ResourcesAddResourceHandler resources.AddResourceHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -129,6 +132,10 @@ func (o *PermissionsAPI) Validate() error {
 
 	if o.ResourceTypesPutResourceTypesHandler == nil {
 		unregistered = append(unregistered, "resource_types.PutResourceTypesHandler")
+	}
+
+	if o.ResourcesAddResourceHandler == nil {
+		unregistered = append(unregistered, "resources.AddResourceHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -228,6 +235,11 @@ func (o *PermissionsAPI) initHandlerCache() {
 		o.handlers[strings.ToUpper("PUT")] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/resource_types"] = resource_types.NewPutResourceTypes(o.context, o.ResourceTypesPutResourceTypesHandler)
+
+	if o.handlers["PUT"] == nil {
+		o.handlers[strings.ToUpper("PUT")] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/resources"] = resources.NewAddResource(o.context, o.ResourcesAddResourceHandler)
 
 }
 

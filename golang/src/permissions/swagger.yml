@@ -73,6 +73,42 @@ definitions:
         description: "The list of resource types."
         items:
           $ref: "#/definitions/resource_type_out"
+  resource_in:
+    type: object
+    description: "An incoming resource."
+    required:
+      - name
+      - resource_type
+    properties:
+      name:
+        type: string
+        description: "The resource name."
+        minLength: 1
+      resource_type:
+        type: string
+        description: "The resource type name."
+        minLength: 1
+  resource_out:
+    type: object
+    description: "An outgoing resource."
+    required:
+      - id
+      - name
+      - resource_type
+    properties:
+      id:
+        type: string
+        description: "The resource identifier."
+        minLength: 36
+        maxLength: 36
+      name:
+        type: string
+        description: "The resource name."
+        minLength: 1
+      resource_type:
+        type: string
+        description: "The resource type name."
+        minLength: 1
 info:
   description: >-
     Manages Permissions for the CyVerse Discovery Environment and related applications.
@@ -176,6 +212,31 @@ paths:
           $ref: "#/responses/bad_request"
         404:
           $ref: "#/responses/not_found"
+        500:
+          $ref: "#/responses/internal_server_error"
+  /resources:
+    put:
+      tags:
+        - resources
+      summary: "Add a Resource"
+      description: >-
+        Adds a resource to the database. A resource is a single item to which permissions may be applied. For example
+        The Discovery Environment app, Word Count, would be defined as a resource in the permissions service.
+      parameters:
+        - description: "The new resource to add."
+          in: body
+          name: "resource_in"
+          required: True
+          schema:
+            $ref: "#/definitions/resource_in"
+      operationId: addResource
+      responses:
+        201:
+          description: "Created"
+          schema:
+            $ref: "#/definitions/resource_out"
+        400:
+          $ref: "#/responses/bad_request"
         500:
           $ref: "#/responses/internal_server_error"
 produces:
