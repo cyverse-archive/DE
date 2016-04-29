@@ -11,6 +11,6 @@
                                [com.fasterxml.jackson.core/jackson-databind]
                                [com.fasterxml.jackson.core/jackson-core]]]
                  [clj-time "0.9.0"] ; required due to bug in lein-ring
-                 [metosin/compojure-api "0.24.2"]]
+                 [metosin/compojure-api "0.24.5"]]
   :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]]
                    :plugins [[lein-ring "0.9.6"]]}})

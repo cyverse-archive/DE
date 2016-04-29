@@ -23,7 +23,7 @@
                  [com.cemerick/url "0.1.1"]
                  [dire "0.5.3"]
                  [me.raynes/fs "1.4.6"]
-                 [metosin/compojure-api "0.24.2"]
+                 [metosin/compojure-api "0.24.5"]
                  [org.apache.tika/tika-core "1.11"]
                  [net.sf.opencsv/opencsv "2.3"]
                  [slingshot "0.12.2"]
