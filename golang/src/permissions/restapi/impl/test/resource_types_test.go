@@ -1,9 +1,10 @@
-package impl
+package test
 
 import (
 	"database/sql"
 	"fmt"
 	"permissions/models"
+	"permissions/restapi/impl"
 	"permissions/restapi/operations/resource_types"
 	"testing"
 
@@ -15,7 +16,7 @@ const FAKE_ID = "1A960034-969A-46A7-B6B5-3F1866258CAB"
 func addResourceTypeAttempt(db *sql.DB, name, description string) middleware.Responder {
 
 	// build the request handler.
-	handler := BuildResourceTypesPutHandler(db)
+	handler := impl.BuildResourceTypesPutHandler(db)
 
 	// Attempt to add the resource type to the database.
 	resourceTypeIn := &models.ResourceTypeIn{Name: &name, Description: description}
@@ -31,7 +32,7 @@ func addResourceType(db *sql.DB, name string, description string) *models.Resour
 func listResourceTypes(db *sql.DB) *models.ResourceTypesOut {
 
 	// Build the request handler.
-	handler := BuildResourceTypesGetHandler(db)
+	handler := impl.BuildResourceTypesGetHandler(db)
 
 	// Get the resource types from the database.
 	responder := handler().(*resource_types.GetResourceTypesOK)
@@ -42,7 +43,7 @@ func listResourceTypes(db *sql.DB) *models.ResourceTypesOut {
 func modifyResourceTypeAttempt(db *sql.DB, id, name, description string) middleware.Responder {
 
 	// Build the request handler.
-	handler := BuildResourceTypesIDPostHandler(db)
+	handler := impl.BuildResourceTypesIDPostHandler(db)
 
 	// Update the resource type in the database.
 	resourceTypeIn := &models.ResourceTypeIn{Name: &name, Description: description}
@@ -58,7 +59,7 @@ func modifyResourceType(db *sql.DB, id string, name string, description string) 
 func deleteResourceTypeAttempt(db *sql.DB, id string) middleware.Responder {
 
 	// Build the request handler.
-	handler := BuildResourceTypesIDDeleteHandler(db)
+	handler := impl.BuildResourceTypesIDDeleteHandler(db)
 
 	// Attempt to remove the resource type from the database.
 	params := resource_types.DeleteResourceTypesIDParams{ID: id}
