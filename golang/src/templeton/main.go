@@ -125,14 +125,15 @@ func doPeriodicMode(es *elasticsearch.Elasticer, d *database.Databaser, client *
 	go client.Listen()
 
 	// Accept and handle messages sent out with the index.all and index.templates routing keys
-	client.AddConsumer(messaging.ReindexExchange, "direct", "templeton.reindexAll", messaging.ReindexAllKey, func(del amqp.Delivery) {
-		es.Reindex(d)
-		del.Ack(false)
-	})
-	client.AddConsumer(messaging.ReindexExchange, "direct", "templeton.reindexTemplates", messaging.ReindexTemplatesKey, func(del amqp.Delivery) {
-		es.Reindex(d)
-		del.Ack(false)
-	})
+	client.AddConsumerMulti(
+		messaging.ReindexExchange,
+		"direct",
+		"templeton.periodic",
+		[]string{messaging.ReindexAllKey, messaging.ReindexTemplatesKey},
+		func(del amqp.Delivery) {
+			es.Reindex(d)
+			del.Ack(false)
+		})
 
 	spin()
 }
