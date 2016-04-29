@@ -23,6 +23,7 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
@@ -81,7 +82,10 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         view.addViewOntologyVersionEventHandler(this);
         view.addSelectOntologyVersionEventHandler(this);
         view.addHierarchySelectedEventHandler(this);
+        view.addSaveOntologyHierarchyEventHandler(this);
         view.addPublishOntologyClickEventHandler(this);
+
+        getOntologies();
     }
 
 
@@ -95,6 +99,10 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     @Override
     public void onViewOntologyVersion(ViewOntologyVersionEvent event) {
+        getOntologies();
+    }
+
+    private void getOntologies() {
         serviceFacade.getOntologies(new AsyncCallback<List<Ontology>>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -161,7 +169,9 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
                                                 @Override
                                                 public void onSuccess(OntologyHierarchy result) {
-                                                    //TODO
+                                                    view.showTreePanel();
+                                                    addHierarchies(null, Lists.newArrayList(result));
+                                                    announcer.schedule(new SuccessAnnouncementConfig("Topic saved"));
                                                 }
                                             });
 
@@ -176,7 +186,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
                                                 @Override
                                                 public void onSuccess(OntologyHierarchy result) {
-                                                    //TODO
+                                                    addHierarchies(null, Lists.newArrayList(result));
+                                                    announcer.schedule(new SuccessAnnouncementConfig("Operation saved"));
                                                 }
                                             });
     }

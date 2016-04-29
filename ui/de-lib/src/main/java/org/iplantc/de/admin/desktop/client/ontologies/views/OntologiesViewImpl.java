@@ -4,6 +4,7 @@ import org.iplantc.de.admin.apps.client.AdminAppsGridView;
 import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
 import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.ViewOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.EdamUploadDialog;
@@ -61,6 +62,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @UiField TextButton addButton;
     @UiField SimpleComboBox<Ontology> ontologyDropDown;
     @UiField TextButton viewVersions;
+    @UiField TextButton saveHierarchy;
     @UiField(provided = true) OntologiesViewAppearance appearance;
     @UiField Tree<OntologyHierarchy, String> tree;
     @UiField(provided = true) AppCategoriesView categoriesView;
@@ -104,6 +106,11 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @Override
     public HandlerRegistration addHierarchySelectedEventHandler(HierarchySelectedEvent.HierarchySelectedEventHandler handler) {
         return addHandler(handler, HierarchySelectedEvent.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addSaveOntologyHierarchyEventHandler(SaveOntologyHierarchyEvent.SaveOntologyHierarchyEventHandler handler) {
+        return addHandler(handler, SaveOntologyHierarchyEvent.TYPE);
     }
 
     @Override
@@ -173,6 +180,14 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         new EdamUploadDialog(eventBus,
                              UriUtils.fromTrustedString(clientConstants.ontologyUploadServlet()),
                              appearance).show();
+    }
+
+    @UiHandler("saveHierarchy")
+    void saveHierarchyClicked(SelectEvent event) {
+        Ontology selectedOntology = ontologyDropDown.getCurrentValue();
+        if (null != selectedOntology){
+            fireEvent(new SaveOntologyHierarchyEvent(selectedOntology));
+        }
     }
 
     @UiFactory
