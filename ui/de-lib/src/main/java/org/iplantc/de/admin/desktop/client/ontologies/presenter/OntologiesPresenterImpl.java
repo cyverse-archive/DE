@@ -82,6 +82,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         view.addViewOntologyVersionEventHandler(this);
         view.addSelectOntologyVersionEventHandler(this);
         view.addHierarchySelectedEventHandler(this);
+        view.addHierarchySelectedEventHandler(gridPresenter.getView());
         view.addSaveOntologyHierarchyEventHandler(this);
         view.addPublishOntologyClickEventHandler(this);
     }
@@ -232,23 +233,26 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         else{
             metadata.setAttr(URL.encodeQueryString("http://edamontology.org/has_topic"));
         }
+        gridPresenter.getView().mask("Loading");
         serviceFacade.getAppsByHierarchy(hierarchy.getIri(), metadata, new AsyncCallback<List<App>>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
+                gridPresenter.getView().unmask();
             }
 
             @Override
             public void onSuccess(List<App> result) {
-                if (null != result && result.size() > 0){
-                    listStore.replaceAll(result);
-                }
+                listStore.clear();
+                listStore.addAll(result);
+                gridPresenter.getView().unmask();
             }
         });
     }
 
     void getUnclassifiedApps(OntologyHierarchy hierarchy, Ontology editedOntology) {
         String baseIri = hierarchy.getIri().replace("_unclassified","");
+        gridPresenter.getView().mask("Loading");
         serviceFacade.getUnclassifiedApps(editedOntology.getVersion(), baseIri, new AsyncCallback<List<App>>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -257,9 +261,9 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
             @Override
             public void onSuccess(List<App> result) {
-                if (null != result && result.size() > 0){
-                    listStore.replaceAll(result);
-                }
+                listStore.clear();
+                listStore.addAll(result);
+                gridPresenter.getView().unmask();
             }
         });
     }
