@@ -151,4 +151,18 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
         deService.getServiceData(wrapper, new TargetIdCallbackConverter(callback, factory));
 
     }
+
+    @Override
+    public void getUnclassifiedApps(String version, String root, AsyncCallback<List<App>> callback) {
+        String address = ONTOLOGY_ADMIN + "/" + URL.encodeQueryString(version) + "/" + URL.encodeQueryString(root) + "/unclassified";
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
+        deService.getServiceData(wrapper, new AsyncCallbackConverter<String, List<App>>(callback) {
+            @Override
+            protected List<App> convertFrom(String object) {
+                List<App> apps = AutoBeanCodex.decode(svcFactory, AppList.class, object).as().getApps();
+                return apps;
+            }
+        });
+    }
 }

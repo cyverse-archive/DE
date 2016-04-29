@@ -84,8 +84,6 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         view.addHierarchySelectedEventHandler(this);
         view.addSaveOntologyHierarchyEventHandler(this);
         view.addPublishOntologyClickEventHandler(this);
-
-        getOntologies();
     }
 
 
@@ -94,6 +92,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         HasId betaGroup = CommonModelUtils.getInstance().createHasIdFromString(DEProperties.getInstance().getDefaultBetaCategoryId());
 
         categoriesPresenter.go(betaGroup);
+        getOntologies();
         container.setWidget(view);
     }
 
@@ -146,6 +145,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
             return;
         }
         if (parent == null) {
+            addUnclassifiedChild(children);
             treeStore.add(children);
         } else {
             treeStore.add(parent, children);
@@ -153,6 +153,15 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
         for (OntologyHierarchy hierarchy : children) {
             addHierarchies(hierarchy, hierarchy.getSubclasses());
+        }
+    }
+
+    private void addUnclassifiedChild(List<OntologyHierarchy> children) {
+        for (OntologyHierarchy child : children){
+            OntologyHierarchy unclassified = beanFactory.getHierarchy().as();
+            unclassified.setLabel("Unclassified");
+            unclassified.setIri(child.getIri() + "_unclassified");
+            child.getSubclasses().add(unclassified);
         }
     }
 
@@ -210,12 +219,18 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     @Override
     public void onHierarchySelected(HierarchySelectedEvent event) {
         OntologyHierarchy hierarchy = event.getHierarchy();
+        Ontology editedOntology = event.getEditedOntology();
+        if (hierarchy.getIri().contains("unclassified")){
+            getUnclassifiedApps(hierarchy, editedOntology);
+            return;
+        }
+
         OntologyMetadata metadata = beanFactory.getMetadata().as();
         if (hierarchy.getIri().contains("operation")){
             metadata.setAttr(URL.encodeQueryString("rdf:type"));
         }
         else{
-            metadata.setAttr(URL.encodeQueryString("has:topic"));
+            metadata.setAttr(URL.encodeQueryString("http://edamontology.org/has_topic"));
         }
         serviceFacade.getAppsByHierarchy(hierarchy.getIri(), metadata, new AsyncCallback<List<App>>() {
             @Override
@@ -225,7 +240,26 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
             @Override
             public void onSuccess(List<App> result) {
-                listStore.replaceAll(result);
+                if (null != result && result.size() > 0){
+                    listStore.replaceAll(result);
+                }
+            }
+        });
+    }
+
+    void getUnclassifiedApps(OntologyHierarchy hierarchy, Ontology editedOntology) {
+        String baseIri = hierarchy.getIri().replace("_unclassified","");
+        serviceFacade.getUnclassifiedApps(editedOntology.getVersion(), baseIri, new AsyncCallback<List<App>>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+            }
+
+            @Override
+            public void onSuccess(List<App> result) {
+                if (null != result && result.size() > 0){
+                    listStore.replaceAll(result);
+                }
             }
         });
     }
