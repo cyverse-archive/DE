@@ -187,4 +187,14 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     public String setActiveOntologySuccess() {
         return displayStrings.setActiveOntologySuccess();
     }
+
+    @Override
+    public String saveHierarchy() {
+        return displayStrings.saveHierarchy();
+    }
+
+    @Override
+    public ImageResource saveIcon() {
+        return iplantResources.save();
+    }
 }

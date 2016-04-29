@@ -54,7 +54,7 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
                                       AsyncCallback<OntologyHierarchy> callback) {
         String address = ONTOLOGY_ADMIN + "/" + URL.encodeQueryString(version) + "/" + URL.encodeQueryString(root);
 
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(PUT, address);
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(PUT, address, "{}");
         deService.getServiceData(wrapper, new OntologyHierarchyCallbackConverter(callback, factory));
 
     }

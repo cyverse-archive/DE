@@ -56,6 +56,11 @@
                                        icon="{appearance.addIcon}"/>
                 </toolbar:child>
                 <toolbar:child>
+                    <button:TextButton ui:field="saveHierarchy"
+                                       text="{appearance.saveHierarchy}"
+                                       icon="{appearance.saveIcon}"/>
+                </toolbar:child>
+                <toolbar:child>
                     <button:TextButton ui:field="publishButton"
                                        text="{appearance.publishOntology}"
                                        icon="{appearance.publishIcon}"/>
