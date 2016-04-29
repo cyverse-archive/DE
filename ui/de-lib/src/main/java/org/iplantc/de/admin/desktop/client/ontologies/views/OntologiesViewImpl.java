@@ -213,7 +213,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
             @Override
             public void onSelectionChanged(SelectionChangedEvent<OntologyHierarchy> event) {
                 if (event.getSelection().size() == 1) {
-                    fireEvent(new HierarchySelectedEvent(event.getSelection().get(0)));
+                    fireEvent(new HierarchySelectedEvent(event.getSelection().get(0), ontologyDropDown.getCurrentValue()));
                 }
             }
         });

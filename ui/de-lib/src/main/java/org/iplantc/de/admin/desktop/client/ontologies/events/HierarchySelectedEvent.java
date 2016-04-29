@@ -1,5 +1,6 @@
 package org.iplantc.de.admin.desktop.client.ontologies.events;
 
+import org.iplantc.de.client.models.ontologies.Ontology;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 
 import com.google.gwt.event.shared.EventHandler;
@@ -22,13 +23,18 @@ public class HierarchySelectedEvent extends GwtEvent<HierarchySelectedEvent.Hier
     public static Type<HierarchySelectedEventHandler> TYPE = new Type<HierarchySelectedEventHandler>();
 
     private OntologyHierarchy hierarchy;
+    private Ontology editedOntology;
 
-    public HierarchySelectedEvent(OntologyHierarchy hierarchy){
+    public HierarchySelectedEvent(OntologyHierarchy hierarchy, Ontology editedOntology){
         this.hierarchy = hierarchy;
+        this.editedOntology = editedOntology;
     }
 
     public OntologyHierarchy getHierarchy() {
         return hierarchy;
+    }
+    public Ontology getEditedOntology() {
+        return editedOntology;
     }
 
     public Type<HierarchySelectedEventHandler> getAssociatedType() {

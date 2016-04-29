@@ -65,6 +65,8 @@ public interface OntologyServiceFacade {
      */
     void filterUnclassifiedTargets(String version, String root, OntologyHierarchyFilterReq filter, AsyncCallback<List<String>> callback);
 
+
+    void getUnclassifiedApps(String version, String root, AsyncCallback<List<App>> callback);
     /**
      * Set the active ontology version used by the app-hierarchies endpoints
      * @param version
