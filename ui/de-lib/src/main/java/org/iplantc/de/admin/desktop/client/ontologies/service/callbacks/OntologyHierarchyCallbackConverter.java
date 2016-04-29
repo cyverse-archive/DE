@@ -26,6 +26,6 @@ public class OntologyHierarchyCallbackConverter
     protected OntologyHierarchy convertFrom(String object) {
         final AutoBean<OntologyHierarchy> decode =
                 AutoBeanCodex.decode(factory, OntologyHierarchy.class, object);
-        return decode.as();
+        return decode.as().getHierarchy();
     }
 }

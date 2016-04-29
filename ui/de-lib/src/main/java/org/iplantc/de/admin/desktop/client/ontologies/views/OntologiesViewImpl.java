@@ -89,8 +89,6 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         this.gridView = gridView;
 
         initWidget(uiBinder.createAndBindUi(this));
-        viewVersionsClicked(new SelectEvent());
-
     }
 
     @Override
@@ -184,6 +182,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
     @UiHandler("saveHierarchy")
     void saveHierarchyClicked(SelectEvent event) {
+        treeStore.clear();
         Ontology selectedOntology = ontologyDropDown.getCurrentValue();
         if (null != selectedOntology){
             fireEvent(new SaveOntologyHierarchyEvent(selectedOntology));
@@ -192,7 +191,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
     @UiFactory
     Tree<OntologyHierarchy, String> createTree() {
-        Tree<OntologyHierarchy, String> ontologyTree = new Tree<OntologyHierarchy, String>(treeStore, new ValueProvider<OntologyHierarchy, String>() {
+        Tree<OntologyHierarchy, String> ontologyTree = new Tree<>(treeStore, new ValueProvider<OntologyHierarchy, String>() {
             @Override
             public String getValue(OntologyHierarchy object) {
                 return object.getLabel();

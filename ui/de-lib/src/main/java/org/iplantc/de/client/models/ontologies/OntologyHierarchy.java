@@ -8,6 +8,9 @@ import java.util.List;
  * @author aramsey
  */
 public interface OntologyHierarchy extends HasDescription {
+
+    OntologyHierarchy getHierarchy();
+
     String getIri();
 
     void setIri(String iri);

@@ -169,7 +169,6 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
                                                 @Override
                                                 public void onSuccess(OntologyHierarchy result) {
-                                                    view.showTreePanel();
                                                     addHierarchies(null, Lists.newArrayList(result));
                                                     announcer.schedule(new SuccessAnnouncementConfig("Topic saved"));
                                                 }
@@ -190,6 +189,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                                                     announcer.schedule(new SuccessAnnouncementConfig("Operation saved"));
                                                 }
                                             });
+        view.showTreePanel();
     }
 
     @Override
