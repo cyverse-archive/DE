@@ -18,6 +18,8 @@ import (
 	"permissions/restapi/operations"
 	"permissions/restapi/operations/resource_types"
 	"permissions/restapi/operations/status"
+
+	status_impl "permissions/restapi/impl/status"
 )
 
 // This file is safe to edit. Once it exists it will not be overwritten
@@ -91,7 +93,7 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 
 	api.JSONProducer = httpkit.JSONProducer()
 
-	api.StatusGetHandler = status.GetHandlerFunc(impl.BuildStatusHandler(SwaggerJSON))
+	api.StatusGetHandler = status.GetHandlerFunc(status_impl.BuildStatusHandler(SwaggerJSON))
 
 	api.ResourceTypesGetResourceTypesHandler = resource_types.GetResourceTypesHandlerFunc(
 		impl.BuildResourceTypesGetHandler(db),
