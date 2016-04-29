@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	status_impl "permissions/restapi/impl/status"
+	impl "permissions/restapi/impl/status"
 )
 
 var testJson = json.RawMessage([]byte(`{
@@ -18,7 +18,7 @@ var testJson = json.RawMessage([]byte(`{
 }`))
 
 func TestGetStatus(t *testing.T) {
-	f := status_impl.BuildStatusHandler(testJson)
+	f := impl.BuildStatusHandler(testJson)
 	r := f()
 
 	// Verify that we got the expected return value.

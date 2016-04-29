@@ -14,11 +14,11 @@ import (
 	swag "github.com/go-swagger/go-swagger/swag"
 	_ "github.com/lib/pq"
 
-	"permissions/restapi/impl"
 	"permissions/restapi/operations"
 	"permissions/restapi/operations/resource_types"
 	"permissions/restapi/operations/status"
 
+	resource_types_impl "permissions/restapi/impl/resource_types"
 	status_impl "permissions/restapi/impl/status"
 )
 
@@ -96,19 +96,19 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 	api.StatusGetHandler = status.GetHandlerFunc(status_impl.BuildStatusHandler(SwaggerJSON))
 
 	api.ResourceTypesGetResourceTypesHandler = resource_types.GetResourceTypesHandlerFunc(
-		impl.BuildResourceTypesGetHandler(db),
+		resource_types_impl.BuildResourceTypesGetHandler(db),
 	)
 
 	api.ResourceTypesPutResourceTypesHandler = resource_types.PutResourceTypesHandlerFunc(
-		impl.BuildResourceTypesPutHandler(db),
+		resource_types_impl.BuildResourceTypesPutHandler(db),
 	)
 
 	api.ResourceTypesPostResourceTypesIDHandler = resource_types.PostResourceTypesIDHandlerFunc(
-		impl.BuildResourceTypesIDPostHandler(db),
+		resource_types_impl.BuildResourceTypesIDPostHandler(db),
 	)
 
 	api.ResourceTypesDeleteResourceTypesIDHandler = resource_types.DeleteResourceTypesIDHandlerFunc(
-		impl.BuildResourceTypesIDDeleteHandler(db),
+		resource_types_impl.BuildResourceTypesIDDeleteHandler(db),
 	)
 
 	api.ServerShutdown = cleanup

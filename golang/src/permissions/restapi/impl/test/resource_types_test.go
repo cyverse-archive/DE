@@ -4,11 +4,11 @@ import (
 	"database/sql"
 	"fmt"
 	"permissions/models"
-	"permissions/restapi/impl"
 	"permissions/restapi/operations/resource_types"
 	"testing"
 
 	middleware "github.com/go-swagger/go-swagger/httpkit/middleware"
+	impl "permissions/restapi/impl/resource_types"
 )
 
 const FAKE_ID = "1A960034-969A-46A7-B6B5-3F1866258CAB"
