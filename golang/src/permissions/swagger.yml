@@ -109,6 +109,17 @@ definitions:
         type: string
         description: "The resource type name."
         minLength: 1
+  resources_out:
+    type: object
+    description: "A list of resources."
+    required:
+      - resources
+    properties:
+      resources:
+        type: array
+        description: "The list of resources."
+        items:
+          $ref: "#/definitions/resource_out"
 info:
   description: >-
     Manages Permissions for the CyVerse Discovery Environment and related applications.
@@ -215,6 +226,21 @@ paths:
         500:
           $ref: "#/responses/internal_server_error"
   /resources:
+    get:
+      tags:
+        - resources
+      summary: "List Resources"
+      description: >-
+        Lists resources in the database. A resource is a single item to which permissions may be applied. For example
+        The Discovery Environment app, Word Count, would be defined as a resource in the permissions service.
+      operationId: listResources
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/resources_out"
+        500:
+          $ref: "#/responses/internal_server_error"
     put:
       tags:
         - resources

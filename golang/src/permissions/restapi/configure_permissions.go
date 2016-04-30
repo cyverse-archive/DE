@@ -122,6 +122,10 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 		resources_impl.BuildAddResourceHandler(db),
 	)
 
+	api.ResourcesListResourcesHandler = resources.ListResourcesHandlerFunc(
+		resources_impl.BuildListResourcesHandler(db),
+	)
+
 	api.ServerShutdown = cleanup
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))
