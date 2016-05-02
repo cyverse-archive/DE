@@ -1,7 +1,5 @@
 package org.iplantc.de.desktop.client.presenter;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import org.iplantc.de.analysis.client.events.OpenAppForRelaunchEvent;
 import org.iplantc.de.apps.client.events.CreateNewAppEvent;
 import org.iplantc.de.apps.client.events.CreateNewWorkflowEvent;
@@ -44,6 +42,7 @@ import org.iplantc.de.fileViewers.client.callbacks.EnsemblUtil;
 import org.iplantc.de.notifications.client.events.WindowShowRequestEvent;
 import org.iplantc.de.systemMessages.client.events.ShowSystemMessagesEvent;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -200,7 +199,7 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
                                        diskResourceServiceProvider.get(),
                                        eventBus,
                                        diskResourceUtil,
-                                       UriUtils.fromTrustedString(clientConstants.ontologyUploadServlet()),
+                                       UriUtils.fromTrustedString(clientConstants.fileUploadServlet()),
                                        userInfo.getUsername()).show();
         }
     }
