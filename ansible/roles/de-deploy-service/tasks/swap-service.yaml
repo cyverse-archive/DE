@@ -10,11 +10,12 @@
   vars:
     restart_service_name: "{{service_name}}_{{other_color}}"
 
+# We'll give it two whole minutes to come up. If that's not enough something's probably wrong anyway.
 - name: wait for {{other_color}} server to be up
   uri: url=http://localhost:{{consul_port}}/v1/health/service/{{service_name_short}}?passing&tag={{environment_name}}-{{other_color}} method=GET return_content=yes
   register: health_check
   until: health_check.content != "[]"
-  retries: 25
+  retries: 60
   delay: 2
 
 - fail: msg="The server did not come up"
