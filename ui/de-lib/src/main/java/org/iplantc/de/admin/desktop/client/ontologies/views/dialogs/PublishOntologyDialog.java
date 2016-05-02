@@ -32,6 +32,7 @@ public class PublishOntologyDialog extends IPlantDialog implements IsHideable {
         this.editedOntology = editedOntology;
         this.appearance = appearance;
         this.activeOntology = activeOntology;
+        this.handlers = handlers;
 
         setHideOnButtonClick(false);
         setHeadingText(appearance.publishOntology());
@@ -42,28 +43,22 @@ public class PublishOntologyDialog extends IPlantDialog implements IsHideable {
 
         setOnEsc(false);
 
-        setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
-        getOkButton().setText(appearance.setActiveVersion());
-        getButton(PredefinedButton.CANCEL).addSelectHandler(new SelectEvent.SelectHandler() {
-            @Override
-            public void onSelect(SelectEvent event) {
-                hide();
-            }
-        });
-        getOkButton().addSelectHandler(new SelectEvent.SelectHandler() {
-            @Override
-            public void onSelect(SelectEvent event) {
-                handlers.fireEvent(new PublishOntologyClickEvent(editedOntology));
-            }
-        });
+        setUpButtons();
 
         VerticalLayoutContainer con = new VerticalLayoutContainer();
-        FieldLabel activeOntologyLabel = new FieldLabel();
+        addText(con);
+        add(con);
 
+        show();
+
+    }
+
+    private void addText(VerticalLayoutContainer con) {
         HTML publishOntologyWarning = new HTML();
         publishOntologyWarning.setHTML(appearance.publishOntologyWarning());
         con.add(publishOntologyWarning);
 
+        FieldLabel activeOntologyLabel = new FieldLabel();
         activeOntologyLabel.setText(appearance.activeOntologyLabel());
         HTML activeOntologyField = new HTML();
         activeOntologyField.setHTML(appearance.activeOntologyField(activeOntology.getVersion()));
@@ -78,10 +73,22 @@ public class PublishOntologyDialog extends IPlantDialog implements IsHideable {
         editedOntologyField.setWidth("400");
         editedOntologyLabel.add(editedOntologyField);
         con.add(editedOntologyLabel);
+    }
 
-        add(con);
-
-        show();
-
+    private void setUpButtons() {
+        setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
+        getOkButton().setText(appearance.setActiveVersion());
+        getButton(PredefinedButton.CANCEL).addSelectHandler(new SelectEvent.SelectHandler() {
+            @Override
+            public void onSelect(SelectEvent event) {
+                hide();
+            }
+        });
+        getOkButton().addSelectHandler(new SelectEvent.SelectHandler() {
+            @Override
+            public void onSelect(SelectEvent event) {
+                handlers.fireEvent(new PublishOntologyClickEvent(editedOntology));
+            }
+        });
     }
 }
