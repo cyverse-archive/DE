@@ -23,7 +23,7 @@
                  [com.cemerick/url "0.1.1" :exclusions [com.cemerick/clojurescript.test]]
                  [commons-net "3.4"]                               ; provides org.apache.commons.net
                  [compojure "1.4.0"]
-                 [metosin/compojure-api "0.24.2"]  ; should be held to the same version as the one 
+                 [metosin/compojure-api "0.24.5"]  ; should be held to the same version as the one
                                                    ; used by org.iplantc/clojure-commons
                  [de.ubercode.clostache/clostache "1.4.0" :exclusions [org.clojure/core.incubator]]
                  [dire "0.5.3"]
