@@ -8,7 +8,6 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarc
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.ViewOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.EdamUploadDialog;
-import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.OntologyListDialog;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.PublishOntologyDialog;
 import org.iplantc.de.apps.client.AppCategoriesView;
 import org.iplantc.de.client.DEClientConstants;
@@ -22,7 +21,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.safehtml.shared.UriUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
@@ -74,7 +72,6 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @Inject EventBus eventBus;
     @Inject DEClientConstants clientConstants;
 
-    @Inject AsyncProvider<OntologyListDialog> listDialog;
     private TreeStore<OntologyHierarchy> treeStore;
     private Ontology activeOntology;
 
