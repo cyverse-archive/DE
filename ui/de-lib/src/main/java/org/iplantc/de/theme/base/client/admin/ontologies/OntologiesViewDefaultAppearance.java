@@ -197,4 +197,9 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     public ImageResource saveIcon() {
         return iplantResources.save();
     }
+
+    @Override
+    public String selectOntologyVersion() {
+        return displayStrings.selectOntologyVersion();
+    }
 }

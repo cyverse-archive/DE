@@ -87,6 +87,8 @@ public interface OntologiesView extends IsWidget,
         String saveHierarchy();
 
         ImageResource saveIcon();
+
+        String selectOntologyVersion();
     }
 
     interface Presenter {

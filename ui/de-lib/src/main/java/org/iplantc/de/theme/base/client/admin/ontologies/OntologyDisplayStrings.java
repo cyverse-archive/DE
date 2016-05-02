@@ -41,4 +41,6 @@ public interface OntologyDisplayStrings extends Messages{
     String setActiveOntologySuccess();
 
     String saveHierarchy();
+
+    String selectOntologyVersion();
 }
