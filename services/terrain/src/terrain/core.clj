@@ -7,7 +7,7 @@
         [compojure.core]
         [compojure.api.middleware :only [wrap-exceptions]]
         [ring.middleware.keyword-params]
-        [tree-urls-client.core :only [with-tree-urls-base]]
+        [tree-urls-client.middleware :only [wrap-tree-urls-base]]
         [terrain.routes.admin]
         [terrain.routes.callbacks]
         [terrain.routes.data]
@@ -59,12 +59,6 @@
         (handler request)
         (tc/with-logging-context {:user-info (cheshire/encode user-info)}
                                  (handler request))))))
-
-(defn- wrap-tree-urls-config
-  [handler]
-  (fn [request]
-    (with-tree-urls-base (config/tree-urls-base)
-      (handler request))))
 
 (defn- start-nrepl
   []
@@ -198,7 +192,7 @@
 
 (def secured-routes-handler
   (-> (delayed-handler secured-routes)
-      (wrap-routes wrap-tree-urls-config)
+      (wrap-routes wrap-tree-urls-base config/tree-urls-base)
       (wrap-routes authenticate-current-user)
       (wrap-routes wrap-user-info)
       (wrap-routes wrap-exceptions  cx/exception-handlers)
