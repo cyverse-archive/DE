@@ -1,6 +1,9 @@
 # Delegates to colored.yaml or uncolored.yaml depending on deploy_use_color.
 ---
 
+- fail: msg="The service_name variable is required by de-deploy-service."
+  when: not service_name
+
 - debug: msg="Deploying {{service_name}}"
 
 - include: "colored.yaml"
