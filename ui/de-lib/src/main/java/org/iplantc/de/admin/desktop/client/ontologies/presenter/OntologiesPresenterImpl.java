@@ -55,6 +55,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     private AdminAppsGridView.Presenter gridPresenter;
     private OntologyAutoBeanFactory beanFactory;
     private ListStore<App> listStore;
+    private String UNCLASSIFIED_LABEL = "Unclassified";
+    private String UNCLASSIFIED_IRI_APPEND = "_unclassified";
 
     @Inject
     public OntologiesPresenterImpl(OntologyServiceFacade serviceFacade,
@@ -140,7 +142,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     }
 
-    private void addHierarchies(OntologyHierarchy parent, List<OntologyHierarchy> children) {
+    void addHierarchies(OntologyHierarchy parent, List<OntologyHierarchy> children) {
         if ((children == null)
             || children.isEmpty()) {
             return;
@@ -157,11 +159,11 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         }
     }
 
-    private void addUnclassifiedChild(List<OntologyHierarchy> children) {
+    void addUnclassifiedChild(List<OntologyHierarchy> children) {
         for (OntologyHierarchy child : children){
             OntologyHierarchy unclassified = beanFactory.getHierarchy().as();
-            unclassified.setLabel("Unclassified");
-            unclassified.setIri(child.getIri() + "_unclassified");
+            unclassified.setLabel(UNCLASSIFIED_LABEL);
+            unclassified.setIri(child.getIri() + UNCLASSIFIED_IRI_APPEND);
             child.getSubclasses().add(unclassified);
         }
     }
@@ -180,7 +182,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                                                 @Override
                                                 public void onSuccess(OntologyHierarchy result) {
                                                     addHierarchies(null, Lists.newArrayList(result));
-                                                    announcer.schedule(new SuccessAnnouncementConfig("Topic saved"));
+                                                    announcer.schedule(new SuccessAnnouncementConfig(appearance.successTopicSaved()));
                                                 }
                                             });
 
@@ -196,7 +198,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                                                 @Override
                                                 public void onSuccess(OntologyHierarchy result) {
                                                     addHierarchies(null, Lists.newArrayList(result));
-                                                    announcer.schedule(new SuccessAnnouncementConfig("Operation saved"));
+                                                    announcer.schedule(new SuccessAnnouncementConfig(appearance.successOperationSaved()));
                                                 }
                                             });
         view.showTreePanel();
@@ -221,18 +223,13 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     public void onHierarchySelected(HierarchySelectedEvent event) {
         OntologyHierarchy hierarchy = event.getHierarchy();
         Ontology editedOntology = event.getEditedOntology();
-        if (hierarchy.getIri().contains("unclassified")){
+        if (isUnclassified(hierarchy)){
             getUnclassifiedApps(hierarchy, editedOntology);
             return;
         }
 
-        OntologyMetadata metadata = beanFactory.getMetadata().as();
-        if (hierarchy.getIri().contains("operation")){
-            metadata.setAttr(URL.encodeQueryString("rdf:type"));
-        }
-        else{
-            metadata.setAttr(URL.encodeQueryString("http://edamontology.org/has_topic"));
-        }
+        OntologyMetadata metadata = getOntologyMetadata(hierarchy);
+
         gridPresenter.getView().mask("Loading");
         serviceFacade.getAppsByHierarchy(hierarchy.getIri(), metadata, new AsyncCallback<List<App>>() {
             @Override
@@ -250,13 +247,29 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         });
     }
 
+    OntologyMetadata getOntologyMetadata(OntologyHierarchy hierarchy) {
+        OntologyMetadata metadata = beanFactory.getMetadata().as();
+        if (hierarchy.getIri().contains("operation")){
+            metadata.setAttr(URL.encodeQueryString(OntologyMetadata.OPERATION_ATTR));
+        }
+        else{
+            metadata.setAttr(URL.encodeQueryString(OntologyMetadata.TOPIC_ATTR));
+        }
+        return metadata;
+    }
+
+    boolean isUnclassified(OntologyHierarchy hierarchy) {
+        return hierarchy.getIri().matches(".*" + UNCLASSIFIED_IRI_APPEND + "$");
+    }
+
     void getUnclassifiedApps(OntologyHierarchy hierarchy, Ontology editedOntology) {
-        String baseIri = hierarchy.getIri().replace("_unclassified","");
+        String parentIri = hierarchy.getIri().replace(UNCLASSIFIED_IRI_APPEND,"");
         gridPresenter.getView().mask("Loading");
-        serviceFacade.getUnclassifiedApps(editedOntology.getVersion(), baseIri, new AsyncCallback<List<App>>() {
+        serviceFacade.getUnclassifiedApps(editedOntology.getVersion(), parentIri, new AsyncCallback<List<App>>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
+                gridPresenter.getView().unmask();
             }
 
             @Override

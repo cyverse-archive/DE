@@ -20,6 +20,12 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     interface Templates extends XTemplates {
         @XTemplates.XTemplate("<span style='color: red;'>*&nbsp</span>{label}")
         SafeHtml requiredFieldLabel(String label);
+
+        @XTemplates.XTemplate("<b>{label}</b>")
+        SafeHtml boldLabel(String label);
+
+        @XTemplates.XTemplate("<span style='color: red;'><b>{label}</b></span>")
+        SafeHtml boldRedLabel(String label);
     }
 
     interface HelpTemplates extends SafeHtmlTemplates {
@@ -64,53 +70,8 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     }
 
     @Override
-    public String ontologyListDialogName() {
-        return displayStrings.ontologyListDialogName();
-    }
-
-    @Override
     public String ontologyList() {
         return displayStrings.ontologyList();
-    }
-
-    @Override
-    public int iriColumnWidth() {
-        return 75;
-    }
-
-    @Override
-    public String iriColumnLabel() {
-        return displayStrings.iriColumnLabel();
-    }
-
-    @Override
-    public int versionColumnWidth() {
-        return 150;
-    }
-
-    @Override
-    public String versionColumnLabel() {
-        return displayStrings.versionColumnLabel();
-    }
-
-    @Override
-    public int createdByColumnWidth() {
-        return 30;
-    }
-
-    @Override
-    public String createdByColumnLabel() {
-        return displayStrings.createdByColumnLabel();
-    }
-
-    @Override
-    public int createdOnColumnWidth() {
-        return 75;
-    }
-
-    @Override
-    public String createdOnColumnLabel() {
-        return displayStrings.createdOnColumnLabel();
     }
 
     @Override
@@ -201,5 +162,30 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     @Override
     public String selectOntologyVersion() {
         return displayStrings.selectOntologyVersion();
+    }
+
+    @Override
+    public SafeHtml activeOntologyField(String version) {
+        return templates.boldLabel(version);
+    }
+
+    @Override
+    public SafeHtml editedOntologyField(String version) {
+        return templates.boldRedLabel(version);
+    }
+
+    @Override
+    public String successTopicSaved() {
+        return displayStrings.successTopicSaved();
+    }
+
+    @Override
+    public String successOperationSaved() {
+        return displayStrings.successOperationSaved();
+    }
+
+    @Override
+    public SafeHtml publishOntologyWarning() {
+        return templates.boldLabel(displayStrings.publishOntologyWarning());
     }
 }

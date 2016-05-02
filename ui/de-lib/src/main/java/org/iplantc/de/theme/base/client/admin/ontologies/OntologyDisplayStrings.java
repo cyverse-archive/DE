@@ -43,4 +43,10 @@ public interface OntologyDisplayStrings extends Messages{
     String saveHierarchy();
 
     String selectOntologyVersion();
+
+    String successTopicSaved();
+
+    String successOperationSaved();
+
+    String publishOntologyWarning();
 }

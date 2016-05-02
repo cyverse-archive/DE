@@ -8,6 +8,7 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.ViewOntologyVersion
 import org.iplantc.de.client.models.ontologies.Ontology;
 
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -34,25 +35,7 @@ public interface OntologiesView extends IsWidget,
 
         ImageResource addIcon();
 
-        String ontologyListDialogName();
-
         String ontologyList();
-
-        int iriColumnWidth();
-
-        String iriColumnLabel();
-
-        int versionColumnWidth();
-
-        String versionColumnLabel();
-
-        int createdByColumnWidth();
-
-        String createdByColumnLabel();
-
-        int createdOnColumnWidth();
-
-        String createdOnColumnLabel();
 
         String setActiveVersion();
 
@@ -89,6 +72,16 @@ public interface OntologiesView extends IsWidget,
         ImageResource saveIcon();
 
         String selectOntologyVersion();
+
+        SafeHtml activeOntologyField(String version);
+
+        SafeHtml editedOntologyField(String version);
+
+        String successTopicSaved();
+
+        String successOperationSaved();
+
+        SafeHtml publishOntologyWarning();
     }
 
     interface Presenter {
