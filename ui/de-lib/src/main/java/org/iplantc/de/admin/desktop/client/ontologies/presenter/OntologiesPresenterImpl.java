@@ -54,7 +54,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     private AdminCategoriesView.Presenter categoriesPresenter;
     private AdminAppsGridView.Presenter gridPresenter;
     private OntologyAutoBeanFactory beanFactory;
-    private ListStore<App> listStore;
+    ListStore<App> listStore;
     private String UNCLASSIFIED_LABEL = "Unclassified";
     private String UNCLASSIFIED_IRI_APPEND = "_unclassified";
 
@@ -104,7 +104,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         getOntologies();
     }
 
-    private void getOntologies() {
+    void getOntologies() {
         serviceFacade.getOntologies(new AsyncCallback<List<Ontology>>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -263,7 +263,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     }
 
     void getUnclassifiedApps(OntologyHierarchy hierarchy, Ontology editedOntology) {
-        String parentIri = hierarchy.getIri().replace(UNCLASSIFIED_IRI_APPEND,"");
+        String parentIri = getParentIri(hierarchy);
         gridPresenter.getView().mask("Loading");
         serviceFacade.getUnclassifiedApps(editedOntology.getVersion(), parentIri, new AsyncCallback<List<App>>() {
             @Override
@@ -279,5 +279,9 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                 gridPresenter.getView().unmask();
             }
         });
+    }
+
+    String getParentIri(OntologyHierarchy hierarchy) {
+        return hierarchy.getIri().replace(UNCLASSIFIED_IRI_APPEND,"");
     }
 }
