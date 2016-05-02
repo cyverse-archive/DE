@@ -11,7 +11,7 @@
             [terrain.services.filesystem.validators :as validators]
             [terrain.services.filesystem.stat :refer [detect-content-type]]
             [terrain.services.filesystem.garnish.irods :as filetypes]
-            [terrain.clients.tree-urls :as tree]
+            [tree-urls-client.core :as tree]
             [terrain.util.config :as cfg]
             [terrain.services.filesystem.icat :as icat])
   (:import [org.apache.tika Tika]))

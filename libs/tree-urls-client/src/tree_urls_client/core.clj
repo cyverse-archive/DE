@@ -1,14 +1,26 @@
-(ns terrain.clients.tree-urls
-  (:use [terrain.util.config]
-        [clojure-commons.error-codes]
+(ns tree-urls-client.core
+  (:use [clojure-commons.error-codes]
         [slingshot.slingshot :only [throw+]])
   (:require [clj-http.client :as http]
             [cemerick.url :refer [url]]
+            [clojure.tools.logging :as log]
             [cheshire.core :as json]))
 
-(defn tree-urls-url
+(def ^:dynamic *tree-urls-base*
+  "Dynamic context to be used in generating URLs."
+  "http://localhost:60000")
+
+(defmacro with-tree-urls-base
+  "A helper macro to change *tree-urls-base* within its body."
+  [tree-urls-base & body]
+  `(let [tree-urls-base# ~tree-urls-base]
+     (binding [*tree-urls-base* tree-urls-base#]
+       ~@body)))
+
+(defn- tree-urls-url
   [sha1]
-  (str (url (tree-urls-base) sha1)))
+  (log/debug "using tree urls base" *tree-urls-base*)
+  (str (url *tree-urls-base* sha1)))
 
 (defn get-tree-urls
   [sha1]
@@ -60,12 +72,12 @@
     (cond
      (= (:status resp) 404)
      (throw+ {:error_code ERR_DOES_NOT_EXIST :sha1 sha1})
-     
+
      (= (:status resp) 400)
      (throw+ {:error_code ERR_BAD_REQUEST :sha1 sha1})
-     
+
      (= (:status resp) 500)
      (throw+ {:error_code ERR_UNCHECKED_EXCEPTION :msg "Error thrown by tree-urls service"})
-     
+
      (not (<= 200 (:status resp) 299))
      (throw+ {:error_code ERR_UNCHECKED_EXCEPTION :msg "Unknown error thrown by the tree-urls service"}))))

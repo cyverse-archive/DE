@@ -117,6 +117,18 @@
   :language :clojure
   :archive? false}
 
+ "tree-urls-client"
+ {:type     :library
+  :type-num 16
+  :path     "libs/tree-urls-client"
+  :build    :lein
+  :install  :lein
+  :tarball? false
+  :uberjar? false
+  :install? true
+  :language :clojure
+  :archive? false}
+
  "kameleon"
  {:type     :library
   :type-num 6
