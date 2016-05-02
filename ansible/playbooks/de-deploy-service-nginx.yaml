@@ -1,3 +1,8 @@
+# Deploy service nginx containers. This should be run when first setting up
+# zero-downtime deployment and when the image has changed (including when the
+# configuration template has changed). Restarting these containers is not a
+# zero-downtime game, so it should be kept minimal. Luckily, these are very
+# simple containers.
 ---
 
 - name: Redeploy anon-files-nginx
