@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
+import com.sencha.gxt.cell.core.client.form.ComboBoxCell;
 import com.sencha.gxt.core.client.Style;
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.LabelProvider;
@@ -142,7 +143,10 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
                 return item.getVersion();
             }
         });
+
         ontologySimpleComboBox.setEditable(false);
+        ontologySimpleComboBox.setEmptyText(appearance.selectOntologyVersion());
+        ontologySimpleComboBox.setTriggerAction(ComboBoxCell.TriggerAction.ALL);
         ontologySimpleComboBox.setWidth(500);
         ontologySimpleComboBox.addSelectionHandler(new SelectionHandler<Ontology>() {
             @Override
