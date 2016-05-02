@@ -7,12 +7,12 @@ import org.iplantc.de.client.models.ontologies.Ontology;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 
 import com.google.gwt.event.shared.HasHandlers;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.inject.Inject;
 
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
-import com.sencha.gxt.widget.core.client.form.TextField;
 
 /**
  * @author aramsey
@@ -59,23 +59,25 @@ public class PublishOntologyDialog extends IPlantDialog implements IsHideable {
 
         VerticalLayoutContainer con = new VerticalLayoutContainer();
         FieldLabel activeOntologyLabel = new FieldLabel();
+
+        HTML publishOntologyWarning = new HTML();
+        publishOntologyWarning.setHTML(appearance.publishOntologyWarning());
+        con.add(publishOntologyWarning);
+
         activeOntologyLabel.setText(appearance.activeOntologyLabel());
-        TextField activeOntologyField = new TextField();
-        activeOntologyField.setAllowTextSelection(false);
-        activeOntologyField.setText(activeOntology.getVersion());
-        activeOntologyField.setWidth(400);
+        HTML activeOntologyField = new HTML();
+        activeOntologyField.setHTML(appearance.activeOntologyField(activeOntology.getVersion()));
+        activeOntologyField.setWidth("400");
         activeOntologyLabel.add(activeOntologyField);
         con.add(activeOntologyLabel);
-//        add(activeOntologyField);
 
         FieldLabel editedOntologyLabel = new FieldLabel();
         editedOntologyLabel.setText(appearance.editedOntologyLabel());
-        TextField editedOntologyField = new TextField();
-        editedOntologyField.setText(editedOntology.getVersion());
-        editedOntologyField.setWidth(400);
+        HTML editedOntologyField = new HTML();
+        editedOntologyField.setHTML(appearance.editedOntologyField(editedOntology.getVersion()));
+        editedOntologyField.setWidth("400");
         editedOntologyLabel.add(editedOntologyField);
         con.add(editedOntologyLabel);
-//        add(editedOntologyField);
 
         add(con);
 
