@@ -9,13 +9,11 @@ import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.Ontology
 import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.OntologyHierarchyListCallbackConverter;
 import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.OntologyListCallbackConverter;
 import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.OntologyVersionCallbackConverter;
-import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.TargetIdCallbackConverter;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppList;
 import org.iplantc.de.client.models.ontologies.Ontology;
 import org.iplantc.de.client.models.ontologies.OntologyAutoBeanFactory;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
-import org.iplantc.de.client.models.ontologies.OntologyHierarchyFilterReq;
 import org.iplantc.de.client.models.ontologies.OntologyMetadata;
 import org.iplantc.de.client.models.ontologies.OntologyVersionDetail;
 import org.iplantc.de.client.services.AppServiceFacade;
@@ -27,8 +25,6 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
-import com.google.web.bindery.autobean.shared.AutoBeanUtils;
-import com.google.web.bindery.autobean.shared.Splittable;
 
 import java.util.List;
 
@@ -101,54 +97,6 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, new OntologyHierarchyListCallbackConverter(callback, factory));
-
-    }
-
-    @Override
-    public void getActiveOntologyHierarchies(AsyncCallback<List<OntologyHierarchy>> callback) {
-        String address = APPS_HIERARCHIES;
-
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
-        deService.getServiceData(wrapper, new OntologyHierarchyListCallbackConverter(callback, factory));
-
-    }
-
-    @Override
-    public void filterOntologyHierarchies(String version,
-                                          String root,
-                                          OntologyHierarchyFilterReq filter,
-                                          AsyncCallback<List<OntologyHierarchy>> callback) {
-        String address = ONTOLOGY + "/" + URL.encodeQueryString(version) + "/" + URL.encodeQueryString(root) + "/" + "filter";
-
-        final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(filter));
-
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode.getPayload());
-        deService.getServiceData(wrapper, new OntologyHierarchyListCallbackConverter(callback, factory));
-
-    }
-
-    @Override
-    public void filterActiveOntologyHierarchies(String root,
-                                                AsyncCallback<List<OntologyHierarchy>> callback) {
-
-        String address = APPS_HIERARCHIES + "/" + URL.encodeQueryString(root);
-
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
-        deService.getServiceData(wrapper, new OntologyHierarchyListCallbackConverter(callback, factory));
-
-    }
-
-    @Override
-    public void filterUnclassifiedTargets(String version,
-                                          String root,
-                                          OntologyHierarchyFilterReq filter,
-                                          AsyncCallback<List<String>> callback) {
-        String address = ONTOLOGY + "/" + URL.encodeQueryString(version) + "/" + URL.encodeQueryString(root) + "/" + "filter-unclassified";
-
-        final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(filter));
-
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode.getPayload());
-        deService.getServiceData(wrapper, new TargetIdCallbackConverter(callback, factory));
 
     }
 
