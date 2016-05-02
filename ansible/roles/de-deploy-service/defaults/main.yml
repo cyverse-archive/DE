@@ -2,3 +2,4 @@
 docker_compose_path: "{{ docker.compose_path }}"
 deploy_use_color: false
 service_name_short: "{{service_name|replace('_', '-')}}"
+consul_port: 8500

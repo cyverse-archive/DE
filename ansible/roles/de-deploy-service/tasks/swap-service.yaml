@@ -11,7 +11,7 @@
     restart_service_name: "{{service_name}}_{{other_color}}"
 
 - name: wait for {{other_color}} server to be up
-  uri: url=http://localhost:8500/v1/health/service/{{service_name_short}}?passing&tag={{environment_name}}-{{other_color}} method=GET return_content=yes
+  uri: url=http://localhost:{{consul_port}}/v1/health/service/{{service_name_short}}?passing&tag={{environment_name}}-{{other_color}} method=GET return_content=yes
   register: health_check
   until: health_check.content != "[]"
   retries: 25
@@ -21,7 +21,7 @@
   when: health_check.content == "[]"
 
 - name: switch color to {{other_color}}
-  uri: url=http://localhost:8500/v1/kv/{{environment_name}}/{{service_name_short}}/color method=PUT body="{{other_color}}" return_content=yes
+  uri: url=http://localhost:{{consul_port}}/v1/kv/{{environment_name}}/{{service_name_short}}/color method=PUT body="{{other_color}}" return_content=yes
   register: color_switch
   failed_when: color_switch.content != "true"
 
