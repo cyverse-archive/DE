@@ -1,4 +1,10 @@
-## needs other_color and current_color variables passed in, as well as service_name
+# Swaps a service to a new version with zero downtime.
+# Needs other_color and current_color variables passed in, as well as service_name
+#
+# This role starts up the other_color services, uses consul to ensure they've
+# started and are ready for requests, switches the color (relying on
+# consul-template+nginx, or some other setup, to direct requests to the new
+# color), and then removes the current_color services.
 
 - include: restart-service.yaml
   vars:

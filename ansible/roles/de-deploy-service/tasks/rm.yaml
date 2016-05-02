@@ -1,3 +1,4 @@
+# Removes containers for a docker-compose service.
 ---
 
 - debug: msg="Removing {{rm_service_name}}"

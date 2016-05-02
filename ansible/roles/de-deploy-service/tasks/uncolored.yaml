@@ -1,3 +1,4 @@
+# Delegates to restart-service.yaml, since uncolored deployment simply restarts the service.
 ---
 
 - include: restart-service.yaml

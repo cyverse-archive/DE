@@ -1,3 +1,4 @@
+# Delegates to colored.yaml or uncolored.yaml depending on deploy_use_color.
 ---
 
 - debug: msg="Deploying {{service_name}}"

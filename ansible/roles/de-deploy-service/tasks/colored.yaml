@@ -1,3 +1,4 @@
+# Determines the current color (blue or green) of a service using consul, then delegates to swap-service.yaml to deploy based on this information.
 ---
 
 - debug: msg="Determining color of {{service_name}}"

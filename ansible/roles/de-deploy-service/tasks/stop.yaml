@@ -1,3 +1,4 @@
+# Stops containers for a docker-compose service.
 ---
 
 - debug: msg="Stopping {{stop_service_name}}"
