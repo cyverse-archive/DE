@@ -1,6 +1,34 @@
 # Determines the current color (blue or green) of a service using consul, then delegates to swap-service.yaml to deploy based on this information.
 ---
 
+- include: check-service.yaml
+  vars:
+    check_service_name: "{{service_name}}_green"
+
+- include: check-service.yaml
+  vars:
+    check_service_name: "{{service_name}}_blue"
+
+- include: check-service.yaml
+  vars:
+    check_service_name: "config_{{service_name}}_green"
+  when: has_configs|default(true)
+
+- include: check-service.yaml
+  vars:
+    check_service_name: "config_{{service_name}}_blue"
+  when: has_configs|default(true)
+
+- include: check.yaml
+  vars:
+    check_service_name: "iplant_data_{{service_name}}_green"
+  when: has_iplant_data|default(false)
+
+- include: check.yaml
+  vars:
+    check_service_name: "iplant_data_{{service_name}}_blue"
+  when: has_iplant_data|default(false)
+
 - debug: msg="Determining color of {{service_name}}"
 
 - name: get {{service_name_short}} color
