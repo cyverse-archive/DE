@@ -87,6 +87,10 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         this.gridView = gridView;
 
         initWidget(uiBinder.createAndBindUi(this));
+
+        publishButton.disable();
+        saveHierarchy.disable();
+        treePanel.setHeadingText("NEW");
     }
 
     @Override
@@ -151,7 +155,16 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         ontologySimpleComboBox.addSelectionHandler(new SelectionHandler<Ontology>() {
             @Override
             public void onSelection(SelectionEvent<Ontology> event) {
-                fireEvent(new SelectOntologyVersionEvent(event.getSelectedItem()));
+                Ontology selectedOntology = event.getSelectedItem();
+                if (selectedOntology == null) {
+                    publishButton.disable();
+                    saveHierarchy.disable();
+                } else {
+                    publishButton.enable();
+                    saveHierarchy.enable();
+                    fireEvent(new SelectOntologyVersionEvent(event.getSelectedItem()));
+                }
+
             }
         });
         return ontologySimpleComboBox;

@@ -18,8 +18,6 @@ import com.sencha.gxt.core.client.XTemplates;
 public class OntologiesViewDefaultAppearance implements OntologiesView.OntologiesViewAppearance {
 
     interface Templates extends XTemplates {
-        @XTemplates.XTemplate("<span style='color: red;'>*&nbsp</span>{label}")
-        SafeHtml requiredFieldLabel(String label);
 
         @XTemplates.XTemplate("<b>{label}</b>")
         SafeHtml boldLabel(String label);
