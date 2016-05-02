@@ -17,8 +17,6 @@ docker:
   version: 1.11.0
   compose_path: /etc/docker-compose.yml
   registry:
-    host: "{{ groups['docker-registry'][0] }}"
-    port: 5000
     base: "{{ groups['docker-registry'][0] }}:5000"
 
 java:
