@@ -113,20 +113,20 @@
 (defn filter-hierarchy
   "Filters an Ontology Hierarchy, rooted at the given root-iri, returning only the hierarchy's
    leaf-classes that are associated with the given targets."
-  [ontology-version root-iri target-types target-ids]
+  [ontology-version root-iri attr target-types target-ids]
   (let [hierarchy (format-hierarchy ontology-version root-iri)
-        iri-set (set (map :value (avu-db/get-avus-by-attr target-types target-ids "rdf:type")))]
+        iri-set (set (map :value (avu-db/get-avus-by-attr target-types target-ids attr)))]
     {:hierarchy (util/filter-hierarchy iri-set hierarchy)}))
 
 (defn filter-unclassified-targets
   "Filters the given target IDs by returning a list of any that are not associated with any Ontology
    classes of the hierarchy rooted at the given root-iri."
-  [ontology-version root-iri target-types target-ids]
+  [ontology-version root-iri attr target-types target-ids]
   (let [target-ids (set target-ids)
         hierarchy  (format-hierarchy ontology-version root-iri)
         iri-set    (set (map :iri (util/hierarchy->class-set hierarchy)))
         found-ids  (set (map :target_id (avu-db/filter-targets-by-attr-values target-types
                                                                               target-ids
-                                                                              "rdf:type"
+                                                                              attr
                                                                               iri-set)))]
     {:target-ids (seq (sets/difference target-ids found-ids))}))

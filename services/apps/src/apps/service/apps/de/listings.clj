@@ -169,11 +169,11 @@
       (get-visible-app-groups user params))))
 
 (defn get-app-hierarchy
-  ([user root-iri]
-   (get-app-hierarchy user (get-active-hierarchy-version) root-iri))
-  ([{:keys [username shortUsername]} ontology-version root-iri]
+  ([user root-iri attr]
+   (get-app-hierarchy user (get-active-hierarchy-version) root-iri attr))
+  ([{:keys [username shortUsername]} ontology-version root-iri attr]
    (let [app-ids (get-visible-app-ids shortUsername)]
-     (metadata-client/filter-hierarchy username ontology-version root-iri app-ids))))
+     (metadata-client/filter-hierarchy username ontology-version root-iri attr app-ids))))
 
 (defn get-admin-app-groups
   "Retrieves the list of app groups that are accessible to administrators. This includes all public
@@ -273,8 +273,8 @@
 (defn get-unclassified-app-listing
   ([user root-iri params]
    (get-unclassified-app-listing user (get-active-hierarchy-version) root-iri params))
-  ([{:keys [username] :as user} ontology-version root-iri params]
-   (let [metadata-filter (partial metadata-client/filter-unclassified username ontology-version root-iri)]
+  ([{:keys [username] :as user} ontology-version root-iri {:keys [attr] :as params}]
+   (let [metadata-filter (partial metadata-client/filter-unclassified username ontology-version root-iri attr)]
      (apps-listing-with-metadata-filter user params metadata-filter))))
 
 (defn- list-apps-in-virtual-group

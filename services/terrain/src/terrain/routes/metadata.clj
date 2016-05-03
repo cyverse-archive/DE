@@ -29,8 +29,8 @@
    (GET "/apps/hierarchies" []
      (service/success-response (apps/get-app-category-hierarchies)))
 
-   (GET "/apps/hierarchies/:root-iri" [root-iri]
-     (service/success-response (apps/get-app-category-hierarchy root-iri)))
+   (GET "/apps/hierarchies/:root-iri" [root-iri :as {params :params}]
+     (service/success-response (apps/get-app-category-hierarchy root-iri params)))
 
    (GET "/apps/hierarchies/:class-iri/apps" [class-iri :as {params :params}]
      (service/success-response (apps/get-hierarchy-app-listing class-iri params)))
@@ -57,8 +57,8 @@
    (POST "/ontologies/:ontology-version" [ontology-version]
      (service/success-response (apps/set-ontology-version ontology-version)))
 
-   (GET "/ontologies/:ontology-version/:root-iri" [ontology-version root-iri]
-     (service/success-response (apps/get-app-category-hierarchy ontology-version root-iri)))
+   (GET "/ontologies/:ontology-version/:root-iri" [ontology-version root-iri :as {params :params}]
+     (service/success-response (apps/get-app-category-hierarchy ontology-version root-iri params)))
 
    (PUT "/ontologies/:ontology-version/:root-iri" [ontology-version root-iri]
      (service/success-response (metadata-client/save-ontology-hierarchy ontology-version root-iri)))

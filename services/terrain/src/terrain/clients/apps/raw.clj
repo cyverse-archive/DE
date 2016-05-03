@@ -7,6 +7,7 @@
 (def apps-sort-params [:limit :offset :sort-field :sort-dir])
 (def apps-analysis-listing-params (conj apps-sort-params :include-hidden :filter))
 (def apps-search-params (conj apps-sort-params :search))
+(def apps-hierarchy-sort-params (conj apps-sort-params :attr))
 
 (defn- apps-url
   [& components]
@@ -45,14 +46,14 @@
                 :follow-redirects false}))
 
 (defn get-app-category-hierarchy
-  ([ontology-version root-iri]
+  ([ontology-version root-iri params]
    (client/get (apps-url-encoded "admin" "ontologies" ontology-version root-iri)
-               {:query-params     (secured-params)
+               {:query-params     (secured-params params [:attr])
                 :as               :stream
                 :follow-redirects false}))
-  ([root-iri]
+  ([root-iri params]
    (client/get (apps-url-encoded "apps" "hierarchies" root-iri)
-               {:query-params     (secured-params)
+               {:query-params     (secured-params params [:attr])
                 :as               :stream
                 :follow-redirects false})))
 
@@ -66,19 +67,19 @@
 (defn get-hierarchy-app-listing
   [class-iri params]
   (client/get (apps-url-encoded "apps" "hierarchies" class-iri "apps")
-              {:query-params     (secured-params params (conj apps-sort-params :attr))
+              {:query-params     (secured-params params apps-hierarchy-sort-params)
                :as               :stream
                :follow-redirects false}))
 
 (defn get-unclassified-app-listing
   ([ontology-version root-iri params]
    (client/get (apps-url-encoded "admin" "ontologies" ontology-version root-iri "unclassified")
-               {:query-params     (secured-params params apps-sort-params)
+               {:query-params     (secured-params params apps-hierarchy-sort-params)
                 :as               :stream
                 :follow-redirects false}))
   ([root-iri params]
    (client/get (apps-url-encoded "apps" "hierarchies" root-iri "unclassified")
-               {:query-params     (secured-params params apps-sort-params)
+               {:query-params     (secured-params params apps-hierarchy-sort-params)
                 :as               :stream
                 :follow-redirects false})))
 

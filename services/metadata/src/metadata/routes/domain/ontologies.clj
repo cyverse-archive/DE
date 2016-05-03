@@ -4,6 +4,10 @@
         [metadata.routes.domain.common])
   (:require [schema.core :as s]))
 
+(s/defschema OntologyHierarchyFilterParams
+  (merge StandardUserQueryParams
+         {:attr (describe String "The metadata attribute that stores class IRIs under the given root IRI")}))
+
 (s/defschema OntologyDetailsList
   {:ontologies (describe [OntologyDetails] "List of saved Ontologies")})
 

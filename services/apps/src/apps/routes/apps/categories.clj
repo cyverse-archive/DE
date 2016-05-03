@@ -51,7 +51,7 @@ Please see the metadata service documentation for response information."
 
   (GET* "/:root-iri" []
         :path-params [root-iri :- OntologyClassIRIParam]
-        :query [params SecuredQueryParams]
+        :query [{:keys [attr]} OntologyHierarchyFilterParams]
         :summary "List App Category Hierarchy"
         :description
 "Gets the list of app categories that are visible to the user for the active ontology version,
@@ -60,7 +60,7 @@ Please see the metadata service documentation for response information."
 #### Delegates to metadata service
     POST /ontologies/{ontology-version}/{root-iri}/filter
 Please see the metadata service documentation for response information."
-        (listings/get-app-hierarchy current-user root-iri))
+        (listings/get-app-hierarchy current-user root-iri attr))
 
   (GET* "/:class-iri/apps" []
         :path-params [class-iri :- OntologyClassIRIParam]
@@ -76,7 +76,7 @@ Please see the metadata service documentation for response information."
 
   (GET* "/:root-iri/unclassified" []
         :path-params [root-iri :- OntologyClassIRIParam]
-        :query [params AppListingPagingParams]
+        :query [params OntologyAppListingPagingParams]
         :return AppListing
         :summary "List Unclassified Apps"
         :description

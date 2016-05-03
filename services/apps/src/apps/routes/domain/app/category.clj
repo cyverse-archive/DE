@@ -100,6 +100,10 @@
 (defschema ActiveOntologyDetailsList
   {:ontologies (describe [ActiveOntologyDetails] "List of available Ontologies")})
 
+(defschema OntologyHierarchyFilterParams
+  (merge SecuredQueryParams
+         {:attr (describe String "The metadata attribute that stores class IRIs under the given root IRI")}))
+
 (defschema OntologyAppListingPagingParams
   (merge AppListingPagingParams
          {:attr (describe String "The metadata attribute that stores the given class IRI")}))
