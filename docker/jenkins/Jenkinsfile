@@ -8,4 +8,20 @@ node('secondary') {
         sh 'docker run --rm -v $(pwd):/build -w /build discoenv/buildenv gb vendor restore'
         sh 'docker run --rm -v $(pwd):/build -w /build discoenv/buildenv gb test'
     }
+
+    stage 'Build'
+    dir('golang') {
+        sh 'docker run --rm -v $(pwd):/build -w /build discoenv/buildenv gb build'
+    }
+
+    stash includes: 'golang/bin/*', name: 'go_binaries'
+}
+
+node('secondary') {
+    stage 'Dockerize'
+    unstash 'go_binaries'
+    dir('golang') {
+        sh 'docker build -f jobservices.docker --rm -t discoenv/jobservices:dev .'
+    }
+
 }
