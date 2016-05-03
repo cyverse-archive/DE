@@ -33,7 +33,7 @@
       service_name_short: "{{anon_files.service_name_short}}"
       tags:
         - service_config
-        - anon_files
+        - anon-files
 
     - role: util-cfg-service
       service_name_short: "{{apps.service_name_short}}"
@@ -51,13 +51,13 @@
       service_name_short: "{{condor_log_monitor.service_name_short}}"
       tags:
         - service_config
-        - condor_log_monitor
+        - condor-log-monitor
 
     - role: util-cfg-service
       service_name_short: "{{data_info.service_name_short}}"
       tags:
         - service_config
-        - data_info
+        - data-info
 
     - role: util-cfg-service
       service_name_short: "{{dewey.service_name_short}}"
@@ -75,7 +75,7 @@
       service_name_short: "{{info_typer.service_name_short}}"
       tags:
         - service_config
-        - info_typer
+        - info-typer
 
     - role: util-cfg-service
       service_name_short: "{{infosquito.service_name_short}}"
@@ -87,13 +87,13 @@
       service_name_short: "{{iplant_email.service_name_short}}"
       tags:
         - service_config
-        - iplant_email
+        - iplant-email
 
     - role: util-cfg-service
       service_name_short: "{{iplant_groups.service_name_short}}"
       tags:
         - service_config
-        - iplant_groups
+        - iplant-groups
 
     - role: util-cfg-service
       service_name_short: "{{jexevents.service_name_short}}"
@@ -123,13 +123,13 @@
       service_name_short: "{{notificationagent.service_name_short}}"
       tags:
         - service_config
-        - notification_agent
+        - notificationagent
 
     - role: util-cfg-service
       service_name_short: "{{saved_searches.service_name_short}}"
       tags:
         - service_config
-        - saved_searches
+        - saved-searches
 
     - role: util-cfg-service
       service_name_short: "{{terrain.service_name_short}}"
@@ -141,19 +141,19 @@
       service_name_short: "{{tree_urls.service_name_short}}"
       tags:
         - service_config
-        - tree_urls
+        - tree-urls
 
     - role: util-cfg-service
       service_name_short: "{{user_preferences.service_name_short}}"
       tags:
         - service_config
-        - user_preferences
+        - user-preferences
 
     - role: util-cfg-service
       service_name_short: "{{user_sessions.service_name_short}}"
       tags:
         - service_config
-        - user_sessions
+        - user-sessions
 
     - role: util-cfg-service
       service_name_short: "{{templeton_periodic.service_name_short}}"
@@ -161,7 +161,7 @@
       dest: "{{service_conf_dir}}/templeton-periodic.yaml"
       tags:
         - service_config
-        - templeton_periodic
+        - templeton-periodic
 
     - role: util-cfg-service
       service_name_short: "{{templeton_incremental.service_name_short}}"
@@ -169,7 +169,7 @@
       dest: "{{service_conf_dir}}/templeton-incremental.yaml"
       tags:
         - service_config
-        - templeton_incremental
+        - templeton-incremental
 
     - role: util-cfg-service
       src: "ui/de-application.yaml.j2"
@@ -177,7 +177,7 @@
       service_name_short: "{{de.service_name_short}}"
       tags:
         - service_config
-        - de_ui
+        - de-ui
 
     - role: util-cfg-service
       src: "ui/de.properties.j2"
@@ -185,7 +185,7 @@
       service_name_short: "{{de.service_name_short}}"
       tags:
         - service_config
-        - de_ui
+        - de-ui
 
     - role: util-cfg-service
       src: "ui/nginx.conf.j2"
@@ -193,7 +193,7 @@
       service_name_short: "{{de.service_name_short}}"
       tags:
         - service_config
-        - de_ui
+        - de-ui
 
     - role: util-cfg-service
       src: "docker-cleanup/docker-gc-exclude-containers.j2"
@@ -201,7 +201,7 @@
       service_name_short: "docker-gc"
       tags:
         - service_config
-        - docker_gc
+        - docker-gc
 
     - role: util-cfg-service
       src: "docker-cleanup/docker-gc-exclude.j2"
@@ -209,7 +209,7 @@
       service_name_short: "docker-gc"
       tags:
         - service_config
-        - docker_gc
+        - docker-gc
 
     - role: util-cfg-service
       service_name_short: jobservices
@@ -217,6 +217,7 @@
       tags:
         - service_config
         - jobservices
+        - jex-adapter
 
     - role: util-cfg-service
       service_name_short: "{{permissions.service_name_short}}"
