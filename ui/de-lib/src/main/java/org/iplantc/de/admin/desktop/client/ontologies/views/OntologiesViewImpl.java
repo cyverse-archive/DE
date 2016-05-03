@@ -12,8 +12,6 @@ import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.PublishOntol
 import org.iplantc.de.apps.client.AppCategoriesView;
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
-import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.ontologies.Ontology;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 
@@ -88,8 +86,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
         initWidget(uiBinder.createAndBindUi(this));
 
-        publishButton.disable();
-        saveHierarchy.disable();
+        saveAndPublishEnabled(false);
         treePanel.setHeadingText("NEW");
     }
 
@@ -157,17 +154,20 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
             public void onSelection(SelectionEvent<Ontology> event) {
                 Ontology selectedOntology = event.getSelectedItem();
                 if (selectedOntology == null) {
-                    publishButton.disable();
-                    saveHierarchy.disable();
+                    saveAndPublishEnabled(false);
                 } else {
-                    publishButton.enable();
-                    saveHierarchy.enable();
-                    fireEvent(new SelectOntologyVersionEvent(event.getSelectedItem()));
+                    saveAndPublishEnabled(true);
+                    fireEvent(new SelectOntologyVersionEvent(selectedOntology));
                 }
 
             }
         });
         return ontologySimpleComboBox;
+    }
+
+    void saveAndPublishEnabled(boolean enabled) {
+        publishButton.setEnabled(enabled);
+        saveHierarchy.setEnabled(enabled);
     }
     @UiHandler("viewVersions")
     void viewVersionsClicked(SelectEvent event) {
@@ -185,10 +185,6 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
     @UiHandler("addButton")
     void addButtonClicked(SelectEvent event) {
-        DiskResourceAutoBeanFactory drFactory = GWT.create(DiskResourceAutoBeanFactory.class);
-        Folder blank = drFactory.folder().as();
-        blank.setPath("Ontology Database");
-
         new EdamUploadDialog(eventBus,
                              UriUtils.fromTrustedString(clientConstants.ontologyUploadServlet()),
                              appearance).show();

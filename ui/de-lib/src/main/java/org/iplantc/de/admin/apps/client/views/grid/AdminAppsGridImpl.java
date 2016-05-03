@@ -27,6 +27,8 @@ import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.grid.GridView;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 
+import java.util.List;
+
 /**
  * Created by jstroot on 3/9/15.
  * @author jstroot
@@ -68,6 +70,12 @@ public class AdminAppsGridImpl extends ContentPanel implements AdminAppsGridView
     @Override
     public Grid<App> getGrid() {
         return grid;
+    }
+
+    @Override
+    public void clearAndAdd(List<App> apps) {
+        listStore.clear();
+        listStore.addAll(apps);
     }
 
     @Override

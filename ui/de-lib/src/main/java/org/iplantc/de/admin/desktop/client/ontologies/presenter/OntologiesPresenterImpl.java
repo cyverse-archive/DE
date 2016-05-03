@@ -29,7 +29,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
 
-import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.TreeStore;
 
 import java.util.Collections;
@@ -54,7 +53,6 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     private AdminCategoriesView.Presenter categoriesPresenter;
     private AdminAppsGridView.Presenter gridPresenter;
     private OntologyAutoBeanFactory beanFactory;
-    ListStore<App> listStore;
     private String UNCLASSIFIED_LABEL = "Unclassified";
     private String UNCLASSIFIED_IRI_APPEND = "_unclassified";
 
@@ -73,7 +71,6 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
         this.categoriesPresenter = categoriesPresenter;
         this.gridPresenter = gridPresenter;
-        listStore = gridPresenter.getView().getGrid().getStore();
 
         this.view = factory.create(treeStore, categoriesPresenter.getView(), gridPresenter.getView());
 
@@ -240,8 +237,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
             @Override
             public void onSuccess(List<App> result) {
-                listStore.clear();
-                listStore.addAll(result);
+                gridPresenter.getView().clearAndAdd(result);
                 gridPresenter.getView().unmask();
             }
         });
@@ -274,8 +270,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
             @Override
             public void onSuccess(List<App> result) {
-                listStore.clear();
-                listStore.addAll(result);
+                gridPresenter.getView().clearAndAdd(result);
                 gridPresenter.getView().unmask();
             }
         });
