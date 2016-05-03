@@ -7,13 +7,12 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClic
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.ViewOntologyVersionEvent;
-import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.EdamUploadDialog;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.PublishOntologyDialog;
 import org.iplantc.de.apps.client.AppCategoriesView;
 import org.iplantc.de.client.DEClientConstants;
-import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.ontologies.Ontology;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
+import org.iplantc.de.commons.client.views.dialogs.EdamUploadDialog;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -68,7 +67,6 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @UiField CenterLayoutContainer noTreePanel, emptyTreePanel;
     @UiField ContentPanel treePanel;
     @UiField TextButton publishButton;
-    @Inject EventBus eventBus;
     @Inject DEClientConstants clientConstants;
 
     private TreeStore<OntologyHierarchy> treeStore;
@@ -185,9 +183,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
     @UiHandler("addButton")
     void addButtonClicked(SelectEvent event) {
-        new EdamUploadDialog(eventBus,
-                             UriUtils.fromTrustedString(clientConstants.ontologyUploadServlet()),
-                             appearance).show();
+        new EdamUploadDialog(UriUtils.fromTrustedString(clientConstants.ontologyUploadServlet())).show();
     }
 
     @UiHandler("saveHierarchy")
