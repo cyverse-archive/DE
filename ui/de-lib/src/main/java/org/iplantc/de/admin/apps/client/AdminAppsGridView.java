@@ -17,6 +17,8 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 
+import java.util.List;
+
 /**
  * Created by jstroot on 3/9/15.
  * @author jstroot
@@ -72,4 +74,6 @@ public interface AdminAppsGridView extends IsWidget,
     }
 
     Grid<App> getGrid();
+
+    void clearAndAdd(List<App> apps);
 }

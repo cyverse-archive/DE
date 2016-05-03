@@ -1,8 +1,9 @@
 package org.iplantc.de.admin.desktop.client.ontologies.presenter;
 
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -28,7 +29,6 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 
-import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 
@@ -55,7 +55,6 @@ public class OntologiesPresenterImplTest {
     @Mock OntologiesView.OntologiesViewAppearance appearanceMock;
     @Mock AdminAppsGridView.Presenter gridPresenterMock;
     @Mock OntologyAutoBeanFactory beanFactoryMock;
-    @Mock ListStore<App> listStoreMock;
     @Mock Grid<App> gridMock;
     @Mock AdminAppsGridView gridViewMock;
     @Mock AdminCategoriesView.Presenter categoriesPresenterMock;
@@ -79,7 +78,6 @@ public class OntologiesPresenterImplTest {
         when(appearanceMock.successTopicSaved()).thenReturn("success");
         when(appearanceMock.successOperationSaved()).thenReturn("success");
         when(appearanceMock.setActiveOntologySuccess()).thenReturn("success");
-        when(gridMock.getStore()).thenReturn(listStoreMock);
         when(gridViewMock.getGrid()).thenReturn(gridMock);
         when(gridPresenterMock.getView()).thenReturn(gridViewMock);
         when(categoriesPresenterMock.getView()).thenReturn(categoriesViewMock);
@@ -93,7 +91,6 @@ public class OntologiesPresenterImplTest {
                                           categoriesPresenterMock,
                                           gridPresenterMock);
         uut.announcer = announcerMock;
-        uut.listStore = listStoreMock;
         uut.properties = propertiesMock;
 
         verifyConstructor(uut);
@@ -268,8 +265,7 @@ public class OntologiesPresenterImplTest {
         verify(serviceFacadeMock).getAppsByHierarchy(eq(ontologyHierarchyMock.getIri()), eq(ontologyMetadataMock), asyncAppListCaptor.capture());
 
         asyncAppListCaptor.getValue().onSuccess(appListMock);
-        verify(listStoreMock).clear();
-        verify(listStoreMock).addAll(eq(appListMock));
+        verify(gridViewMock).clearAndAdd(appListMock);
         verify(gridViewMock).unmask();
     }
 
@@ -306,7 +302,7 @@ public class OntologiesPresenterImplTest {
         /** CALL METHOD UNDER TEST **/
         uut.onHierarchySelected(eventMock);
         //Testing the unclassifiedApps method separately
-        verifyZeroInteractions(listStoreMock, serviceFacadeMock);
+        verifyZeroInteractions(serviceFacadeMock);
     }
 
 
@@ -340,8 +336,7 @@ public class OntologiesPresenterImplTest {
 
         asyncAppListCaptor.getValue().onSuccess(appListMock);
 
-        verify(listStoreMock).clear();
-        verify(listStoreMock).addAll(appListMock);
+        verify(gridViewMock).clearAndAdd(appListMock);
         verify(gridViewMock).unmask();
     }
 }
