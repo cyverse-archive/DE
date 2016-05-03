@@ -12,6 +12,7 @@ node('secondary') {
     stage 'Build'
     dir('golang') {
         sh 'docker run --rm -v $(pwd):/build -w /build discoenv/buildenv gb build'
+        sh 'docker run --rm -v $(pwd):/build -w /build discoenv/buildenv chmod -R a+rwx /build'
     }
 
     stash includes: 'golang/bin/*', name: 'go_binaries'
