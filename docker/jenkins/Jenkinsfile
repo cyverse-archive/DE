@@ -1,0 +1,11 @@
+node('secondary') {
+    stage 'Checkout'
+    git url: 'https://github.com/cyverse/DE.git', branch: 'dev'
+
+    stage 'Test'
+    dir('golang') {
+        sh 'docker pull discoenv/buildenv'
+        sh 'docker run --rm -v $(pwd):/build -w /build discoenv/buildenv gb vendor restore'
+        sh 'docker run --rm -v $(pwd):/build -w /build discoenv/buildenv gb test'
+    }
+}
