@@ -58,6 +58,9 @@
     (PATCH "/apps/:app-id" [app-id :as {:keys [body]}]
            (service/success-response (apps/admin-update-app app-id body)))
 
+    (GET "/apps/:app-id/details" [app-id]
+         (service/success-response (apps/get-admin-app-details app-id)))
+
     (POST "/apps/:app-id/documentation" [app-id :as {:keys [body]}]
           (service/success-response (apps/admin-add-app-docs app-id body)))
 
