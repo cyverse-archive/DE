@@ -15,14 +15,25 @@ node('secondary') {
         sh 'docker run --rm -v $(pwd):/build -w /build discoenv/buildenv chmod -R a+rwx /build'
     }
 
-    stash includes: 'golang/bin/*', name: 'go_binaries'
+    stash includes: '*', name: 'go_checkout'
 }
 
-node('secondary') {
-    stage 'Dockerize'
-    unstash 'go_binaries'
+node('tertiary') {
+    stage 'Docker Build'
+    unstash 'go_checkout'
     dir('golang') {
         sh 'docker build -f jobservices.docker --rm -t discoenv/jobservices:dev .'
     }
 
+    stage 'Docker Push'
+    dir ('golang') {
+        sh 'ls -l bin/'
+    }
+    stash includes: '*', name: 'go_checkout'
+}
+
+node ('secondary') {
+  stage 'Deployment'
+  unstash 'go_checkout'
+  sh 'ls -l golang/bin/'
 }
