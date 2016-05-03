@@ -1,6 +1,6 @@
 package org.iplantc.de.theme.base.client.diskResource.dialogs;
 
-import org.iplantc.de.diskResource.client.views.dialogs.SimpleFileUploadDialog;
+import org.iplantc.de.commons.client.views.dialogs.AbstractFileUploadDialog;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * @author jstroot
  */
-public class SimpleFileUploadDialogDefaultAppearance implements SimpleFileUploadDialog.SimpleFileUploadDialogAppearance {
+public class AbstractFileUploadDialogDefaultAppearance implements AbstractFileUploadDialog.AbstractFileUploadDialogAppearance {
 
     public interface Templates extends SafeHtmlTemplates {
         @Template("<div title='{0}' style='color: #0098AA;width:100%;padding:5px;text-overflow:ellipsis;'>{1}</div>")
@@ -31,7 +31,7 @@ public class SimpleFileUploadDialogDefaultAppearance implements SimpleFileUpload
     private final Templates templates;
     private final IplantResources resources;
 
-    public SimpleFileUploadDialogDefaultAppearance() {
+    public AbstractFileUploadDialogDefaultAppearance() {
         this(GWT.<DiskResourceMessages> create(DiskResourceMessages.class),
              GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class),
              GWT.<IplantErrorStrings> create(IplantErrorStrings.class),
@@ -39,11 +39,11 @@ public class SimpleFileUploadDialogDefaultAppearance implements SimpleFileUpload
              GWT.<IplantResources> create(IplantResources.class));
     }
 
-    SimpleFileUploadDialogDefaultAppearance(final DiskResourceMessages diskResourceMessages,
-                                            final IplantDisplayStrings iplantDisplayStrings,
-                                            final IplantErrorStrings iplantErrorStrings,
-                                            final Templates templates,
-                                            final IplantResources resources) {
+    AbstractFileUploadDialogDefaultAppearance(final DiskResourceMessages diskResourceMessages,
+                                              final IplantDisplayStrings iplantDisplayStrings,
+                                              final IplantErrorStrings iplantErrorStrings,
+                                              final Templates templates,
+                                              final IplantResources resources) {
         this.diskResourceMessages = diskResourceMessages;
         this.iplantDisplayStrings = iplantDisplayStrings;
         this.iplantErrorStrings = iplantErrorStrings;
@@ -95,6 +95,11 @@ public class SimpleFileUploadDialogDefaultAppearance implements SimpleFileUpload
     @Override
     public String upload() {
         return iplantDisplayStrings.upload();
+    }
+
+    @Override
+    public String fileUploadsSuccess(List<String> strings) {
+        return diskResourceMessages.fileUploadsSuccess(strings);
     }
 
 }
