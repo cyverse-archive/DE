@@ -3,33 +3,31 @@
   (:require [cemerick.url :as curl]
             [cheshire.core :as json]
             [clj-http.client :as http]
-            [apps.util.config :as config]
-            [apps.util.service :as util]))
+            [apps.util.config :as config]))
 
 (defn- metadata-url-encoded
   [& components]
   (str (apply curl/url (config/metadata-base) (map curl/url-encode components))))
 
 (defn- get-options
-  [params]
+  [params & {:keys [as] :or {as :stream}}]
   {:query-params     params
-   :as               :stream
+   :as               as
    :follow-redirects false})
 
 (defn- post-options
-  [body params]
+  [body params & {:keys [as] :or {as :stream}}]
   {:query-params     params
    :body             body
    :content-type     :json
-   :as               :stream
+   :as               as
    :follow-redirects false})
 
 (defn list-ontologies
   [username]
   (-> (http/get (metadata-url-encoded "ontologies")
-                (get-options {:user username}))
-      :body
-      util/parse-json))
+                (get-options {:user username} :as :json))
+      :body))
 
 (defn list-hierarchies
   [username ontology-version]
@@ -49,9 +47,9 @@
                                               :target-types ["app"]
                                               :attr attr
                                               :value value})
-                                {:user username}))
+                                {:user username}
+                                :as :json))
        :body
-       util/parse-json
        :target-ids
        (map uuidify)))
 
@@ -59,8 +57,8 @@
   [username ontology-version root-iri app-ids]
   (->> (http/post (metadata-url-encoded "ontologies" ontology-version root-iri "filter-unclassified")
                   (post-options (json/encode {:target-ids app-ids :target-types ["app"]})
-                                {:user username}))
+                                {:user username}
+                                :as :json))
        :body
-       util/parse-json
        :target-ids
        (map uuidify)))
