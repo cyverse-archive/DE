@@ -34,21 +34,6 @@
   [props config-valid configs]
   "terrain.app.environment-name")
 
-(cc/defprop-str cas-server
-  "The base URL used to connect to the CAS server."
-  [props config-valid configs]
-  "terrain.cas.cas-server")
-
-(cc/defprop-str server-name
-  "The name of the local server."
-  [props config-valid configs]
-  "terrain.cas.server-name")
-
-(cc/defprop-str group-attr-name
-  "The name of the user attribute containing group membership information."
-  [props config-valid configs]
-  "terrain.cas.group-attr-name")
-
 (cc/defprop-vec allowed-groups
   "The names of the groups that are permitted to access secured admin services."
   [props config-valid configs]

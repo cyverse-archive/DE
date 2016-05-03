@@ -33,7 +33,6 @@
                  [org.nexml.model/nexml "1.5-SNAPSHOT"]  ; provides org.nexml.model
                  [org.biojava.thirdparty/forester "1.005" ]
                  [slingshot "0.12.2"]
-                 [org.iplantc/clj-cas "5.2.7.0"]
                  [org.iplantc/clj-icat-direct "5.2.7.0"]
                  [org.iplantc/clj-jargon "5.2.7.0"]
                  [org.iplantc/clojure-commons "5.2.7.0"]
