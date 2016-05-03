@@ -135,7 +135,11 @@
 
 (defn get-app-details
   [user app-id]
-  (.getAppDetails (get-apps-client user) app-id))
+  (.getAppDetails (get-apps-client user) app-id false))
+
+(defn admin-get-app-details
+  [user app-id]
+  (.getAppDetails (get-apps-client user) app-id true))
 
 (defn remove-app-favorite
   [user app-id]
@@ -300,7 +304,7 @@
   [user body]
   (let [apps-client (get-apps-client user)]
     (.adminUpdateApp apps-client body)
-    (.getAppDetails apps-client (:id body))))
+    (.getAppDetails apps-client (:id body) true)))
 
 (defn get-admin-app-categories
   [user params]

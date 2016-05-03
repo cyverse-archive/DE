@@ -73,8 +73,10 @@
   (copyApp [_ app-id]
     (.copyApp (util/get-apps-client clients) app-id))
 
-  (getAppDetails [_ app-id]
-    (->> (map #(.getAppDetails % app-id) clients)
+  ;; FIXME: remove the admin flag when we have a better way to deal with administrative
+  ;; privileges.
+  (getAppDetails [_ app-id admin?]
+    (->> (map #(.getAppDetails % app-id admin?) clients)
          (remove nil?)
          (first)))
 

@@ -20,7 +20,7 @@
   (relabelApp [_ app])
   (updateApp [_ app])
   (copyApp [_ app-id])
-  (getAppDetails [_ app-id])
+  (getAppDetails [_ app-id admin?])
   (removeAppFavorite [_ app-id])
   (addAppFavorite [_ app-id])
   (isAppPublishable [_ app-id])
