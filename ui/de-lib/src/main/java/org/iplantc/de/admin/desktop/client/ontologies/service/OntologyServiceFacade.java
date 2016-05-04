@@ -36,7 +36,7 @@ public interface OntologyServiceFacade {
      * @param root
      * @param callback
      */
-    void getUnclassifiedApps(String version, String root, AsyncCallback<List<App>> callback);
+    void getUnclassifiedApps(String version, String root, OntologyMetadata metadata, AsyncCallback<List<App>> callback);
     /**
      * Set the active ontology version used by the app-hierarchies endpoints
      * @param version
