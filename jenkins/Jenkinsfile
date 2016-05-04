@@ -32,5 +32,6 @@ node('secondary') {
 
 node('secondary') {
     stage 'Deployment'
+    common.ansiblemerge("https://github.com/cyverse/DE.git", "dev", "fermin:/repos/de-ansible.git", "dev", "~/ansible_jobservices")
     sh 'ls -l golang/bin/'
 }

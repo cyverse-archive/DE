@@ -35,4 +35,8 @@ def dockerpush(repotag) {
   sh "docker push ${repotag}"
 }
 
+def ansiblemerge(external, external_branch, internal, internal_branch, working_dir {
+  sh "ansible-merge --de-repo '${external}' --de-branch '${external_branch}' --internal-repo '${internal_repo}' --internal-branch '${internal_branch}' --working-dir '${working_dir}'"
+}
+
 this
