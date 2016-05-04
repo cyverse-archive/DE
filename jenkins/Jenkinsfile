@@ -1,55 +1,20 @@
-def version() {
-    readFile('version')
-}
-
-def buildenv(cmd) {
-    b = "docker run --rm -v \$(pwd):/build -w /build discoenv/buildenv ${cmd}"
-    sh b
-}
-
-def buildenv_gitcommit() {
-    sh "docker inspect -f '{{ (index .Config.Labels \"org.iplantc.de.buildenv.git-ref\")}}' discoenv/buildenv:latest > BUILDENV_GIT_COMMIT"
-    readFile('BUILDENV_GIT_COMMIT')
-}
-
-def gitcommit() {
-    sh "git rev-parse HEAD > GIT_COMMIT"
-    readFile('GIT_COMMIT')
-}
-
-def user() {
-  sh "whoami > WHOAMI"
-  readFile('WHOAMI')
-}
-
-def dockerbuild(dockerfile, repotag) {
-    gc = gitcommit()
-    bgc = buildenv_gitcommit()
-    v = version()
-    cmd = "docker build -f ${dockerfile} --build-arg \'git_commit=${gc}\' --build-arg \'buildenv_git_commit=${bgc}\' --build-arg \'version=${v}\' --pull --rm -t ${repotag} ."
-    echo cmd
-    sh cmd
-}
-
-def dockerpush(repotag) {
-  sh "docker push ${repotag}"
-}
-
+def common
 node('secondary') {
     stage 'Checkout'
-    git url: 'https://github.com/cyverse/DE.git', branch: 'dev'
+    //git url: 'https://github.com/cyverse/DE.git', branch: 'dev'
+    common = load 'jenkins/common.groovy'
 
     stage 'Test'
     dir('golang') {
         sh 'docker pull discoenv/buildenv'
-        buildenv('gb vendor restore')
-        buildenv('gb test')
+        common.buildenv('gb vendor restore')
+        common.buildenv('gb test')
     }
 
     stage 'Build'
     dir('golang') {
-        buildenv("gb build -f -F --ldflags \"-X main.appver=${version()} -X main.gitref=${gitcommit()} -X main.builtby=${user()}\"")
-        buildenv('chmod -R a+rwx /build')
+        common.buildenv("gb build -f -F --ldflags \"-X main.appver=${version()} -X main.gitref=${gitcommit()} -X main.builtby=${user()}\"")
+        common.buildenv('chmod -R a+rwx /build')
     }
     stash includes: 'golang/**', name: 'golang'
 }
@@ -59,11 +24,11 @@ node('secondary') {
     unstash 'golang'
 
     dir('golang') {
-        dockerbuild('jobservices.docker', 'discoenv/jobservices:dev')
+        common.dockerbuild('jobservices.docker', 'discoenv/jobservices:dev')
     }
 
     stage 'Docker Push'
-    dockerpush('discoenv/jobservices:dev')
+    common.dockerpush('discoenv/jobservices:dev')
 }
 
 node('secondary') {
