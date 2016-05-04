@@ -13,7 +13,7 @@ node('secondary') {
 
     stage 'Build'
     dir('golang') {
-        common.buildenv("gb build -f -F --ldflags \"-X main.appver=${version()} -X main.gitref=${gitcommit()} -X main.builtby=${user()}\"")
+        common.buildenv("gb build -f -F --ldflags \"-X main.appver=${common.version()} -X main.gitref=${common.gitcommit()} -X main.builtby=${common.user()}\"")
         common.buildenv('chmod -R a+rwx /build')
     }
     stash includes: 'golang/**', name: 'golang'
