@@ -206,7 +206,7 @@
                             </menu:MenuItem>
 
                             <menu:MenuItem ui:field="editmetadataMi"
-                                           text="{appearance.metadataMenuItem}"
+                                           text="{appearance.editViewMetadataMenuItem}"
                                            icon="{appearance.metadataIcon}"
                                            enabled="false"/>
 
