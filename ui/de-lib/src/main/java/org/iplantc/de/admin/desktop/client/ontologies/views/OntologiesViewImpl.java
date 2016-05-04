@@ -8,6 +8,7 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarc
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.ViewOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.PublishOntologyDialog;
+import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.SaveHierarchiesDialog;
 import org.iplantc.de.apps.client.AppCategoriesView;
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.models.ontologies.Ontology;
@@ -62,7 +63,8 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @UiField(provided = true) OntologiesViewAppearance appearance;
     @UiField Tree<OntologyHierarchy, String> tree;
     @UiField(provided = true) AppCategoriesView categoriesView;
-    @UiField(provided = true) AdminAppsGridView gridView;
+    @UiField(provided = true) AdminAppsGridView oldGridView;
+    @UiField(provided = true) AdminAppsGridView newGridView;
     @UiField CardLayoutContainer cards;
     @UiField CenterLayoutContainer noTreePanel, emptyTreePanel;
     @UiField ContentPanel treePanel;
@@ -76,16 +78,19 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     public OntologiesViewImpl(OntologiesViewAppearance appearance,
                               @Assisted TreeStore<OntologyHierarchy> treeStore,
                               @Assisted AppCategoriesView categoriesView,
-                              @Assisted AdminAppsGridView gridView) {
+                              @Assisted("oldGridView") AdminAppsGridView oldGridView,
+                              @Assisted("newGridView") AdminAppsGridView newGridView) {
         this.appearance = appearance;
         this.treeStore = treeStore;
         this.categoriesView = categoriesView;
-        this.gridView = gridView;
+        this.oldGridView = oldGridView;
+        this.newGridView = newGridView;
 
         initWidget(uiBinder.createAndBindUi(this));
 
         saveAndPublishEnabled(false);
-        treePanel.setHeadingText("NEW");
+
+        treePanel.setHeadingText("Hierarchies");
     }
 
     @Override

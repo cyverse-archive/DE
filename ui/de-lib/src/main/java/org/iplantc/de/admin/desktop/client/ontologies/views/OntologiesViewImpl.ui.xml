@@ -18,12 +18,12 @@
     </ui:with>
     <ui:with field="eastData"
              type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
-        <ui:attributes size="250" split="true"/>
+        <ui:attributes size=".5" split="true"/>
     </ui:with>
     <ui:with field="westData"
              type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
         <ui:attributes margins="{westMargins}"
-                       size="250"
+                       size=".5"
                        split="true"/>
     </ui:with>
     <ui:with field="westMargins"
@@ -68,25 +68,40 @@
             </toolbar:ToolBar>
         </container:north>
         <container:west layoutData="{westData}">
-            <container:CardLayoutContainer ui:field="cards">
-                <container:CenterLayoutContainer ui:field="noTreePanel">
-                    <g:Label text="No ontology version selected."/>
-                </container:CenterLayoutContainer>
-                <gxt:ContentPanel ui:field="treePanel">
-                    <tree:Tree ui:field="tree"/>
-                </gxt:ContentPanel>
-                <container:CenterLayoutContainer ui:field="emptyTreePanel">
-                    <g:Label text="No hierarchies saved for this ontology version."/>
-                </container:CenterLayoutContainer>
-            </container:CardLayoutContainer>
+            <gxt:ContentPanel headingText="NEW">
+                <container:BorderLayoutContainer borders="true">
+                    <container:west layoutData="{westData}">
+                        <container:CardLayoutContainer ui:field="cards">
+                            <container:CenterLayoutContainer ui:field="noTreePanel">
+                                <g:Label text="No ontology version selected."/>
+                            </container:CenterLayoutContainer>
+                            <gxt:ContentPanel ui:field="treePanel">
+                                <tree:Tree ui:field="tree"/>
+                            </gxt:ContentPanel>
+                            <container:CenterLayoutContainer ui:field="emptyTreePanel">
+                                <g:Label text="No hierarchies saved for this ontology version."/>
+                            </container:CenterLayoutContainer>
+                        </container:CardLayoutContainer>
+                    </container:west>
+                    <container:east layoutData="{eastData}">
+                        <adminApps:AdminAppsGridView ui:field="newGridView"/>
+                    </container:east>
+                </container:BorderLayoutContainer>
+            </gxt:ContentPanel>
         </container:west>
         <container:east layoutData="{eastData}">
-            <gxt:ContentPanel headingText="OLD">
-                <apps:AppCategoriesView ui:field="categoriesView"></apps:AppCategoriesView>
+            <gxt:ContentPanel>
+                <container:BorderLayoutContainer>
+                    <container:east layoutData="{eastData}">
+                        <apps:AppCategoriesView ui:field="categoriesView"/>
+                    </container:east>
+                    <container:west layoutData="{westData}">
+                        <adminApps:AdminAppsGridView ui:field="oldGridView"/>
+                    </container:west>
+                </container:BorderLayoutContainer>
+
             </gxt:ContentPanel>
+
         </container:east>
-        <container:center layoutData="{centerData}">
-            <adminApps:AdminAppsGridView ui:field="gridView"></adminApps:AdminAppsGridView>
-        </container:center>
     </container:BorderLayoutContainer>
 </ui:UiBinder>

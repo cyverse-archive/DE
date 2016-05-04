@@ -5,6 +5,8 @@ import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
 import org.iplantc.de.apps.client.AppCategoriesView;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 
+import com.google.inject.assistedinject.Assisted;
+
 import com.sencha.gxt.data.shared.TreeStore;
 
 /**
@@ -12,5 +14,8 @@ import com.sencha.gxt.data.shared.TreeStore;
  */
 public interface OntologiesViewFactory {
 
-    OntologiesView create(TreeStore<OntologyHierarchy> treeStore, AppCategoriesView categoriesView, AdminAppsGridView gridView);
+    OntologiesView create(TreeStore<OntologyHierarchy> treeStore,
+                          AppCategoriesView categoriesView,
+                          @Assisted("oldGridView") AdminAppsGridView oldGridView,
+                          @Assisted("newGridView") AdminAppsGridView newGridView);
 }
