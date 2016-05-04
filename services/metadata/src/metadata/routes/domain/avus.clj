@@ -32,15 +32,18 @@ with any of the attributes found in any of the Metadata Template AVUs associated
    :attr (describe String "The Attribute's name")
    :value (describe String "The Attribute's value")
    :unit (describe String "The Attribute's unit")
-   :target_id DataItemIdParam
+   :target_id TargetIdPathParam
    :created_by (describe String "The ID of the user who created the AVU")
    :modified_by (describe String "The ID of the user who last modified the AVU")
    :created_on (describe Long "The date the AVU was created in ms since the POSIX epoch")
    :modified_on (describe Long "The date the AVU was last modified in ms since the POSIX epoch")})
 
+(s/defschema AvuList
+  {:avus (describe [Avu] "The list of AVUs associated with the target")})
+
 (s/defschema MetadataTemplateAvuList
-  {:template_id MetadataTemplateIdParam
-   :avus (describe [Avu] "The list of the data item's AVUs associated with this Metadata Template")})
+  (merge AvuList
+         {:template_id MetadataTemplateIdParam}))
 
 (s/defschema DataItemMetadataTemplateList
   {:data_id DataItemIdParam
@@ -60,16 +63,21 @@ with any of the attributes found in any of the Metadata Template AVUs associated
       (->optional-param :created_on)
       (->optional-param :modified_on)))
 
+(s/defschema AvuListRequest
+  {:avus
+   (describe [AvuRequest]
+             "The AVUs to save for the target data item and to associate with the Metadata Template.")})
+
 (s/defschema UpdateMetadataTemplateAvuRequest
   (-> MetadataTemplateAvuList
       (->optional-param :template_id)
-      (merge
-        {:avus
-         (describe [AvuRequest]
-           "The AVUs to save for the target data item and to associate with the Metadata Template.")})))
+      (merge AvuListRequest)))
 
 (s/defschema SetMetadataTemplateAvuRequest
   (->optional-param UpdateMetadataTemplateAvuRequest :avus))
+
+(s/defschema SetAvuRequest
+  (->optional-param AvuListRequest :avus))
 
 (s/defschema DataItem
   {:id   DataItemIdParam

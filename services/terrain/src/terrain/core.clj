@@ -132,6 +132,7 @@
     (apps-routes)
     (app-comment-routes)
     (app-ontology-routes)
+    (app-avu-routes)
     (analysis-routes)
     (coge-routes)
     (reference-genomes-routes)

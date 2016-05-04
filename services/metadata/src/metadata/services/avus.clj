@@ -27,13 +27,13 @@
   (templates/validate-template-exists template-id)
   (let [avus (map (partial find-existing-metadata-template-avu data-id) avus)
         existing-avus (filter :id avus)
-        new-avus (map #(assoc % :id (uuid)) (remove :id avus))
+        new-avus (map #(assoc % :id (uuid) :target_type data-type) (remove :id avus))
         avus (concat existing-avus new-avus)]
     (transaction
       (doseq [avu existing-avus]
         (persistence/update-avu user-id avu))
       (when (not-empty new-avus)
-        (persistence/add-metadata-template-avus user-id new-avus data-type))
+        (persistence/add-avus user-id new-avus))
       (persistence/set-template-instances data-id template-id (map :id avus)))
     (when publish-update (amqp/publish-metadata-update user-id data-id))
     (persistence/metadata-template-avu-list data-id template-id)))
@@ -141,7 +141,7 @@
                             (:avus (when template-id
                                          (update-metadata-template-avus
                                            user-id data-id data-type template-id metadata :publish-update false)))))]
-      (persistence/remove-orphaned-avus data-id avu-ids)))
+      (persistence/remove-orphaned-avus data-type data-id avu-ids)))
   (amqp/publish-metadata-update user-id data-id)
   (list-metadata-template-avus data-id))
 
@@ -150,3 +150,38 @@
   [attr value target-types target-ids]
   {:target-ids (map :target_id
                     (persistence/filter-targets-by-attr-values target-types target-ids attr [value]))})
+
+(defn- format-avu
+  "Formats the given AVU for adding or updating."
+  [target-type target-id {:keys [attr] :as avu}]
+  (-> (select-keys avu [:id :value :unit])
+      (assoc
+        :attribute   attr
+        :target_type target-type
+        :target_id   target-id)))
+
+(defn list-avus
+  [target-type target-id]
+  {:avus (persistence/avu-list target-type target-id)})
+
+(defn update-avus
+  [user-id target-type target-id {avus :avus}]
+  (transaction
+   (doseq [avu avus]
+     (persistence/add-or-update-avu user-id
+                                    (format-avu target-type target-id avu))))
+  (amqp/publish-metadata-update user-id target-id)
+  (list-avus target-type target-id))
+
+(defn set-avus
+  "Sets AVUs for the given user's data item."
+  [user-id target-type target-id {avus :avus}]
+  (transaction
+   (let [avu-ids (->> avus
+                      (map (comp :id
+                                 (partial persistence/add-or-update-avu user-id)
+                                 (partial format-avu target-type target-id)))
+                      set)]
+     (persistence/remove-orphaned-avus target-type target-id avu-ids)))
+  (amqp/publish-metadata-update user-id target-id)
+  (list-avus target-type target-id))

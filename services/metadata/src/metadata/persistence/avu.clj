@@ -18,6 +18,18 @@
                   :attribute   attribute
                   :value       [in values]})))
 
+(defn get-avu-by-id
+  "Finds existing AVUs by a set of IDs."
+  [id]
+  (select :avus (where {:id id})))
+
+(defn get-avus-for-target
+  "Gets AVUs for the given target."
+  [target-type target-id]
+  (select :avus
+          (where {:target_id   target-id
+                  :target_type (db/->enum-val target-type)})))
+
 (defn get-avus-by-attr
   "Finds all existing AVUs by the given targets and the given set of attributes."
   [target-types target-ids attribute]
@@ -79,13 +91,12 @@
     (insert :template_instances
       (values (map #(hash-map :template_id template-id, :avu_id %) avu-ids)))))
 
-(defn add-metadata-template-avus
+(defn add-avus
   "Adds the given AVUs to the Metadata database."
-  [user-id avus target-type]
-  (let [fmt-avu #(assoc %
-                   :created_by user-id
-                   :modified_by user-id
-                   :target_type (db/->enum-val target-type))]
+  [user-id avus]
+  (let [fmt-avu (comp #(update % :target_type db/->enum-val)
+                      #(assoc % :created_by  user-id
+                                :modified_by user-id))]
     (insert :avus (values (map fmt-avu avus)))))
 
 (defn update-avu
@@ -96,6 +107,23 @@
                     (assoc :modified_by user-id
                            :modified_on (sqlfn now))))
     (where (select-keys avu [:id]))))
+
+(defn- find-matching-avu
+  "Finds an existing AVU by attribute, value, unit, target_type, target_id, and if included the 'id'."
+  [avu]
+  (let [required-keys [:attribute :value :unit :target_type :target_id]]
+    (when (every? (partial contains? avu) required-keys)
+      (first (select :avus
+                     (where (-> (select-keys avu (conj required-keys :id))
+                                (update :target_type db/->enum-val))))))))
+
+(defn add-or-update-avu
+  [user-id {:keys [id] :as avu}]
+  (if-let [matching-avu (find-matching-avu avu)]
+    matching-avu
+    (if (and id (get-avu-by-id id))
+      (do (update-avu user-id avu) avu)
+      (add-avus user-id [avu]))))
 
 (defn remove-avus
   "Removes AVUs with the given IDs from the Metadata database."
@@ -117,14 +145,14 @@
     (delete :template_instances (where {:avu_id [in (subselect avu-id-select)]}))))
 
 (defn remove-orphaned-avus
-  "Removes AVUs for the given data-id that are not in the given set of avu-ids."
-  [data-id avu-ids]
+  "Removes AVUs for the given target-id that are not in the given set of avu-ids."
+  [target-type target-id avu-ids]
   (let [query (-> (delete* :avus)
-                  (where {:target_id data-id
-                          :target_type [in data-types]}))]
+                  (where {:target_id target-id
+                          :target_type (db/->enum-val target-type)}))]
     (if (empty? avu-ids)
       (transaction
-        (remove-data-item-template-instances data-id)
+        (remove-data-item-template-instances target-id)
         (delete query))
       (delete (where query {:id [not-in avu-ids]})))))
 
@@ -166,3 +194,8 @@
   [data-id template-id]
   (assoc (get-metadata-template-avus data-id template-id)
     :data_id data-id))
+
+(defn avu-list
+  "Lists AVUs for the given target."
+  [target-type target-id]
+  (map format-avu (get-avus-for-target target-type target-id)))

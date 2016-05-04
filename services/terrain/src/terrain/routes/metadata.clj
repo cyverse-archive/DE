@@ -87,6 +87,21 @@
    (GET "/ontologies/:ontology-version/:root-iri/unclassified" [ontology-version root-iri :as {params :params}]
      (service/success-response (apps/get-unclassified-app-listing ontology-version root-iri params)))))
 
+(defn app-avu-routes
+  []
+  (optional-routes
+   [#(and (config/app-routes-enabled)
+          (config/metadata-routes-enabled))]
+
+   (GET "/apps/:app-id/metadata" [app-id]
+     (metadata-client/list-avus "app" app-id))
+
+   (POST "/apps/:app-id/metadata" [app-id :as {:keys [body]}]
+     (metadata-client/set-avus "app" app-id body))
+
+   (PUT "/apps/:app-id/metadata" [app-id :as {:keys [body]}]
+     (metadata-client/update-avus "app" app-id body))))
+
 (defn admin-apps-routes
   []
   (optional-routes

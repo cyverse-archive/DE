@@ -47,6 +47,18 @@
 
 (def put-options post-options)
 
+(defn list-avus
+  [target-type target-id]
+  (http/get (metadata-url "avus" target-type target-id) (get-options)))
+
+(defn set-avus
+  [target-type target-id body]
+  (http/post (metadata-url "avus" target-type target-id) (post-options body)))
+
+(defn update-avus
+  [target-type target-id body]
+  (http/put (metadata-url "avus" target-type target-id) (put-options body)))
+
 (defn list-metadata-avus
   [target-id]
   (http/get (metadata-url "filesystem" "data" target-id "avus")
@@ -62,12 +74,6 @@
   [target-id force? dest-items]
   (http/post (metadata-url "filesystem" "data" target-id "avus" "copy")
     (post-options (json/encode {:filesystem dest-items}) {:force force?})))
-
-(defn list-metadata-template-avus
-  [target-id template-id]
-  (http/get (metadata-url "filesystem" "data" target-id "avus" template-id)
-    {:as               :stream
-     :follow_redirects false}))
 
 (defn add-metadata-template-avus
   [target-id data-type template-id avus-req]
