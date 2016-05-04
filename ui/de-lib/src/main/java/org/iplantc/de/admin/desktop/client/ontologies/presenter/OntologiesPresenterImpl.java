@@ -52,7 +52,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     private final TreeStore<OntologyHierarchy> treeStore;
     private OntologiesView.OntologiesViewAppearance appearance;
     private AdminCategoriesView.Presenter categoriesPresenter;
-    private AdminAppsGridView.Presenter gridPresenter;
+    private AdminAppsGridView.Presenter oldGridPresenter;
+    private AdminAppsGridView.Presenter newGridPresenter;
     private OntologyAutoBeanFactory beanFactory;
     private String UNCLASSIFIED_LABEL = "Unclassified";
     private String UNCLASSIFIED_IRI_APPEND = "_unclassified";
@@ -64,25 +65,27 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                                    OntologiesViewFactory factory,
                                    OntologiesView.OntologiesViewAppearance appearance,
                                    AdminCategoriesView.Presenter categoriesPresenter,
-                                   AdminAppsGridView.Presenter gridPresenter) {
+                                   AdminAppsGridView.Presenter oldGridPresenter,
+                                   AdminAppsGridView.Presenter newGridPresenter) {
         this.serviceFacade = serviceFacade;
         this.beanFactory = beanFactory;
         this.treeStore = treeStore;
         this.appearance = appearance;
 
         this.categoriesPresenter = categoriesPresenter;
-        this.gridPresenter = gridPresenter;
+        this.oldGridPresenter = oldGridPresenter;
+        this.newGridPresenter = newGridPresenter;
 
-        this.view = factory.create(treeStore, categoriesPresenter.getView(), gridPresenter.getView());
+        this.view = factory.create(treeStore, categoriesPresenter.getView(), oldGridPresenter.getView(), newGridPresenter.getView());
 
-        categoriesPresenter.getView().addAppCategorySelectedEventHandler(gridPresenter);
-        categoriesPresenter.getView().addAppCategorySelectedEventHandler(gridPresenter.getView());
-        gridPresenter.addStoreRemoveHandler(categoriesPresenter);
+        categoriesPresenter.getView().addAppCategorySelectedEventHandler(oldGridPresenter);
+        categoriesPresenter.getView().addAppCategorySelectedEventHandler(oldGridPresenter.getView());
+        oldGridPresenter.addStoreRemoveHandler(categoriesPresenter);
 
         view.addViewOntologyVersionEventHandler(this);
         view.addSelectOntologyVersionEventHandler(this);
         view.addHierarchySelectedEventHandler(this);
-        view.addHierarchySelectedEventHandler(gridPresenter.getView());
+        view.addHierarchySelectedEventHandler(newGridPresenter.getView());
         view.addSaveOntologyHierarchyEventHandler(this);
         view.addPublishOntologyClickEventHandler(this);
     }
@@ -227,18 +230,18 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
         OntologyMetadata metadata = getOntologyMetadata(hierarchy);
 
-        gridPresenter.getView().mask("Loading");
+        newGridPresenter.getView().mask("Loading");
         serviceFacade.getAppsByHierarchy(hierarchy.getIri(), metadata, new AsyncCallback<List<App>>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
-                gridPresenter.getView().unmask();
+                newGridPresenter.getView().unmask();
             }
 
             @Override
             public void onSuccess(List<App> result) {
-                gridPresenter.getView().clearAndAdd(result);
-                gridPresenter.getView().unmask();
+                newGridPresenter.getView().clearAndAdd(result);
+                newGridPresenter.getView().unmask();
             }
         });
     }
@@ -260,18 +263,19 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     void getUnclassifiedApps(OntologyHierarchy hierarchy, Ontology editedOntology) {
         String parentIri = getParentIri(hierarchy);
-        gridPresenter.getView().mask("Loading");
-        serviceFacade.getUnclassifiedApps(editedOntology.getVersion(), parentIri, new AsyncCallback<List<App>>() {
+        newGridPresenter.getView().mask("Loading");
+        OntologyMetadata metadata = getOntologyMetadata(hierarchy);
+        serviceFacade.getUnclassifiedApps(editedOntology.getVersion(), parentIri, metadata, new AsyncCallback<List<App>>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
-                gridPresenter.getView().unmask();
+                newGridPresenter.getView().unmask();
             }
 
             @Override
             public void onSuccess(List<App> result) {
-                gridPresenter.getView().clearAndAdd(result);
-                gridPresenter.getView().unmask();
+                newGridPresenter.getView().clearAndAdd(result);
+                newGridPresenter.getView().unmask();
             }
         });
     }
