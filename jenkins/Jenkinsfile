@@ -31,6 +31,10 @@ def dockerbuild(dockerfile, repotag) {
     sh cmd
 }
 
+def dockerpush(repotag) {
+  sh "docker push ${repotag}"
+}
+
 node('secondary') {
     stage 'Checkout'
     git url: 'https://github.com/cyverse/DE.git', branch: 'dev'
@@ -53,15 +57,13 @@ node('secondary') {
 node('secondary') {
     stage 'Docker Build'
     unstash 'golang'
-    
+
     dir('golang') {
         dockerbuild('jobservices.docker', 'discoenv/jobservices:dev')
     }
 
     stage 'Docker Push'
-    dir ('golang') {
-        sh 'ls -l bin/'
-    }
+    dockerpush('discoenv/jobservices:dev')
 }
 
 node('secondary') {
