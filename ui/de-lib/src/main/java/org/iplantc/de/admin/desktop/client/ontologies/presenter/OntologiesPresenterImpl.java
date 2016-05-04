@@ -20,6 +20,7 @@ import org.iplantc.de.client.models.ontologies.OntologyMetadata;
 import org.iplantc.de.client.models.ontologies.OntologyVersionDetail;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.commons.client.ErrorHandler;
+import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 
@@ -167,38 +168,37 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     @Override
     public void onSaveOntologyHierarchy(SaveOntologyHierarchyEvent event) {
-        //Save TOPIC hierarchy
-        serviceFacade.saveOntologyHierarchy(event.getOntology().getVersion(),
-                                            properties.getEdamTopicIri(),
-                                            new AsyncCallback<OntologyHierarchy>() {
-                                                @Override
-                                                public void onFailure(Throwable caught) {
-                                                    ErrorHandler.post(caught);
-                                                }
+        List<String> iris = event.getIris();
 
-                                                @Override
-                                                public void onSuccess(OntologyHierarchy result) {
-                                                    addHierarchies(null, Lists.newArrayList(result));
-                                                    announcer.schedule(new SuccessAnnouncementConfig(appearance.successTopicSaved()));
-                                                }
-                                            });
+        for (final String iri : iris) {
+            serviceFacade.saveOntologyHierarchy(event.getOntology().getVersion(),
+                                                iri,
+                                                new AsyncCallback<OntologyHierarchy>() {
+                                                    @Override
+                                                    public void onFailure(Throwable caught) {
+                                                        ErrorHandler.post(caught);
+                                                    }
 
-        //Save OPERATION hierarchy
-        serviceFacade.saveOntologyHierarchy(event.getOntology().getVersion(),
-                                            properties.getEdamOperationIri(),
-                                            new AsyncCallback<OntologyHierarchy>() {
-                                                @Override
-                                                public void onFailure(Throwable caught) {
-                                                    ErrorHandler.post(caught);
-                                                }
+                                                    @Override
+                                                    public void onSuccess(OntologyHierarchy result) {
+                                                        if (isValidHierarchy(result)) {
+                                                            addHierarchies(null, Lists.newArrayList(result));
+                                                        } else {
+                                                            announcer.schedule(new ErrorAnnouncementConfig(appearance.invalidHierarchySubmitted(iri)));
 
-                                                @Override
-                                                public void onSuccess(OntologyHierarchy result) {
-                                                    addHierarchies(null, Lists.newArrayList(result));
-                                                    announcer.schedule(new SuccessAnnouncementConfig(appearance.successOperationSaved()));
-                                                }
-                                            });
+                                                        }
+                                                    }
+                                                });
+        }
+
         view.showTreePanel();
+    }
+
+    private boolean isValidHierarchy(OntologyHierarchy result) {
+        // If there are no subclasses, either the hierarchy had no subcategories (which
+        // we do not want as a root, or
+        // there was an undetected typo in the iri
+        return null != result.getSubclasses();
     }
 
     @Override

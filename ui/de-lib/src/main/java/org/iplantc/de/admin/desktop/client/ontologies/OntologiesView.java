@@ -82,6 +82,18 @@ public interface OntologiesView extends IsWidget,
         String successOperationSaved();
 
         SafeHtml publishOntologyWarning();
+
+        String rootIriLabel();
+
+        String enterIriEmptyText();
+
+        String add();
+
+        ImageResource deleteIcon();
+
+        String delete();
+
+        String invalidHierarchySubmitted(String iri);
     }
 
     interface Presenter {

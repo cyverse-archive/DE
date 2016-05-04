@@ -189,10 +189,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @UiHandler("saveHierarchy")
     void saveHierarchyClicked(SelectEvent event) {
         treeStore.clear();
-        Ontology selectedOntology = ontologyDropDown.getCurrentValue();
-        if (null != selectedOntology){
-            fireEvent(new SaveOntologyHierarchyEvent(selectedOntology));
-        }
+        new SaveHierarchiesDialog(appearance, ontologyDropDown.getCurrentValue(), this);
     }
 
     @UiFactory
