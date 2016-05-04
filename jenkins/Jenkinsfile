@@ -1,7 +1,6 @@
 def common
 node('secondary') {
     stage 'Checkout'
-    //git url: 'https://github.com/cyverse/DE.git', branch: 'dev'
     common = load 'jenkins/common.groovy'
 
     stage 'Test'
