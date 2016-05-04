@@ -186,4 +186,34 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     public SafeHtml publishOntologyWarning() {
         return templates.boldLabel(displayStrings.publishOntologyWarning());
     }
+
+    @Override
+    public String rootIriLabel() {
+        return displayStrings.rootIriLabel();
+    }
+
+    @Override
+    public String enterIriEmptyText() {
+        return displayStrings.enterIriEmptyText();
+    }
+
+    @Override
+    public String add() {
+        return iplantDisplayStrings.add();
+    }
+
+    @Override
+    public ImageResource deleteIcon() {
+        return iplantResources.delete();
+    }
+
+    @Override
+    public String delete() {
+        return iplantDisplayStrings.delete();
+    }
+
+    @Override
+    public String invalidHierarchySubmitted(String iri) {
+        return displayStrings.invalidHierarchySubmitted(iri);
+    }
 }

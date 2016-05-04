@@ -38,4 +38,10 @@ public interface OntologyDisplayStrings extends Messages{
     String successOperationSaved();
 
     String publishOntologyWarning();
+
+    String rootIriLabel();
+
+    String enterIriEmptyText();
+
+    String invalidHierarchySubmitted(String iri);
 }
