@@ -1,3 +1,36 @@
+def version() {
+    readFile('version')
+}
+
+def buildenv(cmd) {
+    b = "docker run --rm -v \$(pwd):/build -w /build discoenv/buildenv ${cmd}"
+    sh b
+}
+
+def buildenv_gitcommit() {
+    sh "docker inspect -f '{{ (index .Config.Labels \"org.iplantc.de.buildenv.git-ref\")}}' discoenv/buildenv:latest > BUILDENV_GIT_COMMIT"
+    readFile('BUILDENV_GIT_COMMIT')
+}
+
+def gitcommit() {
+    sh "git rev-parse HEAD > GIT_COMMIT"
+    readFile('GIT_COMMIT')
+}
+
+def user() {
+  sh "whoami > WHOAMI"
+  readFile('WHOAMI')
+}
+
+def dockerbuild(dockerfile, repotag) {
+    gc = gitcommit()
+    bgc = buildenv_gitcommit()
+    v = version()
+    cmd = "docker build -f ${dockerfile} --build-arg \'git_commit=${gc}\' --build-arg \'buildenv_git_commit=${bgc}\' --build-arg \'version=${v}\' --pull --rm -t ${repotag} ."
+    echo cmd
+    sh cmd
+}
+
 node('secondary') {
     stage 'Checkout'
     git url: 'https://github.com/cyverse/DE.git', branch: 'dev'
@@ -5,35 +38,26 @@ node('secondary') {
     stage 'Test'
     dir('golang') {
         sh 'docker pull discoenv/buildenv'
-        sh 'docker run --rm -v $(pwd):/build -w /build discoenv/buildenv gb vendor restore'
-        sh 'docker run --rm -v $(pwd):/build -w /build discoenv/buildenv gb test'
+        buildenv('gb vendor restore')
+        buildenv('gb test')
     }
 
     stage 'Build'
     dir('golang') {
-        sh 'docker run --rm -v $(pwd):/build -w /build discoenv/buildenv gb build'
-        sh 'docker run --rm -v $(pwd):/build -w /build discoenv/buildenv chmod -R a+rwx /build'
+        buildenv("gb build -f -F --ldflags \"-X main.appver=${version()} -X main.gitref=${gitcommit()} -X main.builtby=${user()}\"")
+        buildenv('chmod -R a+rwx /build')
     }
 
-    stash includes: '**',  name: 'source'
-}
-
-node('tertiary') {
     stage 'Docker Build'
-    unstash 'source'
     dir('golang') {
-        sh 'docker build -f jobservices.docker --rm -t discoenv/jobservices:dev .'
+        dockerbuild('jobservices.docker', 'discoenv/jobservices:dev')
     }
 
     stage 'Docker Push'
     dir ('golang') {
         sh 'ls -l bin/'
     }
-    stash includes: '**', name: 'source'
-}
 
-node ('secondary') {
-  stage 'Deployment'
-  unstash 'source'
-  sh 'ls -l golang/bin/'
+    stage 'Deployment'
+    sh 'ls -l golang/bin/'
 }
