@@ -1,19 +1,59 @@
-def common
-node('secondary') {
-    stage 'Checkout'
-    common = load 'jenkins/common.groovy'
+env.PATH
 
+def version() {
+    readFile('version')
+}
+
+def buildenv(cmd) {
+    b = "docker run --rm -v \$(pwd):/build -w /build discoenv/buildenv ${cmd}"
+    sh b
+}
+
+def buildenv_gitcommit() {
+    sh "docker inspect -f '{{ (index .Config.Labels \"org.iplantc.de.buildenv.git-ref\")}}' discoenv/buildenv:latest > BUILDENV_GIT_COMMIT"
+    readFile('BUILDENV_GIT_COMMIT')
+}
+
+def gitcommit() {
+    sh "git rev-parse HEAD > GIT_COMMIT"
+    readFile('GIT_COMMIT')
+}
+
+def user() {
+  sh "whoami > WHOAMI"
+  readFile('WHOAMI')
+}
+
+def dockerbuild(dockerfile, repotag) {
+    gc = gitcommit()
+    bgc = buildenv_gitcommit()
+    v = version()
+    cmd = "docker build -f ${dockerfile} --build-arg \'git_commit=${gc}\' --build-arg \'buildenv_git_commit=${bgc}\' --build-arg \'version=${v}\' --pull --rm -t ${repotag} ."
+    echo cmd
+    sh cmd
+}
+
+def dockerpush(repotag) {
+  sh "docker push ${repotag}"
+}
+
+def ansiblemerge(external, external_branch, internal, internal_branch, working_dir) {
+  env.PATH = "/usr/local/bin/:${env.PATH}"
+  sh "ansible-merge-tool --de-repo '${external}' --de-repo-branch '${external_branch}' --internal-repo '${internal}' --internal-branch '${internal_branch}' --working-dir '${working_dir}'"
+}
+
+node('secondary') {
     stage 'Test'
     dir('golang') {
         sh 'docker pull discoenv/buildenv'
-        common.buildenv('gb vendor restore')
-        common.buildenv('gb test')
+        buildenv('gb vendor restore')
+        buildenv('gb test')
     }
 
     stage 'Build'
     dir('golang') {
-        common.buildenv("gb build -f -F --ldflags \"-X main.appver=${common.version()} -X main.gitref=${common.gitcommit()} -X main.builtby=${common.user()}\"")
-        common.buildenv('chmod -R a+rwx /build')
+        buildenv("gb build -f -F --ldflags \"-X main.appver=${version()} -X main.gitref=${gitcommit()} -X main.builtby=${user()}\"")
+        buildenv('chmod -R a+rwx /build')
     }
     stash includes: 'golang/**', name: 'golang'
 }
@@ -23,15 +63,15 @@ node('secondary') {
     unstash 'golang'
 
     dir('golang') {
-        common.dockerbuild('jobservices.docker', 'discoenv/jobservices:dev')
+        dockerbuild('jobservices.docker', 'discoenv/jobservices:dev')
     }
 
     stage 'Docker Push'
-    common.dockerpush('discoenv/jobservices:dev')
+    dockerpush('discoenv/jobservices:dev')
 }
 
 node('secondary') {
     stage 'Deployment'
-    common.ansiblemerge("https://github.com/cyverse/DE.git", "dev", "fermin:/repos/de-ansible.git", "dev", "~/ansible_jobservices")
+    ansiblemerge("https://github.com/cyverse/DE.git", "dev", "fermin:/repos/de-ansible.git", "dev", "~/ansible_jobservices")
     sh 'ls -l golang/bin/'
 }
