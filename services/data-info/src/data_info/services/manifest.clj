@@ -12,8 +12,7 @@
             [data-info.util.irods :as irods]
             [data-info.util.logging :as dul]
             [tree-urls-client.core :as tree]
-            [data-info.util.config :as cfg])
-  (:import [org.apache.tika Tika]))
+            [data-info.util.config :as cfg]))
 
 (def ^:private coge-attr "ipc-coge-link")
 
