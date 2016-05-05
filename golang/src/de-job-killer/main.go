@@ -86,11 +86,11 @@ func main() {
 	if *killJob && *statusMsg {
 		log.Fatal("--kill and --send-status conflict.")
 	}
-	err := configurate.Init(*config)
+	cfg, err := configurate.Init(*config)
 	if err != nil {
 		log.Fatal(err)
 	}
-	uri, err := configurate.C.String("amqp.uri")
+	uri, err := cfg.String("amqp.uri")
 	if err != nil {
 		log.Fatal(err)
 	}
