@@ -141,7 +141,11 @@
         (shared? cm unshare-with fpath) (unshare-path* cm user unshare-with fpath)
         :else                           (skip-share unshare-with fpath :not-shared)))
 
-(defn- anon-file-url
+(defn anon-readable?
+  [cm p]
+  (is-readable? cm (cfg/anon-user) p))
+
+(defn anon-file-url
   [p]
   (let [aurl (url/url (cfg/anon-files-base))]
     (str (-> aurl (assoc :path (ft/path-join (:path aurl) (string/replace p #"^\/" "")))))))

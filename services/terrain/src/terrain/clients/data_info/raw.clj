@@ -95,6 +95,12 @@
                    :page page
                    :size chunk-size})))
 
+(defn manifest
+  "Uses the data-info manifest endpoint."
+  [user path-uuid]
+  (request :get ["data" path-uuid "manifest"]
+           (mk-req-map user)))
+
 ;; CREATE
 
 (defn upload-file

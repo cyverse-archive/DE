@@ -37,6 +37,7 @@
                  [org.iplantc/common-cli "5.2.7.0"]
                  [org.iplantc/common-cfg "5.2.7.0"]
                  [org.iplantc/common-swagger-api "5.2.7.0"]
+                 [org.iplantc/tree-urls-client "5.2.7.0"]
                  [org.iplantc/heuristomancer "5.2.7.0"]
                  [org.iplantc/kameleon "5.2.7.0"]
                  [org.iplantc/service-logging "5.2.7.0"]]

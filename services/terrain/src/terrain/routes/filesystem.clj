@@ -5,7 +5,6 @@
             [clojure.tools.logging :as log]
             [terrain.clients.data-info :as data]
             [terrain.services.filesystem.directory :as dir]
-            [terrain.services.filesystem.manifest :as manifest]
             [terrain.services.filesystem.metadata :as meta]
             [terrain.services.filesystem.metadata-templates :as mt]
             [terrain.services.filesystem.root :as root]
@@ -60,7 +59,7 @@
       (controller req data/move-contents :params :body))
 
     (GET "/filesystem/file/manifest" [:as req]
-      (controller req manifest/do-manifest :params))
+      (controller req data/manifest :params))
 
     (POST "/filesystem/user-permissions" [:as req]
       (controller req data/collect-permissions :params :body))

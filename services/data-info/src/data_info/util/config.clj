@@ -89,6 +89,12 @@
   [props config-valid configs]
   "data-info.metadata.base-url")
 
+(cc/defprop-str tree-urls-base-url
+  "The base URL of the tree-urls service"
+  [props config-valid configs]
+  "data-info.tree-urls.base-url")
+
+(defn tree-urls-attr [] "ipc-tree-urls")
 
 ; iRODS connection information
 
