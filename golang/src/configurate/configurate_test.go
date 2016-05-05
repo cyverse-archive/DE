@@ -1,28 +1,32 @@
 package configurate
 
-import "testing"
+import (
+	"testing"
 
-func configurator() error {
+	"github.com/olebedev/config"
+)
+
+func configurator() (*config.Config, error) {
 	path := "../test/test_config.yaml"
 	return Init(path)
 }
 
 func TestNew(t *testing.T) {
-	err := configurator()
+	cfg, err := configurator()
 	if err != nil {
 		t.Error(err)
 	}
-	if C == nil {
+	if cfg == nil {
 		t.Errorf("configurate.New() returned nil")
 	}
 }
 
 func TestAMQPConfig(t *testing.T) {
-	err := configurator()
+	cfg, err := configurator()
 	if err != nil {
 		t.Error(err)
 	}
-	actual, err := C.String("amqp.uri")
+	actual, err := cfg.String("amqp.uri")
 	if err != nil {
 		t.Error(err)
 	}
