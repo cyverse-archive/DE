@@ -20,7 +20,7 @@
   (:import [clojure.lang IPersistentMap]))
 
 
-(defn get-types
+(defn- get-types
   "Gets all of the filetypes associated with path."
   [cm user path]
   (validators/path-exists cm path)
