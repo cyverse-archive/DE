@@ -59,7 +59,6 @@
 
 (defn- manifest
   [cm user file]
-  (log/warn file)
   (let [path (ft/rm-last-slash (:path file))]
     (validators/user-exists cm user)
     (validators/path-exists cm path)
