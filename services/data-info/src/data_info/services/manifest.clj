@@ -56,8 +56,7 @@
 (defn- manifest-map
   [cm user {:keys [path] :as file}]
   (-> (select-keys file [:content-type :infoType])
-      (assoc :action "manifest"
-             :urls (extract-urls cm path))))
+      (assoc :urls (extract-urls cm path))))
 
 (defn- manifest
   [cm user file]

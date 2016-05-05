@@ -107,10 +107,7 @@
    :url   (describe NonBlankString "The URL being described. For anon-files URLs, the label will be 'anonymous'. For CoGe URLs, the label will start with 'gene_'. For tree URLs, the label will *usually* start with 'tree_', but it's not guaranteed as the DE does not produce these labels.")})
 
 (s/defschema Manifest
-  {:action
-   (describe String "The action being called (possibly deprecated)")
-
-   :content-type
+  {:content-type
    (describe NonBlankString "The detected media type of the data contained in this file")
 
    :infoType
