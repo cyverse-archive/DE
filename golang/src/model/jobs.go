@@ -1,7 +1,6 @@
 package model
 
 import (
-	"configurate"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -76,7 +75,8 @@ type Job struct {
 	FailureCount       int64          `json:"failure_count"`
 	FailureThreshold   int64          `json:"failure_threshold"`
 	FileMetadata       []FileMetadata `json:"file-metadata"`
-	Group              string         `json:"group"` //untested for now
+	FilterFiles        []string       `json:"filter_files"` //comes from config, not upstream service
+	Group              string         `json:"group"`        //untested for now
 	InvocationID       string         `json:"uuid"`
 	IRODSBase          string         `json:"irods_base"`
 	Name               string         `json:"name"`
@@ -108,12 +108,27 @@ func New(cfg *config.Config) *Job {
 	if err != nil {
 		lp = ""
 	}
+	var paths []string
+	filterFiles, err := cfg.String("condor.filter_files")
+	if err != nil {
+		filterFiles = ""
+	}
+	for _, filter := range strings.Split(filterFiles, ",") {
+		paths = append(paths, filter)
+	}
+	irodsBase, err := cfg.String("irods.base")
+	if err != nil {
+		irodsBase = "/"
+	}
 	return &Job{
-		NowDate:       n,
-		ArchiveLogs:   true,
-		RequestDisk:   rq,
-		TimeLimit:     3600,
-		CondorLogPath: lp,
+		NowDate:        n,
+		SubmissionDate: n,
+		ArchiveLogs:    true,
+		RequestDisk:    rq,
+		TimeLimit:      3600,
+		CondorLogPath:  lp,
+		FilterFiles:    paths,
+		IRODSBase:      irodsBase,
 	}
 }
 
@@ -122,14 +137,6 @@ func New(cfg *config.Config) *Job {
 func NewFromData(cfg *config.Config, data []byte) (*Job, error) {
 	var err error
 	s := New(cfg)
-	s.SubmissionDate = s.NowDate
-	s.IRODSBase, err = configurate.C.String("irods.base")
-	if err != nil {
-		s.IRODSBase = "/"
-	}
-	if err != nil {
-		return nil, err
-	}
 	err = json.Unmarshal(data, s)
 	if err != nil {
 		return nil, err
@@ -270,12 +277,8 @@ func (s *Job) ExcludeArguments() []string {
 			paths = append(paths, output.Source())
 		}
 	}
-	filterFiles, err := configurate.C.String("condor.filter_files")
-	if err != nil {
-		filterFiles = ""
-	}
-	for _, filter := range strings.Split(filterFiles, ",") {
-		paths = append(paths, filter)
+	for _, ff := range s.FilterFiles {
+		paths = append(paths, ff)
 	}
 	if !s.ArchiveLogs {
 		paths = append(paths, "logs")
