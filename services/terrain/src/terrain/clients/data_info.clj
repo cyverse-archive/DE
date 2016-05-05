@@ -92,6 +92,12 @@
   (let [path-uuid (uuid-for-path (:user params) (:path body))]
     (raw/read-tabular-chunk (:user params) path-uuid (:separator body) (:page body) (:chunk-size body))))
 
+(defn manifest
+  "Uses the data-info manifest endpoint."
+  [params]
+  (let [path-uuid (uuid-for-path (:user params) (:path params))]
+    (raw/manifest (:user params) path-uuid)))
+
 (defn create-dirs
   [{:keys [user]} {:keys [paths]}]
   (validators/not-superuser user)

@@ -332,11 +332,6 @@
   [props config-valid configs filesystem-routes-enabled]
   "terrain.fs.max-paths-in-request")
 
-(cc/defprop-str fs-anon-user
-  "The name of the anonymous user."
-  [props config-valid configs filesystem-routes-enabled]
-  "terrain.fs.anon-user")
-
 (cc/defprop-str anon-files-base-url
   "The base url for the anon-files server."
   [props config-valid configs filesystem-routes-enabled]
