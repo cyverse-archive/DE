@@ -97,7 +97,12 @@ type Job struct {
 	WikiURL            string         `json:"wiki_url"`
 }
 
-// New returns a pointer to a newly instantiated Job with NowDate set. The
+// New returns a pointer to a newly instantiated Job with NowDate set.
+// Accesses the following configuration settings:
+//  * condor.request_disk
+//  * condor.log_path
+//  * condor.filter_files
+//  * irods.base
 func New(cfg *config.Config) *Job {
 	n := time.Now().Format(nowfmt)
 	rq, err := cfg.String("condor.request_disk")
