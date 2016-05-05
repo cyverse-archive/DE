@@ -81,9 +81,10 @@
     (when (util/uuid? app-id)
       (edit/copy-app user app-id)))
 
-  (getAppDetails [_ app-id]
+  ;; FIXME: remove the admin flag when we have a better way to do this.
+  (getAppDetails [_ app-id admin?]
     (when (util/uuid? app-id)
-      (listings/get-app-details user (uuidify app-id))))
+      (listings/get-app-details user (uuidify app-id) admin?)))
 
   (removeAppFavorite [_ app-id]
     (when (util/uuid? app-id)

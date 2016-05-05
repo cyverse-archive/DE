@@ -60,7 +60,8 @@
     (when-not (util/uuid? app-id)
       (.getApp agave app-id)))
 
-  (getAppDetails [_ app-id]
+  ;; FIXME: remove the third parameter when we can.
+  (getAppDetails [_ app-id _]
     (when-not (util/uuid? app-id)
       (.getAppDetails agave app-id)))
 

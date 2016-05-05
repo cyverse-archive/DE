@@ -147,6 +147,13 @@
                 :as               :stream
                 :follow-redirects false}))
 
+(defn get-admin-app-details
+  [app-id]
+  (client/get (apps-url "admin" "apps" app-id "details")
+              {:query-params      (secured-params)
+               :as                :stream
+               :follow-redirects  false}))
+
 (defn get-app-details
   [app-id]
   (client/get (apps-url "apps" app-id "details")

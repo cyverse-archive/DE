@@ -17,7 +17,6 @@ pom.xml
 /bin
 builds/
 checkouts/
-libs/clj-cas/clj-cas
 libs/clj-icat-direct/clj-icat-direct
 libs/clj-jargon/clj-jargon
 libs/heuristomancer/heuristomancer

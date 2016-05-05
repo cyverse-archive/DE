@@ -85,6 +85,15 @@
           (ok (coerce! AppDetails
                 (apps/admin-update-app current-user (assoc body :id app-id)))))
 
+  (GET* "/:app-id/details" []
+        :path-params [app-id :- AppIdPathParam]
+        :query [params SecuredQueryParams]
+        :return AppDetails
+        :summary "Get App Details"
+        :description "This service allows administrative users to view detailed informaiton about private apps."
+        (ok (coerce! AppDetails
+               (apps/admin-get-app-details current-user app-id))))
+
   (PATCH* "/:app-id/documentation" []
           :path-params [app-id :- AppIdPathParam]
           :query [params SecuredQueryParams]

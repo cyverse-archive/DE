@@ -328,10 +328,13 @@
              :suggested_categories (get-suggested-groups-for-app app-id))
       format-wiki-url)))
 
+;; FIXME: remove the code to bypass the permission checks for admin users when we have a better
+;; way to implement this.
 (defn get-app-details
   "This service obtains the high-level details of an app."
-  [{username :shortUsername} app-id]
-  (perms/check-app-permissions username "read" [app-id])
+  [{username :shortUsername} app-id admin?]
+  (when-not admin?
+    (perms/check-app-permissions username "read" [app-id]))
   (let [details (load-app-details app-id)
         tools   (get-app-tools app-id)]
     (when (empty? tools)
