@@ -19,6 +19,7 @@ title: DE API Documentation
     * [Listing Ontologies and Ontology Hierarchies](#listing-ontologies-and-ontology-hierarchies)
         * [Apps passthroughs](#apps-passthroughs)
         * [Metadata passthroughs](#metadata-passthroughs)
+    * [Managing App AVU Metadata](#managing-app-avu-metadata)
     * [Listing Tasks in an App](#listing-tasks-in-an-app)
     * [Categorizing Apps](#categorizing-apps)
     * [Creating an App for the Current User](#creating-an-app-for-the-current-user)
@@ -186,6 +187,24 @@ Secured Endpoint: GET /admin/ontologies/{ontology-version}
 Delegates to metadata: GET /admin/ontologies/{ontology-version}
 
 These endpoints are passthroughs to the apps and metadata endpoints using the same paths.
+Please see the corresponding service documentation for more information.
+
+## Managing App AVU Metadata
+
+Secured Endpoint: GET /apps/{app-id}/metadata
+
+Delegates to metadata: GET /avus/{target-type}/{target-id}
+
+Secured Endpoint: POST /apps/{app-id}/metadata
+
+Delegates to metadata: POST /avus/{target-type}/{target-id}
+
+Secured Endpoint: PUT /apps/{app-id}/metadata
+
+Delegates to metadata: PUT /avus/{target-type}/{target-id}
+
+These endpoints are passthroughs to the metadata endpoints of the given paths,
+where {target-type} is "app".
 Please see the corresponding service documentation for more information.
 
 ## Listing Tasks in an App
