@@ -36,7 +36,7 @@ func _inittests(t *testing.T, memoize bool) *model.Job {
 		configurate.C.Set("irods.pass", "pass")
 		configurate.C.Set("irods.zone", "test")
 		configurate.C.Set("irods.resc", "")
-		configurate.C.Set("condor.log_path", "/path/to/logs")
+		configurate.C.Set("condor.log_path", "../test/tmp")
 		configurate.C.Set("condor.porklock_tag", "test")
 		configurate.C.Set("condor.filter_files", "foo,bar,baz,blippy")
 		configurate.C.Set("condor.request_disk", "0")
@@ -128,7 +128,6 @@ queue
 
 func TestCreateSubmissionDirectory(t *testing.T) {
 	s := inittests(t)
-	configurate.C.Set("condor.log_path", "")
 	dir, err := CreateSubmissionDirectory(s)
 	if err != nil {
 		t.Error(err)
@@ -151,7 +150,6 @@ func TestCreateSubmissionDirectory(t *testing.T) {
 
 func TestCreateSubmissionFiles(t *testing.T) {
 	s := inittests(t)
-	configurate.C.Set("condor.log_path", "")
 	dir, err := CreateSubmissionDirectory(s)
 	if err != nil {
 		t.Error(err)
@@ -196,7 +194,6 @@ func TestCondorSubmit(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	configurate.C.Set("condor.log_path", "")
 	dir, err := CreateSubmissionDirectory(s)
 	if err != nil {
 		t.Error(err)
@@ -243,11 +240,7 @@ func TestLaunch(t *testing.T) {
 	if actual != expected {
 		t.Errorf("launch returned:\n%s\ninstead of:\n%s\n", actual, expected)
 	}
-	logPath, err := configurate.C.String("condor.log_path")
-	if err != nil {
-		logPath = ""
-	}
-	parent := path.Join(logPath, "test_this_is_a_test")
+	parent := path.Join(j.CondorLogPath, "test_this_is_a_test")
 	err = os.RemoveAll(parent)
 	if err != nil {
 		t.Error(err)

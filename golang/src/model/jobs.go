@@ -64,6 +64,7 @@ type Job struct {
 	ID                 string         `json:"id"`
 	BatchID            string         `json:"batch_id"`
 	CondorID           string         `json:"condor_id"`
+	CondorLogPath      string         `json:"condor_log_path"` //comes from config, not upstream service
 	CreateOutputSubdir bool           `json:"create_output_subdir"`
 	DateSubmitted      time.Time      `json:"date_submitted"`
 	DateStarted        time.Time      `json:"date_started"`
@@ -103,11 +104,16 @@ func New(cfg *config.Config) *Job {
 	if err != nil {
 		rq = ""
 	}
+	lp, err := cfg.String("condor.log_path")
+	if err != nil {
+		lp = ""
+	}
 	return &Job{
-		NowDate:     n,
-		ArchiveLogs: true,
-		RequestDisk: rq,
-		TimeLimit:   3600,
+		NowDate:       n,
+		ArchiveLogs:   true,
+		RequestDisk:   rq,
+		TimeLimit:     3600,
+		CondorLogPath: lp,
 	}
 }
 
@@ -181,11 +187,7 @@ func (s *Job) UserIDForSubmission() string {
 // CondorLogDirectory returns the path to the directory containing condor logs on the
 // submission node. This a computed value, so it isn't in the struct.
 func (s *Job) CondorLogDirectory() string {
-	logPath, err := configurate.C.String("condor.log_path")
-	if err != nil {
-		logPath = ""
-	}
-	return fmt.Sprintf("%s/", path.Join(logPath, s.Submitter, s.DirectoryName()))
+	return fmt.Sprintf("%s/", path.Join(s.CondorLogPath, s.Submitter, s.DirectoryName()))
 }
 
 // IRODSConfig returns the path to iRODS config inside the working directory.
