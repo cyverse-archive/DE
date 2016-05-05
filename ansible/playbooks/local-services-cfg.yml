@@ -177,7 +177,7 @@
       service_name_short: "{{de.service_name_short}}"
       tags:
         - service_config
-        - de-ui
+        - ui
 
     - role: util-cfg-service
       src: "ui/de.properties.j2"
@@ -185,7 +185,7 @@
       service_name_short: "{{de.service_name_short}}"
       tags:
         - service_config
-        - de-ui
+        - ui
 
     - role: util-cfg-service
       src: "ui/nginx.conf.j2"
@@ -193,7 +193,7 @@
       service_name_short: "{{de.service_name_short}}"
       tags:
         - service_config
-        - de-ui
+        - ui
 
     - role: util-cfg-service
       src: "docker-cleanup/docker-gc-exclude-containers.j2"
