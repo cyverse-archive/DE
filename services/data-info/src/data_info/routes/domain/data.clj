@@ -101,3 +101,20 @@
   (-> TabularChunkReturn
     (dissoc :csv)
     (assoc :csv (describe [CSVDoc] "The tabular data result."))))
+
+(s/defschema ManifestURL
+  {:label (describe NonBlankString "A label")
+   :url   (describe NonBlankString "The URL being described. For anon-files URLs, the label will be 'anonymous'. For CoGe URLs, the label will start with 'gene_'. For tree URLs, the label will *usually* start with 'tree_', but it's not guaranteed as the DE does not produce these labels.")})
+
+(s/defschema Manifest
+  {:action
+   (describe String "The action being called (possibly deprecated)")
+
+   :content-type
+   (describe NonBlankString "The detected media type of the data contained in this file")
+
+   :infoType
+   (describe String "The type of contents in this file")
+
+   :urls
+   (describe [ManifestURL] "A set of URLs associated with this file")})

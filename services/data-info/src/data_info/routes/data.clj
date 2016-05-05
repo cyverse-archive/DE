@@ -5,14 +5,19 @@
         [data-info.routes.domain.stats])
   (:require [data-info.services.create :as create]
             [data-info.services.metadata :as meta]
+            [data-info.services.manifest :as manifest]
+            [clojure.tools.logging :as log]
             [data-info.services.entry :as entry]
             [data-info.services.write :as write]
             [data-info.services.page-file :as page-file]
             [data-info.services.page-tabular :as page-tabular]
             [data-info.util.config :as cfg]
+            [tree-urls-client.middleware :refer [wrap-tree-urls-base]]
             [clojure-commons.error-codes :as ce]
             [data-info.util.service :as svc]
             [data-info.util.schema :as s]))
+
+(defn tree-urls-middleware [handler] (wrap-tree-urls-base handler cfg/tree-urls-base-url))
 
 (defroutes* data-operations
 
@@ -95,6 +100,16 @@ with characters in a runtime-configurable parameter. Currently, this parameter l
 "Overwrites a file as a user, given the user can write to it and the file already exists."
 (get-error-code-block "ERR_NOT_A_USER, ERR_DOES_NOT_EXIST, ERR_NOT_A_FILE, ERR_NOT_WRITEABLE"))
         (svc/trap uri write/do-upload params file))
+
+      (GET* "/manifest" [:as {uri :uri}]
+        :query [{:keys [user]} StandardUserQueryParams]
+        :middlewares [tree-urls-middleware]
+        :return Manifest
+        :summary "Return file manifest"
+        :description (str
+"Returns a manifest for a file."
+(get-error-code-block "ERR_NOT_A_USER, ERR_DOES_NOT_EXIST, ERR_NOT_A_FILE, ERR_NOT_READABLE"))
+        (svc/trap uri manifest/do-manifest-uuid user data-id))
 
       (GET* "/chunks" [:as {uri :uri}]
         :query [params ChunkParams]
