@@ -8,6 +8,8 @@ import (
 	"os"
 	"path"
 	"testing"
+
+	"github.com/olebedev/config"
 )
 
 func JSONData() ([]byte, error) {
@@ -23,30 +25,35 @@ func JSONData() ([]byte, error) {
 }
 
 var (
-	s *model.Job
+	s   *model.Job
+	cfg *config.Config
 )
 
 func _inittests(t *testing.T, memoize bool) *model.Job {
+	var err error
 	if s == nil || !memoize {
-		configurate.Init("../test/test_config.yaml")
-		configurate.C.Set("irods.base", "/path/to/irodsbase")
-		configurate.C.Set("irods.host", "hostname")
-		configurate.C.Set("irods.port", "1247")
-		configurate.C.Set("irods.user", "user")
-		configurate.C.Set("irods.pass", "pass")
-		configurate.C.Set("irods.zone", "test")
-		configurate.C.Set("irods.resc", "")
-		configurate.C.Set("condor.log_path", "../test/tmp")
-		configurate.C.Set("condor.porklock_tag", "test")
-		configurate.C.Set("condor.filter_files", "foo,bar,baz,blippy")
-		configurate.C.Set("condor.request_disk", "0")
-		configurate.C.Set("condor.path_env_var", "/path/to/path")
-		configurate.C.Set("condor.condor_config", "/condor/config")
+		cfg, err = configurate.Init("../test/test_config.yaml")
+		if err != nil {
+			t.Error(err)
+		}
+		cfg.Set("irods.base", "/path/to/irodsbase")
+		cfg.Set("irods.host", "hostname")
+		cfg.Set("irods.port", "1247")
+		cfg.Set("irods.user", "user")
+		cfg.Set("irods.pass", "pass")
+		cfg.Set("irods.zone", "test")
+		cfg.Set("irods.resc", "")
+		cfg.Set("condor.log_path", "../test/tmp")
+		cfg.Set("condor.porklock_tag", "test")
+		cfg.Set("condor.filter_files", "foo,bar,baz,blippy")
+		cfg.Set("condor.request_disk", "0")
+		cfg.Set("condor.path_env_var", "/path/to/path")
+		cfg.Set("condor.condor_config", "/condor/config")
 		data, err := JSONData()
 		if err != nil {
 			t.Error(err)
 		}
-		s, err = model.NewFromData(configurate.C, data)
+		s, err = model.NewFromData(cfg, data)
 		if err != nil {
 			t.Error(err)
 		}
@@ -65,7 +72,8 @@ func inittests(t *testing.T) *model.Job {
 
 func TestGenerateCondorSubmit(t *testing.T) {
 	s := inittests(t)
-	actual, err := GenerateCondorSubmit(s)
+	cl := New(cfg)
+	actual, err := cl.GenerateCondorSubmit(s)
 	if err != nil {
 		t.Error(err)
 	}
@@ -94,7 +102,7 @@ queue
 		t.Errorf("GenerateCondorSubmit() returned:\n\n%s\n\ninstead of:\n\n%s", actual, expected)
 	}
 	s.Group = "foo"
-	actual, err = GenerateCondorSubmit(s)
+	actual, err = cl.GenerateCondorSubmit(s)
 	if err != nil {
 		t.Error(err)
 	}
@@ -128,7 +136,8 @@ queue
 
 func TestCreateSubmissionDirectory(t *testing.T) {
 	s := inittests(t)
-	dir, err := CreateSubmissionDirectory(s)
+	cl := New(cfg)
+	dir, err := cl.CreateSubmissionDirectory(s)
 	if err != nil {
 		t.Error(err)
 	}
@@ -136,7 +145,7 @@ func TestCreateSubmissionDirectory(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	logPath, err := configurate.C.String("condor.log_path")
+	logPath, err := cl.cfg.String("condor.log_path")
 	if err != nil {
 		t.Error(err)
 	}
@@ -150,11 +159,12 @@ func TestCreateSubmissionDirectory(t *testing.T) {
 
 func TestCreateSubmissionFiles(t *testing.T) {
 	s := inittests(t)
-	dir, err := CreateSubmissionDirectory(s)
+	cl := New(cfg)
+	dir, err := cl.CreateSubmissionDirectory(s)
 	if err != nil {
 		t.Error(err)
 	}
-	cmd, sh, c, err := CreateSubmissionFiles(dir, s)
+	cmd, sh, c, err := cl.CreateSubmissionFiles(dir, s)
 	if err != nil {
 		t.Error(err)
 	}
@@ -175,7 +185,7 @@ func TestCreateSubmissionFiles(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	logPath, err := configurate.C.String("condor.log_path")
+	logPath, err := cl.cfg.String("condor.log_path")
 	if err != nil {
 		t.Error(err)
 	}
@@ -194,15 +204,16 @@ func TestCondorSubmit(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	dir, err := CreateSubmissionDirectory(s)
+	cl := New(cfg)
+	dir, err := cl.CreateSubmissionDirectory(s)
 	if err != nil {
 		t.Error(err)
 	}
-	cmd, _, _, err := CreateSubmissionFiles(dir, s)
+	cmd, _, _, err := cl.CreateSubmissionFiles(dir, s)
 	if err != nil {
 		t.Error(err)
 	}
-	actual, err := submit(cmd, s)
+	actual, err := cl.submit(cmd, s)
 	if err != nil {
 		t.Error(err)
 	}
@@ -210,7 +221,7 @@ func TestCondorSubmit(t *testing.T) {
 	if actual != expected {
 		t.Errorf("CondorSubmit() returned %s instead of %s", actual, expected)
 	}
-	logPath, err := configurate.C.String("condor.log_path")
+	logPath, err := cl.cfg.String("condor.log_path")
 	if err != nil {
 		t.Error(err)
 	}
@@ -223,16 +234,16 @@ func TestCondorSubmit(t *testing.T) {
 
 func TestLaunch(t *testing.T) {
 	inittests(t)
-
+	cl := New(cfg)
 	data, err := JSONData()
 	if err != nil {
 		t.Error(err)
 	}
-	j, err := model.NewFromData(configurate.C, data)
+	j, err := model.NewFromData(cl.cfg, data)
 	if err != nil {
 		t.Error(err)
 	}
-	actual, err := launch(j)
+	actual, err := cl.launch(j)
 	if err != nil {
 		t.Error(err)
 	}
@@ -248,6 +259,8 @@ func TestLaunch(t *testing.T) {
 }
 
 func TestStop(t *testing.T) {
+	inittests(t)
+	cl := New(cfg)
 	//Start up a fake jex-events
 	jr := &model.Job{
 		CondorID:     "10000",
@@ -255,7 +268,7 @@ func TestStop(t *testing.T) {
 		AppID:        "c7f05682-23c8-4182-b9a2-e09650a5f49b",
 		InvocationID: "00000000-0000-0000-0000-000000000000",
 	}
-	actual, err := stop(jr)
+	actual, err := cl.stop(jr)
 	if err != nil {
 		t.Error(err)
 	}
