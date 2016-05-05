@@ -1,6 +1,7 @@
 (ns metadata.persistence.avu
   (:use [korma.core :exclude [update]]
-        [korma.db :only [transaction]])
+        [korma.db :only [transaction]]
+        [slingshot.slingshot :only [throw+]])
   (:require [kameleon.db :as db]
             [korma.core :as sql]))
 
@@ -19,9 +20,14 @@
                   :value       [in values]})))
 
 (defn get-avu-by-id
-  "Finds existing AVUs by a set of IDs."
+  "Fetches an AVU by its ID."
   [id]
-  (select :avus (where {:id id})))
+  (first (select :avus (where {:id id}))))
+
+(defn get-avus-by-ids
+  "Finds existing AVUs by a set of IDs."
+  [ids]
+  (select :avus (where {:id [in ids]})))
 
 (defn get-avus-for-target
   "Gets AVUs for the given target."
@@ -108,8 +114,20 @@
                            :modified_on (sqlfn now))))
     (where (select-keys avu [:id]))))
 
+(defn- update-valid-avu
+  "Updates an AVU, validating its given target_type and target_id match what's already in the database."
+  [user-id {:keys [id] :as avu}]
+  (when-let [existing-avu (when id (get-avu-by-id id))]
+    (when (not= (select-keys existing-avu [:target_type :target_id])
+                (select-keys avu          [:target_type :target_id]))
+      (throw+ {:type  :clojure-commons.exception/exists
+               :error "AVU already attached to another target item."
+               :avu   existing-avu}))
+    (update-avu user-id avu)
+    avu))
+
 (defn- find-matching-avu
-  "Finds an existing AVU by attribute, value, unit, target_type, target_id, and if included the 'id'."
+  "Finds an existing AVU by attribute, value, unit, target_type, target_id, and (if included) its ID."
   [avu]
   (let [required-keys [:attribute :value :unit :target_type :target_id]]
     (when (every? (partial contains? avu) required-keys)
@@ -118,11 +136,11 @@
                                 (update :target_type db/->enum-val))))))))
 
 (defn add-or-update-avu
-  [user-id {:keys [id] :as avu}]
+  [user-id avu]
   (if-let [matching-avu (find-matching-avu avu)]
     matching-avu
-    (if (and id (get-avu-by-id id))
-      (do (update-avu user-id avu) avu)
+    (if-let [existing-avu (update-valid-avu user-id avu)]
+      existing-avu
       (add-avus user-id [avu]))))
 
 (defn remove-avus

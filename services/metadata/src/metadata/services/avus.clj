@@ -173,15 +173,24 @@
   (amqp/publish-metadata-update user-id target-id)
   (list-avus target-type target-id))
 
+(defn- remove-orphaned-avus
+  "Removes any AVU for the given target-type and target-id that does not have a matching ID in the given
+   set of avus."
+  [target-type target-id avus]
+  (->> avus
+       (map :id)
+       (remove nil?)
+       (persistence/get-avus-by-ids)
+       (map :id)
+       (persistence/remove-orphaned-avus target-type target-id)))
+
 (defn set-avus
   "Sets AVUs for the given user's data item."
   [user-id target-type target-id {avus :avus}]
   (transaction
-   (let [avu-ids (->> avus
-                      (map (comp :id
-                                 (partial persistence/add-or-update-avu user-id)
-                                 (partial format-avu target-type target-id)))
-                      set)]
-     (persistence/remove-orphaned-avus target-type target-id avu-ids)))
+   (remove-orphaned-avus target-type target-id avus)
+   (doseq [avu avus]
+     (persistence/add-or-update-avu user-id
+                                    (format-avu target-type target-id avu))))
   (amqp/publish-metadata-update user-id target-id)
   (list-avus target-type target-id))
