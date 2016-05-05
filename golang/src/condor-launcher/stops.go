@@ -229,7 +229,7 @@ func stopHandler(client *messaging.Client) func(d amqp.Delivery) {
 				logcabin.Error.Printf("Error running 'condor_rm %s':\n%s", condorID, err)
 				continue
 			}
-			fauxJob := model.New()
+			fauxJob := model.New(configurate.C)
 			fauxJob.InvocationID = invID
 			update := &messaging.UpdateMessage{
 				Job:     fauxJob,

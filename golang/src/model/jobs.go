@@ -10,6 +10,8 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/olebedev/config"
 )
 
 var (
@@ -94,10 +96,10 @@ type Job struct {
 	WikiURL            string         `json:"wiki_url"`
 }
 
-// New returns a pointer to a newly instantiated Job with NowDate set.
-func New() *Job {
+// New returns a pointer to a newly instantiated Job with NowDate set. The
+func New(cfg *config.Config) *Job {
 	n := time.Now().Format(nowfmt)
-	rq, err := configurate.C.String("condor.request_disk")
+	rq, err := cfg.String("condor.request_disk")
 	if err != nil {
 		rq = ""
 	}
@@ -111,11 +113,14 @@ func New() *Job {
 
 // NewFromData creates a new submission and populates it by parsing the passed
 // in []byte as JSON.
-func NewFromData(data []byte) (*Job, error) {
+func NewFromData(cfg *config.Config, data []byte) (*Job, error) {
 	var err error
-	s := New()
+	s := New(cfg)
 	s.SubmissionDate = s.NowDate
 	s.IRODSBase, err = configurate.C.String("irods.base")
+	if err != nil {
+		s.IRODSBase = "/"
+	}
 	if err != nil {
 		return nil, err
 	}

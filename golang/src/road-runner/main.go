@@ -272,7 +272,7 @@ func main() {
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
-	job, err = model.NewFromData(data)
+	job, err = model.NewFromData(configurate.C, data)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}

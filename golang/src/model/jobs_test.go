@@ -48,7 +48,7 @@ func _inittests(t *testing.T, memoize bool) *Job {
 		if err != nil {
 			t.Error(err)
 		}
-		s, err = NewFromData(data)
+		s, err = NewFromData(configurate.C, data)
 		if err != nil {
 			t.Error(err)
 		}

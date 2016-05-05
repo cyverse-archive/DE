@@ -60,7 +60,7 @@ func _inittests(t *testing.T, memoize bool) *model.Job {
 		if err != nil {
 			t.Error(err)
 		}
-		s, err = model.NewFromData(data)
+		s, err = model.NewFromData(configurate.C, data)
 		if err != nil {
 			t.Error(err)
 		}

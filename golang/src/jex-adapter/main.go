@@ -92,7 +92,7 @@ func launch(writer http.ResponseWriter, request *http.Request) {
 		writer.Write([]byte("Request had no body"))
 		return
 	}
-	job, err := model.NewFromData(bodyBytes)
+	job, err := model.NewFromData(configurate.C, bodyBytes)
 	if err != nil {
 		logcabin.Error.Print(err)
 		writer.WriteHeader(http.StatusBadRequest)

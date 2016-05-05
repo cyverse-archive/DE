@@ -74,7 +74,7 @@ func jobs(filepaths []string) ([]model.Job, error) {
 		if err != nil {
 			return retval, err
 		}
-		job, err := model.NewFromData(data)
+		job, err := model.NewFromData(configurate.C, data)
 		if err != nil {
 			return retval, err
 		}
