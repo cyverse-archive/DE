@@ -332,17 +332,6 @@
   [props config-valid configs filesystem-routes-enabled]
   "terrain.fs.max-paths-in-request")
 
-(cc/defprop-str anon-files-base-url
-  "The base url for the anon-files server."
-  [props config-valid configs filesystem-routes-enabled]
-  "terrain.fs.anon-files-base-url")
-
-(def anon-files-base
-  (memoize
-   (fn []
-     (if (System/getenv "ANON_FILES_PORT")
-       (cfg/env-setting "ANON_FILES_PORT")
-       (anon-files-base-url)))))
 ;;; End Filesystem configuration
 
 (cc/defprop-optint default-search-result-limit
@@ -578,7 +567,6 @@
   (log/warn "ENV? terrain.data-info.base-url -" (data-info-base))
   (log/warn "ENV? terrain.apps.base-url =" (apps-base))
   (log/warn "ENV? terrain.notificationagent.base-url =" (notificationagent-base))
-  (log/warn "ENV? terrain.anon-files.base-url =" (anon-files-base))
   (log/warn "ENV? terrain.sessions.host =" (sessions-base))
   (log/warn "ENV? terrain.saved-searches.host =" (saved-searches-base))
   (log/warn "ENV? terrain.tree-urls.host =" (tree-urls-base))
