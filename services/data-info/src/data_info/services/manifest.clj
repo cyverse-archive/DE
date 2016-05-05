@@ -17,6 +17,13 @@
 
 (def ^:private coge-attr "ipc-coge-link")
 
+;; this is usually going to be the vector case, but the previous behavior is the map case so it's preserved
+(defn- postprocess-tree-urls
+  [tree-urls]
+  (if (map? tree-urls)
+      (:tree-urls tree-urls)
+      (vec tree-urls)))
+
 (defn- extract-tree-urls
   [cm fpath]
   (if (attribute? cm fpath (cfg/tree-urls-attr))
@@ -25,7 +32,7 @@
       :value
       ft/basename
       tree/get-tree-urls
-      :tree-urls)
+      postprocess-tree-urls)
     []))
 
 (defn- extract-coge-view
