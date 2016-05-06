@@ -10,26 +10,26 @@ import (
 )
 
 var (
-	Trace	*log.Logger
-	Info	*log.Logger
-	Warning	*log.Logger
-	Error	*log.Logger
+	Trace   *log.Logger
+	Info    *log.Logger
+	Warning *log.Logger
+	Error   *log.Logger
 
-	Trace_Lincoln *Lincoln
-	Info_Lincoln *Lincoln
+	Trace_Lincoln   *Lincoln
+	Info_Lincoln    *Lincoln
 	Warning_Lincoln *Lincoln
-	Error_Lincoln *Lincoln
+	Error_Lincoln   *Lincoln
 
-	Service string
+	Service  string
 	Artifact string
 )
 
 // Log Level Constants
 const (
 	trace_lvl = "TRACE"
-	info_lvl = "INFO"
-	warn_lvl = "WARN"
-	err_lvl = "ERR"
+	info_lvl  = "INFO"
+	warn_lvl  = "WARN"
+	err_lvl   = "ERR"
 )
 
 func init() {
@@ -63,9 +63,9 @@ type logMessage struct {
 
 // Lincoln is a logger for jex-events.
 type Lincoln struct {
-	service string
+	service  string
 	artifact string
-	level string
+	level    string
 }
 
 // NewLogMessage returns a pointer to a new instance of LogMessage.
@@ -90,4 +90,3 @@ func (l *Lincoln) Write(buf []byte) (n int, err error) {
 	j = append(j, []byte("\n")...)
 	return os.Stdout.Write(j)
 }
-

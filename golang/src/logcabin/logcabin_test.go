@@ -3,10 +3,10 @@ package logcabin
 import (
 	"encoding/json"
 	"io/ioutil"
-	"os"
-	"testing"
 	"log"
+	"os"
 	"regexp"
+	"testing"
 )
 
 func TestAllLoggerOutput(t *testing.T) {
@@ -74,7 +74,7 @@ func testLoggerOutput(expectedSvc string, expectedArtifact string, expectedLvl s
 	}
 }
 
-func BenchmarkTrace(b *testing.B){
+func BenchmarkTrace(b *testing.B) {
 	svc, artifact, msg := "test_service", "test_artifact", "msg"
 	Init(svc, artifact)
 	Trace.SetOutput(ioutil.Discard)
@@ -83,7 +83,7 @@ func BenchmarkTrace(b *testing.B){
 	}
 }
 
-func BenchmarkInfo(b *testing.B){
+func BenchmarkInfo(b *testing.B) {
 	svc, artifact, msg := "test_service", "test_artifact", "msg"
 	Init(svc, artifact)
 	Info.SetOutput(ioutil.Discard)
@@ -92,7 +92,7 @@ func BenchmarkInfo(b *testing.B){
 	}
 }
 
-func BenchmarkWarn(b *testing.B){
+func BenchmarkWarn(b *testing.B) {
 	svc, artifact, msg := "test_service", "test_artifact", "msg"
 	Init(svc, artifact)
 	Warning.SetOutput(ioutil.Discard)
@@ -101,7 +101,7 @@ func BenchmarkWarn(b *testing.B){
 	}
 }
 
-func BenchmarkErr(b *testing.B){
+func BenchmarkErr(b *testing.B) {
 	svc, artifact, msg := "test_service", "test_artifact", "msg"
 	Init(svc, artifact)
 	Error.SetOutput(ioutil.Discard)
@@ -109,4 +109,3 @@ func BenchmarkErr(b *testing.B){
 		Error.Println(msg)
 	}
 }
-
