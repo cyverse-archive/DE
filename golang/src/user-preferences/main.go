@@ -15,6 +15,7 @@ import (
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+	"github.com/olebedev/config"
 )
 
 var (
@@ -378,6 +379,10 @@ func fixAddr(addr string) string {
 }
 
 func main() {
+	var (
+		err error
+		cfg *config.Config
+	)
 	if *version {
 		AppVersion()
 		os.Exit(0)
@@ -385,10 +390,10 @@ func main() {
 	if *cfgPath == "" {
 		logcabin.Error.Fatal("--config must be set")
 	}
-	if err := configurate.Init(*cfgPath); err != nil {
+	if cfg, err = configurate.Init(*cfgPath); err != nil {
 		logcabin.Error.Fatal(err)
 	}
-	dburi, err := configurate.C.String("db.uri")
+	dburi, err := cfg.String("db.uri")
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
