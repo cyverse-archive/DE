@@ -48,7 +48,6 @@ func AppVersion() {
 	if gitref != "" {
 		fmt.Printf("Git-Ref: %s\n", gitref)
 	}
-
 	if builtby != "" {
 		fmt.Printf("Built-By: %s\n", builtby)
 	}
@@ -71,13 +70,15 @@ func (j *JEXAdapter) home(writer http.ResponseWriter, request *http.Request) {
 }
 
 func (j *JEXAdapter) stop(writer http.ResponseWriter, request *http.Request) {
-	logcabin.Info.Printf("Request received:\n%#v\n", request)
 	var (
 		invID string
 		ok    bool
 		err   error
 		v     = mux.Vars(request)
 	)
+
+	logcabin.Info.Printf("Request received:\n%#v\n", request)
+
 	logcabin.Info.Println("Getting invocation ID out of the Vars")
 	if invID, ok = v["invocation_id"]; !ok {
 		writer.WriteHeader(http.StatusBadRequest)
@@ -86,6 +87,7 @@ func (j *JEXAdapter) stop(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 	logcabin.Info.Printf("Invocation ID is %s\n", invID)
+
 	logcabin.Info.Println("Sending stop request")
 	err = client.SendStopRequest(invID, "root", "because I said to")
 	if err != nil {
@@ -105,6 +107,7 @@ func (j *JEXAdapter) launch(writer http.ResponseWriter, request *http.Request) {
 		writer.Write([]byte("Request had no body"))
 		return
 	}
+
 	job, err := model.NewFromData(j.cfg, bodyBytes)
 	if err != nil {
 		logcabin.Error.Print(err)
@@ -180,6 +183,7 @@ func (j *JEXAdapter) launch(writer http.ResponseWriter, request *http.Request) {
 		writer.Write([]byte(fmt.Sprintf("Error creating launch request: %s", err.Error())))
 		return
 	}
+
 	launchJSON, err := json.Marshal(launchRequest)
 	if err != nil {
 		logcabin.Error.Print(err)
@@ -187,6 +191,7 @@ func (j *JEXAdapter) launch(writer http.ResponseWriter, request *http.Request) {
 		writer.Write([]byte(fmt.Sprintf("Error creating launch request JSON: %s", err.Error())))
 		return
 	}
+
 	err = client.Publish(messaging.LaunchesKey, launchJSON)
 	if err != nil {
 		logcabin.Error.Print(err)
@@ -220,6 +225,7 @@ func (j *JEXAdapter) preview(writer http.ResponseWriter, request *http.Request) 
 		writer.Write([]byte("Request had no body"))
 		return
 	}
+
 	previewer := &Previewer{}
 	err = json.Unmarshal(bodyBytes, previewer)
 	if err != nil {
@@ -228,6 +234,7 @@ func (j *JEXAdapter) preview(writer http.ResponseWriter, request *http.Request) 
 		writer.Write([]byte(fmt.Sprintf("Error parsing preview JSON: %s", err.Error())))
 		return
 	}
+
 	var paramMap PreviewerReturn
 	paramMap.Params = previewer.Params.String()
 	outgoingJSON, err := json.Marshal(paramMap)
@@ -237,6 +244,7 @@ func (j *JEXAdapter) preview(writer http.ResponseWriter, request *http.Request) 
 		writer.Write([]byte(fmt.Sprintf("Error creating response JSON: %s", err.Error())))
 		return
 	}
+
 	_, err = writer.Write(outgoingJSON)
 	if err != nil {
 		logcabin.Error.Print(err)
@@ -261,26 +269,33 @@ func main() {
 		AppVersion()
 		os.Exit(0)
 	}
+
 	if *cfgPath == "" {
 		fmt.Println("--config is required")
 		flag.PrintDefaults()
 		os.Exit(-1)
 	}
+
 	cfg, err := configurate.Init(*cfgPath)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
+
 	amqpURI, err = cfg.String("amqp.uri")
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
+
 	app := New(cfg)
+
 	client, err = messaging.NewClient(amqpURI, false)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
 	defer client.Close()
+
 	client.SetupPublishing(messaging.JobsExchange)
+
 	router := app.NewRouter()
 	logcabin.Error.Fatal(http.ListenAndServe(*addr, router))
 }
