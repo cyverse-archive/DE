@@ -27,7 +27,7 @@ func NewAddResource(ctx *middleware.Context, handler AddResourceHandler) *AddRes
 	return &AddResource{Context: ctx, Handler: handler}
 }
 
-/*AddResource swagger:route PUT /resources resources addResource
+/*AddResource swagger:route POST /resources resources addResource
 
 Add a Resource
 

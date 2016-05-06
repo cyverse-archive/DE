@@ -241,7 +241,7 @@ paths:
             $ref: "#/definitions/resources_out"
         500:
           $ref: "#/responses/internal_server_error"
-    put:
+    post:
       tags:
         - resources
       summary: "Add a Resource"

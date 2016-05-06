@@ -242,10 +242,10 @@ func (o *PermissionsAPI) initHandlerCache() {
 	}
 	o.handlers["PUT"]["/resource_types/{id}"] = resource_types.NewPutResourceTypesID(o.context, o.ResourceTypesPutResourceTypesIDHandler)
 
-	if o.handlers["PUT"] == nil {
-		o.handlers[strings.ToUpper("PUT")] = make(map[string]http.Handler)
+	if o.handlers["POST"] == nil {
+		o.handlers[strings.ToUpper("POST")] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/resources"] = resources.NewAddResource(o.context, o.ResourcesAddResourceHandler)
+	o.handlers["POST"]["/resources"] = resources.NewAddResource(o.context, o.ResourcesAddResourceHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
