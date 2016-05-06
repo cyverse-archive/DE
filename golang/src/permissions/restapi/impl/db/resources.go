@@ -47,7 +47,7 @@ func GetResourceByName(tx *sql.Tx, name *string, resourceTypeId *string) (*model
 	defer rows.Close()
 
 	// Get the resources.
-	var resources []*models.ResourceOut
+	resources := make([]*models.ResourceOut, 0)
 	for rows.Next() {
 		var resource models.ResourceOut
 		if err := rows.Scan(&resource.ID, &resource.Name, &resource.ResourceType); err != nil {
@@ -84,7 +84,7 @@ func GetDuplicateResourceByName(tx *sql.Tx, id *string, name *string) (*models.R
 	defer rows.Close()
 
 	// Get the resources.
-	var resources []*models.ResourceOut
+	resources := make([]*models.ResourceOut, 0)
 	for rows.Next() {
 		var resource models.ResourceOut
 		if err := rows.Scan(&resource.ID, &resource.Name, &resource.ResourceType); err != nil {
@@ -148,7 +148,7 @@ func ListResources(tx *sql.Tx) ([]*models.ResourceOut, error) {
 	defer rows.Close()
 
 	// Build the list of resources.
-	var resources []*models.ResourceOut
+	resources := make([]*models.ResourceOut, 0)
 	for rows.Next() {
 		var resource models.ResourceOut
 		if err := rows.Scan(&resource.ID, &resource.Name, &resource.ResourceType); err != nil {

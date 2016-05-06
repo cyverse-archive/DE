@@ -147,6 +147,24 @@ func TestGetResourceTypes(t *testing.T) {
 	}
 }
 
+func TestGetResourceTypesEmpty(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+
+	// List the resource types.
+	resourceTypesOut := listResourceTypes(db)
+
+	// Verify that we got the expected result.
+	resourceTypes := resourceTypesOut.ResourceTypes
+	if resourceTypes == nil {
+		t.Errorf("a nil resource type list was returned")
+	}
+}
+
 func TestModifyResourceType(t *testing.T) {
 	if !shouldrun() {
 		return

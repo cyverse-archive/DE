@@ -228,6 +228,21 @@ func TestListResources(t *testing.T) {
 	}
 }
 
+func TestListResourcesEmpty(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Add a resource to the database.
+	result := listResources(db)
+	if result.Resources == nil {
+		t.Errorf("recieved a nil resource list")
+	}
+}
+
 func TestUpdateResource(t *testing.T) {
 	if !shouldrun() {
 		return
