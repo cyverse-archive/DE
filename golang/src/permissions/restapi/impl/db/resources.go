@@ -159,3 +159,27 @@ func ListResources(tx *sql.Tx) ([]*models.ResourceOut, error) {
 
 	return resources, nil
 }
+
+func DeleteResource(tx *sql.Tx, id *string) error {
+
+	// Update the database.
+	stmt := "DELETE FROM resources WHERE id = $1"
+	result, err := tx.Exec(stmt, id)
+	if err != nil {
+		return err
+	}
+
+	// Verify that a row was deleted.
+	count, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if count == 0 {
+		return fmt.Errorf("no resources deleted for id %s", *id)
+	}
+	if count > 1 {
+		return fmt.Errorf("multiple resources deleted for id %s", *id)
+	}
+
+	return nil
+}

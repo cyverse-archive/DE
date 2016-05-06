@@ -299,9 +299,22 @@ paths:
         200:
           description: "OK"
           schema:
-            $ref: "#definitions/resource_out"
+            $ref: "#/definitions/resource_out"
         400:
           $ref: "#/responses/bad_request"
+        404:
+          $ref: "#/responses/not_found"
+        500:
+          $ref: "#/responses/internal_server_error"
+    delete:
+      tags:
+        - resources
+      summary: "Delete a Resource"
+      description: "Removes a resource from the database."
+      operationId: deleteResource
+      responses:
+        200:
+          description: "OK"
         404:
           $ref: "#/responses/not_found"
         500:

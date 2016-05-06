@@ -97,9 +97,24 @@ func updateResourceAttempt(db *sql.DB, id, name string) middleware.Responder {
 	return handler(params)
 }
 
-func updateResource(db *sql.DB, id, name string) models.ResourceOut {
+func updateResource(db *sql.DB, id, name string) *models.ResourceOut {
 	responder := updateResourceAttempt(db, id, name)
 	return responder.(*resources.UpdateResourceOK).Payload
+}
+
+func deleteResourceAttempt(db *sql.DB, id string) middleware.Responder {
+
+	// Build the request handler.
+	handler := impl.BuildDeleteResourceHandler(db)
+
+	// Attempt to delete the resource.
+	params := resources.DeleteResourceParams{ID: id}
+	return handler(params)
+}
+
+func deleteResource(db *sql.DB, id string) {
+	responder := deleteResourceAttempt(db, id)
+	_ = responder.(*resources.DeleteResourceOK)
 }
 
 func TestAddResource(t *testing.T) {
@@ -289,6 +304,46 @@ func TestUpdateResourceDuplicateName(t *testing.T) {
 	// Verify that we got the expected result.
 	errorOut := responder.(*resources.UpdateResourceBadRequest).Payload
 	expected := fmt.Sprintf("a resource of the same type named, '%s', already exists", *r1.Name)
+	if *errorOut.Reason != expected {
+		t.Errorf("unexpected failure message: %s", *errorOut.Reason)
+	}
+}
+
+func TestDeleteResource(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Add a resource to the database then delete it.
+	r1 := addResource(db, "r1", "app")
+	deleteResource(db, *r1.ID)
+
+	// Verify that the resource was deleted.
+	result := listResources(db)
+	if len(result.Resources) != 0 {
+		t.Fatalf("unexpected number of resources listed: %d", len(result.Resources))
+	}
+}
+
+func TestDeleteNonExistentResource(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Attempt to delete a non-existent resource.
+	responder := deleteResourceAttempt(db, FAKE_ID)
+
+	// Verify that we got the expected result.
+	errorOut := responder.(*resources.DeleteResourceNotFound).Payload
+	expected := fmt.Sprintf("resource, %s, not found", FAKE_ID)
 	if *errorOut.Reason != expected {
 		t.Errorf("unexpected failure message: %s", *errorOut.Reason)
 	}

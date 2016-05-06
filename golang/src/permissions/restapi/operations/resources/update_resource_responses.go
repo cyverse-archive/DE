@@ -18,7 +18,7 @@ swagger:response updateResourceOK
 type UpdateResourceOK struct {
 
 	// In: body
-	Payload models.ResourceOut `json:"body,omitempty"`
+	Payload *models.ResourceOut `json:"body,omitempty"`
 }
 
 // NewUpdateResourceOK creates UpdateResourceOK with default headers values
@@ -27,13 +27,13 @@ func NewUpdateResourceOK() *UpdateResourceOK {
 }
 
 // WithPayload adds the payload to the update resource o k response
-func (o *UpdateResourceOK) WithPayload(payload models.ResourceOut) *UpdateResourceOK {
+func (o *UpdateResourceOK) WithPayload(payload *models.ResourceOut) *UpdateResourceOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the update resource o k response
-func (o *UpdateResourceOK) SetPayload(payload models.ResourceOut) {
+func (o *UpdateResourceOK) SetPayload(payload *models.ResourceOut) {
 	o.Payload = payload
 }
 
@@ -41,10 +41,11 @@ func (o *UpdateResourceOK) SetPayload(payload models.ResourceOut) {
 func (o *UpdateResourceOK) WriteResponse(rw http.ResponseWriter, producer httpkit.Producer) {
 
 	rw.WriteHeader(200)
-	if err := producer.Produce(rw, o.Payload); err != nil {
-		panic(err) // let the recovery middleware deal with this
+	if o.Payload != nil {
+		if err := producer.Produce(rw, o.Payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
 	}
-
 }
 
 /*UpdateResourceBadRequest Bad Request

@@ -59,6 +59,8 @@ type PermissionsAPI struct {
 	ResourceTypesPutResourceTypesIDHandler resource_types.PutResourceTypesIDHandler
 	// ResourcesAddResourceHandler sets the operation handler for the add resource operation
 	ResourcesAddResourceHandler resources.AddResourceHandler
+	// ResourcesDeleteResourceHandler sets the operation handler for the delete resource operation
+	ResourcesDeleteResourceHandler resources.DeleteResourceHandler
 	// ResourcesListResourcesHandler sets the operation handler for the list resources operation
 	ResourcesListResourcesHandler resources.ListResourcesHandler
 	// ResourcesUpdateResourceHandler sets the operation handler for the update resource operation
@@ -140,6 +142,10 @@ func (o *PermissionsAPI) Validate() error {
 
 	if o.ResourcesAddResourceHandler == nil {
 		unregistered = append(unregistered, "resources.AddResourceHandler")
+	}
+
+	if o.ResourcesDeleteResourceHandler == nil {
+		unregistered = append(unregistered, "resources.DeleteResourceHandler")
 	}
 
 	if o.ResourcesListResourcesHandler == nil {
@@ -252,6 +258,11 @@ func (o *PermissionsAPI) initHandlerCache() {
 		o.handlers[strings.ToUpper("POST")] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/resources"] = resources.NewAddResource(o.context, o.ResourcesAddResourceHandler)
+
+	if o.handlers["DELETE"] == nil {
+		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/resources/{id}"] = resources.NewDeleteResource(o.context, o.ResourcesDeleteResourceHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)

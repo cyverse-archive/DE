@@ -69,6 +69,6 @@ func BuildUpdateResourceHandler(db *sql.DB) func(resources.UpdateResourceParams)
 			return resources.NewUpdateResourceInternalServerError().WithPayload(&models.ErrorOut{&reason})
 		}
 
-		return resources.NewUpdateResourceOK().WithPayload(*resourceOut)
+		return resources.NewUpdateResourceOK().WithPayload(resourceOut)
 	}
 }
