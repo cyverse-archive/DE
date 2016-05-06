@@ -254,7 +254,7 @@ type consumer struct {
 	exchange        string
 	exchangeType    string
 	queue           string
-	key             string
+	keys            []string
 	handler         MessageHandler
 	queueDurable    bool
 	queueAutoDelete bool
@@ -364,16 +364,16 @@ func (c *Client) Close() {
 	c.connection.Close()
 }
 
-// AddConsumer adds a consumer to the list of consumers that need to be created
+// AddConsumerMulti adds a consumer to the list of consumers that need to be created
 // each time the client is set up. Note that this just adds the consumers to a
 // list, it doesn't actually start handling messages yet. You need to call
 // Listen() for that.
-func (c *Client) AddConsumer(exchange, exchangeType, queue, key string, handler MessageHandler) {
+func (c *Client) AddConsumerMulti(exchange, exchangeType, queue string, keys []string, handler MessageHandler) {
 	cs := consumer{
 		exchange:        exchange,
 		exchangeType:    exchangeType,
 		queue:           queue,
-		key:             key,
+		keys:            keys,
 		handler:         handler,
 		queueDurable:    true,
 		queueAutoDelete: false,
@@ -386,16 +386,22 @@ func (c *Client) AddConsumer(exchange, exchangeType, queue, key string, handler 
 	<-adder.latch
 }
 
+// AddConsumer adds a consumer with only one binding, which is usually what you need
+func (c *Client) AddConsumer(exchange, exchangeType, queue, key string, handler MessageHandler) {
+	c.AddConsumerMulti(exchange, exchangeType, queue, []string{key}, handler)
+}
+
 // AddDeletableConsumer adds a consumer to the list of consumers that need to be
 // created each time the client is set up. Unlike AddConsumer(), the new
 // consumer will have auto-delete set to true and durable set to false. Make
 // sure that Listen() has been called before calling this function.
+// This only supports a single bind key, for now.
 func (c *Client) AddDeletableConsumer(exchange, exchangeType, queue, key string, handler MessageHandler) {
 	cs := consumer{
 		exchange:        exchange,
 		exchangeType:    exchangeType,
 		queue:           queue,
-		key:             key,
+		keys:            []string{key},
 		handler:         handler,
 		queueDurable:    false,
 		queueAutoDelete: true,
@@ -487,13 +493,15 @@ func (c *Client) initconsumer(cs *consumer) error {
 		false,              //no-wait
 		nil,                //args
 	)
-	err = channel.QueueBind(
-		cs.queue,
-		cs.key,
-		cs.exchange,
-		false, //no-wait
-		nil,   //args
-	)
+	for _, key := range cs.keys {
+		err = channel.QueueBind(
+			cs.queue,
+			key,
+			cs.exchange,
+			false, //no-wait
+			nil,   //args
+		)
+	}
 
 	d, err := channel.Consume(
 		cs.queue,
