@@ -25,20 +25,12 @@ import (
 )
 
 var (
-	version = flag.Bool("version", false, "Print version information")
-	cfgPath = flag.String("config", "", "Path to the configuration file")
 	amqpURI string
-	addr    = flag.String("addr", ":60000", "The port to listen on for HTTP requests")
 	gitref  string
 	appver  string
 	builtby string
 	client  *messaging.Client
 )
-
-func init() {
-	flag.Parse()
-	logcabin.Init("jex-adapter", "jex-adapter")
-}
 
 // AppVersion prints version information to stdout
 func AppVersion() {
@@ -265,6 +257,16 @@ func (j *JEXAdapter) NewRouter() *mux.Router {
 }
 
 func main() {
+	var (
+		version = flag.Bool("version", false, "Print version information")
+		cfgPath = flag.String("config", "", "Path to the configuration file")
+		addr    = flag.String("addr", ":60000", "The port to listen on for HTTP requests")
+	)
+
+	flag.Parse()
+
+	logcabin.Init("jex-adapter", "jex-adapter")
+
 	if *version {
 		AppVersion()
 		os.Exit(0)
