@@ -88,6 +88,16 @@ definitions:
         type: string
         description: "The resource type name."
         minLength: 1
+  resource_update:
+    type: object
+    description: "A modification to a resource."
+    required:
+      - name
+    properties:
+      name:
+        type: string
+        description: "The new resource name."
+        minLength: 1
   resource_out:
     type: object
     description: "An outgoing resource."
@@ -263,6 +273,37 @@ paths:
             $ref: "#/definitions/resource_out"
         400:
           $ref: "#/responses/bad_request"
+        500:
+          $ref: "#/responses/internal_server_error"
+  /resources/{id}:
+    parameters:
+      - name: id
+        type: string
+        description: "The resource ID."
+        in: path
+        required: True
+    put:
+      tags:
+        - resources
+      summary: "Update a Resource"
+      description: "Updates a resource in the database."
+      parameters:
+        - description: "The updated resource information."
+          in: body
+          name: "resource_update"
+          required: True
+          schema:
+            $ref: "#/definitions/resource_update"
+      operationId: updateResource
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#definitions/resource_out"
+        400:
+          $ref: "#/responses/bad_request"
+        404:
+          $ref: "#/responses/not_found"
         500:
           $ref: "#/responses/internal_server_error"
 produces:

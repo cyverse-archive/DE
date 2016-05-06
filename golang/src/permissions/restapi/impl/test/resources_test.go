@@ -86,6 +86,22 @@ func listResources(db *sql.DB) *models.ResourcesOut {
 	return responder.(*resources.ListResourcesOK).Payload
 }
 
+func updateResourceAttempt(db *sql.DB, id, name string) middleware.Responder {
+
+	// Build the request handler.
+	handler := impl.BuildUpdateResourceHandler(db)
+
+	// Attempt to update the resource.
+	resourceUpdate := &models.ResourceUpdate{Name: &name}
+	params := resources.UpdateResourceParams{ID: id, ResourceUpdate: resourceUpdate}
+	return handler(params)
+}
+
+func updateResource(db *sql.DB, id, name string) models.ResourceOut {
+	responder := updateResourceAttempt(db, id, name)
+	return responder.(*resources.UpdateResourceOK).Payload
+}
+
 func TestAddResource(t *testing.T) {
 	if !shouldrun() {
 		return
@@ -194,5 +210,42 @@ func TestListResources(t *testing.T) {
 	}
 	if *resource.ResourceType != *r1.ResourceType {
 		t.Errorf("unexpected resource type: %s", *resource.ResourceType)
+	}
+}
+
+func TestUpdateResource(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Add a resource to the database.
+	r2 := addResource(db, "r2", "app")
+
+	// Update the resource and verify the result,
+	d2 := updateResource(db, *r2.ID, "d2")
+	if *d2.Name != "d2" {
+		t.Errorf("unexpected resource name: %s", *d2.Name)
+	}
+	if *d2.ResourceType != "app" {
+		t.Errorf("unexpected resource type: %s", *d2.ResourceType)
+	}
+
+	// List the resources and verify that we get the expected number of results.
+	result := listResources(db)
+	if len(result.Resources) != 1 {
+		t.Fatalf("unexpected number of resources listed: %d", len(result.Resources))
+	}
+
+	// Verify that we got the expected result.
+	resource := result.Resources[0]
+	if *resource.Name != *d2.Name {
+		t.Errorf("unexpected resource name listed: %s", *resource.Name)
+	}
+	if *resource.ResourceType != *d2.ResourceType {
+		t.Errorf("unexpected resource type listed: %s", *resource.ResourceType)
 	}
 }

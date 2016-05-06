@@ -61,6 +61,8 @@ type PermissionsAPI struct {
 	ResourcesAddResourceHandler resources.AddResourceHandler
 	// ResourcesListResourcesHandler sets the operation handler for the list resources operation
 	ResourcesListResourcesHandler resources.ListResourcesHandler
+	// ResourcesUpdateResourceHandler sets the operation handler for the update resource operation
+	ResourcesUpdateResourceHandler resources.UpdateResourceHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -142,6 +144,10 @@ func (o *PermissionsAPI) Validate() error {
 
 	if o.ResourcesListResourcesHandler == nil {
 		unregistered = append(unregistered, "resources.ListResourcesHandler")
+	}
+
+	if o.ResourcesUpdateResourceHandler == nil {
+		unregistered = append(unregistered, "resources.UpdateResourceHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -251,6 +257,11 @@ func (o *PermissionsAPI) initHandlerCache() {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/resources"] = resources.NewListResources(o.context, o.ResourcesListResourcesHandler)
+
+	if o.handlers["PUT"] == nil {
+		o.handlers[strings.ToUpper("PUT")] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/resources/{id}"] = resources.NewUpdateResource(o.context, o.ResourcesUpdateResourceHandler)
 
 }
 
