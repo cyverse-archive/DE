@@ -232,35 +232,44 @@ func (cl *CondorLauncher) CreateSubmissionFiles(dir string, s *model.Job) (strin
 	if err != nil {
 		return "", "", "", err
 	}
+
 	jobConfigContents, err := cl.GenerateJobConfig()
 	if err != nil {
 		return "", "", "", err
 	}
+
 	jobContents, err := json.Marshal(s)
 	if err != nil {
 		return "", "", "", err
 	}
+
 	irodsContents, err := cl.GenerateIRODSConfig()
 	if err != nil {
 		return "", "", "", err
 	}
+
 	cmdPath := path.Join(dir, "iplant.cmd")
 	configPath := path.Join(dir, "config")
 	jobPath := path.Join(dir, "job")
 	irodsPath := path.Join(dir, "irods-config")
+
 	err = ioutil.WriteFile(cmdPath, []byte(cmdContents), 0644)
 	if err != nil {
 		return "", "", "", nil
 	}
+
 	err = ioutil.WriteFile(configPath, []byte(jobConfigContents), 0644)
 	if err != nil {
 		return "", "", "", nil
 	}
+
 	err = ioutil.WriteFile(jobPath, []byte(jobContents), 0644)
 	if err != nil {
 		return "", "", "", nil
 	}
+
 	err = ioutil.WriteFile(irodsPath, []byte(irodsContents), 0644)
+
 	return cmdPath, configPath, jobPath, err
 }
 
@@ -269,32 +278,39 @@ func (cl *CondorLauncher) submit(cmdPath string, s *model.Job) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	if !path.IsAbs(csPath) {
 		csPath, err = filepath.Abs(csPath)
 		if err != nil {
 			return "", err
 		}
 	}
+
 	cmd := exec.Command(csPath, cmdPath)
 	cmd.Dir = path.Dir(cmdPath)
 	pathEnv, err := cl.cfg.String("condor.path_env_var")
 	if err != nil {
 		pathEnv = ""
 	}
+
 	condorCfg, err := cl.cfg.String("condor.condor_config")
 	if err != nil {
 		condorCfg = ""
 	}
+
 	cmd.Env = []string{
 		fmt.Sprintf("PATH=%s", pathEnv),
 		fmt.Sprintf("CONDOR_CONFIG=%s", condorCfg),
 	}
+
 	output, err := cmd.CombinedOutput()
 	logcabin.Info.Printf("Output of condor_submit:\n%s\n", output)
 	if err != nil {
 		return "", err
 	}
+
 	logcabin.Info.Printf("Extracted ID: %s\n", string(model.ExtractJobID(output)))
+
 	return string(model.ExtractJobID(output)), err
 }
 
@@ -304,17 +320,21 @@ func (cl *CondorLauncher) launch(s *model.Job) (string, error) {
 		logcabin.Error.Printf("Error creating submission directory:\n%s\n", err)
 		return "", err
 	}
+
 	cmd, _, _, err := cl.CreateSubmissionFiles(sdir, s)
 	if err != nil {
 		logcabin.Error.Printf("Error creating submission files:\n%s", err)
 		return "", err
 	}
+
 	id, err := cl.submit(cmd, s)
 	if err != nil {
 		logcabin.Error.Printf("Error submitting job:\n%s", err)
 		return "", err
 	}
+
 	logcabin.Info.Printf("Condor job id is %s\n", id)
+
 	return id, err
 }
 
@@ -324,30 +344,36 @@ func (cl *CondorLauncher) stop(s *model.Job) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	if !path.IsAbs(crPath) {
 		crPath, err = filepath.Abs(crPath)
 		if err != nil {
 			return "", err
 		}
 	}
+
 	pathEnv, err := cl.cfg.String("condor.path_env_var")
 	if err != nil {
 		pathEnv = ""
 	}
+
 	condorConfig, err := cl.cfg.String("condor.condor_config")
 	if err != nil {
 		condorConfig = ""
 	}
+
 	cmd := exec.Command(crPath, s.CondorID)
 	cmd.Env = []string{
 		fmt.Sprintf("PATH=%s", pathEnv),
 		fmt.Sprintf("CONDOR_CONFIG=%s", condorConfig),
 	}
+
 	output, err := cmd.CombinedOutput()
 	logcabin.Info.Printf("condor_rm output for job %s:\n%s\n", s.CondorID, string(output))
 	if err != nil {
 		return "", err
 	}
+
 	return string(output), err
 }
 
@@ -378,7 +404,6 @@ func AppVersion() {
 	if gitref != "" {
 		fmt.Printf("Git-Ref: %s\n", gitref)
 	}
-
 	if builtby != "" {
 		fmt.Printf("Built-By: %s\n", builtby)
 	}
@@ -429,6 +454,7 @@ func main() {
 	client.AddConsumer(messaging.JobsExchange, "topic", "condor_launches", messaging.LaunchesKey, func(d amqp.Delivery) {
 		body := d.Body
 		d.Ack(false)
+
 		req := messaging.JobRequest{}
 		err := json.Unmarshal(body, &req)
 		if err != nil {
@@ -436,9 +462,11 @@ func main() {
 			logcabin.Error.Print(string(body[:]))
 			return
 		}
+
 		if req.Job.RequestDisk == "" {
 			req.Job.RequestDisk = "0"
 		}
+
 		switch req.Command {
 		case messaging.Launch:
 			jobID, err := launcher.launch(req.Job)
@@ -454,7 +482,6 @@ func main() {
 				}
 			} else {
 				logcabin.Info.Printf("Launched Condor ID %s", jobID)
-
 				err = client.PublishJobUpdate(&messaging.UpdateMessage{
 					Job:     req.Job,
 					State:   messaging.SubmittedState,
