@@ -29,7 +29,6 @@ var (
 	gitref  string
 	appver  string
 	builtby string
-	client  *messaging.Client
 )
 
 // AppVersion prints version information to stdout
@@ -47,7 +46,8 @@ func AppVersion() {
 
 // JEXAdapter contains the application state for jex-adapter.
 type JEXAdapter struct {
-	cfg *config.Config
+	cfg    *config.Config
+	client *messaging.Client
 }
 
 // New returns a *JEXAdapter
@@ -81,7 +81,7 @@ func (j *JEXAdapter) stop(writer http.ResponseWriter, request *http.Request) {
 	logcabin.Info.Printf("Invocation ID is %s\n", invID)
 
 	logcabin.Info.Println("Sending stop request")
-	err = client.SendStopRequest(invID, "root", "because I said to")
+	err = j.client.SendStopRequest(invID, "root", "because I said to")
 	if err != nil {
 		logcabin.Error.Print(err)
 		writer.WriteHeader(http.StatusInternalServerError)
@@ -109,7 +109,7 @@ func (j *JEXAdapter) launch(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	// Create the time limit delta channel
-	timeLimitDeltaChannel, err := client.CreateQueue(
+	timeLimitDeltaChannel, err := j.client.CreateQueue(
 		messaging.TimeLimitDeltaQueueName(job.InvocationID),
 		messaging.JobsExchange,
 		messaging.TimeLimitDeltaRequestKey(job.InvocationID),
@@ -124,7 +124,7 @@ func (j *JEXAdapter) launch(writer http.ResponseWriter, request *http.Request) {
 	defer timeLimitDeltaChannel.Close()
 
 	// Create the time limit request channel
-	timeLimitRequestChannel, err := client.CreateQueue(
+	timeLimitRequestChannel, err := j.client.CreateQueue(
 		messaging.TimeLimitRequestQueueName(job.InvocationID),
 		messaging.JobsExchange,
 		messaging.TimeLimitRequestKey(job.InvocationID),
@@ -139,7 +139,7 @@ func (j *JEXAdapter) launch(writer http.ResponseWriter, request *http.Request) {
 	defer timeLimitRequestChannel.Close()
 
 	// Create the time limit response channel
-	timeLimitResponseChannel, err := client.CreateQueue(
+	timeLimitResponseChannel, err := j.client.CreateQueue(
 		messaging.TimeLimitResponsesQueueName(job.InvocationID),
 		messaging.JobsExchange,
 		messaging.TimeLimitResponsesKey(job.InvocationID),
@@ -154,7 +154,7 @@ func (j *JEXAdapter) launch(writer http.ResponseWriter, request *http.Request) {
 	defer timeLimitResponseChannel.Close()
 
 	// Create the stop request channel
-	stopRequestChannel, err := client.CreateQueue(
+	stopRequestChannel, err := j.client.CreateQueue(
 		messaging.StopQueueName(job.InvocationID),
 		messaging.JobsExchange,
 		messaging.StopRequestKey(job.InvocationID),
@@ -184,7 +184,7 @@ func (j *JEXAdapter) launch(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	err = client.Publish(messaging.LaunchesKey, launchJSON)
+	err = j.client.Publish(messaging.LaunchesKey, launchJSON)
 	if err != nil {
 		logcabin.Error.Print(err)
 		writer.WriteHeader(http.StatusInternalServerError)
@@ -290,13 +290,13 @@ func main() {
 
 	app := New(cfg)
 
-	client, err = messaging.NewClient(amqpURI, false)
+	app.client, err = messaging.NewClient(amqpURI, false)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
-	defer client.Close()
+	defer app.client.Close()
 
-	client.SetupPublishing(messaging.JobsExchange)
+	app.client.SetupPublishing(messaging.JobsExchange)
 
 	router := app.NewRouter()
 	logcabin.Error.Fatal(http.ListenAndServe(*addr, router))
