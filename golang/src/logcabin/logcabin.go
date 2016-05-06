@@ -26,10 +26,10 @@ var (
 
 // Log Level Constants
 const (
-	trace_lvl = "TRACE"
-	info_lvl  = "INFO"
-	warn_lvl  = "WARN"
-	err_lvl   = "ERR"
+	traceLevel = "TRACE"
+	infoLevel  = "INFO"
+	warnLevel  = "WARN"
+	errorLevel = "ERR"
 )
 
 func init() {
@@ -40,10 +40,10 @@ func Init(service, artifact string) {
 	Service = service
 	Artifact = artifact
 
-	TraceLincoln = &Lincoln{service, artifact, trace_lvl}
-	InfoLincoln = &Lincoln{service, artifact, info_lvl}
-	WarningLincoln = &Lincoln{service, artifact, warn_lvl}
-	ErrorLincoln = &Lincoln{service, artifact, err_lvl}
+	TraceLincoln = &Lincoln{service, artifact, traceLevel}
+	InfoLincoln = &Lincoln{service, artifact, infoLevel}
+	WarningLincoln = &Lincoln{service, artifact, warnLevel}
+	ErrorLincoln = &Lincoln{service, artifact, errorLevel}
 
 	Trace = log.New(TraceLincoln, "", log.Lshortfile)
 	Info = log.New(InfoLincoln, "", log.Lshortfile)
