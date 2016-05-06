@@ -106,12 +106,12 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 		resource_types_impl.BuildResourceTypesGetHandler(db),
 	)
 
-	api.ResourceTypesPutResourceTypesHandler = resource_types.PutResourceTypesHandlerFunc(
-		resource_types_impl.BuildResourceTypesPutHandler(db),
+	api.ResourceTypesPostResourceTypesHandler = resource_types.PostResourceTypesHandlerFunc(
+		resource_types_impl.BuildResourceTypesPostHandler(db),
 	)
 
-	api.ResourceTypesPostResourceTypesIDHandler = resource_types.PostResourceTypesIDHandlerFunc(
-		resource_types_impl.BuildResourceTypesIDPostHandler(db),
+	api.ResourceTypesPutResourceTypesIDHandler = resource_types.PutResourceTypesIDHandlerFunc(
+		resource_types_impl.BuildResourceTypesIDPutHandler(db),
 	)
 
 	api.ResourceTypesDeleteResourceTypesIDHandler = resource_types.DeleteResourceTypesIDHandlerFunc(

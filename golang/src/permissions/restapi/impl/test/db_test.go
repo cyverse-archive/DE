@@ -2,6 +2,7 @@ package test
 
 import (
 	"database/sql"
+	"fmt"
 	"os"
 	"testing"
 
@@ -13,16 +14,23 @@ func shouldrun() bool {
 }
 
 func dburi() string {
-	return "postgres://de:notprod@dedb:5432/permissions?sslmode=disable"
+	uri := os.Getenv("DBURI")
+	if uri != "" {
+		return uri
+	} else {
+		return "postgres://de:notprod@dedb:5432/permissions?sslmode=disable"
+	}
 }
 
 func truncateTables(db *sql.DB) error {
 
 	// Truncate all tables.
-	stmt := "TRUNCATE permissions, permission_levels, subjects, resources, resource_types"
-	_, err := db.Exec(stmt)
-	if err != nil {
-		return err
+	tables := []string{"permissions", "permission_levels", "subjects", "resources", "resource_types"}
+	for _, table := range tables {
+		_, err := db.Exec(fmt.Sprintf("DELETE FROM %s", table))
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

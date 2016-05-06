@@ -155,7 +155,7 @@ paths:
             $ref: "#/definitions/resource_types_out"
         500:
           $ref: "#/responses/internal_server_error"
-    put:
+    post:
       tags:
         - resource_types
       summary: "Add a Resource Type"
@@ -184,7 +184,7 @@ paths:
         description: "The resource type ID."
         in: path
         required: True
-    post:
+    put:
       tags:
         - resource_types
       summary: "Update a Resource Type"

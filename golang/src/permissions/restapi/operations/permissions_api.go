@@ -53,10 +53,10 @@ type PermissionsAPI struct {
 	StatusGetHandler status.GetHandler
 	// ResourceTypesGetResourceTypesHandler sets the operation handler for the get resource types operation
 	ResourceTypesGetResourceTypesHandler resource_types.GetResourceTypesHandler
-	// ResourceTypesPostResourceTypesIDHandler sets the operation handler for the post resource types ID operation
-	ResourceTypesPostResourceTypesIDHandler resource_types.PostResourceTypesIDHandler
-	// ResourceTypesPutResourceTypesHandler sets the operation handler for the put resource types operation
-	ResourceTypesPutResourceTypesHandler resource_types.PutResourceTypesHandler
+	// ResourceTypesPostResourceTypesHandler sets the operation handler for the post resource types operation
+	ResourceTypesPostResourceTypesHandler resource_types.PostResourceTypesHandler
+	// ResourceTypesPutResourceTypesIDHandler sets the operation handler for the put resource types ID operation
+	ResourceTypesPutResourceTypesIDHandler resource_types.PutResourceTypesIDHandler
 	// ResourcesAddResourceHandler sets the operation handler for the add resource operation
 	ResourcesAddResourceHandler resources.AddResourceHandler
 	// ResourcesListResourcesHandler sets the operation handler for the list resources operation
@@ -128,12 +128,12 @@ func (o *PermissionsAPI) Validate() error {
 		unregistered = append(unregistered, "resource_types.GetResourceTypesHandler")
 	}
 
-	if o.ResourceTypesPostResourceTypesIDHandler == nil {
-		unregistered = append(unregistered, "resource_types.PostResourceTypesIDHandler")
+	if o.ResourceTypesPostResourceTypesHandler == nil {
+		unregistered = append(unregistered, "resource_types.PostResourceTypesHandler")
 	}
 
-	if o.ResourceTypesPutResourceTypesHandler == nil {
-		unregistered = append(unregistered, "resource_types.PutResourceTypesHandler")
+	if o.ResourceTypesPutResourceTypesIDHandler == nil {
+		unregistered = append(unregistered, "resource_types.PutResourceTypesIDHandler")
 	}
 
 	if o.ResourcesAddResourceHandler == nil {
@@ -235,12 +235,12 @@ func (o *PermissionsAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers[strings.ToUpper("POST")] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/resource_types/{id}"] = resource_types.NewPostResourceTypesID(o.context, o.ResourceTypesPostResourceTypesIDHandler)
+	o.handlers["POST"]["/resource_types"] = resource_types.NewPostResourceTypes(o.context, o.ResourceTypesPostResourceTypesHandler)
 
 	if o.handlers["PUT"] == nil {
 		o.handlers[strings.ToUpper("PUT")] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/resource_types"] = resource_types.NewPutResourceTypes(o.context, o.ResourceTypesPutResourceTypesHandler)
+	o.handlers["PUT"]["/resource_types/{id}"] = resource_types.NewPutResourceTypesID(o.context, o.ResourceTypesPutResourceTypesIDHandler)
 
 	if o.handlers["PUT"] == nil {
 		o.handlers[strings.ToUpper("PUT")] = make(map[string]http.Handler)

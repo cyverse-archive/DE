@@ -14,18 +14,18 @@ import (
 	"permissions/models"
 )
 
-// NewPutResourceTypesParams creates a new PutResourceTypesParams object
+// NewPostResourceTypesParams creates a new PostResourceTypesParams object
 // with the default values initialized.
-func NewPutResourceTypesParams() PutResourceTypesParams {
+func NewPostResourceTypesParams() PostResourceTypesParams {
 	var ()
-	return PutResourceTypesParams{}
+	return PostResourceTypesParams{}
 }
 
-// PutResourceTypesParams contains all the bound params for the put resource types operation
+// PostResourceTypesParams contains all the bound params for the post resource types operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters PutResourceTypes
-type PutResourceTypesParams struct {
+// swagger:parameters PostResourceTypes
+type PostResourceTypesParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request
@@ -39,7 +39,7 @@ type PutResourceTypesParams struct {
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls
-func (o *PutResourceTypesParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+func (o *PostResourceTypesParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 	o.HTTPRequest = r
 
