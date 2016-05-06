@@ -193,18 +193,17 @@ Please see the corresponding service documentation for more information.
 
 Secured Endpoint: GET /apps/{app-id}/metadata
 
-Delegates to metadata: GET /avus/{target-type}/{target-id}
+Delegates to apps: GET /apps/{app-id}/metadata
 
 Secured Endpoint: POST /apps/{app-id}/metadata
 
-Delegates to metadata: POST /avus/{target-type}/{target-id}
+Delegates to apps: POST /apps/{app-id}/metadata
 
 Secured Endpoint: PUT /apps/{app-id}/metadata
 
-Delegates to metadata: PUT /avus/{target-type}/{target-id}
+Delegates to apps: PUT /apps/{app-id}/metadata
 
-These endpoints are passthroughs to the metadata endpoints of the given paths,
-where {target-type} is "app".
+These endpoints are passthroughs to the apps endpoints using the same paths.
 Please see the corresponding service documentation for more information.
 
 ## Listing Tasks in an App
