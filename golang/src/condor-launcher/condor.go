@@ -51,17 +51,10 @@ import (
 )
 
 var (
-	cfgPath = flag.String("config", "", "Path to the config file. Required.")
-	version = flag.Bool("version", false, "Print the version information")
 	gitref  string
 	appver  string
 	builtby string
 )
-
-func init() {
-	flag.Parse()
-	logcabin.Init("condor-launcher", "condor-launcher")
-}
 
 // CondorLauncher contains the condor-launcher application state.
 type CondorLauncher struct {
@@ -410,6 +403,15 @@ func AppVersion() {
 }
 
 func main() {
+	var (
+		cfgPath = flag.String("config", "", "Path to the config file. Required.")
+		version = flag.Bool("version", false, "Print the version information")
+	)
+
+	flag.Parse()
+
+	logcabin.Init("condor-launcher", "condor-launcher")
+
 	if *version {
 		AppVersion()
 		os.Exit(0)
