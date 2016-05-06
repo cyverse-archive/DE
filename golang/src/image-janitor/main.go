@@ -19,21 +19,11 @@ import (
 )
 
 var (
-	version       = flag.Bool("version", false, "Print version information.")
-	interval      = flag.String("interval", "1m", "Time between clean up attempts.")
-	cfgPath       = flag.String("config", "/etc/jobservices.yml", "Path to the config.")
-	readFrom      = flag.String("read-from", "/opt/image-janitor", "The directory that job files are read from.")
-	dockerURI     = flag.String("docker", "unix:///var/run/docker.sock", "The URI for connecting to docker.")
 	gitref        string
 	appver        string
 	builtby       string
 	filenameRegex = regexp.MustCompile(`(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.json$`)
 )
-
-func init() {
-	flag.Parse()
-	logcabin.Init("image-janitor", "image-janitor")
-}
 
 // AppVersion prints version information to stdout
 func AppVersion() {
@@ -261,10 +251,19 @@ func (i *ImageJanitor) readExcludes(readFrom string) (map[string]bool, error) {
 
 func main() {
 	var (
+		version       = flag.Bool("version", false, "Print version information.")
+		interval      = flag.String("interval", "1m", "Time between clean up attempts.")
+		cfgPath       = flag.String("config", "/etc/jobservices.yml", "Path to the config.")
+		readFrom      = flag.String("read-from", "/opt/image-janitor", "The directory that job files are read from.")
+		dockerURI     = flag.String("docker", "unix:///var/run/docker.sock", "The URI for connecting to docker.")
 		cfg           *config.Config
 		err           error
 		timerDuration time.Duration
 	)
+
+	flag.Parse()
+
+	logcabin.Init("image-janitor", "image-janitor")
 
 	if *version {
 		AppVersion()
