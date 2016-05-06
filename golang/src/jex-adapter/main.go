@@ -25,7 +25,6 @@ import (
 )
 
 var (
-	amqpURI string
 	gitref  string
 	appver  string
 	builtby string
@@ -261,6 +260,7 @@ func main() {
 		version = flag.Bool("version", false, "Print version information")
 		cfgPath = flag.String("config", "", "Path to the configuration file")
 		addr    = flag.String("addr", ":60000", "The port to listen on for HTTP requests")
+		amqpURI string
 	)
 
 	flag.Parse()
