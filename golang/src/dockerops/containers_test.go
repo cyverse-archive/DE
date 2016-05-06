@@ -13,10 +13,12 @@ import (
 	"testing"
 
 	"github.com/fsouza/go-dockerclient"
+	"github.com/olebedev/config"
 )
 
 var (
-	s *model.Job
+	s   *model.Job
+	cfg *config.Config
 )
 
 func shouldrun() bool {
@@ -43,31 +45,39 @@ func JSONData() ([]byte, error) {
 }
 
 func _inittests(t *testing.T, memoize bool) *model.Job {
+	var err error
 	if s == nil || !memoize {
-		configurate.Init("../test/test_config.json")
-		configurate.C.Set("irods.base", "/path/to/irodsbase")
-		configurate.C.Set("irods.host", "hostname")
-		configurate.C.Set("irods.port", "1247")
-		configurate.C.Set("irods.user", "user")
-		configurate.C.Set("irods.pass", "pass")
-		configurate.C.Set("irods.zone", "test")
-		configurate.C.Set("irods.resc", "")
-		configurate.C.Set("condor.log_path", "/path/to/logs")
-		configurate.C.Set("condor.porklock_tag", "test")
-		configurate.C.Set("condor.filter_files", "foo,bar,baz,blippy")
-		configurate.C.Set("condor.request_disk", "0")
+		// cfg, err = configurate.Init("../test/test_config.json")
+		// if err != nil {
+		// 	t.Error(err)
+		// }
+		cfg, err = configurate.Init("../test/test_config.yaml")
+		if err != nil {
+			t.Fatal(err)
+		}
+		cfg.Set("irods.base", "/path/to/irodsbase")
+		cfg.Set("irods.host", "hostname")
+		cfg.Set("irods.port", "1247")
+		cfg.Set("irods.user", "user")
+		cfg.Set("irods.pass", "pass")
+		cfg.Set("irods.zone", "test")
+		cfg.Set("irods.resc", "")
+		cfg.Set("condor.log_path", "/path/to/logs")
+		cfg.Set("condor.porklock_tag", "test")
+		cfg.Set("condor.filter_files", "foo,bar,baz,blippy")
+		cfg.Set("condor.request_disk", "0")
 		data, err := JSONData()
 		if err != nil {
 			t.Error(err)
 		}
-		s, err = model.NewFromData(configurate.C, data)
+		s, err = model.NewFromData(cfg, data)
 		if err != nil {
 			t.Error(err)
 		}
-		err = configurate.Init("../test/test_config.yaml")
-		if err != nil {
-			t.Fatal(err)
-		}
+		// err = configurate.Init("../test/test_config.yaml")
+		// if err != nil {
+		// 	t.Fatal(err)
+		// }
 	}
 	return s
 }
@@ -80,7 +90,7 @@ func TestNewDocker(t *testing.T) {
 	if !shouldrun() {
 		return
 	}
-	_, err := NewDocker(uri())
+	_, err := NewDocker(cfg, uri())
 	if err != nil {
 		t.Error(err)
 	}
@@ -90,7 +100,7 @@ func TestIsContainer(t *testing.T) {
 	if !shouldrun() {
 		return
 	}
-	dc, err := NewDocker(uri())
+	dc, err := NewDocker(cfg, uri())
 	if err != nil {
 		t.Error(err)
 	}
@@ -107,7 +117,7 @@ func TestPull(t *testing.T) {
 	if !shouldrun() {
 		return
 	}
-	dc, err := NewDocker(uri())
+	dc, err := NewDocker(cfg, uri())
 	if err != nil {
 		t.Error(err)
 	}
@@ -122,7 +132,7 @@ func TestCreateIsContainerAndNukeByName(t *testing.T) {
 		return
 	}
 	job := inittests(t)
-	dc, err := NewDocker(uri())
+	dc, err := NewDocker(cfg, uri())
 	if err != nil {
 		t.Error(err)
 	}
@@ -234,15 +244,15 @@ func TestCreateDownloadContainer(t *testing.T) {
 		return
 	}
 	job := inittests(t)
-	dc, err := NewDocker(uri())
+	dc, err := NewDocker(cfg, uri())
 	if err != nil {
 		t.Error(err)
 	}
-	image, err := configurate.C.String("porklock.image")
+	image, err := cfg.String("porklock.image")
 	if err != nil {
 		t.Error(err)
 	}
-	tag, err := configurate.C.String("porklock.tag")
+	tag, err := cfg.String("porklock.tag")
 	if err != nil {
 		t.Error(err)
 	}
@@ -323,15 +333,15 @@ func TestCreateUploadContainer(t *testing.T) {
 		return
 	}
 	job := inittests(t)
-	dc, err := NewDocker(uri())
+	dc, err := NewDocker(cfg, uri())
 	if err != nil {
 		t.Error(err)
 	}
-	image, err := configurate.C.String("porklock.image")
+	image, err := cfg.String("porklock.image")
 	if err != nil {
 		t.Error(err)
 	}
-	tag, err := configurate.C.String("porklock.tag")
+	tag, err := cfg.String("porklock.tag")
 	if err != nil {
 		t.Error(err)
 	}
@@ -407,7 +417,7 @@ func TestAttach(t *testing.T) {
 		return
 	}
 	job := inittests(t)
-	dc, err := NewDocker(uri())
+	dc, err := NewDocker(cfg, uri())
 	if err != nil {
 		t.Error(err)
 	}
@@ -451,7 +461,7 @@ func TestRunStep(t *testing.T) {
 		return
 	}
 	job := inittests(t)
-	dc, err := NewDocker(uri())
+	dc, err := NewDocker(cfg, uri())
 	if err != nil {
 		t.Error(err)
 	}
@@ -512,15 +522,15 @@ func TestDownloadInputs(t *testing.T) {
 		return
 	}
 	job := inittests(t)
-	dc, err := NewDocker(uri())
+	dc, err := NewDocker(cfg, uri())
 	if err != nil {
 		t.Error(err)
 	}
-	image, err := configurate.C.String("porklock.image")
+	image, err := cfg.String("porklock.image")
 	if err != nil {
 		t.Error(err)
 	}
-	tag, err := configurate.C.String("porklock.tag")
+	tag, err := cfg.String("porklock.tag")
 	if err != nil {
 		t.Error(err)
 	}
@@ -585,15 +595,15 @@ func TestUploadOutputs(t *testing.T) {
 		return
 	}
 	job := inittests(t)
-	dc, err := NewDocker(uri())
+	dc, err := NewDocker(cfg, uri())
 	if err != nil {
 		t.Error(err)
 	}
-	image, err := configurate.C.String("porklock.image")
+	image, err := cfg.String("porklock.image")
 	if err != nil {
 		t.Error(err)
 	}
-	tag, err := configurate.C.String("porklock.tag")
+	tag, err := cfg.String("porklock.tag")
 	if err != nil {
 		t.Error(err)
 	}
@@ -658,15 +668,15 @@ func TestCreateDataContainer(t *testing.T) {
 		return
 	}
 	job := inittests(t)
-	dc, err := NewDocker(uri())
+	dc, err := NewDocker(cfg, uri())
 	if err != nil {
 		t.Error(err)
 	}
-	image, err := configurate.C.String("porklock.image")
+	image, err := cfg.String("porklock.image")
 	if err != nil {
 		t.Error(err)
 	}
-	tag, err := configurate.C.String("porklock.tag")
+	tag, err := cfg.String("porklock.tag")
 	if err != nil {
 		t.Error(err)
 	}

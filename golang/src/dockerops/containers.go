@@ -1,7 +1,6 @@
 package dockerops
 
 import (
-	"configurate"
 	"fmt"
 	"io"
 	"logcabin"
@@ -11,12 +10,14 @@ import (
 	"strings"
 
 	"github.com/fsouza/go-dockerclient"
+	"github.com/olebedev/config"
 )
 
 // Docker provides operations that runner needs from the docker client.
 type Docker struct {
 	Client        *docker.Client
 	TransferImage string
+	cfg           *config.Config
 }
 
 // WORKDIR is the path to the working directory inside all of the containers
@@ -42,13 +43,15 @@ const (
 
 // NewDocker returns a *Docker that connects to the docker client listening at
 // 'uri'.
-func NewDocker(uri string) (*Docker, error) {
-	d := &Docker{}
+func NewDocker(cfg *config.Config, uri string) (*Docker, error) {
 	cl, err := docker.NewClient(uri)
 	if err != nil {
 		return nil, err
 	}
-	d.Client = cl
+	d := &Docker{
+		Client: cl,
+		cfg:    cfg,
+	}
 	return d, err
 }
 
@@ -448,11 +451,11 @@ func (d *Docker) CreateDownloadContainer(job *model.Job, input *model.StepInput,
 		Config:     &docker.Config{},
 		HostConfig: &docker.HostConfig{},
 	}
-	image, err := configurate.C.String("porklock.image")
+	image, err := d.cfg.String("porklock.image")
 	if err != nil {
 		return nil, nil, err
 	}
-	tag, err := configurate.C.String("porklock.tag")
+	tag, err := d.cfg.String("porklock.tag")
 	if err != nil {
 		return nil, nil, err
 	}
@@ -513,11 +516,11 @@ func (d *Docker) CreateUploadContainer(job *model.Job) (*docker.Container, *dock
 		Config:     &docker.Config{},
 		HostConfig: &docker.HostConfig{},
 	}
-	image, err := configurate.C.String("porklock.image")
+	image, err := d.cfg.String("porklock.image")
 	if err != nil {
 		return nil, nil, err
 	}
-	tag, err := configurate.C.String("porklock.tag")
+	tag, err := d.cfg.String("porklock.tag")
 	if err != nil {
 		return nil, nil, err
 	}
