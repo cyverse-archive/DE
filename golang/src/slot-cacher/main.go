@@ -15,18 +15,11 @@ import (
 )
 
 var (
-	interval     = flag.String("interval", "5s", "The length of time between cache refreshes. Must be in Go's duration string format.")
-	port         = flag.String("port", ":60000", "The port to listen on.")
-	version      = flag.Bool("version", false, "Print the version information")
 	gitref       string
 	appver       string
 	builtby      string
 	condorStatus = "condor_status"
 )
-
-func init() {
-	flag.Parse()
-}
 
 // AppVersion prints version information to stdout
 func AppVersion() {
@@ -137,11 +130,16 @@ func (s *slotStorer) Respond(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	var (
+		interval = flag.String("interval", "5s", "The length of time between cache refreshes. Must be in Go's duration string format.")
+		port     = flag.String("port", ":60000", "The port to listen on.")
+		version  = flag.Bool("version", false, "Print the version information")
 		err      error
 		duration time.Duration
 		t        *time.Ticker
 		s        *slotStorer
 	)
+
+	flag.Parse()
 
 	if *version {
 		AppVersion()
