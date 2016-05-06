@@ -11,6 +11,7 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.diskResource.client.MetadataView;
 import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceMetadataUpdateCallback;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 
@@ -41,6 +42,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
 
             @Override
             public void onSuccess(final List<MetadataTemplateInfo> result) {
+                GWT.log("templates size ---->" + result.size());
                 view.populateTemplates(result);
                 loadMetadata();
             }
@@ -57,7 +59,8 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
                 if (metadataTemplateList != null) {
                     final List<DiskResourceMetadataTemplate> templates = metadataTemplateList.getTemplates();
                     if (templates != null && !templates.isEmpty()) {
-                        view.loadMetadataTemplate(templates.get(0));
+                   //     view.loadMetadataTemplate(templates.get(0));
+                        view.loadUserMetadata(templates.get(0).getAvus());
                     }
                 }
             }
@@ -89,10 +92,10 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
             }
         };
 
-        drService.setDiskResourceMetaData(resource,
-                                          view.getMetadataTemplate(),
-                                          view.getAvus(),
-                                          batchAvuCallback);
+//        drService.setDiskResourceMetaData(resource,
+//                                          view.getMetadataTemplate(),
+//                                          view.getAvus(),
+//                                          batchAvuCallback);
     }
 
     @Override
@@ -106,7 +109,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
 
             @Override
             public void onSuccess(MetadataTemplate result) {
-                view.loadTemplateAttributes(result.getAttributes());
+              //  view.loadTemplateAttributes(result.getAttributes());
             }
         });
 
