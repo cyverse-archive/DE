@@ -71,7 +71,6 @@ public interface MetadataView extends IsWidget {
 
     }
 
-    DiskResourceMetadataTemplate getMetadataTemplate();
 
     List<DiskResourceMetadata> getAvus();
 
@@ -79,13 +78,10 @@ public interface MetadataView extends IsWidget {
 
     void loadMetadata(List<DiskResourceMetadata> metadataList);
 
-    void loadMetadataTemplate(DiskResourceMetadataTemplate metadataTemplate);
-
-    void loadTemplateAttributes(List<MetadataTemplateAttribute> attributes);
+    void loadUserMetadata(List<DiskResourceMetadata> metadataList);
 
     void populateTemplates(List<MetadataTemplateInfo> templates);
 
     void setPresenter(Presenter p);
 
-    // boolean shouldValidate();
-}
+ }
