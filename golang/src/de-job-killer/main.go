@@ -75,32 +75,40 @@ func main() {
 		AppVersion()
 		os.Exit(0)
 	}
+
 	if *config == "" {
 		flag.PrintDefaults()
 		log.Fatal("--config must be set.")
 	}
+
 	if *uuid == "" {
 		flag.PrintDefaults()
 		log.Fatal("--uuid must be set.")
 	}
+
 	if *killJob && *statusMsg {
 		log.Fatal("--kill and --send-status conflict.")
 	}
+
 	cfg, err := configurate.Init(*config)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	uri, err := cfg.String("amqp.uri")
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	client, err := messaging.NewClient(uri, true)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
 	defer client.Close()
+
 	client.SetupPublishing(messaging.JobsExchange)
 	go client.Listen()
+
 	switch {
 	case *killJob:
 		if err = doKillJob(client, *uuid); err != nil {
