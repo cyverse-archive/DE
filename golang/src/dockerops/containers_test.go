@@ -47,10 +47,6 @@ func JSONData() ([]byte, error) {
 func _inittests(t *testing.T, memoize bool) *model.Job {
 	var err error
 	if s == nil || !memoize {
-		// cfg, err = configurate.Init("../test/test_config.json")
-		// if err != nil {
-		// 	t.Error(err)
-		// }
 		cfg, err = configurate.Init("../test/test_config.yaml")
 		if err != nil {
 			t.Fatal(err)
@@ -74,10 +70,6 @@ func _inittests(t *testing.T, memoize bool) *model.Job {
 		if err != nil {
 			t.Error(err)
 		}
-		// err = configurate.Init("../test/test_config.yaml")
-		// if err != nil {
-		// 	t.Fatal(err)
-		// }
 	}
 	return s
 }
