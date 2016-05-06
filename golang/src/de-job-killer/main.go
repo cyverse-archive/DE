@@ -19,19 +19,10 @@ import (
 )
 
 var (
-	killJob   = flag.Bool("kill", false, "Send out a stop request. Conflicts with --send-status.")
-	statusMsg = flag.Bool("send-status", false, "Send out a job status. Conflicts with --kill.")
-	version   = flag.Bool("version", false, "Print the version information.")
-	config    = flag.String("config", "", "Path to the jobservices config. Required.")
-	uuid      = flag.String("uuid", "", "The job UUID to operate against.")
-	gitref    string
-	appver    string
-	builtby   string
+	gitref  string
+	appver  string
+	builtby string
 )
-
-func init() {
-	flag.Parse()
-}
 
 // AppVersion prints version information to stdout
 func AppVersion() {
@@ -71,6 +62,16 @@ func doStatusMessage(client *messaging.Client, uuid string) error {
 }
 
 func main() {
+	var (
+		killJob   = flag.Bool("kill", false, "Send out a stop request. Conflicts with --send-status.")
+		statusMsg = flag.Bool("send-status", false, "Send out a job status. Conflicts with --kill.")
+		version   = flag.Bool("version", false, "Print the version information.")
+		config    = flag.String("config", "", "Path to the jobservices config. Required.")
+		uuid      = flag.String("uuid", "", "The job UUID to operate against.")
+	)
+
+	flag.Parse()
+
 	if *version {
 		AppVersion()
 		os.Exit(0)
