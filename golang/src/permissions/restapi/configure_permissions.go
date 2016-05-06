@@ -13,6 +13,7 @@ import (
 	httpkit "github.com/go-swagger/go-swagger/httpkit"
 	swag "github.com/go-swagger/go-swagger/swag"
 	_ "github.com/lib/pq"
+	"github.com/olebedev/config"
 
 	"permissions/restapi/operations"
 	"permissions/restapi/operations/resource_types"
@@ -50,11 +51,15 @@ var db *sql.DB
 
 // Initialize the service.
 func initService() error {
-	if err := configurate.Init(options.CfgPath); err != nil {
+	var (
+		err error
+		cfg *config.Config
+	)
+	if cfg, err = configurate.Init(options.CfgPath); err != nil {
 		return err
 	}
 
-	dburi, err := configurate.C.String("db.uri")
+	dburi, err := cfg.String("db.uri")
 	if err != nil {
 		return err
 	}
