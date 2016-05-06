@@ -14,6 +14,8 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/olebedev/config"
 )
 
 var (
@@ -46,9 +48,21 @@ func AppVersion() {
 	}
 }
 
+// ImageJanitor contains application state for image-janitor
+type ImageJanitor struct {
+	cfg *config.Config
+}
+
+// New returns a *ImageJanitor
+func New(cfg *config.Config) *ImageJanitor {
+	return &ImageJanitor{
+		cfg: cfg,
+	}
+}
+
 // jobFiles lists the files in the directory that have a filename matching the
 // filenameRegex pattern.
-func jobFiles(dir string) ([]string, error) {
+func (i *ImageJanitor) jobFiles(dir string) ([]string, error) {
 	var retval []string
 	entries, err := ioutil.ReadDir(dir)
 	if err != nil {
@@ -67,14 +81,14 @@ func jobFiles(dir string) ([]string, error) {
 
 // jobs returns a list of model.Job's that were read from the file paths passed
 // in.
-func jobs(filepaths []string) ([]model.Job, error) {
+func (i *ImageJanitor) jobs(filepaths []string) ([]model.Job, error) {
 	var retval []model.Job
 	for _, filepath := range filepaths {
 		data, err := ioutil.ReadFile(filepath)
 		if err != nil {
 			return retval, err
 		}
-		job, err := model.NewFromData(configurate.C, data)
+		job, err := model.NewFromData(i.cfg, data)
 		if err != nil {
 			return retval, err
 		}
@@ -85,7 +99,7 @@ func jobs(filepaths []string) ([]model.Job, error) {
 
 // jobImages returns a uniquified list of container images referenced in the
 // model.Job's that were passed in.
-func jobImages(jobs []model.Job) []string {
+func (i *ImageJanitor) jobImages(jobs []model.Job) []string {
 	unique := make(map[string]bool)
 	for _, job := range jobs {
 		jobImages := job.ContainerImages()
@@ -105,7 +119,7 @@ func jobImages(jobs []model.Job) []string {
 // of images returned by Docker and returns the ones that can be safely removed.
 // Images are considered safe if they're listed in the Docker images but not
 // in the job images.
-func removableImages(jobImages, dockerImages []string) []string {
+func (i *ImageJanitor) removableImages(jobImages, dockerImages []string) []string {
 	imageMap := make(map[string]bool)
 	for _, di := range dockerImages {
 		imageMap[di] = true
@@ -125,7 +139,7 @@ func removableImages(jobImages, dockerImages []string) []string {
 
 // removeImage uses the dockerops.Docker client to safely remove the specified
 // image.
-func removeImage(client *dockerops.Docker, image string) error {
+func (i *ImageJanitor) removeImage(client *dockerops.Docker, image string) error {
 	var (
 		err       error
 		parts     []string
@@ -144,9 +158,9 @@ func removeImage(client *dockerops.Docker, image string) error {
 
 // removeUnusedImages removes all of the images returned by removeImage() from
 // the connected Docker Engine.
-func removeUnusedImages(client *dockerops.Docker, readFrom string) {
+func (i *ImageJanitor) removeUnusedImages(client *dockerops.Docker, readFrom string) {
 	logcabin.Info.Println("Removing unused Docker images")
-	listing, err := jobFiles(readFrom)
+	listing, err := i.jobFiles(readFrom)
 	if err != nil {
 		logcabin.Error.Print(err)
 		return
@@ -154,7 +168,7 @@ func removeUnusedImages(client *dockerops.Docker, readFrom string) {
 	for _, f := range listing {
 		logcabin.Info.Printf("Job file %s found in %s", f, readFrom)
 	}
-	jobList, err := jobs(listing)
+	jobList, err := i.jobs(listing)
 	if err != nil {
 		logcabin.Error.Print(err)
 		return
@@ -162,7 +176,7 @@ func removeUnusedImages(client *dockerops.Docker, readFrom string) {
 	for _, j := range jobList {
 		logcabin.Info.Printf("Job %s found in %s", j.InvocationID, readFrom)
 	}
-	imagesFromJobs := jobImages(jobList)
+	imagesFromJobs := i.jobImages(jobList)
 	for _, i := range imagesFromJobs {
 		logcabin.Info.Printf("Image %s is referenced in a job", i)
 	}
@@ -174,15 +188,15 @@ func removeUnusedImages(client *dockerops.Docker, readFrom string) {
 	for _, d := range imagesFromDocker {
 		logcabin.Info.Printf("Image %s was listed by Docker", d)
 	}
-	rmables := removableImages(imagesFromJobs, imagesFromDocker)
-	excludes, err := readExcludes(readFrom)
+	rmables := i.removableImages(imagesFromJobs, imagesFromDocker)
+	excludes, err := i.readExcludes(readFrom)
 	if err != nil {
 		logcabin.Error.Println(err)
 	}
 	for _, removableImage := range rmables {
 		if _, ok := excludes[removableImage]; !ok {
 			logcabin.Info.Printf("Removing image %s...", removableImage)
-			if err = removeImage(client, removableImage); err != nil {
+			if err = i.removeImage(client, removableImage); err != nil {
 				logcabin.Error.Printf("Error removing image %s: %s", removableImage, err)
 			} else {
 				logcabin.Info.Printf("Done removing image %s", removableImage)
@@ -206,7 +220,7 @@ func removeUnusedImages(client *dockerops.Docker, readFrom string) {
 	}
 }
 
-func readExcludes(readFrom string) (map[string]bool, error) {
+func (i *ImageJanitor) readExcludes(readFrom string) (map[string]bool, error) {
 	retval := make(map[string]bool)
 	excludesPath := path.Join(readFrom, "excludes")
 	excludesBytes, err := ioutil.ReadFile(excludesPath)
@@ -222,6 +236,7 @@ func readExcludes(readFrom string) (map[string]bool, error) {
 
 func main() {
 	var (
+		cfg           *config.Config
 		err           error
 		timerDuration time.Duration
 	)
@@ -247,13 +262,14 @@ func main() {
 		logcabin.Error.Fatal(*cfgPath)
 	}
 	r.Close()
-	err = configurate.Init(*cfgPath)
+	cfg, err = configurate.Init(*cfgPath)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
+	app := New(cfg)
 	logcabin.Info.Printf("Done reading config from %s", *cfgPath)
 	logcabin.Info.Printf("Connecting to Docker at %s", *dockerURI)
-	client, err := dockerops.NewDocker(*dockerURI)
+	client, err := dockerops.NewDocker(cfg, *dockerURI)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
@@ -262,7 +278,7 @@ func main() {
 	for {
 		select {
 		case <-timer.C:
-			removeUnusedImages(client, *readFrom)
+			app.removeUnusedImages(client, *readFrom)
 		}
 	}
 }

@@ -5,6 +5,12 @@ import (
 	"dockerops"
 	"os"
 	"testing"
+
+	"github.com/olebedev/config"
+)
+
+var (
+	cfg *config.Config
 )
 
 func shouldrun() bool {
@@ -19,7 +25,7 @@ func uri() string {
 }
 
 func Client() (*dockerops.Docker, error) {
-	client, err := dockerops.NewDocker(uri())
+	client, err := dockerops.NewDocker(cfg, uri())
 	if err != nil {
 		return nil, err
 	}
@@ -27,22 +33,27 @@ func Client() (*dockerops.Docker, error) {
 }
 
 func inittests(t *testing.T) {
-	configurate.Init("../test/test_config.yaml")
-	configurate.C.Set("irods.base", "/path/to/irodsbase")
-	configurate.C.Set("irods.host", "hostname")
-	configurate.C.Set("irods.port", "1247")
-	configurate.C.Set("irods.user", "user")
-	configurate.C.Set("irods.pass", "pass")
-	configurate.C.Set("irods.zone", "test")
-	configurate.C.Set("irods.resc", "")
-	configurate.C.Set("condor.log_path", "/path/to/logs")
-	configurate.C.Set("condor.porklock_tag", "test")
-	configurate.C.Set("condor.filter_files", "foo,bar,baz,blippy")
-	configurate.C.Set("condor.request_disk", "0")
+	var err error
+	cfg, err = configurate.Init("../test/test_config.yaml")
+	if err != nil {
+		t.Error(err)
+	}
+	cfg.Set("irods.base", "/path/to/irodsbase")
+	cfg.Set("irods.host", "hostname")
+	cfg.Set("irods.port", "1247")
+	cfg.Set("irods.user", "user")
+	cfg.Set("irods.pass", "pass")
+	cfg.Set("irods.zone", "test")
+	cfg.Set("irods.resc", "")
+	cfg.Set("condor.log_path", "/path/to/logs")
+	cfg.Set("condor.porklock_tag", "test")
+	cfg.Set("condor.filter_files", "foo,bar,baz,blippy")
+	cfg.Set("condor.request_disk", "0")
 }
 
 func TestJobFiles(t *testing.T) {
-	listing, err := jobFiles("../test/")
+	app := New(cfg)
+	listing, err := app.jobFiles("../test/")
 	if err != nil {
 		t.Error(err)
 	}
@@ -78,11 +89,12 @@ func TestJobFiles(t *testing.T) {
 
 func TestJobs(t *testing.T) {
 	inittests(t)
-	paths, err := jobFiles("../test/")
+	app := New(cfg)
+	paths, err := app.jobFiles("../test/")
 	if err != nil {
 		t.Error(err)
 	}
-	listing, err := jobs(paths)
+	listing, err := app.jobs(paths)
 	if err != nil {
 		t.Error(err)
 	}
@@ -117,15 +129,16 @@ func TestJobs(t *testing.T) {
 
 func TestJobImages(t *testing.T) {
 	inittests(t)
-	paths, err := jobFiles("../test/")
+	app := New(cfg)
+	paths, err := app.jobFiles("../test/")
 	if err != nil {
 		t.Error(err)
 	}
-	listing, err := jobs(paths)
+	listing, err := app.jobs(paths)
 	if err != nil {
 		t.Error(err)
 	}
-	images := jobImages(listing)
+	images := app.jobImages(listing)
 	actualLength := len(images)
 	expectedLength := 2
 	if actualLength != expectedLength {
@@ -151,21 +164,22 @@ func TestJobImages(t *testing.T) {
 
 func TestRemovableImages(t *testing.T) {
 	inittests(t)
-	paths, err := jobFiles("../test/")
+	app := New(cfg)
+	paths, err := app.jobFiles("../test/")
 	if err != nil {
 		t.Error(err)
 	}
-	listing, err := jobs(paths)
+	listing, err := app.jobs(paths)
 	if err != nil {
 		t.Error(err)
 	}
-	jImages := jobImages(listing)
+	jImages := app.jobImages(listing)
 	dImages := []string{
 		"gims.iplantcollaborative.org:5000/backwards-compat:latest",
 		"gims.iplantcollaborative.org:5000/fake-image:latest",
 		"not-listed",
 	}
-	rImages := removableImages(jImages, dImages)
+	rImages := app.removableImages(jImages, dImages)
 	actualLength := len(rImages)
 	expectedLength := 1
 	if actualLength != expectedLength {
@@ -182,6 +196,7 @@ func TestRemoveImage(t *testing.T) {
 	if !shouldrun() {
 		return
 	}
+	app := New(cfg)
 	client, err := Client()
 	if err != nil {
 		t.Error(err)
@@ -190,7 +205,7 @@ func TestRemoveImage(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	err = removeImage(client, "alpine:latest")
+	err = app.removeImage(client, "alpine:latest")
 	if err != nil {
 		t.Error(err)
 	}
@@ -213,6 +228,7 @@ func TestRemoveUnusedImages(t *testing.T) {
 	if !shouldrun() {
 		return
 	}
+	app := New(cfg)
 	client, err := Client()
 	if err != nil {
 		t.Error(err)
@@ -221,7 +237,7 @@ func TestRemoveUnusedImages(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	removeUnusedImages(client, "../test/")
+	app.removeUnusedImages(client, "../test/")
 	images, err := client.Images()
 	if err != nil {
 		t.Error(err)
