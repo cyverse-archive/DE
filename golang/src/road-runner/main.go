@@ -44,22 +44,30 @@ var (
 
 func signals() {
 	c := make(chan os.Signal, 1)
+
 	signal.Notify(c, os.Interrupt, os.Kill, syscall.SIGTERM, syscall.SIGSTOP, syscall.SIGQUIT)
+
 	go func() {
 		sig := <-c
+
 		logcabin.Info.Println("Received signal:", sig)
+
 		if dckr == nil {
 			logcabin.Warning.Println("Docker client is nil, can't clean up. Probably don't need to.")
 		}
+
 		if job == nil {
 			logcabin.Warning.Println("Info didn't get parsed from the job file, can't clean up. Probably don't need to.")
 		}
+
 		if dckr != nil && job != nil {
 			cleanup(job)
 		}
+
 		if client != nil && job != nil {
 			fail(client, job, fmt.Sprintf("Received signal %s", sig))
 		}
+
 		os.Exit(-1)
 	}()
 }
@@ -78,7 +86,6 @@ func AppVersion() {
 	if gitref != "" {
 		fmt.Printf("Git-Ref: %s\n", gitref)
 	}
-
 	if builtby != "" {
 		fmt.Printf("Built-By: %s\n", builtby)
 	}
@@ -167,23 +174,28 @@ func (t *TimeTracker) ApplyDelta(deltaDuration time.Duration) error {
 func RegisterTimeLimitDeltaListener(client *messaging.Client, timeTracker *TimeTracker, invID string) {
 	client.AddDeletableConsumer(messaging.JobsExchange, "topic", messaging.TimeLimitDeltaQueueName(invID), messaging.TimeLimitDeltaRequestKey(invID), func(d amqp.Delivery) {
 		d.Ack(false)
+
 		running(client, job, "Received delta request")
+
 		deltaMsg := &messaging.TimeLimitDelta{}
 		err := json.Unmarshal(d.Body, deltaMsg)
 		if err != nil {
 			running(client, job, fmt.Sprintf("Failed to unmarshal time limit delta: %s", err.Error()))
 			return
 		}
+
 		newDuration, err := time.ParseDuration(deltaMsg.Delta)
 		if err != nil {
 			running(client, job, fmt.Sprintf("Failed to parse duration string from message: %s", err.Error()))
 			return
 		}
+
 		err = timeTracker.ApplyDelta(newDuration)
 		if err != nil {
 			running(client, job, fmt.Sprintf("Failed to apply time limit delta: %s", err.Error()))
 			return
 		}
+
 		running(client, job, fmt.Sprintf("Applied time delta of %s. New end date is %s", deltaMsg.Delta, timeTracker.EndDate.UTC().String()))
 	})
 }
@@ -193,13 +205,16 @@ func RegisterTimeLimitDeltaListener(client *messaging.Client, timeTracker *TimeT
 func RegisterTimeLimitRequestListener(client *messaging.Client, timeTracker *TimeTracker, invID string) {
 	client.AddDeletableConsumer(messaging.JobsExchange, "topic", messaging.TimeLimitRequestQueueName(invID), messaging.TimeLimitRequestKey(invID), func(d amqp.Delivery) {
 		d.Ack(false)
+
 		running(client, job, "Received time limit request")
+
 		timeLeft := int64(timeTracker.EndDate.Sub(time.Now())) / int64(time.Millisecond)
 		err := client.SendTimeLimitResponse(invID, timeLeft)
 		if err != nil {
 			running(client, job, fmt.Sprintf("Failed to send time limit response: %s", err.Error()))
 			return
 		}
+
 		running(client, job, fmt.Sprintf("Sent message saying that time left is %dms", timeLeft))
 	})
 }
@@ -230,14 +245,17 @@ func copyJobFile(uuid, from, toDir string) error {
 	if err != nil {
 		return err
 	}
+
 	outputFilePath := path.Join(toDir, fmt.Sprintf("%s.json", uuid))
 	outputWriter, err := os.Create(outputFilePath)
 	if err != nil {
 		return err
 	}
+
 	if _, err := io.Copy(outputWriter, inputReader); err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -253,13 +271,16 @@ func main() {
 		err error
 		cfg *config.Config
 	)
+
 	if *version {
 		AppVersion()
 		os.Exit(0)
 	}
+
 	if *cfgPath == "" {
 		logcabin.Error.Fatal("--config must be set.")
 	}
+
 	logcabin.Info.Printf("Reading config from %s", *cfgPath)
 	if _, err = os.Open(*cfgPath); err != nil {
 		logcabin.Error.Fatal(*cfgPath)
@@ -269,20 +290,25 @@ func main() {
 		logcabin.Error.Fatal(err)
 	}
 	logcabin.Info.Printf("Done reading config from %s", *cfgPath)
+
 	if *jobFile == "" {
 		logcabin.Error.Fatal("--job must be set.")
 	}
+
 	data, err := ioutil.ReadFile(*jobFile)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
+
 	job, err = model.NewFromData(cfg, data)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
+
 	if _, err = os.Open(*writeTo); err != nil {
 		logcabin.Error.Fatal(err)
 	}
+
 	if err = copyJobFile(job.InvocationID, *jobFile, *writeTo); err != nil {
 		logcabin.Error.Fatal(err)
 	}
@@ -291,6 +317,7 @@ func main() {
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
+
 	client, err = messaging.NewClient(uri, true)
 	if err != nil {
 		logcabin.Error.Fatal(err)
@@ -338,15 +365,20 @@ func main() {
 	if err != nil {
 		logcabin.Error.Print(err)
 	}
+
 	if err = writeJobSummary("logs", job); err != nil {
 		logcabin.Error.Print(err)
 	}
+
 	if err = writeJobParameters("logs", job); err != nil {
 		logcabin.Error.Print(err)
 	}
 
 	go Run(client, dckr, exit)
+
 	exitCode := <-finalExit
+
 	deleteJobFile(job.InvocationID, *writeTo)
+
 	os.Exit(int(exitCode))
 }
