@@ -1,4 +1,0 @@
-language: clojure
-script: lein2 midje
-lein: lein2
-
