@@ -27,6 +27,7 @@ import (
 	"time"
 
 	_ "github.com/lib/pq"
+	"github.com/olebedev/config"
 )
 
 var (
@@ -318,7 +319,10 @@ func ScanAndPropagate(d *sql.DB) error {
 }
 
 func main() {
-	var err error
+	var (
+		err error
+		cfg *config.Config
+	)
 
 	if *version {
 		AppVersion()
@@ -331,7 +335,7 @@ func main() {
 		os.Exit(-1)
 	}
 
-	err = configurate.Init(*cfgPath)
+	cfg, err = configurate.Init(*cfgPath)
 	if err != nil {
 		logcabin.Error.Print(err)
 		os.Exit(-1)
@@ -340,15 +344,15 @@ func main() {
 	logcabin.Info.Println("Done reading config.")
 
 	if *dbURI == "" {
-		if *dbURI == "" {
-			*dbURI, err = configurate.C.String("db.uri")
-			if err != nil {
-				logcabin.Error.Fatal(err)
-			}
+		*dbURI, err = cfg.String("db.uri")
+		if err != nil {
+			logcabin.Error.Fatal(err)
 		}
+	} else {
+		cfg.Set("db.uri", *dbURI)
 	}
 
-	appsURI, err = configurate.C.String("apps.callbacks_uri")
+	appsURI, err = cfg.String("apps.callbacks_uri")
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
