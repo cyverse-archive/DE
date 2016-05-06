@@ -37,7 +37,6 @@ func AppVersion() {
 	if gitref != "" {
 		fmt.Printf("Git-Ref: %s\n", gitref)
 	}
-
 	if builtby != "" {
 		fmt.Printf("Built-By: %s\n", builtby)
 	}
@@ -81,32 +80,40 @@ func (r *JobStatusRecorder) msg(delivery amqp.Delivery) {
 	if err := delivery.Ack(false); err != nil {
 		logcabin.Error.Print(err)
 	}
+
 	logcabin.Info.Println("Message received")
+
 	update := &messaging.UpdateMessage{}
+
 	err := json.Unmarshal(delivery.Body, update)
 	if err != nil {
 		logcabin.Error.Print(err)
 		return
 	}
+
 	if update.State == "" {
 		logcabin.Warning.Println("State was unset, dropping update")
 		return
 	}
 	logcabin.Info.Printf("State is %s\n", update.State)
+
 	if update.Job.InvocationID == "" {
 		logcabin.Warning.Println("InvocationID was unset, dropping update")
 	}
 	logcabin.Info.Printf("InvocationID is %s\n", update.Job.InvocationID)
+
 	if update.Message == "" {
 		logcabin.Warning.Println("Message set to empty string, setting to UNKNOWN")
 		update.Message = "UNKNOWN"
 	}
 	logcabin.Info.Printf("Message is: %s", update.Message)
+
 	var sentFromAddr string
 	if update.Sender == "" {
 		logcabin.Warning.Println("Unknown sender, setting from address to 0.0.0.0")
 		update.Sender = "0.0.0.0"
 	}
+
 	parsedIP := net.ParseIP(update.Sender)
 	if parsedIP != nil {
 		sentFromAddr = update.Sender
@@ -120,7 +127,9 @@ func (r *JobStatusRecorder) msg(delivery amqp.Delivery) {
 			}
 		}
 	}
+
 	logcabin.Info.Printf("Sent from: %s", sentFromAddr)
+
 	logcabin.Info.Printf("Sent On, unparsed: %s", update.SentOn)
 	sentOn, err := strconv.ParseInt(update.SentOn, 10, 64)
 	if err != nil {
@@ -128,6 +137,7 @@ func (r *JobStatusRecorder) msg(delivery amqp.Delivery) {
 		sentOn = 0
 	}
 	logcabin.Info.Printf("Sent On: %d", sentOn)
+
 	result, err := r.insert(
 		string(update.State),
 		update.Job.InvocationID,
@@ -140,6 +150,7 @@ func (r *JobStatusRecorder) msg(delivery amqp.Delivery) {
 		logcabin.Error.Print(err)
 		return
 	}
+
 	rowCount, err := result.RowsAffected()
 	if err != nil {
 		logcabin.Error.Print(err)
@@ -158,19 +169,25 @@ func main() {
 		dbURI   = flag.String("db", "", "The URI used to connect to the database")
 		amqpURI = flag.String("amqp", "", "The URI used to connect to the amqp broker")
 	)
+
 	flag.Parse()
+
 	logcabin.Init("job-status-recorder", "job-status-recorder")
+
 	if *version {
 		AppVersion()
 		os.Exit(0)
 	}
+
 	if *cfgPath == "" {
 		logcabin.Error.Fatal("--config must be set.")
 	}
+
 	cfg, err = configurate.Init(*cfgPath)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
+
 	if *dbURI == "" {
 		*dbURI, err = cfg.String("db.uri")
 		if err != nil {
@@ -179,6 +196,7 @@ func main() {
 	} else {
 		cfg.Set("db.uri", *dbURI)
 	}
+
 	if *amqpURI == "" {
 		*amqpURI, err = cfg.String("amqp.uri")
 		if err != nil {
@@ -187,13 +205,16 @@ func main() {
 	} else {
 		cfg.Set("amqp.uri", *amqpURI)
 	}
+
 	app = New(cfg)
+
 	logcabin.Info.Printf("AMQP broker setting is %s\n", *amqpURI)
 	app.amqpClient, err = messaging.NewClient(*amqpURI, false)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
 	defer app.amqpClient.Close()
+
 	logcabin.Info.Println("Connecting to the database...")
 	app.db, err = sql.Open("postgres", *dbURI)
 	if err != nil {
@@ -204,7 +225,9 @@ func main() {
 		logcabin.Error.Fatal(err)
 	}
 	logcabin.Info.Println("Connected to the database")
+
 	go app.amqpClient.Listen()
+
 	app.amqpClient.AddConsumer(messaging.JobsExchange, "topic", "job_status_recorder", messaging.UpdatesKey, app.msg)
 	spinner := make(chan int)
 	<-spinner
