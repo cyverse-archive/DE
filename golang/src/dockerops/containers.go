@@ -234,7 +234,7 @@ func (d *Docker) Pull(name, tag string) error {
 		Repository:   name,
 		Registry:     reg,
 		Tag:          tag,
-		OutputStream: logcabin.Info_Lincoln,
+		OutputStream: logcabin.InfoLincoln,
 	}
 	return d.Client.PullImage(opts, auth)
 }

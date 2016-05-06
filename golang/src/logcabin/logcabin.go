@@ -15,10 +15,10 @@ var (
 	Warning *log.Logger
 	Error   *log.Logger
 
-	Trace_Lincoln   *Lincoln
-	Info_Lincoln    *Lincoln
-	Warning_Lincoln *Lincoln
-	Error_Lincoln   *Lincoln
+	TraceLincoln   *Lincoln
+	InfoLincoln    *Lincoln
+	WarningLincoln *Lincoln
+	ErrorLincoln   *Lincoln
 
 	Service  string
 	Artifact string
@@ -40,15 +40,15 @@ func Init(service, artifact string) {
 	Service = service
 	Artifact = artifact
 
-	Trace_Lincoln = &Lincoln{service, artifact, trace_lvl}
-	Info_Lincoln = &Lincoln{service, artifact, info_lvl}
-	Warning_Lincoln = &Lincoln{service, artifact, warn_lvl}
-	Error_Lincoln = &Lincoln{service, artifact, err_lvl}
+	TraceLincoln = &Lincoln{service, artifact, trace_lvl}
+	InfoLincoln = &Lincoln{service, artifact, info_lvl}
+	WarningLincoln = &Lincoln{service, artifact, warn_lvl}
+	ErrorLincoln = &Lincoln{service, artifact, err_lvl}
 
-	Trace = log.New(Trace_Lincoln, "", log.Lshortfile)
-	Info = log.New(Info_Lincoln, "", log.Lshortfile)
-	Warning = log.New(Warning_Lincoln, "", log.Lshortfile)
-	Error = log.New(Error_Lincoln, "", log.Lshortfile)
+	Trace = log.New(TraceLincoln, "", log.Lshortfile)
+	Info = log.New(InfoLincoln, "", log.Lshortfile)
+	Warning = log.New(WarningLincoln, "", log.Lshortfile)
+	Error = log.New(ErrorLincoln, "", log.Lshortfile)
 }
 
 // LogMessage represents a message that will be logged in JSON format.
