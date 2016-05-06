@@ -12,10 +12,10 @@ import (
 func TestAllLoggerOutput(t *testing.T) {
 	svc, artifact, msg := "test_service", "test_artifact", "msg"
 	Init(svc, artifact)
-	testLoggerOutput(svc, artifact, trace_lvl, msg, Trace, t)
-	testLoggerOutput(svc, artifact, info_lvl, msg, Info, t)
-	testLoggerOutput(svc, artifact, warn_lvl, msg, Warning, t)
-	testLoggerOutput(svc, artifact, err_lvl, msg, Error, t)
+	testLoggerOutput(svc, artifact, traceLevel, msg, Trace, t)
+	testLoggerOutput(svc, artifact, infoLevel, msg, Info, t)
+	testLoggerOutput(svc, artifact, warnLevel, msg, Warning, t)
+	testLoggerOutput(svc, artifact, errorLevel, msg, Error, t)
 }
 
 func testLoggerOutput(expectedSvc string, expectedArtifact string, expectedLvl string, expectedMsg string, logger *log.Logger, t *testing.T) {
