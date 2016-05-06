@@ -24,15 +24,13 @@ import (
 )
 
 var (
-	version    = flag.Bool("version", false, "Print the version information")
-	cfgPath    = flag.String("config", "", "The path to the config file")
-	dbURI      = flag.String("db", "", "The URI used to connect to the database")
-	amqpURI    = flag.String("amqp", "", "The URI used to connect to the amqp broker")
-	gitref     string
-	appver     string
-	builtby    string
-	amqpClient *messaging.Client
-	db         *sql.DB
+	version = flag.Bool("version", false, "Print the version information")
+	cfgPath = flag.String("config", "", "The path to the config file")
+	dbURI   = flag.String("db", "", "The URI used to connect to the database")
+	amqpURI = flag.String("amqp", "", "The URI used to connect to the amqp broker")
+	gitref  string
+	appver  string
+	builtby string
 )
 
 func init() {
@@ -56,7 +54,9 @@ func AppVersion() {
 
 // JobStatusRecorder contains the application state for job-status-recorder
 type JobStatusRecorder struct {
-	cfg *config.Config
+	cfg        *config.Config
+	amqpClient *messaging.Client
+	db         *sql.DB
 }
 
 // New returns a *JobStatusRecorder
@@ -83,7 +83,7 @@ func (r *JobStatusRecorder) insert(state, invID, msg, host, ip string, sentOn in
 			$5,
 			$6
 		) RETURNING id`
-	return db.Exec(insertStr, invID, msg, state, ip, host, sentOn)
+	return r.db.Exec(insertStr, invID, msg, state, ip, host, sentOn)
 }
 
 func (r *JobStatusRecorder) msg(delivery amqp.Delivery) {
@@ -192,23 +192,23 @@ func main() {
 	}
 	app = New(cfg)
 	logcabin.Info.Printf("AMQP broker setting is %s\n", *amqpURI)
-	amqpClient, err := messaging.NewClient(*amqpURI, false)
+	app.amqpClient, err = messaging.NewClient(*amqpURI, false)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
-	defer amqpClient.Close()
+	defer app.amqpClient.Close()
 	logcabin.Info.Println("Connecting to the database...")
-	db, err = sql.Open("postgres", *dbURI)
+	app.db, err = sql.Open("postgres", *dbURI)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
-	err = db.Ping()
+	err = app.db.Ping()
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
 	logcabin.Info.Println("Connected to the database")
-	go amqpClient.Listen()
-	amqpClient.AddConsumer(messaging.JobsExchange, "topic", "job_status_recorder", messaging.UpdatesKey, app.msg)
+	go app.amqpClient.Listen()
+	app.amqpClient.AddConsumer(messaging.JobsExchange, "topic", "job_status_recorder", messaging.UpdatesKey, app.msg)
 	spinner := make(chan int)
 	<-spinner
 }
