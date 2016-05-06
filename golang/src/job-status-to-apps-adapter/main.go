@@ -31,16 +31,11 @@ import (
 )
 
 var (
-	cfgPath    = flag.String("config", "", "Path to the config file. Required.")
-	version    = flag.Bool("version", false, "Print the version information")
-	dbURI      = flag.String("db", "", "The URI used to connect to the database")
-	amqpURI    = flag.String("amqp", "", "The URI used to connect to the amqp broker")
-	maxRetries = flag.Int64("retries", 3, "The maximum number of propagation retries to make")
-	gitref     string
-	appver     string
-	builtby    string
-	appsURI    string
-	db         *sql.DB
+	gitref  string
+	appver  string
+	builtby string
+	appsURI string
+	db      *sql.DB
 )
 
 // AppVersion prints version information to stdout
@@ -54,11 +49,6 @@ func AppVersion() {
 	if builtby != "" {
 		fmt.Printf("Built-By: %s\n", builtby)
 	}
-}
-
-func init() {
-	flag.Parse()
-	logcabin.Init("job-status-to-apps-adapter", "job-status-to-apps-adapter")
 }
 
 // JobStatusUpdate contains the data POSTed to the apps service.
@@ -284,7 +274,7 @@ func (p *Propagator) StorePropagationAttempts(update *DBJobStatusUpdate) error {
 // * Propagate any unpropagated steps that appear after the last propagated
 //   update.
 // * Commit the transaction.
-func ScanAndPropagate(d *sql.DB) error {
+func ScanAndPropagate(d *sql.DB, maxRetries int64) error {
 	unpropped, err := Unpropagated(d)
 	if err != nil {
 		return err
@@ -302,7 +292,7 @@ func ScanAndPropagate(d *sql.DB) error {
 		}
 
 		for _, subupdates := range updates {
-			if !subupdates.Propagated && subupdates.PropagationAttempts < *maxRetries {
+			if !subupdates.Propagated && subupdates.PropagationAttempts < maxRetries {
 				logcabin.Info.Printf("Propagating %#v", subupdates)
 				if err = proper.Propagate(&subupdates); err != nil {
 					logcabin.Error.Print(err)
@@ -330,9 +320,17 @@ func ScanAndPropagate(d *sql.DB) error {
 
 func main() {
 	var (
-		err error
-		cfg *config.Config
+		cfgPath    = flag.String("config", "", "Path to the config file. Required.")
+		version    = flag.Bool("version", false, "Print the version information")
+		dbURI      = flag.String("db", "", "The URI used to connect to the database")
+		maxRetries = flag.Int64("retries", 3, "The maximum number of propagation retries to make")
+		err        error
+		cfg        *config.Config
 	)
+
+	flag.Parse()
+
+	logcabin.Init("job-status-to-apps-adapter", "job-status-to-apps-adapter")
 
 	if *version {
 		AppVersion()
@@ -380,7 +378,7 @@ func main() {
 	logcabin.Info.Println("Connected to the database")
 
 	for {
-		if err = ScanAndPropagate(db); err != nil {
+		if err = ScanAndPropagate(db, *maxRetries); err != nil {
 			logcabin.Error.Fatal(err)
 		}
 		time.Sleep(5 * time.Second)
