@@ -34,7 +34,6 @@ var (
 	gitref  string
 	appver  string
 	builtby string
-	appsURI string
 )
 
 // AppVersion prints version information to stdout
@@ -108,18 +107,20 @@ type Propagator struct {
 	db       *sql.DB
 	tx       *sql.Tx
 	rollback bool
+	appsURI  string
 }
 
 // NewPropagator returns a *Propagator that has been initialized with a new
 // transaction.
-func NewPropagator(d *sql.DB) (*Propagator, error) {
+func NewPropagator(d *sql.DB, appsURI string) (*Propagator, error) {
 	t, err := d.Begin()
 	if err != nil {
 		return nil, err
 	}
 	return &Propagator{
-		db: d,
-		tx: t,
+		db:      d,
+		tx:      t,
+		appsURI: appsURI,
 	}, nil
 }
 
@@ -161,15 +162,15 @@ func (p *Propagator) Propagate(status *DBJobStatusUpdate) error {
 
 	logcabin.Info.Printf("Message to propagate: %s", string(msg))
 
-	logcabin.Info.Printf("Sending job status to %s in the propagate function for job %s", appsURI, jsu.UUID)
-	resp, err := http.Post(appsURI, "application/json", buf)
+	logcabin.Info.Printf("Sending job status to %s in the propagate function for job %s", p.appsURI, jsu.UUID)
+	resp, err := http.Post(p.appsURI, "application/json", buf)
 	if err != nil {
-		logcabin.Error.Printf("Error sending job status to %s in the propagate function for job %s: %#v", appsURI, jsu.UUID, err)
+		logcabin.Error.Printf("Error sending job status to %s in the propagate function for job %s: %#v", p.appsURI, jsu.UUID, err)
 		return err
 	}
 	defer resp.Body.Close()
 
-	logcabin.Info.Printf("Response from %s in the propagate function for job %s is: %s", appsURI, jsu.UUID, resp.Status)
+	logcabin.Info.Printf("Response from %s in the propagate function for job %s is: %s", p.appsURI, jsu.UUID, resp.Status)
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		return errors.New("bad response")
 	}
@@ -273,14 +274,14 @@ func (p *Propagator) StorePropagationAttempts(update *DBJobStatusUpdate) error {
 // * Propagate any unpropagated steps that appear after the last propagated
 //   update.
 // * Commit the transaction.
-func ScanAndPropagate(d *sql.DB, maxRetries int64) error {
+func ScanAndPropagate(d *sql.DB, maxRetries int64, appsURI string) error {
 	unpropped, err := Unpropagated(d)
 	if err != nil {
 		return err
 	}
 
 	for _, jobExtID := range unpropped {
-		proper, err := NewPropagator(d)
+		proper, err := NewPropagator(d, appsURI)
 		if err != nil {
 			return err
 		}
@@ -326,6 +327,7 @@ func main() {
 		err        error
 		cfg        *config.Config
 		db         *sql.DB
+		appsURI    string
 	)
 
 	flag.Parse()
@@ -378,7 +380,7 @@ func main() {
 	logcabin.Info.Println("Connected to the database")
 
 	for {
-		if err = ScanAndPropagate(db, *maxRetries); err != nil {
+		if err = ScanAndPropagate(db, *maxRetries, appsURI); err != nil {
 			logcabin.Error.Fatal(err)
 		}
 		time.Sleep(5 * time.Second)
