@@ -51,7 +51,6 @@ func AppVersion() {
 	if gitref != "" {
 		fmt.Printf("Git-Ref: %s\n", gitref)
 	}
-
 	if builtby != "" {
 		fmt.Printf("Built-By: %s\n", builtby)
 	}
@@ -149,24 +148,30 @@ func (p *Propagator) Propagate(status *DBJobStatusUpdate) error {
 		Status: status.Status,
 		UUID:   status.ExternalID,
 	}
+
 	if jsu.Status == string(messaging.SucceededState) || jsu.Status == string(messaging.FailedState) {
 		jsu.CompletionDate = fmt.Sprintf("%d", time.Now().UnixNano()/int64(time.Millisecond))
 	}
+
 	jsuw := JobStatusUpdateWrapper{
 		State: jsu,
 	}
+
 	logcabin.Info.Printf("Job status in the propagate function for job %s is: %#v", jsu.UUID, jsuw)
 	msg, err := json.Marshal(jsuw)
 	if err != nil {
 		logcabin.Error.Print(err)
 		return err
 	}
+
 	buf := bytes.NewBuffer(msg)
 	if err != nil {
 		logcabin.Error.Print(err)
 		return err
 	}
+
 	logcabin.Info.Printf("Message to propagate: %s", string(msg))
+
 	logcabin.Info.Printf("Sending job status to %s in the propagate function for job %s", appsURI, jsu.UUID)
 	resp, err := http.Post(appsURI, "application/json", buf)
 	if err != nil {
@@ -174,10 +179,12 @@ func (p *Propagator) Propagate(status *DBJobStatusUpdate) error {
 		return err
 	}
 	defer resp.Body.Close()
+
 	logcabin.Info.Printf("Response from %s in the propagate function for job %s is: %s", appsURI, jsu.UUID, resp.Status)
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		return errors.New("bad response")
 	}
+
 	return nil
 }
 
@@ -282,6 +289,7 @@ func ScanAndPropagate(d *sql.DB) error {
 	if err != nil {
 		return err
 	}
+
 	for _, jobExtID := range unpropped {
 		proper, err := NewPropagator(d)
 		if err != nil {
@@ -311,10 +319,12 @@ func ScanAndPropagate(d *sql.DB) error {
 				}
 			}
 		}
+
 		if err = proper.Finished(); err != nil {
 			logcabin.Error.Print(err)
 		}
 	}
+
 	return nil
 }
 
