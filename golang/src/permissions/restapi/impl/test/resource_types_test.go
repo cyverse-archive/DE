@@ -11,8 +11,6 @@ import (
 	impl "permissions/restapi/impl/resource_types"
 )
 
-const FAKE_ID = "1A960034-969A-46A7-B6B5-3F1866258CAB"
-
 func addResourceTypeAttempt(db *sql.DB, name, description string) middleware.Responder {
 
 	// build the request handler.

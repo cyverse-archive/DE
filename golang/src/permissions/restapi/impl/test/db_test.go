@@ -9,6 +9,8 @@ import (
 	_ "github.com/lib/pq"
 )
 
+const FAKE_ID = "1A960034-969A-46A7-B6B5-3F1866258CAB"
+
 func shouldrun() bool {
 	return os.Getenv("RUN_INTEGRATION_TESTS") != ""
 }

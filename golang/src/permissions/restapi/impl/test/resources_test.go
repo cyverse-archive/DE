@@ -249,3 +249,47 @@ func TestUpdateResource(t *testing.T) {
 		t.Errorf("unexpected resource type listed: %s", *resource.ResourceType)
 	}
 }
+
+func TestUpdateNonExistentResource(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Attempt to update a non-existent resource.
+	responder := updateResourceAttempt(db, FAKE_ID, "foo")
+
+	// Verify that we got the expected result.
+	errorOut := responder.(*resources.UpdateResourceNotFound).Payload
+	expected := fmt.Sprintf("resource, %s, not found", FAKE_ID)
+	if *errorOut.Reason != expected {
+		t.Errorf("unexpected failure message: %s", *errorOut.Reason)
+	}
+}
+
+func TestUpdateResourceDuplicateName(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Add two resources to the database.
+	r1 := addResource(db, "r1", "app")
+	r2 := addResource(db, "r2", "app")
+
+	// Attempt to give the second resource the first one's name.
+	responder := updateResourceAttempt(db, *r2.ID, *r1.Name)
+
+	// Verify that we got the expected result.
+	errorOut := responder.(*resources.UpdateResourceBadRequest).Payload
+	expected := fmt.Sprintf("a resource of the same type named, '%s', already exists", *r1.Name)
+	if *errorOut.Reason != expected {
+		t.Errorf("unexpected failure message: %s", *errorOut.Reason)
+	}
+}
