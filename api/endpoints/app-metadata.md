@@ -191,6 +191,18 @@ Please see the corresponding service documentation for more information.
 
 ## Managing App AVU Metadata
 
+Secured Endpoint: GET /admin/apps/{app-id}/metadata
+
+Delegates to apps: GET /admin/apps/{app-id}/metadata
+
+Secured Endpoint: POST /admin/apps/{app-id}/metadata
+
+Delegates to apps: POST /admin/apps/{app-id}/metadata
+
+Secured Endpoint: PUT /admin/apps/{app-id}/metadata
+
+Delegates to apps: PUT /admin/apps/{app-id}/metadata
+
 Secured Endpoint: GET /apps/{app-id}/metadata
 
 Delegates to apps: GET /apps/{app-id}/metadata
