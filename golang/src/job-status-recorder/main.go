@@ -24,19 +24,10 @@ import (
 )
 
 var (
-	version = flag.Bool("version", false, "Print the version information")
-	cfgPath = flag.String("config", "", "The path to the config file")
-	dbURI   = flag.String("db", "", "The URI used to connect to the database")
-	amqpURI = flag.String("amqp", "", "The URI used to connect to the amqp broker")
 	gitref  string
 	appver  string
 	builtby string
 )
-
-func init() {
-	flag.Parse()
-	logcabin.Init("job-status-recorder", "job-status-recorder")
-}
 
 // AppVersion prints version information to stdout
 func AppVersion() {
@@ -159,10 +150,16 @@ func (r *JobStatusRecorder) msg(delivery amqp.Delivery) {
 
 func main() {
 	var (
-		err error
-		app *JobStatusRecorder
-		cfg *config.Config
+		err     error
+		app     *JobStatusRecorder
+		cfg     *config.Config
+		version = flag.Bool("version", false, "Print the version information")
+		cfgPath = flag.String("config", "", "The path to the config file")
+		dbURI   = flag.String("db", "", "The URI used to connect to the database")
+		amqpURI = flag.String("amqp", "", "The URI used to connect to the amqp broker")
 	)
+	flag.Parse()
+	logcabin.Init("job-status-recorder", "job-status-recorder")
 	if *version {
 		AppVersion()
 		os.Exit(0)
