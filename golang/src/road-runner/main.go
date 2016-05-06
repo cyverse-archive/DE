@@ -24,6 +24,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/olebedev/config"
 	"github.com/streadway/amqp"
 )
 
@@ -248,7 +249,10 @@ func deleteJobFile(uuid, toDir string) {
 }
 
 func main() {
-	var err error
+	var (
+		err error
+		cfg *config.Config
+	)
 	if *version {
 		AppVersion()
 		os.Exit(0)
@@ -260,7 +264,7 @@ func main() {
 	if _, err = os.Open(*cfgPath); err != nil {
 		logcabin.Error.Fatal(*cfgPath)
 	}
-	err = configurate.Init(*cfgPath)
+	cfg, err = configurate.Init(*cfgPath)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
@@ -272,7 +276,7 @@ func main() {
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
-	job, err = model.NewFromData(configurate.C, data)
+	job, err = model.NewFromData(cfg, data)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
@@ -283,7 +287,7 @@ func main() {
 		logcabin.Error.Fatal(err)
 	}
 
-	uri, err := configurate.C.String("amqp.uri")
+	uri, err := cfg.String("amqp.uri")
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
@@ -295,7 +299,7 @@ func main() {
 
 	client.SetupPublishing(messaging.JobsExchange)
 
-	dckr, err = dockerops.NewDocker(*dockerURI)
+	dckr, err = dockerops.NewDocker(cfg, *dockerURI)
 	if err != nil {
 		fail(client, job, "Failed to connect to local docker socket")
 		logcabin.Error.Fatal(err)
