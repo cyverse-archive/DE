@@ -416,11 +416,13 @@ func main() {
 		AppVersion()
 		os.Exit(0)
 	}
+
 	if *cfgPath == "" {
 		fmt.Println("Error: --config must be set.")
 		flag.PrintDefaults()
 		os.Exit(-1)
 	}
+
 	cfg, err := configurate.Init(*cfgPath)
 	if err != nil {
 		logcabin.Error.Fatal(err)
