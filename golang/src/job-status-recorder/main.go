@@ -19,6 +19,7 @@ import (
 	"strconv"
 
 	_ "github.com/lib/pq"
+	"github.com/olebedev/config"
 	"github.com/streadway/amqp"
 )
 
@@ -53,7 +54,19 @@ func AppVersion() {
 	}
 }
 
-func insert(state, invID, msg, host, ip string, sentOn int64) (sql.Result, error) {
+// JobStatusRecorder contains the application state for job-status-recorder
+type JobStatusRecorder struct {
+	cfg *config.Config
+}
+
+// New returns a *JobStatusRecorder
+func New(cfg *config.Config) *JobStatusRecorder {
+	return &JobStatusRecorder{
+		cfg: cfg,
+	}
+}
+
+func (r *JobStatusRecorder) insert(state, invID, msg, host, ip string, sentOn int64) (sql.Result, error) {
 	insertStr := `
 		INSERT INTO job_status_updates (
 			external_id,
@@ -73,7 +86,7 @@ func insert(state, invID, msg, host, ip string, sentOn int64) (sql.Result, error
 	return db.Exec(insertStr, invID, msg, state, ip, host, sentOn)
 }
 
-func msg(delivery amqp.Delivery) {
+func (r *JobStatusRecorder) msg(delivery amqp.Delivery) {
 	if err := delivery.Ack(false); err != nil {
 		logcabin.Error.Print(err)
 	}
@@ -124,7 +137,7 @@ func msg(delivery amqp.Delivery) {
 		sentOn = 0
 	}
 	logcabin.Info.Printf("Sent On: %d", sentOn)
-	result, err := insert(
+	result, err := r.insert(
 		string(update.State),
 		update.Job.InvocationID,
 		update.Message,
@@ -145,34 +158,39 @@ func msg(delivery amqp.Delivery) {
 }
 
 func main() {
-	var err error
-
+	var (
+		err error
+		app *JobStatusRecorder
+		cfg *config.Config
+	)
 	if *version {
 		AppVersion()
 		os.Exit(0)
 	}
-
-	if *dbURI == "" || *amqpURI == "" {
-		if *cfgPath == "" {
-			logcabin.Error.Fatal("--config must be set.")
-		}
-		err := configurate.Init(*cfgPath)
+	if *cfgPath == "" {
+		logcabin.Error.Fatal("--config must be set.")
+	}
+	cfg, err = configurate.Init(*cfgPath)
+	if err != nil {
+		logcabin.Error.Fatal(err)
+	}
+	if *dbURI == "" {
+		*dbURI, err = cfg.String("db.uri")
 		if err != nil {
 			logcabin.Error.Fatal(err)
 		}
-		if *dbURI == "" {
-			*dbURI, err = configurate.C.String("db.uri")
-			if err != nil {
-				logcabin.Error.Fatal(err)
-			}
-		}
-		if *amqpURI == "" {
-			*amqpURI, err = configurate.C.String("amqp.uri")
-			if err != nil {
-				logcabin.Error.Fatal(err)
-			}
-		}
+	} else {
+		cfg.Set("db.uri", *dbURI)
 	}
+	if *amqpURI == "" {
+		*amqpURI, err = cfg.String("amqp.uri")
+		if err != nil {
+			logcabin.Error.Fatal(err)
+		}
+	} else {
+		cfg.Set("amqp.uri", *amqpURI)
+	}
+	app = New(cfg)
 	logcabin.Info.Printf("AMQP broker setting is %s\n", *amqpURI)
 	amqpClient, err := messaging.NewClient(*amqpURI, false)
 	if err != nil {
@@ -190,7 +208,7 @@ func main() {
 	}
 	logcabin.Info.Println("Connected to the database")
 	go amqpClient.Listen()
-	amqpClient.AddConsumer(messaging.JobsExchange, "topic", "job_status_recorder", messaging.UpdatesKey, msg)
+	amqpClient.AddConsumer(messaging.JobsExchange, "topic", "job_status_recorder", messaging.UpdatesKey, app.msg)
 	spinner := make(chan int)
 	<-spinner
 }

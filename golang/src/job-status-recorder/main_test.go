@@ -1,6 +1,7 @@
 package main
 
 import (
+	"configurate"
 	"database/sql"
 	"encoding/json"
 	"messaging"
@@ -11,7 +12,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/olebedev/config"
 	"github.com/streadway/amqp"
+)
+
+var (
+	cfg *config.Config
 )
 
 func shouldrun() bool {
@@ -41,14 +47,24 @@ func initdb(t *testing.T) *sql.DB {
 	return db
 }
 
+func inittests(t *testing.T) {
+	var err error
+	cfg, err = configurate.Init("../test/test_config.yaml")
+	if err != nil {
+		t.Error(err)
+	}
+}
+
 func TestInsert(t *testing.T) {
 	if !shouldrun() {
 		return
 	}
+	inittests(t)
+	app := New(cfg)
 	db = initdb(t)
 	defer db.Close()
 	n := time.Now().UnixNano() / int64(time.Millisecond)
-	actual, err := insert("RUNNING", "test-invocation-id", "test", "localhost", "127.0.0.1", n)
+	actual, err := app.insert("RUNNING", "test-invocation-id", "test", "localhost", "127.0.0.1", n)
 	if err != nil {
 		t.Error(err)
 	}
@@ -104,6 +120,8 @@ func TestMsg(t *testing.T) {
 	if !shouldrun() {
 		return
 	}
+	inittests(t)
+	app := New(cfg)
 	db = initdb(t)
 	defer db.Close()
 	me, err := os.Hostname()
@@ -126,7 +144,7 @@ func TestMsg(t *testing.T) {
 		Body:      m,
 		Timestamp: time.Now(),
 	}
-	msg(d)
+	app.msg(d)
 	rows, err := db.Query("select status, message, sent_from, sent_from_hostname, sent_on from job_status_updates where external_id = 'test-invocation-id'")
 	if err != nil {
 		t.Error(err)

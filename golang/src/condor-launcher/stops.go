@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"configurate"
 	"encoding/json"
 	"fmt"
 	"logcabin"
@@ -16,7 +15,7 @@ import (
 )
 
 // ExecCondorQ runs the condor_q -long command and returns its output.
-func ExecCondorQ() ([]byte, error) {
+func (cl *CondorLauncher) ExecCondorQ() ([]byte, error) {
 	var (
 		output []byte
 		err    error
@@ -32,11 +31,11 @@ func ExecCondorQ() ([]byte, error) {
 		}
 	}
 	cmd := exec.Command(csPath, "-long")
-	pathEnv, err := configurate.C.String("condor.path_env_var")
+	pathEnv, err := cl.cfg.String("condor.path_env_var")
 	if err != nil {
 		pathEnv = ""
 	}
-	condorCfg, err := configurate.C.String("condor.condor_config")
+	condorCfg, err := cl.cfg.String("condor.condor_config")
 	if err != nil {
 		condorCfg = ""
 	}
@@ -53,7 +52,7 @@ func ExecCondorQ() ([]byte, error) {
 
 // ExecCondorRm runs condor_rm, passing it the condor ID. Returns the output
 // of the command and passibly an error.
-func ExecCondorRm(condorID string) ([]byte, error) {
+func (cl *CondorLauncher) ExecCondorRm(condorID string) ([]byte, error) {
 	var (
 		output []byte
 		err    error
@@ -69,11 +68,11 @@ func ExecCondorRm(condorID string) ([]byte, error) {
 			return output, err
 		}
 	}
-	pathEnv, err := configurate.C.String("condor.path_env_var")
+	pathEnv, err := cl.cfg.String("condor.path_env_var")
 	if err != nil {
 		pathEnv = ""
 	}
-	condorConfig, err := configurate.C.String("condor.condor_config")
+	condorConfig, err := cl.cfg.String("condor.condor_config")
 	if err != nil {
 		condorConfig = ""
 	}
@@ -167,14 +166,14 @@ func heldQueueEntries(output []byte) []queueEntry {
 	return retval
 }
 
-func killHeldJobs(client *messaging.Client) {
+func (cl *CondorLauncher) killHeldJobs(client *messaging.Client) {
 	var (
 		err         error
 		cmdOutput   []byte
 		heldEntries []queueEntry
 	)
 	logcabin.Info.Print("Looking for jobs in the held state...")
-	if cmdOutput, err = ExecCondorQ(); err != nil {
+	if cmdOutput, err = cl.ExecCondorQ(); err != nil {
 		logcabin.Error.Printf("Error running condor_q: %s", err)
 		return
 	}
@@ -194,7 +193,7 @@ func killHeldJobs(client *messaging.Client) {
 	}
 }
 
-func stopHandler(client *messaging.Client) func(d amqp.Delivery) {
+func (cl *CondorLauncher) stopHandler(client *messaging.Client) func(d amqp.Delivery) {
 	return func(d amqp.Delivery) {
 		var (
 			condorQOutput  []byte
@@ -212,7 +211,7 @@ func stopHandler(client *messaging.Client) func(d amqp.Delivery) {
 		}
 		invID = stopRequest.InvocationID
 		logcabin.Info.Print("Running condor_q...")
-		if condorQOutput, err = ExecCondorQ(); err != nil {
+		if condorQOutput, err = cl.ExecCondorQ(); err != nil {
 			logcabin.Error.Printf("Error running condor_q:\n%s", err)
 			return
 		}
@@ -225,11 +224,11 @@ func stopHandler(client *messaging.Client) func(d amqp.Delivery) {
 			}
 			condorID := entry.CondorID
 			logcabin.Info.Printf("Running 'condor_rm %s'", condorID)
-			if condorRMOutput, err = ExecCondorRm(condorID); err != nil {
+			if condorRMOutput, err = cl.ExecCondorRm(condorID); err != nil {
 				logcabin.Error.Printf("Error running 'condor_rm %s':\n%s", condorID, err)
 				continue
 			}
-			fauxJob := model.New(configurate.C)
+			fauxJob := model.New(cl.cfg)
 			fauxJob.InvocationID = invID
 			update := &messaging.UpdateMessage{
 				Job:     fauxJob,
@@ -245,6 +244,6 @@ func stopHandler(client *messaging.Client) func(d amqp.Delivery) {
 }
 
 // RegisterStopHandler registers a handler for all stop requests.
-func RegisterStopHandler(client *messaging.Client) {
-	client.AddConsumer(messaging.JobsExchange, "topic", "condor-launcher-stops", messaging.StopRequestKey("*"), stopHandler(client))
+func (cl *CondorLauncher) RegisterStopHandler(client *messaging.Client) {
+	client.AddConsumer(messaging.JobsExchange, "topic", "condor-launcher-stops", messaging.StopRequestKey("*"), cl.stopHandler(client))
 }
