@@ -130,9 +130,9 @@
   (util/flagged-routes
     (app-category-routes)
     (apps-routes)
+    (app-avu-routes)
     (app-comment-routes)
     (app-ontology-routes)
-    (app-avu-routes)
     (analysis-routes)
     (coge-routes)
     (reference-genomes-routes)
@@ -168,6 +168,7 @@
     (admin-data-comment-routes)
     (admin-category-routes)
     (admin-apps-routes)
+    (admin-app-avu-routes)
     (admin-app-comment-routes)
     (admin-filesystem-metadata-routes)
     (admin-notification-routes)

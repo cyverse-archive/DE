@@ -14,6 +14,7 @@
             [apps.routes.apps.categories :as app-category-routes]
             [apps.routes.apps.elements :as app-element-routes]
             [apps.routes.apps.pipelines :as pipeline-routes]
+            [apps.routes.apps.metadata :as metadata-routes]
             [apps.routes.callbacks :as callback-routes]
             [apps.routes.collaborators :as collaborator-routes]
             [apps.routes.oauth :as oauth-routes]
@@ -40,6 +41,7 @@
             {:name "app-hierarchies", :description "App Hierarchy endpoints."}
             {:name "app-element-types", :description "App Element endpoints."}
             {:name "apps", :description "App endpoints."}
+            {:name "app-metadata", :description "App Metadata endpoints."}
             {:name "pipelines", :description "Pipeline endpoints."}
             {:name "analyses", :description "Analysis endpoints."}
             {:name "tool-data-containers", :description "Tool Docker Data Container endpoints."}
@@ -51,6 +53,7 @@
             {:name "oauth-routes", :description "OAuth callback routes."}
             {:name "collaborator-routes", :description "Collaborator Information Routes"}
             {:name "admin-apps", :description "Admin App endpoints."}
+            {:name "admin-app-metadata", :description "Admin App Metadata endpoints."}
             {:name "admin-categories", :description "Admin App Category endpoints."}
             {:name "admin-ontologies", :description "Admin App Ontology endpoints."}
             {:name "admin-container-images", :description "Admin Tool Docker Images endpoints."}
@@ -91,6 +94,9 @@
     (context* "/apps/pipelines" []
       :tags ["pipelines"]
       pipeline-routes/pipelines)
+    (context* "/apps/:app-id/metadata" []
+      :tags ["app-metadata"]
+      metadata-routes/app-metadata)
     (context* "/analyses" []
       :tags ["analyses"]
       analysis-routes/analyses)
@@ -124,6 +130,9 @@
     (context* "/admin/apps/categories" []
       :tags ["admin-categories"]
       admin-routes/admin-categories)
+    (context* "/admin/apps/:app-id/metadata" []
+      :tags ["admin-app-metadata"]
+      metadata-routes/admin-app-metadata)
     (context* "/admin/ontologies" []
       :tags ["admin-ontologies"]
       admin-routes/admin-ontologies)

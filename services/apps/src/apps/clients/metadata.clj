@@ -23,6 +23,8 @@
    :as               as
    :follow-redirects false})
 
+(def ^:private put-options post-options)
+
 (defn list-ontologies
   [username]
   (-> (http/get (metadata-url-encoded "ontologies")
@@ -61,3 +63,18 @@
        :body
        :target-ids
        (map uuidify)))
+
+(defn list-avus
+  [username app-id]
+  (http/get (metadata-url-encoded "avus" "app" app-id)
+            (get-options {:user username})))
+
+(defn set-avus
+  [username app-id body]
+  (http/post (metadata-url-encoded "avus" "app" app-id)
+             (post-options body {:user username})))
+
+(defn update-avus
+  [username app-id body]
+  (http/put (metadata-url-encoded "avus" "app" app-id)
+            (put-options body {:user username})))

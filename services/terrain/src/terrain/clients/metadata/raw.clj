@@ -47,18 +47,6 @@
 
 (def put-options post-options)
 
-(defn list-avus
-  [target-type target-id]
-  (http/get (metadata-url "avus" target-type target-id) (get-options)))
-
-(defn set-avus
-  [target-type target-id body]
-  (http/post (metadata-url "avus" target-type target-id) (post-options body)))
-
-(defn update-avus
-  [target-type target-id body]
-  (http/put (metadata-url "avus" target-type target-id) (put-options body)))
-
 (defn list-metadata-avus
   [target-id]
   (http/get (metadata-url "filesystem" "data" target-id "avus")

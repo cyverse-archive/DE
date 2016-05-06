@@ -239,6 +239,56 @@
                :as               :stream
                :follow-redirects false}))
 
+(defn admin-list-avus
+  [app-id]
+  (client/get (apps-url "admin" "apps" app-id "metadata")
+              {:query-params     (secured-params)
+               :as               :stream
+               :follow-redirects false}))
+
+(defn admin-set-avus
+  [app-id body]
+  (client/post (apps-url "admin" "apps" app-id "metadata")
+               {:query-params     (secured-params)
+                :body             body
+                :content-type     :json
+                :as               :stream
+                :follow-redirects false}))
+
+(defn admin-update-avus
+  [app-id body]
+  (client/put (apps-url "admin" "apps" app-id "metadata")
+              {:query-params     (secured-params)
+               :body             body
+               :content-type     :json
+               :as               :stream
+               :follow-redirects false}))
+
+(defn list-avus
+  [app-id]
+  (client/get (apps-url "apps" app-id "metadata")
+            {:query-params     (secured-params)
+             :as               :stream
+             :follow-redirects false}))
+
+(defn set-avus
+  [app-id body]
+  (client/post (apps-url "apps" app-id "metadata")
+               {:query-params     (secured-params)
+                :body             body
+                :content-type     :json
+                :as               :stream
+                :follow-redirects false}))
+
+(defn update-avus
+  [app-id body]
+  (client/put (apps-url "apps" app-id "metadata")
+              {:query-params     (secured-params)
+               :body             body
+               :content-type     :json
+               :as               :stream
+               :follow-redirects false}))
+
 (defn make-app-public
   [app-id app]
   (client/post (apps-url "apps" app-id "publish")

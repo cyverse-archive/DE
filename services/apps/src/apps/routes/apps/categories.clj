@@ -85,4 +85,6 @@ Please see the metadata service documentation for response information."
 
 #### Delegates to metadata service
     POST /ontologies/{ontology-version}/{root-iri}/filter-unclassified"
-        (ok (coerce! AppListing (listings/get-unclassified-app-listing current-user root-iri params)))))
+        (ok (coerce! AppListing (listings/get-unclassified-app-listing current-user root-iri params))))
+
+  (route/not-found (service/unrecognized-path-response)))

@@ -87,21 +87,6 @@
    (GET "/ontologies/:ontology-version/:root-iri/unclassified" [ontology-version root-iri :as {params :params}]
      (service/success-response (apps/get-unclassified-app-listing ontology-version root-iri params)))))
 
-(defn app-avu-routes
-  []
-  (optional-routes
-   [#(and (config/app-routes-enabled)
-          (config/metadata-routes-enabled))]
-
-   (GET "/apps/:app-id/metadata" [app-id]
-     (metadata-client/list-avus "app" app-id))
-
-   (POST "/apps/:app-id/metadata" [app-id :as {:keys [body]}]
-     (metadata-client/set-avus "app" app-id body))
-
-   (PUT "/apps/:app-id/metadata" [app-id :as {:keys [body]}]
-     (metadata-client/update-avus "app" app-id body))))
-
 (defn admin-apps-routes
   []
   (optional-routes
@@ -229,6 +214,37 @@
 
     (GET "/apps/:app-id/ui" [app-id]
          (service/success-response (apps/get-app-ui app-id)))))
+
+(defn admin-app-avu-routes
+  []
+  (optional-routes
+    [#(and (config/admin-routes-enabled)
+           (config/app-routes-enabled)
+           (config/metadata-routes-enabled))]
+
+    (GET "/apps/:app-id/metadata" [app-id]
+      (service/success-response (apps/admin-list-avus app-id)))
+
+    (POST "/apps/:app-id/metadata" [app-id :as {:keys [body]}]
+      (service/success-response (apps/admin-set-avus app-id body)))
+
+    (PUT "/apps/:app-id/metadata" [app-id :as {:keys [body]}]
+      (service/success-response (apps/admin-update-avus app-id body)))))
+
+(defn app-avu-routes
+  []
+  (optional-routes
+    [#(and (config/app-routes-enabled)
+           (config/metadata-routes-enabled))]
+
+    (GET "/apps/:app-id/metadata" [app-id]
+      (service/success-response (apps/list-avus app-id)))
+
+    (POST "/apps/:app-id/metadata" [app-id :as {:keys [body]}]
+      (service/success-response (apps/set-avus app-id body)))
+
+    (PUT "/apps/:app-id/metadata" [app-id :as {:keys [body]}]
+      (service/success-response (apps/update-avus app-id body)))))
 
 (defn analysis-routes
   []
