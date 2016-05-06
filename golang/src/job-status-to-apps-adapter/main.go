@@ -35,7 +35,6 @@ var (
 	appver  string
 	builtby string
 	appsURI string
-	db      *sql.DB
 )
 
 // AppVersion prints version information to stdout
@@ -114,7 +113,7 @@ type Propagator struct {
 // NewPropagator returns a *Propagator that has been initialized with a new
 // transaction.
 func NewPropagator(d *sql.DB) (*Propagator, error) {
-	t, err := db.Begin()
+	t, err := d.Begin()
 	if err != nil {
 		return nil, err
 	}
@@ -326,6 +325,7 @@ func main() {
 		maxRetries = flag.Int64("retries", 3, "The maximum number of propagation retries to make")
 		err        error
 		cfg        *config.Config
+		db         *sql.DB
 	)
 
 	flag.Parse()
