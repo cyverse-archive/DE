@@ -19,17 +19,10 @@ import (
 )
 
 var (
-	version = flag.Bool("version", false, "Print the version information")
-	cfgPath = flag.String("config", "/etc/iplant/de/jobservices.yml", "The path to the config file")
-	port    = flag.String("port", "60000", "The port number to listen on")
 	gitref  string
 	appver  string
 	builtby string
 )
-
-func init() {
-	flag.Parse()
-}
 
 // AppVersion prints the version information to stdout
 func AppVersion() {
@@ -416,9 +409,14 @@ func fixAddr(addr string) string {
 
 func main() {
 	var (
-		err error
-		cfg *config.Config
+		version = flag.Bool("version", false, "Print the version information")
+		cfgPath = flag.String("config", "/etc/iplant/de/jobservices.yml", "The path to the config file")
+		port    = flag.String("port", "60000", "The port number to listen on")
+		err     error
+		cfg     *config.Config
 	)
+
+	flag.Parse()
 
 	if *version {
 		AppVersion()
