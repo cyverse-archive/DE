@@ -39,10 +39,8 @@
                                                     :id.in    (string/join "," app-ids)})))
   (listAppsWithOntology [_ term]
     (v2/check-access-token token-info-fn timeout)
-    ;; Not yet supported
-    nil
-    #_(v2/list-apps base-url token-info-fn timeout {:page-len      page-len
-                                                    :ontology.like (str "*" term "*")}))
+    (v2/list-apps base-url token-info-fn timeout {:page-len      page-len
+                                                  :ontology.like (str "*" term "*")}))
   (getApp [_ app-id]
     (v2/check-access-token token-info-fn timeout)
     (v2/get-app base-url token-info-fn timeout app-id))
