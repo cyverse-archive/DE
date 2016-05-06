@@ -21,6 +21,7 @@ import (
 	"os"
 
 	"github.com/gorilla/mux"
+	"github.com/olebedev/config"
 )
 
 var (
@@ -53,11 +54,23 @@ func AppVersion() {
 	}
 }
 
-func home(writer http.ResponseWriter, request *http.Request) {
+// JEXAdapter contains the application state for jex-adapter.
+type JEXAdapter struct {
+	cfg *config.Config
+}
+
+// New returns a *JEXAdapter
+func New(cfg *config.Config) *JEXAdapter {
+	return &JEXAdapter{
+		cfg: cfg,
+	}
+}
+
+func (j *JEXAdapter) home(writer http.ResponseWriter, request *http.Request) {
 	fmt.Fprintf(writer, "Welcome to the JEX.\n")
 }
 
-func stop(writer http.ResponseWriter, request *http.Request) {
+func (j *JEXAdapter) stop(writer http.ResponseWriter, request *http.Request) {
 	logcabin.Info.Printf("Request received:\n%#v\n", request)
 	var (
 		invID string
@@ -84,7 +97,7 @@ func stop(writer http.ResponseWriter, request *http.Request) {
 	logcabin.Info.Println("Done sending stop request")
 }
 
-func launch(writer http.ResponseWriter, request *http.Request) {
+func (j *JEXAdapter) launch(writer http.ResponseWriter, request *http.Request) {
 	bodyBytes, err := ioutil.ReadAll(request.Body)
 	if err != nil {
 		logcabin.Error.Print(err)
@@ -92,7 +105,7 @@ func launch(writer http.ResponseWriter, request *http.Request) {
 		writer.Write([]byte("Request had no body"))
 		return
 	}
-	job, err := model.NewFromData(configurate.C, bodyBytes)
+	job, err := model.NewFromData(j.cfg, bodyBytes)
 	if err != nil {
 		logcabin.Error.Print(err)
 		writer.WriteHeader(http.StatusBadRequest)
@@ -199,7 +212,7 @@ type PreviewerReturn struct {
 	Params string `json:"params"`
 }
 
-func preview(writer http.ResponseWriter, request *http.Request) {
+func (j *JEXAdapter) preview(writer http.ResponseWriter, request *http.Request) {
 	bodyBytes, err := ioutil.ReadAll(request.Body)
 	if err != nil {
 		logcabin.Error.Print(err)
@@ -234,12 +247,12 @@ func preview(writer http.ResponseWriter, request *http.Request) {
 }
 
 // NewRouter returns a newly configured *mux.Router.
-func NewRouter() *mux.Router {
+func (j *JEXAdapter) NewRouter() *mux.Router {
 	router := mux.NewRouter()
-	router.HandleFunc("/", home).Methods("GET")
-	router.HandleFunc("/", launch).Methods("POST")
-	router.HandleFunc("/stop/{invocation_id}", stop).Methods("DELETE")
-	router.HandleFunc("/arg-preview", preview).Methods("POST")
+	router.HandleFunc("/", j.home).Methods("GET")
+	router.HandleFunc("/", j.launch).Methods("POST")
+	router.HandleFunc("/stop/{invocation_id}", j.stop).Methods("DELETE")
+	router.HandleFunc("/arg-preview", j.preview).Methods("POST")
 	return router
 }
 
@@ -253,20 +266,21 @@ func main() {
 		flag.PrintDefaults()
 		os.Exit(-1)
 	}
-	err := configurate.Init(*cfgPath)
+	cfg, err := configurate.Init(*cfgPath)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
-	amqpURI, err = configurate.C.String("amqp.uri")
+	amqpURI, err = cfg.String("amqp.uri")
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
+	app := New(cfg)
 	client, err = messaging.NewClient(amqpURI, false)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
 	defer client.Close()
 	client.SetupPublishing(messaging.JobsExchange)
-	router := NewRouter()
+	router := app.NewRouter()
 	logcabin.Error.Fatal(http.ListenAndServe(*addr, router))
 }
