@@ -64,11 +64,13 @@ type UserSessionRecord struct {
 // whether to wrap the object in a map with "session" as the key.
 func convert(record *UserSessionRecord, wrap bool) (map[string]interface{}, error) {
 	var values map[string]interface{}
+
 	if record.Session != "" {
 		if err := json.Unmarshal([]byte(record.Session), &values); err != nil {
 			return nil, err
 		}
 	}
+
 	// We don't want the return value wrapped in a session object, so unwrap it
 	// if it is wrapped.
 	if !wrap {
@@ -77,6 +79,7 @@ func convert(record *UserSessionRecord, wrap bool) (map[string]interface{}, erro
 		}
 		return values, nil
 	}
+
 	// We do want the return value wrapped in a session object, so wrap it if it
 	// isn't already.
 	if _, ok := values["session"]; !ok {
@@ -84,6 +87,7 @@ func convert(record *UserSessionRecord, wrap bool) (map[string]interface{}, erro
 		newmap["session"] = values
 		return newmap, nil
 	}
+
 	return values, nil
 }
 
@@ -124,11 +128,13 @@ func (u *UserSessionsApp) getSessions(username string) ([]UserSessionRecord, err
                    users u
              WHERE s.user_id = u.id
                AND u.username = $1`
+
 	rows, err := u.db.Query(query, username)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
+
 	var sessions []UserSessionRecord
 	for rows.Next() {
 		var session UserSessionRecord
@@ -137,9 +143,11 @@ func (u *UserSessionsApp) getSessions(username string) ([]UserSessionRecord, err
 		}
 		sessions = append(sessions, session)
 	}
+
 	if err := rows.Err(); err != nil {
 		return sessions, err
 	}
+
 	return sessions, nil
 }
 
@@ -201,14 +209,17 @@ func (u *UserSessionsApp) getUserSessionForRequest(username string, wrap bool) (
 	if err != nil {
 		return nil, fmt.Errorf("Error getting sessions for username %s: %s", username, err)
 	}
+
 	var retval UserSessionRecord
 	if len(sessions) >= 1 {
 		retval = sessions[0]
 	}
+
 	response, err := convert(&retval, wrap)
 	if err != nil {
 		return nil, fmt.Errorf("Error generating response for username %s: %s", username, err)
 	}
+
 	var jsoned []byte
 	if len(response) > 0 {
 		jsoned, err = json.Marshal(response)
@@ -218,6 +229,7 @@ func (u *UserSessionsApp) getUserSessionForRequest(username string, wrap bool) (
 	} else {
 		jsoned = []byte("{}")
 	}
+
 	return jsoned, nil
 }
 
@@ -230,23 +242,28 @@ func (u *UserSessionsApp) GetRequest(writer http.ResponseWriter, r *http.Request
 		ok         bool
 		v          = mux.Vars(r)
 	)
+
 	if username, ok = v["username"]; !ok {
 		badRequest(writer, "Missing username in URL")
 		return
 	}
+
 	logcabin.Info.Printf("Getting user session for %s", username)
 	if userExists, err = queries.IsUser(u.db, username); err != nil {
 		badRequest(writer, fmt.Sprintf("Error checking for username %s: %s", username, err))
 		return
 	}
+
 	if !userExists {
 		badRequest(writer, fmt.Sprintf("User %s does not exist", username))
 		return
 	}
+
 	jsoned, err := u.getUserSessionForRequest(username, false)
 	if err != nil {
 		errored(writer, err.Error())
 	}
+
 	writer.Write(jsoned)
 }
 
@@ -265,32 +282,39 @@ func (u *UserSessionsApp) PostRequest(writer http.ResponseWriter, r *http.Reques
 		ok         bool
 		v          = mux.Vars(r)
 	)
+
 	if username, ok = v["username"]; !ok {
 		badRequest(writer, "Missing username in URL")
 		return
 	}
+
 	if userExists, err = queries.IsUser(u.db, username); err != nil {
 		badRequest(writer, fmt.Sprintf("Error checking for username %s: %s", username, err))
 		return
 	}
+
 	if !userExists {
 		badRequest(writer, fmt.Sprintf("User %s does not exist", username))
 		return
 	}
+
 	if hasSession, err = u.hasSessions(username); err != nil {
 		errored(writer, fmt.Sprintf("Error checking session for user %s: %s", username, err))
 		return
 	}
+
 	var checked map[string]interface{}
 	bodyBuffer, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		errored(writer, fmt.Sprintf("Error reading body: %s", err))
 		return
 	}
+
 	if err = json.Unmarshal(bodyBuffer, &checked); err != nil {
 		errored(writer, fmt.Sprintf("Error parsing request body: %s", err))
 		return
 	}
+
 	bodyString := string(bodyBuffer)
 	if !hasSession {
 		if err = u.insertSession(username, bodyString); err != nil {
@@ -303,11 +327,13 @@ func (u *UserSessionsApp) PostRequest(writer http.ResponseWriter, r *http.Reques
 			return
 		}
 	}
+
 	jsoned, err := u.getUserSessionForRequest(username, true)
 	if err != nil {
 		errored(writer, err.Error())
 		return
 	}
+
 	writer.Write(jsoned)
 }
 
@@ -321,25 +347,31 @@ func (u *UserSessionsApp) DeleteRequest(writer http.ResponseWriter, r *http.Requ
 		ok         bool
 		v          = mux.Vars(r)
 	)
+
 	if username, ok = v["username"]; !ok {
 		badRequest(writer, "Missing username in URL")
 		return
 	}
+
 	if userExists, err = queries.IsUser(u.db, username); err != nil {
 		badRequest(writer, fmt.Sprintf("Error checking for username %s: %s", username, err))
 		return
 	}
+
 	if !userExists {
 		badRequest(writer, fmt.Sprintf("User %s does not exist", username))
 		return
 	}
+
 	if hasSession, err = u.hasSessions(username); err != nil {
 		errored(writer, fmt.Sprintf("Error checking session for user %s: %s", username, err))
 		return
 	}
+
 	if !hasSession {
 		return
 	}
+
 	if err = u.deleteSession(username); err != nil {
 		errored(writer, fmt.Sprintf("Error deleting session for user %s: %s", username, err))
 	}
@@ -367,31 +399,38 @@ func main() {
 		err error
 		cfg *config.Config
 	)
+
 	if *version {
 		AppVersion()
 		os.Exit(0)
 	}
+
 	if *cfgPath == "" {
 		logcabin.Error.Fatal("--config must be set")
 	}
+
 	if cfg, err = configurate.Init(*cfgPath); err != nil {
 		logcabin.Error.Fatal(err)
 	}
+
 	dburi, err := cfg.String("db.uri")
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
+
 	logcabin.Info.Println("Connecting to the database...")
 	db, err := sql.Open("postgres", dburi)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
 	defer db.Close()
+
 	logcabin.Info.Println("Connected to the database.")
 	if err := db.Ping(); err != nil {
 		logcabin.Error.Fatal(err)
 	}
 	logcabin.Info.Println("Successfully pinged the database")
+
 	logcabin.Info.Printf("Listening on port %s", *port)
 	app := New(db)
 	logcabin.Error.Fatal(http.ListenAndServe(fixAddr(*port), newRouter(app)))
