@@ -64,11 +64,13 @@ type UserPreferencesRecord struct {
 // whether to wrap the object in a map with "preferences" as the key.
 func convert(record *UserPreferencesRecord, wrap bool) (map[string]interface{}, error) {
 	var values map[string]interface{}
+
 	if record.Preferences != "" {
 		if err := json.Unmarshal([]byte(record.Preferences), &values); err != nil {
 			return nil, err
 		}
 	}
+
 	// We don't want the return value wrapped in a preferences object, so unwrap it
 	// if it is wrapped.
 	if !wrap {
@@ -77,6 +79,7 @@ func convert(record *UserPreferencesRecord, wrap bool) (map[string]interface{}, 
 		}
 		return values, nil
 	}
+
 	// We do want the return value wrapped in a preferences object, so wrap it if it
 	// isn't already.
 	if _, ok := values["preferences"]; !ok {
@@ -84,6 +87,7 @@ func convert(record *UserPreferencesRecord, wrap bool) (map[string]interface{}, 
 		newmap["preferences"] = values
 		return newmap, nil
 	}
+
 	return values, nil
 }
 
@@ -124,11 +128,13 @@ func (u *UserPreferencesApp) getPreferences(username string) ([]UserPreferencesR
                    users u
              WHERE p.user_id = u.id
                AND u.username = $1`
+
 	rows, err := u.db.Query(query, username)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
+
 	var prefs []UserPreferencesRecord
 	for rows.Next() {
 		var pref UserPreferencesRecord
@@ -137,9 +143,11 @@ func (u *UserPreferencesApp) getPreferences(username string) ([]UserPreferencesR
 		}
 		prefs = append(prefs, pref)
 	}
+
 	if err := rows.Err(); err != nil {
 		return prefs, err
 	}
+
 	return prefs, nil
 }
 
@@ -197,18 +205,22 @@ func errored(writer http.ResponseWriter, msg string) {
 }
 
 func (u *UserPreferencesApp) getUserPreferencesForRequest(username string, wrap bool) ([]byte, error) {
+	var retval UserPreferencesRecord
+
 	prefs, err := u.getPreferences(username)
 	if err != nil {
 		return nil, fmt.Errorf("Error getting preferences for username %s: %s", username, err)
 	}
-	var retval UserPreferencesRecord
+
 	if len(prefs) >= 1 {
 		retval = prefs[0]
 	}
+
 	response, err := convert(&retval, wrap)
 	if err != nil {
 		return nil, fmt.Errorf("Error generating response for username %s: %s", username, err)
 	}
+
 	var jsoned []byte
 	if len(response) > 0 {
 		jsoned, err = json.Marshal(response)
@@ -218,6 +230,7 @@ func (u *UserPreferencesApp) getUserPreferencesForRequest(username string, wrap 
 	} else {
 		jsoned = []byte("{}")
 	}
+
 	return jsoned, nil
 }
 
@@ -226,6 +239,7 @@ func handleNonUser(writer http.ResponseWriter, username string) {
 		retval []byte
 		err    error
 	)
+
 	retval, err = json.Marshal(map[string]string{
 		"user": username,
 	})
@@ -233,7 +247,9 @@ func handleNonUser(writer http.ResponseWriter, username string) {
 		errored(writer, fmt.Sprintf("Error generating json for non-user %s", err))
 		return
 	}
+
 	badRequest(writer, string(retval))
+
 	return
 }
 
@@ -246,23 +262,28 @@ func (u *UserPreferencesApp) GetRequest(writer http.ResponseWriter, r *http.Requ
 		ok         bool
 		v          = mux.Vars(r)
 	)
+
 	if username, ok = v["username"]; !ok {
 		badRequest(writer, "Missing username in URL")
 		return
 	}
+
 	logcabin.Info.Printf("Getting user preferences for %s", username)
 	if userExists, err = queries.IsUser(u.db, username); err != nil {
 		badRequest(writer, fmt.Sprintf("Error checking for username %s: %s", username, err))
 		return
 	}
+
 	if !userExists {
 		handleNonUser(writer, username)
 		return
 	}
+
 	jsoned, err := u.getUserPreferencesForRequest(username, false)
 	if err != nil {
 		errored(writer, err.Error())
 	}
+
 	writer.Write(jsoned)
 }
 
@@ -281,32 +302,39 @@ func (u *UserPreferencesApp) PostRequest(writer http.ResponseWriter, r *http.Req
 		ok         bool
 		v          = mux.Vars(r)
 	)
+
 	if username, ok = v["username"]; !ok {
 		badRequest(writer, "Missing username in URL")
 		return
 	}
+
 	if userExists, err = queries.IsUser(u.db, username); err != nil {
 		badRequest(writer, fmt.Sprintf("Error checking for username %s: %s", username, err))
 		return
 	}
+
 	if !userExists {
 		handleNonUser(writer, username)
 		return
 	}
+
 	if hasPrefs, err = u.hasPreferences(username); err != nil {
 		errored(writer, fmt.Sprintf("Error checking preferences for user %s: %s", username, err))
 		return
 	}
+
 	var checked map[string]interface{}
 	bodyBuffer, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		errored(writer, fmt.Sprintf("Error reading body: %s", err))
 		return
 	}
+
 	if err = json.Unmarshal(bodyBuffer, &checked); err != nil {
 		errored(writer, fmt.Sprintf("Error parsing request body: %s", err))
 		return
 	}
+
 	bodyString := string(bodyBuffer)
 	if !hasPrefs {
 		if err = u.insertPreferences(username, bodyString); err != nil {
@@ -319,11 +347,13 @@ func (u *UserPreferencesApp) PostRequest(writer http.ResponseWriter, r *http.Req
 			return
 		}
 	}
+
 	jsoned, err := u.getUserPreferencesForRequest(username, true)
 	if err != nil {
 		errored(writer, err.Error())
 		return
 	}
+
 	writer.Write(jsoned)
 }
 
@@ -337,25 +367,31 @@ func (u *UserPreferencesApp) DeleteRequest(writer http.ResponseWriter, r *http.R
 		ok         bool
 		v          = mux.Vars(r)
 	)
+
 	if username, ok = v["username"]; !ok {
 		badRequest(writer, "Missing username in URL")
 		return
 	}
+
 	if userExists, err = queries.IsUser(u.db, username); err != nil {
 		badRequest(writer, fmt.Sprintf("Error checking for username %s: %s", username, err))
 		return
 	}
+
 	if !userExists {
 		handleNonUser(writer, username)
 		return
 	}
+
 	if hasPrefs, err = u.hasPreferences(username); err != nil {
 		errored(writer, fmt.Sprintf("Error checking preferences for user %s: %s", username, err))
 		return
 	}
+
 	if !hasPrefs {
 		return
 	}
+
 	if err = u.deletePreferences(username); err != nil {
 		errored(writer, fmt.Sprintf("Error deleting preferences for user %s: %s", username, err))
 	}
@@ -383,20 +419,25 @@ func main() {
 		err error
 		cfg *config.Config
 	)
+
 	if *version {
 		AppVersion()
 		os.Exit(0)
 	}
+
 	if *cfgPath == "" {
 		logcabin.Error.Fatal("--config must be set")
 	}
+
 	if cfg, err = configurate.Init(*cfgPath); err != nil {
 		logcabin.Error.Fatal(err)
 	}
+
 	dburi, err := cfg.String("db.uri")
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
+
 	logcabin.Info.Println("Connecting to the database...")
 	db, err := sql.Open("postgres", dburi)
 	if err != nil {
@@ -404,10 +445,12 @@ func main() {
 	}
 	defer db.Close()
 	logcabin.Info.Println("Connected to the database.")
+
 	if err := db.Ping(); err != nil {
 		logcabin.Error.Fatal(err)
 	}
 	logcabin.Info.Println("Successfully pinged the database")
+
 	logcabin.Info.Printf("Listening on port %s", *port)
 	app := New(db)
 	logcabin.Error.Fatal(http.ListenAndServe(fixAddr(*port), newRouter(app)))
