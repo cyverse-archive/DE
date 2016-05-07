@@ -33,6 +33,8 @@ import com.sencha.gxt.core.client.Style;
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.LabelProvider;
 import com.sencha.gxt.data.shared.TreeStore;
+import com.sencha.gxt.dnd.core.client.DragSource;
+import com.sencha.gxt.dnd.core.client.DropTarget;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.button.TextButton;
@@ -73,22 +75,32 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
     private TreeStore<OntologyHierarchy> treeStore;
     private Ontology activeOntology;
+    private OntologyViewDnDHandler dndHandler;
 
     @Inject
     public OntologiesViewImpl(OntologiesViewAppearance appearance,
                               @Assisted TreeStore<OntologyHierarchy> treeStore,
                               @Assisted AppCategoriesView categoriesView,
                               @Assisted("oldGridView") AdminAppsGridView oldGridView,
-                              @Assisted("newGridView") AdminAppsGridView newGridView) {
+                              @Assisted("newGridView") AdminAppsGridView newGridView,
+                              @Assisted OntologyViewDnDHandler dndHandler) {
         this.appearance = appearance;
         this.treeStore = treeStore;
         this.categoriesView = categoriesView;
         this.oldGridView = oldGridView;
         this.newGridView = newGridView;
+        this.dndHandler = dndHandler;
 
         initWidget(uiBinder.createAndBindUi(this));
 
         saveAndPublishEnabled(false);
+
+        DropTarget gridDropTarget = new DropTarget(oldGridView.asWidget());
+        gridDropTarget.setAllowSelfAsSource(false);
+        gridDropTarget.addDragEnterHandler(dndHandler);
+        gridDropTarget.addDragMoveHandler(dndHandler);
+        gridDropTarget.addDragEnterHandler(dndHandler);
+        gridDropTarget.addDropHandler(dndHandler);
 
         treePanel.setHeadingText("Hierarchies");
     }
@@ -132,6 +144,11 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @Override
     public void showTreePanel() {
         cards.setActiveWidget(treePanel);
+    }
+
+    @Override
+    public List<OntologyHierarchy> getSelectionItems() {
+        return tree.getSelectionModel().getSelectedItems();
     }
 
 
@@ -225,6 +242,9 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
                 }
             }
         });
+
+        DragSource treeDragSource = new DragSource(ontologyTree);
+        treeDragSource.addDragStartHandler(dndHandler);
 
         return ontologyTree;
     }

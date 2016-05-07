@@ -11,6 +11,9 @@ import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.Ontology
 import org.iplantc.de.admin.desktop.client.ontologies.service.callbacks.OntologyVersionCallbackConverter;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppList;
+import org.iplantc.de.client.models.avu.Avu;
+import org.iplantc.de.client.models.avu.AvuAutoBeanFactory;
+import org.iplantc.de.client.models.avu.AvuList;
 import org.iplantc.de.client.models.ontologies.Ontology;
 import org.iplantc.de.client.models.ontologies.OntologyAutoBeanFactory;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
@@ -18,6 +21,7 @@ import org.iplantc.de.client.models.ontologies.OntologyMetadata;
 import org.iplantc.de.client.models.ontologies.OntologyVersionDetail;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
+import org.iplantc.de.client.services.converters.AvuListCallbackConverter;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -25,6 +29,8 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+import com.google.web.bindery.autobean.shared.AutoBeanUtils;
+import com.google.web.bindery.autobean.shared.Splittable;
 
 import java.util.List;
 
@@ -36,7 +42,9 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
     private final String ONTOLOGY = "org.iplantc.services.ontologies";
     private final String ONTOLOGY_ADMIN = "org.iplantc.services.admin.ontologies";
     private final String APPS_HIERARCHIES = "org.iplantc.services.apps.hierarchies";
+    private final String APPS_ADMIN = "org.iplantc.services.admin.apps";
     @Inject OntologyAutoBeanFactory factory;
+    @Inject AvuAutoBeanFactory avuFactory;
     @Inject private DiscEnvApiService deService;
     @Inject AppServiceFacade.AppServiceAutoBeanFactory svcFactory;
 
@@ -76,7 +84,7 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
 
     @Override
     public void getAppsByHierarchy(String iri, OntologyMetadata metadata, AsyncCallback<List<App>> callback) {
-        String address = APPS_HIERARCHIES + "/" + URL.encodeQueryString(iri) + "/apps" + "?attr=" + metadata.getAttr();
+        String address = APPS_HIERARCHIES + "/" + URL.encodeQueryString(iri) + "/apps" + "?attr=" + URL.encodeQueryString(metadata.getAttr());
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, new AsyncCallbackConverter<String, List<App>>(callback) {
@@ -86,6 +94,24 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
                 return apps;
             }
         });
+    }
+
+    @Override
+    public void addAVUToApp(App app, AvuList avus, AsyncCallback<List<Avu>> callback) {
+        String address = APPS_ADMIN + "/" + app.getId() + "/metadata";
+
+        final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(avus));
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(PUT, address, encode.getPayload());
+        deService.getServiceData(wrapper, new AvuListCallbackConverter(callback, avuFactory));
+    }
+
+    @Override
+    public void clearAVUsFromApp(App app, AvuList avus, AsyncCallback<List<Avu>> callback) {
+        String address = APPS_ADMIN + "/" + app.getId() + "/metadata";
+
+        final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(avus));
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode.getPayload());
+        deService.getServiceData(wrapper, new AvuListCallbackConverter(callback, avuFactory));
     }
 
 
@@ -103,7 +129,7 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
     @Override
     public void getUnclassifiedApps(String version, String root, OntologyMetadata metadata, AsyncCallback<List<App>> callback) {
         String address = ONTOLOGY_ADMIN + "/" + URL.encodeQueryString(version) + "/" + URL.encodeQueryString(root) + "/unclassified";
-        address += "?attr=" + metadata.getAttr();
+        address += "?attr=" + URL.encodeQueryString(metadata.getAttr());
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, new AsyncCallbackConverter<String, List<App>>(callback) {
