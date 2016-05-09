@@ -1,0 +1,15 @@
+clj-icat-direct.icat/icat-db-spec
+clj-icat-direct.icat/setup-icat
+clj-icat-direct.icat/number-of-files-in-folder
+clj-icat-direct.icat/number-of-folders-in-folder
+clj-icat-direct.icat/number-of-items-in-folder
+clj-icat-direct.icat/number-of-all-items-under-folder
+clj-icat-direct.icat/number-of-bad-items-in-folder
+clj-icat-direct.icat/list-folders-in-folder
+clj-icat-direct.icat/folder-path-listing
+clj-icat-direct.icat/folder-listing
+clj-icat-direct.icat/select-files-with-uuids
+clj-icat-direct.icat/select-folders-with-uuids
+clj-icat-direct.icat/paged-uuid-listing
+clj-icat-direct.icat/number-of-uuids-in-folder
+clj-icat-direct.icat/paged-folder-listing
