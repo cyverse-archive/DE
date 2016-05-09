@@ -71,12 +71,12 @@ public class GridViewPresenterDefaultAppearance implements GridView.Presenter.Ap
 
     @Override
     public String metadataDialogHeight() {
-        return "400";
+        return "600";
     }
 
     @Override
     public String metadataDialogWidth() {
-        return "600";
+        return "800";
     }
 
     @Override

@@ -7,13 +7,18 @@ import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplateLi
 import org.iplantc.de.client.models.diskResources.MetadataTemplate;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.diskResource.client.MetadataView;
 import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceMetadataUpdateCallback;
+import org.iplantc.de.diskResource.client.views.metadata.dialogs.MetadataTemplateViewDialog;
+import org.iplantc.de.diskResource.client.views.metadata.dialogs.SelectMetadataTemplateDialog;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
+
+import com.sencha.gxt.widget.core.client.event.HideEvent;
 
 import java.util.List;
 
@@ -25,6 +30,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
     private final DiskResource resource;
     private final MetadataView view;
     private final DiskResourceServiceFacade drService;
+    private List<MetadataTemplateInfo> templates;
 
     public MetadataPresenterImpl(final DiskResource selected,
                                  final MetadataView view,
@@ -34,7 +40,6 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
         this.drService = drService;
         view.setPresenter(this);
         drService.getMetadataTemplateListing(new AsyncCallback<List<MetadataTemplateInfo>>() {
-
             @Override
             public void onFailure(Throwable arg0) {
                 ErrorHandler.post("Unable to retrieve templates!", arg0);
@@ -43,7 +48,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
             @Override
             public void onSuccess(final List<MetadataTemplateInfo> result) {
                 GWT.log("templates size ---->" + result.size());
-                view.populateTemplates(result);
+                templates = result;
                 loadMetadata();
             }
         });
@@ -55,11 +60,13 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
             public void onSuccess(final DiskResourceMetadataList result) {
                 view.loadMetadata(result.getMetadata());
 
-                final DiskResourceMetadataTemplateList metadataTemplateList = result.getMetadataTemplates();
+                final DiskResourceMetadataTemplateList metadataTemplateList =
+                        result.getMetadataTemplates();
                 if (metadataTemplateList != null) {
-                    final List<DiskResourceMetadataTemplate> templates = metadataTemplateList.getTemplates();
+                    final List<DiskResourceMetadataTemplate> templates =
+                            metadataTemplateList.getTemplates();
                     if (templates != null && !templates.isEmpty()) {
-                   //     view.loadMetadataTemplate(templates.get(0));
+                        //     view.loadMetadataTemplate(templates.get(0));
                         view.loadUserMetadata(templates.get(0).getAvus());
                     }
                 }
@@ -99,6 +106,25 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
     }
 
     @Override
+    public void onSelectTemplate() {
+        final SelectMetadataTemplateDialog view = new SelectMetadataTemplateDialog(templates);
+        view.addHideHandler(new HideEvent.HideHandler() {
+            @Override
+            public void onHide(HideEvent event) {
+                MetadataTemplateInfo selectedTemplate = view.getSelectedTemplate();
+                if (selectedTemplate != null) {
+                    onTemplateSelected(selectedTemplate.getId());
+                }
+            }
+        });
+        view.setModal(false);
+        view.setSize("400px", "200px");
+        view.setHeadingText("Select Template");
+        view.show();
+
+    }
+
+    @Override
     public void onTemplateSelected(String templateId) {
         drService.getMetadataTemplate(templateId, new AsyncCallback<MetadataTemplate>() {
 
@@ -109,7 +135,15 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
 
             @Override
             public void onSuccess(MetadataTemplate result) {
-              //  view.loadTemplateAttributes(result.getAttributes());
+                MetadataTemplateViewDialog mtvd = new MetadataTemplateViewDialog(DiskResourceUtil.getInstance()
+                                                                                                 .isWritable(
+                                                                                                         resource),
+                                                                                 result.getAttributes());
+                mtvd.setHeadingText(result.getName());
+                mtvd.setModal(false);
+                mtvd.setSize("600px", "400px");
+                mtvd.show();
+
             }
         });
 
