@@ -39,6 +39,7 @@
   (listAppsWithMetadata [_ attr value params]
     (let [unpaged-params (dissoc params :limit :offset)
           listing-maps   (map #(.listAppsWithMetadata % attr value unpaged-params) clients)
+          ;; Expects each client to return a map like {:app_count int, :apps []}
           result-map     (apply merge-with #(if (integer? %1) (+ %1 %2) (into %1 %2)) listing-maps)]
       (-> result-map
           (sort-apps params {:default-sort-field "name"})

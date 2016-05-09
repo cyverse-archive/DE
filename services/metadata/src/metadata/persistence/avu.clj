@@ -115,7 +115,8 @@
     (where (select-keys avu [:id]))))
 
 (defn- update-valid-avu
-  "Updates an AVU, validating its given target_type and target_id match what's already in the database."
+  "Updates an AVU, validating its given target_type and target_id match what's already in the database.
+   Returns nil if an AVU with the given ID does not already exist in the database."
   [user-id {:keys [id] :as avu}]
   (when-let [existing-avu (when id (get-avu-by-id id))]
     (when (not= (select-keys existing-avu [:target_type :target_id])
