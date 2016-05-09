@@ -130,6 +130,47 @@ definitions:
         description: "The list of resources."
         items:
           $ref: "#/definitions/resource_out"
+  internal_subject_id:
+    type: string
+    description: "The internal subject identifier."
+    minLength: 36
+    maxLength: 36
+  external_subject_id:
+    type: string
+    description: "The external subject identifier."
+    minLength: 1
+    maxLength: 64
+  subject_type:
+    type: string
+    description: "The subject type."
+    enum:
+      - user
+      - group
+  subject_in:
+    type: object
+    description: "An incoming subject."
+    required:
+      - subject_id
+      - subject_type
+    properties:
+      subject_id:
+        $ref: "#/definitions/external_subject_id"
+      subject_type:
+        $ref: "#/definitions/subject_type"
+  subject_out:
+    type: object
+    description: "An outgoing subject."
+    required:
+      - id
+      - subject_id
+      - subject_type
+    properties:
+      id:
+        $ref: "#/definitions/internal_subject_id"
+      subject_id:
+        $ref: "#/definitions/external_subject_id"
+      subject_type:
+        $ref: "#/definitions/subject_type"
 info:
   description: >-
     Manages Permissions for the CyVerse Discovery Environment and related applications.
@@ -317,6 +358,32 @@ paths:
           description: "OK"
         404:
           $ref: "#/responses/not_found"
+        500:
+          $ref: "#/responses/internal_server_error"
+  /subjects:
+    post:
+      tags:
+        - subjects
+      summary: "Add a Subject"
+      parameters:
+        - description: "The new subject to add."
+          in: body
+          name: "subject_in"
+          required: True
+          schema:
+            $ref: "#/definitions/subject_in"
+      description: >-
+        Adds a subject (an entity to which permissions may be granted) to the database. For full use of the
+        permissions service, the subject should be present in Grouper and have the same subject ID in Grouper
+        and the permissions service.
+      operationId: addSubject
+      responses:
+        201:
+          description: "Created"
+          schema:
+            $ref: "#/definitions/subject_out"
+        400:
+          $ref: "#/responses/bad_request"
         500:
           $ref: "#/responses/internal_server_error"
 produces:

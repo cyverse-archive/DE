@@ -17,6 +17,7 @@ import (
 	"permissions/restapi/operations/resource_types"
 	"permissions/restapi/operations/resources"
 	"permissions/restapi/operations/status"
+	"permissions/restapi/operations/subjects"
 )
 
 // NewPermissionsAPI creates a new Permissions instance
@@ -59,6 +60,8 @@ type PermissionsAPI struct {
 	ResourceTypesPutResourceTypesIDHandler resource_types.PutResourceTypesIDHandler
 	// ResourcesAddResourceHandler sets the operation handler for the add resource operation
 	ResourcesAddResourceHandler resources.AddResourceHandler
+	// SubjectsAddSubjectHandler sets the operation handler for the add subject operation
+	SubjectsAddSubjectHandler subjects.AddSubjectHandler
 	// ResourcesDeleteResourceHandler sets the operation handler for the delete resource operation
 	ResourcesDeleteResourceHandler resources.DeleteResourceHandler
 	// ResourcesListResourcesHandler sets the operation handler for the list resources operation
@@ -142,6 +145,10 @@ func (o *PermissionsAPI) Validate() error {
 
 	if o.ResourcesAddResourceHandler == nil {
 		unregistered = append(unregistered, "resources.AddResourceHandler")
+	}
+
+	if o.SubjectsAddSubjectHandler == nil {
+		unregistered = append(unregistered, "subjects.AddSubjectHandler")
 	}
 
 	if o.ResourcesDeleteResourceHandler == nil {
@@ -258,6 +265,11 @@ func (o *PermissionsAPI) initHandlerCache() {
 		o.handlers[strings.ToUpper("POST")] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/resources"] = resources.NewAddResource(o.context, o.ResourcesAddResourceHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers[strings.ToUpper("POST")] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/subjects"] = subjects.NewAddSubject(o.context, o.SubjectsAddSubjectHandler)
 
 	if o.handlers["DELETE"] == nil {
 		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)
