@@ -26,11 +26,11 @@ import java.util.List;
 /**
  * Created by sriram on 5/4/16.
  */
-public class SelectMetadataTemplateView extends IPlantDialog implements IsWidget {
+public class SelectMetadataTemplateDialog extends IPlantDialog implements IsWidget {
 
 
-    @UiTemplate("SelectMetadataTemplateView.ui.xml")
-    interface SelectMetadataTemplateViewUiBinder extends UiBinder<Widget, SelectMetadataTemplateView> {
+    @UiTemplate("SelectMetadataTemplateDialog.ui.xml")
+    interface SelectMetadataTemplateViewUiBinder extends UiBinder<Widget, SelectMetadataTemplateDialog> {
     }
 
     private static final SelectMetadataTemplateViewUiBinder uiBinder =
@@ -48,7 +48,7 @@ public class SelectMetadataTemplateView extends IPlantDialog implements IsWidget
     @UiField(provided = true)
     ColumnModel<MetadataTemplateInfo> cm;
 
-    public SelectMetadataTemplateView(List<MetadataTemplateInfo> templates) {
+    public SelectMetadataTemplateDialog(List<MetadataTemplateInfo> templates) {
         super();
         getOkButton().disable();
         listStore = new ListStore<>(new ModelKeyProvider<MetadataTemplateInfo>() {

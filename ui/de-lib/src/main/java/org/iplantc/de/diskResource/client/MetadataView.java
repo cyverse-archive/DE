@@ -69,6 +69,7 @@ public interface MetadataView extends IsWidget {
 
         void setDiskResourceMetadata(DiskResourceMetadataUpdateCallback callback);
 
+        void onSelectTemplate();
     }
 
 
@@ -79,8 +80,6 @@ public interface MetadataView extends IsWidget {
     void loadMetadata(List<DiskResourceMetadata> metadataList);
 
     void loadUserMetadata(List<DiskResourceMetadata> metadataList);
-
-    void populateTemplates(List<MetadataTemplateInfo> templates);
 
     void setPresenter(Presenter p);
 
