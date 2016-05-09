@@ -56,7 +56,14 @@ func BuildResourceTypesIDDeleteHandler(
 			reason := err.Error()
 			return resource_types.NewDeleteResourceTypesIDInternalServerError().WithPayload(&models.ErrorOut{&reason})
 		}
-		tx.Commit()
+
+		// Commit the transaction.
+		if err := tx.Commit(); err != nil {
+			tx.Rollback()
+			reason := err.Error()
+			return resource_types.NewDeleteResourceTypesIDInternalServerError().WithPayload(&models.ErrorOut{&reason})
+		}
+
 		return resource_types.NewDeleteResourceTypesIDOK()
 	}
 }

@@ -17,9 +17,11 @@ import (
 
 	"permissions/restapi/operations"
 	"permissions/restapi/operations/resource_types"
+	"permissions/restapi/operations/resources"
 	"permissions/restapi/operations/status"
 
 	resource_types_impl "permissions/restapi/impl/resource_types"
+	resources_impl "permissions/restapi/impl/resources"
 	status_impl "permissions/restapi/impl/status"
 )
 
@@ -104,18 +106,33 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 		resource_types_impl.BuildResourceTypesGetHandler(db),
 	)
 
-	api.ResourceTypesPutResourceTypesHandler = resource_types.PutResourceTypesHandlerFunc(
-		resource_types_impl.BuildResourceTypesPutHandler(db),
+	api.ResourceTypesPostResourceTypesHandler = resource_types.PostResourceTypesHandlerFunc(
+		resource_types_impl.BuildResourceTypesPostHandler(db),
 	)
 
-	api.ResourceTypesPostResourceTypesIDHandler = resource_types.PostResourceTypesIDHandlerFunc(
-		resource_types_impl.BuildResourceTypesIDPostHandler(db),
+	api.ResourceTypesPutResourceTypesIDHandler = resource_types.PutResourceTypesIDHandlerFunc(
+		resource_types_impl.BuildResourceTypesIDPutHandler(db),
 	)
 
 	api.ResourceTypesDeleteResourceTypesIDHandler = resource_types.DeleteResourceTypesIDHandlerFunc(
 		resource_types_impl.BuildResourceTypesIDDeleteHandler(db),
 	)
 
+	api.ResourcesAddResourceHandler = resources.AddResourceHandlerFunc(
+		resources_impl.BuildAddResourceHandler(db),
+	)
+
+	api.ResourcesListResourcesHandler = resources.ListResourcesHandlerFunc(
+		resources_impl.BuildListResourcesHandler(db),
+	)
+
+	api.ResourcesUpdateResourceHandler = resources.UpdateResourceHandlerFunc(
+		resources_impl.BuildUpdateResourceHandler(db),
+	)
+
+	api.ResourcesDeleteResourceHandler = resources.DeleteResourceHandlerFunc(
+		resources_impl.BuildDeleteResourceHandler(db),
+	)
 	api.ServerShutdown = cleanup
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))

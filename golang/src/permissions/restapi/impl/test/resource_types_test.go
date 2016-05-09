@@ -11,22 +11,20 @@ import (
 	impl "permissions/restapi/impl/resource_types"
 )
 
-const FAKE_ID = "1A960034-969A-46A7-B6B5-3F1866258CAB"
-
 func addResourceTypeAttempt(db *sql.DB, name, description string) middleware.Responder {
 
 	// build the request handler.
-	handler := impl.BuildResourceTypesPutHandler(db)
+	handler := impl.BuildResourceTypesPostHandler(db)
 
 	// Attempt to add the resource type to the database.
 	resourceTypeIn := &models.ResourceTypeIn{Name: &name, Description: description}
-	params := resource_types.PutResourceTypesParams{ResourceTypeIn: resourceTypeIn}
+	params := resource_types.PostResourceTypesParams{ResourceTypeIn: resourceTypeIn}
 	return handler(params)
 }
 
 func addResourceType(db *sql.DB, name string, description string) *models.ResourceTypeOut {
 	responder := addResourceTypeAttempt(db, name, description)
-	return responder.(*resource_types.PutResourceTypesCreated).Payload
+	return responder.(*resource_types.PostResourceTypesCreated).Payload
 }
 
 func listResourceTypes(db *sql.DB) *models.ResourceTypesOut {
@@ -43,17 +41,17 @@ func listResourceTypes(db *sql.DB) *models.ResourceTypesOut {
 func modifyResourceTypeAttempt(db *sql.DB, id, name, description string) middleware.Responder {
 
 	// Build the request handler.
-	handler := impl.BuildResourceTypesIDPostHandler(db)
+	handler := impl.BuildResourceTypesIDPutHandler(db)
 
 	// Update the resource type in the database.
 	resourceTypeIn := &models.ResourceTypeIn{Name: &name, Description: description}
-	params := resource_types.PostResourceTypesIDParams{ID: id, ResourceTypeIn: resourceTypeIn}
+	params := resource_types.PutResourceTypesIDParams{ID: id, ResourceTypeIn: resourceTypeIn}
 	return handler(params)
 }
 
 func modifyResourceType(db *sql.DB, id string, name string, description string) *models.ResourceTypeOut {
 	responder := modifyResourceTypeAttempt(db, id, name, description)
-	return responder.(*resource_types.PostResourceTypesIDOK).Payload
+	return responder.(*resource_types.PutResourceTypesIDOK).Payload
 }
 
 func deleteResourceTypeAttempt(db *sql.DB, id string) middleware.Responder {
@@ -84,7 +82,7 @@ func TestAddResourceType(t *testing.T) {
 	description := "The resource type."
 	resourceTypeOut := addResourceType(db, name, description)
 
-	// Verify that the name and description.
+	// Verify the name and description.
 	if *resourceTypeOut.Name != name {
 		t.Errorf("unexpected resource type name returned from database: %s", resourceTypeOut.Name)
 	}
@@ -107,7 +105,7 @@ func TestAddDuplicateResourceType(t *testing.T) {
 
 	// Attempt to add another resource type with the same name.
 	responder := addResourceTypeAttempt(db, name, "The impostor!")
-	errorOut := responder.(*resource_types.PutResourceTypesBadRequest).Payload
+	errorOut := responder.(*resource_types.PostResourceTypesBadRequest).Payload
 
 	// Verify that we got the expected error message.
 	expected := fmt.Sprintf("a resource type named %s already exists", name)
@@ -146,6 +144,24 @@ func TestGetResourceTypes(t *testing.T) {
 	}
 	if actual.Description != expected.Description {
 		t.Errorf("unexpected resource type description: %s", actual.Description)
+	}
+}
+
+func TestGetResourceTypesEmpty(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+
+	// List the resource types.
+	resourceTypesOut := listResourceTypes(db)
+
+	// Verify that we got the expected result.
+	resourceTypes := resourceTypesOut.ResourceTypes
+	if resourceTypes == nil {
+		t.Errorf("a nil resource type list was returned")
 	}
 }
 
@@ -210,7 +226,7 @@ func TestModifyNonExistentResourceType(t *testing.T) {
 
 	// Attempt to modify a non-existent resource type.
 	responder := modifyResourceTypeAttempt(db, FAKE_ID, "n", "d")
-	errorOut := responder.(*resource_types.PostResourceTypesIDNotFound).Payload
+	errorOut := responder.(*resource_types.PutResourceTypesIDNotFound).Payload
 
 	// Verify that we got the expected error message.
 	expected := fmt.Sprintf("resource type %s not found", FAKE_ID)
@@ -233,7 +249,7 @@ func TestModifyDuplicateResourceType(t *testing.T) {
 
 	// Attempt to rename the second resource type to the name of the first resource type.
 	responder := modifyResourceTypeAttempt(db, *rt2.ID, *rt1.Name, rt2.Description)
-	errorOut := responder.(*resource_types.PostResourceTypesIDBadRequest).Payload
+	errorOut := responder.(*resource_types.PutResourceTypesIDBadRequest).Payload
 
 	// Verify that we got the expected error message.
 	expected := fmt.Sprintf("another resource type named %s already exists", *rt1.Name)
