@@ -42,41 +42,51 @@
       (.findMetadataValuesForCollection collection-ao dir-path)
       (.findMetadataValuesForDataObject data-ao dir-path))))
 
-(defn get-attribute
-  "Returns a list of avu maps for set of attributes associated with dir-path"
-  [cm dir-path attr]
-  (validate-path-lengths dir-path)
-  (filter
-    #(= (:attr %1) attr)
-    (get-metadata cm dir-path)))
+(defn- get-metadata-by-query
+  [{^DataObjectAO data-ao :dataObjectAO
+    ^CollectionAO collection-ao :collectionAO
+    :as cm} path query]
+  (mapv avu2map
+    (if (is-dir? cm path)
+      (.findMetadataValuesByMetadataQueryForCollection collection-ao query path)
+      (.findMetadataValuesForDataObjectUsingAVUQuery data-ao query path))))
 
-(defn get-attributes
-  "Returns a list of avu maps for a set of attributes associated with dir-path."
-  [cm attrs path]
-  (validate-path-lengths path)
-  (filter
-    #(contains? attrs (:attr %1))
-    (get-metadata cm path)))
+(defn get-attribute
+  "Returns a list of avu maps for a specific attribute associated with dir-path"
+  [{^DataObjectAO data-ao :dataObjectAO
+    ^CollectionAO collection-ao :collectionAO
+    :as cm} dir-path attr]
+  (validate-path-lengths dir-path)
+  (let [query [(AVUQueryElement/instanceForValueQuery
+                AVUQueryElement$AVUQueryPart/ATTRIBUTE
+                AVUQueryOperatorEnum/EQUAL
+                attr)]]
+    (get-metadata-by-query cm dir-path query)))
 
 (defn get-attribute-value
-  [cm apath attr val]
+  [{^DataObjectAO data-ao :dataObjectAO
+    ^CollectionAO collection-ao :collectionAO
+    :as cm} apath attr val]
   (validate-path-lengths apath)
-  (filter
-    #(and (= (:attr %1) attr)
-          (= (:value %1) val))
-    (get-metadata cm apath)))
+  (let [query [(AVUQueryElement/instanceForValueQuery
+                AVUQueryElement$AVUQueryPart/ATTRIBUTE
+                AVUQueryOperatorEnum/EQUAL
+                attr) (AVUQueryElement/instanceForValueQuery
+                AVUQueryElement$AVUQueryPart/VALUE
+                AVUQueryOperatorEnum/EQUAL
+                (str val))]]
+    (get-metadata-by-query cm apath query)))
 
 (defn attribute?
   "Returns true if the path has the associated attribute."
   [cm dir-path attr]
-  (validate-path-lengths dir-path)
   (pos? (count (get-attribute cm dir-path attr))))
 
 (defn attr-value?
   "Returns a truthy value if path has metadata that has an attribute of attr and
    a value of val."
   ([cm path attr val]
-    (attr-value? (get-metadata cm path) attr val))
+    (pos? (count (get-attribute-value cm path attr val))))
   ([metadata attr val]
     (-> (filter
           #(and (= (:attr %1) attr)
