@@ -171,6 +171,17 @@ definitions:
         $ref: "#/definitions/external_subject_id"
       subject_type:
         $ref: "#/definitions/subject_type"
+  subjects_out:
+    type: object
+    description: "A list of subjects."
+    required:
+      - subjects
+    properties:
+      subjects:
+        type: array
+        description: "The list of subjects."
+        items:
+          $ref: "#/definitions/subject_out"
 info:
   description: >-
     Manages Permissions for the CyVerse Discovery Environment and related applications.
@@ -361,6 +372,20 @@ paths:
         500:
           $ref: "#/responses/internal_server_error"
   /subjects:
+    get:
+      tags:
+        - subjects
+      summary: "List Subjects"
+      description: >-
+        Lists subjects (entities to which permissions may be gratned) that exist in the database.
+      operationId: listSubjects
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/subjects_out"
+        500:
+          $ref: "#/responses/internal_server_error"
     post:
       tags:
         - subjects

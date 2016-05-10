@@ -1,4 +1,4 @@
-package subject
+package subjects
 
 import (
 	"database/sql"

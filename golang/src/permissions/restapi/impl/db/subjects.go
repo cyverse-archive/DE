@@ -37,3 +37,26 @@ func SubjectExists(tx *sql.Tx, subjectId models.ExternalSubjectID) (bool, error)
 	}
 	return count > 0, nil
 }
+
+func ListSubjects(tx *sql.Tx) ([]*models.SubjectOut, error) {
+
+	// Query the database.
+	query := "SELECT id, subject_id, subject_type FROM subjects"
+	rows, err := tx.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	// Get the list of subjects.
+	subjects := make([]*models.SubjectOut, 0)
+	for rows.Next() {
+		var subjectDto SubjectDto
+		if err := rows.Scan(&subjectDto.ID, &subjectDto.SubjectID, &subjectDto.SubjectType); err != nil {
+			return nil, err
+		}
+		subjects = append(subjects, subjectDto.ToSubjectOut())
+	}
+
+	return subjects, nil
+}
