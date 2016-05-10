@@ -46,6 +46,7 @@
   [{^DataObjectAO data-ao :dataObjectAO
     ^CollectionAO collection-ao :collectionAO
     :as cm} path query]
+  (validate-path-lengths dir-path)
   (mapv avu2map
     (if (is-dir? cm path)
       (.findMetadataValuesByMetadataQueryForCollection collection-ao query path)
@@ -56,7 +57,6 @@
   [{^DataObjectAO data-ao :dataObjectAO
     ^CollectionAO collection-ao :collectionAO
     :as cm} dir-path attr]
-  (validate-path-lengths dir-path)
   (let [query [(AVUQueryElement/instanceForValueQuery
                 AVUQueryElement$AVUQueryPart/ATTRIBUTE
                 AVUQueryOperatorEnum/EQUAL
@@ -67,7 +67,6 @@
   [{^DataObjectAO data-ao :dataObjectAO
     ^CollectionAO collection-ao :collectionAO
     :as cm} apath attr val]
-  (validate-path-lengths apath)
   (let [query [(AVUQueryElement/instanceForValueQuery
                 AVUQueryElement$AVUQueryPart/ATTRIBUTE
                 AVUQueryOperatorEnum/EQUAL
