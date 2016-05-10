@@ -295,9 +295,5 @@
   (table :user_sessions)
   (belongs-to users {:fk :user_id}))
 
-(defentity user-saved-searches
-  (table :user_saved_searches)
-  (belongs-to users {:fk :user_id}))
-
 (defentity job-status-updates
   (table :job_status_updates))
