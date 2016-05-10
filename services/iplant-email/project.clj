@@ -7,7 +7,7 @@
       (string/trim (:out (sh "git" "rev-parse" "HEAD")))
       ""))
 
-(defproject org.iplantc/iplant-email "5.2.6.0"
+(defproject org.iplantc/iplant-email "5.2.7.0"
   :description "iPlant Email Service"
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"
@@ -15,8 +15,8 @@
   :manifest {"Git-Ref" ~(git-ref)}
   :uberjar-name "iplant-email-standalone.jar"
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [org.iplantc/clojure-commons "5.2.6.0"]
-                 [org.iplantc/service-logging "5.2.6.0"]
+                 [org.iplantc/clojure-commons "5.2.7.0"]
+                 [org.iplantc/service-logging "5.2.7.0"]
                  [cheshire "5.5.0"
                    :exclusions [[com.fasterxml.jackson.dataformat/jackson-dataformat-cbor]
                                 [com.fasterxml.jackson.dataformat/jackson-dataformat-smile]
@@ -26,7 +26,7 @@
                  [javax.mail/mail "1.4"]
                  [org.bituf/clj-stringtemplate "0.2"]
                  [compojure "1.0.1"]
-                 [org.iplantc/common-cli "5.2.6.0"]
+                 [org.iplantc/common-cli "5.2.7.0"]
                  [me.raynes/fs "1.4.6"]]
   :plugins [[test2junit "1.1.3"]]
   :aot [iplant-email.core]

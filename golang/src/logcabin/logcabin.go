@@ -10,26 +10,26 @@ import (
 )
 
 var (
-	Trace	*log.Logger
-	Info	*log.Logger
-	Warning	*log.Logger
-	Error	*log.Logger
+	Trace   *log.Logger
+	Info    *log.Logger
+	Warning *log.Logger
+	Error   *log.Logger
 
-	Trace_Lincoln *Lincoln
-	Info_Lincoln *Lincoln
-	Warning_Lincoln *Lincoln
-	Error_Lincoln *Lincoln
+	TraceLincoln   *Lincoln
+	InfoLincoln    *Lincoln
+	WarningLincoln *Lincoln
+	ErrorLincoln   *Lincoln
 
-	Service string
+	Service  string
 	Artifact string
 )
 
 // Log Level Constants
 const (
-	trace_lvl = "TRACE"
-	info_lvl = "INFO"
-	warn_lvl = "WARN"
-	err_lvl = "ERR"
+	traceLevel = "TRACE"
+	infoLevel  = "INFO"
+	warnLevel  = "WARN"
+	errorLevel = "ERR"
 )
 
 func init() {
@@ -40,15 +40,15 @@ func Init(service, artifact string) {
 	Service = service
 	Artifact = artifact
 
-	Trace_Lincoln = &Lincoln{service, artifact, trace_lvl}
-	Info_Lincoln = &Lincoln{service, artifact, info_lvl}
-	Warning_Lincoln = &Lincoln{service, artifact, warn_lvl}
-	Error_Lincoln = &Lincoln{service, artifact, err_lvl}
+	TraceLincoln = &Lincoln{service, artifact, traceLevel}
+	InfoLincoln = &Lincoln{service, artifact, infoLevel}
+	WarningLincoln = &Lincoln{service, artifact, warnLevel}
+	ErrorLincoln = &Lincoln{service, artifact, errorLevel}
 
-	Trace = log.New(Trace_Lincoln, "", log.Lshortfile)
-	Info = log.New(Info_Lincoln, "", log.Lshortfile)
-	Warning = log.New(Warning_Lincoln, "", log.Lshortfile)
-	Error = log.New(Error_Lincoln, "", log.Lshortfile)
+	Trace = log.New(TraceLincoln, "", log.Lshortfile)
+	Info = log.New(InfoLincoln, "", log.Lshortfile)
+	Warning = log.New(WarningLincoln, "", log.Lshortfile)
+	Error = log.New(ErrorLincoln, "", log.Lshortfile)
 }
 
 // LogMessage represents a message that will be logged in JSON format.
@@ -63,9 +63,9 @@ type logMessage struct {
 
 // Lincoln is a logger for jex-events.
 type Lincoln struct {
-	service string
+	service  string
 	artifact string
-	level string
+	level    string
 }
 
 // NewLogMessage returns a pointer to a new instance of LogMessage.
@@ -90,4 +90,3 @@ func (l *Lincoln) Write(buf []byte) (n int, err error) {
 	j = append(j, []byte("\n")...)
 	return os.Stdout.Write(j)
 }
-

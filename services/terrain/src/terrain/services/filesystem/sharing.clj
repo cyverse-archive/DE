@@ -163,12 +163,3 @@
       {:user unsharees
        :path fpaths
        :skipped (map #(dissoc % :skipped) (:skipped unshare-recs))})))
-
-(defn anon-readable?
-  [cm p]
-  (is-readable? cm (cfg/fs-anon-user) p))
-
-(defn anon-file-url
-  [p]
-  (let [aurl (url/url (cfg/anon-files-base))]
-    (str (-> aurl (assoc :path (ft/path-join (:path aurl) (string/replace p #"^\/" "")))))))

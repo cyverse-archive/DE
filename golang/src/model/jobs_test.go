@@ -11,6 +11,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/olebedev/config"
 )
 
 func JSONData() ([]byte, error) {
@@ -26,29 +28,34 @@ func JSONData() ([]byte, error) {
 }
 
 var (
-	s *Job
+	s   *Job
+	cfg *config.Config
 )
 
 func _inittests(t *testing.T, memoize bool) *Job {
+	var err error
 	if s == nil || !memoize {
-		configurate.Init("../test/test_config.yaml")
-		configurate.C.Set("condor.run_on_nfs", true)
-		configurate.C.Set("irods.base", "/path/to/irodsbase")
-		configurate.C.Set("irods.host", "hostname")
-		configurate.C.Set("irods.port", "1247")
-		configurate.C.Set("irods.user", "user")
-		configurate.C.Set("irods.pass", "pass")
-		configurate.C.Set("irods.zone", "test")
-		configurate.C.Set("irods.resc", "")
-		configurate.C.Set("condor.log_path", "/path/to/logs")
-		configurate.C.Set("condor.porklock_tag", "test")
-		configurate.C.Set("condor.filter_files", "foo,bar,baz,blippy")
-		configurate.C.Set("condor.request_disk", "0")
+		cfg, err = configurate.Init("../test/test_config.yaml")
+		if err != nil {
+			t.Error(err)
+		}
+		cfg.Set("condor.run_on_nfs", true)
+		cfg.Set("irods.base", "/path/to/irodsbase")
+		cfg.Set("irods.host", "hostname")
+		cfg.Set("irods.port", "1247")
+		cfg.Set("irods.user", "user")
+		cfg.Set("irods.pass", "pass")
+		cfg.Set("irods.zone", "test")
+		cfg.Set("irods.resc", "")
+		cfg.Set("condor.log_path", "/path/to/logs")
+		cfg.Set("condor.porklock_tag", "test")
+		cfg.Set("condor.filter_files", "foo,bar,baz,blippy")
+		cfg.Set("condor.request_disk", "0")
 		data, err := JSONData()
 		if err != nil {
 			t.Error(err)
 		}
-		s, err = NewFromData(data)
+		s, err = NewFromData(cfg, data)
 		if err != nil {
 			t.Error(err)
 		}
@@ -254,7 +261,7 @@ func TestDirname(t *testing.T) {
 func TestCondorLogDir(t *testing.T) {
 	s := _inittests(t, false)
 	s.NowDate = time.Now().Format(nowfmt)
-	logPath, err := configurate.C.String("condor.log_path")
+	logPath, err := cfg.String("condor.log_path")
 	if err != nil {
 		t.Error(err)
 	}

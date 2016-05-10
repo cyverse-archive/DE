@@ -93,6 +93,10 @@
         client     (get-apps-client user state-info)]
     (.listAppsInCategory client category-id params)))
 
+(defn list-apps-with-metadata
+  [user attr value params]
+  (.listAppsWithMetadata (get-apps-client user) attr value params))
+
 (defn search-apps
   [user {:keys [search] :as params}]
   (.searchApps (get-apps-client user) search params))
@@ -135,7 +139,11 @@
 
 (defn get-app-details
   [user app-id]
-  (.getAppDetails (get-apps-client user) app-id))
+  (.getAppDetails (get-apps-client user) app-id false))
+
+(defn admin-get-app-details
+  [user app-id]
+  (.getAppDetails (get-apps-client user) app-id true))
 
 (defn remove-app-favorite
   [user app-id]
@@ -300,7 +308,7 @@
   [user body]
   (let [apps-client (get-apps-client user)]
     (.adminUpdateApp apps-client body)
-    (.getAppDetails apps-client (:id body))))
+    (.getAppDetails apps-client (:id body) true)))
 
 (defn get-admin-app-categories
   [user params]

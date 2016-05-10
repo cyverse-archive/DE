@@ -1,7 +1,6 @@
 package model
 
 import (
-	"configurate"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -10,6 +9,8 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/olebedev/config"
 )
 
 var (
@@ -62,6 +63,7 @@ type Job struct {
 	ID                 string         `json:"id"`
 	BatchID            string         `json:"batch_id"`
 	CondorID           string         `json:"condor_id"`
+	CondorLogPath      string         `json:"condor_log_path"` //comes from config, not upstream service
 	CreateOutputSubdir bool           `json:"create_output_subdir"`
 	DateSubmitted      time.Time      `json:"date_submitted"`
 	DateStarted        time.Time      `json:"date_started"`
@@ -73,7 +75,8 @@ type Job struct {
 	FailureCount       int64          `json:"failure_count"`
 	FailureThreshold   int64          `json:"failure_threshold"`
 	FileMetadata       []FileMetadata `json:"file-metadata"`
-	Group              string         `json:"group"` //untested for now
+	FilterFiles        []string       `json:"filter_files"` //comes from config, not upstream service
+	Group              string         `json:"group"`        //untested for now
 	InvocationID       string         `json:"uuid"`
 	IRODSBase          string         `json:"irods_base"`
 	Name               string         `json:"name"`
@@ -95,30 +98,50 @@ type Job struct {
 }
 
 // New returns a pointer to a newly instantiated Job with NowDate set.
-func New() *Job {
+// Accesses the following configuration settings:
+//  * condor.request_disk
+//  * condor.log_path
+//  * condor.filter_files
+//  * irods.base
+func New(cfg *config.Config) *Job {
 	n := time.Now().Format(nowfmt)
-	rq, err := configurate.C.String("condor.request_disk")
+	rq, err := cfg.String("condor.request_disk")
 	if err != nil {
 		rq = ""
 	}
+	lp, err := cfg.String("condor.log_path")
+	if err != nil {
+		lp = ""
+	}
+	var paths []string
+	filterFiles, err := cfg.String("condor.filter_files")
+	if err != nil {
+		filterFiles = ""
+	}
+	for _, filter := range strings.Split(filterFiles, ",") {
+		paths = append(paths, filter)
+	}
+	irodsBase, err := cfg.String("irods.base")
+	if err != nil {
+		irodsBase = "/"
+	}
 	return &Job{
-		NowDate:     n,
-		ArchiveLogs: true,
-		RequestDisk: rq,
-		TimeLimit:   3600,
+		NowDate:        n,
+		SubmissionDate: n,
+		ArchiveLogs:    true,
+		RequestDisk:    rq,
+		TimeLimit:      3600,
+		CondorLogPath:  lp,
+		FilterFiles:    paths,
+		IRODSBase:      irodsBase,
 	}
 }
 
 // NewFromData creates a new submission and populates it by parsing the passed
 // in []byte as JSON.
-func NewFromData(data []byte) (*Job, error) {
+func NewFromData(cfg *config.Config, data []byte) (*Job, error) {
 	var err error
-	s := New()
-	s.SubmissionDate = s.NowDate
-	s.IRODSBase, err = configurate.C.String("irods.base")
-	if err != nil {
-		return nil, err
-	}
+	s := New(cfg)
 	err = json.Unmarshal(data, s)
 	if err != nil {
 		return nil, err
@@ -176,11 +199,7 @@ func (s *Job) UserIDForSubmission() string {
 // CondorLogDirectory returns the path to the directory containing condor logs on the
 // submission node. This a computed value, so it isn't in the struct.
 func (s *Job) CondorLogDirectory() string {
-	logPath, err := configurate.C.String("condor.log_path")
-	if err != nil {
-		logPath = ""
-	}
-	return fmt.Sprintf("%s/", path.Join(logPath, s.Submitter, s.DirectoryName()))
+	return fmt.Sprintf("%s/", path.Join(s.CondorLogPath, s.Submitter, s.DirectoryName()))
 }
 
 // IRODSConfig returns the path to iRODS config inside the working directory.
@@ -263,12 +282,8 @@ func (s *Job) ExcludeArguments() []string {
 			paths = append(paths, output.Source())
 		}
 	}
-	filterFiles, err := configurate.C.String("condor.filter_files")
-	if err != nil {
-		filterFiles = ""
-	}
-	for _, filter := range strings.Split(filterFiles, ",") {
-		paths = append(paths, filter)
+	for _, ff := range s.FilterFiles {
+		paths = append(paths, ff)
 	}
 	if !s.ArchiveLogs {
 		paths = append(paths, "logs")

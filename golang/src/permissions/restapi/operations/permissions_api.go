@@ -15,6 +15,7 @@ import (
 	"github.com/go-swagger/go-swagger/swag"
 
 	"permissions/restapi/operations/resource_types"
+	"permissions/restapi/operations/resources"
 	"permissions/restapi/operations/status"
 )
 
@@ -52,10 +53,18 @@ type PermissionsAPI struct {
 	StatusGetHandler status.GetHandler
 	// ResourceTypesGetResourceTypesHandler sets the operation handler for the get resource types operation
 	ResourceTypesGetResourceTypesHandler resource_types.GetResourceTypesHandler
-	// ResourceTypesPostResourceTypesIDHandler sets the operation handler for the post resource types ID operation
-	ResourceTypesPostResourceTypesIDHandler resource_types.PostResourceTypesIDHandler
-	// ResourceTypesPutResourceTypesHandler sets the operation handler for the put resource types operation
-	ResourceTypesPutResourceTypesHandler resource_types.PutResourceTypesHandler
+	// ResourceTypesPostResourceTypesHandler sets the operation handler for the post resource types operation
+	ResourceTypesPostResourceTypesHandler resource_types.PostResourceTypesHandler
+	// ResourceTypesPutResourceTypesIDHandler sets the operation handler for the put resource types ID operation
+	ResourceTypesPutResourceTypesIDHandler resource_types.PutResourceTypesIDHandler
+	// ResourcesAddResourceHandler sets the operation handler for the add resource operation
+	ResourcesAddResourceHandler resources.AddResourceHandler
+	// ResourcesDeleteResourceHandler sets the operation handler for the delete resource operation
+	ResourcesDeleteResourceHandler resources.DeleteResourceHandler
+	// ResourcesListResourcesHandler sets the operation handler for the list resources operation
+	ResourcesListResourcesHandler resources.ListResourcesHandler
+	// ResourcesUpdateResourceHandler sets the operation handler for the update resource operation
+	ResourcesUpdateResourceHandler resources.UpdateResourceHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -123,12 +132,28 @@ func (o *PermissionsAPI) Validate() error {
 		unregistered = append(unregistered, "resource_types.GetResourceTypesHandler")
 	}
 
-	if o.ResourceTypesPostResourceTypesIDHandler == nil {
-		unregistered = append(unregistered, "resource_types.PostResourceTypesIDHandler")
+	if o.ResourceTypesPostResourceTypesHandler == nil {
+		unregistered = append(unregistered, "resource_types.PostResourceTypesHandler")
 	}
 
-	if o.ResourceTypesPutResourceTypesHandler == nil {
-		unregistered = append(unregistered, "resource_types.PutResourceTypesHandler")
+	if o.ResourceTypesPutResourceTypesIDHandler == nil {
+		unregistered = append(unregistered, "resource_types.PutResourceTypesIDHandler")
+	}
+
+	if o.ResourcesAddResourceHandler == nil {
+		unregistered = append(unregistered, "resources.AddResourceHandler")
+	}
+
+	if o.ResourcesDeleteResourceHandler == nil {
+		unregistered = append(unregistered, "resources.DeleteResourceHandler")
+	}
+
+	if o.ResourcesListResourcesHandler == nil {
+		unregistered = append(unregistered, "resources.ListResourcesHandler")
+	}
+
+	if o.ResourcesUpdateResourceHandler == nil {
+		unregistered = append(unregistered, "resources.UpdateResourceHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -222,12 +247,32 @@ func (o *PermissionsAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers[strings.ToUpper("POST")] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/resource_types/{id}"] = resource_types.NewPostResourceTypesID(o.context, o.ResourceTypesPostResourceTypesIDHandler)
+	o.handlers["POST"]["/resource_types"] = resource_types.NewPostResourceTypes(o.context, o.ResourceTypesPostResourceTypesHandler)
 
 	if o.handlers["PUT"] == nil {
 		o.handlers[strings.ToUpper("PUT")] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/resource_types"] = resource_types.NewPutResourceTypes(o.context, o.ResourceTypesPutResourceTypesHandler)
+	o.handlers["PUT"]["/resource_types/{id}"] = resource_types.NewPutResourceTypesID(o.context, o.ResourceTypesPutResourceTypesIDHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers[strings.ToUpper("POST")] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/resources"] = resources.NewAddResource(o.context, o.ResourcesAddResourceHandler)
+
+	if o.handlers["DELETE"] == nil {
+		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/resources/{id}"] = resources.NewDeleteResource(o.context, o.ResourcesDeleteResourceHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/resources"] = resources.NewListResources(o.context, o.ResourcesListResourcesHandler)
+
+	if o.handlers["PUT"] == nil {
+		o.handlers[strings.ToUpper("PUT")] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/resources/{id}"] = resources.NewUpdateResource(o.context, o.ResourcesUpdateResourceHandler)
 
 }
 

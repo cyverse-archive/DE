@@ -43,6 +43,9 @@
   (listAppsInCategory [_ category-id params]
     (listings/list-apps-in-group user category-id params))
 
+  (listAppsWithMetadata [_ attr value params]
+    (listings/list-apps-with-metadata user attr value params))
+
   (searchApps [_ _ params]
     (listings/search-apps user params))
 
@@ -81,9 +84,10 @@
     (when (util/uuid? app-id)
       (edit/copy-app user app-id)))
 
-  (getAppDetails [_ app-id]
+  ;; FIXME: remove the admin flag when we have a better way to do this.
+  (getAppDetails [_ app-id admin?]
     (when (util/uuid? app-id)
-      (listings/get-app-details user (uuidify app-id))))
+      (listings/get-app-details user (uuidify app-id) admin?)))
 
   (removeAppFavorite [_ app-id]
     (when (util/uuid? app-id)

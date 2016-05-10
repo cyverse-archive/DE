@@ -1,4 +1,4 @@
-(defproject org.iplantc/kameleon "5.2.6.0"
+(defproject org.iplantc/kameleon "5.2.7.0"
   :description "Library for interacting with backend relational databases."
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"
@@ -14,4 +14,4 @@
                  [slingshot "0.12.2"]]
   :plugins [[lein-marginalia "0.7.1"]
             [test2junit "1.1.3"]]
-  :manifest {"db-version" "2.6.0:20160309.01"})
+  :manifest {"db-version" "2.6.0:20160420.01"})

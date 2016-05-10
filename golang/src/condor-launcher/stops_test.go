@@ -455,7 +455,8 @@ func TestCondorID(t *testing.T) {
 
 func TestExecCondorQ(t *testing.T) {
 	inittests(t)
-	output, err := ExecCondorQ()
+	cl := New(cfg)
+	output, err := cl.ExecCondorQ()
 	if err != nil {
 		t.Error(err)
 	}
@@ -501,7 +502,8 @@ func TestExecCondorQ(t *testing.T) {
 
 func TestExecCondorRm(t *testing.T) {
 	inittests(t)
-	actual, err := ExecCondorRm("foo")
+	cl := New(cfg)
+	actual, err := cl.ExecCondorRm("foo")
 	if err != nil {
 		t.Error(err)
 	}
@@ -521,6 +523,7 @@ func TestStopHandler(t *testing.T) {
 		return
 	}
 	inittests(t)
+	cl := New(cfg)
 	stopMsg := messaging.StopRequest{
 		InvocationID: "b788569f-6948-4586-b5bd-5ea096986331",
 	}
@@ -546,7 +549,7 @@ func TestStopHandler(t *testing.T) {
 		coord <- buf.String()
 	}()
 	client := GetClient(t)
-	stopHandler(client)(msg)
+	cl.stopHandler(client)(msg)
 	w.Close()
 	actual := <-coord
 	if !strings.Contains(actual, "Running condor_q...") {

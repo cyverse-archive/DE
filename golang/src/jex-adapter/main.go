@@ -21,23 +21,14 @@ import (
 	"os"
 
 	"github.com/gorilla/mux"
+	"github.com/olebedev/config"
 )
 
 var (
-	version = flag.Bool("version", false, "Print version information")
-	cfgPath = flag.String("config", "", "Path to the configuration file")
-	amqpURI string
-	addr    = flag.String("addr", ":60000", "The port to listen on for HTTP requests")
 	gitref  string
 	appver  string
 	builtby string
-	client  *messaging.Client
 )
-
-func init() {
-	flag.Parse()
-	logcabin.Init("jex-adapter", "jex-adapter")
-}
 
 // AppVersion prints version information to stdout
 func AppVersion() {
@@ -47,24 +38,38 @@ func AppVersion() {
 	if gitref != "" {
 		fmt.Printf("Git-Ref: %s\n", gitref)
 	}
-
 	if builtby != "" {
 		fmt.Printf("Built-By: %s\n", builtby)
 	}
 }
 
-func home(writer http.ResponseWriter, request *http.Request) {
+// JEXAdapter contains the application state for jex-adapter.
+type JEXAdapter struct {
+	cfg    *config.Config
+	client *messaging.Client
+}
+
+// New returns a *JEXAdapter
+func New(cfg *config.Config) *JEXAdapter {
+	return &JEXAdapter{
+		cfg: cfg,
+	}
+}
+
+func (j *JEXAdapter) home(writer http.ResponseWriter, request *http.Request) {
 	fmt.Fprintf(writer, "Welcome to the JEX.\n")
 }
 
-func stop(writer http.ResponseWriter, request *http.Request) {
-	logcabin.Info.Printf("Request received:\n%#v\n", request)
+func (j *JEXAdapter) stop(writer http.ResponseWriter, request *http.Request) {
 	var (
 		invID string
 		ok    bool
 		err   error
 		v     = mux.Vars(request)
 	)
+
+	logcabin.Info.Printf("Request received:\n%#v\n", request)
+
 	logcabin.Info.Println("Getting invocation ID out of the Vars")
 	if invID, ok = v["invocation_id"]; !ok {
 		writer.WriteHeader(http.StatusBadRequest)
@@ -73,8 +78,9 @@ func stop(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 	logcabin.Info.Printf("Invocation ID is %s\n", invID)
+
 	logcabin.Info.Println("Sending stop request")
-	err = client.SendStopRequest(invID, "root", "because I said to")
+	err = j.client.SendStopRequest(invID, "root", "because I said to")
 	if err != nil {
 		logcabin.Error.Print(err)
 		writer.WriteHeader(http.StatusInternalServerError)
@@ -84,7 +90,7 @@ func stop(writer http.ResponseWriter, request *http.Request) {
 	logcabin.Info.Println("Done sending stop request")
 }
 
-func launch(writer http.ResponseWriter, request *http.Request) {
+func (j *JEXAdapter) launch(writer http.ResponseWriter, request *http.Request) {
 	bodyBytes, err := ioutil.ReadAll(request.Body)
 	if err != nil {
 		logcabin.Error.Print(err)
@@ -92,7 +98,8 @@ func launch(writer http.ResponseWriter, request *http.Request) {
 		writer.Write([]byte("Request had no body"))
 		return
 	}
-	job, err := model.NewFromData(bodyBytes)
+
+	job, err := model.NewFromData(j.cfg, bodyBytes)
 	if err != nil {
 		logcabin.Error.Print(err)
 		writer.WriteHeader(http.StatusBadRequest)
@@ -101,52 +108,52 @@ func launch(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	// Create the time limit delta channel
-	// timeLimitDeltaChannel, err := client.CreateQueue(
-	// 	messaging.TimeLimitDeltaQueueName(job.InvocationID),
-	// 	messaging.JobsExchange,
-	// 	messaging.TimeLimitDeltaRequestKey(job.InvocationID),
-	// 	false,
-	// 	true,
-	// )
-	// if err != nil {
-	// 	logcabin.Error.Print(err)
-	// 	writer.WriteHeader(http.StatusInternalServerError)
-	// 	writer.Write([]byte(fmt.Sprintf("Error creating time limit delta request queue: %s", err.Error())))
-	// }
-	// defer timeLimitDeltaChannel.Close()
+	timeLimitDeltaChannel, err := j.client.CreateQueue(
+		messaging.TimeLimitDeltaQueueName(job.InvocationID),
+		messaging.JobsExchange,
+		messaging.TimeLimitDeltaRequestKey(job.InvocationID),
+		false,
+		true,
+	)
+	if err != nil {
+		logcabin.Error.Print(err)
+		writer.WriteHeader(http.StatusInternalServerError)
+		writer.Write([]byte(fmt.Sprintf("Error creating time limit delta request queue: %s", err.Error())))
+	}
+	defer timeLimitDeltaChannel.Close()
 
 	// Create the time limit request channel
-	// timeLimitRequestChannel, err := client.CreateQueue(
-	// 	messaging.TimeLimitRequestQueueName(job.InvocationID),
-	// 	messaging.JobsExchange,
-	// 	messaging.TimeLimitRequestKey(job.InvocationID),
-	// 	false,
-	// 	true,
-	// )
-	// if err != nil {
-	// 	logcabin.Error.Print(err)
-	// 	writer.WriteHeader(http.StatusInternalServerError)
-	// 	writer.Write([]byte(fmt.Sprintf("Error creating time limit request queue: %s", err.Error())))
-	// }
-	// defer timeLimitRequestChannel.Close()
+	timeLimitRequestChannel, err := j.client.CreateQueue(
+		messaging.TimeLimitRequestQueueName(job.InvocationID),
+		messaging.JobsExchange,
+		messaging.TimeLimitRequestKey(job.InvocationID),
+		false,
+		true,
+	)
+	if err != nil {
+		logcabin.Error.Print(err)
+		writer.WriteHeader(http.StatusInternalServerError)
+		writer.Write([]byte(fmt.Sprintf("Error creating time limit request queue: %s", err.Error())))
+	}
+	defer timeLimitRequestChannel.Close()
 
 	// Create the time limit response channel
-	// timeLimitResponseChannel, err := client.CreateQueue(
-	// 	messaging.TimeLimitResponsesQueueName(job.InvocationID),
-	// 	messaging.JobsExchange,
-	// 	messaging.TimeLimitResponsesKey(job.InvocationID),
-	// 	false,
-	// 	true,
-	// )
-	// if err != nil {
-	// 	logcabin.Error.Print(err)
-	// 	writer.WriteHeader(http.StatusInternalServerError)
-	// 	writer.Write([]byte(fmt.Sprintf("Error creating time limit response queue: %s", err.Error())))
-	// }
-	// defer timeLimitResponseChannel.Close()
+	timeLimitResponseChannel, err := j.client.CreateQueue(
+		messaging.TimeLimitResponsesQueueName(job.InvocationID),
+		messaging.JobsExchange,
+		messaging.TimeLimitResponsesKey(job.InvocationID),
+		false,
+		true,
+	)
+	if err != nil {
+		logcabin.Error.Print(err)
+		writer.WriteHeader(http.StatusInternalServerError)
+		writer.Write([]byte(fmt.Sprintf("Error creating time limit response queue: %s", err.Error())))
+	}
+	defer timeLimitResponseChannel.Close()
 
 	// Create the stop request channel
-	stopRequestChannel, err := client.CreateQueue(
+	stopRequestChannel, err := j.client.CreateQueue(
 		messaging.StopQueueName(job.InvocationID),
 		messaging.JobsExchange,
 		messaging.StopRequestKey(job.InvocationID),
@@ -167,6 +174,7 @@ func launch(writer http.ResponseWriter, request *http.Request) {
 		writer.Write([]byte(fmt.Sprintf("Error creating launch request: %s", err.Error())))
 		return
 	}
+
 	launchJSON, err := json.Marshal(launchRequest)
 	if err != nil {
 		logcabin.Error.Print(err)
@@ -174,7 +182,8 @@ func launch(writer http.ResponseWriter, request *http.Request) {
 		writer.Write([]byte(fmt.Sprintf("Error creating launch request JSON: %s", err.Error())))
 		return
 	}
-	err = client.Publish(messaging.LaunchesKey, launchJSON)
+
+	err = j.client.Publish(messaging.LaunchesKey, launchJSON)
 	if err != nil {
 		logcabin.Error.Print(err)
 		writer.WriteHeader(http.StatusInternalServerError)
@@ -199,7 +208,7 @@ type PreviewerReturn struct {
 	Params string `json:"params"`
 }
 
-func preview(writer http.ResponseWriter, request *http.Request) {
+func (j *JEXAdapter) preview(writer http.ResponseWriter, request *http.Request) {
 	bodyBytes, err := ioutil.ReadAll(request.Body)
 	if err != nil {
 		logcabin.Error.Print(err)
@@ -207,6 +216,7 @@ func preview(writer http.ResponseWriter, request *http.Request) {
 		writer.Write([]byte("Request had no body"))
 		return
 	}
+
 	previewer := &Previewer{}
 	err = json.Unmarshal(bodyBytes, previewer)
 	if err != nil {
@@ -215,6 +225,7 @@ func preview(writer http.ResponseWriter, request *http.Request) {
 		writer.Write([]byte(fmt.Sprintf("Error parsing preview JSON: %s", err.Error())))
 		return
 	}
+
 	var paramMap PreviewerReturn
 	paramMap.Params = previewer.Params.String()
 	outgoingJSON, err := json.Marshal(paramMap)
@@ -224,6 +235,7 @@ func preview(writer http.ResponseWriter, request *http.Request) {
 		writer.Write([]byte(fmt.Sprintf("Error creating response JSON: %s", err.Error())))
 		return
 	}
+
 	_, err = writer.Write(outgoingJSON)
 	if err != nil {
 		logcabin.Error.Print(err)
@@ -234,39 +246,58 @@ func preview(writer http.ResponseWriter, request *http.Request) {
 }
 
 // NewRouter returns a newly configured *mux.Router.
-func NewRouter() *mux.Router {
+func (j *JEXAdapter) NewRouter() *mux.Router {
 	router := mux.NewRouter()
-	router.HandleFunc("/", home).Methods("GET")
-	router.HandleFunc("/", launch).Methods("POST")
-	router.HandleFunc("/stop/{invocation_id}", stop).Methods("DELETE")
-	router.HandleFunc("/arg-preview", preview).Methods("POST")
+	router.HandleFunc("/", j.home).Methods("GET")
+	router.HandleFunc("/", j.launch).Methods("POST")
+	router.HandleFunc("/stop/{invocation_id}", j.stop).Methods("DELETE")
+	router.HandleFunc("/arg-preview", j.preview).Methods("POST")
 	return router
 }
 
 func main() {
+	var (
+		version = flag.Bool("version", false, "Print version information")
+		cfgPath = flag.String("config", "", "Path to the configuration file")
+		addr    = flag.String("addr", ":60000", "The port to listen on for HTTP requests")
+		amqpURI string
+	)
+
+	flag.Parse()
+
+	logcabin.Init("jex-adapter", "jex-adapter")
+
 	if *version {
 		AppVersion()
 		os.Exit(0)
 	}
+
 	if *cfgPath == "" {
 		fmt.Println("--config is required")
 		flag.PrintDefaults()
 		os.Exit(-1)
 	}
-	err := configurate.Init(*cfgPath)
+
+	cfg, err := configurate.Init(*cfgPath)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
-	amqpURI, err = configurate.C.String("amqp.uri")
+
+	amqpURI, err = cfg.String("amqp.uri")
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
-	client, err = messaging.NewClient(amqpURI, false)
+
+	app := New(cfg)
+
+	app.client, err = messaging.NewClient(amqpURI, false)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
-	defer client.Close()
-	client.SetupPublishing(messaging.JobsExchange)
-	router := NewRouter()
+	defer app.client.Close()
+
+	app.client.SetupPublishing(messaging.JobsExchange)
+
+	router := app.NewRouter()
 	logcabin.Error.Fatal(http.ListenAndServe(*addr, router))
 }

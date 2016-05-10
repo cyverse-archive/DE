@@ -140,6 +140,8 @@ public interface ToolbarView extends IsWidget,
 
         String metadataMenuItem();
 
+        String editViewMetadataMenuItem();
+
         String copyMetadataMenuItem();
 
         ImageResource metadataIcon();

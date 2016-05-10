@@ -15,18 +15,11 @@ import (
 )
 
 var (
-	interval     = flag.String("interval", "5s", "The length of time between cache refreshes. Must be in Go's duration string format.")
-	port         = flag.String("port", ":60000", "The port to listen on.")
-	version      = flag.Bool("version", false, "Print the version information")
 	gitref       string
 	appver       string
 	builtby      string
 	condorStatus = "condor_status"
 )
-
-func init() {
-	flag.Parse()
-}
 
 // AppVersion prints version information to stdout
 func AppVersion() {
@@ -74,27 +67,34 @@ func (s *slotStorer) Refresh() error {
 		cmd       *exec.Cmd
 		output    []byte
 	)
+
 	logcabin.Info.Println("Refreshing slot information from condor_status")
 	cmd = exec.Command(condorStatus)
 	if output, err = cmd.CombinedOutput(); err != nil {
 		return err
 	}
+
 	output = bytes.TrimSpace(output)
+
 	lines := bytes.Split(output, []byte("\n"))
 	if len(lines) <= 0 {
 		return fmt.Errorf("There where %d lines in the condor_status output", len(lines))
 	}
+
 	chunks := bytes.Fields(bytes.TrimSpace(lines[len(lines)-1]))
 	if len(chunks) < 4 {
 		return fmt.Errorf("There were only %d fields in the last line of the condor_status output", len(chunks))
 	}
+
 	if numSlots, err = strconv.ParseInt(string(chunks[1]), 10, 64); err != nil {
 		return err
 	}
+
 	if slotsUsed, err = strconv.ParseInt(string(chunks[3]), 10, 64); err != nil {
 		return err
 	}
 	logcabin.Info.Printf("Number of slots: %d\tSlots used: %d", numSlots, slotsUsed)
+
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 	s.numSlots = numSlots
@@ -109,41 +109,57 @@ type response struct {
 
 func (s *slotStorer) Respond(w http.ResponseWriter, r *http.Request) {
 	numSlots, slotsUsed := s.Values()
+
 	resp := &response{
 		NumSlots:  numSlots,
 		SlotsUsed: slotsUsed,
 	}
+
 	jsoned, err := json.Marshal(resp)
 	if err != nil {
 		logcabin.Error.Print(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 	}
+
 	output := string(jsoned)
 	logcabin.Info.Printf("request:\n%#v\nresponse:\n%s", r, output)
+
 	fmt.Fprintf(w, output)
 }
 
 func main() {
 	var (
+		interval = flag.String("interval", "5s", "The length of time between cache refreshes. Must be in Go's duration string format.")
+		port     = flag.String("port", ":60000", "The port to listen on.")
+		version  = flag.Bool("version", false, "Print the version information")
 		err      error
 		duration time.Duration
 		t        *time.Ticker
 		s        *slotStorer
 	)
+
+	flag.Parse()
+
 	if *version {
 		AppVersion()
 		os.Exit(0)
 	}
+
 	if duration, err = time.ParseDuration(*interval); err != nil {
 		logcabin.Error.Fatal(err)
 	}
+
 	s = New()
+
 	if err = s.Refresh(); err != nil {
 		logcabin.Error.Fatal(err)
 	}
+
 	http.HandleFunc("/", s.Respond)
+
 	t = time.NewTicker(duration)
+
 	go func() {
 		for _ = range t.C {
 			if err := s.Refresh(); err != nil {
@@ -151,5 +167,6 @@ func main() {
 			}
 		}
 	}()
+
 	logcabin.Error.Fatal(http.ListenAndServe(*port, nil))
 }

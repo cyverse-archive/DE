@@ -13,11 +13,16 @@ import (
 	httpkit "github.com/go-swagger/go-swagger/httpkit"
 	swag "github.com/go-swagger/go-swagger/swag"
 	_ "github.com/lib/pq"
+	"github.com/olebedev/config"
 
-	"permissions/restapi/impl"
 	"permissions/restapi/operations"
 	"permissions/restapi/operations/resource_types"
+	"permissions/restapi/operations/resources"
 	"permissions/restapi/operations/status"
+
+	resource_types_impl "permissions/restapi/impl/resource_types"
+	resources_impl "permissions/restapi/impl/resources"
+	status_impl "permissions/restapi/impl/status"
 )
 
 // This file is safe to edit. Once it exists it will not be overwritten
@@ -48,11 +53,15 @@ var db *sql.DB
 
 // Initialize the service.
 func initService() error {
-	if err := configurate.Init(options.CfgPath); err != nil {
+	var (
+		err error
+		cfg *config.Config
+	)
+	if cfg, err = configurate.Init(options.CfgPath); err != nil {
 		return err
 	}
 
-	dburi, err := configurate.C.String("db.uri")
+	dburi, err := cfg.String("db.uri")
 	if err != nil {
 		return err
 	}
@@ -91,24 +100,39 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 
 	api.JSONProducer = httpkit.JSONProducer()
 
-	api.StatusGetHandler = status.GetHandlerFunc(impl.BuildStatusHandler(SwaggerJSON))
+	api.StatusGetHandler = status.GetHandlerFunc(status_impl.BuildStatusHandler(SwaggerJSON))
 
 	api.ResourceTypesGetResourceTypesHandler = resource_types.GetResourceTypesHandlerFunc(
-		impl.BuildResourceTypesGetHandler(db),
+		resource_types_impl.BuildResourceTypesGetHandler(db),
 	)
 
-	api.ResourceTypesPutResourceTypesHandler = resource_types.PutResourceTypesHandlerFunc(
-		impl.BuildResourceTypesPutHandler(db),
+	api.ResourceTypesPostResourceTypesHandler = resource_types.PostResourceTypesHandlerFunc(
+		resource_types_impl.BuildResourceTypesPostHandler(db),
 	)
 
-	api.ResourceTypesPostResourceTypesIDHandler = resource_types.PostResourceTypesIDHandlerFunc(
-		impl.BuildResourceTypesIDPostHandler(db),
+	api.ResourceTypesPutResourceTypesIDHandler = resource_types.PutResourceTypesIDHandlerFunc(
+		resource_types_impl.BuildResourceTypesIDPutHandler(db),
 	)
 
 	api.ResourceTypesDeleteResourceTypesIDHandler = resource_types.DeleteResourceTypesIDHandlerFunc(
-		impl.BuildResourceTypesIDDeleteHandler(db),
+		resource_types_impl.BuildResourceTypesIDDeleteHandler(db),
 	)
 
+	api.ResourcesAddResourceHandler = resources.AddResourceHandlerFunc(
+		resources_impl.BuildAddResourceHandler(db),
+	)
+
+	api.ResourcesListResourcesHandler = resources.ListResourcesHandlerFunc(
+		resources_impl.BuildListResourcesHandler(db),
+	)
+
+	api.ResourcesUpdateResourceHandler = resources.UpdateResourceHandlerFunc(
+		resources_impl.BuildUpdateResourceHandler(db),
+	)
+
+	api.ResourcesDeleteResourceHandler = resources.DeleteResourceHandlerFunc(
+		resources_impl.BuildDeleteResourceHandler(db),
+	)
 	api.ServerShutdown = cleanup
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))

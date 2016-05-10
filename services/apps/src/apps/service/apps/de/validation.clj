@@ -129,8 +129,12 @@
 
 (defn verify-app-permission
   "Verifies that the user has sufficient privileges for an app."
-  [{user :shortUsername} {app-id :id} level]
-  (perms/check-app-permissions user level [app-id]))
+  ([user app level]
+   (verify-app-permission user app level false))
+  ([{user :shortUsername} {app-id :id} level admin?]
+    ;; FIXME: find better permission checks for admin users
+   (when-not admin?
+     (perms/check-app-permissions user level [app-id]))))
 
 (defn verify-app-editable
   "Verifies that the app is allowed to be edited by the current user."

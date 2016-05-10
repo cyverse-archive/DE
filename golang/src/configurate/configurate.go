@@ -10,21 +10,15 @@ import (
 	"github.com/olebedev/config"
 )
 
-var (
-	//C is a global *config.Config
-	C *config.Config
-)
-
 // Init initializes the underlying config.
-func Init(path string) error {
+func Init(path string) (*config.Config, error) {
 	f, err := os.Open(path)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	contents, err := ioutil.ReadAll(f)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	C, err = config.ParseYaml(string(contents))
-	return err
+	return config.ParseYaml(string(contents))
 }

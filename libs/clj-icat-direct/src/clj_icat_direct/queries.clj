@@ -208,7 +208,7 @@
 
 (defn- mk-count-colls-in-coll
   [parent-path group-ids-query & {:keys [cond] :or {cond "TRUE"}}]
-  (str "SELECT COUNT(*) AS total
+  (str "SELECT COUNT(DISTINCT c.coll_id) AS total
           FROM r_coll_main c JOIN r_objt_access AS a ON c.coll_id = a.object_id
           WHERE c.parent_coll_name = '" parent-path "'
             AND c.coll_type != 'linkPoint'
@@ -218,7 +218,7 @@
 
 (defn- mk-count-objs-of-type
   [objs-cte avus-cte group-query info-type-cond & {:keys [cond] :or {cond "TRUE"}}]
-  (str "SELECT COUNT(*) AS total
+  (str "SELECT COUNT(DISTINCT d.data_id) AS total
           FROM " objs-cte " AS d
             JOIN r_objt_access AS a ON a.object_id = d.data_id
             LEFT JOIN (" (mk-file-types avus-cte) ") AS f ON f.object_id = d.data_id

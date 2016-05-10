@@ -22,11 +22,13 @@ func Environment(job *model.Job) []string {
 // Run executes the job, and returns the exit code on the exit channel.
 func Run(client *messaging.Client, dckr *dockerops.Docker, exit chan messaging.StatusCode) {
 	status := messaging.Success
+
 	host, err := os.Hostname()
 	if err != nil {
 		logcabin.Error.Print(err)
 		host = "UNKNOWN"
 	}
+
 	// let everyone know the job is running
 	running(client, job, fmt.Sprintf("Job %s is running on host %s", job.InvocationID, host))
 
@@ -88,7 +90,9 @@ func Run(client *messaging.Client, dckr *dockerops.Docker, exit chan messaging.S
 			running(client, job, fmt.Sprintf("Done pulling tool container %s:%s", ci.Name, ci.Tag))
 		}
 	}
+
 	var exitCode int
+
 	// If pulls didn't succeed then we can't guarantee that we've got the
 	// correct versions of the tools. Don't bother pulling in data in that case,
 	// things are already screwed up.
@@ -162,6 +166,7 @@ func Run(client *messaging.Client, dckr *dockerops.Docker, exit chan messaging.S
 	// Always attempt to transfer outputs. There might be logs that can help
 	// debug issues when the job fails.
 	running(client, job, fmt.Sprintf("Beginning to upload outputs to %s", job.OutputDirectory()))
+
 	exitCode, err = dckr.UploadOutputs(job)
 	if exitCode != 0 || err != nil {
 		if err != nil {
@@ -187,5 +192,6 @@ func Run(client *messaging.Client, dckr *dockerops.Docker, exit chan messaging.S
 	} else {
 		success(client, job)
 	}
+
 	exit <- status
 }

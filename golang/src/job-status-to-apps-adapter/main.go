@@ -27,19 +27,13 @@ import (
 	"time"
 
 	_ "github.com/lib/pq"
+	"github.com/olebedev/config"
 )
 
 var (
-	cfgPath    = flag.String("config", "", "Path to the config file. Required.")
-	version    = flag.Bool("version", false, "Print the version information")
-	dbURI      = flag.String("db", "", "The URI used to connect to the database")
-	amqpURI    = flag.String("amqp", "", "The URI used to connect to the amqp broker")
-	maxRetries = flag.Int64("retries", 3, "The maximum number of propagation retries to make")
-	gitref     string
-	appver     string
-	builtby    string
-	appsURI    string
-	db         *sql.DB
+	gitref  string
+	appver  string
+	builtby string
 )
 
 // AppVersion prints version information to stdout
@@ -50,15 +44,9 @@ func AppVersion() {
 	if gitref != "" {
 		fmt.Printf("Git-Ref: %s\n", gitref)
 	}
-
 	if builtby != "" {
 		fmt.Printf("Built-By: %s\n", builtby)
 	}
-}
-
-func init() {
-	flag.Parse()
-	logcabin.Init("job-status-to-apps-adapter", "job-status-to-apps-adapter")
 }
 
 // JobStatusUpdate contains the data POSTed to the apps service.
@@ -119,18 +107,20 @@ type Propagator struct {
 	db       *sql.DB
 	tx       *sql.Tx
 	rollback bool
+	appsURI  string
 }
 
 // NewPropagator returns a *Propagator that has been initialized with a new
 // transaction.
-func NewPropagator(d *sql.DB) (*Propagator, error) {
-	t, err := db.Begin()
+func NewPropagator(d *sql.DB, appsURI string) (*Propagator, error) {
+	t, err := d.Begin()
 	if err != nil {
 		return nil, err
 	}
 	return &Propagator{
-		db: d,
-		tx: t,
+		db:      d,
+		tx:      t,
+		appsURI: appsURI,
 	}, nil
 }
 
@@ -148,35 +138,43 @@ func (p *Propagator) Propagate(status *DBJobStatusUpdate) error {
 		Status: status.Status,
 		UUID:   status.ExternalID,
 	}
+
 	if jsu.Status == string(messaging.SucceededState) || jsu.Status == string(messaging.FailedState) {
 		jsu.CompletionDate = fmt.Sprintf("%d", time.Now().UnixNano()/int64(time.Millisecond))
 	}
+
 	jsuw := JobStatusUpdateWrapper{
 		State: jsu,
 	}
+
 	logcabin.Info.Printf("Job status in the propagate function for job %s is: %#v", jsu.UUID, jsuw)
 	msg, err := json.Marshal(jsuw)
 	if err != nil {
 		logcabin.Error.Print(err)
 		return err
 	}
+
 	buf := bytes.NewBuffer(msg)
 	if err != nil {
 		logcabin.Error.Print(err)
 		return err
 	}
+
 	logcabin.Info.Printf("Message to propagate: %s", string(msg))
-	logcabin.Info.Printf("Sending job status to %s in the propagate function for job %s", appsURI, jsu.UUID)
-	resp, err := http.Post(appsURI, "application/json", buf)
+
+	logcabin.Info.Printf("Sending job status to %s in the propagate function for job %s", p.appsURI, jsu.UUID)
+	resp, err := http.Post(p.appsURI, "application/json", buf)
 	if err != nil {
-		logcabin.Error.Printf("Error sending job status to %s in the propagate function for job %s: %#v", appsURI, jsu.UUID, err)
+		logcabin.Error.Printf("Error sending job status to %s in the propagate function for job %s: %#v", p.appsURI, jsu.UUID, err)
 		return err
 	}
 	defer resp.Body.Close()
-	logcabin.Info.Printf("Response from %s in the propagate function for job %s is: %s", appsURI, jsu.UUID, resp.Status)
+
+	logcabin.Info.Printf("Response from %s in the propagate function for job %s is: %s", p.appsURI, jsu.UUID, resp.Status)
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		return errors.New("bad response")
 	}
+
 	return nil
 }
 
@@ -276,13 +274,14 @@ func (p *Propagator) StorePropagationAttempts(update *DBJobStatusUpdate) error {
 // * Propagate any unpropagated steps that appear after the last propagated
 //   update.
 // * Commit the transaction.
-func ScanAndPropagate(d *sql.DB) error {
+func ScanAndPropagate(d *sql.DB, maxRetries int64, appsURI string) error {
 	unpropped, err := Unpropagated(d)
 	if err != nil {
 		return err
 	}
+
 	for _, jobExtID := range unpropped {
-		proper, err := NewPropagator(d)
+		proper, err := NewPropagator(d, appsURI)
 		if err != nil {
 			return err
 		}
@@ -293,7 +292,7 @@ func ScanAndPropagate(d *sql.DB) error {
 		}
 
 		for _, subupdates := range updates {
-			if !subupdates.Propagated && subupdates.PropagationAttempts < *maxRetries {
+			if !subupdates.Propagated && subupdates.PropagationAttempts < maxRetries {
 				logcabin.Info.Printf("Propagating %#v", subupdates)
 				if err = proper.Propagate(&subupdates); err != nil {
 					logcabin.Error.Print(err)
@@ -310,15 +309,30 @@ func ScanAndPropagate(d *sql.DB) error {
 				}
 			}
 		}
+
 		if err = proper.Finished(); err != nil {
 			logcabin.Error.Print(err)
 		}
 	}
+
 	return nil
 }
 
 func main() {
-	var err error
+	var (
+		cfgPath    = flag.String("config", "", "Path to the config file. Required.")
+		version    = flag.Bool("version", false, "Print the version information")
+		dbURI      = flag.String("db", "", "The URI used to connect to the database")
+		maxRetries = flag.Int64("retries", 3, "The maximum number of propagation retries to make")
+		err        error
+		cfg        *config.Config
+		db         *sql.DB
+		appsURI    string
+	)
+
+	flag.Parse()
+
+	logcabin.Init("job-status-to-apps-adapter", "job-status-to-apps-adapter")
 
 	if *version {
 		AppVersion()
@@ -331,7 +345,7 @@ func main() {
 		os.Exit(-1)
 	}
 
-	err = configurate.Init(*cfgPath)
+	cfg, err = configurate.Init(*cfgPath)
 	if err != nil {
 		logcabin.Error.Print(err)
 		os.Exit(-1)
@@ -340,15 +354,15 @@ func main() {
 	logcabin.Info.Println("Done reading config.")
 
 	if *dbURI == "" {
-		if *dbURI == "" {
-			*dbURI, err = configurate.C.String("db.uri")
-			if err != nil {
-				logcabin.Error.Fatal(err)
-			}
+		*dbURI, err = cfg.String("db.uri")
+		if err != nil {
+			logcabin.Error.Fatal(err)
 		}
+	} else {
+		cfg.Set("db.uri", *dbURI)
 	}
 
-	appsURI, err = configurate.C.String("apps.callbacks_uri")
+	appsURI, err = cfg.String("apps.callbacks_uri")
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
@@ -366,7 +380,7 @@ func main() {
 	logcabin.Info.Println("Connected to the database")
 
 	for {
-		if err = ScanAndPropagate(db); err != nil {
+		if err = ScanAndPropagate(db, *maxRetries, appsURI); err != nil {
 			logcabin.Error.Fatal(err)
 		}
 		time.Sleep(5 * time.Second)

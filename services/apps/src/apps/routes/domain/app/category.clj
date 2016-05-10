@@ -2,14 +2,16 @@
   (:use [common-swagger-api.schema :only [->optional-param
                                           ->required-key
                                           describe
+                                          NonBlankString
                                           PagingParams
                                           SortFieldDocs
                                           SortFieldOptionalKey]]
+        [common-swagger-api.schema.ontologies]
         [apps.routes.domain.app]
         [apps.routes.params]
         [schema.core :only [defschema optional-key recursive enum]])
   (:require [clojure.set :as sets])
-  (:import [java.util UUID]))
+  (:import [java.util Date UUID]))
 
 (def AppCategoryNameParam (describe String "The App Category's name"))
 
@@ -83,3 +85,25 @@
   (-> AppCategoryRequest
       (->optional-param :name)
       (->optional-param :parent_id)))
+
+(defschema AppCategoryOntologyVersionDetails
+  {:version    (describe String "The unique version of the Ontology")
+   :applied_by (describe NonBlankString "The user that set this version as active")
+   :applied    (describe Date "The date this version was set as active")})
+
+(defschema ActiveOntologyDetails
+  (merge OntologyDetails
+         {:active (describe Boolean
+                            "Marks this Ontology version as the active version used when querying
+                             metadata service ontology endpoints")}))
+
+(defschema ActiveOntologyDetailsList
+  {:ontologies (describe [ActiveOntologyDetails] "List of available Ontologies")})
+
+(defschema OntologyHierarchyFilterParams
+  (merge SecuredQueryParams
+         {:attr (describe String "The metadata attribute that stores class IRIs under the given root IRI")}))
+
+(defschema OntologyAppListingPagingParams
+  (merge AppListingPagingParams
+         {:attr (describe String "The metadata attribute that stores the given class IRI")}))

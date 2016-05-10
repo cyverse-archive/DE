@@ -49,3 +49,7 @@
      (format-app-listing-response (.listApps agave) statuses jobs-enabled?))
   ([agave statuses jobs-enabled? app-ids]
      (format-app-listing-response (.listApps agave app-ids) statuses jobs-enabled?)))
+
+(defn list-apps-with-ontology
+  [agave statuses jobs-enabled? term]
+  (format-app-listing-response (.listAppsWithOntology agave term) statuses jobs-enabled?))
