@@ -52,13 +52,14 @@ public class MetadataTemplateViewDialog extends IPlantDialog {
     private final FastMap<DiskResourceMetadata> templateAttrAvuMap = new FastMap<>();
     private final FastMap<Field<?>> templateAttrFieldMap = new FastMap<>();
     private List<MetadataTemplateAttribute> attributes;
+    private List<DiskResourceMetadata> templateMd;
 
-    public MetadataTemplateViewDialog(boolean writable,
+    public MetadataTemplateViewDialog(List<DiskResourceMetadata> templateMd, boolean writable,
                                       List<MetadataTemplateAttribute> attributes) {
         timestampFormat = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT);
         this.writable = writable;
         this.attributes = attributes;
-
+        this.templateMd = templateMd;
 
         widget = new VerticalLayoutContainer();
         widget.setScrollMode(ScrollSupport.ScrollMode.AUTOY);

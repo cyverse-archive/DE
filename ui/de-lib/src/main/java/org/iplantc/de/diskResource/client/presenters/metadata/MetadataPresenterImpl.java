@@ -1,6 +1,7 @@
 package org.iplantc.de.diskResource.client.presenters.metadata;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadataList;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplateList;
@@ -31,6 +32,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
     private final MetadataView view;
     private final DiskResourceServiceFacade drService;
     private List<MetadataTemplateInfo> templates;
+    private List<DiskResourceMetadata> templateMd;
 
     public MetadataPresenterImpl(final DiskResource selected,
                                  final MetadataView view,
@@ -66,11 +68,12 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
                     final List<DiskResourceMetadataTemplate> templates =
                             metadataTemplateList.getTemplates();
                     if (templates != null && !templates.isEmpty()) {
-                        //     view.loadMetadataTemplate(templates.get(0));
-                        view.loadUserMetadata(templates.get(0).getAvus());
+                        templateMd =  templates.get(0).getAvus();
+                        view.loadUserMetadata(templateMd);
                     }
                 }
             }
+
 
             @Override
             public void onFailure(Throwable caught) {
@@ -135,7 +138,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
 
             @Override
             public void onSuccess(MetadataTemplate result) {
-                MetadataTemplateViewDialog mtvd = new MetadataTemplateViewDialog(DiskResourceUtil.getInstance()
+                MetadataTemplateViewDialog mtvd = new MetadataTemplateViewDialog(templateMd,DiskResourceUtil.getInstance()
                                                                                                  .isWritable(
                                                                                                          resource),
                                                                                  result.getAttributes());
