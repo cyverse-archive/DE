@@ -15,10 +15,12 @@
   [body workspace-id]
   (cheshire/encode (assoc (cheshire/decode body true) :workspace_id workspace-id)))
 
-(defn string->long
-  "Converts a String to a long."
-  [string]
+(defn param->long
+  "Converts a String or a Number to a long."
+  [param]
   (try
-    (Long/parseLong string)
+    (if (number? param)
+      (long param)
+      (Long/parseLong param))
     (catch NumberFormatException e
       (throw (IllegalArgumentException. e)))))

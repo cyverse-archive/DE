@@ -1,5 +1,6 @@
 (ns terrain.clients.metadata
   (:require [cheshire.core :as cheshire]
+            [ring.middleware.multipart-params :as multipart]
             [terrain.clients.metadata.raw :as raw]
             [terrain.util.service :as service]))
 
@@ -34,3 +35,13 @@
 (defn admin-delete-template
   [template-id]
   (raw/admin-delete-template template-id))
+
+(defn- store-ontology
+  [{istream :stream filename :filename content-type :content-type}]
+  (raw/upload-ontology filename content-type istream))
+
+(defn upload-ontology
+  "Forwards an Ontology XML document upload to the metadata service"
+  [request]
+  (let [{{response "ontology-xml"} :params} (multipart/multipart-params-request request {:store store-ontology})]
+    response))

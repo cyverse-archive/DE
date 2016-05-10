@@ -19,6 +19,10 @@
   ([agave jobs-enabled? app-ids]
      (app-listings/list-apps agave (get-system-statuses agave) jobs-enabled? app-ids)))
 
+(defn list-apps-with-ontology
+  [agave jobs-enabled? term]
+  (app-listings/list-apps-with-ontology agave (get-system-statuses agave) jobs-enabled? term))
+
 (defn- app-matches?
   [search-term app]
   (some (fn [s] (re-find (re-pattern (str "(?i)\\Q" search-term)) s))

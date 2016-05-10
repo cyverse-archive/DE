@@ -7,10 +7,15 @@
 (def apps-sort-params [:limit :offset :sort-field :sort-dir])
 (def apps-analysis-listing-params (conj apps-sort-params :include-hidden :filter))
 (def apps-search-params (conj apps-sort-params :search))
+(def apps-hierarchy-sort-params (conj apps-sort-params :attr))
 
 (defn- apps-url
   [& components]
   (str (apply curl/url (config/apps-base) components)))
+
+(defn- apps-url-encoded
+  [& components]
+  (str (apply curl/url (config/apps-base) (map curl/url-encode components))))
 
 (defn get-all-workflow-elements
   [params]
@@ -25,6 +30,58 @@
               {:query-params     (secured-params params [:include-hidden])
                :as               :stream
                :follow-redirects false}))
+
+(defn list-ontologies
+  []
+  (client/get (apps-url "admin" "ontologies")
+              {:query-params     (secured-params)
+               :as               :stream
+               :follow-redirects false}))
+
+(defn set-ontology-version
+  [ontology-version]
+  (client/post (apps-url-encoded "admin" "ontologies" ontology-version)
+               {:query-params     (secured-params)
+                :as               :stream
+                :follow-redirects false}))
+
+(defn get-app-category-hierarchy
+  ([ontology-version root-iri params]
+   (client/get (apps-url-encoded "admin" "ontologies" ontology-version root-iri)
+               {:query-params     (secured-params params [:attr])
+                :as               :stream
+                :follow-redirects false}))
+  ([root-iri params]
+   (client/get (apps-url-encoded "apps" "hierarchies" root-iri)
+               {:query-params     (secured-params params [:attr])
+                :as               :stream
+                :follow-redirects false})))
+
+(defn get-app-category-hierarchies
+  []
+  (client/get (apps-url "apps" "hierarchies")
+              {:query-params     (secured-params)
+               :as               :stream
+               :follow-redirects false}))
+
+(defn get-hierarchy-app-listing
+  [class-iri params]
+  (client/get (apps-url-encoded "apps" "hierarchies" class-iri "apps")
+              {:query-params     (secured-params params apps-hierarchy-sort-params)
+               :as               :stream
+               :follow-redirects false}))
+
+(defn get-unclassified-app-listing
+  ([ontology-version root-iri params]
+   (client/get (apps-url-encoded "admin" "ontologies" ontology-version root-iri "unclassified")
+               {:query-params     (secured-params params apps-hierarchy-sort-params)
+                :as               :stream
+                :follow-redirects false}))
+  ([root-iri params]
+   (client/get (apps-url-encoded "apps" "hierarchies" root-iri "unclassified")
+               {:query-params     (secured-params params apps-hierarchy-sort-params)
+                :as               :stream
+                :follow-redirects false})))
 
 (defn get-app-categories
   [params]
@@ -179,6 +236,56 @@
   [app-id]
   (client/get (apps-url "apps" app-id "is-publishable")
               {:query-params     (secured-params)
+               :as               :stream
+               :follow-redirects false}))
+
+(defn admin-list-avus
+  [app-id]
+  (client/get (apps-url "admin" "apps" app-id "metadata")
+              {:query-params     (secured-params)
+               :as               :stream
+               :follow-redirects false}))
+
+(defn admin-set-avus
+  [app-id body]
+  (client/post (apps-url "admin" "apps" app-id "metadata")
+               {:query-params     (secured-params)
+                :body             body
+                :content-type     :json
+                :as               :stream
+                :follow-redirects false}))
+
+(defn admin-update-avus
+  [app-id body]
+  (client/put (apps-url "admin" "apps" app-id "metadata")
+              {:query-params     (secured-params)
+               :body             body
+               :content-type     :json
+               :as               :stream
+               :follow-redirects false}))
+
+(defn list-avus
+  [app-id]
+  (client/get (apps-url "apps" app-id "metadata")
+            {:query-params     (secured-params)
+             :as               :stream
+             :follow-redirects false}))
+
+(defn set-avus
+  [app-id body]
+  (client/post (apps-url "apps" app-id "metadata")
+               {:query-params     (secured-params)
+                :body             body
+                :content-type     :json
+                :as               :stream
+                :follow-redirects false}))
+
+(defn update-avus
+  [app-id body]
+  (client/put (apps-url "apps" app-id "metadata")
+              {:query-params     (secured-params)
+               :body             body
+               :content-type     :json
                :as               :stream
                :follow-redirects false}))
 

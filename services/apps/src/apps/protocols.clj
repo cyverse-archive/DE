@@ -8,6 +8,7 @@
   (listAppCategories [_ params])
   (hasCategory [_ category-id])
   (listAppsInCategory [_ category-id params])
+  (listAppsWithMetadata [_ attr value params])
   (searchApps [_ search-term params])
   (canEditApps [_])
   (addApp [_ app])

@@ -14,6 +14,9 @@
             :url "http://www.iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :manifest {"Git-Ref" ~(git-ref)}
   :dependencies [[org.clojure/clojure "1.7.0"]
+                 [net.sourceforge.owlapi/owlapi-api "3.5.0"]
+                 [net.sourceforge.owlapi/owlapi-apibinding "3.4.10"]
+                 [net.sourceforge.owlapi/owlapi-reasoner "3.3"]
                  [metosin/compojure-api "0.24.5"]
                  [cheshire "5.5.0"]
                  [com.novemberain/langohr "3.5.1"]
