@@ -247,6 +247,48 @@ func TestPost(t *testing.T) {
 	}
 }
 
+func TestDelete(t *testing.T) {
+	sha1 := "60e3da2efd886074e28e44d48cc642f84c25b140"
+	treeURL := `[{"label":"tree_0","url":"http://portnoy.iplantcollaborative.org/view/tree/3727f35cc7125567492cab69850f6473"}]`
+
+	mock := NewMockDB()
+	if err := mock.insertTreeURLs(sha1, treeURL); err != nil {
+		t.Error(err)
+	}
+
+	n := New(mock)
+	server := httptest.NewServer(n.router)
+	defer server.Close()
+
+	sha1URL := fmt.Sprintf("%s/%s", server.URL, sha1)
+	httpClient := &http.Client{}
+	req, err := http.NewRequest(http.MethodDelete, sha1URL, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	res, err := httpClient.Do(req)
+	if err != nil {
+		t.Error(err)
+	}
+
+	bodyBytes, err := ioutil.ReadAll(res.Body)
+	res.Body.Close()
+	if err != nil {
+		t.Error(err)
+	}
+
+	if len(bodyBytes) > 0 {
+		t.Errorf("Delete returned a body when it should not have: %s", string(bodyBytes))
+	}
+
+	expectedStatus := http.StatusOK
+	actualStatus := res.StatusCode
+
+	if actualStatus != expectedStatus {
+		t.Errorf("StatusCode was %d instead of %d", actualStatus, expectedStatus)
+	}
+}
+
 func TestFixAddrNoPrefix(t *testing.T) {
 	expected := ":70000"
 	actual := fixAddr("70000")
