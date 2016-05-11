@@ -76,17 +76,15 @@ func handleNonUser(writer http.ResponseWriter, username string) {
 
 // SavedSearches contains the application state for saved-searches
 type SavedSearches struct {
-	cfg    *config.Config
 	db     *sql.DB
 	router *mux.Router
 }
 
 // New returns a new *SavedSearches
-func New(cfg *config.Config, db *sql.DB) *SavedSearches {
+func New(db *sql.DB) *SavedSearches {
 	var s *SavedSearches
 	router := mux.NewRouter()
 	s = &SavedSearches{
-		cfg:    cfg,
 		db:     db,
 		router: router,
 	}
@@ -390,6 +388,6 @@ func main() {
 	}
 	logcabin.Info.Println("Successfully pinged the database")
 
-	app := New(cfg, db)
+	app := New(db)
 	logcabin.Error.Fatal(http.ListenAndServe(fixAddr(*port), app.router))
 }
