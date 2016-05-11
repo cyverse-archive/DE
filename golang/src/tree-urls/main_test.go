@@ -289,6 +289,44 @@ func TestDelete(t *testing.T) {
 	}
 }
 
+func TestDeleteUnstored(t *testing.T) {
+	sha1 := "60e3da2efd886074e28e44d48cc642f84c25b140"
+
+	mock := NewMockDB()
+
+	n := New(mock)
+	server := httptest.NewServer(n.router)
+	defer server.Close()
+
+	sha1URL := fmt.Sprintf("%s/%s", server.URL, sha1)
+	httpClient := &http.Client{}
+	req, err := http.NewRequest(http.MethodDelete, sha1URL, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	res, err := httpClient.Do(req)
+	if err != nil {
+		t.Error(err)
+	}
+
+	bodyBytes, err := ioutil.ReadAll(res.Body)
+	res.Body.Close()
+	if err != nil {
+		t.Error(err)
+	}
+
+	if len(bodyBytes) > 0 {
+		t.Errorf("Delete returned a body when it should not have: %s", string(bodyBytes))
+	}
+
+	expectedStatus := http.StatusOK
+	actualStatus := res.StatusCode
+
+	if actualStatus != expectedStatus {
+		t.Errorf("StatusCode was %d instead of %d", actualStatus, expectedStatus)
+	}
+}
+
 func TestFixAddrNoPrefix(t *testing.T) {
 	expected := ":70000"
 	actual := fixAddr("70000")
