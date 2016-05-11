@@ -248,7 +248,7 @@ func TestPutInsert(t *testing.T) {
 	}
 
 	if parsed["tree_urls"] != treeURL {
-		t.Errorf("Post returned '%s' as the tree URL instead of '%s'", parsed["tree_urls"], treeURL)
+		t.Errorf("Put returned '%s' as the tree URL instead of '%s'", parsed["tree_urls"], treeURL)
 	}
 }
 
@@ -293,7 +293,7 @@ func TestPutUpdate(t *testing.T) {
 	}
 
 	if parsed["tree_urls"] != treeURL {
-		t.Errorf("Post returned '%s' as the tree URL instead of '%s'", parsed["tree_urls"], treeURL)
+		t.Errorf("Put returned '%s' as the tree URL instead of '%s'", parsed["tree_urls"], treeURL)
 	}
 }
 
