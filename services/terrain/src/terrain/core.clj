@@ -211,6 +211,7 @@
 
 (def unsecured-routes-handler
   (-> (delayed-handler unsecured-routes)
+      (wrap-routes wrap-tree-urls-base config/tree-urls-base)
       (wrap-routes wrap-exceptions cx/exception-handlers)
       (wrap-routes wrap-logging)))
 
