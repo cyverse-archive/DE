@@ -4,15 +4,18 @@
 - include: check-service.yaml
   vars:
     check_service_name: "{{service_name}}"
+    available_services: "{{service_list.stdout_lines}}"
 
 - include: check-service.yaml
   vars:
     check_service_name: "config_{{service_name}}"
+    available_services: "{{service_list.stdout_lines}}"
   when: has_configs|default(true)
 
 - include: check-service.yaml
   vars:
     check_service_name: "iplant_data_{{service_name}}"
+    available_services: "{{service_list.stdout_lines}}"
   when: has_iplant_data|default(false)
 
 - include: restart-service.yaml
