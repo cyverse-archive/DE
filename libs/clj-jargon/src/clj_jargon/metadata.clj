@@ -46,7 +46,7 @@
   [{^DataObjectAO data-ao :dataObjectAO
     ^CollectionAO collection-ao :collectionAO
     :as cm} path query]
-  (validate-path-lengths dir-path)
+  (validate-path-lengths path)
   (mapv avu2map
     (if (is-dir? cm path)
       (.findMetadataValuesByMetadataQueryForCollection collection-ao query path)
