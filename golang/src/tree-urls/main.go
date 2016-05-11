@@ -56,7 +56,7 @@ func notFound(writer http.ResponseWriter, msg string) {
 }
 
 func validSHA1(sha1 string) (bool, error) {
-	return regexp.MatchString("^[a-fA-F0-9]{40}$", sha1)
+	return regexp.MatchString("^[a-fA-F0-9]+$", sha1)
 }
 
 // Databaser is an interface for objects that interact with a data store. Mostly

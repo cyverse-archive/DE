@@ -126,8 +126,8 @@ func TestValidSHA1(t *testing.T) {
 	if valid, err = validSHA1(badSHA1); err != nil {
 		t.Error(err)
 	}
-	if valid {
-		t.Errorf("SHA1 '%s' was reported as valid when it is invalid", badSHA1)
+	if !valid {
+		t.Errorf("SHA1 '%s' was reported as invalid", badSHA1)
 	}
 }
 
