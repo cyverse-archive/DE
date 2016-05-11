@@ -1,10 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -206,6 +208,42 @@ func TestGet(t *testing.T) {
 
 	if actualStatus != expectedStatus {
 		t.Errorf("Status of the response was %d instead of %d", actualStatus, expectedStatus)
+	}
+}
+
+func TestPost(t *testing.T) {
+	sha1 := "60e3da2efd886074e28e44d48cc642f84c25b140"
+	treeURL := `[{"label":"tree_0","url":"http://portnoy.iplantcollaborative.org/view/tree/3727f35cc7125567492cab69850f6473"}]`
+
+	mock := NewMockDB()
+	n := New(mock)
+	server := httptest.NewServer(n.router)
+	defer server.Close()
+
+	sha1URL := fmt.Sprintf("%s/%s", server.URL, sha1)
+	res, err := http.Post(sha1URL, "", strings.NewReader(treeURL))
+	if err != nil {
+		t.Error(err)
+	}
+
+	bodyBytes, err := ioutil.ReadAll(res.Body)
+	res.Body.Close()
+	if err != nil {
+		t.Error(err)
+	}
+
+	var parsed map[string]string
+	err = json.Unmarshal(bodyBytes, &parsed)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if _, ok := parsed["tree_urls"]; !ok {
+		t.Error("Parsed response did not have a top-level 'tree_urls' key")
+	}
+
+	if parsed["tree_urls"] != treeURL {
+		t.Errorf("Post returned '%s' as the tree URL instead of '%s'", parsed["tree_urls"], treeURL)
 	}
 }
 
