@@ -35,8 +35,10 @@ func (m *MockDB) deleteTreeURLs(sha1 string) error {
 }
 
 func (m *MockDB) insertTreeURLs(sha1, treeURLs string) error {
-	insertable := []string{treeURLs}
-	m.storage[sha1]["tree_urls"] = insertable
+	if _, ok := m.storage[sha1]["tree_urls"]; !ok {
+		m.storage[sha1] = make(map[string]interface{})
+	}
+	m.storage[sha1]["tree_urls"] = treeURLs
 	return nil
 }
 
@@ -173,8 +175,9 @@ func TestGet(t *testing.T) {
 	expectedBody := `[{"label":"tree_0","url":"http://portnoy.iplantcollaborative.org/view/tree/3727f35cc7125567492cab69850f6473"}]`
 
 	mock := NewMockDB()
-	mock.storage[sha1] = make(map[string]interface{})
-	mock.storage[sha1]["tree_urls"] = expectedBody
+	if err := mock.insertTreeURLs(sha1, expectedBody); err != nil {
+		t.Error(err)
+	}
 
 	n := New(mock)
 	server := httptest.NewServer(n.router)
