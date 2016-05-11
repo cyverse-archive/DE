@@ -5,6 +5,9 @@ global_config_dir: /etc/iplant
 de_config_dir: "{{ global_config_dir }}/de"
 local_cfg_dest: cfg_files
 
+## zero-downtime
+use_color: false
+
 # A proxy host and port to be used by the database initialization utility,
 # facepalm. This does not affect network requests not made by facepalm.
 facepalm_proxy_host: null

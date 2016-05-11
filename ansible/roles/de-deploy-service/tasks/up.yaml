@@ -1,0 +1,17 @@
+# Starts containers for a docker-compose service.
+---
+
+- debug: msg="Starting {{up_service_name}}"
+  tags:
+      - docker_up
+
+- name: start {{up_service_name}}
+  environment:
+    DE_TAG: "{{docker.tag}}"
+    DE_ENV: "{{environment_name}}"
+    HOSTNAME: "{{inventory_hostname}}"
+  shell: "docker-compose -f {{docker_compose_path}} up -d {% if force_recreate|default(true) %}--force-recreate{% endif %} {{up_service_name}}"
+  register: docker_up_v
+  changed_when: docker_up_v.stdout.find('is up to date') == -1
+  tags:
+    - docker_up

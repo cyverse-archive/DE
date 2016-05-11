@@ -1,0 +1,341 @@
+---
+
+- name: Redeploy anon-files
+  hosts: anon-files:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - anon-files
+  roles:
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{anon_files.compose_service}}"
+
+- name: Redeploy apps
+  hosts: apps:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - apps
+  roles:
+    - role: de-deploy-service
+      has_iplant_data: true
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{apps.compose_service}}"
+
+- name: Redeploy data-info
+  hosts: data-info:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - data-info
+  roles:
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{data_info.compose_service}}"
+
+- name: Redeploy iplant-email
+  hosts: iplant-email:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - iplant-email
+  roles:
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{iplant_email.compose_service}}"
+
+- name: Redeploy iplant-groups
+  hosts: iplant-groups:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - iplant-groups
+  roles:
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{iplant_groups.compose_service}}"
+
+- name: Redeploy jex-adapter
+  hosts: jexevents
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - jex-adapter
+  roles:
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: jex_adapter
+
+- name: Redeploy kifshare
+  hosts: kifshare:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - kifshare
+  roles:
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{kifshare.compose_service}}"
+
+- name: Redeploy metadata
+  hosts: metadata:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - metadata
+  roles:
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{metadata.compose_service}}"
+
+- name: Redeploy notification-agent
+  hosts: notificationagent:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - notificationagent
+  roles:
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{notificationagent.compose_service}}"
+
+- name: Redeploy permissions
+  hosts: permissions:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - permissions
+  roles:
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{permissions.compose_service}}"
+
+- name: Redeploy saved-searches
+  hosts: saved-searches:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - saved-searches
+  roles:
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{saved_searches.compose_service}}"
+
+- name: Redeploy terrain
+  hosts: terrain:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - terrain
+  roles:
+    - role: de-deploy-service
+      has_iplant_data: true
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{terrain.compose_service}}"
+
+- name: Redeploy tree-urls
+  hosts: tree-urls:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - tree-urls
+  roles:
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{tree_urls.compose_service}}"
+
+- name: Redeploy user-preferences
+  hosts: user-preferences:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - user-preferences
+  roles:
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{user_preferences.compose_service}}"
+
+- name: Redeploy user-sessions
+  hosts: user-sessions:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - user-sessions
+  roles:
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{user_sessions.compose_service}}"
+
+
+##############################################################
+# Services which do not use colors ever
+##############################################################
+
+- name: Redeploy clockwork
+  hosts: clockwork:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - clockwork
+  roles:
+    - role: de-deploy-service
+      deploy_use_color: false
+      service_name: "{{clockwork.compose_service}}"
+
+- name: Redeploy dewey
+  hosts: dewey:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - dewey
+  roles:
+    - role: de-deploy-service
+      deploy_use_color: false
+      when: not parasitic
+      service_name: "{{dewey.compose_service}}"
+
+- name: Redeploy de-ui
+  hosts: ui:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - ui
+  roles:
+    - role: de-deploy-service
+      has_iplant_data: true
+      deploy_use_color: false
+      service_name: "{{de.compose_service}}"
+
+- name: Redeploy de-ui-nginx
+  hosts: ui:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - ui
+    - de-ui-nginx
+  roles:
+    - role: de-deploy-service
+      has_iplant_data: true
+      deploy_use_color: false
+      service_name: "{{de.http_server.compose_service}}"
+
+- name: Redeploy exim-sender
+  hosts: exim-sender:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - exim-sender
+  roles:
+    - role: de-deploy-service
+      deploy_use_color: false
+      service_name: "{{exim.compose_service}}"
+
+- name: Redeploy info-typer
+  hosts: info-typer:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - info-typer
+  roles:
+    - role: de-deploy-service
+      deploy_use_color: false
+      when: not parasitic
+      service_name: "{{info_typer.compose_service}}"
+
+- name: Redeploy infosquito
+  hosts: infosquito:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - infosquito
+  roles:
+    - role: de-deploy-service
+      deploy_use_color: false
+      when: not parasitic
+      service_name: "{{infosquito.compose_service}}"
+
+- name: Redeploy job-status-to-apps-adapter
+  hosts: jexevents
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - job-status-to-apps-adapter
+  roles:
+    - role: de-deploy-service
+      deploy_use_color: false
+      service_name: job_status_to_apps_adapter
+
+- name: Redeploy job-status-recorder
+  hosts: jexevents
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - job-status-recorder
+  roles:
+    - role: de-deploy-service
+      deploy_use_color: false
+      service_name: job_status_recorder
+
+- name: Redeploy monkey
+  hosts: monkey:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - monkey
+  roles:
+    - role: de-deploy-service
+      deploy_use_color: false
+      when: not parasitic
+      service_name: "{{monkey.compose_service}}"
+
+- name: Redeploy templeton-periodic
+  hosts: templeton-periodic:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - templeton
+    - templeton-periodic
+  roles:
+    - role: de-deploy-service
+      deploy_use_color: false
+      when: not parasitic
+      service_name: "{{templeton_periodic.compose_service}}"
+
+- name: Redeploy templeton-incremental
+  hosts: templeton-incremental:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - templeton
+    - templeton-incremental
+  roles:
+    - role: de-deploy-service
+      deploy_use_color: false
+      when: not parasitic
+      service_name: "{{templeton_incremental.compose_service}}"

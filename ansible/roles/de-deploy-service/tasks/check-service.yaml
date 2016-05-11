@@ -1,0 +1,13 @@
+# Checks that a docker-compose service exists.
+---
+
+- name: verify that {{check_service_name}} exists in the docker-compose file
+  environment:
+    DE_TAG: "{{docker.tag}}"
+    DE_ENV: "{{environment_name}}"
+    HOSTNAME: "{{inventory_hostname}}"
+  shell: "docker-compose -f {{docker_compose_path}} ps {{check_service_name}}"
+  register: docker_ps_v
+  failed_when: "docker_ps_v.rc != 0"
+  tags:
+      - verify

@@ -1,17 +1,16 @@
+# Removes containers for a docker-compose service.
 ---
-# tasks file for cfg-docker-pull
-#
 
-- debug: msg="Removing config_{{service_name}}"
+- debug: msg="Removing {{rm_service_name}}"
   tags:
       - docker_rm
 
-- name: remove the config_{{service_name}} image
+- name: remove the {{rm_service_name}} container
   environment:
     DE_TAG: "{{docker.tag}}"
     DE_ENV: "{{environment_name}}"
     HOSTNAME: "{{ inventory_hostname }}"
-  shell: "docker-compose -f {{docker_compose_path}} rm -f -v config_{{service_name}}"
+  shell: "docker-compose -f {{docker_compose_path}} rm -f -v {{rm_service_name}}"
   register: docker_pull_v
   changed_when: docker_pull_v.stdout.find('Image is up to date') == -1
   ignore_errors: yes
