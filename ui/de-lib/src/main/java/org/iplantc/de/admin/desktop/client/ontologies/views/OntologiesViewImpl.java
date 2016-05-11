@@ -11,7 +11,9 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.ViewOntologyVersion
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.PublishOntologyDialog;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.SaveHierarchiesDialog;
 import org.iplantc.de.apps.client.AppCategoriesView;
+import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
 import org.iplantc.de.client.DEClientConstants;
+import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.ontologies.Ontology;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import org.iplantc.de.commons.client.views.dialogs.EdamUploadDialog;
@@ -33,6 +35,8 @@ import com.sencha.gxt.cell.core.client.form.ComboBoxCell;
 import com.sencha.gxt.core.client.Style;
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.LabelProvider;
+import com.sencha.gxt.data.shared.SortDir;
+import com.sencha.gxt.data.shared.Store;
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.dnd.core.client.DragSource;
 import com.sencha.gxt.dnd.core.client.DropTarget;
@@ -46,6 +50,7 @@ import com.sencha.gxt.widget.core.client.form.SimpleComboBox;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -55,6 +60,14 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
     interface OntologiesViewImplUiBinder extends UiBinder<Widget, OntologiesViewImpl> {
 
+    }
+
+    private class OntologyHierarchyNameComparator implements Comparator<OntologyHierarchy> {
+
+        @Override
+        public int compare(OntologyHierarchy o1, OntologyHierarchy o2) {
+            return o1.getLabel().compareToIgnoreCase(o2.getLabel());
+        }
     }
 
     private static OntologiesViewImplUiBinder uiBinder = GWT.create(OntologiesViewImplUiBinder.class);
@@ -77,6 +90,8 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
     private TreeStore<OntologyHierarchy> treeStore;
     private Ontology activeOntology;
+    private Ontology selectedOntology;
+    private App targetApp;
     private OntologyViewDnDHandler dndHandler;
 
     @Inject
@@ -95,7 +110,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
         initWidget(uiBinder.createAndBindUi(this));
 
-        saveAndPublishEnabled(false);
+        updateButtonStatus();
 
         DropTarget gridDropTarget = new DropTarget(oldGridView.asWidget());
         gridDropTarget.setAllowSelfAsSource(false);
@@ -138,9 +153,22 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     @Override
+    public void onAppSelectionChanged(AppSelectionChangedEvent event) {
+        List<App> appSelection = event.getAppSelection();
+        targetApp = null;
+        if (appSelection != null && appSelection.size() == 1) {
+            targetApp = appSelection.get(0);
+        }
+        updateButtonStatus();
+    }
+
+    @Override
     public void showOntologyVersions(final List<Ontology> ontologies) {
         ontologyDropDown.clear();
         ontologyDropDown.getStore().replaceAll(ontologies);
+        selectedOntology = null;
+        cards.setActiveWidget(noTreePanel);
+        updateButtonStatus();
     }
 
     @Override
@@ -179,11 +207,9 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         ontologySimpleComboBox.addSelectionHandler(new SelectionHandler<Ontology>() {
             @Override
             public void onSelection(SelectionEvent<Ontology> event) {
-                Ontology selectedOntology = event.getSelectedItem();
-                if (selectedOntology == null) {
-                    saveAndPublishEnabled(false);
-                } else {
-                    saveAndPublishEnabled(true);
+                selectedOntology = event.getSelectedItem();
+                updateButtonStatus();
+                if (selectedOntology != null) {
                     fireEvent(new SelectOntologyVersionEvent(selectedOntology));
                 }
 
@@ -192,9 +218,10 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         return ontologySimpleComboBox;
     }
 
-    void saveAndPublishEnabled(boolean enabled) {
-        publishButton.setEnabled(enabled);
-        saveHierarchy.setEnabled(enabled);
+    void updateButtonStatus() {
+        publishButton.setEnabled(selectedOntology != null && selectedOntology != activeOntology);
+        saveHierarchy.setEnabled(selectedOntology != null);
+        categorize.setEnabled(selectedOntology != null && targetApp != null);
     }
     @UiHandler("viewVersions")
     void viewVersionsClicked(SelectEvent event) {
@@ -223,7 +250,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
     @UiHandler("categorize")
     void categorizeButtonClicked(SelectEvent event) {
-        fireEvent(new CategorizeButtonClickedEvent(oldGridView.getGrid().getSelectionModel().getSelectedItem(), tree));
+        fireEvent(new CategorizeButtonClickedEvent(targetApp, tree));
     }
 
     @UiFactory
@@ -257,6 +284,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
         DragSource treeDragSource = new DragSource(ontologyTree);
         treeDragSource.addDragStartHandler(dndHandler);
+        treeStore.addSortInfo(new Store.StoreSortInfo<>(new OntologyHierarchyNameComparator(), SortDir.ASC));
 
         return ontologyTree;
     }

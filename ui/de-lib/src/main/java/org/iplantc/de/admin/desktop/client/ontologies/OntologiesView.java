@@ -6,7 +6,9 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClic
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.ViewOntologyVersionEvent;
+import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
 import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.client.models.ontologies.Ontology;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 
@@ -26,7 +28,8 @@ public interface OntologiesView extends IsWidget,
                                         HierarchySelectedEvent.HasHierarchySelectedEventHandlers,
                                         SaveOntologyHierarchyEvent.HasSaveOntologyHierarchyEventHandlers,
                                         PublishOntologyClickEvent.HasPublishOntologyClickEventHandlers,
-                                        CategorizeButtonClickedEvent.HasCategorizeButtonClickedEventHandlers {
+                                        CategorizeButtonClickedEvent.HasCategorizeButtonClickedEventHandlers,
+                                        AppSelectionChangedEvent.AppSelectionChangedEventHandler{
 
     void showOntologyVersions(List<Ontology> result);
 
@@ -116,6 +119,12 @@ public interface OntologiesView extends IsWidget,
         String categorizeDialogHeight();
 
         String categorizeApp(App targetApp);
+
+        String appAvusCleared(App targetApp);
+
+        String appClassified(String name, List<Avu> result);
+
+        String appClassified(String name, String label);
     }
 
     interface Presenter {

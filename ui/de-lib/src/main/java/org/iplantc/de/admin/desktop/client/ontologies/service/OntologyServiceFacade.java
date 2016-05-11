@@ -17,6 +17,12 @@ import java.util.List;
  */
 public interface OntologyServiceFacade {
 
+    /**
+     * Save an ontology hierarchy at the given root to the specified ontology version
+     * @param version
+     * @param root
+     * @param callback
+     */
     void saveOntologyHierarchy(String version, String root, AsyncCallback<OntologyHierarchy> callback);
 
     /**
@@ -54,9 +60,26 @@ public interface OntologyServiceFacade {
      */
     void getAppsByHierarchy(String iri, OntologyMetadata metadata, AsyncCallback<List<App>> callback);
 
+    /**
+     * Add/Append a list of metadata tags to an App
+     * @param app
+     * @param avus
+     * @param callback
+     */
     void addAVUToApp(App app, AvuList avus, AsyncCallback<List<Avu>> callback);
 
+    /**
+     * Set the metadata tags for an App (overwriting any existing tags)
+     * @param app
+     * @param avus
+     * @param callback
+     */
     void setAppAVUs(App app, AvuList avus, AsyncCallback<List<Avu>> callback);
 
+    /**
+     * Get the list of metadata tags for an App
+     * @param app
+     * @param callback
+     */
     void getAppAVUs(App app, AsyncCallback<List<Avu>> callback);
 }

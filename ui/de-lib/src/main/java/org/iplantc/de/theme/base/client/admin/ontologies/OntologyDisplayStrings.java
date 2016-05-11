@@ -2,6 +2,8 @@ package org.iplantc.de.theme.base.client.admin.ontologies;
 
 import com.google.gwt.i18n.client.Messages;
 
+import java.util.List;
+
 /**
  * @author aramsey
  */
@@ -50,4 +52,10 @@ public interface OntologyDisplayStrings extends Messages{
     String categorize();
 
     String categorizeApp(String targetApp);
+
+    String appAvusCleared(String name);
+
+    String appClassifiedList(String name, @PluralCount List<String> tags);
+
+    String appClassified(String name, String label);
 }

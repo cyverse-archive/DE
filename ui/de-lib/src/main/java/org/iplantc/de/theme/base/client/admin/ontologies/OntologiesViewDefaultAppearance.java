@@ -2,9 +2,11 @@ package org.iplantc.de.theme.base.client.admin.ontologies;
 
 import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
 import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
@@ -12,6 +14,8 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeUri;
 
 import com.sencha.gxt.core.client.XTemplates;
+
+import java.util.List;
 
 /**
  * @author aramsey
@@ -256,5 +260,24 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     @Override
     public String categorizeApp(App targetApp) {
         return displayStrings.categorizeApp(targetApp.getName());
+    }
+
+    @Override
+    public String appAvusCleared(App targetApp) {
+        return displayStrings.appAvusCleared(targetApp.getName());
+    }
+
+    @Override
+    public String appClassified(String name, List<Avu> result) {
+        List<String> tags = Lists.newArrayList();
+        for (Avu avu : result) {
+            tags.add(avu.getUnit());
+        }
+        return displayStrings.appClassifiedList(name, tags);
+    }
+
+    @Override
+    public String appClassified(String name, String label) {
+        return displayStrings.appClassified(name,label);
     }
 }
