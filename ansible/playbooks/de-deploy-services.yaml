@@ -6,6 +6,7 @@
   gather_facts: false
   tags:
     - services
+    - colored
     - anon-files
   roles:
     - role: de-deploy-service
@@ -18,6 +19,7 @@
   gather_facts: false
   tags:
     - services
+    - colored
     - apps
   roles:
     - role: de-deploy-service
@@ -31,6 +33,7 @@
   gather_facts: false
   tags:
     - services
+    - colored
     - data-info
   roles:
     - role: de-deploy-service
@@ -43,6 +46,7 @@
   gather_facts: false
   tags:
     - services
+    - colored
     - iplant-email
   roles:
     - role: de-deploy-service
@@ -55,6 +59,7 @@
   gather_facts: false
   tags:
     - services
+    - colored
     - iplant-groups
   roles:
     - role: de-deploy-service
@@ -67,6 +72,7 @@
   gather_facts: false
   tags:
     - services
+    - colored
     - jex-adapter
   roles:
     - role: de-deploy-service
@@ -79,6 +85,7 @@
   gather_facts: false
   tags:
     - services
+    - colored
     - kifshare
   roles:
     - role: de-deploy-service
@@ -91,6 +98,7 @@
   gather_facts: false
   tags:
     - services
+    - colored
     - metadata
   roles:
     - role: de-deploy-service
@@ -103,6 +111,7 @@
   gather_facts: false
   tags:
     - services
+    - colored
     - notificationagent
   roles:
     - role: de-deploy-service
@@ -115,6 +124,7 @@
   gather_facts: false
   tags:
     - services
+    - colored
     - permissions
   roles:
     - role: de-deploy-service
@@ -127,6 +137,7 @@
   gather_facts: false
   tags:
     - services
+    - colored
     - saved-searches
   roles:
     - role: de-deploy-service
@@ -139,6 +150,7 @@
   gather_facts: false
   tags:
     - services
+    - colored
     - terrain
   roles:
     - role: de-deploy-service
@@ -152,6 +164,7 @@
   gather_facts: false
   tags:
     - services
+    - colored
     - tree-urls
   roles:
     - role: de-deploy-service
@@ -164,6 +177,7 @@
   gather_facts: false
   tags:
     - services
+    - colored
     - user-preferences
   roles:
     - role: de-deploy-service
@@ -176,6 +190,7 @@
   gather_facts: false
   tags:
     - services
+    - colored
     - user-sessions
   roles:
     - role: de-deploy-service
@@ -193,6 +208,7 @@
   gather_facts: false
   tags:
     - services
+    - uncolored
     - clockwork
   roles:
     - role: de-deploy-service
@@ -205,6 +221,7 @@
   gather_facts: false
   tags:
     - services
+    - uncolored
     - dewey
   roles:
     - role: de-deploy-service
@@ -218,6 +235,7 @@
   gather_facts: false
   tags:
     - ui
+    - uncolored
   roles:
     - role: de-deploy-service
       has_iplant_data: true
@@ -230,6 +248,7 @@
   gather_facts: false
   tags:
     - ui
+    - uncolored
     - de-ui-nginx
   roles:
     - role: de-deploy-service
@@ -243,6 +262,7 @@
   gather_facts: false
   tags:
     - services
+    - uncolored
     - exim-sender
   roles:
     - role: de-deploy-service
@@ -255,6 +275,7 @@
   gather_facts: false
   tags:
     - services
+    - uncolored
     - info-typer
   roles:
     - role: de-deploy-service
@@ -268,6 +289,7 @@
   gather_facts: false
   tags:
     - services
+    - uncolored
     - infosquito
   roles:
     - role: de-deploy-service
@@ -281,6 +303,7 @@
   gather_facts: false
   tags:
     - services
+    - uncolored
     - job-status-to-apps-adapter
   roles:
     - role: de-deploy-service
@@ -293,6 +316,7 @@
   gather_facts: false
   tags:
     - services
+    - uncolored
     - job-status-recorder
   roles:
     - role: de-deploy-service
@@ -305,6 +329,7 @@
   gather_facts: false
   tags:
     - services
+    - uncolored
     - monkey
   roles:
     - role: de-deploy-service
@@ -318,6 +343,7 @@
   gather_facts: false
   tags:
     - services
+    - uncolored
     - templeton
     - templeton-periodic
   roles:
@@ -332,6 +358,7 @@
   gather_facts: false
   tags:
     - services
+    - uncolored
     - templeton
     - templeton-incremental
   roles:
