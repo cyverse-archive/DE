@@ -106,11 +106,19 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
     }
 
     @Override
-    public void clearAVUsFromApp(App app, AvuList avus, AsyncCallback<List<Avu>> callback) {
+    public void setAppAVUs(App app, AvuList avus, AsyncCallback<List<Avu>> callback) {
         String address = APPS_ADMIN + "/" + app.getId() + "/metadata";
 
         final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(avus));
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode.getPayload());
+        deService.getServiceData(wrapper, new AvuListCallbackConverter(callback, avuFactory));
+    }
+
+    @Override
+    public void getAppAVUs(App app, AsyncCallback<List<Avu>> callback) {
+        String address = APPS_ADMIN + "/" + app.getId() + "/metadata";
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, new AvuListCallbackConverter(callback, avuFactory));
     }
 

@@ -56,5 +56,7 @@ public interface OntologyServiceFacade {
 
     void addAVUToApp(App app, AvuList avus, AsyncCallback<List<Avu>> callback);
 
-    void clearAVUsFromApp(App app, AvuList avus, AsyncCallback<List<Avu>> callback);
+    void setAppAVUs(App app, AvuList avus, AsyncCallback<List<Avu>> callback);
+
+    void getAppAVUs(App app, AsyncCallback<List<Avu>> callback);
 }

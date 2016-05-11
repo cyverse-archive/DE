@@ -3,6 +3,8 @@ package org.iplantc.de.admin.desktop.client.ontologies.presenter;
 import org.iplantc.de.admin.apps.client.AdminAppsGridView;
 import org.iplantc.de.admin.apps.client.AdminCategoriesView;
 import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
+import org.iplantc.de.admin.desktop.client.ontologies.events.CategorizeButtonClickedEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.CategorizeHierarchiesToAppEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
@@ -10,7 +12,9 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersi
 import org.iplantc.de.admin.desktop.client.ontologies.events.ViewOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.gin.factory.OntologiesViewFactory;
 import org.iplantc.de.admin.desktop.client.ontologies.service.OntologyServiceFacade;
+import org.iplantc.de.admin.desktop.client.ontologies.views.AppCategorizeView;
 import org.iplantc.de.admin.desktop.client.ontologies.views.OntologyViewDnDHandler;
+import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.CategorizeDialog;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
@@ -29,14 +33,18 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 
 import com.google.common.collect.Lists;
+import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
 
+import com.sencha.gxt.core.shared.FastMap;
 import com.sencha.gxt.data.shared.TreeStore;
+import com.sencha.gxt.widget.core.client.tree.Tree;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author aramsey
@@ -46,7 +54,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                                                 SelectOntologyVersionEvent.SelectOntologyVersionEventHandler,
                                                 SaveOntologyHierarchyEvent.SaveOntologyHierarchyEventHandler,
                                                 PublishOntologyClickEvent.PublishOntologyClickEventHandler,
-                                                HierarchySelectedEvent.HierarchySelectedEventHandler {
+                                                HierarchySelectedEvent.HierarchySelectedEventHandler,
+                                                CategorizeButtonClickedEvent.CategorizeButtonClickedEventHandler {
 
     @Inject DEProperties properties;
     @Inject IplantAnnouncer announcer;
@@ -57,10 +66,12 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     private AdminCategoriesView.Presenter categoriesPresenter;
     private AdminAppsGridView.Presenter oldGridPresenter;
     private AdminAppsGridView.Presenter newGridPresenter;
+    private AppCategorizeView categorizeView;
     private OntologyAutoBeanFactory beanFactory;
     private AvuAutoBeanFactory avuFactory;
     private String UNCLASSIFIED_LABEL = "Unclassified";
     private String UNCLASSIFIED_IRI_APPEND = "_unclassified";
+    private Map<String, List<OntologyHierarchy>> iriToHierarchyMap = new FastMap<>();
 
     @Inject
     public OntologiesPresenterImpl(OntologyServiceFacade serviceFacade,
@@ -71,7 +82,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                                    OntologiesView.OntologiesViewAppearance appearance,
                                    AdminCategoriesView.Presenter categoriesPresenter,
                                    AdminAppsGridView.Presenter oldGridPresenter,
-                                   AdminAppsGridView.Presenter newGridPresenter) {
+                                   AdminAppsGridView.Presenter newGridPresenter,
+                                   AppCategorizeView categorizeView) {
         this.serviceFacade = serviceFacade;
         this.beanFactory = beanFactory;
         this.avuFactory = avuFactory;
@@ -81,6 +93,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         this.categoriesPresenter = categoriesPresenter;
         this.oldGridPresenter = oldGridPresenter;
         this.newGridPresenter = newGridPresenter;
+        this.categorizeView = categorizeView;
 
         this.view = factory.create(treeStore, categoriesPresenter.getView(), oldGridPresenter.getView(), newGridPresenter.getView(), new OntologyViewDnDHandler(appearance, oldGridPresenter, this));
 
@@ -94,6 +107,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         view.addHierarchySelectedEventHandler(newGridPresenter.getView());
         view.addSaveOntologyHierarchyEventHandler(this);
         view.addPublishOntologyClickEventHandler(this);
+        view.addCategorizeButtonClickedEventHandler(this);
     }
 
 
@@ -109,6 +123,33 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     @Override
     public OntologiesView getView() {
         return view;
+    }
+
+    void categorizeHierarchiesToApp(CategorizeHierarchiesToAppEvent event) {
+        final App targetApp = event.getTargetApp();
+        List<OntologyHierarchy> selectedHierarchies = event.getSelectedHierarchies();
+
+        AvuList avuListBean = avuFactory.getAvuList().as();
+        List<Avu> avuList = Lists.newArrayList();
+        for (OntologyHierarchy hierarchy : selectedHierarchies) {
+            OntologyMetadata metadata = getOntologyMetadata(hierarchy);
+            metadata.setValue(hierarchy.getIri());
+            metadata.setUnit(hierarchy.getLabel());
+            avuList.add(metadata);
+        }
+        avuListBean.setAvus(avuList);
+
+        serviceFacade.setAppAVUs(targetApp, avuListBean, new AsyncCallback<List<Avu>>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+            }
+
+            @Override
+            public void onSuccess(List<Avu> result) {
+                announcer.schedule(new SuccessAnnouncementConfig(targetApp.getName() + " classified"));
+            }
+        });
     }
 
     @Override
@@ -138,7 +179,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     private void clearAvus(App targetApp) {
         AvuList avuList = avuFactory.getAvuList().as();
-        serviceFacade.clearAVUsFromApp(targetApp, avuList, new AsyncCallback<List<Avu>>() {
+        serviceFacade.setAppAVUs(targetApp, avuList, new AsyncCallback<List<Avu>>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
@@ -174,6 +215,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     @Override
     public void onSelectOntologyVersion(SelectOntologyVersionEvent event) {
         treeStore.clear();
+        iriToHierarchyMap.clear();
         serviceFacade.getOntologyHierarchies(event.getSelectedOntology().getVersion(), new AsyncCallback<List<OntologyHierarchy>>() {
                                                  @Override
                                                  public void onFailure(Throwable caught) {
@@ -202,12 +244,27 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         if (parent == null) {
             addUnclassifiedChild(children);
             treeStore.add(children);
+
         } else {
             treeStore.add(parent, children);
         }
 
+        helperMap(children);
+
         for (OntologyHierarchy hierarchy : children) {
             addHierarchies(hierarchy, hierarchy.getSubclasses());
+        }
+    }
+
+    void helperMap(List<OntologyHierarchy> children) {
+        for (OntologyHierarchy hierarchy : children) {
+            String iri = hierarchy.getIri();
+            List<OntologyHierarchy> hierarchies = iriToHierarchyMap.get(iri);
+            if (hierarchies == null) {
+                hierarchies = Lists.newArrayList();
+            }
+            hierarchies.add(hierarchy);
+            iriToHierarchyMap.put(hierarchy.getIri(), hierarchies);
         }
     }
 
@@ -246,6 +303,13 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         }
 
         view.showTreePanel();
+    }
+
+    @Override
+    public void onCategorizeButtonClicked(CategorizeButtonClickedEvent event) {
+        final App selectedApp = event.getSelectedApp();
+        final Tree<OntologyHierarchy, String> ontologyTree = event.getOntologyTree();
+        serviceFacade.getAppAVUs(selectedApp, new CategorizeCallback(selectedApp, ontologyTree));
     }
 
     private boolean isValidHierarchy(OntologyHierarchy result) {
@@ -333,5 +397,34 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     String getParentIri(OntologyHierarchy hierarchy) {
         return hierarchy.getIri().replace(UNCLASSIFIED_IRI_APPEND,"");
+    }
+
+    private class CategorizeCallback implements AsyncCallback<List<Avu>> {
+        private final App selectedApp;
+        private final Tree<OntologyHierarchy, String> ontologyTree;
+
+        public CategorizeCallback(App selectedApp,
+                                  Tree<OntologyHierarchy, String> ontologyTree) {
+            this.selectedApp = selectedApp;
+            this.ontologyTree = ontologyTree;
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            ErrorHandler.post(caught);
+        }
+
+        @Override
+        public void onSuccess(List<Avu> result) {
+            CategorizeDialog dlg = new CategorizeDialog(appearance,
+                                                        selectedApp, categorizeView,
+                                                        ontologyTree, iriToHierarchyMap, result);
+            dlg.addCategorizeHierarchiesToAppEventHandler(new CategorizeHierarchiesToAppEvent.CategorizeHierarchiesToAppEventHandler() {
+                @Override
+                public void onCategorizeHierarchiesToApp(CategorizeHierarchiesToAppEvent event) {
+                    categorizeHierarchiesToApp(event);
+                }
+            });
+        }
     }
 }

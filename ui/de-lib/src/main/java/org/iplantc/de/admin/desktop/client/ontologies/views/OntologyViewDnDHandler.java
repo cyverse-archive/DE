@@ -108,19 +108,20 @@ public class OntologyViewDnDHandler implements DndDragStartEvent.DndDragStartHan
         // Verify we have drag data.
         if (hierarchy == null) {
             status.setStatus(false);
+            status.update("");
+            return false;
+        }
+
+        // Verify we have a drop target.
+        if (targetApp == null) {
+            status.setStatus(false);
+            status.update(hierarchy.getLabel());
             return false;
         }
 
         // Reset status message
         status.setStatus(true);
         status.update(hierarchy.getLabel() + " > " + targetApp.getName());
-
-        // Verify we have a drop target.
-        if (targetApp == null) {
-            status.setStatus(false);
-            return false;
-        }
-
         return true;
     }
 }

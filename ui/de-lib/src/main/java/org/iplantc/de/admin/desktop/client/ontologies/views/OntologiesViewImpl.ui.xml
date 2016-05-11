@@ -61,6 +61,11 @@
                                        icon="{appearance.saveIcon}"/>
                 </toolbar:child>
                 <toolbar:child>
+                    <button:TextButton ui:field="categorize"
+                                       text="{appearance.categorize}"
+                                       icon="{appearance.blueFolder}"/>
+                </toolbar:child>
+                <toolbar:child>
                     <button:TextButton ui:field="publishButton"
                                        text="{appearance.publishOntology}"
                                        icon="{appearance.publishIcon}"/>

@@ -1,6 +1,7 @@
 package org.iplantc.de.theme.base.client.admin.ontologies;
 
 import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
+import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
@@ -215,5 +216,45 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     @Override
     public String invalidHierarchySubmitted(String iri) {
         return displayStrings.invalidHierarchySubmitted(iri);
+    }
+
+    @Override
+    public String clearHierarchySelection() {
+        return displayStrings.clearHierarchySelection();
+    }
+
+    @Override
+    public ImageResource blueFolder() {
+        return iplantResources.category();
+    }
+
+    @Override
+    public ImageResource blueFolderOpen() {
+        return iplantResources.category_open();
+    }
+
+    @Override
+    public ImageResource blueFolderLeaf() {
+        return iplantResources.subCategory();
+    }
+
+    @Override
+    public String categorize() {
+        return displayStrings.categorize();
+    }
+
+    @Override
+    public String categorizeDialogWidth() {
+        return "400px";
+    }
+
+    @Override
+    public String categorizeDialogHeight() {
+        return "400px";
+    }
+
+    @Override
+    public String categorizeApp(App targetApp) {
+        return displayStrings.categorizeApp(targetApp.getName());
     }
 }

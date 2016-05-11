@@ -44,4 +44,10 @@ public interface OntologyDisplayStrings extends Messages{
     String enterIriEmptyText();
 
     String invalidHierarchySubmitted(String iri);
+
+    String clearHierarchySelection();
+
+    String categorize();
+
+    String categorizeApp(String targetApp);
 }

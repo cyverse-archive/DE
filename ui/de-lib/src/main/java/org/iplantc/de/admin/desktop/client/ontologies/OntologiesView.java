@@ -1,5 +1,6 @@
 package org.iplantc.de.admin.desktop.client.ontologies;
 
+import org.iplantc.de.admin.desktop.client.ontologies.events.CategorizeButtonClickedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
@@ -24,7 +25,8 @@ public interface OntologiesView extends IsWidget,
                                         SelectOntologyVersionEvent.HasSelectOntologyVersionEventHandlers,
                                         HierarchySelectedEvent.HasHierarchySelectedEventHandlers,
                                         SaveOntologyHierarchyEvent.HasSaveOntologyHierarchyEventHandlers,
-                                        PublishOntologyClickEvent.HasPublishOntologyClickEventHandlers {
+                                        PublishOntologyClickEvent.HasPublishOntologyClickEventHandlers,
+                                        CategorizeButtonClickedEvent.HasCategorizeButtonClickedEventHandlers {
 
     void showOntologyVersions(List<Ontology> result);
 
@@ -98,6 +100,22 @@ public interface OntologiesView extends IsWidget,
         String delete();
 
         String invalidHierarchySubmitted(String iri);
+
+        String clearHierarchySelection();
+
+        ImageResource blueFolder();
+
+        ImageResource blueFolderOpen();
+
+        ImageResource blueFolderLeaf();
+
+        String categorize();
+
+        String categorizeDialogWidth();
+
+        String categorizeDialogHeight();
+
+        String categorizeApp(App targetApp);
     }
 
     interface Presenter {

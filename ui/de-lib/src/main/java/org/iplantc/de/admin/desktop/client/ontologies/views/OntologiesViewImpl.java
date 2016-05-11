@@ -2,6 +2,7 @@ package org.iplantc.de.admin.desktop.client.ontologies.views;
 
 import org.iplantc.de.admin.apps.client.AdminAppsGridView;
 import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
+import org.iplantc.de.admin.desktop.client.ontologies.events.CategorizeButtonClickedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
@@ -62,6 +63,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @UiField SimpleComboBox<Ontology> ontologyDropDown;
     @UiField TextButton viewVersions;
     @UiField TextButton saveHierarchy;
+    @UiField TextButton categorize;
     @UiField(provided = true) OntologiesViewAppearance appearance;
     @UiField Tree<OntologyHierarchy, String> tree;
     @UiField(provided = true) AppCategoriesView categoriesView;
@@ -128,6 +130,11 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @Override
     public HandlerRegistration addPublishOntologyClickEventHandler(PublishOntologyClickEvent.PublishOntologyClickEventHandler handler) {
         return addHandler(handler, PublishOntologyClickEvent.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addCategorizeButtonClickedEventHandler(CategorizeButtonClickedEvent.CategorizeButtonClickedEventHandler handler) {
+        return addHandler(handler, CategorizeButtonClickedEvent.TYPE);
     }
 
     @Override
@@ -212,6 +219,11 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     void saveHierarchyClicked(SelectEvent event) {
         treeStore.clear();
         new SaveHierarchiesDialog(appearance, ontologyDropDown.getCurrentValue(), this);
+    }
+
+    @UiHandler("categorize")
+    void categorizeButtonClicked(SelectEvent event) {
+        fireEvent(new CategorizeButtonClickedEvent(oldGridView.getGrid().getSelectionModel().getSelectedItem(), tree));
     }
 
     @UiFactory
