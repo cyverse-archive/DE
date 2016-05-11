@@ -1,10 +1,6 @@
 # Stops containers for a docker-compose service.
 ---
 
-- debug: msg="Stopping {{stop_service_name}}"
-  tags:
-      - docker_stop
-
 - name: stop the {{stop_service_name}} container
   environment:
     DE_TAG: "{{docker.tag}}"

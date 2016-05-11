@@ -1,10 +1,6 @@
 # Starts containers for a docker-compose service.
 ---
 
-- debug: msg="Starting {{up_service_name}}"
-  tags:
-      - docker_up
-
 - name: start {{up_service_name}}
   environment:
     DE_TAG: "{{docker.tag}}"

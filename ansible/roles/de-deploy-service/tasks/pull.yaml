@@ -1,10 +1,6 @@
 # Pulls a docker-compose service.
 ---
 
-- debug: msg="Pulling {{pull_service_name}}"
-  tags:
-      - docker_pull
-
 - name: pull the {{pull_service_name}} image
   environment:
     DE_TAG: "{{docker.tag}}"

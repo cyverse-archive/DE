@@ -29,9 +29,7 @@
     check_service_name: "iplant_data_{{service_name}}_blue"
   when: has_iplant_data|default(false)
 
-- debug: msg="Determining color of {{service_name}}"
-
-- name: get {{service_name_short}} color
+- name: Determine color of {{service_name_short}}
   environment:
     DE_TAG: "{{docker.tag}}"
     DE_ENV: "{{environment_name}}"

@@ -4,8 +4,6 @@
 - fail: msg="The service_name variable is required by de-deploy-service."
   when: not service_name
 
-- debug: msg="Deploying {{service_name}}"
-
 - include: "colored.yaml"
   when: deploy_use_color
 
