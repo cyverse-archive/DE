@@ -66,6 +66,29 @@ func TestNotFound(t *testing.T) {
 	}
 }
 
+func TestValidSHA1(t *testing.T) {
+	var (
+		err      error
+		valid    bool
+		goodSHA1 = "60e3da2efd886074e28e44d48cc642f84c25b140"
+		badSHA1  = "60e3da2efd886074e28e44d48cc64"
+	)
+
+	if valid, err = validSHA1(goodSHA1); err != nil {
+		t.Error(err)
+	}
+	if !valid {
+		t.Errorf("SHA1 '%s' was reported as invalid when it is valid", goodSHA1)
+	}
+
+	if valid, err = validSHA1(badSHA1); err != nil {
+		t.Error(err)
+	}
+	if valid {
+		t.Errorf("SHA1 '%s' was reported as valid when it is invalid", badSHA1)
+	}
+}
+
 func TestFixAddrNoPrefix(t *testing.T) {
 	expected := ":70000"
 	actual := fixAddr("70000")
