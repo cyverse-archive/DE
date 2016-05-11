@@ -62,7 +62,7 @@
                   (find-annotation-value (.getAnnotations ontology) version-iri))}))
 
 (defn hierarchy->class-subclass-pairs
-  "Returns a set of the {:class-iri c :subclass-iri s} pairs found in the given hierarchy."
+  "Returns a set of the {:class_iri c :subclass_iri s} pairs found in the given hierarchy."
   [{:keys [iri subclasses]}]
   (apply sets/union
          (set (map #(hash-map :class_iri iri :subclass_iri (:iri %)) subclasses))
