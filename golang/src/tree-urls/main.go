@@ -165,17 +165,15 @@ func (p *PostgresDB) updateTreeURLs(sha1, treeURLs string) error {
 
 // TreeURLs contains the application state for tree-urls
 type TreeURLs struct {
-	cfg    *config.Config
 	db     Databaser
 	router *mux.Router
 }
 
 // New returns a new *TreeURLs.
-func New(cfg *config.Config, db Databaser) *TreeURLs {
+func New(db Databaser) *TreeURLs {
 	var t *TreeURLs
 	router := mux.NewRouter()
 	t = &TreeURLs{
-		cfg:    cfg,
 		db:     db,
 		router: router,
 	}
@@ -398,6 +396,6 @@ func main() {
 	logcabin.Info.Println("Successfully pinged the database")
 
 	databaser := NewPostgresDB(db)
-	app := New(cfg, databaser)
+	app := New(databaser)
 	logcabin.Error.Fatal(http.ListenAndServe(fixAddr(*port), app.router))
 }
