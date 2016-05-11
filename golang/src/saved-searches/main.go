@@ -74,29 +74,35 @@ func handleNonUser(writer http.ResponseWriter, username string) {
 	return
 }
 
-// SavedSearches contains the application state for saved-searches
-type SavedSearches struct {
-	db     *sql.DB
-	router *mux.Router
+// Databaser defines the interface for interacting with storage. Mostly included
+// to make unit tests easier to write.
+type Databaser interface {
+	isUser(string) (bool, error)
+	hasSavedSearches(string) (bool, error)
+	getSavedSearches(string) ([]string, error)
+	insertSavedSearches(string, string) error
+	updateSavedSearches(string, string) error
+	deleteSavedSearches(string) error
 }
 
-// New returns a new *SavedSearches
-func New(db *sql.DB) *SavedSearches {
-	var s *SavedSearches
-	router := mux.NewRouter()
-	s = &SavedSearches{
-		db:     db,
-		router: router,
+// PostgresDB implements the Databaser interface to allow SavedSearches to store
+// information in a database.
+type PostgresDB struct {
+	db *sql.DB
+}
+
+// NewPostgresDB returns a new *PostgresDB.
+func NewPostgresDB(db *sql.DB) *PostgresDB {
+	return &PostgresDB{
+		db: db,
 	}
-	router.HandleFunc("/", s.Greeting).Methods("GET")
-	router.HandleFunc("/{username}", s.Get).Methods("GET")
-	router.HandleFunc("/{username}", s.Post).Methods("PUT")
-	router.HandleFunc("/{username}", s.Post).Methods("POST")
-	router.HandleFunc("/{username}", s.Delete).Methods("DELETE")
-	return s
 }
 
-func (s *SavedSearches) hasSavedSearches(username string) (bool, error) {
+func (p *PostgresDB) isUser(username string) (bool, error) {
+	return queries.IsUser(p.db, username)
+}
+
+func (p *PostgresDB) hasSavedSearches(username string) (bool, error) {
 	var (
 		err    error
 		exists bool
@@ -109,14 +115,14 @@ func (s *SavedSearches) hasSavedSearches(username string) (bool, error) {
                WHERE s.user_id = u.id
                  AND u.username = $1) AS exists`
 
-	if err = s.db.QueryRow(query, username).Scan(&exists); err != nil {
+	if err = p.db.QueryRow(query, username).Scan(&exists); err != nil {
 		return false, err
 	}
 
 	return exists, nil
 }
 
-func (s *SavedSearches) getSavedSearches(username string) ([]string, error) {
+func (p *PostgresDB) getSavedSearches(username string) ([]string, error) {
 	var (
 		err    error
 		retval []string
@@ -129,7 +135,7 @@ func (s *SavedSearches) getSavedSearches(username string) ([]string, error) {
              WHERE s.user_id = u.id
                AND u.username = $1`
 
-	if rows, err = s.db.Query(query, username); err != nil {
+	if rows, err = p.db.Query(query, username); err != nil {
 		return nil, err
 	}
 	defer rows.Close()
@@ -149,7 +155,7 @@ func (s *SavedSearches) getSavedSearches(username string) ([]string, error) {
 	return retval, nil
 }
 
-func (s *SavedSearches) insertSavedSearches(username, searches string) error {
+func (p *PostgresDB) insertSavedSearches(username, searches string) error {
 	var (
 		err    error
 		userID string
@@ -157,15 +163,15 @@ func (s *SavedSearches) insertSavedSearches(username, searches string) error {
 
 	query := `INSERT INTO user_saved_searches (user_id, saved_searches) VALUES ($1, $2)`
 
-	if userID, err = queries.UserID(s.db, username); err != nil {
+	if userID, err = queries.UserID(p.db, username); err != nil {
 		return err
 	}
 
-	_, err = s.db.Exec(query, userID, searches)
+	_, err = p.db.Exec(query, userID, searches)
 	return err
 }
 
-func (s *SavedSearches) updateSavedSearches(username, searches string) error {
+func (p *PostgresDB) updateSavedSearches(username, searches string) error {
 	var (
 		err    error
 		userID string
@@ -173,15 +179,15 @@ func (s *SavedSearches) updateSavedSearches(username, searches string) error {
 
 	query := `UPDATE ONLY user_saved_searches SET saved_searches = $2 WHERE user_id = $1`
 
-	if userID, err = queries.UserID(s.db, username); err != nil {
+	if userID, err = queries.UserID(p.db, username); err != nil {
 		return err
 	}
 
-	_, err = s.db.Exec(query, userID, searches)
+	_, err = p.db.Exec(query, userID, searches)
 	return err
 }
 
-func (s *SavedSearches) deleteSavedSearches(username string) error {
+func (p *PostgresDB) deleteSavedSearches(username string) error {
 	var (
 		err    error
 		userID string
@@ -189,12 +195,34 @@ func (s *SavedSearches) deleteSavedSearches(username string) error {
 
 	query := `DELETE FROM ONLY user_saved_searches WHERE user_id = $1`
 
-	if userID, err = queries.UserID(s.db, username); err != nil {
+	if userID, err = queries.UserID(p.db, username); err != nil {
 		return nil
 	}
 
-	_, err = s.db.Exec(query, userID)
+	_, err = p.db.Exec(query, userID)
 	return err
+}
+
+// SavedSearches contains the application state for saved-searches
+type SavedSearches struct {
+	db     Databaser
+	router *mux.Router
+}
+
+// New returns a new *SavedSearches
+func New(db Databaser) *SavedSearches {
+	var s *SavedSearches
+	router := mux.NewRouter()
+	s = &SavedSearches{
+		db:     db,
+		router: router,
+	}
+	router.HandleFunc("/", s.Greeting).Methods("GET")
+	router.HandleFunc("/{username}", s.Get).Methods("GET")
+	router.HandleFunc("/{username}", s.Post).Methods("PUT")
+	router.HandleFunc("/{username}", s.Post).Methods("POST")
+	router.HandleFunc("/{username}", s.Delete).Methods("DELETE")
+	return s
 }
 
 // Greeting is the http handler for the / endpoint.
@@ -218,7 +246,7 @@ func (s *SavedSearches) Get(writer http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if userExists, err = queries.IsUser(s.db, username); err != nil {
+	if userExists, err = s.db.isUser(username); err != nil {
 		badRequest(writer, fmt.Sprintf("Error checking for username %s: %s", username, err))
 		return
 	}
@@ -228,7 +256,7 @@ func (s *SavedSearches) Get(writer http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if searches, err = s.getSavedSearches(username); err != nil {
+	if searches, err = s.db.getSavedSearches(username); err != nil {
 		errored(writer, err.Error())
 		return
 	}
@@ -272,7 +300,7 @@ func (s *SavedSearches) Post(writer http.ResponseWriter, r *http.Request) {
 
 	bodyString := string(bodyBuffer)
 
-	if userExists, err = queries.IsUser(s.db, username); err != nil {
+	if userExists, err = s.db.isUser(username); err != nil {
 		badRequest(writer, fmt.Sprintf("Error checking for username %s: %s", username, err))
 		return
 	}
@@ -282,16 +310,16 @@ func (s *SavedSearches) Post(writer http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if hasSearches, err = s.hasSavedSearches(username); err != nil {
+	if hasSearches, err = s.db.hasSavedSearches(username); err != nil {
 		errored(writer, err.Error())
 		return
 	}
 
 	var upsert func(string, string) error
 	if hasSearches {
-		upsert = s.updateSavedSearches
+		upsert = s.db.updateSavedSearches
 	} else {
-		upsert = s.insertSavedSearches
+		upsert = s.db.insertSavedSearches
 	}
 	if err = upsert(username, bodyString); err != nil {
 		errored(writer, err.Error())
@@ -325,7 +353,7 @@ func (s *SavedSearches) Delete(writer http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if userExists, err = queries.IsUser(s.db, username); err != nil {
+	if userExists, err = s.db.isUser(username); err != nil {
 		badRequest(writer, fmt.Sprintf("Error checking for username %s: %s", username, err))
 		return
 	}
@@ -334,7 +362,7 @@ func (s *SavedSearches) Delete(writer http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = s.deleteSavedSearches(username); err != nil {
+	if err = s.db.deleteSavedSearches(username); err != nil {
 		errored(writer, err.Error())
 	}
 }
@@ -388,6 +416,7 @@ func main() {
 	}
 	logcabin.Info.Println("Successfully pinged the database")
 
-	app := New(db)
+	pg := NewPostgresDB(db)
+	app := New(pg)
 	logcabin.Error.Fatal(http.ListenAndServe(fixAddr(*port), app.router))
 }
