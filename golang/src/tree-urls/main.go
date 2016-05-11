@@ -59,31 +59,29 @@ func validSHA1(sha1 string) (bool, error) {
 	return regexp.MatchString("^[a-fA-F0-9]{40}$", sha1)
 }
 
-// TreeURLs contains the application state for tree-urls
-type TreeURLs struct {
-	cfg    *config.Config
-	db     *sql.DB
-	router *mux.Router
+// Databaser is an interface for objects that interact with a data store. Mostly
+// included to make unit tests easier to write.
+type Databaser interface {
+	hasSHA1(string) (bool, error)
+	getTreeURLs(string) ([]string, error)
+	deleteTreeURLs(string) error
+	insertTreeURLs(string, string) error
+	updateTreeURLs(string, string) error
 }
 
-// New returns a new *TreeURLs.
-func New(cfg *config.Config, db *sql.DB) *TreeURLs {
-	var t *TreeURLs
-	router := mux.NewRouter()
-	t = &TreeURLs{
-		cfg:    cfg,
-		db:     db,
-		router: router,
+// PostgresDB is a Databaser for storing information in a postgres database.
+type PostgresDB struct {
+	db *sql.DB
+}
+
+// NewPostgresDB returns a *PostgresDB
+func NewPostgresDB(db *sql.DB) *PostgresDB {
+	return &PostgresDB{
+		db: db,
 	}
-	router.HandleFunc("/", t.Greeting).Methods("GET")
-	router.HandleFunc("/{sha1}", t.Get).Methods("GET")
-	router.HandleFunc("/{sha1}", t.Post).Methods("PUT")
-	router.HandleFunc("/{sha1}", t.Post).Methods("POST")
-	router.HandleFunc("/{sha1}", t.Delete).Methods("DELETE")
-	return t
 }
 
-func (t *TreeURLs) hasSHA1(sha1 string) (bool, error) {
+func (p *PostgresDB) hasSHA1(sha1 string) (bool, error) {
 	var (
 		err    error
 		exists bool
@@ -91,14 +89,14 @@ func (t *TreeURLs) hasSHA1(sha1 string) (bool, error) {
 
 	query := `SELECT EXISTS(SELECT 1 FROM tree_urls WHERE sha1 = $1) AS exists`
 
-	if err = t.db.QueryRow(query, sha1).Scan(&exists); err != nil {
+	if err = p.db.QueryRow(query, sha1).Scan(&exists); err != nil {
 		return false, err
 	}
 
 	return exists, nil
 }
 
-func (t *TreeURLs) getTreeURLs(sha1 string) ([]string, error) {
+func (p *PostgresDB) getTreeURLs(sha1 string) ([]string, error) {
 	var (
 		err    error
 		query  string
@@ -108,7 +106,7 @@ func (t *TreeURLs) getTreeURLs(sha1 string) ([]string, error) {
 
 	query = `SELECT tree_urls FROM tree_urls WHERE sha1 = $1`
 
-	if rows, err = t.db.Query(query, sha1); err != nil {
+	if rows, err = p.db.Query(query, sha1); err != nil {
 		return nil, err
 	}
 	defer rows.Close()
@@ -130,18 +128,18 @@ func (t *TreeURLs) getTreeURLs(sha1 string) ([]string, error) {
 	return retval, nil
 }
 
-func (t *TreeURLs) deleteTreeURLs(sha1 string) error {
+func (p *PostgresDB) deleteTreeURLs(sha1 string) error {
 	var (
 		err   error
 		query string
 	)
 
 	query = `DELETE FROM tree_urls WHERE sha1 = $1`
-	_, err = t.db.Exec(query, sha1)
+	_, err = p.db.Exec(query, sha1)
 	return err
 }
 
-func (t *TreeURLs) insertTreeURLs(sha1, treeURLs string) error {
+func (p *PostgresDB) insertTreeURLs(sha1, treeURLs string) error {
 	var (
 		err   error
 		query string
@@ -149,11 +147,11 @@ func (t *TreeURLs) insertTreeURLs(sha1, treeURLs string) error {
 
 	logcabin.Info.Printf("Inserting tree URLs for %s: %s", sha1, treeURLs)
 	query = `INSERT INTO tree_urls (sha1, tree_urls) VALUES ($1, $2)`
-	_, err = t.db.Exec(query, sha1, treeURLs)
+	_, err = p.db.Exec(query, sha1, treeURLs)
 	return err
 }
 
-func (t *TreeURLs) updateTreeURLs(sha1, treeURLs string) error {
+func (p *PostgresDB) updateTreeURLs(sha1, treeURLs string) error {
 	var (
 		err   error
 		query string
@@ -161,8 +159,32 @@ func (t *TreeURLs) updateTreeURLs(sha1, treeURLs string) error {
 
 	logcabin.Info.Printf("Updating tree URLs for %s: %s", sha1, treeURLs)
 	query = `UPDATE ONLY tree_urls SET tree_urls = $2 WHERE sha1 = $1`
-	_, err = t.db.Exec(query, sha1, treeURLs)
+	_, err = p.db.Exec(query, sha1, treeURLs)
 	return err
+}
+
+// TreeURLs contains the application state for tree-urls
+type TreeURLs struct {
+	cfg    *config.Config
+	db     Databaser
+	router *mux.Router
+}
+
+// New returns a new *TreeURLs.
+func New(cfg *config.Config, db Databaser) *TreeURLs {
+	var t *TreeURLs
+	router := mux.NewRouter()
+	t = &TreeURLs{
+		cfg:    cfg,
+		db:     db,
+		router: router,
+	}
+	router.HandleFunc("/", t.Greeting).Methods("GET")
+	router.HandleFunc("/{sha1}", t.Get).Methods("GET")
+	router.HandleFunc("/{sha1}", t.Post).Methods("PUT")
+	router.HandleFunc("/{sha1}", t.Post).Methods("POST")
+	router.HandleFunc("/{sha1}", t.Delete).Methods("DELETE")
+	return t
 }
 
 func cleanTreeURL(treeURL []byte) ([]byte, error) {
@@ -228,7 +250,7 @@ func (t *TreeURLs) Get(writer http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ok, err = t.hasSHA1(sha1)
+	ok, err = t.db.hasSHA1(sha1)
 	if err != nil {
 		errored(writer, err.Error())
 		return
@@ -238,7 +260,7 @@ func (t *TreeURLs) Get(writer http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	urls, err = t.getTreeURLs(sha1)
+	urls, err = t.db.getTreeURLs(sha1)
 	if err != nil {
 		errored(writer, err.Error())
 		return
@@ -291,7 +313,7 @@ func (t *TreeURLs) Post(writer http.ResponseWriter, r *http.Request) {
 
 	bodyString := string(bodyBuffer)
 
-	exists, err = t.hasSHA1(sha1)
+	exists, err = t.db.hasSHA1(sha1)
 	if err != nil {
 		errored(writer, err.Error())
 		return
@@ -299,9 +321,9 @@ func (t *TreeURLs) Post(writer http.ResponseWriter, r *http.Request) {
 
 	var upsert func(string, string) error
 	if exists {
-		upsert = t.updateTreeURLs
+		upsert = t.db.updateTreeURLs
 	} else {
-		upsert = t.insertTreeURLs
+		upsert = t.db.insertTreeURLs
 	}
 	if err = upsert(sha1, bodyString); err != nil {
 		errored(writer, err.Error())
@@ -345,7 +367,7 @@ func (t *TreeURLs) Delete(writer http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ok, err = t.hasSHA1(sha1)
+	ok, err = t.db.hasSHA1(sha1)
 	if err != nil {
 		errored(writer, err.Error())
 		return
@@ -354,7 +376,7 @@ func (t *TreeURLs) Delete(writer http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = t.deleteTreeURLs(sha1); err != nil {
+	if err = t.db.deleteTreeURLs(sha1); err != nil {
 		errored(writer, err.Error())
 	}
 }
@@ -408,6 +430,7 @@ func main() {
 	}
 	logcabin.Info.Println("Successfully pinged the database")
 
-	app := New(cfg, db)
+	databaser := NewPostgresDB(db)
+	app := New(cfg, databaser)
 	logcabin.Error.Fatal(http.ListenAndServe(fixAddr(*port), app.router))
 }
