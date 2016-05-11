@@ -187,39 +187,6 @@ func New(cfg *config.Config, db Databaser) *TreeURLs {
 	return t
 }
 
-func cleanTreeURL(treeURL []byte) ([]byte, error) {
-	var (
-		badKeys = []string{"user_id", "id", "sha1"}
-		isBad   bool
-		err     error
-		parsed  []map[string]string
-		retval  []map[string]string
-		jsoned  []byte
-	)
-
-	if err = json.Unmarshal(treeURL, parsed); err != nil {
-		return nil, err
-	}
-
-	for _, m := range parsed {
-		isBad = false
-		for _, badKey := range badKeys {
-			if _, ok := m[badKey]; ok {
-				isBad = true
-			}
-		}
-		if !isBad {
-			retval = append(retval, m)
-		}
-	}
-
-	if jsoned, err = json.Marshal(retval); err != nil {
-		return nil, err
-	}
-
-	return jsoned, nil
-}
-
 // Greeting is the http handler for the / endpoint.
 func (t *TreeURLs) Greeting(writer http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(writer, "Hello from tree-urls.")
