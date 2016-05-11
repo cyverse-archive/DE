@@ -61,4 +61,10 @@ public interface DEClientConstants extends Constants {
      */
     String wssProtocol();
 
+    /**
+     * The Servlet path (relative URL) for uploading an ontology XML.
+     *
+     * @return the requested URL.
+     */
+    String ontologyUploadServlet();
 }

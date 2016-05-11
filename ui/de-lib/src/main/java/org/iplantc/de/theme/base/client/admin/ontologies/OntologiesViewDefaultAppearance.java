@@ -2,6 +2,7 @@ package org.iplantc.de.theme.base.client.admin.ontologies;
 
 import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
 import org.iplantc.de.resources.client.IplantResources;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
@@ -28,22 +29,26 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
 
     private OntologyDisplayStrings displayStrings;
     private IplantResources iplantResources;
+    private IplantDisplayStrings iplantDisplayStrings;
     private HelpTemplates helpTemplates;
     private Templates templates;
 
     public OntologiesViewDefaultAppearance() {
         this(GWT.<OntologyDisplayStrings>create(OntologyDisplayStrings.class),
-        GWT.<IplantResources>create(IplantResources.class),
-        GWT.<HelpTemplates>create(HelpTemplates.class),
-        GWT.<Templates>create(Templates.class));
+             GWT.<IplantResources>create(IplantResources.class),
+             GWT.<IplantDisplayStrings>create(IplantDisplayStrings.class),
+             GWT.<HelpTemplates>create(HelpTemplates.class),
+             GWT.<Templates>create(Templates.class));
     }
 
     OntologiesViewDefaultAppearance(OntologyDisplayStrings displayStrings,
                                     IplantResources iplantResources,
+                                    IplantDisplayStrings iplantDisplayStrings,
                                     HelpTemplates helpTemplates,
                                     Templates templates) {
         this.displayStrings = displayStrings;
         this.iplantResources = iplantResources;
+        this.iplantDisplayStrings = iplantDisplayStrings;
         this.helpTemplates = helpTemplates;
         this.templates = templates;
     }
@@ -111,5 +116,45 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     @Override
     public String setActiveVersion() {
         return displayStrings.setActiveVersion();
+    }
+
+    @Override
+    public String upload() {
+        return iplantDisplayStrings.upload();
+    }
+
+    @Override
+    public String fileUploadMaxSizeWarning() {
+        return displayStrings.fileUploadMaxSizeWarning();
+    }
+
+    @Override
+    public String reset() {
+        return displayStrings.reset();
+    }
+
+    @Override
+    public ImageResource arrowUndoIcon() {
+        return iplantResources.arrowUndoIcon();
+    }
+
+    @Override
+    public String confirmAction() {
+        return iplantDisplayStrings.confirmAction();
+    }
+
+    @Override
+    public String closeConfirmMessage() {
+        return iplantDisplayStrings.transferCloseConfirmMessage();
+    }
+
+    @Override
+    public String fileUploadsFailed(String file) {
+        return displayStrings.fileUploadFailed(file);
+    }
+
+    @Override
+    public String fileUploadSuccess(String file) {
+        return displayStrings.fileUploadSuccess(file);
     }
 }

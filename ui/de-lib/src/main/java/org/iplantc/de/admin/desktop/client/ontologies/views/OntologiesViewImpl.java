@@ -2,13 +2,19 @@ package org.iplantc.de.admin.desktop.client.ontologies.views;
 
 import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
 import org.iplantc.de.admin.desktop.client.ontologies.events.ViewOntologyVersionEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.EdamUploadDialog;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.OntologyListDialog;
+import org.iplantc.de.client.DEClientConstants;
+import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
+import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.ontologies.Ontology;
 import org.iplantc.de.commons.client.ErrorHandler;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.inject.client.AsyncProvider;
+import com.google.gwt.safehtml.shared.UriUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -36,6 +42,8 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @UiField TextButton addButton;
     @UiField TextButton viewVersions;
     @UiField(provided = true) OntologiesViewAppearance appearance;
+    @Inject EventBus eventBus;
+    @Inject DEClientConstants clientConstants;
 
     @Inject AsyncProvider<OntologyListDialog> listDialog;
 
@@ -68,8 +76,19 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     @UiHandler("viewVersions")
-    void addButtonClicked(SelectEvent event) {
+    void viewVersionsClicked(SelectEvent event) {
         fireEvent(new ViewOntologyVersionEvent());
+    }
+
+    @UiHandler("addButton")
+    void addButtonClicked(SelectEvent event) {
+        DiskResourceAutoBeanFactory drFactory = GWT.create(DiskResourceAutoBeanFactory.class);
+        Folder blank = drFactory.folder().as();
+        blank.setPath("Ontology Database");
+
+        new EdamUploadDialog(eventBus,
+                             UriUtils.fromTrustedString(clientConstants.ontologyUploadServlet()),
+                             appearance).show();
     }
 
 }

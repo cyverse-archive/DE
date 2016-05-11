@@ -43,6 +43,22 @@ public interface OntologiesView extends IsWidget,
         String createdOnColumnLabel();
 
         String setActiveVersion();
+
+        String upload();
+
+        String fileUploadMaxSizeWarning();
+
+        String reset();
+
+        ImageResource arrowUndoIcon();
+
+        String confirmAction();
+
+        String closeConfirmMessage();
+
+        String fileUploadsFailed(String strings);
+
+        String fileUploadSuccess(String value);
     }
 
     interface Presenter {
