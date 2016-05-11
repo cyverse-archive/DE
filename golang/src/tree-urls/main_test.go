@@ -1,10 +1,48 @@
 package main
 
 import (
+	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
+
+type MockDB struct {
+	storage map[string]map[string]interface{}
+}
+
+func NewMockDB() *MockDB {
+	return &MockDB{
+		storage: make(map[string]map[string]interface{}),
+	}
+}
+
+func (m *MockDB) hasSHA1(sha1 string) (bool, error) {
+	var ok bool
+	_, ok = m.storage[sha1]
+	return ok, nil
+
+}
+
+func (m *MockDB) getTreeURLs(sha1 string) ([]string, error) {
+	return []string{m.storage[sha1]["tree_urls"].(string)}, nil
+}
+
+func (m *MockDB) deleteTreeURLs(sha1 string) error {
+	delete(m.storage, sha1)
+	return nil
+}
+
+func (m *MockDB) insertTreeURLs(sha1, treeURLs string) error {
+	insertable := []string{treeURLs}
+	m.storage[sha1]["tree_urls"] = insertable
+	return nil
+}
+
+func (m *MockDB) updateTreeURLs(sha1, treeURLs string) error {
+	return m.insertTreeURLs(sha1, treeURLs)
+}
 
 func TestBadRequest(t *testing.T) {
 	var (
@@ -86,6 +124,85 @@ func TestValidSHA1(t *testing.T) {
 	}
 	if valid {
 		t.Errorf("SHA1 '%s' was reported as valid when it is invalid", badSHA1)
+	}
+}
+
+func TestNew(t *testing.T) {
+	mock := NewMockDB()
+	n := New(mock)
+	if n == nil {
+		t.Error("New returned nil instead of a *TreeURLs")
+	}
+}
+
+func TestGreeting(t *testing.T) {
+	mock := NewMockDB()
+	n := New(mock)
+
+	server := httptest.NewServer(n.router)
+	defer server.Close()
+
+	res, err := http.Get(server.URL)
+	if err != nil {
+		t.Error(err)
+	}
+
+	bodyBytes, err := ioutil.ReadAll(res.Body)
+	res.Body.Close()
+	if err != nil {
+		t.Error(err)
+	}
+
+	actualBody := string(bodyBytes)
+	expectedBody := "Hello from tree-urls."
+
+	expectedStatus := http.StatusOK
+	actualStatus := res.StatusCode
+
+	if actualBody != expectedBody {
+		t.Errorf("Body of the response was '%s' instead of '%s'", actualBody, expectedBody)
+	}
+
+	if actualStatus != expectedStatus {
+		t.Errorf("Status of the response was %d instead of %d", actualStatus, expectedStatus)
+	}
+}
+
+func TestGet(t *testing.T) {
+	sha1 := "60e3da2efd886074e28e44d48cc642f84c25b140"
+	expectedBody := `[{"label":"tree_0","url":"http://portnoy.iplantcollaborative.org/view/tree/3727f35cc7125567492cab69850f6473"}]`
+
+	mock := NewMockDB()
+	mock.storage[sha1] = make(map[string]interface{})
+	mock.storage[sha1]["tree_urls"] = expectedBody
+
+	n := New(mock)
+	server := httptest.NewServer(n.router)
+	defer server.Close()
+
+	sha1URL := fmt.Sprintf("%s/%s", server.URL, sha1)
+	res, err := http.Get(sha1URL)
+	if err != nil {
+		t.Error(err)
+	}
+
+	bodyBytes, err := ioutil.ReadAll(res.Body)
+	res.Body.Close()
+	if err != nil {
+		t.Error(err)
+	}
+
+	actualBody := string(bodyBytes)
+
+	expectedStatus := http.StatusOK
+	actualStatus := res.StatusCode
+
+	if actualBody != expectedBody {
+		t.Errorf("Body of the response was '%s' instead of '%s'", actualBody, expectedBody)
+	}
+
+	if actualStatus != expectedStatus {
+		t.Errorf("Status of the response was %d instead of %d", actualStatus, expectedStatus)
 	}
 }
 
