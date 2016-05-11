@@ -5,7 +5,6 @@ import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.client.models.avu.AvuList;
 import org.iplantc.de.client.models.ontologies.Ontology;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
-import org.iplantc.de.client.models.ontologies.OntologyMetadata;
 import org.iplantc.de.client.models.ontologies.OntologyVersionDetail;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -44,7 +43,7 @@ public interface OntologyServiceFacade {
      * @param root
      * @param callback
      */
-    void getUnclassifiedApps(String version, String root, OntologyMetadata metadata, AsyncCallback<List<App>> callback);
+    void getUnclassifiedApps(String version, String root, Avu avu, AsyncCallback<List<App>> callback);
     /**
      * Set the active ontology version used by the app-hierarchies endpoints
      * @param version
@@ -55,10 +54,10 @@ public interface OntologyServiceFacade {
     /**
      * Get the list of apps that belong to the specified class iri and metadata attribute
      * @param iri
-     * @param metadata
+     * @param avu
      * @param callback
      */
-    void getAppsByHierarchy(String iri, OntologyMetadata metadata, AsyncCallback<List<App>> callback);
+    void getAppsByHierarchy(String iri, Avu avu, AsyncCallback<List<App>> callback);
 
     /**
      * Add/Append a list of metadata tags to an App
@@ -66,7 +65,7 @@ public interface OntologyServiceFacade {
      * @param avus
      * @param callback
      */
-    void addAVUToApp(App app, AvuList avus, AsyncCallback<List<Avu>> callback);
+    void addAVUsToApp(App app, AvuList avus, AsyncCallback<List<Avu>> callback);
 
     /**
      * Set the metadata tags for an App (overwriting any existing tags)

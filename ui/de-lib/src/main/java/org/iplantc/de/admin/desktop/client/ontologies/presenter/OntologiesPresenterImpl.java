@@ -22,11 +22,10 @@ import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.client.models.avu.AvuAutoBeanFactory;
 import org.iplantc.de.client.models.avu.AvuList;
 import org.iplantc.de.client.models.ontologies.Ontology;
-import org.iplantc.de.client.models.ontologies.OntologyAutoBeanFactory;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
-import org.iplantc.de.client.models.ontologies.OntologyMetadata;
 import org.iplantc.de.client.models.ontologies.OntologyVersionDetail;
 import org.iplantc.de.client.util.CommonModelUtils;
+import org.iplantc.de.client.util.OntologyUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
@@ -93,6 +92,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     @Inject DEProperties properties;
     @Inject IplantAnnouncer announcer;
+    OntologyUtil ontologyUtil;
     private OntologiesView view;
     private OntologyServiceFacade serviceFacade;
     private final TreeStore<OntologyHierarchy> treeStore;
@@ -101,16 +101,12 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     private AdminAppsGridView.Presenter oldGridPresenter;
     private AdminAppsGridView.Presenter newGridPresenter;
     private AppCategorizeView categorizeView;
-    private OntologyAutoBeanFactory beanFactory;
     private AvuAutoBeanFactory avuFactory;
-    private String UNCLASSIFIED_LABEL = "Unclassified";
-    private String UNCLASSIFIED_IRI_APPEND = "_unclassified";
     private Map<String, List<OntologyHierarchy>> iriToHierarchyMap = new FastMap<>();
 
     @Inject
     public OntologiesPresenterImpl(OntologyServiceFacade serviceFacade,
                                    final TreeStore<OntologyHierarchy> treeStore,
-                                   OntologyAutoBeanFactory beanFactory,
                                    OntologiesViewFactory factory,
                                    AvuAutoBeanFactory avuFactory,
                                    OntologiesView.OntologiesViewAppearance appearance,
@@ -119,10 +115,10 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                                    AdminAppsGridView.Presenter newGridPresenter,
                                    AppCategorizeView categorizeView) {
         this.serviceFacade = serviceFacade;
-        this.beanFactory = beanFactory;
         this.avuFactory = avuFactory;
         this.treeStore = treeStore;
         this.appearance = appearance;
+        this.ontologyUtil = OntologyUtil.getInstance();
 
         this.categoriesPresenter = categoriesPresenter;
         this.oldGridPresenter = oldGridPresenter;
@@ -164,17 +160,9 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         final App targetApp = event.getTargetApp();
         List<OntologyHierarchy> selectedHierarchies = event.getSelectedHierarchies();
 
-        AvuList avuListBean = avuFactory.getAvuList().as();
-        List<Avu> avuList = Lists.newArrayList();
-        for (OntologyHierarchy hierarchy : selectedHierarchies) {
-            OntologyMetadata metadata = getOntologyMetadata(hierarchy);
-            metadata.setValue(hierarchy.getIri());
-            metadata.setUnit(hierarchy.getLabel());
-            avuList.add(metadata);
-        }
-        avuListBean.setAvus(avuList);
+        AvuList avus = ontologyUtil.convertHierarchiesToAvus(selectedHierarchies);
 
-        serviceFacade.setAppAVUs(targetApp, avuListBean, new AsyncCallback<List<Avu>>() {
+        serviceFacade.setAppAVUs(targetApp, avus, new AsyncCallback<List<Avu>>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
@@ -189,17 +177,13 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     @Override
     public void hierarchyDNDtoApp(final OntologyHierarchy hierarchy, final App targetApp) {
-        if (isUnclassified(hierarchy)) {
+        if (ontologyUtil.isUnclassified(hierarchy)) {
             clearAvus(targetApp);
             return;
         }
 
-        OntologyMetadata metadata = getOntologyMetadata(hierarchy);
-        metadata.setValue(hierarchy.getIri());
-        metadata.setUnit(hierarchy.getLabel());
-        AvuList avuList = avuFactory.getAvuList().as();
-        avuList.setAvus(Lists.<Avu>newArrayList(metadata));
-        serviceFacade.addAVUToApp(targetApp, avuList, new AsyncCallback<List<Avu>>() {
+        AvuList avuList = ontologyUtil.convertHierarchiesToAvus(hierarchy);
+        serviceFacade.addAVUsToApp(targetApp, avuList, new AsyncCallback<List<Avu>>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
@@ -276,7 +260,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
             return;
         }
         if (parent == null) {
-            addUnclassifiedChild(children);
+            ontologyUtil.addUnclassifiedChild(children);
             treeStore.add(children);
 
         } else {
@@ -299,15 +283,6 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
             }
             hierarchies.add(hierarchy);
             iriToHierarchyMap.put(hierarchy.getIri(), hierarchies);
-        }
-    }
-
-    void addUnclassifiedChild(List<OntologyHierarchy> children) {
-        for (OntologyHierarchy child : children){
-            OntologyHierarchy unclassified = beanFactory.getHierarchy().as();
-            unclassified.setLabel(UNCLASSIFIED_LABEL);
-            unclassified.setIri(child.getIri() + UNCLASSIFIED_IRI_APPEND);
-            child.getSubclasses().add(unclassified);
         }
     }
 
@@ -375,15 +350,15 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     public void onHierarchySelected(HierarchySelectedEvent event) {
         OntologyHierarchy hierarchy = event.getHierarchy();
         Ontology editedOntology = event.getEditedOntology();
-        if (isUnclassified(hierarchy)){
+        if (ontologyUtil.isUnclassified(hierarchy)){
             getUnclassifiedApps(hierarchy, editedOntology);
             return;
         }
 
-        OntologyMetadata metadata = getOntologyMetadata(hierarchy);
+        Avu avu = ontologyUtil.convertHierarchyToAvu(hierarchy);
 
         newGridPresenter.getView().mask("Loading");
-        serviceFacade.getAppsByHierarchy(hierarchy.getIri(), metadata, new AsyncCallback<List<App>>() {
+        serviceFacade.getAppsByHierarchy(hierarchy.getIri(), avu, new AsyncCallback<List<App>>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
@@ -396,28 +371,13 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                 newGridPresenter.getView().unmask();
             }
         });
-    }
-
-    OntologyMetadata getOntologyMetadata(OntologyHierarchy hierarchy) {
-        OntologyMetadata metadata = beanFactory.getMetadata().as();
-        if (hierarchy.getIri().contains("operation")){
-            metadata.setAttr(OntologyMetadata.OPERATION_ATTR);
-        }
-        else{
-            metadata.setAttr(OntologyMetadata.TOPIC_ATTR);
-        }
-        return metadata;
-    }
-
-    boolean isUnclassified(OntologyHierarchy hierarchy) {
-        return hierarchy.getIri().matches(".*" + UNCLASSIFIED_IRI_APPEND + "$");
     }
 
     void getUnclassifiedApps(OntologyHierarchy hierarchy, Ontology editedOntology) {
-        String parentIri = getParentIri(hierarchy);
+        String parentIri = ontologyUtil.getUnclassifiedParentIri(hierarchy);
         newGridPresenter.getView().mask("Loading");
-        OntologyMetadata metadata = getOntologyMetadata(hierarchy);
-        serviceFacade.getUnclassifiedApps(editedOntology.getVersion(), parentIri, metadata, new AsyncCallback<List<App>>() {
+        Avu avu = ontologyUtil.convertHierarchyToAvu(hierarchy);
+        serviceFacade.getUnclassifiedApps(editedOntology.getVersion(), parentIri, avu, new AsyncCallback<List<App>>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
@@ -430,10 +390,6 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                 newGridPresenter.getView().unmask();
             }
         });
-    }
-
-    String getParentIri(OntologyHierarchy hierarchy) {
-        return hierarchy.getIri().replace(UNCLASSIFIED_IRI_APPEND,"");
     }
 
 }

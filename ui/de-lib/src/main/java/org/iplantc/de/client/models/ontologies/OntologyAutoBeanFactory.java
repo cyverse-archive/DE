@@ -22,5 +22,4 @@ public interface OntologyAutoBeanFactory extends AutoBeanFactory {
 
     AutoBean<OntologyVersionDetail> getVersionDetail();
 
-    AutoBean<OntologyMetadata> getMetadata();
 }
