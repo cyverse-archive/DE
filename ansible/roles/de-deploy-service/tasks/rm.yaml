@@ -1,14 +1,14 @@
 # Removes containers for a docker-compose service.
 ---
 
-- name: remove the {{rm_service_name}} container
+- name: remove the {{rm_service_name}} container (s)
   environment:
     DE_TAG: "{{docker.tag}}"
     DE_ENV: "{{environment_name}}"
     HOSTNAME: "{{ inventory_hostname }}"
   shell: "docker-compose -f {{docker_compose_path}} rm -f -v {{rm_service_name}}"
   register: docker_pull_v
-  changed_when: docker_pull_v.stdout.find('Image is up to date') == -1
+  changed_when: true
   ignore_errors: yes
   tags:
     - docker_rm

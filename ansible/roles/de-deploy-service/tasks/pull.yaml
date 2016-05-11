@@ -1,13 +1,13 @@
 # Pulls a docker-compose service.
 ---
 
-- name: pull the {{pull_service_name}} image
+- name: pull the {{pull_service_name}} image(s)
   environment:
     DE_TAG: "{{docker.tag}}"
     DE_ENV: "{{environment_name}}"
     HOSTNAME: "{{inventory_hostname}}"
   shell: "docker-compose -f {{docker_compose_path}} pull {{pull_service_name}}"
   register: docker_pull_v
-  changed_when: docker_pull_v.stdout.find('Image is up to date') == -1
+  changed_when: true
   tags:
       - docker_pull

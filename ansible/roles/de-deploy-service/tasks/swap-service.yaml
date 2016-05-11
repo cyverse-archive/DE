@@ -32,20 +32,6 @@
 
 - include: rm.yaml
   vars:
-    rm_service_name: "config_{{service_name}}_{{current_color}}"
-  tags:
-    - docker_rm_configs
-  when: has_configs|default(true)
-
-- include: rm.yaml
-  vars:
-    rm_service_name: "iplant_data_{{service_name}}_{{current_color}}"
-  tags:
-    - docker_rm_iplant_data
-  when: has_iplant_data|default(false)
-
-- include: rm.yaml
-  vars:
-    rm_service_name: "{{service_name}}_{{current_color}}"
+    rm_service_name: "{{service_name}}_{{current_color}} {% if has_configs|default(true) %}config_{{service_name}}_{{current_color}}{% endif %} {% if has_iplant_data|default(false) %}iplant_data_{{service_name}}_{{current_color}}{% endif %}"
   tags:
     - docker_rm_service
