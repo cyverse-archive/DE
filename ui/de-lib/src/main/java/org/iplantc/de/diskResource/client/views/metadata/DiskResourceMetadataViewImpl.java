@@ -1,8 +1,9 @@
 package org.iplantc.de.diskResource.client.views.metadata;
 
+import java.util.List;
+
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
-import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 import org.iplantc.de.diskResource.client.MetadataView;
 import org.iplantc.de.diskResource.client.model.DiskResourceMetadataProperties;
 import org.iplantc.de.diskResource.share.DiskResourceModule.MetadataIds;
@@ -10,7 +11,6 @@ import org.iplantc.de.diskResource.share.DiskResourceModule.MetadataIds;
 import com.google.common.collect.Lists;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -19,7 +19,6 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
-
 import com.sencha.gxt.core.client.resources.ThemeStyles;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
@@ -28,6 +27,7 @@ import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.AccordionLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.AccordionLayoutContainer.AccordionLayoutAppearance;
+import com.sencha.gxt.widget.core.client.container.AccordionLayoutContainer.ExpandMode;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
@@ -49,8 +49,6 @@ import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
 import com.sencha.gxt.widget.core.client.tips.QuickTip;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
-
-import java.util.List;
 
 /**
  * FIXME REFACTOR Segregate programmatic view construction to a different UIBinder, class, etc FIXME
@@ -196,6 +194,18 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
 
         return metadataTemplate;
     }*/
+    
+    
+    @Override
+    public void mask() {
+    	con.mask();
+    }
+    
+    @Override
+    public void unmask() {
+    	con.unmask();
+    }
+    
 
     @Override
     public List<DiskResourceMetadata> getAvus() {
@@ -227,6 +237,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         additionalMdListStore.addAll(metadataList);
 
         additionalMdgrid.getStore().setEnableFilters(true);
+        centerPanel.forceLayout();
     }
 
     @Override
@@ -240,6 +251,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         userMdListStore.addAll(metadataList);
 
         userMdGrid.getStore().setEnableFilters(true);
+        centerPanel.forceLayout();
     }
 
     @Override
@@ -292,7 +304,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
 
     private void buildUserMetadataPanel() {
         userMetadataPanel = new ContentPanel(accordionLayoutAppearance);
-        userMetadataPanel.setSize("575", "275"); //$NON-NLS-1$ //$NON-NLS-2$
+        userMetadataPanel.setSize("575", "475"); //$NON-NLS-1$ //$NON-NLS-2$
         userMetadataPanel.setCollapsible(true);
         userMetadataPanel.getHeader().addStyleName(ThemeStyles.get().style().borderTop());
         userMetadataPanel.setHeadingHtml(appearance.boldHeader(appearance.userMetadata()));
@@ -300,7 +312,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
 
     private void buildAdditionalMetadataPanel() {
         additionalMetadataPanel = new ContentPanel(accordionLayoutAppearance);
-        additionalMetadataPanel.setSize("575", "275"); //$NON-NLS-1$ //$NON-NLS-2$
+        additionalMetadataPanel.setSize("575", "475"); //$NON-NLS-1$ //$NON-NLS-2$
         additionalMetadataPanel.setCollapsible(true);
         additionalMetadataPanel.getHeader().addStyleName(ThemeStyles.get().style().borderTop());
         additionalMetadataPanel.setHeadingHtml(appearance.boldHeader("Additional Metadata"));
@@ -411,6 +423,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     private void initGrid() {
         buildAdditionalMetadataPanel();
         buildUserMetadataPanel();
+        alc.setExpandMode(ExpandMode.SINGLE);
 
         userMdGrid = new Grid<>(createUserListStore(), createColumnModel());
         userMetadataPanel.add(userMdGrid);
