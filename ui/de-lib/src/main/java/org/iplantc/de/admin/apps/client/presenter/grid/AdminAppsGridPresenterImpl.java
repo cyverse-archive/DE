@@ -25,6 +25,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONObject;
@@ -102,6 +103,11 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
     @Override
     public AdminAppsGridView getView() {
         return view;
+    }
+
+    @Override
+    public App getAppFromElement(Element eventTarget) {
+        return view.getAppFromElement(Element.as(eventTarget));
     }
 
     @Override

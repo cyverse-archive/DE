@@ -12,6 +12,7 @@ import org.iplantc.de.client.models.apps.App;
 
 import com.google.common.base.Joiner;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
@@ -119,5 +120,12 @@ public class AdminAppsGridImpl extends ContentPanel implements AdminAppsGridView
         super.onEnsureDebugId(baseID);
 
         grid.asWidget().ensureDebugId(baseID + Belphegor.AppIds.GRID);
+    }
+
+    @Override
+    public App getAppFromElement(Element as) {
+        Element row = gridView.findRow(as);
+        int dropIndex = gridView.findRowIndex(row);
+        return listStore.get(dropIndex);
     }
 }

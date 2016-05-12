@@ -5,7 +5,9 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClic
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.ViewOntologyVersionEvent;
+import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.ontologies.Ontology;
+import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -29,6 +31,8 @@ public interface OntologiesView extends IsWidget,
     void showEmptyTreePanel();
 
     void showTreePanel();
+
+    List<OntologyHierarchy> getSelectionItems();
 
     interface OntologiesViewAppearance {
         String addOntology();
@@ -98,6 +102,10 @@ public interface OntologiesView extends IsWidget,
 
     interface Presenter {
         void go(HasOneWidget container);
+
+        OntologiesView getView();
+
+        void hierarchyDNDtoApp(OntologyHierarchy hierarchy, App targetApp);
     }
 
 }

@@ -12,6 +12,7 @@ import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.apps.App;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.IsWidget;
 
 import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
@@ -71,9 +72,13 @@ public interface AdminAppsGridView extends IsWidget,
         }
 
         AdminAppsGridView getView();
+
+        App getAppFromElement(Element eventTarget);
     }
 
     Grid<App> getGrid();
 
     void clearAndAdd(List<App> apps);
+
+    App getAppFromElement(Element as);
 }
