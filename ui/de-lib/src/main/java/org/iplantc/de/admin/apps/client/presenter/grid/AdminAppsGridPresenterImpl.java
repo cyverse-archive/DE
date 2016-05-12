@@ -111,6 +111,11 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
     }
 
     @Override
+    public List<App> getSelectedApps() {
+        return view.getSelectedApps();
+    }
+
+    @Override
     public void onAppCategorySelectionChanged(AppCategorySelectionChangedEvent event) {
         if (event.getAppCategorySelection().isEmpty()) {
             return;

@@ -13,7 +13,8 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.ViewOntologyVersion
 import org.iplantc.de.admin.desktop.client.ontologies.gin.factory.OntologiesViewFactory;
 import org.iplantc.de.admin.desktop.client.ontologies.service.OntologyServiceFacade;
 import org.iplantc.de.admin.desktop.client.ontologies.views.AppCategorizeView;
-import org.iplantc.de.admin.desktop.client.ontologies.views.OntologyViewDnDHandler;
+import org.iplantc.de.admin.desktop.client.ontologies.views.AppToOntologyHierarchyDND;
+import org.iplantc.de.admin.desktop.client.ontologies.views.OntologyHierarchyToAppDND;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.CategorizeDialog;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
@@ -32,6 +33,7 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 
 import com.google.common.collect.Lists;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
@@ -125,12 +127,13 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         this.newGridPresenter = newGridPresenter;
         this.categorizeView = categorizeView;
 
-        this.view = factory.create(treeStore, categoriesPresenter.getView(), oldGridPresenter.getView(), newGridPresenter.getView(), new OntologyViewDnDHandler(appearance, oldGridPresenter, this));
+        this.view = factory.create(treeStore, categoriesPresenter.getView(), oldGridPresenter.getView(), newGridPresenter.getView(), new OntologyHierarchyToAppDND(appearance, oldGridPresenter, this), new AppToOntologyHierarchyDND(appearance, oldGridPresenter, this));
 
         categoriesPresenter.getView().addAppCategorySelectedEventHandler(oldGridPresenter);
         categoriesPresenter.getView().addAppCategorySelectedEventHandler(oldGridPresenter.getView());
         oldGridPresenter.addStoreRemoveHandler(categoriesPresenter);
         oldGridPresenter.getView().addAppSelectionChangedEventHandler(view);
+        newGridPresenter.getView().addAppSelectionChangedEventHandler(view);
 
         view.addViewOntologyVersionEventHandler(this);
         view.addSelectOntologyVersionEventHandler(this);
@@ -173,6 +176,15 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                 announcer.schedule(new SuccessAnnouncementConfig(appearance.appClassified(targetApp.getName(), result)));
             }
         });
+    }
+
+    @Override
+    public void appsDNDtoHierarchy(List<App> apps, OntologyHierarchy hierarchy) {
+        if (apps != null & apps.size() > 0) {
+            for (App app: apps) {
+                hierarchyDNDtoApp(hierarchy, app);
+            }
+        }
     }
 
     @Override
@@ -390,6 +402,16 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                 newGridPresenter.getView().unmask();
             }
         });
+    }
+
+    @Override
+    public OntologyHierarchy getHierarchyFromElement(Element el) {
+        return view.getHierarchyFromElement(el);
+    }
+
+    @Override
+    public OntologyHierarchy getSelectedHierarchy() {
+        return view.getSelectedHierarchy();
     }
 
 }

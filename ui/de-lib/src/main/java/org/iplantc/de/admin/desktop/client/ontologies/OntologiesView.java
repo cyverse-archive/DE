@@ -12,6 +12,7 @@ import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.client.models.ontologies.Ontology;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.HasOneWidget;
@@ -37,7 +38,9 @@ public interface OntologiesView extends IsWidget,
 
     void showTreePanel();
 
-    List<OntologyHierarchy> getSelectionItems();
+    OntologyHierarchy getHierarchyFromElement(Element el);
+
+    OntologyHierarchy getSelectedHierarchy();
 
     interface OntologiesViewAppearance {
         String addOntology();
@@ -133,6 +136,12 @@ public interface OntologiesView extends IsWidget,
         OntologiesView getView();
 
         void hierarchyDNDtoApp(OntologyHierarchy hierarchy, App targetApp);
+
+        OntologyHierarchy getHierarchyFromElement(Element el);
+
+        void appsDNDtoHierarchy(List<App> apps, OntologyHierarchy hierarchy);
+
+        OntologyHierarchy getSelectedHierarchy();
     }
 
 }

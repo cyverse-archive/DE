@@ -128,4 +128,9 @@ public class AdminAppsGridImpl extends ContentPanel implements AdminAppsGridView
         int dropIndex = gridView.findRowIndex(row);
         return listStore.get(dropIndex);
     }
+
+    @Override
+    public List<App> getSelectedApps() {
+        return grid.getSelectionModel().getSelectedItems();
+    }
 }

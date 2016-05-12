@@ -19,6 +19,7 @@ import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import org.iplantc.de.commons.client.views.dialogs.EdamUploadDialog;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -92,7 +93,8 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     private Ontology activeOntology;
     private Ontology selectedOntology;
     private App targetApp;
-    private OntologyViewDnDHandler dndHandler;
+    private OntologyHierarchyToAppDND dndHandler;
+    private AppToOntologyHierarchyDND appDndHandler;
 
     @Inject
     public OntologiesViewImpl(OntologiesViewAppearance appearance,
@@ -100,13 +102,15 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
                               @Assisted AppCategoriesView categoriesView,
                               @Assisted("oldGridView") AdminAppsGridView oldGridView,
                               @Assisted("newGridView") AdminAppsGridView newGridView,
-                              @Assisted OntologyViewDnDHandler dndHandler) {
+                              @Assisted OntologyHierarchyToAppDND dndHandler,
+                              @Assisted AppToOntologyHierarchyDND appDndHandler) {
         this.appearance = appearance;
         this.treeStore = treeStore;
         this.categoriesView = categoriesView;
         this.oldGridView = oldGridView;
         this.newGridView = newGridView;
         this.dndHandler = dndHandler;
+        this.appDndHandler = appDndHandler;
 
         initWidget(uiBinder.createAndBindUi(this));
 
@@ -118,6 +122,9 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         gridDropTarget.addDragMoveHandler(dndHandler);
         gridDropTarget.addDragEnterHandler(dndHandler);
         gridDropTarget.addDropHandler(dndHandler);
+
+        DragSource appDragSource = new DragSource(oldGridView.asWidget());
+        appDragSource.addDragStartHandler(appDndHandler);
 
         treePanel.setHeadingText("Hierarchies");
     }
@@ -156,7 +163,12 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     public void onAppSelectionChanged(AppSelectionChangedEvent event) {
         List<App> appSelection = event.getAppSelection();
         targetApp = null;
-        if (appSelection != null && appSelection.size() == 1) {
+        if (appSelection != null && appSelection.size() != 0) {
+            if (event.getSource() == oldGridView) {
+                newGridView.getGrid().getSelectionModel().deselectAll();
+            } else {
+                oldGridView.getGrid().getSelectionModel().deselectAll();
+            }
             targetApp = appSelection.get(0);
         }
         updateButtonStatus();
@@ -182,10 +194,18 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     @Override
-    public List<OntologyHierarchy> getSelectionItems() {
-        return tree.getSelectionModel().getSelectedItems();
+    public OntologyHierarchy getHierarchyFromElement(Element el) {
+        Tree.TreeNode<OntologyHierarchy> node = tree.findNode(el);
+        if (node != null) {
+            return node.getModel();
+        }
+        return null;
     }
 
+    @Override
+    public OntologyHierarchy getSelectedHierarchy() {
+        return tree.getSelectionModel().getSelectedItem();
+    }
 
     @UiFactory
     SimpleComboBox<Ontology> createComboBox() {
@@ -284,6 +304,14 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
         DragSource treeDragSource = new DragSource(ontologyTree);
         treeDragSource.addDragStartHandler(dndHandler);
+
+        DropTarget treeDropTarget = new DropTarget(ontologyTree);
+        treeDropTarget.setAllowSelfAsSource(false);
+        treeDropTarget.addDragEnterHandler(appDndHandler);
+        treeDropTarget.addDragMoveHandler(appDndHandler);
+        treeDropTarget.addDragEnterHandler(appDndHandler);
+        treeDropTarget.addDropHandler(appDndHandler);
+
         treeStore.addSortInfo(new Store.StoreSortInfo<>(new OntologyHierarchyNameComparator(), SortDir.ASC));
 
         return ontologyTree;

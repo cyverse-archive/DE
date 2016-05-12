@@ -2,7 +2,8 @@ package org.iplantc.de.admin.desktop.client.ontologies.gin.factory;
 
 import org.iplantc.de.admin.apps.client.AdminAppsGridView;
 import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
-import org.iplantc.de.admin.desktop.client.ontologies.views.OntologyViewDnDHandler;
+import org.iplantc.de.admin.desktop.client.ontologies.views.AppToOntologyHierarchyDND;
+import org.iplantc.de.admin.desktop.client.ontologies.views.OntologyHierarchyToAppDND;
 import org.iplantc.de.apps.client.AppCategoriesView;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 
@@ -19,5 +20,6 @@ public interface OntologiesViewFactory {
                           AppCategoriesView categoriesView,
                           @Assisted("oldGridView") AdminAppsGridView oldGridView,
                           @Assisted("newGridView") AdminAppsGridView newGridView,
-                          OntologyViewDnDHandler dndHandler);
+                          OntologyHierarchyToAppDND dndHandler,
+                          AppToOntologyHierarchyDND appDndHandler);
 }

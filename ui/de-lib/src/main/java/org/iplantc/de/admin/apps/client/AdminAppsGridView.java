@@ -74,6 +74,8 @@ public interface AdminAppsGridView extends IsWidget,
         AdminAppsGridView getView();
 
         App getAppFromElement(Element eventTarget);
+
+        List<App> getSelectedApps();
     }
 
     Grid<App> getGrid();
@@ -81,4 +83,6 @@ public interface AdminAppsGridView extends IsWidget,
     void clearAndAdd(List<App> apps);
 
     App getAppFromElement(Element as);
+
+    List<App> getSelectedApps();
 }
