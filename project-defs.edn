@@ -275,16 +275,6 @@
   :language :clojure
   :archive? true}
 
- "saved-searches"
- {:type     :service
-  :path     "services/saved-searches"
-  :build    :lein
-  :tarball? false
-  :uberjar? true
-  :install? false
-  :language :clojure
-  :archive? true}
-
  "facepalm"
  {:type     :tool
   :path     "tools/facepalm"
