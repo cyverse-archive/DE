@@ -285,16 +285,6 @@
   :language :clojure
   :archive? true}
 
- "tree-urls"
- {:type     :service
-  :path     "services/tree-urls"
-  :build    :lein
-  :tarball? false
-  :uberjar? true
-  :install? false
-  :language :clojure
-  :archive? true}
-
  "facepalm"
  {:type     :tool
   :path     "tools/facepalm"
