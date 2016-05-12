@@ -63,8 +63,25 @@ public class MetadataTemplateViewDialog extends IPlantDialog {
 
         widget = new VerticalLayoutContainer();
         widget.setScrollMode(ScrollSupport.ScrollMode.AUTOY);
-        loadTemplateAttributes(this.attributes);
+        buildAvuMap();
+        loadTemplateAttributes();
         add(widget);
+    }
+    
+    private void buildAvuMap() {
+    	for (MetadataTemplateAttribute attribute: attributes) {
+    		DiskResourceMetadata md = findMetadataForAttribute(attribute.getName());
+    		templateAttrAvuMap.put(attribute.getName(),md);
+    	}
+    }
+    
+    private DiskResourceMetadata findMetadataForAttribute(String attribute) {
+    	for(DiskResourceMetadata md: templateMd) {
+    		if(md.getAttribute().equals(attribute)) {
+    			return md;
+    		}
+    	}
+		return null;
     }
 
     private CheckBox buildBooleanField(MetadataTemplateAttribute attribute) {
@@ -179,7 +196,7 @@ public class MetadataTemplateViewDialog extends IPlantDialog {
     }
 
 
-    private void loadTemplateAttributes(List<MetadataTemplateAttribute> attributes) {
+    private void loadTemplateAttributes() {
         templateAttrFieldMap.clear();
         IPlantAnchor helpLink = buildHelpLink(attributes);
         HorizontalPanel hp = new HorizontalPanel();

@@ -33,6 +33,8 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
     private final DiskResourceServiceFacade drService;
     private List<MetadataTemplateInfo> templates;
     private List<DiskResourceMetadata> templateMd;
+    
+    final MetadataView.Presenter.Appearance appearance = GWT.create(MetadataView.Presenter.Appearance.class);
 
     public MetadataPresenterImpl(final DiskResource selected,
                                  final MetadataView view,
@@ -41,15 +43,16 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
         this.view = view;
         this.drService = drService;
         view.setPresenter(this);
+        view.mask();
         drService.getMetadataTemplateListing(new AsyncCallback<List<MetadataTemplateInfo>>() {
             @Override
             public void onFailure(Throwable arg0) {
-                ErrorHandler.post("Unable to retrieve templates!", arg0);
+            	view.unmask();
+                ErrorHandler.post(appearance.templateListingError(), arg0);
             }
 
             @Override
             public void onSuccess(final List<MetadataTemplateInfo> result) {
-                GWT.log("templates size ---->" + result.size());
                 templates = result;
                 loadMetadata();
             }
@@ -72,11 +75,14 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
                         view.loadUserMetadata(templateMd);
                     }
                 }
+                
+                view.unmask();
             }
 
 
             @Override
             public void onFailure(Throwable caught) {
+            	view.unmask();
                 ErrorHandler.post(caught);
             }
         });
@@ -121,8 +127,8 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
             }
         });
         view.setModal(false);
-        view.setSize("400px", "200px");
-        view.setHeadingText("Select Template");
+        view.setSize("400px", "400px");
+        view.setHeadingText(appearance.selectTemplate());
         view.show();
 
     }
@@ -133,7 +139,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
 
             @Override
             public void onFailure(Throwable arg0) {
-                ErrorHandler.post("Unable to retrieve template attributes!", arg0);
+                ErrorHandler.post(appearance.templateinfoError(), arg0);
             }
 
             @Override
