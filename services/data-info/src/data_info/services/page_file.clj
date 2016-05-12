@@ -34,5 +34,3 @@
 (with-pre-hook! #'do-read-chunk
   (fn [params data-id]
     (dul/log-call "do-read-chunk" params data-id)))
-
-(with-post-hook! #'do-read-chunk (dul/log-func "do-read-chunk"))
