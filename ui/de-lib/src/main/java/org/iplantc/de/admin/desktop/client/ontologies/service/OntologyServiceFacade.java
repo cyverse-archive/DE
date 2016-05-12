@@ -1,6 +1,8 @@
 package org.iplantc.de.admin.desktop.client.ontologies.service;
 
 import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.avu.Avu;
+import org.iplantc.de.client.models.avu.AvuList;
 import org.iplantc.de.client.models.ontologies.Ontology;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import org.iplantc.de.client.models.ontologies.OntologyMetadata;
@@ -51,4 +53,8 @@ public interface OntologyServiceFacade {
      * @param callback
      */
     void getAppsByHierarchy(String iri, OntologyMetadata metadata, AsyncCallback<List<App>> callback);
+
+    void addAVUToApp(App app, AvuList avus, AsyncCallback<List<Avu>> callback);
+
+    void clearAVUsFromApp(App app, AvuList avus, AsyncCallback<List<Avu>> callback);
 }
