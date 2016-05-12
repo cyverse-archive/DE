@@ -234,6 +234,11 @@
   [props config-valid configs]
   "apps.iplant-groups.base-url")
 
+(cc/defprop-str metadata-base
+  "The base URL for the metadata service."
+  [props config-valid configs]
+  "apps.metadata.base-url")
+
 (cc/defprop-int job-status-poll-interval
   "The job status polling interval in minutes."
   [props config-valid configs]

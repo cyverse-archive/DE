@@ -33,6 +33,18 @@
   :language :clojure
   :archive? false}
 
+ "debug-utils"
+ {:type     :library
+  :type-num 1
+  :path     "libs/debug-utils"
+  :build    :lein
+  :install  :lein
+  :tarball? false
+  :uberjar? false
+  :install? true
+  :language :clojure
+  :archive? false}
+
  "heuristomancer"
  {:type     :library
   :type-num 12
@@ -256,16 +268,6 @@
  "anon-files"
  {:type     :service
   :path     "services/anon-files"
-  :build    :lein
-  :tarball? false
-  :uberjar? true
-  :install? false
-  :language :clojure
-  :archive? true}
-
- "tree-urls"
- {:type     :service
-  :path     "services/tree-urls"
   :build    :lein
   :tarball? false
   :uberjar? true

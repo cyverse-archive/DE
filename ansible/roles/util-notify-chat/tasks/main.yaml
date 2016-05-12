@@ -1,10 +1,10 @@
 ---
 - name: notify chatroom
-  when: chat_room_url is defined and chat_room_url != None and ((not ansible_ssh_host is defined) or ansible_ssh_host != "127.0.0.1")
+  when: chat_room_url is defined and chat_room_url != None
   uri: 
     url: "{{ chat_room_url }}"
     method: POST
-    body: '{"channel":"#ansible", "username":"{{username}}", "text":"[{{ ansible_user_id }}@{{ ansible_hostname }}] {{ msg }}", "icon_emoji":"{{icon}}"}'
+    body: '{"channel":"#ansible", "username":"{{username}}", "text":"[{% if ansible_user_id is defined %}{{ ansible_user_id }}@{% endif %}{{ inventory_hostname }}] {{ msg }}", "icon_emoji":"{{icon}}"}'
     body_format: json
   ignore_errors: True
   changed_when: false

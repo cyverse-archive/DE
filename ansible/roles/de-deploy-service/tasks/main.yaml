@@ -1,0 +1,19 @@
+# Delegates to colored.yaml or uncolored.yaml depending on deploy_use_color.
+---
+
+- fail: msg="The service_name variable is required by de-deploy-service."
+  when: not service_name
+
+- name: get list of configured services
+  environment:
+    DE_TAG: "{{docker.tag}}"
+    DE_ENV: "{{environment_name}}"
+    HOSTNAME: "{{inventory_hostname}}"
+  shell: "docker-compose -f {{docker_compose_path}} config --services"
+  register: service_list
+
+- include: "colored.yaml"
+  when: deploy_use_color
+
+- include: "uncolored.yaml"
+  when: not deploy_use_color

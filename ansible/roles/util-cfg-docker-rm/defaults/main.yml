@@ -1,3 +1,0 @@
-# Default docker-compose file path
----
-docker_compose_path: "{{ docker.compose_path }}"

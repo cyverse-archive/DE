@@ -8,7 +8,6 @@ info-typer
 infosquito
 iplant-email
 iplant-groups
-jobservices
 kifshare
 apps
 metadata

@@ -130,7 +130,9 @@
   (util/flagged-routes
     (app-category-routes)
     (apps-routes)
+    (app-avu-routes)
     (app-comment-routes)
+    (app-ontology-routes)
     (analysis-routes)
     (coge-routes)
     (reference-genomes-routes)
@@ -166,9 +168,11 @@
     (admin-data-comment-routes)
     (admin-category-routes)
     (admin-apps-routes)
+    (admin-app-avu-routes)
     (admin-app-comment-routes)
     (admin-filesystem-metadata-routes)
     (admin-notification-routes)
+    (admin-ontology-routes)
     (admin-reference-genomes-routes)
     (admin-tool-routes)
     (admin-permanent-id-request-routes)
@@ -207,6 +211,7 @@
 
 (def unsecured-routes-handler
   (-> (delayed-handler unsecured-routes)
+      (wrap-routes wrap-tree-urls-base config/tree-urls-base)
       (wrap-routes wrap-exceptions cx/exception-handlers)
       (wrap-routes wrap-logging)))
 

@@ -288,9 +288,6 @@
   (table :user_preferences)
   (belongs-to users {:fk :user_id}))
 
-(defentity tree-urls
-  (table :tree_urls))
-
 (defentity user-sessions
   (table :user_sessions)
   (belongs-to users {:fk :user_id}))

@@ -43,6 +43,9 @@
   (listAppsInCategory [_ category-id params]
     (listings/list-apps-in-group user category-id params))
 
+  (listAppsWithMetadata [_ attr value params]
+    (listings/list-apps-with-metadata user attr value params))
+
   (searchApps [_ _ params]
     (listings/search-apps user params))
 

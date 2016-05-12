@@ -1,0 +1,12 @@
+# Checks that a docker-compose service exists. Expects to be passed a check_service_name string and available_services list
+---
+
+- name: verify available_services was provided to check-service
+  fail: msg="An iterable available_services must be passed to check-service.yaml"
+  when: available_services is not iterable
+
+- name: verify that {{check_service_name}} exists in the docker-compose file
+  fail: msg="{{check_service_name}} is not available on this host"
+  when: "check_service_name not in available_services"
+  tags:
+      - verify

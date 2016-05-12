@@ -1,0 +1,488 @@
+---
+
+- name: Redeploy anon-files
+  hosts: anon-files:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - colored
+    - anon-files
+  roles:
+    - role: util-notify-chat
+      msg: "Deploying anon-files"
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{anon_files.compose_service}}"
+    - role: util-notify-chat
+      msg: ":heavy_check_mark: Done deploying anon-files"
+
+- name: Redeploy apps
+  hosts: apps:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - colored
+    - apps
+  roles:
+    - role: util-notify-chat
+      msg: "Deploying apps"
+    - role: de-deploy-service
+      has_iplant_data: true
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{apps.compose_service}}"
+    - role: util-notify-chat
+      msg: ":heavy_check_mark: Done deploying apps"
+
+- name: Redeploy data-info
+  hosts: data-info:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - colored
+    - data-info
+  roles:
+    - role: util-notify-chat
+      msg: "Deploying data-info"
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{data_info.compose_service}}"
+    - role: util-notify-chat
+      msg: ":heavy_check_mark: Done deploying data-info"
+
+- name: Redeploy iplant-email
+  hosts: iplant-email:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - colored
+    - iplant-email
+  roles:
+    - role: util-notify-chat
+      msg: "Deploying iplant-email"
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{iplant_email.compose_service}}"
+    - role: util-notify-chat
+      msg: ":heavy_check_mark: Done deploying iplant-email"
+
+- name: Redeploy iplant-groups
+  hosts: iplant-groups:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - colored
+    - iplant-groups
+  roles:
+    - role: util-notify-chat
+      msg: "Deploying iplant-groups"
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{iplant_groups.compose_service}}"
+    - role: util-notify-chat
+      msg: ":heavy_check_mark: Done deploying iplant-groups"
+
+- name: Redeploy jex-adapter
+  hosts: jexevents
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - colored
+    - jex-adapter
+  roles:
+    - role: util-notify-chat
+      msg: "Deploying jex-adapter"
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: jex_adapter
+    - role: util-notify-chat
+      msg: ":heavy_check_mark: Done deploying jex-adapter"
+
+- name: Redeploy kifshare
+  hosts: kifshare:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - colored
+    - kifshare
+  roles:
+    - role: util-notify-chat
+      msg: "Deploying kifshare"
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{kifshare.compose_service}}"
+    - role: util-notify-chat
+      msg: ":heavy_check_mark: Done deploying kifshare"
+
+- name: Redeploy metadata
+  hosts: metadata:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - colored
+    - metadata
+  roles:
+    - role: util-notify-chat
+      msg: "Deploying metadata"
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{metadata.compose_service}}"
+    - role: util-notify-chat
+      msg: ":heavy_check_mark: Done deploying metadata"
+
+- name: Redeploy notification-agent
+  hosts: notificationagent:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - colored
+    - notificationagent
+  roles:
+    - role: util-notify-chat
+      msg: "Deploying notification-agent"
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{notificationagent.compose_service}}"
+    - role: util-notify-chat
+      msg: ":heavy_check_mark: Done deploying notification-agent"
+
+- name: Redeploy permissions
+  hosts: permissions:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - colored
+    - permissions
+  roles:
+    - role: util-notify-chat
+      msg: "Deploying permissions"
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{permissions.compose_service}}"
+    - role: util-notify-chat
+      msg: ":heavy_check_mark: Done deploying permissions"
+
+- name: Redeploy saved-searches
+  hosts: saved-searches:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - colored
+    - saved-searches
+  roles:
+    - role: util-notify-chat
+      msg: "Deploying saved-searches"
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{saved_searches.compose_service}}"
+    - role: util-notify-chat
+      msg: ":heavy_check_mark: Done deploying saved-searches"
+
+- name: Redeploy terrain
+  hosts: terrain:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - colored
+    - terrain
+  roles:
+    - role: util-notify-chat
+      msg: "Deploying terrain"
+    - role: de-deploy-service
+      has_iplant_data: true
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{terrain.compose_service}}"
+    - role: util-notify-chat
+      msg: ":heavy_check_mark: Done deploying terrain"
+
+- name: Redeploy tree-urls
+  hosts: tree-urls:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - colored
+    - tree-urls
+  roles:
+    - role: util-notify-chat
+      msg: "Deploying tree-urls"
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{tree_urls.compose_service}}"
+    - role: util-notify-chat
+      msg: ":heavy_check_mark: Done deploying tree-urls"
+
+- name: Redeploy user-preferences
+  hosts: user-preferences:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - colored
+    - user-preferences
+  roles:
+    - role: util-notify-chat
+      msg: "Deploying user-preferences"
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{user_preferences.compose_service}}"
+    - role: util-notify-chat
+      msg: ":heavy_check_mark: Done deploying user-preferences"
+
+- name: Redeploy user-sessions
+  hosts: user-sessions:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - colored
+    - user-sessions
+  roles:
+    - role: util-notify-chat
+      msg: "Deploying user-sessions"
+    - role: de-deploy-service
+      deploy_use_color: "{{use_color|default(false)}}"
+      service_name: "{{user_sessions.compose_service}}"
+    - role: util-notify-chat
+      msg: ":heavy_check_mark: Done deploying user-sessions"
+
+
+##############################################################
+# Services which do not use colors ever
+##############################################################
+
+- name: Redeploy clockwork
+  hosts: clockwork:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - uncolored
+    - clockwork
+  roles:
+    - role: util-notify-chat
+      msg: "Deploying clockwork"
+    - role: de-deploy-service
+      deploy_use_color: false
+      service_name: "{{clockwork.compose_service}}"
+    - role: util-notify-chat
+      msg: ":heavy_check_mark: Done deploying clockwork"
+
+- name: Redeploy dewey
+  hosts: dewey:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - uncolored
+    - dewey
+  roles:
+    - role: util-notify-chat
+      when: not parasitic
+      msg: "Deploying dewey"
+    - role: de-deploy-service
+      deploy_use_color: false
+      when: not parasitic
+      service_name: "{{dewey.compose_service}}"
+    - role: util-notify-chat
+      when: not parasitic
+      msg: ":heavy_check_mark: Done deploying dewey"
+
+- name: Redeploy de-ui
+  hosts: ui:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - ui
+    - uncolored
+  roles:
+    - role: util-notify-chat
+      msg: "Deploying UI"
+    - role: de-deploy-service
+      has_iplant_data: true
+      deploy_use_color: false
+      service_name: "{{de.compose_service}}"
+    - role: util-notify-chat
+      msg: ":heavy_check_mark: Done deploying UI"
+
+- name: Redeploy de-ui-nginx
+  hosts: ui:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - ui
+    - uncolored
+    - de-ui-nginx
+  roles:
+    - role: util-notify-chat
+      msg: "Deploying UI nginx"
+    - role: de-deploy-service
+      has_iplant_data: true
+      deploy_use_color: false
+      service_name: "{{de.http_server.compose_service}}"
+    - role: util-notify-chat
+      msg: ":heavy_check_mark: Done deploying UI nginx"
+
+- name: Redeploy exim-sender
+  hosts: exim-sender:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - uncolored
+    - exim-sender
+  roles:
+    - role: util-notify-chat
+      msg: "Deploying exim-sender"
+    - role: de-deploy-service
+      deploy_use_color: false
+      service_name: "{{exim.compose_service}}"
+    - role: util-notify-chat
+      msg: ":heavy_check_mark: Done deploying exim-sender"
+
+- name: Redeploy info-typer
+  hosts: info-typer:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - uncolored
+    - info-typer
+  roles:
+    - role: util-notify-chat
+      when: not parasitic
+      msg: "Deploying info-typer"
+    - role: de-deploy-service
+      deploy_use_color: false
+      when: not parasitic
+      service_name: "{{info_typer.compose_service}}"
+    - role: util-notify-chat
+      when: not parasitic
+      msg: ":heavy_check_mark: Done deploying info-typer"
+
+- name: Redeploy infosquito
+  hosts: infosquito:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - uncolored
+    - infosquito
+  roles:
+    - role: util-notify-chat
+      when: not parasitic
+      msg: "Deploying infosquito"
+    - role: de-deploy-service
+      deploy_use_color: false
+      when: not parasitic
+      service_name: "{{infosquito.compose_service}}"
+    - role: util-notify-chat
+      when: not parasitic
+      msg: ":heavy_check_mark: Done deploying infosquito"
+
+- name: Redeploy job-status-to-apps-adapter
+  hosts: jexevents
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - uncolored
+    - job-status-to-apps-adapter
+  roles:
+    - role: util-notify-chat
+      msg: "Deploying job-status-to-apps-adapter"
+    - role: de-deploy-service
+      deploy_use_color: false
+      service_name: job_status_to_apps_adapter
+    - role: util-notify-chat
+      msg: ":heavy_check_mark: Done deploying job-status-to-apps-adapter"
+
+- name: Redeploy job-status-recorder
+  hosts: jexevents
+  sudo: true
+  gather_facts: false
+  tags:
+    - services
+    - uncolored
+    - job-status-recorder
+  roles:
+    - role: util-notify-chat
+      msg: "Deploying job-status-recorder"
+    - role: de-deploy-service
+      deploy_use_color: false
+      service_name: job_status_recorder
+    - role: util-notify-chat
+      msg: ":heavy_check_mark: Done deploying job-status-recorder"
+
+- name: Redeploy monkey
+  hosts: monkey:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - uncolored
+    - monkey
+  roles:
+    - role: util-notify-chat
+      when: not parasitic
+      msg: "Deploying monkey"
+    - role: de-deploy-service
+      deploy_use_color: false
+      when: not parasitic
+      service_name: "{{monkey.compose_service}}"
+    - role: util-notify-chat
+      when: not parasitic
+      msg: ":heavy_check_mark: Done deploying monkey"
+
+- name: Redeploy templeton-periodic
+  hosts: templeton-periodic:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - uncolored
+    - templeton
+    - templeton-periodic
+  roles:
+    - role: util-notify-chat
+      when: not parasitic
+      msg: "Deploying templeton-periodic"
+    - role: de-deploy-service
+      deploy_use_color: false
+      when: not parasitic
+      service_name: "{{templeton_periodic.compose_service}}"
+    - role: util-notify-chat
+      when: not parasitic
+      msg: ":heavy_check_mark: Done deploying templeton-periodic"
+
+- name: Redeploy templeton-incremental
+  hosts: templeton-incremental:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - uncolored
+    - templeton
+    - templeton-incremental
+  roles:
+    - role: util-notify-chat
+      when: not parasitic
+      msg: "Deploying templeton-incremental"
+    - role: de-deploy-service
+      deploy_use_color: false
+      when: not parasitic
+      service_name: "{{templeton_incremental.compose_service}}"
+    - role: util-notify-chat
+      when: not parasitic
+      msg: ":heavy_check_mark: Done deploying templeton-incremental"
