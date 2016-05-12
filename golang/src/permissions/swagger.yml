@@ -411,6 +411,36 @@ paths:
           $ref: "#/responses/bad_request"
         500:
           $ref: "#/responses/internal_server_error"
+  /subjects/{id}:
+    parameters:
+      - name: id
+        type: string
+        description: "The subject ID."
+        in: path
+        required: True
+    put:
+      tags:
+        - subjects
+      summary: "Update a Subject"
+      parameters:
+        - description: "The new subject information."
+          in: body
+          name: "subject_in"
+          required: True
+          schema:
+            $ref: "#/definitions/subject_in"
+      operationId: updateSubject
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/subject_out"
+        400:
+          $ref: "#/responses/bad_request"
+        404:
+          $ref: "#/responses/not_found"
+        500:
+          $ref: "#/responses/internal_server_error"
 produces:
   - application/json
 responses:

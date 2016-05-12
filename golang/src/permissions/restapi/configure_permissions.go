@@ -144,6 +144,10 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 		subjects_impl.BuildListSubjectsHandler(db),
 	)
 
+	api.SubjectsUpdateSubjectHandler = subjects.UpdateSubjectHandlerFunc(
+		subjects_impl.BuildUpdateSubjectHandler(db),
+	)
+
 	api.ServerShutdown = cleanup
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))

@@ -24,8 +24,8 @@ func BuildAddSubjectHandler(db *sql.DB) func(subjects.AddSubjectParams) middlewa
 			return subjects.NewAddSubjectInternalServerError().WithPayload(&models.ErrorOut{&reason})
 		}
 
-		// Make sure that the subject doesn't exist already.
-		exists, err := permsdb.SubjectExists(tx, subjectIn.SubjectID)
+		// Make sure that a subject with the same ID doesn't exist already.
+		exists, err := permsdb.SubjectIdExists(tx, subjectIn.SubjectID)
 		if err != nil {
 			tx.Rollback()
 			logcabin.Error.Print(err)
