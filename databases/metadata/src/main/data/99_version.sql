@@ -10,3 +10,4 @@ INSERT INTO version (version) VALUES ('2.1.0:20150810.01');
 INSERT INTO version (version) VALUES ('2.1.0:20150811.01');
 INSERT INTO version (version) VALUES ('2.4.0:20151210.01');
 INSERT INTO version (version) VALUES ('2.6.0:20160331.01');
+INSERT INTO version (version) VALUES ('2.7.0:20160513.01');
