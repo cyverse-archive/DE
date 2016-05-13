@@ -212,23 +212,14 @@
   (zipmap [:folders :files]
     ((juxt filter remove) stat-is-dir? folder-children)))
 
-(defn- format-template-avus
-  "Takes a Metadata Template map and returns just its :avus list, adding the template ID to each AVU."
-  [{:keys [template_id avus]}]
-  (map #(assoc % :template_id template_id) avus))
-
-(defn- get-metadata-template-avus
-  [data-id]
-  (mapcat format-template-avus (:templates (metadata/get-metadata-avus data-id))))
-
 (defn- get-data-item-metadata-for-save
   "Adds a :metadata key to the given data-item, with a list of all IRODS and Template AVUs together
    as the key's value. If recursive? is true and data-item is a folder, then includes all files and
    subfolders (plus all their files and subfolders) with their metadata in the resulting stat map."
-  [cm user recursive? {:keys [id path] :as data-item}]
-  (let [metadata (list-path-metadata cm path)
-        template-avus (get-metadata-template-avus (uuidify id))
-        data-item (assoc data-item :metadata (concat metadata template-avus))
+  [cm user recursive? {:keys [id path type] :as data-item}]
+  (let [irods-metadata (list-path-metadata cm path)
+        metadata-avus (:avus (metadata/get-metadata-avus user type (uuidify id)))
+        data-item (assoc data-item :metadata (concat irods-metadata metadata-avus))
         path->metadata (comp (partial get-data-item-metadata-for-save cm user recursive?)
                              (partial stat/path-stat cm user))]
     (if (and recursive? (stat-is-dir? data-item))
