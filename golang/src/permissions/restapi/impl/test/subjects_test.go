@@ -71,6 +71,21 @@ func updateSubject(
 	return responder.(*subjects.UpdateSubjectOK).Payload
 }
 
+func deleteSubjectAttempt(db *sql.DB, id models.InternalSubjectID) middleware.Responder {
+
+	// Build the request handler.
+	handler := impl.BuildDeleteSubjectHandler(db)
+
+	// Attempt to delete the subject.
+	params := subjects.DeleteSubjectParams{ID: string(id)}
+	return handler(params)
+}
+
+func deleteSubject(db *sql.DB, id models.InternalSubjectID) {
+	responder := deleteSubjectAttempt(db, id)
+	_ = responder.(*subjects.DeleteSubjectOK)
+}
+
 func TestAddSubject(t *testing.T) {
 	if !shouldrun() {
 		return
@@ -260,6 +275,48 @@ func TestUpdateSubjectDuplicate(t *testing.T) {
 
 	// Verify that we got the expected error message.
 	expected := fmt.Sprintf("another subject with the ID, %s, already exists", string(s1Id))
+	if *errorOut.Reason != expected {
+		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
+	}
+}
+
+func TestDeleteSubject(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+
+	// Insert a subject into the database.
+	s1Id := models.ExternalSubjectID("s1")
+	s1Type := models.SubjectType("user")
+	s1 := addSubject(db, s1Id, s1Type)
+
+	// Delete the subject.
+	deleteSubject(db, s1.ID)
+
+	// Verify that the subject was deleted.
+	subjectList := listSubjects(db).Subjects
+	if len(subjectList) != 0 {
+		t.Fatalf("unexpected number of results: %d", len(subjectList))
+	}
+}
+
+func TestDeleteSubjectNotFound(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+
+	// Attempt to delete a non-existent subject.
+	responder := deleteSubjectAttempt(db, models.InternalSubjectID(FAKE_ID))
+	errorOut := responder.(*subjects.DeleteSubjectNotFound).Payload
+
+	// Verify that we got the expected error message.
+	expected := fmt.Sprintf("subject, %s, not found", FAKE_ID)
 	if *errorOut.Reason != expected {
 		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
 	}

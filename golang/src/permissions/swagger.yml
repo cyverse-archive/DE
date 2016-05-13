@@ -441,6 +441,18 @@ paths:
           $ref: "#/responses/not_found"
         500:
           $ref: "#/responses/internal_server_error"
+    delete:
+      tags:
+        - subjects
+      summary: "Delete a Subject"
+      operationId: deleteSubject
+      responses:
+        200:
+          description: "OK"
+        404:
+          $ref: "#/responses/not_found"
+        500:
+          $ref: "#/responses/internal_server_error"
 produces:
   - application/json
 responses:

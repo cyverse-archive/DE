@@ -10,26 +10,6 @@ type SubjectDto struct {
 	SubjectType string
 }
 
-func NewSubjectDto(
-	id *models.InternalSubjectID,
-	subjectId *models.ExternalSubjectID,
-	subjectType *models.SubjectType,
-) *SubjectDto {
-	var subjectDto SubjectDto
-
-	if id != nil {
-		subjectDto.ID = string(*id)
-	}
-	if subjectId != nil {
-		subjectDto.SubjectID = string(*subjectId)
-	}
-	if subjectType != nil {
-		subjectDto.SubjectType = string(*subjectType)
-	}
-
-	return &subjectDto
-}
-
 func (s *SubjectDto) ToSubjectOut() *models.SubjectOut {
 	var subjectOut models.SubjectOut
 

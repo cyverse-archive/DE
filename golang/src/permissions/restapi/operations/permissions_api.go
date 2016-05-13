@@ -64,6 +64,8 @@ type PermissionsAPI struct {
 	SubjectsAddSubjectHandler subjects.AddSubjectHandler
 	// ResourcesDeleteResourceHandler sets the operation handler for the delete resource operation
 	ResourcesDeleteResourceHandler resources.DeleteResourceHandler
+	// SubjectsDeleteSubjectHandler sets the operation handler for the delete subject operation
+	SubjectsDeleteSubjectHandler subjects.DeleteSubjectHandler
 	// ResourcesListResourcesHandler sets the operation handler for the list resources operation
 	ResourcesListResourcesHandler resources.ListResourcesHandler
 	// SubjectsListSubjectsHandler sets the operation handler for the list subjects operation
@@ -157,6 +159,10 @@ func (o *PermissionsAPI) Validate() error {
 
 	if o.ResourcesDeleteResourceHandler == nil {
 		unregistered = append(unregistered, "resources.DeleteResourceHandler")
+	}
+
+	if o.SubjectsDeleteSubjectHandler == nil {
+		unregistered = append(unregistered, "subjects.DeleteSubjectHandler")
 	}
 
 	if o.ResourcesListResourcesHandler == nil {
@@ -287,6 +293,11 @@ func (o *PermissionsAPI) initHandlerCache() {
 		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/resources/{id}"] = resources.NewDeleteResource(o.context, o.ResourcesDeleteResourceHandler)
+
+	if o.handlers["DELETE"] == nil {
+		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/subjects/{id}"] = subjects.NewDeleteSubject(o.context, o.SubjectsDeleteSubjectHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)

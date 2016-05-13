@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	"permissions/models"
 )
 
@@ -112,4 +113,28 @@ func ListSubjects(tx *sql.Tx) ([]*models.SubjectOut, error) {
 	}
 
 	return subjects, nil
+}
+
+func DeleteSubject(tx *sql.Tx, id models.InternalSubjectID) error {
+
+	// Update the database.
+	stmt := "DELETE FROM subjects WHERE id = $1"
+	result, err := tx.Exec(stmt, string(id))
+	if err != nil {
+		return err
+	}
+
+	// Verify that a row was deleted.
+	count, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if count == 0 {
+		return fmt.Errorf("no subjects deleted for id %s", id)
+	}
+	if count > 1 {
+		return fmt.Errorf("multiple subjects deleted for id %s", id)
+	}
+
+	return nil
 }
