@@ -27,7 +27,7 @@ func dburi() string {
 func truncateTables(db *sql.DB) error {
 
 	// Truncate all tables.
-	tables := []string{"permissions", "permission_levels", "subjects", "resources", "resource_types"}
+	tables := []string{"permissions", "subjects", "resources", "resource_types"}
 	for _, table := range tables {
 		_, err := db.Exec(fmt.Sprintf("DELETE FROM %s", table))
 		if err != nil {
