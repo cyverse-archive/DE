@@ -14,6 +14,7 @@ import (
 	strfmt "github.com/go-swagger/go-swagger/strfmt"
 	"github.com/go-swagger/go-swagger/swag"
 
+	"permissions/restapi/operations/permissions"
 	"permissions/restapi/operations/resource_types"
 	"permissions/restapi/operations/resources"
 	"permissions/restapi/operations/status"
@@ -66,6 +67,10 @@ type PermissionsAPI struct {
 	ResourcesDeleteResourceHandler resources.DeleteResourceHandler
 	// SubjectsDeleteSubjectHandler sets the operation handler for the delete subject operation
 	SubjectsDeleteSubjectHandler subjects.DeleteSubjectHandler
+	// PermissionsGrantPermissionHandler sets the operation handler for the grant permission operation
+	PermissionsGrantPermissionHandler permissions.GrantPermissionHandler
+	// PermissionsListPermissionsHandler sets the operation handler for the list permissions operation
+	PermissionsListPermissionsHandler permissions.ListPermissionsHandler
 	// ResourcesListResourcesHandler sets the operation handler for the list resources operation
 	ResourcesListResourcesHandler resources.ListResourcesHandler
 	// SubjectsListSubjectsHandler sets the operation handler for the list subjects operation
@@ -163,6 +168,14 @@ func (o *PermissionsAPI) Validate() error {
 
 	if o.SubjectsDeleteSubjectHandler == nil {
 		unregistered = append(unregistered, "subjects.DeleteSubjectHandler")
+	}
+
+	if o.PermissionsGrantPermissionHandler == nil {
+		unregistered = append(unregistered, "permissions.GrantPermissionHandler")
+	}
+
+	if o.PermissionsListPermissionsHandler == nil {
+		unregistered = append(unregistered, "permissions.ListPermissionsHandler")
 	}
 
 	if o.ResourcesListResourcesHandler == nil {
@@ -298,6 +311,16 @@ func (o *PermissionsAPI) initHandlerCache() {
 		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/subjects/{id}"] = subjects.NewDeleteSubject(o.context, o.SubjectsDeleteSubjectHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers[strings.ToUpper("POST")] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/permissions"] = permissions.NewGrantPermission(o.context, o.PermissionsGrantPermissionHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/permissions"] = permissions.NewListPermissions(o.context, o.PermissionsListPermissionsHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)

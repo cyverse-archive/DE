@@ -152,6 +152,10 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 		subjects_impl.BuildDeleteSubjectHandler(db),
 	)
 
+	api.PermissionsListPermissionsHandler = permissions.ListPermissionsHandlerFunc(
+		permissions_impl.BuildListPermissionsHandler(db),
+	)
+
 	api.ServerShutdown = cleanup
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))

@@ -182,6 +182,53 @@ definitions:
         description: "The list of subjects."
         items:
           $ref: "#/definitions/subject_out"
+  permission_level:
+    type: string
+    description: "A permission level name."
+    enum:
+      - read
+      - admin
+      - write
+      - own
+  permission_grant_request:
+    type: object
+    description: "Information for granting permission to a user."
+    required:
+      - subject
+      - resource
+      - permission_level
+    properties:
+      subject:
+        $ref: "#/definitions/subject_in"
+      resource:
+        $ref: "#/definitions/resource_in"
+      permission_level:
+        $ref: "#/definitions/permission_level"
+  permission:
+    type: object
+    description: "Information about permissions granted to a user."
+    required:
+      - subject
+      - resource
+      - permission_level
+    properties:
+      subject:
+        $ref: "#/definitions/subject_out"
+      resource:
+        $ref: "#/definitions/resource_out"
+      permission_level:
+        $ref: "#/definitions/permission_level"
+  permission_list:
+    type: object
+    description: "A list of matching permissions."
+    required:
+      - permissions
+    properties:
+      permissions:
+        type: array
+        description: "The list of permissions."
+        items:
+          $ref: "#/definitions/permission"
 info:
   description: >-
     Manages Permissions for the CyVerse Discovery Environment and related applications.
@@ -451,6 +498,40 @@ paths:
           description: "OK"
         404:
           $ref: "#/responses/not_found"
+        500:
+          $ref: "#/responses/internal_server_error"
+  /permissions:
+    get:
+      tags:
+        - permissions
+      summary: "List Permissions"
+      operationId: listPermissions
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/permission_list"
+        500:
+          $ref: "#/responses/internal_server_error"
+    post:
+      tags:
+        - permissions
+      summary: "Grant Permission to a Resource"
+      parameters:
+        - description: "Information about the permission to add."
+          in: body
+          name: "permission_grant_request"
+          required: True
+          schema:
+            $ref: "#/definitions/permission_grant_request"
+      operationId: grantPermission
+      responses:
+        200:
+          description: "Created"
+          schema:
+            $ref: "#/definitions/permission"
+        400:
+          $ref: "#/responses/bad_request"
         500:
           $ref: "#/responses/internal_server_error"
 produces:
