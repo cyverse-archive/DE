@@ -127,7 +127,12 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         this.newGridPresenter = newGridPresenter;
         this.categorizeView = categorizeView;
 
-        this.view = factory.create(treeStore, categoriesPresenter.getView(), oldGridPresenter.getView(), newGridPresenter.getView(), new OntologyHierarchyToAppDND(appearance, oldGridPresenter, this), new AppToOntologyHierarchyDND(appearance, oldGridPresenter, this));
+        this.view = factory.create(treeStore,
+                                   categoriesPresenter.getView(),
+                                   oldGridPresenter.getView(),
+                                   newGridPresenter.getView(),
+                                   new OntologyHierarchyToAppDND(appearance, oldGridPresenter, newGridPresenter, this),
+                                   new AppToOntologyHierarchyDND(appearance, oldGridPresenter, newGridPresenter, this));
 
         categoriesPresenter.getView().addAppCategorySelectedEventHandler(oldGridPresenter);
         categoriesPresenter.getView().addAppCategorySelectedEventHandler(oldGridPresenter.getView());

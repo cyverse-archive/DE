@@ -7,6 +7,7 @@ import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.EventTarget;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.sencha.gxt.dnd.core.client.DndDragEnterEvent;
 import com.sencha.gxt.dnd.core.client.DndDragMoveEvent;
@@ -24,15 +25,18 @@ public class OntologyHierarchyToAppDND implements DndDragStartEvent.DndDragStart
                                                   DndDragEnterEvent.DndDragEnterHandler {
 
     OntologiesView.OntologiesViewAppearance appearance;
-    AdminAppsGridView.Presenter gridPresenter;
+    AdminAppsGridView.Presenter oldGridPresenter;
+    AdminAppsGridView.Presenter newGridPresenter;
     OntologiesView.Presenter presenter;
     boolean moved;
 
     public OntologyHierarchyToAppDND(OntologiesView.OntologiesViewAppearance appearance,
-                                     AdminAppsGridView.Presenter gridPresenter,
+                                     AdminAppsGridView.Presenter oldGridPresenter,
+                                     AdminAppsGridView.Presenter newGridPresenter,
                                      OntologiesView.Presenter presenter) {
         this.appearance = appearance;
-        this.gridPresenter = gridPresenter;
+        this.oldGridPresenter = oldGridPresenter;
+        this.newGridPresenter = newGridPresenter;
         this.presenter = presenter;
     }
 
@@ -41,8 +45,9 @@ public class OntologyHierarchyToAppDND implements DndDragStartEvent.DndDragStart
         moved = false;
         OntologyHierarchy dropData = getDragSources();
         DragMoveEvent dragEnterEvent = event.getDragEnterEvent();
+        Widget widget = dragEnterEvent.getTarget();
         EventTarget target = dragEnterEvent.getNativeEvent().getEventTarget();
-        App targetApp = getDropTargetApp(Element.as(target));
+        App targetApp = getDropTargetApp(Element.as(target), widget);
 
         if (!validateDropStatus(targetApp, dropData, event.getStatusProxy())) {
             event.setCancelled(true);
@@ -54,8 +59,9 @@ public class OntologyHierarchyToAppDND implements DndDragStartEvent.DndDragStart
         moved = true;
 
         OntologyHierarchy hierarchy = getDragSources();
+        Widget widget = event.getDropTarget().getWidget();
         EventTarget target = event.getDragMoveEvent().getNativeEvent().getEventTarget();
-        App targetApp = getDropTargetApp(Element.as(target));
+        App targetApp = getDropTargetApp(Element.as(target), widget);
 
         if (!validateDropStatus(targetApp, hierarchy, event.getStatusProxy())) {
             event.setCancelled(true);
@@ -85,8 +91,9 @@ public class OntologyHierarchyToAppDND implements DndDragStartEvent.DndDragStart
         if (!moved) return;
 
         OntologyHierarchy hierarchy = getDragSources();
+        Widget widget = event.getDropTarget().getWidget();
         EventTarget target = event.getDragEndEvent().getNativeEvent().getEventTarget();
-        App targetApp = getDropTargetApp(Element.as(target));
+        App targetApp = getDropTargetApp(Element.as(target), widget);
 
         if (validateDropStatus(targetApp, hierarchy, event.getStatusProxy())) {
             presenter.hierarchyDNDtoApp(hierarchy, targetApp);
@@ -98,8 +105,16 @@ public class OntologyHierarchyToAppDND implements DndDragStartEvent.DndDragStart
         return presenter.getSelectedHierarchy();
     }
 
-    private App getDropTargetApp(Element eventTarget) {
-        return gridPresenter.getAppFromElement(eventTarget);
+    private App getDropTargetApp(Element eventTarget, Widget dropTarget) {
+        if (dropTarget == oldGridPresenter.getView().asWidget()) {
+            return oldGridPresenter.getAppFromElement(eventTarget);
+        }
+
+        if (dropTarget == newGridPresenter.getView().asWidget()) {
+            return newGridPresenter.getAppFromElement(eventTarget);
+        }
+
+        return null;
     }
 
     private boolean validateDropStatus(final App targetApp,

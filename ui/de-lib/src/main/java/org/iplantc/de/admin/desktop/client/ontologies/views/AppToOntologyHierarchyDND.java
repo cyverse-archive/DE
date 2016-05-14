@@ -9,6 +9,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.EventTarget;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.sencha.gxt.dnd.core.client.DndDragEnterEvent;
 import com.sencha.gxt.dnd.core.client.DndDragMoveEvent;
@@ -28,22 +29,31 @@ public class AppToOntologyHierarchyDND implements DndDragStartEvent.DndDragStart
                                                   DndDragEnterEvent.DndDragEnterHandler {
 
     OntologiesView.OntologiesViewAppearance appearance;
-    AdminAppsGridView.Presenter gridPresenter;
+    AdminAppsGridView.Presenter oldGridPresenter;
+    AdminAppsGridView.Presenter newGridPresenter;
+    Widget oldGridView;
+    Widget newGridView;
     OntologiesView.Presenter presenter;
     boolean moved;
 
     public AppToOntologyHierarchyDND(OntologiesView.OntologiesViewAppearance appearance,
-                                     AdminAppsGridView.Presenter gridPresenter,
+                                     AdminAppsGridView.Presenter oldGridPresenter,
+                                     AdminAppsGridView.Presenter newGridPresenter,
                                      OntologiesView.Presenter presenter) {
         this.appearance = appearance;
-        this.gridPresenter = gridPresenter;
+        this.oldGridPresenter = oldGridPresenter;
+        this.newGridPresenter = newGridPresenter;
         this.presenter = presenter;
+        this.oldGridView = oldGridPresenter.getView().asWidget();
+        this.newGridView = newGridPresenter.getView().asWidget();
     }
 
     @Override
     public void onDragEnter(DndDragEnterEvent event) {
         moved = false;
-        List<App> apps = getDragSources();
+
+        Widget dragSource = event.getDragEnterEvent().getSource().getDragWidget();
+        List<App> apps = getDragSources(dragSource);
         DragMoveEvent dragEnterEvent = event.getDragEnterEvent();
         EventTarget target = dragEnterEvent.getNativeEvent().getEventTarget();
         OntologyHierarchy hierarchy = getDropTargetHierarchy(Element.as(target));
@@ -57,7 +67,8 @@ public class AppToOntologyHierarchyDND implements DndDragStartEvent.DndDragStart
     public void onDragMove(DndDragMoveEvent event) {
         moved = true;
 
-        List<App> apps = getDragSources();
+        Widget dragSource = event.getDragMoveEvent().getSource().getDragWidget();
+        List<App> apps = getDragSources(dragSource);
         EventTarget target = event.getDragMoveEvent().getNativeEvent().getEventTarget();
         OntologyHierarchy hierarchy  = getDropTargetHierarchy(Element.as(target));
 
@@ -71,7 +82,8 @@ public class AppToOntologyHierarchyDND implements DndDragStartEvent.DndDragStart
     public void onDragStart(DndDragStartEvent event) {
         moved = false;
 
-        List<App> apps = getDragSources();
+        Widget dragSource = event.getDragStartEvent().getSource().getDragWidget();
+        List<App> apps = getDragSources(dragSource);
 
         if (apps == null) {
             // Cancel drag
@@ -88,7 +100,8 @@ public class AppToOntologyHierarchyDND implements DndDragStartEvent.DndDragStart
     public void onDrop(DndDropEvent event) {
         if (!moved) return;
 
-        List<App> apps = getDragSources();
+        Widget dragSource = event.getDragEndEvent().getSource().getDragWidget();
+        List<App> apps = getDragSources(dragSource);
         EventTarget target = event.getDragEndEvent().getNativeEvent().getEventTarget();
         OntologyHierarchy hierarchy  = getDropTargetHierarchy(Element.as(target));
 
@@ -98,8 +111,22 @@ public class AppToOntologyHierarchyDND implements DndDragStartEvent.DndDragStart
 
     }
 
-    private List<App> getDragSources() {
-        return gridPresenter.getSelectedApps();
+    private List<App> getDragSources(Widget dragWidget) {
+        if (isOldGridApp(dragWidget)) {
+            return oldGridPresenter.getSelectedApps();
+        }
+        if (isNewGridApp(dragWidget)) {
+            return newGridPresenter.getSelectedApps();
+        }
+        return null;
+    }
+
+    private boolean isOldGridApp(Widget dragSource) {
+        return dragSource == oldGridView;
+    }
+
+    private boolean isNewGridApp(Widget dragSource) {
+        return dragSource == newGridView;
     }
 
     private OntologyHierarchy getDropTargetHierarchy(Element eventTarget) {

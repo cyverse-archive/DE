@@ -93,8 +93,8 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     private Ontology activeOntology;
     private Ontology selectedOntology;
     private App targetApp;
-    private OntologyHierarchyToAppDND dndHandler;
-    private AppToOntologyHierarchyDND appDndHandler;
+    private OntologyHierarchyToAppDND hierarchyToAppDND;
+    private AppToOntologyHierarchyDND appToHierarchyDND;
 
     @Inject
     public OntologiesViewImpl(OntologiesViewAppearance appearance,
@@ -102,29 +102,21 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
                               @Assisted AppCategoriesView categoriesView,
                               @Assisted("oldGridView") AdminAppsGridView oldGridView,
                               @Assisted("newGridView") AdminAppsGridView newGridView,
-                              @Assisted OntologyHierarchyToAppDND dndHandler,
-                              @Assisted AppToOntologyHierarchyDND appDndHandler) {
+                              @Assisted OntologyHierarchyToAppDND hierarchyToAppDND,
+                              @Assisted AppToOntologyHierarchyDND appToHierarchyDND) {
         this.appearance = appearance;
         this.treeStore = treeStore;
         this.categoriesView = categoriesView;
         this.oldGridView = oldGridView;
         this.newGridView = newGridView;
-        this.dndHandler = dndHandler;
-        this.appDndHandler = appDndHandler;
+        this.hierarchyToAppDND = hierarchyToAppDND;
+        this.appToHierarchyDND = appToHierarchyDND;
 
         initWidget(uiBinder.createAndBindUi(this));
 
         updateButtonStatus();
 
-        DropTarget gridDropTarget = new DropTarget(oldGridView.asWidget());
-        gridDropTarget.setAllowSelfAsSource(false);
-        gridDropTarget.addDragEnterHandler(dndHandler);
-        gridDropTarget.addDragMoveHandler(dndHandler);
-        gridDropTarget.addDragEnterHandler(dndHandler);
-        gridDropTarget.addDropHandler(dndHandler);
-
-        DragSource appDragSource = new DragSource(oldGridView.asWidget());
-        appDragSource.addDragStartHandler(appDndHandler);
+        setUpDND();
 
         treePanel.setHeadingText("Hierarchies");
     }
@@ -302,19 +294,43 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
             }
         });
 
-        DragSource treeDragSource = new DragSource(ontologyTree);
-        treeDragSource.addDragStartHandler(dndHandler);
-
-        DropTarget treeDropTarget = new DropTarget(ontologyTree);
-        treeDropTarget.setAllowSelfAsSource(false);
-        treeDropTarget.addDragEnterHandler(appDndHandler);
-        treeDropTarget.addDragMoveHandler(appDndHandler);
-        treeDropTarget.addDragEnterHandler(appDndHandler);
-        treeDropTarget.addDropHandler(appDndHandler);
-
         treeStore.addSortInfo(new Store.StoreSortInfo<>(new OntologyHierarchyNameComparator(), SortDir.ASC));
 
         return ontologyTree;
+    }
+
+    void setUpDND() {
+        //App DND
+        DropTarget oldGridTarget = new DropTarget(oldGridView.asWidget());
+        oldGridTarget.setAllowSelfAsSource(false);
+        oldGridTarget.addDragEnterHandler(hierarchyToAppDND);
+        oldGridTarget.addDragMoveHandler(hierarchyToAppDND);
+        oldGridTarget.addDragEnterHandler(hierarchyToAppDND);
+        oldGridTarget.addDropHandler(hierarchyToAppDND);
+
+        DropTarget newGridTarget = new DropTarget(newGridView.asWidget());
+        newGridTarget.setAllowSelfAsSource(false);
+        newGridTarget.addDragEnterHandler(hierarchyToAppDND);
+        newGridTarget.addDragMoveHandler(hierarchyToAppDND);
+        newGridTarget.addDragEnterHandler(hierarchyToAppDND);
+        newGridTarget.addDropHandler(hierarchyToAppDND);
+
+        DragSource oldGridSource = new DragSource(oldGridView.asWidget());
+        oldGridSource.addDragStartHandler(appToHierarchyDND);
+
+        DragSource newGridSource = new DragSource(newGridView.asWidget());
+        newGridSource.addDragStartHandler(appToHierarchyDND);
+
+        //Tree DND
+        DragSource treeDragSource = new DragSource(tree);
+        treeDragSource.addDragStartHandler(hierarchyToAppDND);
+
+        DropTarget treeDropTarget = new DropTarget(tree);
+        treeDropTarget.setAllowSelfAsSource(false);
+        treeDropTarget.addDragEnterHandler(appToHierarchyDND);
+        treeDropTarget.addDragMoveHandler(appToHierarchyDND);
+        treeDropTarget.addDragEnterHandler(appToHierarchyDND);
+        treeDropTarget.addDropHandler(appToHierarchyDND);
     }
 
 }
