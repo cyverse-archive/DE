@@ -2,10 +2,10 @@ package org.iplantc.de.diskResource.client.views.metadata;
 
 import java.util.List;
 
-import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
 import org.iplantc.de.diskResource.client.MetadataView;
 import org.iplantc.de.diskResource.client.model.DiskResourceMetadataProperties;
+import org.iplantc.de.diskResource.client.presenters.metadata.MetadataPresenterImpl;
 import org.iplantc.de.diskResource.share.DiskResourceModule.MetadataIds;
 
 import com.google.common.collect.Lists;
@@ -85,8 +85,8 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         @Override
         public void onSelectionChanged(SelectionChangedEvent<DiskResourceMetadata> event) {
             deleteMetadataButton.setEnabled(event.getSelection().size() > 0 && writable);
-            if (gridInlineEditing != null) {
-                gridInlineEditing.completeEditing();
+            if (userGridInlineEditing != null) {
+            	userGridInlineEditing.completeEditing();
             }
         }
     }
@@ -125,13 +125,11 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     private ContentPanel userMetadataPanel;
     private ContentPanel additionalMetadataPanel;
 
-    private final DiskResourceAutoBeanFactory autoBeanFactory =
-            GWT.create(DiskResourceAutoBeanFactory.class);
-
     private final boolean writable;
     private ListStore<DiskResourceMetadata> additionalMdListStore;
     private Grid<DiskResourceMetadata> additionalMdgrid;
-    private GridInlineEditing<DiskResourceMetadata> gridInlineEditing;
+    private GridInlineEditing<DiskResourceMetadata> additionalGridInlineEditing;
+    private GridInlineEditing<DiskResourceMetadata> userGridInlineEditing;
 
     private ListStore<DiskResourceMetadata> userMdListStore;
     private Grid<DiskResourceMetadata> userMdGrid;
@@ -156,46 +154,6 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         deleteMetadataButton.disable();
     }
 
-/*    @Override
-    public DiskResourceMetadataTemplate getMetadataTemplate() {
-        if (selectedTemplate == null) {
-            return null;
-        }
-
-        DiskResourceMetadataTemplate metadataTemplate = autoBeanFactory.templateAvus().as();
-        metadataTemplate.setId(selectedTemplate.getId());
-
-        ArrayList<DiskResourceMetadata> avus = Lists.newArrayList();
-
-        for (String attr : templateAttrFieldMap.keySet()) {
-            DiskResourceMetadata avu = templateAttrAvuMap.get(attr);
-            if (avu == null) {
-                avu = newMetadata(attr, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
-                templateAttrAvuMap.put(attr, avu);
-            }
-
-            Field<?> field = templateAttrFieldMap.get(attr);
-            if (field.getValue() != null) {
-                String value = field.getValue().toString();
-                if ((field instanceof DateField) && !Strings.isNullOrEmpty(value)) {
-                    value = timestampFormat.format(((DateField)field).getValue());
-                } else if (field instanceof ComboBox<?>) {
-                    @SuppressWarnings("unchecked") ComboBox<TemplateAttributeSelectionItem> temp =
-                            (ComboBox<TemplateAttributeSelectionItem>)field;
-                    value = temp.getValue().getValue();
-                }
-
-                avu.setValue(value);
-            }
-
-            avus.add(avu);
-        }
-        metadataTemplate.setAvus(avus);
-
-        return metadataTemplate;
-    }*/
-    
-    
     @Override
     public void mask() {
     	con.mask();
@@ -275,18 +233,18 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     void onAddMetadataSelected(SelectEvent event) {
         expandUserMetadataPanel();
         String attr = getUniqueAttrName(appearance.newAttribute(), 0);
-        DiskResourceMetadata md = newMetadata(attr, appearance.newValue(), ""); //$NON-NLS-1$
+        DiskResourceMetadata md = MetadataPresenterImpl.newMetadata(attr, appearance.newValue(), ""); //$NON-NLS-1$
         setAvuModelKey(md);
-        additionalMdListStore.add(0, md);
-        gridInlineEditing.startEditing(new GridCell(0, 0));
-        gridInlineEditing.getEditor(additionalMdgrid.getColumnModel().getColumn(0)).validate(false);
+        userMdListStore.add(0, md);
+        userGridInlineEditing.startEditing(new GridCell(0, 0));
+        userGridInlineEditing.getEditor(additionalMdgrid.getColumnModel().getColumn(0)).validate(false);
     }
 
     @UiHandler("deleteMetadataButton")
     void onDeleteMetadataSelected(SelectEvent event) {
         expandUserMetadataPanel();
-        for (DiskResourceMetadata md : additionalMdgrid.getSelectionModel().getSelectedItems()) {
-            additionalMdListStore.remove(md);
+        for (DiskResourceMetadata md : userMdGrid.getSelectionModel().getSelectedItems()) {
+            userMdListStore.remove(md);
         }
     }
 
@@ -315,7 +273,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         additionalMetadataPanel.setSize("575", "475"); //$NON-NLS-1$ //$NON-NLS-2$
         additionalMetadataPanel.setCollapsible(true);
         additionalMetadataPanel.getHeader().addStyleName(ThemeStyles.get().style().borderTop());
-        additionalMetadataPanel.setHeadingHtml(appearance.boldHeader("Additional Metadata"));
+        additionalMetadataPanel.setHeadingHtml(appearance.boldHeader(appearance.additionalMetadata()));
     }
 
     private ColumnModel<DiskResourceMetadata> createColumnModel() {
@@ -390,9 +348,9 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         return retName;
     }
 
-    private void initEditor() {
-        gridInlineEditing = new GridInlineEditing<>(additionalMdgrid);
-        gridInlineEditing.setClicksToEdit(ClicksToEdit.TWO);
+    private void initAdditionalMdGridEditor() {
+        additionalGridInlineEditing = new GridInlineEditing<>(additionalMdgrid);
+        additionalGridInlineEditing.setClicksToEdit(ClicksToEdit.TWO);
         ColumnConfig<DiskResourceMetadata, String> column1 = additionalMdgrid.getColumnModel().getColumn(0);
         ColumnConfig<DiskResourceMetadata, String> column2 = additionalMdgrid.getColumnModel().getColumn(1);
 
@@ -409,13 +367,43 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         field1.addInvalidHandler(validationHandler);
         field1.addValidHandler(validationHandler);
 
-        gridInlineEditing.addEditor(column1, field1);
-        gridInlineEditing.addEditor(column2, field2);
-        gridInlineEditing.addCompleteEditHandler(new CompleteEditHandler<DiskResourceMetadata>() {
+        additionalGridInlineEditing.addEditor(column1, field1);
+        additionalGridInlineEditing.addEditor(column2, field2);
+        additionalGridInlineEditing.addCompleteEditHandler(new CompleteEditHandler<DiskResourceMetadata>() {
 
             @Override
             public void onCompleteEdit(CompleteEditEvent<DiskResourceMetadata> event) {
                 additionalMdListStore.commitChanges();
+            }
+        });
+    }
+    
+    private void initUserMdGridEditor() {
+        userGridInlineEditing = new GridInlineEditing<>(userMdGrid);
+        userGridInlineEditing.setClicksToEdit(ClicksToEdit.TWO);
+        ColumnConfig<DiskResourceMetadata, String> column1 = userMdGrid.getColumnModel().getColumn(0);
+        ColumnConfig<DiskResourceMetadata, String> column2 = userMdGrid.getColumnModel().getColumn(1);
+
+        TextField field1 = new TextField();
+        TextField field2 = new TextField();
+
+        field1.setAutoValidate(true);
+        field2.setAutoValidate(true);
+
+        field1.setAllowBlank(false);
+        field2.setAllowBlank(false);
+
+        AttributeValidationHandler validationHandler = new AttributeValidationHandler();
+        field1.addInvalidHandler(validationHandler);
+        field1.addValidHandler(validationHandler);
+
+        userGridInlineEditing.addEditor(column1, field1);
+        userGridInlineEditing.addEditor(column2, field2);
+        userGridInlineEditing.addCompleteEditHandler(new CompleteEditHandler<DiskResourceMetadata>() {
+
+            @Override
+            public void onCompleteEdit(CompleteEditEvent<DiskResourceMetadata> event) {
+                userMdListStore.commitChanges();
             }
         });
     }
@@ -426,6 +414,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         alc.setExpandMode(ExpandMode.SINGLE);
 
         userMdGrid = new Grid<>(createUserListStore(), createColumnModel());
+        userMdGrid.getView().setStripeRows(true);
         userMetadataPanel.add(userMdGrid);
         alc.add(userMetadataPanel);
 
@@ -433,11 +422,13 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         new QuickTip(additionalMdgrid);
 
         additionalMdgrid = new Grid<>(createAdditionalListStore(), createColumnModel());
+        additionalMdgrid.getView().setStripeRows(true);
         additionalMetadataPanel.add(additionalMdgrid);
         alc.add(additionalMetadataPanel);
 
         if (writable) {
-            initEditor();
+        	initUserMdGridEditor();
+            initAdditionalMdGridEditor();
         }
         additionalMdgrid.getSelectionModel().addSelectionChangedHandler(new MetadataSelectionChangedListener());
         new QuickTip(additionalMdgrid);
@@ -447,19 +438,22 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
 
     }
 
-    private DiskResourceMetadata newMetadata(String attr, String value, String unit) {
-        // FIXME Move to presenter. Autobean factory doesn't belong in view.
-        DiskResourceMetadata avu = autoBeanFactory.metadata().as();
-
-        avu.setAttribute(attr);
-        avu.setValue(value);
-        avu.setUnit(unit);
-
-        return avu;
-    }
-
     private Widget getCollapseBtn(ContentPanel panel) {
         return panel.getHeader().getTool(0);
     }
+
+	@Override
+	public void updateMetadataFromTemplateView(List<DiskResourceMetadata> metadataList) {
+		userMdGrid.mask();
+		for(DiskResourceMetadata md: metadataList) {
+			for(DiskResourceMetadata storemd: userMdListStore.getAll()) {
+				if(storemd.getAttribute().equals(md.getAttribute())) {
+					storemd.setValue(md.getValue());
+					userMdListStore.update(storemd);
+				}
+			}
+		}
+		userMdGrid.unmask();
+	}
 
 }

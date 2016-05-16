@@ -1,5 +1,9 @@
 package org.iplantc.de.diskResource.client.views.metadata.dialogs;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateAttribute;
 import org.iplantc.de.client.models.diskResources.TemplateAttributeSelectionItem;
@@ -7,8 +11,10 @@ import org.iplantc.de.commons.client.validators.UrlValidator;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.diskResource.client.MetadataView;
+import org.iplantc.de.diskResource.client.presenters.metadata.MetadataPresenterImpl;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -16,7 +22,6 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IsWidget;
-
 import com.sencha.gxt.cell.core.client.form.ComboBoxCell;
 import com.sencha.gxt.core.client.dom.ScrollSupport;
 import com.sencha.gxt.core.shared.FastMap;
@@ -32,14 +37,13 @@ import com.sencha.gxt.widget.core.client.form.DateTimePropertyEditor;
 import com.sencha.gxt.widget.core.client.form.Field;
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.FormPanel;
+import com.sencha.gxt.widget.core.client.form.FormPanelHelper;
+import com.sencha.gxt.widget.core.client.form.IsField;
 import com.sencha.gxt.widget.core.client.form.NumberField;
 import com.sencha.gxt.widget.core.client.form.NumberPropertyEditor;
 import com.sencha.gxt.widget.core.client.form.TextArea;
 import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.tips.QuickTip;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by sriram on 5/9/16.
@@ -53,6 +57,7 @@ public class MetadataTemplateViewDialog extends IPlantDialog {
     private final FastMap<Field<?>> templateAttrFieldMap = new FastMap<>();
     private List<MetadataTemplateAttribute> attributes;
     private List<DiskResourceMetadata> templateMd;
+    private boolean valid;
 
     public MetadataTemplateViewDialog(List<DiskResourceMetadata> templateMd, boolean writable,
                                       List<MetadataTemplateAttribute> attributes) {
@@ -60,12 +65,52 @@ public class MetadataTemplateViewDialog extends IPlantDialog {
         this.writable = writable;
         this.attributes = attributes;
         this.templateMd = templateMd;
-
+        valid = true;
+        
         widget = new VerticalLayoutContainer();
         widget.setScrollMode(ScrollSupport.ScrollMode.AUTOY);
         buildAvuMap();
         loadTemplateAttributes();
         add(widget);
+    }
+    
+    public ArrayList<DiskResourceMetadata> getMetadataFromTemplate() {
+        ArrayList<DiskResourceMetadata> avus = Lists.newArrayList();
+        for (String attr : templateAttrFieldMap.keySet()) {
+            DiskResourceMetadata avu = templateAttrAvuMap.get(attr);
+            if (avu == null) {
+                avu = MetadataPresenterImpl.newMetadata(attr, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
+                templateAttrAvuMap.put(attr, avu);
+            }
+
+            Field<?> field = templateAttrFieldMap.get(attr);
+            if (field.getValue() != null) {
+                String value = field.getValue().toString();
+                if ((field instanceof DateField) && !Strings.isNullOrEmpty(value)) {
+                    value = timestampFormat.format(((DateField)field).getValue());
+                } else if (field instanceof ComboBox<?>) {
+                    @SuppressWarnings("unchecked") ComboBox<TemplateAttributeSelectionItem> temp =
+                            (ComboBox<TemplateAttributeSelectionItem>)field;
+                    value = temp.getValue().getValue();
+                }
+
+                avu.setValue(value);
+            }
+
+            avus.add(avu);
+        }
+        		return avus;
+    }
+    
+    public boolean isValid() {
+      List<IsField<?>> fields = FormPanelHelper.getFields(widget);
+            for (IsField<?> f : fields) {
+                if (!f.isValid(false)) {
+                    valid = false;
+                }
+            }
+
+      return false;
     }
     
     private void buildAvuMap() {

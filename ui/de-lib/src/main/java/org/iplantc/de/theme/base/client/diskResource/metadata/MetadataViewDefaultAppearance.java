@@ -177,4 +177,9 @@ public class MetadataViewDefaultAppearance implements MetadataView.Appearance {
     public String metadataTermGuide() {
         return displayStrings.metadataTermGuide();
     }
+
+	@Override
+	public String additionalMetadata() {
+		return displayStrings.additionalMetadata();
+	}
 }
