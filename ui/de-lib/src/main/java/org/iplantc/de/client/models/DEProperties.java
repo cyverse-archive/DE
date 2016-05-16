@@ -86,20 +86,6 @@ public class DEProperties {
      */
     private static final String KEEPALIVE_INTERVAL = KEEPALIVE_PREFIX + "interval";
 
-    /**
-     * The prefix used for the EDAM ontology parameters
-     */
-    private static final String EDAM_ONTOLOGY_PREFIX = "org.iplantc.discoveryenvironment.edamOntology.";
-
-    /**
-     * The root IRI used for Topic in the EDAM ontology
-     */
-    private static final String EDAM_TOPIC_IRI = EDAM_ONTOLOGY_PREFIX + "topicRootIRI";
-
-    /**
-     * The root IRI used for Operation in the EDAM ontology
-     */
-    private static final String EDAM_OPERATION_IRI = EDAM_ONTOLOGY_PREFIX + "operationRootIRI";
 
     /**
      * Default community data folder path
@@ -157,9 +143,6 @@ public class DEProperties {
 
     private String pathListFileIdentifier;
 
-    private String edamTopicRootIri;
-
-    private String edamOperationRootIri;
 
 
     public String getPathListFileIdentifier() {
@@ -249,8 +232,6 @@ public class DEProperties {
         pathListFileIdentifier = properties.get(PATH_LIST_FILE_IDENTIFIER);
         communityDataPath = properties.get(COMMUNITY_DATA_PATH);
         permIdBaseUrl = properties.get(PERM_ID_BASE_URL);
-        edamTopicRootIri = properties.get(EDAM_TOPIC_IRI);
-        edamOperationRootIri = properties.get(EDAM_OPERATION_IRI);
     }
 
     /**
@@ -381,8 +362,5 @@ public class DEProperties {
         return permIdBaseUrl;
     }
 
-    public String getEdamTopicIri() { return edamTopicRootIri;}
-
-    public String getEdamOperationIri() {return edamOperationRootIri;}
 
 }

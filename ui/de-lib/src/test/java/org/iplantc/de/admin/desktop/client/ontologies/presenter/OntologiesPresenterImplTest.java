@@ -313,8 +313,6 @@ public class OntologiesPresenterImplTest {
         Ontology ontologyMock = mock(Ontology.class);
         OntologyHierarchy ontologyHierarchyMock = mock(OntologyHierarchy.class);
 
-        when(propertiesMock.getEdamTopicIri()).thenReturn("topic");
-        when(propertiesMock.getEdamOperationIri()).thenReturn("operation");
         when(ontologyMock.getVersion()).thenReturn("version");
         when(eventMock.getOntology()).thenReturn(ontologyMock);
         when(eventMock.getIris()).thenReturn(iriListMock);
