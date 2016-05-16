@@ -26,46 +26,6 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent;
  */
 public class ManageMetadataDialog extends IPlantDialog {
 
-    private class CancelSelectHandler implements SelectEvent.SelectHandler {
-        @Override
-        public void onSelect(SelectEvent event) {
-            if(!writable){
-                return;
-            }
-            hide();
-        }
-    }
-
-    private class OkSelectHandler implements SelectEvent.SelectHandler {
-        @Override
-        public void onSelect(SelectEvent event) {
-            if(!writable){
-                return;
-            }
-            Preconditions.checkNotNull(mdPresenter);
-            Preconditions.checkNotNull(mdView);
-
-            if (!mdView.isValid()) {
-                ConfirmMessageBox cmb = new ConfirmMessageBox("Error", appearance.metadataFormInvalid());
-                cmb.addDialogHideHandler(new DialogHideHandler() {
-                    
-                    @Override
-                    public void onDialogHide(DialogHideEvent event) {
-                        if (event.getHideButton().equals(PredefinedButton.YES)) {
-                            ManageMetadataDialog.this.mask(I18N.DISPLAY.loadingMask());
-                            mdPresenter.setDiskResourceMetadata(new DiskResourceMetadataUpdateCallback(ManageMetadataDialog.this));
-                        }
-                        
-                    }
-                });
-                cmb.show();
-            } else {
-                ManageMetadataDialog.this.mask(I18N.DISPLAY.loadingMask());
-                mdPresenter.setDiskResourceMetadata(new DiskResourceMetadataUpdateCallback(ManageMetadataDialog.this));
-            }
-        }
-    }
-
     private final DiskResourceServiceFacade diskResourceService;
     private final GridView.Presenter.Appearance appearance;
     private MetadataView.Presenter mdPresenter;
@@ -86,8 +46,8 @@ public class ManageMetadataDialog extends IPlantDialog {
         setSize(appearance.metadataDialogWidth(), appearance.metadataDialogHeight());
         setResizable(true);
         addHelp(new HTML(appearance.metadataHelp()));
-        addOkButtonSelectHandler(new OkSelectHandler());
-        addCancelButtonSelectHandler(new CancelSelectHandler());
+  //      addOkButtonSelectHandler(new OkSelectHandler());
+  //      addCancelButtonSelectHandler(new CancelSelectHandler());
     }
 
     public void show(final DiskResource resource){

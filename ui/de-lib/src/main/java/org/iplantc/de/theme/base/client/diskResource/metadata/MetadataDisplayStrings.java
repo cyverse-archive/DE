@@ -32,4 +32,6 @@ public interface MetadataDisplayStrings extends Messages{
 	String templateinfoError();
 
 	String selectTemplate();
+
+	String additionalMetadata();
 }

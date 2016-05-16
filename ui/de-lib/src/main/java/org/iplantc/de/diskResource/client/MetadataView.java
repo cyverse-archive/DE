@@ -57,6 +57,8 @@ public interface MetadataView extends IsWidget {
         String metadataTermGuide();
 
         ImageResource deleteIcon();
+
+		String additionalMetadata();
     }
 
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter {
@@ -97,5 +99,7 @@ public interface MetadataView extends IsWidget {
     void mask();
     
     void unmask();
+    
+    void updateMetadataFromTemplateView(List<DiskResourceMetadata> metadataList);
 
  }
