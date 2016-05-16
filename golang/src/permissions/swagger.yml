@@ -182,6 +182,11 @@ definitions:
         description: "The list of subjects."
         items:
           $ref: "#/definitions/subject_out"
+  permission_id:
+    type: string
+    description: "The internal permission identifier."
+    minLength: 36
+    maxLength: 36
   permission_level:
     type: string
     description: "A permission level name."
@@ -208,10 +213,13 @@ definitions:
     type: object
     description: "Information about permissions granted to a user."
     required:
+      - id
       - subject
       - resource
       - permission_level
     properties:
+      id:
+        $ref: "#/definitions/permission_id"
       subject:
         $ref: "#/definitions/subject_out"
       resource:

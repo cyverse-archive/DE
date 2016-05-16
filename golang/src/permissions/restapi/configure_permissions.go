@@ -16,11 +16,13 @@ import (
 	"github.com/olebedev/config"
 
 	"permissions/restapi/operations"
+	"permissions/restapi/operations/permissions"
 	"permissions/restapi/operations/resource_types"
 	"permissions/restapi/operations/resources"
 	"permissions/restapi/operations/status"
 	"permissions/restapi/operations/subjects"
 
+	permissions_impl "permissions/restapi/impl/permissions"
 	resource_types_impl "permissions/restapi/impl/resource_types"
 	resources_impl "permissions/restapi/impl/resources"
 	status_impl "permissions/restapi/impl/status"
