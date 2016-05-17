@@ -75,6 +75,7 @@ public class OntologyHierarchiesViewImpl extends ContentPanel implements Ontolog
                 return null;
             }
         });
+        appearance.setTreeIcons(tree.getStyle());
         tree.getSelectionModel().setSelectionMode(Style.SelectionMode.SINGLE);
         tree.getSelectionModel().addSelectionChangedHandler(new SelectionChangedEvent.SelectionChangedHandler<OntologyHierarchy>() {
             @Override
