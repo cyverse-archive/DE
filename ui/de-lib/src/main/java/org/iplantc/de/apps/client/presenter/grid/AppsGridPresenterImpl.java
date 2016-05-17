@@ -188,7 +188,12 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
         if (selectedHierarchy != null) {
             view.mask(appearance.getAppsLoadingMask());
             Avu avu = ontologyUtil.convertHierarchyToAvu(selectedHierarchy);
-            ontologyService.getAppsInCategory(selectedHierarchy.getIri(), avu, new AppListCallback());
+            String iri = selectedHierarchy.getIri();
+            if (ontologyUtil.isUnclassified(selectedHierarchy)) {
+                ontologyService.getUnclassifiedAppsInCategory(ontologyUtil.getUnclassifiedParentIri(selectedHierarchy), avu, new AppListCallback());
+            } else {
+                ontologyService.getAppsInCategory(iri, avu, new AppListCallback());
+            }
         }
     }
 
