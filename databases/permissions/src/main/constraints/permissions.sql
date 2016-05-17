@@ -21,3 +21,9 @@ ALTER TABLE permissions
     ADD CONSTRAINT permissions_permission_level_id_fkey
     FOREIGN KEY (permission_level_id)
     REFERENCES permission_levels(id);
+
+--
+-- A single subject may only have one permission level per resource.
+--
+CREATE UNIQUE INDEX permissions_subject_resource_unique
+    ON permissions (subject_id, resource_id);
