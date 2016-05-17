@@ -12,6 +12,7 @@ import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
 import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
+import org.iplantc.de.apps.client.events.selection.OntologyHierarchySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.RunAppSelected;
 import org.iplantc.de.apps.client.gin.factory.AppsGridViewFactory;
 import org.iplantc.de.apps.client.presenter.callbacks.DeleteRatingCallback;
@@ -20,9 +21,13 @@ import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
+import org.iplantc.de.client.models.avu.Avu;
+import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import org.iplantc.de.client.services.AppMetadataServiceFacade;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
+import org.iplantc.de.client.services.OntologyServiceFacade;
+import org.iplantc.de.client.util.OntologyUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.comments.view.dialogs.CommentsDialog;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
@@ -53,7 +58,39 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
                                               AppRatingSelected.AppRatingSelectedHandler,
                                               AppRatingDeselected.AppRatingDeselectedHandler,
                                               AppCommentSelectedEvent.AppCommentSelectedEventHandler,
-                                              AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler, AppUpdatedEvent.AppUpdatedEventHandler {
+                                              AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler,
+                                              AppUpdatedEvent.AppUpdatedEventHandler {
+
+    private class AppListCallback implements AsyncCallback<List<App>> {
+        @Override
+        public void onFailure(Throwable caught) {
+            if (caught instanceof HttpRedirectException) {
+                MessageBox messageBox = new MessageBox(appearance.agaveAuthRequiredTitle(), appearance.agaveAuthRequiredMsg());
+                messageBox.setIcon(MessageBox.ICONS.info());
+                messageBox.show();
+            } else {
+                ErrorHandler.post(caught);
+            }
+            view.unmask();
+        }
+
+        @Override
+        public void onSuccess(final List<App> apps) {
+            listStore.clear();
+            listStore.addAll(apps);
+
+            if (getDesiredSelectedApp() != null) {
+
+                view.getGrid().getSelectionModel().select(getDesiredSelectedApp(), false);
+
+            } else if (listStore.size() > 0) {
+                // Select first app
+                view.getGrid().getSelectionModel().select(listStore.get(0), false);
+            }
+            setDesiredSelectedApp(null);
+            view.unmask();
+        }
+    }
 
     final ListStore<App> listStore;
     @Inject IplantAnnouncer announcer;
@@ -63,6 +100,8 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
     @Inject AsyncProviderWrapper<CommentsDialog> commentsDialogProvider;
     @Inject AppMetadataServiceFacade metadataFacade;
     @Inject UserInfo userInfo;
+    OntologyServiceFacade ontologyService;
+    OntologyUtil ontologyUtil;
     private final EventBus eventBus;
     private final AppsGridView view;
     private App desiredSelectedApp;
@@ -70,9 +109,12 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
     @Inject
     AppsGridPresenterImpl(final AppsGridViewFactory viewFactory,
                           final ListStore<App> listStore,
-                          final EventBus eventBus) {
+                          final EventBus eventBus,
+                          OntologyServiceFacade ontologyService) {
         this.listStore = listStore;
         this.eventBus = eventBus;
+        this.ontologyService = ontologyService;
+        this.ontologyUtil = OntologyUtil.getInstance();
         this.view = viewFactory.create(listStore);
 
         this.view.addAppNameSelectedEventHandler(this);
@@ -137,36 +179,17 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
         view.mask(appearance.getAppsLoadingMask());
 
         final AppCategory appCategory = event.getAppCategorySelection().iterator().next();
-        appService.getApps(appCategory, new AsyncCallback<List<App>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                if (caught instanceof HttpRedirectException) {
-                    MessageBox messageBox = new MessageBox(appearance.agaveAuthRequiredTitle(), appearance.agaveAuthRequiredMsg());
-                    messageBox.setIcon(MessageBox.ICONS.info());
-                    messageBox.show();
-                } else {
-                    ErrorHandler.post(caught);
-                }
-                view.unmask();
-            }
+        appService.getApps(appCategory, new AppListCallback());
+    }
 
-            @Override
-            public void onSuccess(final List<App> apps) {
-                listStore.clear();
-                listStore.addAll(apps);
-
-                if (getDesiredSelectedApp() != null) {
-
-                    view.getGrid().getSelectionModel().select(getDesiredSelectedApp(), false);
-
-                } else if (listStore.size() > 0) {
-                    // Select first app
-                    view.getGrid().getSelectionModel().select(listStore.get(0), false);
-                }
-                setDesiredSelectedApp(null);
-                view.unmask();
-            }
-        });
+    @Override
+    public void onOntologyHierarchySelectionChanged(OntologyHierarchySelectionChangedEvent event) {
+        OntologyHierarchy selectedHierarchy = event.getSelectedHierarchy();
+        if (selectedHierarchy != null) {
+            view.mask(appearance.getAppsLoadingMask());
+            Avu avu = ontologyUtil.convertHierarchyToAvu(selectedHierarchy);
+            ontologyService.getAppsInCategory(selectedHierarchy.getIri(), avu, new AppListCallback());
+        }
     }
 
     @Override

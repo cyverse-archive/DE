@@ -3,7 +3,17 @@ package org.iplantc.de.apps.client;
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.BeforeAppSearchEvent;
-import org.iplantc.de.apps.client.events.selection.*;
+import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
+import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppInfoSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
+import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
+import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
+import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
+import org.iplantc.de.apps.client.events.selection.OntologyHierarchySelectionChangedEvent;
+import org.iplantc.de.apps.client.events.selection.RunAppSelected;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
@@ -38,7 +48,8 @@ public interface AppsGridView extends IsWidget,
                                       AppSearchResultLoadEvent.AppSearchResultLoadEventHandler,
                                       AppCategorySelectionChangedEvent.AppCategorySelectionChangedEventHandler,
                                       AppFavoritedEvent.HasAppFavoritedEventHandlers,
-                                      BeforeAppSearchEvent.BeforeAppSearchEventHandler {
+                                      BeforeAppSearchEvent.BeforeAppSearchEventHandler,
+                                      OntologyHierarchySelectionChangedEvent.OntologyHierarchySelectionChangedEventHandler{
     interface AppsGridAppearance {
 
         String appLaunchWithoutToolError();
@@ -79,8 +90,8 @@ public interface AppsGridView extends IsWidget,
                                 StoreClearEvent.HasStoreClearHandler<App>,
                                 AppFavoritedEvent.HasAppFavoritedEventHandlers,
                                 DeleteAppsSelected.DeleteAppsSelectedHandler,
-                                RunAppSelected.RunAppSelectedHandler {
-
+                                RunAppSelected.RunAppSelectedHandler,
+                                OntologyHierarchySelectionChangedEvent.OntologyHierarchySelectionChangedEventHandler {
         App getSelectedApp();
 
         AppsGridView getView();

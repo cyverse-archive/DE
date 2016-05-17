@@ -14,6 +14,7 @@ import org.iplantc.de.apps.client.events.selection.CreateNewWorkflowSelected;
 import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
 import org.iplantc.de.apps.client.events.selection.EditAppSelected;
 import org.iplantc.de.apps.client.events.selection.EditWorkflowSelected;
+import org.iplantc.de.apps.client.events.selection.OntologyHierarchySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.RequestToolSelected;
 import org.iplantc.de.apps.client.events.selection.RunAppSelected;
 import org.iplantc.de.apps.client.events.selection.ShareAppsSelected;
@@ -201,6 +202,13 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
     @Override
     public void onAppCategorySelectionChanged(AppCategorySelectionChangedEvent event) {
         if (!event.getAppCategorySelection().isEmpty()) {
+            appSearch.clear();
+        }
+    }
+
+    @Override
+    public void onOntologyHierarchySelectionChanged(OntologyHierarchySelectionChangedEvent event) {
+        if (event.getSelectedHierarchy() != null) {
             appSearch.clear();
         }
     }
@@ -473,5 +481,4 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
     void shareWithCollaborator(SelectionEvent<Item> event) {
         fireEvent(new ShareAppsSelected(currentSelection));
     }
-
 }

@@ -1,7 +1,7 @@
 package org.iplantc.de.apps.client;
 
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
-import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
+import org.iplantc.de.apps.client.events.selection.OntologyHierarchySelectionChangedEvent;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 
@@ -15,14 +15,15 @@ import com.sencha.gxt.widget.core.client.tree.Tree;
  */
 public interface OntologyHierarchiesView extends IsWidget,
                                                  IsMaskable,
-                                                 AppCategorySelectionChangedEvent.HasAppCategorySelectionChangedEventHandlers {
+                                                 OntologyHierarchySelectionChangedEvent.HasOntologyHierarchySelectionChangedEventHandlers {
 
-    interface OntologyHierarchiesAppearance {
+    interface OntologyHierarchiesAppearance extends AppCategoriesView.AppCategoriesAppearance {
 
         String hierarchyLabelName(OntologyHierarchy hierarchy);
     }
 
-    interface Presenter extends AppSearchResultLoadEvent.AppSearchResultLoadEventHandler {
+    interface Presenter extends AppSearchResultLoadEvent.AppSearchResultLoadEventHandler,
+                                OntologyHierarchySelectionChangedEvent.HasOntologyHierarchySelectionChangedEventHandlers {
 
         OntologyHierarchy getSelectedHierarchy();
 

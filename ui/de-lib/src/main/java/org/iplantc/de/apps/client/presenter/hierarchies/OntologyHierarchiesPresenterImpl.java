@@ -2,6 +2,7 @@ package org.iplantc.de.apps.client.presenter.hierarchies;
 
 import org.iplantc.de.apps.client.OntologyHierarchiesView;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
+import org.iplantc.de.apps.client.events.selection.OntologyHierarchySelectionChangedEvent;
 import org.iplantc.de.apps.client.gin.OntologyHierarchyTreeStoreProvider;
 import org.iplantc.de.apps.client.gin.factory.OntologyHierarchiesViewFactory;
 import org.iplantc.de.client.models.avu.AvuAutoBeanFactory;
@@ -11,6 +12,9 @@ import org.iplantc.de.client.util.OntologyUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 
@@ -28,7 +32,8 @@ import java.util.Map;
 /**
  * @author aramsey
  */
-public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView.Presenter {
+public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView.Presenter,
+                                                         OntologyHierarchySelectionChangedEvent.OntologyHierarchySelectionChangedEventHandler {
 
     private class OntologyHierarchyNameComparator implements Comparator<OntologyHierarchy> {
         @Override
@@ -43,6 +48,7 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
     private OntologyServiceFacade serviceFacade;
     private OntologyHierarchiesView.OntologyHierarchiesAppearance appearance;
     private AvuAutoBeanFactory avuFactory;
+    private HandlerManager handlerManager;
     private Map<String, List<OntologyHierarchy>> iriToHierarchyMap = new FastMap<>();
     private OntologyHierarchiesViewFactory viewFactory;
 
@@ -95,6 +101,7 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
         for (OntologyHierarchy hierarchy : results) {
             TreeStore<OntologyHierarchy> treeStore = getTreeStore(hierarchy);
             OntologyHierarchiesView view = viewFactory.create(treeStore);
+            view.addOntologyHierarchySelectionChangedEventHandler(this);
             viewTabPanel.add(view.getTree(), new TabItemConfig(appearance.hierarchyLabelName(hierarchy)));
         }
     }
@@ -131,4 +138,28 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
         }
     }
 
+    @Override
+    public void onOntologyHierarchySelectionChanged(OntologyHierarchySelectionChangedEvent event) {
+        fireEvent(event);
+    }
+
+    @Override
+    public HandlerRegistration addOntologyHierarchySelectionChangedEventHandler(
+            OntologyHierarchySelectionChangedEvent.OntologyHierarchySelectionChangedEventHandler handler) {
+        return ensureHandlers().addHandler(OntologyHierarchySelectionChangedEvent.TYPE, handler);
+    }
+
+    HandlerManager createHandlerManager() {
+        return new HandlerManager(this);
+    }
+
+    HandlerManager ensureHandlers() {
+        return handlerManager == null ? handlerManager = createHandlerManager() : handlerManager;
+    }
+
+    void fireEvent(GwtEvent<?> event) {
+        if (handlerManager != null) {
+            handlerManager.fireEvent(event);
+        }
+    }
 }

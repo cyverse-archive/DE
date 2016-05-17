@@ -1,7 +1,7 @@
 package org.iplantc.de.apps.client.views.hierarchies;
 
 import org.iplantc.de.apps.client.OntologyHierarchiesView;
-import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
+import org.iplantc.de.apps.client.events.selection.OntologyHierarchySelectionChangedEvent;
 import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import org.iplantc.de.client.util.OntologyUtil;
@@ -15,17 +15,19 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
+import com.sencha.gxt.core.client.Style;
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 
+import java.util.List;
+
 /**
  * @author aramsey
  */
-public class OntologyHierarchiesViewImpl extends ContentPanel implements OntologyHierarchiesView,
-                                                                         SelectionChangedEvent.SelectionChangedHandler<OntologyHierarchy> {
+public class OntologyHierarchiesViewImpl extends ContentPanel implements OntologyHierarchiesView {
 
     interface OntologyHierarchiesViewImplUiBinder extends UiBinder<Widget, OntologyHierarchiesViewImpl> {}
 
@@ -45,23 +47,8 @@ public class OntologyHierarchiesViewImpl extends ContentPanel implements Ontolog
     }
 
     @Override
-    public HandlerRegistration addAppCategorySelectedEventHandler(AppCategorySelectionChangedEvent.AppCategorySelectionChangedEventHandler handler) {
-        return addHandler(handler, AppCategorySelectionChangedEvent.TYPE);
-    }
-
-    @Override
     public Tree<OntologyHierarchy, String> getTree() {
         return tree;
-    }
-
-    @Override
-    public void onSelectionChanged(SelectionChangedEvent<OntologyHierarchy> event) {
-//        final List<String> groupHierarchy = Lists.newArrayList();
-//        if(!event.getSelection().isEmpty()){
-//            groupHierarchy.addAll(hierarchyProvider.getGroupHierarchy(event.getSelection().iterator().next()));
-//        }
-//        fireEvent(new AppCategorySelectionChangedEvent(event.getSelection(),
-//                                                       groupHierarchy));
     }
 
     @Override
@@ -72,7 +59,7 @@ public class OntologyHierarchiesViewImpl extends ContentPanel implements Ontolog
 
     @UiFactory
     Tree<OntologyHierarchy, String> createTree() {
-        return new Tree<>(treeStore, new ValueProvider<OntologyHierarchy, String>() {
+        Tree<OntologyHierarchy, String> tree = new Tree<>(treeStore, new ValueProvider<OntologyHierarchy, String>() {
             @Override
             public String getValue(OntologyHierarchy object) {
                 return object.getLabel();
@@ -88,5 +75,23 @@ public class OntologyHierarchiesViewImpl extends ContentPanel implements Ontolog
                 return null;
             }
         });
+        tree.getSelectionModel().setSelectionMode(Style.SelectionMode.SINGLE);
+        tree.getSelectionModel().addSelectionChangedHandler(new SelectionChangedEvent.SelectionChangedHandler<OntologyHierarchy>() {
+            @Override
+            public void onSelectionChanged(SelectionChangedEvent<OntologyHierarchy> event) {
+                List<OntologyHierarchy> hierarchyList = event.getSelection();
+                if (hierarchyList != null && hierarchyList.size() == 1) {
+                    OntologyHierarchy selectedHierarchy = hierarchyList.get(0);
+                    fireEvent(new OntologyHierarchySelectionChangedEvent(selectedHierarchy, ontologyUtil.getPathList(selectedHierarchy)));
+                }
+            }
+        });
+        return tree;
+    }
+
+    @Override
+    public HandlerRegistration addOntologyHierarchySelectionChangedEventHandler(
+            OntologyHierarchySelectionChangedEvent.OntologyHierarchySelectionChangedEventHandler handler) {
+        return addHandler(handler, OntologyHierarchySelectionChangedEvent.TYPE);
     }
 }

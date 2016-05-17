@@ -8,7 +8,10 @@ import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
+import com.google.web.bindery.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -27,6 +30,8 @@ public class OntologyUtil {
 
     final String UNCLASSIFIED_LABEL = "Unclassified";
     final String UNCLASSIFIED_IRI_APPEND = "_unclassified";
+    
+    private static final String HIERARCHY_MODEL_KEY = "model_key";
 
     private OntologyUtil() {
         factory = GWT.create(OntologyAutoBeanFactory.class);
@@ -103,6 +108,16 @@ public class OntologyUtil {
         }
         avuListBean.setAvus(avuList);
         return avuListBean;
+    }
+
+    public List<String> getPathList(OntologyHierarchy hierarchy) {
+        List<String> pathList = Lists.newArrayList();
+        if (hierarchy != null) {
+            final AutoBean<OntologyHierarchy> hierarchyAutoBean = AutoBeanUtils.getAutoBean(hierarchy);
+            String tag = hierarchyAutoBean.getTag(HIERARCHY_MODEL_KEY);
+            pathList = Arrays.asList(tag.split("/"));
+        }
+        return pathList;
     }
 
 }
