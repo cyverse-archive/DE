@@ -165,6 +165,18 @@
   :language :clojure
   :archive? false}
 
+ "metadata-client"
+ {:type     :library
+  :type-num 16
+  :path     "libs/metadata-client"
+  :build    :lein
+  :install  :lein
+  :tarball? false
+  :uberjar? false
+  :install? true
+  :language :clojure
+  :archive? false}
+
  "clockwork"
  {:type     :service
   :path     "services/clockwork"

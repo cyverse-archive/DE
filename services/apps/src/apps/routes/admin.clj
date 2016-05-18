@@ -10,6 +10,7 @@
         [apps.routes.domain.app.category]
         [apps.routes.domain.reference-genome]
         [apps.routes.domain.tool]
+        [apps.routes.middleware :only [wrap-metadata-base-url]]
         [apps.routes.params]
         [apps.user :only [current-user]]
         [apps.util.coercions :only [coerce!]]
@@ -170,6 +171,7 @@
   (GET* "/" []
         :query [params SecuredQueryParams]
         :return ActiveOntologyDetailsList
+        :middlewares [wrap-metadata-base-url]
         :summary "List Ontology Details"
         :description
 "Lists Ontology details saved in the metadata service.
@@ -192,6 +194,7 @@
         :path-params [ontology-version :- OntologyVersionParam
                       root-iri :- OntologyClassIRIParam]
         :query [{:keys [attr] :as params} OntologyHierarchyFilterParams]
+        :middlewares [wrap-metadata-base-url]
         :summary "Get App Category Hierarchy"
         :description
 "Gets the list of app categories that are visible to the user for the given `ontology-version`,
@@ -207,6 +210,7 @@ Please see the metadata service documentation for response information."
                       root-iri :- OntologyClassIRIParam]
         :query [params OntologyAppListingPagingParams]
         :return AppListing
+        :middlewares [wrap-metadata-base-url]
         :summary "List Unclassified Apps"
         :description
 "Lists all of the apps that are visible to the user that are not under the given `root-iri`, or any of

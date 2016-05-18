@@ -3,9 +3,7 @@ pom.xml
 /lib/
 /classes/
 /target/
-.lein-deps-sum
-.lein-failures
-.lein-repl-history
+.lein-*
 *~
 *.swp
 .dir-locals.el
@@ -17,12 +15,6 @@ pom.xml
 /bin
 builds/
 checkouts/
-libs/clj-icat-direct/clj-icat-direct
-libs/clj-jargon/clj-jargon
-libs/heuristomancer/heuristomancer
-libs/iplant-clojure-commons/iplant-clojure-commons
-libs/kameleon/kameleon
-libs/mescal/mescal
 node_modules/
 .idea
 *.iml
@@ -31,4 +23,7 @@ node_modules/
 /out
 .DS_Store
 services/*/*-build
+libs/*/target
+services/*/target
 *.rpm
+*.class

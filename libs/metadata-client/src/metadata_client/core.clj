@@ -1,13 +1,25 @@
-(ns apps.clients.metadata
+(ns metadata-client.core
   (:use [kameleon.uuids :only [uuidify]])
   (:require [cemerick.url :as curl]
             [cheshire.core :as json]
             [clj-http.client :as http]
-            [apps.util.config :as config]))
+            [clojure.tools.logging :as log]))
+
+(def ^:dynamic *metadata-base*
+  "Dynamic context to be used in generating URLs."
+  "http://localhost:60000")
+
+(defmacro with-metadata-base
+  "A helper macro to change *metadata-base* within its body."
+  [metadata-base & body]
+  `(let [metadata-base# ~metadata-base]
+     (binding [*metadata-base* metadata-base#]
+       ~@body)))
 
 (defn- metadata-url-encoded
   [& components]
-  (str (apply curl/url (config/metadata-base) (map curl/url-encode components))))
+  (log/debug "using metadata base" *metadata-base*)
+  (str (apply curl/url *metadata-base* (map curl/url-encode components))))
 
 (defn- get-options
   [params & {:keys [as] :or {as :stream}}]
@@ -37,15 +49,15 @@
             (get-options {:user username})))
 
 (defn filter-hierarchy
-  [username ontology-version root-iri attr app-ids]
+  [username ontology-version root-iri attr target-types target-ids]
   (http/post (metadata-url-encoded "ontologies" ontology-version root-iri "filter")
-             (post-options (json/encode {:target-types ["app"] :target-ids app-ids})
+             (post-options (json/encode {:target-types target-types :target-ids target-ids})
                            {:user username :attr attr})))
 
 (defn filter-by-attr-value
-  [username attr value app-ids]
+  [username attr value target-types target-ids]
   (->> (http/post (metadata-url-encoded "avus" "filter-targets")
-                  (post-options (json/encode {:target-types ["app"] :target-ids app-ids})
+                  (post-options (json/encode {:target-types target-types :target-ids target-ids})
                                 {:user  username
                                  :attr  attr
                                  :value value}
@@ -55,9 +67,9 @@
        (map uuidify)))
 
 (defn filter-unclassified
-  [username ontology-version root-iri attr app-ids]
+  [username ontology-version root-iri attr target-types target-ids]
   (->> (http/post (metadata-url-encoded "ontologies" ontology-version root-iri "filter-unclassified")
-                  (post-options (json/encode {:target-types ["app"] :target-ids app-ids})
+                  (post-options (json/encode {:target-types target-types :target-ids target-ids})
                                 {:user username :attr attr}
                                 :as :json))
        :body
@@ -65,16 +77,16 @@
        (map uuidify)))
 
 (defn list-avus
-  [username app-id]
-  (http/get (metadata-url-encoded "avus" "app" app-id)
+  [username target-type target-id]
+  (http/get (metadata-url-encoded "avus" target-type target-id)
             (get-options {:user username})))
 
 (defn set-avus
-  [username app-id body]
-  (http/post (metadata-url-encoded "avus" "app" app-id)
+  [username target-type target-id body]
+  (http/post (metadata-url-encoded "avus" target-type target-id)
              (post-options body {:user username})))
 
 (defn update-avus
-  [username app-id body]
-  (http/put (metadata-url-encoded "avus" "app" app-id)
+  [username target-type target-id body]
+  (http/put (metadata-url-encoded "avus" target-type target-id)
             (put-options body {:user username})))

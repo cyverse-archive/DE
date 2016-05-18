@@ -3,6 +3,7 @@
         [common-swagger-api.schema.ontologies]
         [apps.routes.domain.app :only [AppListing]]
         [apps.routes.domain.app.category]
+        [apps.routes.middleware :only [wrap-metadata-base-url]]
         [apps.routes.params]
         [apps.user :only [current-user]]
         [apps.util.coercions :only [coerce!]]
@@ -40,6 +41,7 @@
 
   (GET* "/" []
         :query [params SecuredQueryParams]
+        :middlewares [wrap-metadata-base-url]
         :summary "List App Hierarchies"
         :description
 "Lists all hierarchies saved for the active ontology version.
@@ -52,6 +54,7 @@ Please see the metadata service documentation for response information."
   (GET* "/:root-iri" []
         :path-params [root-iri :- OntologyClassIRIParam]
         :query [{:keys [attr]} OntologyHierarchyFilterParams]
+        :middlewares [wrap-metadata-base-url]
         :summary "List App Category Hierarchy"
         :description
 "Gets the list of app categories that are visible to the user for the active ontology version,
@@ -65,6 +68,7 @@ Please see the metadata service documentation for response information."
   (GET* "/:class-iri/apps" []
         :path-params [class-iri :- OntologyClassIRIParam]
         :query [{:keys [attr] :as params} OntologyAppListingPagingParams]
+        :middlewares [wrap-metadata-base-url]
         :return AppListing
         :summary "List Apps in a Category"
         :description
@@ -78,6 +82,7 @@ Please see the metadata service documentation for response information."
         :path-params [root-iri :- OntologyClassIRIParam]
         :query [params OntologyAppListingPagingParams]
         :return AppListing
+        :middlewares [wrap-metadata-base-url]
         :summary "List Unclassified Apps"
         :description
 "Lists all of the apps that are visible to the user that are not under the given app category or any of
