@@ -17,6 +17,7 @@ import (
 	"permissions/restapi/operations/resource_types"
 	"permissions/restapi/operations/resources"
 	"permissions/restapi/operations/status"
+	"permissions/restapi/operations/subjects"
 )
 
 // NewPermissionsAPI creates a new Permissions instance
@@ -59,12 +60,20 @@ type PermissionsAPI struct {
 	ResourceTypesPutResourceTypesIDHandler resource_types.PutResourceTypesIDHandler
 	// ResourcesAddResourceHandler sets the operation handler for the add resource operation
 	ResourcesAddResourceHandler resources.AddResourceHandler
+	// SubjectsAddSubjectHandler sets the operation handler for the add subject operation
+	SubjectsAddSubjectHandler subjects.AddSubjectHandler
 	// ResourcesDeleteResourceHandler sets the operation handler for the delete resource operation
 	ResourcesDeleteResourceHandler resources.DeleteResourceHandler
+	// SubjectsDeleteSubjectHandler sets the operation handler for the delete subject operation
+	SubjectsDeleteSubjectHandler subjects.DeleteSubjectHandler
 	// ResourcesListResourcesHandler sets the operation handler for the list resources operation
 	ResourcesListResourcesHandler resources.ListResourcesHandler
+	// SubjectsListSubjectsHandler sets the operation handler for the list subjects operation
+	SubjectsListSubjectsHandler subjects.ListSubjectsHandler
 	// ResourcesUpdateResourceHandler sets the operation handler for the update resource operation
 	ResourcesUpdateResourceHandler resources.UpdateResourceHandler
+	// SubjectsUpdateSubjectHandler sets the operation handler for the update subject operation
+	SubjectsUpdateSubjectHandler subjects.UpdateSubjectHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -144,16 +153,32 @@ func (o *PermissionsAPI) Validate() error {
 		unregistered = append(unregistered, "resources.AddResourceHandler")
 	}
 
+	if o.SubjectsAddSubjectHandler == nil {
+		unregistered = append(unregistered, "subjects.AddSubjectHandler")
+	}
+
 	if o.ResourcesDeleteResourceHandler == nil {
 		unregistered = append(unregistered, "resources.DeleteResourceHandler")
+	}
+
+	if o.SubjectsDeleteSubjectHandler == nil {
+		unregistered = append(unregistered, "subjects.DeleteSubjectHandler")
 	}
 
 	if o.ResourcesListResourcesHandler == nil {
 		unregistered = append(unregistered, "resources.ListResourcesHandler")
 	}
 
+	if o.SubjectsListSubjectsHandler == nil {
+		unregistered = append(unregistered, "subjects.ListSubjectsHandler")
+	}
+
 	if o.ResourcesUpdateResourceHandler == nil {
 		unregistered = append(unregistered, "resources.UpdateResourceHandler")
+	}
+
+	if o.SubjectsUpdateSubjectHandler == nil {
+		unregistered = append(unregistered, "subjects.UpdateSubjectHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -259,20 +284,40 @@ func (o *PermissionsAPI) initHandlerCache() {
 	}
 	o.handlers["POST"]["/resources"] = resources.NewAddResource(o.context, o.ResourcesAddResourceHandler)
 
+	if o.handlers["POST"] == nil {
+		o.handlers[strings.ToUpper("POST")] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/subjects"] = subjects.NewAddSubject(o.context, o.SubjectsAddSubjectHandler)
+
 	if o.handlers["DELETE"] == nil {
 		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/resources/{id}"] = resources.NewDeleteResource(o.context, o.ResourcesDeleteResourceHandler)
+
+	if o.handlers["DELETE"] == nil {
+		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/subjects/{id}"] = subjects.NewDeleteSubject(o.context, o.SubjectsDeleteSubjectHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/resources"] = resources.NewListResources(o.context, o.ResourcesListResourcesHandler)
 
+	if o.handlers["GET"] == nil {
+		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/subjects"] = subjects.NewListSubjects(o.context, o.SubjectsListSubjectsHandler)
+
 	if o.handlers["PUT"] == nil {
 		o.handlers[strings.ToUpper("PUT")] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/resources/{id}"] = resources.NewUpdateResource(o.context, o.ResourcesUpdateResourceHandler)
+
+	if o.handlers["PUT"] == nil {
+		o.handlers[strings.ToUpper("PUT")] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/subjects/{id}"] = subjects.NewUpdateSubject(o.context, o.SubjectsUpdateSubjectHandler)
 
 }
 

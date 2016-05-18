@@ -19,10 +19,12 @@ import (
 	"permissions/restapi/operations/resource_types"
 	"permissions/restapi/operations/resources"
 	"permissions/restapi/operations/status"
+	"permissions/restapi/operations/subjects"
 
 	resource_types_impl "permissions/restapi/impl/resource_types"
 	resources_impl "permissions/restapi/impl/resources"
 	status_impl "permissions/restapi/impl/status"
+	subjects_impl "permissions/restapi/impl/subjects"
 )
 
 // This file is safe to edit. Once it exists it will not be overwritten
@@ -133,6 +135,23 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 	api.ResourcesDeleteResourceHandler = resources.DeleteResourceHandlerFunc(
 		resources_impl.BuildDeleteResourceHandler(db),
 	)
+
+	api.SubjectsAddSubjectHandler = subjects.AddSubjectHandlerFunc(
+		subjects_impl.BuildAddSubjectHandler(db),
+	)
+
+	api.SubjectsListSubjectsHandler = subjects.ListSubjectsHandlerFunc(
+		subjects_impl.BuildListSubjectsHandler(db),
+	)
+
+	api.SubjectsUpdateSubjectHandler = subjects.UpdateSubjectHandlerFunc(
+		subjects_impl.BuildUpdateSubjectHandler(db),
+	)
+
+	api.SubjectsDeleteSubjectHandler = subjects.DeleteSubjectHandlerFunc(
+		subjects_impl.BuildDeleteSubjectHandler(db),
+	)
+
 	api.ServerShutdown = cleanup
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))
