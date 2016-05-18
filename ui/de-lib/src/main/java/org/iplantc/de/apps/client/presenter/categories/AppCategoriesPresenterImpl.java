@@ -154,7 +154,8 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
 
                 @Override
                 public void onSuccess(List<AppCategory> result) {
-                    addAppCategories(null, result);
+                    List<AppCategory> filteredCategories = getFilteredCategories(result);
+                    addAppCategories(null, filteredCategories);
                     view.getTree().expandAll();
                     if (selectedAppCategory != null) {
                         AppCategory desiredCategory = treeStore.findModelWithKey(selectedAppCategory.getId());
@@ -167,6 +168,16 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
                 }
             });
         }
+    }
+
+    private List<AppCategory> getFilteredCategories(List<AppCategory> result) {
+        List<AppCategory> filteredCategories = Lists.newArrayList();
+        for (AppCategory category : result) {
+            if (!category.isPublic()) {
+                filteredCategories.addAll(category.getCategories());
+            }
+        }
+        return filteredCategories;
     }
 
     @Override
