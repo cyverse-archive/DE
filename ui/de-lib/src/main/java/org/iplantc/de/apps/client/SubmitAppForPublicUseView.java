@@ -1,10 +1,10 @@
 package org.iplantc.de.apps.client;
 
 import org.iplantc.de.client.models.apps.App;
-import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.AppRefLink;
+import org.iplantc.de.client.models.apps.PublishAppRequest;
+import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 
-import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
@@ -98,11 +98,9 @@ public interface SubmitAppForPublicUseView extends IsWidget {
         void go(HasOneWidget container, App selectedApp, AsyncCallback<String> callback);
     }
 
-    TreeStore<AppCategory> getTreeStore();
+    TreeStore<OntologyHierarchy> getTreeStore();
 
-    void expandAppCategories();
-
-    JSONObject toJson();
+    PublishAppRequest getPublishAppRequest();
 
     App getSelectedApp();
 

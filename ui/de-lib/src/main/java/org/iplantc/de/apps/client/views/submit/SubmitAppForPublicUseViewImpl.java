@@ -1,26 +1,27 @@
 package org.iplantc.de.apps.client.views.submit;
 
 import org.iplantc.de.apps.client.SubmitAppForPublicUseView;
+import org.iplantc.de.apps.client.gin.OntologyHierarchyTreeStoreProvider;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
-import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.AppRefLink;
+import org.iplantc.de.client.models.apps.PublishAppRequest;
+import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
+import org.iplantc.de.client.util.OntologyUtil;
 import org.iplantc.de.commons.client.validators.UrlValidator;
 import org.iplantc.de.commons.client.widgets.ContextualHelpPopup;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorFieldFactory;
 import org.iplantc.de.diskResource.client.views.widgets.FolderSelectorField;
 import org.iplantc.de.shared.DEProperties;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
-import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -32,6 +33,7 @@ import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
+import com.sencha.gxt.core.client.Style;
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
@@ -64,12 +66,9 @@ import com.sencha.gxt.widget.core.client.selection.CellSelection;
 import com.sencha.gxt.widget.core.client.selection.CellSelectionChangedEvent;
 import com.sencha.gxt.widget.core.client.selection.CellSelectionChangedEvent.CellSelectionChangedHandler;
 import com.sencha.gxt.widget.core.client.tree.Tree;
-import com.sencha.gxt.widget.core.client.tree.Tree.CheckCascade;
-import com.sencha.gxt.widget.core.client.tree.Tree.CheckNodes;
 import com.sencha.gxt.widget.core.client.tree.Tree.TreeAppearance;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -92,8 +91,8 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
     @UiField TextField appName;
     @UiField TextArea appDesc;
     @UiField VerticalLayoutContainer container;
-    @UiField(provided = true) TreeStore<AppCategory> treeStore;
-    @UiField(provided = true) Tree<AppCategory, String> tree;
+    @UiField(provided = true) TreeStore<OntologyHierarchy> treeStore;
+    @UiField(provided = true) Tree<OntologyHierarchy, String> tree;
     @UiField Grid<AppRefLink> grid;
     @UiField ListStore<AppRefLink> listStore;
     @UiField TextButton addBtn;
@@ -116,16 +115,20 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
     private GridEditing<AppRefLink> editing;
     private App selectedApp;
     private final DEProperties deProps;
+    private OntologyUtil ontologyUtil = OntologyUtil.getInstance();
+    private AppAutoBeanFactory factory;
 
     final Logger LOG = Logger.getLogger("Submit Application for Public Use");
 
     @Inject
     SubmitAppForPublicUseViewImpl(final DiskResourceSelectorFieldFactory folderSelectorFieldFactory,
                                   final SubmitAppAppearance appearance,
-                                  final DEProperties props) {
+                                  final DEProperties props,
+                                  AppAutoBeanFactory factory) {
         this.appearance = appearance;
         this.dataFolderSelector = folderSelectorFieldFactory.defaultFolderSelector();
         this.deProps = props;
+        this.factory = factory;
         initCategoryTree();
         widget = uiBinder.createAndBindUi(this);
         initGrid();
@@ -232,28 +235,16 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
     }
 
     private void initCategoryTree() {
-        treeStore = new TreeStore<>(new ModelKeyProvider<AppCategory>() {
+        treeStore = new OntologyHierarchyTreeStoreProvider().get();
+        tree = new Tree<>(treeStore, new ValueProvider<OntologyHierarchy, String>() {
 
             @Override
-            public String getKey(AppCategory item) {
-                if (item == null) {
-                    return null;
-                }
-                return item.getId();
-            }
-        });
-
-        initTreeStoreSorter();
-
-        tree = new Tree<>(treeStore, new ValueProvider<AppCategory, String>() {
-
-            @Override
-            public String getValue(AppCategory object) {
-                return object.getName();
+            public String getValue(OntologyHierarchy object) {
+                return object.getLabel();
             }
 
             @Override
-            public void setValue(AppCategory object, String value) {
+            public void setValue(OntologyHierarchy object, String value) {
                 // do nothing intentionally
             }
 
@@ -265,35 +256,21 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
 
         setTreeIcons();
         tree.setCheckable(true);
-        tree.setCheckStyle(CheckCascade.CHILDREN);
-        tree.setCheckNodes(CheckNodes.LEAF);
-        tree.getSelectionModel().addSelectionHandler(new SelectionHandler<AppCategory>() {
+        tree.setCheckStyle(Tree.CheckCascade.NONE);
+        treeStore.addSortInfo(new StoreSortInfo<>(ontologyUtil.getOntologyNameComparator(),
+                                                  SortDir.ASC));
+        tree.getSelectionModel().setSelectionMode(Style.SelectionMode.MULTI);
+        tree.getSelectionModel().addSelectionHandler(new SelectionHandler<OntologyHierarchy>() {
             @Override
-            public void onSelection(SelectionEvent<AppCategory> event) {
-                AppCategory selectedItem = event.getSelectedItem();
-                // Have to deselect after un/checking the item, or else a second
-                // SelectionEvent gets fired and reverts the check
+            public void onSelection(SelectionEvent<OntologyHierarchy> event) {
+                OntologyHierarchy selectedItem = event.getSelectedItem();
                 if (tree.isChecked(selectedItem)) {
                     tree.setChecked(selectedItem, Tree.CheckState.UNCHECKED);
-                    tree.getSelectionModel().deselect(selectedItem);
                 } else {
                     tree.setChecked(selectedItem, Tree.CheckState.CHECKED);
-                    tree.getSelectionModel().deselect(selectedItem);
                 }
             }
         });
-    }
-
-    private void initTreeStoreSorter() {
-        Comparator<AppCategory> comparator = new Comparator<AppCategory>() {
-
-            @Override
-            public int compare(AppCategory group1, AppCategory group2) {
-                return group1.getName().compareToIgnoreCase(group2.getName());
-            }
-        };
-
-        treeStore.addSortInfo(new StoreSortInfo<>(comparator, SortDir.ASC));
     }
 
     @UiFactory
@@ -388,13 +365,8 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
     }
 
     @Override
-    public TreeStore<AppCategory> getTreeStore() {
+    public TreeStore<OntologyHierarchy> getTreeStore() {
         return treeStore;
-    }
-
-    @Override
-    public void expandAppCategories() {
-        tree.expandAll();
     }
 
     private GridEditing<AppRefLink> createGridEditing() {
@@ -445,14 +417,14 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
     ;
 
     @Override
-    public JSONObject toJson() {
-        JSONObject json = new JSONObject();
+    public PublishAppRequest getPublishAppRequest() {
+        PublishAppRequest appRequest = factory.publishAppRequest().as();
 
-        json.put("id", getJsonString(selectedApp.getId())); //$NON-NLS-1$
-        json.put("name", getJsonString(appName.getValue()));
-        json.put("description", getJsonString(appDesc.getValue())); //$NON-NLS-1$
-        json.put("categories", buildSelectedCategoriesAsJson()); //$NON-NLS-1$
-        json.put("references", buildRefLinksAsJson()); //$NON-NLS-1$
+        appRequest.setId(selectedApp.getId());
+        appRequest.setName(appName.getValue());
+        appRequest.setDescription(appDesc.getValue());
+        appRequest.setAvus(getAppAvus());
+        appRequest.setReferences(getRefLinks());
 
 
 
@@ -463,9 +435,9 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
                                        paramDesc.getValue(),
                                        outputDesc.getValue());
         LOG.log(Level.SEVERE, md);
-        json.put("documentation", getJsonString(md));
+        appRequest.setDocumentation(md);
 
-        return json;
+        return appRequest;
     }
 
     private boolean checkRefLinksGrid() {
@@ -486,26 +458,20 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
         return tree.getCheckedSelection().size() > 0;
     }
 
-    private JSONValue buildRefLinksAsJson() {
-        JSONArray arr = new JSONArray();
-        int index = 0;
+    private List<String> getRefLinks() {
+        List<String> refLinks = Lists.newArrayList();
         for (AppRefLink model : listStore.getAll()) {
-            arr.set(index++, new JSONString(model.getRefLink()));
+            refLinks.add(model.getRefLink());
         }
-        return arr;
+        return refLinks;
     }
 
-    private JSONString getJsonString(String value) {
-        return new JSONString(value == null ? "" : value); //$NON-NLS-1$
-    }
-
-    private JSONArray buildSelectedCategoriesAsJson() {
-        JSONArray arr = new JSONArray();
-        int index = 0;
-        for (AppCategory model : tree.getCheckedSelection()) {
-            arr.set(index++, new JSONString(model.getId()));
+    private List<Avu> getAppAvus() {
+        List<Avu> avus = Lists.newArrayList();
+        for (OntologyHierarchy model : tree.getCheckedSelection()) {
+            avus.add(ontologyUtil.convertHierarchyToAvu(model));
         }
-        return arr;
+        return avus;
     }
 
     @Override

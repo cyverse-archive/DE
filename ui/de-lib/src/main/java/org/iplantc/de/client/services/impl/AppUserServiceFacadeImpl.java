@@ -11,6 +11,7 @@ import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.AppDoc;
 import org.iplantc.de.client.models.apps.AppFeedback;
 import org.iplantc.de.client.models.apps.AppList;
+import org.iplantc.de.client.models.apps.PublishAppRequest;
 import org.iplantc.de.client.models.apps.integration.AppTemplate;
 import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
 import org.iplantc.de.client.models.apps.proxy.AppListLoadResult;
@@ -139,10 +140,11 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void publishToWorld(JSONObject application, String appId, AsyncCallback<Void> callback) {
-        String address = APPS + "/" + appId + "/publish"; //$NON-NLS-1$
+    public void publishToWorld(PublishAppRequest request, AsyncCallback<Void> callback) {
+        String address = APPS + "/" + request.getId() + "/publish"; //$NON-NLS-1$
 
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, application.toString());
+        final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(request));
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode.getPayload());
 
         deServiceFacade.getServiceData(wrapper, new StringToVoidCallbackConverter(callback));
     }
