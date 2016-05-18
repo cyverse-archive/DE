@@ -1,20 +1,14 @@
 package org.iplantc.de.apps.client.presenter.categories;
 
 import org.iplantc.de.apps.client.AppCategoriesView;
-import org.iplantc.de.apps.client.events.AppFavoritedEvent;
 import org.iplantc.de.apps.client.events.AppSavedEvent;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.AppUpdatedEvent;
 import org.iplantc.de.apps.client.events.EditAppEvent;
 import org.iplantc.de.apps.client.events.EditWorkflowEvent;
-import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
-import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
-import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.events.selection.CopyAppSelected;
 import org.iplantc.de.apps.client.events.selection.CopyWorkflowSelected;
 import org.iplantc.de.apps.client.gin.factory.AppCategoriesViewFactory;
-import org.iplantc.de.apps.client.presenter.callbacks.DeleteRatingCallback;
-import org.iplantc.de.apps.client.presenter.callbacks.RateAppCallback;
 import org.iplantc.de.apps.client.views.details.dialogs.AppDetailsDialog;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.shared.DEProperties;
@@ -26,7 +20,6 @@ import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.shared.AsyncProviderWrapper;
@@ -54,9 +47,7 @@ import java.util.List;
 public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
                                                    AppCategoriesView.AppCategoryHierarchyProvider,
                                                    AppUpdatedEvent.AppUpdatedEventHandler,
-                                                   AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler,
-                                                   AppRatingSelected.AppRatingSelectedHandler,
-                                                   AppRatingDeselected.AppRatingDeselectedHandler {
+                                                   AppSavedEvent.AppSavedEventHandler {
 
     private static class AppCategoryComparator implements Comparator<AppCategory> {
 
@@ -172,41 +163,6 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
             }
         }
         return filteredCategories;
-    }
-
-    @Override
-    public void onAppFavoriteSelected(AppFavoriteSelectedEvent event) {
-        final App app = event.getApp();
-        appUserService.favoriteApp(app, !app.isFavorite(), new AsyncCallback<Void>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                announcer.schedule(new ErrorAnnouncementConfig(appearance.favServiceFailure()));
-            }
-
-            @Override
-            public void onSuccess(Void result) {
-                app.setFavorite(!app.isFavorite());
-                // Have to fire global events.
-                eventBus.fireEvent(new AppFavoritedEvent(app));
-                eventBus.fireEvent(new AppUpdatedEvent(app));
-            }
-        });
-    }
-
-    @Override
-    public void onAppRatingDeselected(AppRatingDeselected event) {
-        final App appToUnRate = event.getApp();
-        appUserService.deleteRating(appToUnRate, new DeleteRatingCallback(appToUnRate,
-                                                                      eventBus));
-    }
-
-    @Override
-    public void onAppRatingSelected(AppRatingSelected event) {
-        final App appToRate = event.getApp();
-        appUserService.rateApp(appToRate,
-                               event.getScore(),
-                               new RateAppCallback(appToRate,
-                                                   eventBus));
     }
 
     @Override

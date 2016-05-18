@@ -1,12 +1,20 @@
 package org.iplantc.de.apps.client.presenter.hierarchies;
 
 import org.iplantc.de.apps.client.OntologyHierarchiesView;
+import org.iplantc.de.apps.client.events.AppFavoritedEvent;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
+import org.iplantc.de.apps.client.events.AppUpdatedEvent;
+import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppInfoSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
+import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.events.selection.OntologyHierarchySelectionChangedEvent;
 import org.iplantc.de.apps.client.gin.OntologyHierarchyTreeStoreProvider;
 import org.iplantc.de.apps.client.gin.factory.OntologyHierarchiesViewFactory;
+import org.iplantc.de.apps.client.presenter.callbacks.DeleteRatingCallback;
+import org.iplantc.de.apps.client.presenter.callbacks.RateAppCallback;
 import org.iplantc.de.apps.client.views.details.dialogs.AppDetailsDialog;
+import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.client.models.avu.AvuAutoBeanFactory;
@@ -41,7 +49,10 @@ import java.util.Map;
  * @author aramsey
  */
 public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView.Presenter,
-                                                         OntologyHierarchySelectionChangedEvent.OntologyHierarchySelectionChangedEventHandler {
+                                                         OntologyHierarchySelectionChangedEvent.OntologyHierarchySelectionChangedEventHandler,
+                                                         AppRatingSelected.AppRatingSelectedHandler,
+                                                         AppRatingDeselected.AppRatingDeselectedHandler,
+                                                         AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler {
 
     private class OntologyHierarchyNameComparator implements Comparator<OntologyHierarchy> {
         @Override
@@ -73,10 +84,9 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
             dlg.show(app,
                      searchRegexPattern,
                      appGroupHierarchies,
-                     null,
-                     null,
-                     null);
-
+                     OntologyHierarchiesPresenterImpl.this,
+                     OntologyHierarchiesPresenterImpl.this,
+                     OntologyHierarchiesPresenterImpl.this);
         }
 
         List<OntologyHierarchy> convertAvusToHierarches(List<Avu> avus) {
@@ -117,6 +127,7 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
     private OntologyServiceFacade serviceFacade;
     private OntologyHierarchiesView.OntologyHierarchiesAppearance appearance;
     protected String searchRegexPattern;
+    private final EventBus eventBus;
     private AvuAutoBeanFactory avuFactory;
     private HandlerManager handlerManager;
     private Map<String, List<OntologyHierarchy>> iriToHierarchyMap = new FastMap<>();
@@ -126,6 +137,7 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
     @Inject
     public OntologyHierarchiesPresenterImpl(OntologyHierarchiesViewFactory viewFactory,
                                             OntologyServiceFacade serviceFacade,
+                                            EventBus eventBus,
                                             OntologyHierarchiesView.OntologyHierarchiesAppearance appearance,
                                             AvuAutoBeanFactory avuFactory) {
 
@@ -133,6 +145,7 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
         this.appearance = appearance;
         this.avuFactory = avuFactory;
         this.viewFactory = viewFactory;
+        this.eventBus = eventBus;
 
         this.ontologyUtil = OntologyUtil.getInstance();
     }
@@ -244,6 +257,41 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
     @Override
     public void onOntologyHierarchySelectionChanged(OntologyHierarchySelectionChangedEvent event) {
         fireEvent(event);
+    }
+
+    @Override
+    public void onAppRatingDeselected(AppRatingDeselected event) {
+        final App appToUnRate = event.getApp();
+        appUserService.deleteRating(appToUnRate, new DeleteRatingCallback(appToUnRate,
+                                                                          eventBus));
+    }
+
+    @Override
+    public void onAppRatingSelected(AppRatingSelected event) {
+        final App appToRate = event.getApp();
+        appUserService.rateApp(appToRate,
+                               event.getScore(),
+                               new RateAppCallback(appToRate,
+                                                   eventBus));
+    }
+
+    @Override
+    public void onAppFavoriteSelected(AppFavoriteSelectedEvent event) {
+        final App app = event.getApp();
+        appUserService.favoriteApp(app, !app.isFavorite(), new AsyncCallback<Void>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                announcer.schedule(new ErrorAnnouncementConfig(appearance.favServiceFailure()));
+            }
+
+            @Override
+            public void onSuccess(Void result) {
+                app.setFavorite(!app.isFavorite());
+                // Have to fire global events.
+                eventBus.fireEvent(new AppFavoritedEvent(app));
+                eventBus.fireEvent(new AppUpdatedEvent(app));
+            }
+        });
     }
 
     @Override
