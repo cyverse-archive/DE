@@ -14,7 +14,7 @@ docker:
   log_driver: syslog
   tag: latest
   user: discoenv
-  version: 1.11.0
+  version: 1.11.1
   compose_path: /etc/docker-compose.yml
   registry:
     base: "{{ groups['docker-registry'][0] }}:5000"
