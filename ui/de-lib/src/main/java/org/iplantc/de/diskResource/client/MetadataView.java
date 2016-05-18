@@ -76,6 +76,10 @@ public interface MetadataView extends IsWidget {
 			String selectTemplate();
 
 			String templates();
+			
+			String error();
+			
+			String incomplete();
     	}
 
         DiskResource getSelectedResource();
