@@ -69,7 +69,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
             }
 
             if (!mdView.isValid()) {
-                ConfirmMessageBox cmb = new ConfirmMessageBox("Error", "Metadata incomplete");
+                ConfirmMessageBox cmb = new ConfirmMessageBox(appearance.error(), appearance.incomplete());
                 cmb.addDialogHideHandler(new DialogHideHandler() {
                     
                     @Override
