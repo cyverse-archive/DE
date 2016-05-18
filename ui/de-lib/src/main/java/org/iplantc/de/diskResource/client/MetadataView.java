@@ -74,6 +74,8 @@ public interface MetadataView extends IsWidget {
     		String templateinfoError();
 
 			String selectTemplate();
+
+			String templates();
     	}
 
         DiskResource getSelectedResource();
@@ -86,9 +88,9 @@ public interface MetadataView extends IsWidget {
     }
 
 
-    List<DiskResourceMetadata> getAvus();
-
     boolean isValid();
+    
+    List<DiskResourceMetadata> getAvus();
 
     void loadMetadata(List<DiskResourceMetadata> metadataList);
 

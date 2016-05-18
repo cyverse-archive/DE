@@ -2,6 +2,8 @@ package org.iplantc.de.diskResource.client.views.metadata.dialogs;
 
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
+import org.iplantc.de.diskResource.client.MetadataView;
+import org.iplantc.de.diskResource.client.MetadataView.Presenter.Appearance;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -47,8 +49,10 @@ public class SelectMetadataTemplateDialog extends IPlantDialog implements IsWidg
 
     @UiField(provided = true)
     ColumnModel<MetadataTemplateInfo> cm;
+    
+    private MetadataView.Presenter.Appearance appearance;
 
-    public SelectMetadataTemplateDialog(List<MetadataTemplateInfo> templates) {
+    public SelectMetadataTemplateDialog(List<MetadataTemplateInfo> templates, Appearance appearance) {
         super();
         getOkButton().disable();
         listStore = new ListStore<>(new ModelKeyProvider<MetadataTemplateInfo>() {
@@ -57,6 +61,7 @@ public class SelectMetadataTemplateDialog extends IPlantDialog implements IsWidg
                 return item.getId();
             }
         });
+        this.appearance = appearance;
         cm = buildColumnModel();
         uiBinder.createAndBindUi(this);
         this.setWidget(asWidget());
@@ -99,7 +104,7 @@ public class SelectMetadataTemplateDialog extends IPlantDialog implements IsWidg
                     public String getPath() {
                         return null;
                     }
-                }, 150, "Templates");
+                }, 150, appearance.templates());
 
         return new ColumnModel<MetadataTemplateInfo>(Arrays.<ColumnConfig<MetadataTemplateInfo, ?>>asList(
                 name));

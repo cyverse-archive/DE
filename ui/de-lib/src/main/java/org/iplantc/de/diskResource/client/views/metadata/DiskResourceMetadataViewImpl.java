@@ -54,7 +54,7 @@ import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
  * FIXME REFACTOR Segregate programmatic view construction to a different UIBinder, class, etc FIXME
  * REFACTOR Factor out an appearance for this class
  *
- * @author jstroot
+ * @author jstroot sriram
  */
 public class DiskResourceMetadataViewImpl extends Composite implements MetadataView {
 
@@ -170,19 +170,6 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         return additionalMdListStore.getAll();
     }
 
-    @Override
-    public boolean isValid() {
-/*        if (selectedTemplate != null && templateForm != null) {
-            List<IsField<?>> fields = FormPanelHelper.getFields(templateForm);
-            for (IsField<?> f : fields) {
-                if (!f.isValid(false)) {
-                    valid = false;
-                }
-            }
-
-        }*/
-        return false;
-    }
 
     @Override
     public void loadMetadata(final List<DiskResourceMetadata> metadataList) {
@@ -454,6 +441,11 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
 			}
 		}
 		userMdGrid.unmask();
+	}
+
+	@Override
+	public boolean isValid() {
+		return valid;
 	}
 
 }
