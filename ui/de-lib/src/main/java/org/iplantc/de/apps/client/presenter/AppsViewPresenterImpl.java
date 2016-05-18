@@ -57,7 +57,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         appsGridPresenter.addAppFavoritedEventHandler(categoriesPresenter);
         appsGridPresenter.getView().addAppSelectionChangedEventHandler(toolbarPresenter.getView());
 
-        appsGridPresenter.getView().addAppInfoSelectedEventHandler(categoriesPresenter);
+        appsGridPresenter.getView().addAppInfoSelectedEventHandler(hierarchiesPresenter);
 
         toolbarPresenter.getView().addDeleteAppsSelectedHandler(appsGridPresenter);
         toolbarPresenter.getView().addCopyAppSelectedHandler(categoriesPresenter);

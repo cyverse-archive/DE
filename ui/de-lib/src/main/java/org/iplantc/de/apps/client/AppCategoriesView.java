@@ -66,8 +66,7 @@ public interface AppCategoriesView extends IsWidget,
      * {@link AppFavoritedEvent}s are handled here for the sake of updating {@code AppCategory}
      * counts.
      */
-    interface Presenter extends AppInfoSelectedEvent.AppInfoSelectedEventHandler,
-                                AppSearchResultLoadEvent.AppSearchResultLoadEventHandler,
+    interface Presenter extends AppSearchResultLoadEvent.AppSearchResultLoadEventHandler,
                                 StoreAddEvent.StoreAddHandler<App>,
                                 StoreRemoveEvent.StoreRemoveHandler<App>,
                                 CopyAppSelected.CopyAppSelectedHandler,

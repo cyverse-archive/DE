@@ -8,7 +8,6 @@ import org.iplantc.de.apps.client.events.AppUpdatedEvent;
 import org.iplantc.de.apps.client.events.EditAppEvent;
 import org.iplantc.de.apps.client.events.EditWorkflowEvent;
 import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
-import org.iplantc.de.apps.client.events.selection.AppInfoSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
 import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.events.selection.CopyAppSelected;
@@ -113,7 +112,6 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
 
         eventBus.addHandler(AppUpdatedEvent.TYPE, this);
         eventBus.addHandler(AppSavedEvent.TYPE, this);
-        eventBus.addHandler(AppFavoritedEvent.TYPE, this);
     }
 
     @Override
@@ -220,44 +218,6 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
             int favCountAdjustment = app.isFavorite() ? 1 : -1;
             updateAppCategoryAppCount(favoriteCategory, favoriteCategory.getAppCount() + favCountAdjustment);
         }
-    }
-
-    @Override
-    public void onAppInfoSelected(final AppInfoSelectedEvent event) {
-        appDetailsDlgAsyncProvider.get(new AsyncCallback<AppDetailsDialog>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                ErrorHandler.post(caught);
-            }
-
-            @Override
-            public void onSuccess(final AppDetailsDialog dlg) {
-
-                // Fetch details, otherwise App.getGroups may be null
-                appUserService.getAppDetails(event.getApp(), new AsyncCallback<App>() {
-                    @Override
-                    public void onFailure(final Throwable caught) {
-                        announcer.schedule(new ErrorAnnouncementConfig(appearance.fetchAppDetailsError(caught)));
-                    }
-
-                    @Override
-                    public void onSuccess(final App result) {
-                        // Create list of group hierarchies
-                        List<List<String>> appGroupHierarchies = Lists.newArrayList();
-                        for (AppCategory appCategory : result.getGroups()) {
-                            appGroupHierarchies.add(getGroupHierarchy(appCategory));
-                        }
-
-                        dlg.show(result,
-                                 searchRegexPattern,
-                                 appGroupHierarchies,
-                                 AppCategoriesPresenterImpl.this,
-                                 AppCategoriesPresenterImpl.this,
-                                 AppCategoriesPresenterImpl.this);
-                    }
-                });
-            }
-        });
     }
 
     @Override

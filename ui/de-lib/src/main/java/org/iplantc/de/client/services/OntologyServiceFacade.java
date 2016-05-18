@@ -18,4 +18,6 @@ public interface OntologyServiceFacade {
     void getAppsInCategory(String iri, Avu avu, AsyncCallback<List<App>> callback);
 
     void getUnclassifiedAppsInCategory(String iri, Avu avu, AsyncCallback<List<App>> callback);
+
+    void getAppAVUs(App app, AsyncCallback<List<Avu>> callback);
 }

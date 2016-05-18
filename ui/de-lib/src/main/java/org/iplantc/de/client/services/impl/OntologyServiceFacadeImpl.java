@@ -4,6 +4,7 @@ import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
 
 import org.iplantc.de.client.models.apps.AppList;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
+import org.iplantc.de.client.services.converters.AvuListCallbackConverter;
 import org.iplantc.de.client.services.converters.OntologyHierarchyListCallbackConverter;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.avu.Avu;
@@ -28,6 +29,7 @@ import java.util.List;
 public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
 
     private final String APPS_HIERARCHIES = "org.iplantc.services.apps.hierarchies";
+    private final String APPS = "org.iplantc.services.apps";
     @Inject OntologyAutoBeanFactory factory;
     @Inject AvuAutoBeanFactory avuFactory;
     @Inject private DiscEnvApiService deService;
@@ -67,5 +69,13 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
                 return apps;
             }
         });
+    }
+
+    @Override
+    public void getAppAVUs(App app, AsyncCallback<List<Avu>> callback) {
+        String address = APPS + "/" + app.getId() + "/metadata";
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
+        deService.getServiceData(wrapper, new AvuListCallbackConverter(callback, avuFactory));
     }
 }

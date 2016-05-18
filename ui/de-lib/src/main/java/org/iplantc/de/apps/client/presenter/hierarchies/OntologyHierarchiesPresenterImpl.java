@@ -2,19 +2,27 @@ package org.iplantc.de.apps.client.presenter.hierarchies;
 
 import org.iplantc.de.apps.client.OntologyHierarchiesView;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
+import org.iplantc.de.apps.client.events.selection.AppInfoSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.OntologyHierarchySelectionChangedEvent;
 import org.iplantc.de.apps.client.gin.OntologyHierarchyTreeStoreProvider;
 import org.iplantc.de.apps.client.gin.factory.OntologyHierarchiesViewFactory;
+import org.iplantc.de.apps.client.views.details.dialogs.AppDetailsDialog;
+import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.client.models.avu.AvuAutoBeanFactory;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
+import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.services.OntologyServiceFacade;
 import org.iplantc.de.client.util.OntologyUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
+import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 
@@ -42,11 +50,73 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
         }
     }
 
+    private class AppAVUCallback implements AsyncCallback<List<Avu>> {
+
+        private final AppDetailsDialog dlg;
+        private final App app;
+
+        public AppAVUCallback(AppDetailsDialog dlg, App app) {
+            this.dlg = dlg;
+            this.app = app;
+        }
+        @Override
+        public void onFailure(Throwable caught) {
+            ErrorHandler.post(caught);
+        }
+
+        @Override
+        public void onSuccess(List<Avu> result) {
+            // Create list of group hierarchies
+            List<OntologyHierarchy> hierarchies = convertAvusToHierarches(result);
+            List<List<String>> appGroupHierarchies = ontologyUtil.getAllPathsList(hierarchies);
+
+            dlg.show(app,
+                     searchRegexPattern,
+                     appGroupHierarchies,
+                     null,
+                     null,
+                     null);
+
+        }
+
+        List<OntologyHierarchy> convertAvusToHierarches(List<Avu> avus) {
+            List<OntologyHierarchy> selectedHierarchies = Lists.newArrayList();
+            for (Avu avu: avus) {
+                List<OntologyHierarchy> hierarchies = iriToHierarchyMap.get(avu.getValue());
+                if (hierarchies != null) {
+                    selectedHierarchies.addAll(hierarchies);
+                }
+            }
+            return selectedHierarchies;
+        }
+    }
+    private class AppDetailsCallback implements AsyncCallback<App> {
+
+        private final AppDetailsDialog dlg;
+
+        public AppDetailsCallback(AppDetailsDialog dlg) {
+            this.dlg = dlg;
+        }
+
+        @Override
+        public void onFailure(final Throwable caught) {
+            announcer.schedule(new ErrorAnnouncementConfig(appearance.fetchAppDetailsError(caught)));
+        }
+
+        @Override
+        public void onSuccess(final App result) {
+            serviceFacade.getAppAVUs(result, new AppAVUCallback(dlg, result));
+        }
+    }
+
     @Inject IplantAnnouncer announcer;
     OntologyUtil ontologyUtil;
+    @Inject AsyncProvider<AppDetailsDialog> appDetailsDlgAsyncProvider;
+    @Inject AppUserServiceFacade appUserService;
     private TabPanel viewTabPanel;
     private OntologyServiceFacade serviceFacade;
     private OntologyHierarchiesView.OntologyHierarchiesAppearance appearance;
+    protected String searchRegexPattern;
     private AvuAutoBeanFactory avuFactory;
     private HandlerManager handlerManager;
     private Map<String, List<OntologyHierarchy>> iriToHierarchyMap = new FastMap<>();
@@ -97,6 +167,21 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
         });
     }
 
+    @Override
+    public void onAppInfoSelected(final AppInfoSelectedEvent event) {
+        appDetailsDlgAsyncProvider.get(new AsyncCallback<AppDetailsDialog>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+            }
+
+            @Override
+            public void onSuccess(final AppDetailsDialog dlg) {
+                appUserService.getAppDetails(event.getApp(), new AppDetailsCallback(dlg));
+            }
+        });
+    }
+
     void createViewTabs(List<OntologyHierarchy> results) {
         for (OntologyHierarchy hierarchy : results) {
             TreeStore<OntologyHierarchy> treeStore = getTreeStore(hierarchy);
@@ -108,6 +193,7 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
 
     @Override
     public void onAppSearchResultLoad(AppSearchResultLoadEvent event) {
+        searchRegexPattern = event.getSearchPattern();
         OntologyHierarchiesView view = (OntologyHierarchiesView)viewTabPanel.getActiveWidget();
         view.getTree().getSelectionModel().deselectAll();
     }
@@ -116,6 +202,9 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
         TreeStore<OntologyHierarchy> treeStore = new OntologyHierarchyTreeStoreProvider().get();
         treeStore.addSortInfo(new Store.StoreSortInfo<>(new OntologyHierarchyNameComparator(),
                                                         SortDir.ASC));
+        //Set the key for the current root (which won't appear in the tree, but will be the name of the tab)
+        // which will allow the children to know the full path from its parent to node
+        ontologyUtil.treeStoreModelKeyProvider(hierarchy);
         ontologyUtil.addUnclassifiedChild(hierarchy);
         addHierarchies(treeStore, null, hierarchy.getSubclasses());
         return treeStore;
@@ -133,8 +222,22 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
             treeStore.add(parent, children);
         }
 
+        helperMap(children);
+
         for (OntologyHierarchy hierarchy : children) {
             addHierarchies(treeStore, hierarchy, hierarchy.getSubclasses());
+        }
+    }
+
+    void helperMap(List<OntologyHierarchy> children) {
+        for (OntologyHierarchy hierarchy : children) {
+            String iri = hierarchy.getIri();
+            List<OntologyHierarchy> hierarchies = iriToHierarchyMap.get(iri);
+            if (hierarchies == null) {
+                hierarchies = Lists.newArrayList();
+            }
+            hierarchies.add(hierarchy);
+            iriToHierarchyMap.put(hierarchy.getIri(), hierarchies);
         }
     }
 
