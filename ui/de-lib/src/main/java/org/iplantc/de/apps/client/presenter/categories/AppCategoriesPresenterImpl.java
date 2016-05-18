@@ -43,9 +43,6 @@ import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 import com.sencha.gxt.data.shared.SortDir;
 import com.sencha.gxt.data.shared.Store;
 import com.sencha.gxt.data.shared.TreeStore;
-import com.sencha.gxt.data.shared.event.StoreAddEvent;
-import com.sencha.gxt.data.shared.event.StoreClearEvent;
-import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -58,7 +55,6 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
                                                    AppCategoriesView.AppCategoryHierarchyProvider,
                                                    AppUpdatedEvent.AppUpdatedEventHandler,
                                                    AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler,
-                                                   AppSavedEvent.AppSavedEventHandler,
                                                    AppRatingSelected.AppRatingSelectedHandler,
                                                    AppRatingDeselected.AppRatingDeselectedHandler {
 
@@ -179,16 +175,6 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     }
 
     @Override
-    public void onAdd(StoreAddEvent<App> event) {
-        // When the list store adds
-        AppCategory appCategory = getSelectedAppCategory();
-        if (appCategory == null) {
-            return;
-        }
-        updateAppCategoryAppCount(appCategory, event.getSource().getAll().size());
-    }
-
-    @Override
     public void onAppFavoriteSelected(AppFavoriteSelectedEvent event) {
         final App app = event.getApp();
         appUserService.favoriteApp(app, !app.isFavorite(), new AsyncCallback<Void>() {
@@ -205,19 +191,6 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
                 eventBus.fireEvent(new AppUpdatedEvent(app));
             }
         });
-    }
-
-    @Override
-    public void onAppFavorited(AppFavoritedEvent appFavoritedEvent) {
-        final App app = appFavoritedEvent.getApp();
-        final AppCategory currentCategory = getSelectedAppCategory();
-
-        if (currentCategory == null || !FAVORITES.equals(currentCategory.getName())) {
-            // Adjust favorite category count.
-            final AppCategory favoriteCategory = findAppCategoryByName(FAVORITES);
-            int favCountAdjustment = app.isFavorite() ? 1 : -1;
-            updateAppCategoryAppCount(favoriteCategory, favoriteCategory.getAppCount() + favCountAdjustment);
-        }
     }
 
     @Override
@@ -262,17 +235,6 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
             view.getTree().getSelectionModel().select(currentCategory, false);
         }
 
-    }
-
-    @Override
-    public void onClear(StoreClearEvent<App> event) {
-        // When the store is cleared, set count to 0.
-        // App count will be updated when items are added to the store
-        AppCategory appCategory = getSelectedAppCategory();
-        if (appCategory == null) {
-            return;
-        }
-        updateAppCategoryAppCount(appCategory, 0);
     }
 
     @Override
@@ -332,16 +294,6 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
         });
     }
 
-    @Override
-    public void onRemove(StoreRemoveEvent<App> event) {
-        // When the list store removes something
-        AppCategory appCategory = getSelectedAppCategory();
-        if (appCategory == null) {
-            return;
-        }
-        updateAppCategoryAppCount(appCategory, event.getSource().getAll().size());
-    }
-
     void addAppCategories(AppCategory parent, List<AppCategory> children) {
         if ((children == null)
                 || children.isEmpty()) {
@@ -389,16 +341,6 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
             JSONArray items = JSONParser.parseStrict(props.getPrivateWorkspaceItems()).isArray();
             USER_APPS_GROUP = jsonUtil.getRawValueAsString(items.get(0));
             FAVORITES = jsonUtil.getRawValueAsString(items.get(1));
-        }
-    }
-
-    void updateAppCategoryAppCount(AppCategory appGroup, int newCount) {
-        int difference = appGroup.getAppCount() - newCount;
-
-        while (appGroup != null) {
-            appGroup.setAppCount(appGroup.getAppCount() - difference);
-            treeStore.update(appGroup);
-            appGroup = treeStore.getParent(appGroup);
         }
     }
 

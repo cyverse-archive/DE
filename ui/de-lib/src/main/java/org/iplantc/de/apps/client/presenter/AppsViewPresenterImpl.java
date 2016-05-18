@@ -50,13 +50,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         hierarchiesPresenter.addOntologyHierarchySelectionChangedEventHandler(appsGridPresenter.getView());
         hierarchiesPresenter.addOntologyHierarchySelectionChangedEventHandler(toolbarPresenter.getView());
 
-        // Wire up list store handlers
-        appsGridPresenter.addStoreAddHandler(categoriesPresenter);
-        appsGridPresenter.addStoreRemoveHandler(categoriesPresenter);
-        appsGridPresenter.addStoreClearHandler(categoriesPresenter);
-        appsGridPresenter.addAppFavoritedEventHandler(categoriesPresenter);
         appsGridPresenter.getView().addAppSelectionChangedEventHandler(toolbarPresenter.getView());
-
         appsGridPresenter.getView().addAppInfoSelectedEventHandler(hierarchiesPresenter);
 
         toolbarPresenter.getView().addDeleteAppsSelectedHandler(appsGridPresenter);

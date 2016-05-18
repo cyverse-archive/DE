@@ -11,7 +11,7 @@ public class AppCategoryStringValueProvider implements ValueProvider<AppCategory
 
     @Override
     public String getValue(AppCategory object) {
-        return object.getName() + " (" + object.getAppCount() + ")";
+        return object.getName();
     }
 
     @Override
