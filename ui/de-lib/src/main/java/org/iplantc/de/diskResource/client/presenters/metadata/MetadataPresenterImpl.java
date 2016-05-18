@@ -31,16 +31,16 @@ import com.sencha.gxt.widget.core.client.event.HideEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 
 /**
- * @author jstroot
+ * @author jstroot sriram
  */
 public class MetadataPresenterImpl implements MetadataView.Presenter {
 	
 	
-    private class CancelSelectHandler implements SelectEvent.SelectHandler {
+    private class TemplateViewCancelSelectHandler implements SelectEvent.SelectHandler {
     	
     	private MetadataTemplateViewDialog mdView;
     	
-    	public CancelSelectHandler(MetadataTemplateViewDialog mdView) {
+    	public TemplateViewCancelSelectHandler(MetadataTemplateViewDialog mdView) {
 			this.mdView = mdView;
 		}
     	
@@ -50,13 +50,13 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
         }
     }
 
-    private class OkSelectHandler implements SelectEvent.SelectHandler {
+    private class TemplateViewOkSelectHandler implements SelectEvent.SelectHandler {
     
     	private MetadataTemplateViewDialog mdView;
     	private boolean writable;
     	private MetadataView.Presenter mdPresenter;
     	
-    	public OkSelectHandler(boolean writable, MetadataView.Presenter mdPresenter, MetadataTemplateViewDialog mdView) {
+    	public TemplateViewOkSelectHandler(boolean writable, MetadataView.Presenter mdPresenter, MetadataTemplateViewDialog mdView) {
 			this.writable = writable;
 			this.mdView = mdView;
 			this.mdPresenter = mdPresenter;
@@ -75,20 +75,22 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
                     @Override
                     public void onDialogHide(DialogHideEvent event) {
                         if (event.getHideButton().equals(PredefinedButton.YES)) {
-                            mdView.mask(I18N.DISPLAY.loadingMask());
-                            ArrayList<DiskResourceMetadata> mdList = mdView.getMetadataFromTemplate();
-                            view.updateMetadataFromTemplateView(mdList);
+                            updateMetadataFromTemplateView();
                         }
                         
                     }
                 });
                 cmb.show();
             } else {
-                mdView.mask(I18N.DISPLAY.loadingMask());
-                ArrayList<DiskResourceMetadata> mdList = mdView.getMetadataFromTemplate();
-                view.updateMetadataFromTemplateView(mdList);
+               updateMetadataFromTemplateView();
             }
         }
+        
+    	private void updateMetadataFromTemplateView() {
+			mdView.mask(I18N.DISPLAY.loadingMask());
+			ArrayList<DiskResourceMetadata> mdList = mdView.getMetadataFromTemplate();
+			view.updateMetadataFromTemplateView(mdList);
+		}
     }
 
     private final DiskResource resource;
@@ -181,7 +183,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
 
     @Override
     public void onSelectTemplate() {
-        final SelectMetadataTemplateDialog view = new SelectMetadataTemplateDialog(templates);
+        final SelectMetadataTemplateDialog view = new SelectMetadataTemplateDialog(templates, appearance);
         view.addHideHandler(new HideEvent.HideHandler() {
             @Override
             public void onHide(HideEvent event) {
@@ -211,8 +213,8 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
             public void onSuccess(MetadataTemplate result) {
                 MetadataTemplateViewDialog mtvd = new MetadataTemplateViewDialog(templateMd,isWritable(),
                                                                                  result.getAttributes());
-                mtvd.addOkButtonSelectHandler(new OkSelectHandler(isWritable(), MetadataPresenterImpl.this, mtvd));
-                mtvd.addCancelButtonSelectHandler(new CancelSelectHandler(mtvd));
+                mtvd.addOkButtonSelectHandler(new TemplateViewOkSelectHandler(isWritable(), MetadataPresenterImpl.this, mtvd));
+                mtvd.addCancelButtonSelectHandler(new TemplateViewCancelSelectHandler(mtvd));
                 mtvd.setHeadingText(result.getName());
                 mtvd.setModal(false);
                 mtvd.setSize("600px", "400px");

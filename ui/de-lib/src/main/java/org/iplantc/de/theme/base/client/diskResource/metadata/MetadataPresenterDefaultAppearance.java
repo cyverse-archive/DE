@@ -3,6 +3,7 @@ package org.iplantc.de.theme.base.client.diskResource.metadata;
 import org.iplantc.de.diskResource.client.MetadataView;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
 
 public class MetadataPresenterDefaultAppearance implements MetadataView.Presenter.Appearance {
 
@@ -31,6 +32,11 @@ public class MetadataPresenterDefaultAppearance implements MetadataView.Presente
 	@Override
 	public String selectTemplate() {
 		return displayStrings.selectTemplate();
+	}
+
+	@Override
+	public String templates() {
+		return displayStrings.templates();
 	}
 	
 }

@@ -110,7 +110,7 @@ public class MetadataTemplateViewDialog extends IPlantDialog {
                 }
             }
 
-      return false;
+      return valid;
     }
     
     private void buildAvuMap() {
