@@ -12,14 +12,14 @@
             [clojure-commons.file-utils :as ft]
             [cheshire.core :as json]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
-            [data-info.clients.metadata :as metadata]
             [data-info.services.directory :as directory]
             [data-info.services.stat :as stat]
             [data-info.services.uuids :as uuids]
             [data-info.util.config :as cfg]
             [data-info.util.logging :as dul]
             [data-info.util.paths :as paths]
-            [data-info.util.validators :as validators]))
+            [data-info.util.validators :as validators]
+            [metadata-client.core :as metadata]))
 
 
 (defn- fix-unit
@@ -44,12 +44,6 @@
     (throw+ {:error_code ERR_NOT_AUTHORIZED
              :avus avus})))
 
-(defn- get-readable-path
-  [cm user data-id]
-  (let [path (:path (uuids/path-for-uuid cm user data-id))]
-    (validators/path-readable cm user path)
-    path))
-
 (defn- list-path-metadata
   "Returns the metadata for a path. Passes all AVUs to (fix-unit).
    AVUs with a unit matching IPCSYSTEM are filtered out."
@@ -66,6 +60,21 @@
     paths/IPCRESERVED
     (:unit avu-map)))
 
+(defn- resolve-data-type
+  "Returns a type converted from the type field of a stat result to a type expected by the
+   metadata service endpoints."
+  [type]
+  (let [type (name type)]
+    (if (= type "dir")
+      "folder"
+      type)))
+
+(defn- get-readable-data-item
+  [cm user data-id]
+  (let [{:keys [path] :as data-item} (uuids/path-for-uuid cm user data-id)]
+    (validators/path-readable cm user path)
+    data-item))
+
 (defn metadata-get
   "Returns the metadata for a path. Filters out system AVUs
    if :system true is not passed to it, and replaces
@@ -73,9 +82,10 @@
   [user data-id & {:keys [system] :or {system false}}]
   (with-jargon (cfg/jargon-cfg) [cm]
     (validators/user-exists cm user)
-    (let [path (get-readable-path cm user data-id)]
+    (let [{:keys [path type]} (get-readable-data-item cm user data-id)
+          metadata-response   (metadata/list-avus user (resolve-data-type type) data-id :as :json)]
       {:irods-avus (list-path-metadata cm path :system system)
-       :path path})))
+       :metadata   (:body metadata-response)})))
 
 (defn admin-metadata-get
   "Lists metadata for a path, showing all AVUs."
@@ -137,7 +147,7 @@
   [user data-id avu-maps & {:keys [system] :or {system false}}]
   (with-jargon (cfg/jargon-cfg) [cm]
     (validators/user-exists cm user)
-    (let [path (ft/rm-last-slash (get-readable-path cm user data-id))]
+    (let [path (-> (get-readable-data-item cm user data-id) :path ft/rm-last-slash)]
       (validators/path-writeable cm user path)
       (when-not system (authorized-avus avu-maps))
       (doseq [avu-map avu-maps]
@@ -164,7 +174,7 @@
   [user data-id avu-maps & {:keys [system] :or {system false}}]
   (with-jargon (cfg/jargon-cfg) [cm]
     (validators/user-exists cm user)
-    (let [path (ft/rm-last-slash (get-readable-path cm user data-id))]
+    (let [path (-> (get-readable-data-item cm user data-id) :path ft/rm-last-slash)]
       (validators/path-writeable cm user path)
       (when-not system (authorized-avus avu-maps))
       (doseq [avu-map avu-maps]
@@ -181,25 +191,27 @@
 (defn metadata-set
   "Allows user to set metadata on an item with the given data-id. The user must exist in iRODS and have
    write permissions on the data item. The 'irods-avus' parameter should be an array of AVU maps following
-   the format used for (metadata-add)."
-  [user data-id irods-avus]
+   the format used for (metadata-add). The 'metadata' parameter should be in a format expected by the
+   metadata service set AVUs endpoint, or nil."
+  [user data-id {:keys [irods-avus metadata]}]
   (with-jargon (cfg/jargon-cfg) [cm]
     (validators/user-exists cm user)
     (let [{:keys [path type]} (uuids/path-for-uuid cm user data-id)
           irods-avus (set (map #(select-keys % [:attr :value :unit]) irods-avus))
           current-avus (set (list-path-metadata cm path :system false))
-          delete-irods-avus (s/difference current-avus irods-avus)]
+          delete-irods-avus (s/difference current-avus irods-avus)
+          metadata-request (json/encode (or metadata {}))]
       (validators/path-writeable cm user path)
       (authorized-avus irods-avus)
 
+      (metadata/set-avus user (resolve-data-type type) data-id metadata-request)
       (doseq [del-avu delete-irods-avus]
         (common-metadata-delete cm path del-avu))
       (doseq [avu irods-avus]
         (common-metadata-add cm path avu))
 
       {:path path
-       :user user
-       :type type})))
+       :user user})))
 
 (defn- stat-is-dir?
   [{:keys [type]}]
@@ -218,7 +230,9 @@
    subfolders (plus all their files and subfolders) with their metadata in the resulting stat map."
   [cm user recursive? {:keys [id path type] :as data-item}]
   (let [irods-metadata (list-path-metadata cm path)
-        metadata-avus (:avus (metadata/get-metadata-avus user type (uuidify id)))
+        metadata-avus (-> (metadata/list-avus user (resolve-data-type type) (uuidify id) :as :json)
+                          :body
+                          :avus)
         data-item (assoc data-item :metadata (concat irods-metadata metadata-avus))
         path->metadata (comp (partial get-data-item-metadata-for-save cm user recursive?)
                              (partial stat/path-stat cm user))]

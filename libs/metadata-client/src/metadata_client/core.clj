@@ -77,9 +77,9 @@
        (map uuidify)))
 
 (defn list-avus
-  [username target-type target-id]
+  [username target-type target-id & {:keys [as] :or {as :stream}}]
   (http/get (metadata-url-encoded "avus" target-type target-id)
-            (get-options {:user username})))
+            (get-options {:user username} :as as)))
 
 (defn set-avus
   [username target-type target-id body]

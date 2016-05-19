@@ -6,7 +6,17 @@
 
 (defn get-error-code-block
   [& error-codes]
-  (str "\n\n#### Error Codes:\n    " (clojure.string/join "\n    " error-codes)))
+  (str "
+
+#### Error Codes:
+    " (clojure.string/join "\n    " error-codes)))
+
+(defn get-endpoint-delegate-block
+  [service endpoint]
+  (str "
+
+#### Delegates to " service " service
+    " endpoint))
 
 (def DataIdPathParam (describe UUID "The data item's UUID"))
 
