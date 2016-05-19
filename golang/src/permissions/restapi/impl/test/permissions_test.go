@@ -36,6 +36,28 @@ func grantPermission(
 	return responder.(*permissions.GrantPermissionOK).Payload
 }
 
+func revokePermissionAttempt(
+	db *sql.DB, subjectType, subjectId, resourceType, resourceName string,
+) middleware.Responder {
+
+	// Build the request handler.
+	handler := impl.BuildRevokePermissionHandler(db)
+
+	// Attempt to revoke the permission.
+	params := permissions.RevokePermissionParams{
+		SubjectType: subjectType,
+		SubjectID: subjectId,
+		ResourceType: resourceType,
+		ResourceName: resourceName,
+	}
+	return handler(params)
+}
+
+func revokePermission(db *sql.DB, subjectType, subjectId, resourceType, resourceName string) {
+	responder := revokePermissionAttempt(db, subjectType, subjectId, resourceType, resourceName)
+	_ = responder.(*permissions.RevokePermissionOK)
+}
+
 func listPermissionsAttempt(db *sql.DB) middleware.Responder {
 
 	// Build the request handler.
@@ -311,5 +333,119 @@ func TestUpdatePermissionLevel(t *testing.T) {
 	}
 	if permission.PermissionLevel != models.PermissionLevel("write") {
 		t.Errorf("unexpected permission level listed: %v", permission.PermissionLevel)
+	}
+}
+
+func TestRevokePermission(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the datasbase.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Grant the subject access to the resource.
+	_ = grantPermission(db, newSubjectIn("s1", "user"), newResourceIn("r1", "app"), "own")
+
+	// Revoke the permission.
+	revokePermission(db, "user", "s1", "app", "r1")
+
+	// List the permissions and verify that we get the expected number of results.
+	permissions := listPermissions(db).Permissions
+	if len(permissions) != 0 {
+		t.Errorf("unexpected number of permissions listed: %d", len(permissions))
+	}
+}
+
+func TestRevokePermissionResourceTypeNotFound(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Attempt to revoke a permission for a bogus resource type.
+	responder := revokePermissionAttempt(db, "user", "s1", "foo", "r1")
+	errorOut := responder.(*permissions.RevokePermissionNotFound).Payload
+
+	// Verify that we got the expected error message.
+	expected := "resource type not found: foo"
+	if *errorOut.Reason != expected {
+		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
+	}
+}
+
+func TestRevokePermissionResourceNotFound(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Attempt to revoke a permission for a bogus resource.
+	responder := revokePermissionAttempt(db, "user", "s1", "app", "r1")
+	errorOut := responder.(*permissions.RevokePermissionNotFound).Payload
+
+	// Verify that we got the expected error message.
+	expected := "resource not found: app/r1"
+	if *errorOut.Reason != expected {
+		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
+	}
+}
+
+func TestRevokePermissionUserNotFound(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Define a resource.
+	resourceIn := newResourceIn("r1", "app")
+	_ = addResource(db, *resourceIn.Name, *resourceIn.ResourceType)
+
+	// Attempt to revoke a permission for a bogus user.
+	responder := revokePermissionAttempt(db, "user", "nobody", "app", "r1")
+	errorOut := responder.(*permissions.RevokePermissionNotFound).Payload
+
+	// Verify that we got the expected error message.
+	expected := "subject not found: user/nobody"
+	if *errorOut.Reason != expected {
+		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
+	}
+}
+
+func TestRevokePermissionNotFound(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Define a subject.
+	subjectIn := newSubjectIn("s1", "user")
+	_ = addSubject(db, subjectIn.SubjectID, subjectIn.SubjectType)
+
+	// Define a resource.
+	resourceIn := newResourceIn("r1", "app")
+	_ = addResource(db, *resourceIn.Name, *resourceIn.ResourceType)
+
+	// Attempt to revoke a permission for a bogus user.
+	responder := revokePermissionAttempt(db, "user", "s1", "app", "r1")
+	errorOut := responder.(*permissions.RevokePermissionNotFound).Payload
+
+	// Verify that we got the expected error message.
+	expected := "permission not found: app/r1:user/s1"
+	if *errorOut.Reason != expected {
+		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
 	}
 }

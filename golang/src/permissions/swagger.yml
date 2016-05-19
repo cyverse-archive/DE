@@ -542,6 +542,43 @@ paths:
           $ref: "#/responses/bad_request"
         500:
           $ref: "#/responses/internal_server_error"
+  /permissions/resources/{resource_type}/{resource_name}/subjects/{subject_type}/{subject_id}:
+    parameters:
+      - name: resource_type
+        type: string
+        description: "The resource type name."
+        in: path
+        required: True
+      - name: resource_name
+        type: string
+        description: "The resource name."
+        in: path
+        required: True
+      - name: subject_type
+        type: string
+        enum:
+          - user
+          - group
+        description: "The subject type name."
+        in: path
+        required: True
+      - name: subject_id
+        type: string
+        description: "The external subject identifier."
+        in: path
+        required: True
+    delete:
+      tags:
+        - permissions
+      summary: "Revoke Permission to a Resource"
+      operationId: revokePermission
+      responses:
+        200:
+          description: "OK"
+        404:
+          $ref: "#/responses/not_found"
+        500:
+          $ref: "#/responses/internal_server_error"
 produces:
   - application/json
 responses:

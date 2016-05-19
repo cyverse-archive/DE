@@ -162,6 +162,10 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 		permissions_impl.BuildGrantPermissionHandler(db),
 	)
 
+	api.PermissionsRevokePermissionHandler = permissions.RevokePermissionHandlerFunc(
+		permissions_impl.BuildRevokePermissionHandler(db),
+	)
+
 	api.ServerShutdown = cleanup
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))

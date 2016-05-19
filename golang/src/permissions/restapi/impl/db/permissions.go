@@ -158,3 +158,83 @@ func UpsertPermission(
 		return permission, nil
 	}
 }
+
+func GetPermission(
+	tx *sql.Tx,
+	subjectId models.InternalSubjectID,
+	resourceId string,
+) (*models.Permission, error) {
+
+	// Query the database.
+	query := `SELECT p.id AS id,
+                   s.id AS internal_subject_id,
+                   s.subject_id AS subject_id,
+                   s.subject_type AS subject_type,
+                   r.id AS resource_id,
+                   r.name AS resource_name,
+                   rt.name AS resource_type,
+                   pl.name AS permission_level
+            FROM permissions p
+            JOIN permission_levels pl ON p.permission_level_id = pl.id
+            JOIN subjects s ON p.subject_id = s.id
+            JOIN resources r ON p.resource_id = r.id
+            JOIN resource_types rt ON r.resource_type_id = rt.id
+            WHERE p.subject_id = $1
+            AND p.resource_id = $2`
+	rows, err := tx.Query(query, string(subjectId), resourceId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	// Build the list of permissions.
+	permissions := make([]*models.Permission, 0)
+	for rows.Next() {
+		var dto PermissionDto
+		err = rows.Scan(
+			&dto.ID, &dto.InternalSubjectID, &dto.SubjectID, &dto.SubjectType, &dto.ResourceID,
+			&dto.ResourceName, &dto.ResourceType, &dto.PermissionLevel,
+		)
+		if err != nil {
+			return nil, err
+		}
+		permissions = append(permissions, dto.ToPermission())
+	}
+
+	// Check for duplicates. This shouldn't happen because of the uniqueness constraint.
+	if len(permissions) > 1 {
+		return nil, fmt.Errorf("multiple permissions found for subject/resource: %s/%s", subjectId, resourceId)
+	}
+
+	// Return the result.
+	if len(permissions) < 1 {
+		return nil, nil
+	} else {
+		return permissions[0], nil
+	}
+}
+
+func DeletePermission(tx *sql.Tx, id models.PermissionID) error {
+
+	// Update the database.
+	stmt := "DELETE FROM permissions WHERE id = $1"
+	result, err := tx.Exec(stmt, string(id))
+	if err != nil {
+		return err
+	}
+
+	// Verify that a row was deleted.
+	count, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if count == 0 {
+		return fmt.Errorf("no permissions deleted for id %s", id)
+	}
+	if count > 1 {
+		return fmt.Errorf("multiple permissions deleted for id %s", id)
+	}
+
+	return nil
+}
+
