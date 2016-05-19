@@ -29,10 +29,9 @@
                 </toolbar:child>
                 <toolbar:FillToolItem/>
                 <toolbar:child>
-                    <form:ComboBox ui:field="templateCombo"
-                                   allowBlank="true"
-                                   forceSelection="true"
-                                   triggerAction="ALL"/>
+                    <button:TextButton ui:field="selectButton"
+                                       text="Select Template..."
+                                       icon="{appearance.addIcon}"/>
                 </toolbar:child>
             </toolbar:ToolBar>
         </container:north>

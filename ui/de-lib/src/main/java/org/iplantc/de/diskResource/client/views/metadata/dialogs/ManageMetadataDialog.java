@@ -6,65 +6,40 @@ import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.MetadataView;
-import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceMetadataUpdateCallback;
 import org.iplantc.de.diskResource.client.presenters.metadata.MetadataPresenterImpl;
 import org.iplantc.de.diskResource.client.views.metadata.DiskResourceMetadataViewImpl;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
-import org.iplantc.de.resources.client.messages.I18N;
 
-import com.google.common.base.Preconditions;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.inject.Inject;
-
-import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
-import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
-import com.sencha.gxt.widget.core.client.event.DialogHideEvent.DialogHideHandler;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 
 /**
  * @author jstroot
  */
 public class ManageMetadataDialog extends IPlantDialog {
+	
+	
+	private class OkSelectHandler implements SelectEvent.SelectHandler {
 
-    private class CancelSelectHandler implements SelectEvent.SelectHandler {
-        @Override
-        public void onSelect(SelectEvent event) {
-            if(!writable){
-                return;
-            }
-            hide();
-        }
-    }
+		@Override
+		public void onSelect(SelectEvent event) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+	
+	private class CancelSelectHandler implements SelectEvent.SelectHandler {
 
-    private class OkSelectHandler implements SelectEvent.SelectHandler {
-        @Override
-        public void onSelect(SelectEvent event) {
-            if(!writable){
-                return;
-            }
-            Preconditions.checkNotNull(mdPresenter);
-            Preconditions.checkNotNull(mdView);
-
-            if (!mdView.isValid()) {
-                ConfirmMessageBox cmb = new ConfirmMessageBox("Error", appearance.metadataFormInvalid());
-                cmb.addDialogHideHandler(new DialogHideHandler() {
-                    
-                    @Override
-                    public void onDialogHide(DialogHideEvent event) {
-                        if (event.getHideButton().equals(PredefinedButton.YES)) {
-                            ManageMetadataDialog.this.mask(I18N.DISPLAY.loadingMask());
-                            mdPresenter.setDiskResourceMetadata(new DiskResourceMetadataUpdateCallback(ManageMetadataDialog.this));
-                        }
-                        
-                    }
-                });
-                cmb.show();
-            } else {
-                ManageMetadataDialog.this.mask(I18N.DISPLAY.loadingMask());
-                mdPresenter.setDiskResourceMetadata(new DiskResourceMetadataUpdateCallback(ManageMetadataDialog.this));
-            }
-        }
-    }
+		@Override
+		public void onSelect(SelectEvent event) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+	
 
     private final DiskResourceServiceFacade diskResourceService;
     private final GridView.Presenter.Appearance appearance;
