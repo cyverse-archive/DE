@@ -8,6 +8,8 @@ import org.iplantc.de.apps.client.OntologyHierarchiesView;
 import org.iplantc.de.apps.shared.AppsModule.Ids;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
@@ -17,6 +19,7 @@ import com.google.inject.assistedinject.Assisted;
 
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.TabPanel;
+import com.sencha.gxt.widget.core.client.tree.Tree;
 
 /**
  * @author jstroot
@@ -45,6 +48,18 @@ public class AppsViewImpl extends Composite implements AppsView {
         this.toolBar = toolbarPresenter.getView();
 
         initWidget(uiBinder.createAndBindUi(this));
+        categoryTabs.addSelectionHandler(new SelectionHandler<Widget>() {
+            @Override
+            public void onSelection(SelectionEvent<Widget> event) {
+                for (Widget next : categoryTabs) {
+                    if (event.getSelectedItem() instanceof AppCategoriesView && next instanceof Tree) {
+                        ((Tree)next).getSelectionModel().deselectAll();
+                    } else if (event.getSelectedItem() instanceof Tree && next instanceof AppCategoriesView) {
+                        ((AppCategoriesView)next).getTree().getSelectionModel().deselectAll();
+                    }
+                }
+            }
+        });
     }
 
 //    @Override
