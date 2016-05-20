@@ -16,6 +16,7 @@ import org.iplantc.de.client.models.analysis.AnalysesAutoBeanFactory;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.notifications.Counts;
 import org.iplantc.de.client.models.notifications.Notification;
 import org.iplantc.de.client.models.notifications.NotificationAutoBeanFactory;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
@@ -634,7 +635,25 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
         panel.add(view);
         processQueryStrings();
         messageServiceFacade.getRecentMessages(new InitializationCallbacks.GetInitialNotificationsCallback(view, appearance, announcer));
-    }
+        messageServiceFacade.getMessageCounts(new AsyncCallback<Counts>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(Counts result) {
+				GWT.log("new system message count-->" + result.getNewSystemMessageCount());
+				if(result.getNewSystemMessageCount() > 0) {
+					 eventBus.fireEvent(new NewSystemMessagesEvent());
+				}
+				
+			}
+		});
+   
+   }
 
     void restoreWindows(List<WindowState> windowStates) {
         for (WindowState ws : windowStates) {
