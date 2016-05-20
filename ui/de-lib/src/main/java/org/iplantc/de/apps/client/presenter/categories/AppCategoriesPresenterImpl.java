@@ -70,6 +70,7 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     }
 
     protected static String FAVORITES;
+    static AppCategory FAVORITES_CATEGORY;
     protected static String USER_APPS_GROUP;
     protected static String WORKSPACE;
     protected String searchRegexPattern;
@@ -114,7 +115,11 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
 
     @Override
     public AppCategory getSelectedAppCategory() {
-        return view.getTree().getSelectionModel().getSelectedItem();
+        AppCategory selectedCategory = view.getTree().getSelectionModel().getSelectedItem();
+        if (selectedCategory == null) {
+            selectedCategory = FAVORITES_CATEGORY;
+        }
+        return selectedCategory;
     }
 
     @Override
@@ -262,6 +267,9 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
         }
 
         for (AppCategory ag : children) {
+            if (FAVORITES.equals(ag.getName())) {
+                FAVORITES_CATEGORY = ag;
+            }
             addAppCategories(ag, ag.getCategories());
         }
     }

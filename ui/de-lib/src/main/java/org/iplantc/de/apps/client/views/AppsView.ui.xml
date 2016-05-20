@@ -43,7 +43,7 @@
     </ui:with>
     <ui:with field="workspaceTabConfig"
              type="com.sencha.gxt.widget.core.client.TabItemConfig">
-        <ui:attributes text="old"/>
+        <ui:attributes text="My Apps"/>
     </ui:with>
 
 
