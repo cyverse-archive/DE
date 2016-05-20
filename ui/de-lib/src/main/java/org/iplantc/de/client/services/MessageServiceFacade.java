@@ -1,16 +1,15 @@
 package org.iplantc.de.client.services;
 
+import java.util.List;
+
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.notifications.Counts;
-import org.iplantc.de.client.models.notifications.Notification;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.models.notifications.NotificationList;
 import org.iplantc.de.client.services.callbacks.NotificationCallback;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
-import java.util.List;
 
 public interface MessageServiceFacade {
 
