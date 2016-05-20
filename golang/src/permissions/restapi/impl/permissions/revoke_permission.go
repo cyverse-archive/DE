@@ -80,7 +80,7 @@ func BuildRevokePermissionHandler(db *sql.DB) func(permissions.RevokePermissionP
 
 		// Delete the permission.
 		err = permsdb.DeletePermission(tx, permission.ID)
-		if (err != nil) {
+		if err != nil {
 			logcabin.Error.Print(err)
 			return revokePermissionInternalServerError(err.Error())
 		}
