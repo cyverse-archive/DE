@@ -284,7 +284,7 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     @Override
     public void onAppUpdated(final AppUpdatedEvent event) {
         final AppCategory currentCategory = getSelectedAppCategory();
-        if (FAVORITES.equals(currentCategory.getName())) {
+        if (currentCategory != null && FAVORITES.equals(currentCategory.getName())) {
             // If our current category is Favorites, initiate refetch by reselecting category
             // This will cause the favorite count to be updated
             view.getTree().getSelectionModel().deselectAll();
