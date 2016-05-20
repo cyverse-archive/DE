@@ -13,12 +13,21 @@ import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
  * @author aramsey
  */
 public class OntologyUtil {
+
+    public class OntologyHierarchyNameComparator implements Comparator<OntologyHierarchy> {
+        @Override
+        public int compare(OntologyHierarchy o1, OntologyHierarchy o2) {
+            return o1.getLabel().compareToIgnoreCase(o2.getLabel());
+        }
+    }
 
     private static OntologyUtil INSTANCE;
     OntologyAutoBeanFactory factory;
@@ -45,6 +54,10 @@ public class OntologyUtil {
             INSTANCE = new OntologyUtil();
         }
         return INSTANCE;
+    }
+
+    public OntologyHierarchyNameComparator getOntologyNameComparator() {
+        return new OntologyHierarchyNameComparator();
     }
 
     public void addUnclassifiedChild(List<OntologyHierarchy> children) {
@@ -126,6 +139,8 @@ public class OntologyUtil {
         if (hierarchies == null || hierarchies.size() == 0){
             return pathList;
         }
+
+        Collections.sort(hierarchies, new OntologyHierarchyNameComparator());
         for (OntologyHierarchy hierarchy : hierarchies) {
             pathList.add(getPathList(hierarchy));
         }

@@ -41,7 +41,6 @@ import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.widget.core.client.TabItemConfig;
 import com.sencha.gxt.widget.core.client.TabPanel;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -54,12 +53,6 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
                                                          AppRatingDeselected.AppRatingDeselectedHandler,
                                                          AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler {
 
-    private class OntologyHierarchyNameComparator implements Comparator<OntologyHierarchy> {
-        @Override
-        public int compare(OntologyHierarchy o1, OntologyHierarchy o2) {
-            return o1.getLabel().compareToIgnoreCase(o2.getLabel());
-        }
-    }
 
     private class AppAVUCallback implements AsyncCallback<List<Avu>> {
 
@@ -213,7 +206,7 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
 
     TreeStore<OntologyHierarchy> getTreeStore(OntologyHierarchy hierarchy) {
         TreeStore<OntologyHierarchy> treeStore = new OntologyHierarchyTreeStoreProvider().get();
-        treeStore.addSortInfo(new Store.StoreSortInfo<>(new OntologyHierarchyNameComparator(),
+        treeStore.addSortInfo(new Store.StoreSortInfo<>(ontologyUtil.getOntologyNameComparator(),
                                                         SortDir.ASC));
         //Set the key for the current root (which won't appear in the tree, but will be the name of the tab)
         // which will allow the children to know the full path from its parent to node
