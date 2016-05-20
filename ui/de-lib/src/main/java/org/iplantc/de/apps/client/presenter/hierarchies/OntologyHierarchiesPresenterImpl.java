@@ -32,6 +32,7 @@ import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
 import com.sencha.gxt.core.shared.FastMap;
@@ -40,6 +41,7 @@ import com.sencha.gxt.data.shared.Store;
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.widget.core.client.TabItemConfig;
 import com.sencha.gxt.widget.core.client.TabPanel;
+import com.sencha.gxt.widget.core.client.tree.Tree;
 
 import java.util.List;
 import java.util.Map;
@@ -54,10 +56,12 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
                                                          AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler {
 
 
-    private class AppAVUCallback implements AsyncCallback<List<Avu>> {
+    class AppAVUCallback implements AsyncCallback<List<Avu>> {
 
-        private final AppDetailsDialog dlg;
-        private final App app;
+        AppDetailsDialog dlg;
+        App app;
+        List<OntologyHierarchy> hierarchies;
+        List<List<String>> appGroupHierarchies;
 
         public AppAVUCallback(AppDetailsDialog dlg, App app) {
             this.dlg = dlg;
@@ -71,8 +75,8 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
         @Override
         public void onSuccess(List<Avu> result) {
             // Create list of group hierarchies
-            List<OntologyHierarchy> hierarchies = convertAvusToHierarches(result);
-            List<List<String>> appGroupHierarchies = ontologyUtil.getAllPathsList(hierarchies);
+            hierarchies = convertAvusToHierarches(result);
+            appGroupHierarchies = ontologyUtil.getAllPathsList(hierarchies);
 
             dlg.show(app,
                      searchRegexPattern,
@@ -93,7 +97,7 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
             return selectedHierarchies;
         }
     }
-    private class AppDetailsCallback implements AsyncCallback<App> {
+    class AppDetailsCallback implements AsyncCallback<App> {
 
         private final AppDetailsDialog dlg;
 
@@ -116,14 +120,14 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
     OntologyUtil ontologyUtil;
     @Inject AsyncProvider<AppDetailsDialog> appDetailsDlgAsyncProvider;
     @Inject AppUserServiceFacade appUserService;
-    private TabPanel viewTabPanel;
+    TabPanel viewTabPanel;
     private OntologyServiceFacade serviceFacade;
     private OntologyHierarchiesView.OntologyHierarchiesAppearance appearance;
     protected String searchRegexPattern;
     private final EventBus eventBus;
     private AvuAutoBeanFactory avuFactory;
-    private HandlerManager handlerManager;
-    private Map<String, List<OntologyHierarchy>> iriToHierarchyMap = new FastMap<>();
+    HandlerManager handlerManager;
+    Map<String, List<OntologyHierarchy>> iriToHierarchyMap = new FastMap<>();
     private OntologyHierarchiesViewFactory viewFactory;
 
 
@@ -200,18 +204,21 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
     @Override
     public void onAppSearchResultLoad(AppSearchResultLoadEvent event) {
         searchRegexPattern = event.getSearchPattern();
-        OntologyHierarchiesView view = (OntologyHierarchiesView)viewTabPanel.getActiveWidget();
-        view.getTree().getSelectionModel().deselectAll();
+        for (Widget widget : viewTabPanel) {
+            if (widget instanceof Tree) {
+                ((Tree)widget).getSelectionModel().deselectAll();
+            }
+        }
     }
 
     TreeStore<OntologyHierarchy> getTreeStore(OntologyHierarchy hierarchy) {
         TreeStore<OntologyHierarchy> treeStore = new OntologyHierarchyTreeStoreProvider().get();
         treeStore.addSortInfo(new Store.StoreSortInfo<>(ontologyUtil.getOntologyNameComparator(),
                                                         SortDir.ASC));
+        ontologyUtil.addUnclassifiedChild(hierarchy);
         //Set the key for the current root (which won't appear in the tree, but will be the name of the tab)
         // which will allow the children to know the full path from its parent to node
         ontologyUtil.treeStoreModelKeyProvider(hierarchy);
-        ontologyUtil.addUnclassifiedChild(hierarchy);
         addHierarchies(treeStore, null, hierarchy.getSubclasses());
         return treeStore;
     }

@@ -32,6 +32,7 @@ import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.services.AppMetadataServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
+import org.iplantc.de.client.services.OntologyServiceFacade;
 import org.iplantc.de.commons.client.comments.view.dialogs.CommentsDialog;
 import org.iplantc.de.shared.AsyncProviderWrapper;
 
@@ -79,6 +80,7 @@ public class AppsGridPresenterImplTest {
     @Mock AppsGridView.AppsGridAppearance appearanceMock;
     @Mock UserInfo userInfoMock;
     @Mock AppUserServiceFacade appUserServiceMock;
+    @Mock OntologyServiceFacade ontologyServiceMock;
 
     @Mock AsyncProviderWrapper<CommentsDialog> commentsProviderMock;
     @Captor ArgumentCaptor<AsyncCallback<CommentsDialog>> commentsDlgCaptor;
@@ -97,7 +99,8 @@ public class AppsGridPresenterImplTest {
         when(gridMock.getSelectionModel()).thenReturn(selectionModelMock);
         uut = new AppsGridPresenterImpl(viewFactoryMock,
                                         listStoreMock,
-                                        eventBusMock);
+                                        eventBusMock,
+                                        ontologyServiceMock);
         uut.appService = appServiceMock;
         uut.appUserService = appUserServiceMock;
         uut.appearance = appearanceMock;
