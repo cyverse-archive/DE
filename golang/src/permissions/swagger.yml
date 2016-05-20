@@ -209,6 +209,14 @@ definitions:
         $ref: "#/definitions/resource_in"
       permission_level:
         $ref: "#/definitions/permission_level"
+  permission_put_request:
+    type: object
+    description: "Specifies the permission level to assign."
+    required:
+      - permission_level
+    properties:
+      permission_level:
+        $ref: "#/definitions/permission_level"
   permission:
     type: object
     description: "Information about permissions granted to a user."
@@ -577,6 +585,27 @@ paths:
           description: "OK"
         404:
           $ref: "#/responses/not_found"
+        500:
+          $ref: "#/responses/internal_server_error"
+    put:
+      tags:
+        - permissions
+      summary: "Grant Permission to a Resource"
+      parameters:
+        - description: "The permission level to assign."
+          in: body
+          name: "permission"
+          required: True
+          schema:
+            $ref: "#/definitions/permission_put_request"
+      operationId: putPermission
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/permission"
+        400:
+          $ref: "#/responses/bad_request"
         500:
           $ref: "#/responses/internal_server_error"
 produces:

@@ -75,6 +75,8 @@ type PermissionsAPI struct {
 	ResourcesListResourcesHandler resources.ListResourcesHandler
 	// SubjectsListSubjectsHandler sets the operation handler for the list subjects operation
 	SubjectsListSubjectsHandler subjects.ListSubjectsHandler
+	// PermissionsPutPermissionHandler sets the operation handler for the put permission operation
+	PermissionsPutPermissionHandler permissions.PutPermissionHandler
 	// PermissionsRevokePermissionHandler sets the operation handler for the revoke permission operation
 	PermissionsRevokePermissionHandler permissions.RevokePermissionHandler
 	// ResourcesUpdateResourceHandler sets the operation handler for the update resource operation
@@ -186,6 +188,10 @@ func (o *PermissionsAPI) Validate() error {
 
 	if o.SubjectsListSubjectsHandler == nil {
 		unregistered = append(unregistered, "subjects.ListSubjectsHandler")
+	}
+
+	if o.PermissionsPutPermissionHandler == nil {
+		unregistered = append(unregistered, "permissions.PutPermissionHandler")
 	}
 
 	if o.PermissionsRevokePermissionHandler == nil {
@@ -337,6 +343,11 @@ func (o *PermissionsAPI) initHandlerCache() {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/subjects"] = subjects.NewListSubjects(o.context, o.SubjectsListSubjectsHandler)
+
+	if o.handlers["PUT"] == nil {
+		o.handlers[strings.ToUpper("PUT")] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/permissions/resources/{resource_type}/{resource_name}/subjects/{subject_type}/{subject_id}"] = permissions.NewPutPermission(o.context, o.PermissionsPutPermissionHandler)
 
 	if o.handlers["DELETE"] == nil {
 		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)

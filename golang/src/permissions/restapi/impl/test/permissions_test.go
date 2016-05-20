@@ -45,8 +45,8 @@ func revokePermissionAttempt(
 
 	// Attempt to revoke the permission.
 	params := permissions.RevokePermissionParams{
-		SubjectType: subjectType,
-		SubjectID: subjectId,
+		SubjectType:  subjectType,
+		SubjectID:    subjectId,
 		ResourceType: resourceType,
 		ResourceName: resourceName,
 	}
@@ -56,6 +56,29 @@ func revokePermissionAttempt(
 func revokePermission(db *sql.DB, subjectType, subjectId, resourceType, resourceName string) {
 	responder := revokePermissionAttempt(db, subjectType, subjectId, resourceType, resourceName)
 	_ = responder.(*permissions.RevokePermissionOK)
+}
+
+func putPermissionAttempt(
+	db *sql.DB, subjectType, subjectId, resourceType, resourceName, level string,
+) middleware.Responder {
+
+	// Build the request handler.
+	handler := impl.BuildPutPermissionHandler(db)
+
+	// Attempt to put the permission.
+	params := permissions.PutPermissionParams{
+		SubjectType:  subjectType,
+		SubjectID:    subjectId,
+		ResourceType: resourceType,
+		ResourceName: resourceName,
+		Permission:   &models.PermissionPutRequest{PermissionLevel: models.PermissionLevel(level)},
+	}
+	return handler(params)
+}
+
+func putPermission(db *sql.DB, subjectType, subjectId, resourceType, resourceName, level string) *models.Permission {
+	responder := putPermissionAttempt(db, subjectType, subjectId, resourceType, resourceName, level)
+	return responder.(*permissions.PutPermissionOK).Payload
 }
 
 func listPermissionsAttempt(db *sql.DB) middleware.Responder {
@@ -445,6 +468,189 @@ func TestRevokePermissionNotFound(t *testing.T) {
 
 	// Verify that we got the expected error message.
 	expected := "permission not found: app/r1:user/s1"
+	if *errorOut.Reason != expected {
+		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
+	}
+}
+
+func TestPutPermission(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Define a subject.
+	subjectIn := newSubjectIn("s1", "user")
+	subjectOut := addSubject(db, subjectIn.SubjectID, subjectIn.SubjectType)
+
+	// Define a resource.
+	resourceIn := newResourceIn("r1", "app")
+	resourceOut := addResource(db, *resourceIn.Name, *resourceIn.ResourceType)
+
+	// Grant the subject access to the resource.
+	permission := putPermission(db, "user", "s1", "app", "r1", "own")
+
+	// Verify that we got the expected result.
+	if len(permission.ID) != 36 {
+		t.Errorf("unexpected internal permission ID returned: %s", permission.ID)
+	}
+	if permission.Subject.ID != subjectOut.ID {
+		t.Errorf("unexpected internal subject ID returned: %s", permission.Subject.ID)
+	}
+	if permission.Subject.SubjectID != subjectOut.SubjectID {
+		t.Errorf("unexpected external subject ID returned: %s", permission.Subject.SubjectID)
+	}
+	if permission.Subject.SubjectType != subjectOut.SubjectType {
+		t.Errorf("unexpedted subject type returned: %s", permission.Subject.SubjectType)
+	}
+	if *permission.Resource.ID != *resourceOut.ID {
+		t.Errorf("unexpected resource ID returned: %s", *permission.Resource.ID)
+	}
+	if *permission.Resource.Name != *resourceOut.Name {
+		t.Errorf("unexpected resource name returned: %s", *permission.Resource.Name)
+	}
+	if *permission.Resource.ResourceType != *resourceOut.ResourceType {
+		t.Errorf("unexpected resource type returned: %s", *permission.Resource.ResourceType)
+	}
+	if permission.PermissionLevel != models.PermissionLevel("own") {
+		t.Errorf("unexpected permission level returned: %v", permission.PermissionLevel)
+	}
+}
+
+func TestPutPermissionNewSubject(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Define, but don't register a subject.
+	subjectIn := newSubjectIn("s1", "user")
+
+	// Define a resource.
+	resourceIn := newResourceIn("r1", "app")
+	resourceOut := addResource(db, *resourceIn.Name, *resourceIn.ResourceType)
+
+	// Grant the subject access to the resource.
+	permission := putPermission(db, "user", "s1", "app", "r1", "own")
+
+	// Verify that we got the expected result.
+	if len(permission.ID) != 36 {
+		t.Errorf("unexpected internal permission ID returned: %s", permission.ID)
+	}
+	if len(permission.Subject.ID) != 36 {
+		t.Errorf("unexpected internal subject ID returned: %s", permission.Subject.ID)
+	}
+	if permission.Subject.SubjectID != subjectIn.SubjectID {
+		t.Errorf("unexpected external subject ID returned: %s", permission.Subject.SubjectID)
+	}
+	if permission.Subject.SubjectType != subjectIn.SubjectType {
+		t.Errorf("unexpedted subject type returned: %s", permission.Subject.SubjectType)
+	}
+	if *permission.Resource.ID != *resourceOut.ID {
+		t.Errorf("unexpected resource ID returned: %s", *permission.Resource.ID)
+	}
+	if *permission.Resource.Name != *resourceOut.Name {
+		t.Errorf("unexpected resource name returned: %s", *permission.Resource.Name)
+	}
+	if *permission.Resource.ResourceType != *resourceOut.ResourceType {
+		t.Errorf("unexpected resource type returned: %s", *permission.Resource.ResourceType)
+	}
+	if permission.PermissionLevel != models.PermissionLevel("own") {
+		t.Errorf("unexpected permission level returned: %v", permission.PermissionLevel)
+	}
+}
+
+func TestPutPermissionNewResource(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Define a subject.
+	subjectIn := newSubjectIn("s1", "user")
+	subjectOut := addSubject(db, subjectIn.SubjectID, subjectIn.SubjectType)
+
+	// Define, but don't register a resource.
+	resourceIn := newResourceIn("r1", "app")
+
+	// Grant the subject access to the resource.
+	permission := putPermission(db, "user", "s1", "app", "r1", "own")
+
+	// Verify that we got the expected result.
+	if len(permission.ID) != 36 {
+		t.Errorf("unexpected internal permission ID returned: %s", permission.ID)
+	}
+	if permission.Subject.ID != subjectOut.ID {
+		t.Errorf("unexpected internal subject ID returned: %s", permission.Subject.ID)
+	}
+	if permission.Subject.SubjectID != subjectOut.SubjectID {
+		t.Errorf("unexpected external subject ID returned: %s", permission.Subject.SubjectID)
+	}
+	if permission.Subject.SubjectType != subjectOut.SubjectType {
+		t.Errorf("unexpedted subject type returned: %s", permission.Subject.SubjectType)
+	}
+	if len(*permission.Resource.ID) != 36 {
+		t.Errorf("unexpected resource ID returned: %s", *permission.Resource.ID)
+	}
+	if *permission.Resource.Name != *resourceIn.Name {
+		t.Errorf("unexpected resource name returned: %s", *permission.Resource.Name)
+	}
+	if *permission.Resource.ResourceType != *resourceIn.ResourceType {
+		t.Errorf("unexpected resource type returned: %s", *permission.Resource.ResourceType)
+	}
+	if permission.PermissionLevel != models.PermissionLevel("own") {
+		t.Errorf("unexpected permission level returned: %v", permission.PermissionLevel)
+	}
+}
+
+func TestPutPermissionDuplicateSubjectId(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Define a subject.
+	subjectIn := newSubjectIn("s1", "user")
+	_ = addSubject(db, subjectIn.SubjectID, subjectIn.SubjectType)
+
+	// Attempt to add a permission using a duplicate subject ID.
+	responder := putPermissionAttempt(db, "group", "s1", "app", "r1", "own")
+	errorOut := responder.(*permissions.PutPermissionBadRequest).Payload
+
+	// Verify that we got the expected error.
+	expected := "another subject with ID, s1, already exists"
+	if *errorOut.Reason != expected {
+		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
+	}
+}
+
+func TestPutPermissionBogusResourceType(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Attempt to add a permission using a bogus resource type.
+	responder := putPermissionAttempt(db, "user", "s1", "foo", "r1", "own")
+	errorOut := responder.(*permissions.PutPermissionBadRequest).Payload
+
+	// Verify that we got the expected error.
+	expected := "no resource type named, foo, found"
 	if *errorOut.Reason != expected {
 		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
 	}
