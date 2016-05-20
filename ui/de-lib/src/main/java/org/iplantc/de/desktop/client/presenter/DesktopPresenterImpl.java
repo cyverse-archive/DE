@@ -106,9 +106,23 @@ import java.util.Map;
  */
 public class DesktopPresenterImpl implements DesktopView.Presenter {
 
+    private final class NewSysMessageCountCallback implements AsyncCallback<Counts> {
+		@Override
+		public void onFailure(Throwable caught) {
+			// TODO Auto-generated method stub
+			
+		}
 
+		@Override
+		public void onSuccess(Counts result) {
+			if(result.getNewSystemMessageCount() > 0) {
+				 eventBus.fireEvent(new NewSystemMessagesEvent());
+			}
+			
+		}
+	}
 
-    interface AuthErrors {
+	interface AuthErrors {
         String API_NAME = "api_name";
         String ERROR = "error";
         String ERROR_DESCRIPTION = "error_description";
@@ -635,23 +649,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
         panel.add(view);
         processQueryStrings();
         messageServiceFacade.getRecentMessages(new InitializationCallbacks.GetInitialNotificationsCallback(view, appearance, announcer));
-        messageServiceFacade.getMessageCounts(new AsyncCallback<Counts>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onSuccess(Counts result) {
-				GWT.log("new system message count-->" + result.getNewSystemMessageCount());
-				if(result.getNewSystemMessageCount() > 0) {
-					 eventBus.fireEvent(new NewSystemMessagesEvent());
-				}
-				
-			}
-		});
+        messageServiceFacade.getMessageCounts(new NewSysMessageCountCallback());
    
    }
 
