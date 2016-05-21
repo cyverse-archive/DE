@@ -14,6 +14,7 @@ import (
 	strfmt "github.com/go-swagger/go-swagger/strfmt"
 	"github.com/go-swagger/go-swagger/swag"
 
+	"permissions/restapi/operations/permission_lookup"
 	"permissions/restapi/operations/permissions"
 	"permissions/restapi/operations/resource_types"
 	"permissions/restapi/operations/resources"
@@ -63,6 +64,8 @@ type PermissionsAPI struct {
 	ResourcesAddResourceHandler resources.AddResourceHandler
 	// SubjectsAddSubjectHandler sets the operation handler for the add subject operation
 	SubjectsAddSubjectHandler subjects.AddSubjectHandler
+	// PermissionLookupBySubjectHandler sets the operation handler for the by subject operation
+	PermissionLookupBySubjectHandler permission_lookup.BySubjectHandler
 	// ResourcesDeleteResourceHandler sets the operation handler for the delete resource operation
 	ResourcesDeleteResourceHandler resources.DeleteResourceHandler
 	// SubjectsDeleteSubjectHandler sets the operation handler for the delete subject operation
@@ -164,6 +167,10 @@ func (o *PermissionsAPI) Validate() error {
 
 	if o.SubjectsAddSubjectHandler == nil {
 		unregistered = append(unregistered, "subjects.AddSubjectHandler")
+	}
+
+	if o.PermissionLookupBySubjectHandler == nil {
+		unregistered = append(unregistered, "permission_lookup.BySubjectHandler")
 	}
 
 	if o.ResourcesDeleteResourceHandler == nil {
@@ -313,6 +320,11 @@ func (o *PermissionsAPI) initHandlerCache() {
 		o.handlers[strings.ToUpper("POST")] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/subjects"] = subjects.NewAddSubject(o.context, o.SubjectsAddSubjectHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/transitive_permissions/subjects/{subject_type}/{subject_id}"] = permission_lookup.NewBySubject(o.context, o.PermissionLookupBySubjectHandler)
 
 	if o.handlers["DELETE"] == nil {
 		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)

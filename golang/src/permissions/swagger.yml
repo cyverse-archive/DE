@@ -608,6 +608,33 @@ paths:
           $ref: "#/responses/bad_request"
         500:
           $ref: "#/responses/internal_server_error"
+  /transitive_permissions/subjects/{subject_type}/{subject_id}:
+    parameters:
+      - name: subject_type
+        type: string
+        enum:
+          - user
+          - group
+        description: "The subject type name."
+        in: path
+        required: True
+      - name: subject_id
+        type: string
+        description: "The external subject identifier."
+        in: path
+        required: True
+    get:
+      tags:
+        - permissionLookup
+      summary: "Look Up Permissions for a Subject"
+      operationId: bySubject
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/permission_list"
+        500:
+          $ref: "#/responses/internal_server_error"
 produces:
   - application/json
 responses:

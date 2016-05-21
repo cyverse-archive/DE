@@ -15,13 +15,16 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/olebedev/config"
 
+	"permissions/clients/grouper"
 	"permissions/restapi/operations"
+	"permissions/restapi/operations/permission_lookup"
 	"permissions/restapi/operations/permissions"
 	"permissions/restapi/operations/resource_types"
 	"permissions/restapi/operations/resources"
 	"permissions/restapi/operations/status"
 	"permissions/restapi/operations/subjects"
 
+	permission_lookup_impl "permissions/restapi/impl/permission_lookup"
 	permissions_impl "permissions/restapi/impl/permissions"
 	resource_types_impl "permissions/restapi/impl/resource_types"
 	resources_impl "permissions/restapi/impl/resources"
@@ -54,6 +57,7 @@ func validateOptions() error {
 
 // The database connection.
 var db *sql.DB
+var grouperClient *grouper.GrouperClient
 
 // Initialize the service.
 func initService() error {
@@ -69,9 +73,23 @@ func initService() error {
 	if err != nil {
 		return err
 	}
-	logcabin.Info.Printf("DB URI: %s\n", dburi)
 
 	db, err = sql.Open("postgres", dburi)
+	if err != nil {
+		return err
+	}
+
+	grouperDburi, err := cfg.String("grouperdb.uri")
+	if err != nil {
+		return err
+	}
+
+	grouperFolderNamePrefix, err := cfg.String("grouperdb.folder_name_prefix")
+	if err != nil {
+		return err
+	}
+
+	grouperClient, err = grouper.NewGrouperClient(grouperDburi, grouperFolderNamePrefix)
 	if err != nil {
 		return err
 	}
@@ -168,6 +186,10 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 
 	api.PermissionsPutPermissionHandler = permissions.PutPermissionHandlerFunc(
 		permissions_impl.BuildPutPermissionHandler(db),
+	)
+
+	api.PermissionLookupBySubjectHandler = permission_lookup.BySubjectHandlerFunc(
+		permission_lookup_impl.BuildBySubjectHandler(db, grouperClient),
 	)
 
 	api.ServerShutdown = cleanup
