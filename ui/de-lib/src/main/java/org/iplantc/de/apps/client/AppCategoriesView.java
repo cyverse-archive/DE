@@ -13,6 +13,8 @@ import org.iplantc.de.client.models.apps.AppCategory;
 
 import com.google.gwt.user.client.ui.IsWidget;
 
+import com.sencha.gxt.data.shared.TreeStore;
+import com.sencha.gxt.widget.core.client.TabPanel;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.TreeStyle;
 
@@ -43,9 +45,7 @@ public interface AppCategoriesView extends IsWidget,
 
         String workspaceTab();
 
-        String operationTab();
-
-        String topicTab();
+        String hpcTab();
     }
 
     /**
@@ -65,17 +65,18 @@ public interface AppCategoriesView extends IsWidget,
      */
     interface Presenter extends AppSearchResultLoadEvent.AppSearchResultLoadEventHandler,
                                 CopyAppSelected.CopyAppSelectedHandler,
-                                CopyWorkflowSelected.CopyWorkflowSelectedHandler {
+                                CopyWorkflowSelected.CopyWorkflowSelectedHandler,
+                                AppCategorySelectionChangedEvent.HasAppCategorySelectionChangedEventHandlers {
 
         AppCategory getSelectedAppCategory();
 
         AppCategoriesView getView();
 
-        void go(HasId selectedAppCategory);
+        void go(HasId selectedAppCategory, TabPanel tabPanel);
     }
 
     interface AppCategoryHierarchyProvider {
-        List<String> getGroupHierarchy(AppCategory appCategory);
+        List<String> getGroupHierarchy(TreeStore<AppCategory> treeStore, AppCategory appCategory);
     }
 
     Tree<AppCategory, String> getTree();

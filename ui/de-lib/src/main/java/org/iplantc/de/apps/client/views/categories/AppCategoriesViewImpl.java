@@ -19,7 +19,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 import com.sencha.gxt.data.shared.TreeStore;
-import com.sencha.gxt.widget.core.client.Composite;
+import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 
@@ -30,8 +30,8 @@ import java.util.List;
  *
  * @author jstroot
  */
-public class AppCategoriesViewImpl extends Composite implements AppCategoriesView,
-                                                                SelectionChangedEvent.SelectionChangedHandler<AppCategory> {
+public class AppCategoriesViewImpl extends ContentPanel implements AppCategoriesView,
+                                                                   SelectionChangedEvent.SelectionChangedHandler<AppCategory> {
 
     interface AppCategoriesViewImplUiBinder extends UiBinder<Widget, AppCategoriesViewImpl> {
     }
@@ -50,7 +50,7 @@ public class AppCategoriesViewImpl extends Composite implements AppCategoriesVie
         this.appearance = appearance;
         this.treeStore = treeStore;
         this.hierarchyProvider = hierarchyProvider;
-        initWidget(ourUiBinder.createAndBindUi(this));
+        setWidget(ourUiBinder.createAndBindUi(this));
     }
 
     @Override
@@ -67,7 +67,7 @@ public class AppCategoriesViewImpl extends Composite implements AppCategoriesVie
     public void onSelectionChanged(SelectionChangedEvent<AppCategory> event) {
         final List<String> groupHierarchy = Lists.newArrayList();
         if(!event.getSelection().isEmpty()){
-            groupHierarchy.addAll(hierarchyProvider.getGroupHierarchy(event.getSelection().iterator().next()));
+            groupHierarchy.addAll(hierarchyProvider.getGroupHierarchy(treeStore, event.getSelection().iterator().next()));
         }
         fireEvent(new AppCategorySelectionChangedEvent(event.getSelection(),
                                                        groupHierarchy));

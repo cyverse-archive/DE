@@ -63,7 +63,7 @@ public class AdminAppsCategoriesPresenterImpl implements AdminCategoriesView.Pre
     }
 
     @Override
-    public List<String> getGroupHierarchy(AppCategory appCategory) {
+    public List<String> getGroupHierarchy(TreeStore<AppCategory> treeStore, AppCategory appCategory) {
         List<String> groupNames = Lists.newArrayList();
 
         for (AppCategory group : getGroupHierarchy(appCategory, null)) {

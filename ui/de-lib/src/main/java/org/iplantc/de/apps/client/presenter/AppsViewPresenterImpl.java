@@ -37,14 +37,12 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         this.categoriesPresenter = categoriesPresenter;
         this.appsGridPresenter = appsGridPresenter;
         this.hierarchiesPresenter = hierarchiesPresenter;
-        this.view = viewFactory.create(categoriesPresenter,
-                                       hierarchiesPresenter,
-                                       appsGridPresenter,
+        this.view = viewFactory.create(appsGridPresenter,
                                        toolbarPresenter);
 
-        categoriesPresenter.getView().addAppCategorySelectedEventHandler(appsGridPresenter);
-        categoriesPresenter.getView().addAppCategorySelectedEventHandler(appsGridPresenter.getView());
-        categoriesPresenter.getView().addAppCategorySelectedEventHandler(toolbarPresenter.getView());
+        categoriesPresenter.addAppCategorySelectedEventHandler(appsGridPresenter);
+        categoriesPresenter.addAppCategorySelectedEventHandler(appsGridPresenter.getView());
+        categoriesPresenter.addAppCategorySelectedEventHandler(toolbarPresenter.getView());
 
         hierarchiesPresenter.addOntologyHierarchySelectionChangedEventHandler(appsGridPresenter);
         hierarchiesPresenter.addOntologyHierarchySelectionChangedEventHandler(appsGridPresenter.getView());
@@ -86,7 +84,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
                    final HasId selectedAppCategory,
                    final HasId selectedApp) {
         TabPanel tabPanel = view.getCategoryTabPanel();
-        categoriesPresenter.go(selectedAppCategory);
+        categoriesPresenter.go(selectedAppCategory, tabPanel);
         hierarchiesPresenter.go(tabPanel);
         container.setWidget(view);
     }

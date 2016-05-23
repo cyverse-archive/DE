@@ -6,8 +6,10 @@ import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.AppUpdatedEvent;
 import org.iplantc.de.apps.client.events.EditAppEvent;
 import org.iplantc.de.apps.client.events.EditWorkflowEvent;
+import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.CopyAppSelected;
 import org.iplantc.de.apps.client.events.selection.CopyWorkflowSelected;
+import org.iplantc.de.apps.client.gin.AppCategoryTreeStoreProvider;
 import org.iplantc.de.apps.client.gin.factory.AppCategoriesViewFactory;
 import org.iplantc.de.apps.client.views.details.dialogs.AppDetailsDialog;
 import org.iplantc.de.client.events.EventBus;
@@ -26,6 +28,9 @@ import org.iplantc.de.shared.AsyncProviderWrapper;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -36,6 +41,9 @@ import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 import com.sencha.gxt.data.shared.SortDir;
 import com.sencha.gxt.data.shared.Store;
 import com.sencha.gxt.data.shared.TreeStore;
+import com.sencha.gxt.widget.core.client.TabItemConfig;
+import com.sencha.gxt.widget.core.client.TabPanel;
+import com.sencha.gxt.widget.core.client.tree.Tree;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -47,7 +55,8 @@ import java.util.List;
 public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
                                                    AppCategoriesView.AppCategoryHierarchyProvider,
                                                    AppUpdatedEvent.AppUpdatedEventHandler,
-                                                   AppSavedEvent.AppSavedEventHandler {
+                                                   AppSavedEvent.AppSavedEventHandler,
+                                                   AppCategorySelectionChangedEvent.AppCategorySelectionChangedEventHandler {
 
     private static class AppCategoryComparator implements Comparator<AppCategory> {
 
@@ -70,6 +79,7 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     }
 
     protected static String FAVORITES;
+    protected static String HPC_ID = "00000000-0000-0000-0000-000000000001";
     static AppCategory FAVORITES_CATEGORY;
     protected static String USER_APPS_GROUP;
     protected static String WORKSPACE;
@@ -80,22 +90,24 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     @Inject AppUserServiceFacade appUserService;
     @Inject AppCategoriesView.AppCategoriesAppearance appearance;
     private final EventBus eventBus;
-    private final TreeStore<AppCategory> treeStore;
-    private final AppCategoriesView view;
+    List<AppCategory> workspaceCategories = Lists.newArrayList();
+    List<AppCategory> hpcCategories = Lists.newArrayList();
+    TabPanel viewTabPanel;
+    AppCategoriesViewFactory viewFactory;
+    HandlerManager handlerManager;
+    AppCategoriesView workspaceView;
+    AppCategoriesView hpcView;
 
     @Inject
-    AppCategoriesPresenterImpl(final TreeStore<AppCategory> treeStore,
-                               final DEProperties props,
+    AppCategoriesPresenterImpl(final DEProperties props,
                                final JsonUtil jsonUtil,
                                final EventBus eventBus,
                                final AppCategoriesViewFactory viewFactory) {
-        this.treeStore = treeStore;
         this.eventBus = eventBus;
-        this.view = viewFactory.create(treeStore, this);
+        this.viewFactory = viewFactory;
+        this.workspaceView = viewFactory.create(new AppCategoryTreeStoreProvider().get(), this);
+        this.hpcView = viewFactory.create(new AppCategoryTreeStoreProvider().get(), this);
 
-        final Store.StoreSortInfo<AppCategory> info = new Store.StoreSortInfo<>(new AppCategoryComparator(treeStore),
-                                                                                SortDir.ASC);
-        treeStore.addSortInfo(info);
         initConstants(props, jsonUtil);
 
         eventBus.addHandler(AppUpdatedEvent.TYPE, this);
@@ -103,71 +115,91 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     }
 
     @Override
-    public List<String> getGroupHierarchy(AppCategory appCategory) {
+    public List<String> getGroupHierarchy(TreeStore<AppCategory> treeStore, AppCategory appCategory) {
         List<String> groupNames = Lists.newArrayList();
 
-        for (AppCategory group : getGroupHierarchy(appCategory, null)) {
+        for (AppCategory group : getGroupHierarchy(treeStore, appCategory, null)) {
             groupNames.add(group.getName());
         }
+        groupNames.add(appearance.workspaceTab());
+
         Collections.reverse(groupNames);
         return groupNames;
     }
 
     @Override
     public AppCategory getSelectedAppCategory() {
-        AppCategory selectedCategory = view.getTree().getSelectionModel().getSelectedItem();
-        if (selectedCategory == null) {
+        AppCategory selectedCategory;
+        Tree<AppCategory, String> tree = workspaceView.getTree();
+        if (tree == null || tree.getSelectionModel().getSelectedItem() == null) {
             selectedCategory = FAVORITES_CATEGORY;
+        } else {
+            selectedCategory = workspaceView.getTree().getSelectionModel().getSelectedItem();
         }
         return selectedCategory;
     }
 
     @Override
     public AppCategoriesView getView() {
-        return view;
+        return workspaceView;
     }
 
     @Override
-    public void go(final HasId selectedAppCategory) {
-        if (!treeStore.getAll().isEmpty()
-                && selectedAppCategory != null) {
-            AppCategory desiredCategory = treeStore.findModelWithKey(selectedAppCategory.getId());
-            view.getTree().getSelectionModel().select(desiredCategory, false);
-        } else {
-            view.mask(appearance.getAppCategoriesLoadingMask());
-            appService.getAppCategories(new AsyncCallback<List<AppCategory>>() {
-                @Override
-                public void onFailure(Throwable caught) {
-                    ErrorHandler.post(caught);
-                    view.unmask();
-                }
+    public void go(final HasId selectedAppCategory, final TabPanel tabPanel) {
+        this.viewTabPanel = tabPanel;
 
-                @Override
-                public void onSuccess(List<AppCategory> result) {
-                    List<AppCategory> filteredCategories = getFilteredCategories(result);
-                    addAppCategories(null, filteredCategories);
-                    view.getTree().expandAll();
-                    if (selectedAppCategory != null) {
-                        AppCategory desiredCategory = treeStore.findModelWithKey(selectedAppCategory.getId());
-                        view.getTree().getSelectionModel().select(desiredCategory, false);
-                    } else {
-                        view.getTree().getSelectionModel().selectNext();
-                        view.getTree().getSelectionModel().select(treeStore.getRootItems().get(0), false);
-                    }
-                    view.unmask();
-                }
-            });
+        viewTabPanel.add(workspaceView.getTree(), new TabItemConfig(appearance.workspaceTab()));
+        viewTabPanel.add(hpcView.getTree(), new TabItemConfig(appearance.hpcTab()));
+
+        workspaceView.mask(appearance.getAppCategoriesLoadingMask());
+        appService.getAppCategories(new AsyncCallback<List<AppCategory>>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+                viewTabPanel.unmask();
+            }
+
+            @Override
+            public void onSuccess(List<AppCategory> result) {
+                filterCategories(result);
+                createWorkspaceTab(selectedAppCategory);
+                createHPCTab();
+                workspaceView.unmask();
+            }
+        });
+
+    }
+
+    void createHPCTab() {
+        hpcView.addAppCategorySelectedEventHandler(this);
+        addAppCategories(hpcView.getTree().getStore(), null, hpcCategories);
+    }
+
+    void createWorkspaceTab(HasId selectedAppCategory) {
+        TreeStore<AppCategory> treeStore = workspaceView.getTree().getStore();
+        final Store.StoreSortInfo<AppCategory> info = new Store.StoreSortInfo<>(new AppCategoryComparator(treeStore),
+                                                                                SortDir.ASC);
+        treeStore.addSortInfo(info);
+        workspaceView.addAppCategorySelectedEventHandler(this);
+        addAppCategories(treeStore, null, workspaceCategories);
+        if (selectedAppCategory != null) {
+            AppCategory desiredCategory = treeStore.findModelWithKey(selectedAppCategory.getId());
+            workspaceView.getTree().getSelectionModel().select(desiredCategory, false);
+        } else {
+            workspaceView.getTree().getSelectionModel().selectNext();
+            workspaceView.getTree().getSelectionModel().select(treeStore.getRootItems().get(0), false);
         }
     }
 
-    private List<AppCategory> getFilteredCategories(List<AppCategory> result) {
-        List<AppCategory> filteredCategories = Lists.newArrayList();
+    void filterCategories(List<AppCategory> result) {
         for (AppCategory category : result) {
             if (!category.isPublic()) {
-                filteredCategories.addAll(category.getCategories());
+                workspaceCategories.addAll(category.getCategories());
+            }
+            if (category.getId().equals(HPC_ID)) {
+                hpcCategories.add(category);
             }
         }
-        return filteredCategories;
     }
 
     @Override
@@ -175,15 +207,16 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
         /* JDS When an app is saved, always assume that the app is in the
          * "Apps Under Development" group
          */
-        view.getTree().getSelectionModel().deselectAll();
+        workspaceView.getTree().getSelectionModel().deselectAll();
         AppCategory userAppCategory = findAppCategoryByName(USER_APPS_GROUP);
-        view.getTree().getSelectionModel().select(userAppCategory, false);
+        workspaceView.getTree().getSelectionModel().select(userAppCategory, false);
     }
 
     @Override
     public void onAppSearchResultLoad(AppSearchResultLoadEvent event) {
         searchRegexPattern = event.getSearchPattern();
-        view.getTree().getSelectionModel().deselectAll();
+        workspaceView.getTree().getSelectionModel().deselectAll();
+        hpcView.getTree().getSelectionModel().deselectAll();
     }
 
     @Override
@@ -192,8 +225,8 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
         if (currentCategory != null && FAVORITES.equals(currentCategory.getName())) {
             // If our current category is Favorites, initiate refetch by reselecting category
             // This will cause the favorite count to be updated
-            view.getTree().getSelectionModel().deselectAll();
-            view.getTree().getSelectionModel().select(currentCategory, false);
+            workspaceView.getTree().getSelectionModel().deselectAll();
+            workspaceView.getTree().getSelectionModel().select(currentCategory, false);
         }
 
     }
@@ -215,11 +248,11 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
                 if (!app.getId().isEmpty()) {
                     announcer.schedule(new SuccessAnnouncementConfig(appearance.copyAppSuccessMessage(appToBeCopied.getName())));
 
-                    view.getTree().getSelectionModel().deselectAll();
+                    workspaceView.getTree().getSelectionModel().deselectAll();
                     AppCategory userCategory = findAppCategoryByName(USER_APPS_GROUP);
 
                     // Select "Apps Under Dev" to cause fetch of center
-                    view.getTree().getSelectionModel().select(userCategory, false);
+                    workspaceView.getTree().getSelectionModel().select(userCategory, false);
                     eventBus.fireEvent(new EditAppEvent(app, false));
                 }
             }
@@ -243,10 +276,10 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
             @Override
             public void onSuccess(String result) {
                 // Update the user's private apps group count.
-                view.getTree().getSelectionModel().deselectAll();
+                workspaceView.getTree().getSelectionModel().deselectAll();
                 AppCategory userAppsGrp = findAppCategoryByName(USER_APPS_GROUP);
                 // Select "Apps Under Dev" to cause fetch of center
-                view.getTree().getSelectionModel().select(userAppsGrp, false);
+                workspaceView.getTree().getSelectionModel().select(userAppsGrp, false);
 
                 // Fire an EditWorkflowEvent for the new workflow copy.
                 Splittable serviceWorkflowJson = StringQuoter.split(result);
@@ -255,7 +288,19 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
         });
     }
 
-    void addAppCategories(AppCategory parent, List<AppCategory> children) {
+    @Override
+    public HandlerRegistration addAppCategorySelectedEventHandler(AppCategorySelectionChangedEvent.AppCategorySelectionChangedEventHandler handler) {
+        return ensureHandlers().addHandler(AppCategorySelectionChangedEvent.TYPE, handler);
+    }
+
+    @Override
+    public void onAppCategorySelectionChanged(AppCategorySelectionChangedEvent event) {
+        fireEvent(event);
+    }
+
+    void addAppCategories(TreeStore<AppCategory> treeStore,
+                          AppCategory parent,
+                          List<AppCategory> children) {
         if ((children == null)
                 || children.isEmpty()) {
             return;
@@ -270,12 +315,12 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
             if (FAVORITES.equals(ag.getName())) {
                 FAVORITES_CATEGORY = ag;
             }
-            addAppCategories(ag, ag.getCategories());
+            addAppCategories(treeStore, ag, ag.getCategories());
         }
     }
 
     AppCategory findAppCategoryByName(String name) {
-        for (AppCategory appCategory : treeStore.getAll()) {
+        for (AppCategory appCategory : workspaceView.getTree().getStore().getAll()) {
             if (appCategory.getName().equalsIgnoreCase(name)) {
                 return appCategory;
             }
@@ -284,7 +329,7 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
         return null;
     }
 
-    List<AppCategory> getGroupHierarchy(AppCategory grp, List<AppCategory> groups) {
+    List<AppCategory> getGroupHierarchy(TreeStore<AppCategory> treeStore, AppCategory grp, List<AppCategory> groups) {
         if (groups == null) {
             groups = Lists.newArrayList();
         }
@@ -294,7 +339,7 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
                 return groups;
             }
         }
-        return getGroupHierarchy(treeStore.getParent(grp), groups);
+        return getGroupHierarchy(treeStore, treeStore.getParent(grp), groups);
     }
 
     void initConstants(final DEProperties props,
@@ -305,6 +350,20 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
             JSONArray items = JSONParser.parseStrict(props.getPrivateWorkspaceItems()).isArray();
             USER_APPS_GROUP = jsonUtil.getRawValueAsString(items.get(0));
             FAVORITES = jsonUtil.getRawValueAsString(items.get(1));
+        }
+    }
+
+    HandlerManager createHandlerManager() {
+        return new HandlerManager(this);
+    }
+
+    HandlerManager ensureHandlers() {
+        return handlerManager == null ? handlerManager = createHandlerManager() : handlerManager;
+    }
+
+    void fireEvent(GwtEvent<?> event) {
+        if (handlerManager != null) {
+            handlerManager.fireEvent(event);
         }
     }
 

@@ -4,7 +4,6 @@ import org.iplantc.de.apps.client.AppCategoriesView;
 import org.iplantc.de.apps.client.AppsGridView;
 import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.apps.client.AppsView;
-import org.iplantc.de.apps.client.OntologyHierarchiesView;
 import org.iplantc.de.apps.shared.AppsModule.Ids;
 
 import com.google.gwt.core.client.GWT;
@@ -31,19 +30,13 @@ public class AppsViewImpl extends Composite implements AppsView {
 
     @UiField(provided = true) final AppsToolbarView toolBar;
     @UiField TabPanel categoryTabs;
-    @UiField(provided = true) final AppCategoriesView appCategoriesView;
-//    private final OntologyHierarchiesView hierarchiesView;
     @UiField(provided = true) final AppsGridView appsGridView;
 
     private static final MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     @Inject
-    protected AppsViewImpl(@Assisted final AppCategoriesView.Presenter categoriesPresenter,
-                           @Assisted final OntologyHierarchiesView.Presenter hierarchiesPresenter,
-                           @Assisted final AppsGridView.Presenter gridPresenter,
+    protected AppsViewImpl(@Assisted final AppsGridView.Presenter gridPresenter,
                            @Assisted final AppsToolbarView.Presenter toolbarPresenter) {
-        this.appCategoriesView = categoriesPresenter.getView();
-//        this.hierarchiesView = hierarchiesPresenter.getView();
         this.appsGridView = gridPresenter.getView();
         this.toolBar = toolbarPresenter.getView();
 
@@ -62,23 +55,6 @@ public class AppsViewImpl extends Composite implements AppsView {
         });
     }
 
-//    @Override
-//    public AppCategory getAppCategoryFromElement(Element el) {
-//        TreeNode<AppCategory> node = tree.findNode(el);
-//        if (node != null && tree.getView().isSelectableTarget(node.getModel(), el)) {
-//            return node.getModel();
-//        }
-//
-//        return null;
-//    }
-//
-//    @Override
-//    public App getAppFromElement(Element el) {
-//        Element row = gridView.findRow(el);
-//        int index = gridView.findRowIndex(row);
-//        return listStore.get(index);
-//    }
-
     @Override
     public TabPanel getCategoryTabPanel() {
         return categoryTabs;
@@ -93,60 +69,6 @@ public class AppsViewImpl extends Composite implements AppsView {
     public void hideWorkflowMenu() {
         toolBar.hideWorkflowMenu();
     }
-
-    //<editor-fold desc="Selection">
-//    @Override
-//    public void selectApp(String appId) {
-//        App app = listStore.findModelWithKey(appId);
-//        if (app != null) {
-//            grid.getSelectionModel().select(app, false);
-//        }
-//    }
-//
-//    @Override
-//    public void selectAppCategory(HasId appCategory) {
-//        if (appCategory == null) {
-//            tree.getSelectionModel().deselectAll();
-//            return;
-//        }
-//        AppCategory ag = treeStore.findModelWithKey(appCategory.getId());
-//
-//        if (ag != null) {
-//            if (tree.getSelectionModel().isSelected(ag)) {
-//                /* if category is already selected, then manually fire event since selection
-//                     * model won't fire selection changed
-//                     */
-//                fireEvent(new AppCategorySelectionChangedEvent(Collections.singletonList(ag), hierarchyProvider.getGroupHierarchy(event.getSelection().iterator().next())));
-//            } else {
-//                tree.getSelectionModel().select(ag, false);
-//                tree.scrollIntoView(ag);
-//            }
-//        } else {
-//            // Try to find app group by name if ID could not locate the
-//            for (AppCategory appGrp : treeStore.getAll()) {
-//
-//                if (appGrp.getName().equalsIgnoreCase(appCategory.getId())) {
-//                    tree.getSelectionModel().select(appGrp, false);
-//                    tree.scrollIntoView(appGrp);
-//                    return;
-//                }
-//            }
-//        }
-//
-//    }
-//
-//    @Override
-//    public void selectFirstApp() {
-//        grid.getSelectionModel().select(0, false);
-//    }
-//
-//    @Override
-//    public void selectFirstAppCategory() {
-//        AppCategory ag = treeStore.getRootItems().get(0);
-//        tree.getSelectionModel().select(ag, false);
-//        tree.scrollIntoView(ag);
-//    }
-    //</editor-fold>
 
     @Override
     protected void onEnsureDebugId(String baseID) {

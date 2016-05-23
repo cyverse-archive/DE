@@ -56,12 +56,7 @@
         <!-- This is the navigation panel -->
         <container:west layoutData="{westData}">
             <gxt:TabPanel ui:field="categoryTabs">
-                <gxt:child config="{workspaceTabConfig}">
-                    <appsWidgets:AppCategoriesView ui:field="appCategoriesView"/>
-                </gxt:child>
-                <!--<gxt:child>-->
-                    <!--<appsWidgets:OntologyHierarchiesView ui:field="hierarchiesView"/>-->
-                <!--</gxt:child>-->
+
             </gxt:TabPanel>
         </container:west>
 

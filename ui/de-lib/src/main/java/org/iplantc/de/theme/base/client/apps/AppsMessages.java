@@ -128,7 +128,5 @@ public interface AppsMessages extends Messages {
 
     String workspaceTab();
 
-    String operationTab();
-
-    String topicTab();
+    String hpcTab();
 }

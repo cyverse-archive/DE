@@ -84,12 +84,7 @@ public class AppCategoriesViewDefaultAppearance implements AppCategoriesView.App
     }
 
     @Override
-    public String operationTab() {
-        return appsMessages.operationTab();
-    }
-
-    @Override
-    public String topicTab() {
-        return appsMessages.topicTab();
+    public String hpcTab() {
+        return appsMessages.hpcTab();
     }
 }
