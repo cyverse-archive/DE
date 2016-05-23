@@ -85,7 +85,8 @@
     (let [{:keys [path type]} (get-readable-data-item cm user data-id)
           metadata-response   (metadata/list-avus user (resolve-data-type type) data-id :as :json)]
       {:irods-avus (list-path-metadata cm path :system system)
-       :metadata   (:body metadata-response)})))
+       :metadata   (:body metadata-response)
+       :path       path})))
 
 (defn admin-metadata-get
   "Lists metadata for a path, showing all AVUs."
@@ -136,21 +137,25 @@
 (defn metadata-add
   "Allows user to set metadata on a path. The user must exist in iRODS
    and have write permissions on the path. The path must exist. The
-   avu-map parameter must be a list of objects in this format:
+   irods-avus parameter must be a list of objects in this format:
    {
       :attr attr-string
       :value value-string
       :unit unit-string
    }
 
+   The 'metadata' parameter must be nil or in a format expected by the metadata service add AVUs endpoint.
    Pass :system true to ignore restrictions on AVUs which may be added."
-  [user data-id avu-maps & {:keys [system] :or {system false}}]
+  [user data-id {:keys [irods-avus metadata]} & {:keys [system] :or {system false}}]
   (with-jargon (cfg/jargon-cfg) [cm]
     (validators/user-exists cm user)
-    (let [path (-> (get-readable-data-item cm user data-id) :path ft/rm-last-slash)]
+    (let [{:keys [path type]} (get-readable-data-item cm user data-id)
+          path (ft/rm-last-slash path)]
       (validators/path-writeable cm user path)
-      (when-not system (authorized-avus avu-maps))
-      (doseq [avu-map avu-maps]
+      (when-not system (authorized-avus irods-avus))
+      (when metadata
+        (metadata/update-avus user (resolve-data-type type) data-id (json/encode metadata)))
+      (doseq [avu-map irods-avus]
         (common-metadata-add cm path avu-map))
       {:path path
        :user user})))
@@ -158,8 +163,8 @@
 (defn admin-metadata-add
   "Adds AVUs to path, bypassing user permission checks. See (metadata-add)
    for the AVU map format."
-  [data-id avu-maps]
-  (metadata-add (cfg/irods-user) data-id avu-maps :system true))
+  [data-id body]
+  (metadata-add (cfg/irods-user) data-id body :system true))
 
 (defn metadata-delete
   "Allows user to remove metadata on a path. The user must exist in iRODS
@@ -212,6 +217,61 @@
 
       {:path path
        :user user})))
+
+(defn- find-attributes
+  [cm attrs {:keys [path]}]
+  (let [irods-avus (list-path-metadata cm path)
+        matching-avus (filter #(contains? attrs (:attr %)) irods-avus)]
+    (if-not (empty? matching-avus)
+      {:path path
+       :avus matching-avus}
+      nil)))
+
+(defn- validate-batch-add-attrs
+  "Throws an error if any of the given paths already have metadata set with any of the attrs found in the
+  irods-avus list."
+  [cm irods-avus dest-items]
+  (let [attrs      (set (map :attr irods-avus))
+        duplicates (remove nil? (map (partial find-attributes cm attrs) dest-items))]
+    (when-not (empty? duplicates)
+      (throw+ {:error_code :clojure-commons.exception/not-unique
+               :message    "Some paths already have metadata with some of the given attributes."
+               :duplicates duplicates}))))
+
+(defn- format-copy-dest-item
+  [{:keys [id type]}]
+  {:id   id
+   :type (resolve-data-type type)})
+
+(defn- get-writable-data-items
+  [cm user data-ids]
+  (let [data-items (map (partial stat/uuid-stat cm user) data-ids)
+        paths (map :path data-items)]
+    (validators/all-paths-writeable cm user paths)
+    data-items))
+
+(defn metadata-copy
+  "Copies all IRODS AVUs visible to the client, and Metadata AVUs, from the data item with
+   src-id to the items with dest-ids. When the 'force?' parameter is false or not set, additional
+   validation is performed."
+  [user force? src-id dest-ids]
+  (with-jargon (cfg/jargon-cfg) [cm]
+    (let [{:keys [path type]} (get-readable-data-item cm user src-id)
+          dest-items (get-writable-data-items cm user dest-ids)
+          dest-paths (map :path dest-items)
+          dest-ids (map :id dest-items)
+          {:keys [irods-avus]} (metadata-get user src-id)]
+      (if-not force?
+        (validate-batch-add-attrs cm irods-avus dest-items))
+      (metadata/copy-metadata-avus (resolve-data-type type)
+                                   src-id
+                                   force?
+                                   (map format-copy-dest-item dest-items))
+      (doseq [dest-id dest-ids]
+        (metadata-add user dest-id {:irods-avus irods-avus}))
+      {:user  user
+       :src   path
+       :paths dest-paths})))
 
 (defn- stat-is-dir?
   [{:keys [type]}]

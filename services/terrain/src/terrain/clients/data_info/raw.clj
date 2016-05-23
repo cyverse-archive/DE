@@ -187,9 +187,10 @@
 
 (defn get-avus
   "Get the set of iRODS AVUs for a data item."
-  [user path-uuid]
+  [user path-uuid  & {:keys [as] :or {as :stream}}]
   (request :get ["data" path-uuid "avus"]
-           (mk-req-map user)))
+           (assoc (mk-req-map user)
+                  :as as)))
 
 (defn admin-get-avus
   "Get the set of iRODS AVUs, including administrative AVUs, for a data-item."
@@ -200,20 +201,25 @@
 (defn set-avus
   "Set the iRODs AVUs to a specific set."
   [user path-uuid avu-map]
-  (request :put ["data" path-uuid "avus"]
-           (mk-req-map user (json/encode {:irods-avus avu-map}))))
+  (request :post ["data" path-uuid "avus"]
+           (mk-req-map user (json/encode avu-map))))
 
 (defn add-avus
   "Add AVUs to a data item."
   [user path-uuid avu-map]
-  (request :post ["data" path-uuid "avus"]
-           (mk-req-map user (json/encode {:irods-avus avu-map}))))
+  (request :put ["data" path-uuid "avus"]
+           (mk-req-map user (json/encode avu-map))))
+
+(defn metadata-copy
+  [user force path-uuid copy-request]
+  (request :post ["data" path-uuid "avus" "copy"]
+           (mk-req-map user (json/encode copy-request) {:force force})))
 
 (defn admin-add-avus
   "Add AVUs, allowing administrative AVUs to be included, for a data item."
   [user path-uuid avu-map]
-  (request :post ["admin" "data" path-uuid "avus"]
-           (mk-req-map user (json/encode {:irods-avus avu-map}))))
+  (request :put ["admin" "data" path-uuid "avus"]
+           (mk-req-map user (json/encode avu-map))))
 
 (defn admin-delete-avu
   "Delete an AVU for a data item by attr/value, allowing any AVU to be deleted."

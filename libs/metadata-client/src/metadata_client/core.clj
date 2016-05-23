@@ -90,3 +90,8 @@
   [username target-type target-id body]
   (http/put (metadata-url-encoded "avus" target-type target-id)
             (put-options body {:user username})))
+
+(defn copy-metadata-avus
+  [target-type target-id force? dest-items]
+  (http/post (metadata-url-encoded "avus" target-type target-id "copy")
+             (post-options (json/encode {:targets dest-items}) {:force force?})))
