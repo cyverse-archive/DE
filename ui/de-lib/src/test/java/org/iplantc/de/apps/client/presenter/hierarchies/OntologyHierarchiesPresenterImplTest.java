@@ -106,12 +106,15 @@ public class OntologyHierarchiesPresenterImplTest {
         when(avuListMock.size()).thenReturn(1);
         when(avuIteratorMock.hasNext()).thenReturn(true, false);
         when(avuIteratorMock.next()).thenReturn(avuMock);
+        when(hierarchyMock.getLabel()).thenReturn("string");
+        when(hierarchyMock.getLabel().toLowerCase()).thenReturn("string");
         when(hierarchyListMock.size()).thenReturn(1);
         when(hierarchyListIterator.hasNext()).thenReturn(true, false);
         when(hierarchyListIterator.next()).thenReturn(hierarchyMock);
         when(ontologyUtilMock.getAllPathsList(hierarchyListMock)).thenReturn(pathListMock);
         when(factoryMock.create(treeStoreMock)).thenReturn(viewMock);
         when(appearanceMock.hierarchyLabelName(hierarchyMock)).thenReturn("string");
+        when(viewMock.asWidget()).thenReturn(randomWidgetMock);
         when(viewMock.getTree()).thenReturn(treeMock);
         when(treeMock.getSelectionModel()).thenReturn(treeSelectionModelMock);
         when(tabPanelMock.iterator()).thenReturn(tabPanelIteratorMock);

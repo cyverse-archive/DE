@@ -36,6 +36,7 @@ import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.data.shared.event.StoreAddEvent;
 import com.sencha.gxt.data.shared.event.StoreClearEvent;
 import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
+import com.sencha.gxt.widget.core.client.TabPanel;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.TreeSelectionModel;
 
@@ -61,12 +62,14 @@ public class AppCategoriesPresenterImplTest {
     @Mock DEProperties propsMock;
     @Mock TreeStore<AppCategory> treeStoreMock;
     @Mock AppCategoriesViewFactory viewFactoryMock;
-    @Mock AppCategoriesView viewMock;
+    @Mock AppCategoriesView workspaceViewMock;
+    @Mock AppCategoriesView hpcViewMock;
     @Mock AppServiceFacade appServiceMock;
     @Mock AppUserServiceFacade appUserServiceMock;
     @Mock AppCategoriesView.AppCategoriesAppearance appearanceMock;
     @Mock Tree<AppCategory, String> treeMock;
     @Mock TreeSelectionModel<AppCategory> selectionModelMock;
+    @Mock TabPanel tabPanelMock;
 
     // Event mocks
     @Mock StoreAddEvent<App> mockAddEvent;
@@ -87,25 +90,28 @@ public class AppCategoriesPresenterImplTest {
     @Before public void setUp() {
 
         when(viewFactoryMock.create(Matchers.<TreeStore<AppCategory>>any(),
-                                    any(AppCategoriesView.AppCategoryHierarchyProvider.class))).thenReturn(viewMock);
-        when(viewMock.getTree()).thenReturn(treeMock);
+                                    any(AppCategoriesView.AppCategoryHierarchyProvider.class))).thenReturn(
+                workspaceViewMock).thenReturn(hpcViewMock);
+        when(workspaceViewMock.getTree()).thenReturn(treeMock);
+        when(hpcViewMock.getTree()).thenReturn(treeMock);
+        when(treeMock.getStore()).thenReturn(treeStoreMock);
         when(treeMock.getSelectionModel()).thenReturn(selectionModelMock);
         when(treeStoreMock.getRootItems()).thenReturn(Lists.newArrayList(mock(AppCategory.class),
                                                                          mock(AppCategory.class)));
-        uut = new AppCategoriesPresenterImpl(treeStoreMock,
-                                             propsMock,
+        uut = new AppCategoriesPresenterImpl(propsMock,
                                              jsonUtilMock,
                                              eventBusMock,
                                              viewFactoryMock);
         uut.appUserService = appUserServiceMock;
         uut.appearance = appearanceMock;
         uut.appService = appServiceMock;
+        uut.workspaceView = workspaceViewMock;
+        uut.hpcView = hpcViewMock;
     }
 
     @Test public void testConstructorEventHandlerWiring() {
         verifyConstructor();
-        verifyNoMoreInteractions(treeStoreMock,
-                                 viewMock,
+        verifyNoMoreInteractions(treeStoreMock, workspaceViewMock,
                                  viewFactoryMock,
                                  eventBusMock);
     }
@@ -121,17 +127,18 @@ public class AppCategoriesPresenterImplTest {
         when(appearanceMock.getAppCategoriesLoadingMask()).thenReturn("mask");
 
         /*** CALL METHOD UNDER TEST ***/
-        uut.go(null);
+        uut.go(null, tabPanelMock);
 
-        verify(viewMock).mask(anyString());
+        verify(workspaceViewMock).mask(anyString());
         verify(appServiceMock).getAppCategories(appCategoriesCaptor.capture());
 
         // Call failure with arbitrary exception
         appCategoriesCaptor.getValue().onFailure(null);
-        verify(viewMock).unmask();
+        verify(tabPanelMock).unmask();
 
         appCategoriesCaptor.getValue().onSuccess(Collections.<AppCategory>emptyList());
-        verify(viewMock, times(2)).unmask(); // At this point, it has been called 2 times
+        verify(treeStoreMock).addSortInfo(Matchers.<Store.StoreSortInfo<AppCategory>>any());
+        verify(workspaceViewMock).unmask(); // At this point, it has been called 2 times
     }
 
     @Test public void testGetSelectedAppCategory() {
@@ -154,7 +161,7 @@ public class AppCategoriesPresenterImplTest {
         uut.onAppSearchResultLoad(eventMock);
 
         verify(eventMock).getSearchPattern();
-        verify(selectionModelMock).deselectAll();
+        verify(selectionModelMock, times(2)).deselectAll();
     }
 
     @Test public void userAppsCategoryReselected_onAppUpdated() {
@@ -197,9 +204,7 @@ public class AppCategoriesPresenterImplTest {
 
 
     private void verifyConstructor() {
-        verify(viewFactoryMock).create(eq(treeStoreMock), eq(uut));
-        verify(treeStoreMock).addSortInfo(Matchers.<Store.StoreSortInfo<AppCategory>>any());
-
+        verify(viewFactoryMock, times(2)).create(Matchers.<TreeStore<AppCategory>> any(), eq(uut));
         verify(eventBusMock, times(2)).addHandler(Matchers.<GwtEvent.Type<AppCategoriesPresenterImpl>>any(), eq(uut));
     }
 

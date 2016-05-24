@@ -59,9 +59,9 @@ public class AppsViewPresenterImplTest {
                                        eq(toolbarPresenterMock));
 
         // Verify categories wiring
-        verify(categoriesViewMock).addAppCategorySelectedEventHandler(eq(gridPresenterMock));
-        verify(categoriesViewMock).addAppCategorySelectedEventHandler(eq(gridViewMock));
-        verify(categoriesViewMock).addAppCategorySelectedEventHandler(eq(toolbarViewMock));
+        verify(categoriesPresenterMock).addAppCategorySelectedEventHandler(eq(gridPresenterMock));
+        verify(categoriesPresenterMock).addAppCategorySelectedEventHandler(eq(gridViewMock));
+        verify(categoriesPresenterMock).addAppCategorySelectedEventHandler(eq(toolbarViewMock));
 
         hierarchiesPresenter.addOntologyHierarchySelectionChangedEventHandler(gridPresenterMock);
         hierarchiesPresenter.addOntologyHierarchySelectionChangedEventHandler(gridViewMock);
@@ -82,7 +82,6 @@ public class AppsViewPresenterImplTest {
         verify(toolbarViewMock).addBeforeAppSearchEventHandler(gridViewMock);
         verify(toolbarViewMock).addAppSearchResultLoadEventHandler(gridViewMock);
 
-        verify(categoriesPresenterMock, times(3)).getView();
         verify(gridPresenterMock, times(6)).getView();
         verify(toolbarPresenterMock, times(12)).getView();
 
