@@ -138,10 +138,12 @@ func TestBySubjectIncorrectSubjectType(t *testing.T) {
 	putPermission(db, "user", "s2", "analysis", "r2", "read")
 	putPermission(db, "group", "g1id", "analysis", "r2", "write")
 
-	// Look up permissions and verify that we get the expected number of results.
-	perms := lookupBySubject(db, "group", "s2").Permissions
-	if len(perms) != 0 {
-		t.Errorf("unexpected number of results: %d", len(perms))
+	// Attempt the lookup.
+	responder := lookupBySubjectAttempt(db, "group", "s2")
+	errorOut := responder.(*lookup.BySubjectBadRequest).Payload
+	expected := "incorrect type for subject, s2: group"
+	if *errorOut.Reason != expected {
+		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
 	}
 }
 
@@ -231,9 +233,11 @@ func TestBySubjectAndResourceTypeIncorrectSubjectType(t *testing.T) {
 	putPermission(db, "group", "g2id", "app", "app3", "own")
 
 	// Look up permissions and verify that we get the expected number of results.
-	perms := lookupBySubjectAndResourceType(db, "group", "s2", "app").Permissions
-	if len(perms) != 0 {
-		t.Errorf("unexpected number of results: %d", len(perms))
+	responder := lookupBySubjectAndResourceTypeAttempt(db, "group", "s2", "app")
+	errorOut := responder.(*lookup.BySubjectAndResourceTypeBadRequest).Payload
+	expected := "incorrect type for subject, s2: group"
+	if *errorOut.Reason != expected {
+		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
 	}
 }
 

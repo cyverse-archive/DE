@@ -48,6 +48,43 @@ func (o *BySubjectAndResourceTypeOK) WriteResponse(rw http.ResponseWriter, produ
 	}
 }
 
+/*BySubjectAndResourceTypeBadRequest Bad Request
+
+swagger:response bySubjectAndResourceTypeBadRequest
+*/
+type BySubjectAndResourceTypeBadRequest struct {
+
+	// In: body
+	Payload *models.ErrorOut `json:"body,omitempty"`
+}
+
+// NewBySubjectAndResourceTypeBadRequest creates BySubjectAndResourceTypeBadRequest with default headers values
+func NewBySubjectAndResourceTypeBadRequest() *BySubjectAndResourceTypeBadRequest {
+	return &BySubjectAndResourceTypeBadRequest{}
+}
+
+// WithPayload adds the payload to the by subject and resource type bad request response
+func (o *BySubjectAndResourceTypeBadRequest) WithPayload(payload *models.ErrorOut) *BySubjectAndResourceTypeBadRequest {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the by subject and resource type bad request response
+func (o *BySubjectAndResourceTypeBadRequest) SetPayload(payload *models.ErrorOut) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *BySubjectAndResourceTypeBadRequest) WriteResponse(rw http.ResponseWriter, producer httpkit.Producer) {
+
+	rw.WriteHeader(400)
+	if o.Payload != nil {
+		if err := producer.Produce(rw, o.Payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}
+
 /*BySubjectAndResourceTypeInternalServerError by subject and resource type internal server error
 
 swagger:response bySubjectAndResourceTypeInternalServerError

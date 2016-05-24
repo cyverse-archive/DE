@@ -2,6 +2,7 @@ package permission_lookup
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/go-swagger/go-swagger/httpkit/middleware"
 	"logcabin"
 	"permissions/clients/grouper"
@@ -16,6 +17,10 @@ func bySubjectOk(permissions []*models.Permission) middleware.Responder {
 
 func bySubjectInternalServerError(reason string) middleware.Responder {
 	return permission_lookup.NewBySubjectInternalServerError().WithPayload(&models.ErrorOut{&reason})
+}
+
+func bySubjectBadRequest(reason string) middleware.Responder {
+	return permission_lookup.NewBySubjectBadRequest().WithPayload(&models.ErrorOut{&reason})
 }
 
 func BuildBySubjectHandler(
@@ -43,7 +48,8 @@ func BuildBySubjectHandler(
 		}
 		if subject != nil && string(subject.SubjectType) != subjectType {
 			tx.Rollback()
-			return bySubjectOk(make([]*models.Permission, 0))
+			reason := fmt.Sprintf("incorrect type for subject, %s: %s", subjectId, subjectType)
+			return bySubjectBadRequest(reason)
 		}
 
 		// Get the list of group IDs.

@@ -2,6 +2,7 @@ package permission_lookup
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/go-swagger/go-swagger/httpkit/middleware"
 	"logcabin"
 	"permissions/clients/grouper"
@@ -16,6 +17,10 @@ func bySubjectAndResourceTypeOk(permissions []*models.Permission) middleware.Res
 
 func bySubjectAndResourceTypeInternalServerError(reason string) middleware.Responder {
 	return permission_lookup.NewBySubjectAndResourceTypeInternalServerError().WithPayload(&models.ErrorOut{&reason})
+}
+
+func bySubjectAndResourceTypeBadRequest(reason string) middleware.Responder {
+	return permission_lookup.NewBySubjectAndResourceTypeBadRequest().WithPayload(&models.ErrorOut{&reason})
 }
 
 func BuildBySubjectAndResourceTypeHandler(
@@ -44,7 +49,8 @@ func BuildBySubjectAndResourceTypeHandler(
 		}
 		if subject != nil && string(subject.SubjectType) != subjectType {
 			tx.Rollback()
-			return bySubjectAndResourceTypeOk(make([]*models.Permission, 0))
+			reason := fmt.Sprintf("incorrect type for subject, %s: %s", subjectId, subjectType)
+			return bySubjectAndResourceTypeBadRequest(reason)
 		}
 
 		// Verify that the resource type exists.
