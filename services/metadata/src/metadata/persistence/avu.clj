@@ -98,16 +98,6 @@
       existing-avu
       (add-avus user-id [avu]))))
 
-(defn remove-avus
-  "Removes AVUs with the given IDs from the Metadata database."
-  [avu-ids]
-  (delete :avus (where {:id [in avu-ids]})))
-
-(defn remove-avu
-  "Removes the AVU with the given ID from the Metadata database."
-  [avu-id]
-  (delete :avus (where {:id avu-id})))
-
 (defn remove-orphaned-avus
   "Removes AVUs for the given target-id that are not in the given set of avu-ids."
   [target-type target-id avu-ids]

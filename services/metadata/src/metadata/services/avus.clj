@@ -6,21 +6,6 @@
             [metadata.amqp :as amqp]
             [metadata.persistence.avu :as persistence]))
 
-(defn remove-avu
-  "Removes the given Metadata AVU association for the given user's data item."
-  [user-id target-type target-id avu-id]
-  (log/info user-id "removing AVU" avu-id "from item" target-type target-id)
-  (let [avu {:id          avu-id
-             :target_type target-type
-             :target_id   target-id}
-        existing-avu (persistence/get-avu-for-target avu)]
-    (when-not existing-avu
-      (throw+ {:type :clojure-commons.exception/not-found
-               :avu  avu}))
-    (persistence/remove-avu avu-id)
-    (amqp/publish-metadata-update user-id target-id))
-  nil)
-
 (defn filter-targets-by-attr-value
   "Filters the given target IDs by returning a list of any that have the given attr and value applied."
   [attr value target-types target-ids]

@@ -72,13 +72,4 @@ matching `attr`, `value`, `unit`, `target`, and `type`."
            :description "
 Copies all Metadata Template AVUs from the data item with the ID given in the URL to other data
 items sent in the request body."
-           (ok (avus/copy-avus user target-type target-id body)))
-
-    (DELETE* "/:target-type/:target-id/:avu-id" []
-             :path-params [target-id :- TargetIdPathParam
-                           target-type :- TargetTypeEnum
-                           avu-id :- AvuIdPathParam]
-             :query [{:keys [user]} StandardUserQueryParams]
-             :summary "Remove Metadata AVU from a Target"
-             :description "Removes the AVU associated with the given ID and target item."
-             (ok (avus/remove-avu user target-type target-id avu-id)))))
+           (ok (avus/copy-avus user target-type target-id body)))))
