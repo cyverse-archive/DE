@@ -166,33 +166,6 @@
   [data-id body]
   (metadata-add (cfg/irods-user) data-id body :system true))
 
-(defn metadata-delete
-  "Allows user to remove metadata on a path. The user must exist in iRODS
-   and have write permissions on the path. The path must exist. The
-   avu-map parameter must be a list of objects in this format:
-   {
-      :attr attr-string
-      :value value-string
-   }
-
-   Pass :system true to ignore restrictions on AVUs which may be added."
-  [user data-id avu-maps & {:keys [system] :or {system false}}]
-  (with-jargon (cfg/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (let [path (-> (get-readable-data-item cm user data-id) :path ft/rm-last-slash)]
-      (validators/path-writeable cm user path)
-      (when-not system (authorized-avus avu-maps))
-      (doseq [avu-map avu-maps]
-        (common-metadata-delete cm path avu-map))
-      {:path path
-       :user user})))
-
-(defn admin-metadata-delete
-  "Deletes AVUs from path, bypassing user permission checks. See (metadata-delete)
-   for the AVU map format."
-  [data-id avu-maps]
-  (metadata-delete (cfg/irods-user) data-id avu-maps :system true))
-
 (defn metadata-set
   "Allows user to set metadata on an item with the given data-id. The user must exist in iRODS and have
    write permissions on the data item. The 'irods-avus' parameter should be an array of AVU maps following

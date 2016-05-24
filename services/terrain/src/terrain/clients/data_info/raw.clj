@@ -221,12 +221,6 @@
   (request :put ["admin" "data" path-uuid "avus"]
            (mk-req-map user (json/encode avu-map))))
 
-(defn admin-delete-avu
-  "Delete an AVU for a data item by attr/value, allowing any AVU to be deleted."
-  [user path-uuid avu]
-  (request :delete ["admin" "data" path-uuid "avus"]
-           (mk-req-map user (select-keys avu [:attr :value]))))
-
 (defn save-metadata
   "Request that metadata be saved to a file."
   [user path-uuid dest recursive]

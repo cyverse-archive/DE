@@ -31,15 +31,7 @@
       :description (str "Associate iRODS and Metadata AVUs with a data item. Allow adding any AVU."
 (get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_AUTHORIZED")
 (get-endpoint-delegate-block "metadata" "PUT /avus/{target-type}/{target-id}"))
-      (svc/trap uri meta/admin-metadata-add data-id body))
-
-    (DELETE* "/avus" [:as {uri :uri}]
-      :query [{:keys [user attr value]} AVUDeleteParams]
-      :return AVUChangeResult
-      :summary "Delete AVU (administrative)"
-      :description (str "Delete a single iRODS AVU from a data item. Allows deleting any AVU."
-(get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_AUTHORIZED"))
-      (svc/trap uri meta/admin-metadata-delete data-id [{:attr attr :value value}])))
+      (svc/trap uri meta/admin-metadata-add data-id body)))
 
   (context* "/data/:data-id" []
     :path-params [data-id :- DataIdPathParam]

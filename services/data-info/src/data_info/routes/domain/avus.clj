@@ -12,10 +12,6 @@
    :value (describe String "The value associated with this attribute")
    :unit  (describe String "The unit associated with this value")})
 
-(s/defschema AVUDeleteParams
-  (merge StandardUserQueryParams
-    (dissoc AVUMap :unit)))
-
 (s/defschema AVUListing
   {:irods-avus
    (describe [AVUMap] "A list of AVUs on this object")})
