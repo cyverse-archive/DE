@@ -35,14 +35,14 @@ func BuildBySubjectAndResourceTypeHandler(
 			return bySubjectAndResourceTypeInternalServerError(err.Error())
 		}
 
-		// Verify that the subject exists.
-		subject, err := permsdb.GetSubject(tx, models.ExternalSubjectID(subjectId), models.SubjectType(subjectType))
+		// Verify that the subject type is correct.
+		subject, err := permsdb.GetSubjectByExternalId(tx, models.ExternalSubjectID(subjectId))
 		if err != nil {
 			tx.Rollback()
 			logcabin.Error.Print(err)
 			return bySubjectAndResourceTypeInternalServerError(err.Error())
 		}
-		if subject == nil {
+		if subject != nil && string(subject.SubjectType) != subjectType {
 			tx.Rollback()
 			return bySubjectAndResourceTypeOk(make([]*models.Permission, 0))
 		}
