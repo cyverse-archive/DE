@@ -129,6 +129,7 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
     HandlerManager handlerManager;
     Map<String, List<OntologyHierarchy>> iriToHierarchyMap = new FastMap<>();
     private OntologyHierarchiesViewFactory viewFactory;
+    String baseID;
 
 
     @Inject
@@ -178,6 +179,11 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
     }
 
     @Override
+    public void setViewDebugId(String baseID) {
+        this.baseID = baseID;
+    }
+
+    @Override
     public void onAppInfoSelected(final AppInfoSelectedEvent event) {
         appDetailsDlgAsyncProvider.get(new AsyncCallback<AppDetailsDialog>() {
             @Override
@@ -196,6 +202,7 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
         for (OntologyHierarchy hierarchy : results) {
             TreeStore<OntologyHierarchy> treeStore = getTreeStore(hierarchy);
             OntologyHierarchiesView view = viewFactory.create(treeStore);
+            view.asWidget().ensureDebugId(baseID + "." + hierarchy.getLabel().toLowerCase());
             view.addOntologyHierarchySelectionChangedEventHandler(this);
             viewTabPanel.add(view.getTree(), new TabItemConfig(appearance.hierarchyLabelName(hierarchy)));
         }

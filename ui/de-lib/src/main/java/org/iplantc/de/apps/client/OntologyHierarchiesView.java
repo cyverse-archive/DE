@@ -32,6 +32,8 @@ public interface OntologyHierarchiesView extends IsWidget,
         OntologyHierarchiesView getView();
 
         void go(TabPanel tabPanel);
+
+        void setViewDebugId(String baseID);
     }
 
     Tree<OntologyHierarchy, String> getTree();

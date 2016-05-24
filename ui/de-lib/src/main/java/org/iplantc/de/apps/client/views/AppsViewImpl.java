@@ -4,6 +4,7 @@ import org.iplantc.de.apps.client.AppCategoriesView;
 import org.iplantc.de.apps.client.AppsGridView;
 import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.apps.client.AppsView;
+import org.iplantc.de.apps.client.OntologyHierarchiesView;
 import org.iplantc.de.apps.shared.AppsModule.Ids;
 
 import com.google.gwt.core.client.GWT;
@@ -30,13 +31,20 @@ public class AppsViewImpl extends Composite implements AppsView {
 
     @UiField(provided = true) final AppsToolbarView toolBar;
     @UiField TabPanel categoryTabs;
+    AppCategoriesView.Presenter categoriesPresenter;
+    OntologyHierarchiesView.Presenter hierarchiesPresenter;
+
     @UiField(provided = true) final AppsGridView appsGridView;
 
     private static final MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     @Inject
-    protected AppsViewImpl(@Assisted final AppsGridView.Presenter gridPresenter,
+    protected AppsViewImpl(@Assisted final AppCategoriesView.Presenter categoriesPresenter,
+                           @Assisted final OntologyHierarchiesView.Presenter hierarchiesPresenter,
+                           @Assisted final AppsGridView.Presenter gridPresenter,
                            @Assisted final AppsToolbarView.Presenter toolbarPresenter) {
+        this.categoriesPresenter = categoriesPresenter;
+        this.hierarchiesPresenter = hierarchiesPresenter;
         this.appsGridView = gridPresenter.getView();
         this.toolBar = toolbarPresenter.getView();
 
@@ -75,7 +83,8 @@ public class AppsViewImpl extends Composite implements AppsView {
         super.onEnsureDebugId(baseID);
         toolBar.asWidget().ensureDebugId(baseID + Ids.MENU_BAR);
         appsGridView.asWidget().ensureDebugId(baseID);
-//        appCategoriesView.asWidget().ensureDebugId(baseID);
+        categoriesPresenter.setViewDebugId(baseID);
+        hierarchiesPresenter.setViewDebugId(baseID);
     }
 
 }

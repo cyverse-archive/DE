@@ -37,7 +37,9 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         this.categoriesPresenter = categoriesPresenter;
         this.appsGridPresenter = appsGridPresenter;
         this.hierarchiesPresenter = hierarchiesPresenter;
-        this.view = viewFactory.create(appsGridPresenter,
+        this.view = viewFactory.create(categoriesPresenter,
+                                       hierarchiesPresenter,
+                                       appsGridPresenter,
                                        toolbarPresenter);
 
         categoriesPresenter.addAppCategorySelectedEventHandler(appsGridPresenter);

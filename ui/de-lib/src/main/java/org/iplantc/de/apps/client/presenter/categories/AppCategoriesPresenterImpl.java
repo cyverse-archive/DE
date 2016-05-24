@@ -12,6 +12,7 @@ import org.iplantc.de.apps.client.events.selection.CopyWorkflowSelected;
 import org.iplantc.de.apps.client.gin.AppCategoryTreeStoreProvider;
 import org.iplantc.de.apps.client.gin.factory.AppCategoriesViewFactory;
 import org.iplantc.de.apps.client.views.details.dialogs.AppDetailsDialog;
+import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.shared.DEProperties;
 import org.iplantc.de.client.models.HasId;
@@ -168,6 +169,12 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
             }
         });
 
+    }
+
+    @Override
+    public void setViewDebugId(String baseID) {
+        workspaceView.asWidget().ensureDebugId(baseID + AppsModule.Ids.CATEGORIES);
+        hpcView.asWidget().ensureDebugId(baseID + AppsModule.Ids.HPC);
     }
 
     void createHPCTab() {

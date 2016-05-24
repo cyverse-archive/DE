@@ -73,6 +73,8 @@ public interface AppCategoriesView extends IsWidget,
         AppCategoriesView getView();
 
         void go(HasId selectedAppCategory, TabPanel tabPanel);
+
+        void setViewDebugId(String baseID);
     }
 
     interface AppCategoryHierarchyProvider {
