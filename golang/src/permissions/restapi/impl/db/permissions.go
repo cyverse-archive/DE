@@ -10,19 +10,19 @@ func ListPermissions(tx *sql.Tx) ([]*models.Permission, error) {
 
 	// Query the database.
 	query := `SELECT p.id AS id,
-                   s.id AS internal_subject_id,
-                   s.subject_id AS subject_id,
-                   s.subject_type AS subject_type,
-                   r.id AS resource_id,
-                   r.name AS resource_name,
-                   rt.name AS resource_type,
-                   pl.name AS permission_level
-            FROM permissions p
-            JOIN permission_levels pl ON p.permission_level_id = pl.id
-            JOIN subjects s ON p.subject_id = s.id
-            JOIN resources r ON p.resource_id = r.id
-            JOIN resource_types rt ON r.resource_type_id = rt.id
-            ORDER BY s.subject_id, r.name, pl.precedence`
+	                 s.id AS internal_subject_id,
+	                 s.subject_id AS subject_id,
+	                 s.subject_type AS subject_type,
+	                 r.id AS resource_id,
+	                 r.name AS resource_name,
+	                 rt.name AS resource_type,
+	                 pl.name AS permission_level
+	          FROM permissions p
+	          JOIN permission_levels pl ON p.permission_level_id = pl.id
+	          JOIN subjects s ON p.subject_id = s.id
+	          JOIN resources r ON p.resource_id = r.id
+	          JOIN resource_types rt ON r.resource_type_id = rt.id
+	          ORDER BY s.subject_id, r.name, pl.precedence`
 	rows, err := tx.Query(query)
 	if err != nil {
 		return nil, err
@@ -47,23 +47,27 @@ func ListPermissions(tx *sql.Tx) ([]*models.Permission, error) {
 }
 
 func PermissionsForSubjects(tx *sql.Tx, subjectIds []string) ([]*models.Permission, error) {
+	sa := StringArray(subjectIds)
 
 	// Query the database.
-	query := `SELECT p.id AS id,
-                   s.id AS internal_subject_id,
-                   s.subject_id AS subject_id,
-                   s.subject_type AS subject_type,
-                   r.id AS resource_id,
-                   r.name AS resource_name,
-                   rt.name AS resource_type,
-                   pl.name AS permission_level
-            FROM permissions p
-            JOIN permission_levels pl ON p.permission_level_id = pl.id
-            JOIN subjects s ON p.subject_id = s.id
-            JOIN resources r ON p.resource_id = r.id
-            JOIN resource_types rt ON r.resource_type_id = rt.id
-            WHERE s.subject_id in $1`
-	rows, err := tx.Query(query, subjectIds)
+	query := `SELECT DISTINCT ON (r.id)
+	              first_value(p.id) OVER w AS id,
+	              first_value(s.id) OVER w AS internal_subject_id,
+	              first_value(s.subject_id) OVER w AS subject_id,
+	              first_value(s.subject_type) OVER w AS subject_type,
+	              r.id AS resource_id,
+	              first_value(r.name) OVER w AS resource_name,
+	              first_value(rt.name) OVER w AS resource_type,
+	              first_value(pl.name) OVER w AS permission_level
+	          FROM permissions p
+	          JOIN permission_levels pl ON p.permission_level_id = pl.id
+	          JOIN subjects s ON p.subject_id = s.id
+	          JOIN resources r ON p.resource_id = r.id
+	          JOIN resource_types rt ON r.resource_type_id = rt.id
+	          WHERE s.subject_id = any($1)
+	          WINDOW w AS (PARTITION BY r.id ORDER BY pl.precedence)
+            ORDER BY r.id`
+	rows, err := tx.Query(query, &sa)
 	if err != nil {
 		return nil, err
 	}
@@ -90,19 +94,19 @@ func GetPermissionById(tx *sql.Tx, permissionId string) (*models.Permission, err
 
 	// Query the database.
 	query := `SELECT p.id AS id,
-                   s.id AS internal_subject_id,
-                   s.subject_id AS subject_id,
-                   s.subject_type AS subject_type,
-                   r.id AS resource_id,
-                   r.name AS resource_name,
-                   rt.name AS resource_type,
-                   pl.name AS permission_level
-            FROM permissions p
-            JOIN permission_levels pl ON p.permission_level_id = pl.id
-            JOIN subjects s ON p.subject_id = s.id
-            JOIN resources r ON p.resource_id = r.id
-            JOIN resource_types rt ON r.resource_type_id = rt.id
-            WHERE p.id = $1`
+	                 s.id AS internal_subject_id,
+	                 s.subject_id AS subject_id,
+	                 s.subject_type AS subject_type,
+	                 r.id AS resource_id,
+	                 r.name AS resource_name,
+	                 rt.name AS resource_type,
+	                 pl.name AS permission_level
+	          FROM permissions p
+	          JOIN permission_levels pl ON p.permission_level_id = pl.id
+	          JOIN subjects s ON p.subject_id = s.id
+	          JOIN resources r ON p.resource_id = r.id
+	          JOIN resource_types rt ON r.resource_type_id = rt.id
+	          WHERE p.id = $1`
 	rows, err := tx.Query(query, &permissionId)
 	if err != nil {
 		return nil, err
@@ -177,9 +181,9 @@ func UpsertPermission(
 
 	// Update the database.
 	stmt := `INSERT INTO permissions (subject_id, resource_id, permission_level_id) VALUES ($1, $2, $3)
-           ON CONFLICT (subject_id, resource_id) DO UPDATE
-           SET permission_level_id = EXCLUDED.permission_level_id
-           RETURNING id`
+	         ON CONFLICT (subject_id, resource_id) DO UPDATE
+	         SET permission_level_id = EXCLUDED.permission_level_id
+	         RETURNING id`
 	row := tx.QueryRow(stmt, string(subjectId), resourceId, permissionLevelId)
 
 	// Extract the permission ID.
@@ -207,20 +211,20 @@ func GetPermission(
 
 	// Query the database.
 	query := `SELECT p.id AS id,
-                   s.id AS internal_subject_id,
-                   s.subject_id AS subject_id,
-                   s.subject_type AS subject_type,
-                   r.id AS resource_id,
-                   r.name AS resource_name,
-                   rt.name AS resource_type,
-                   pl.name AS permission_level
-            FROM permissions p
-            JOIN permission_levels pl ON p.permission_level_id = pl.id
-            JOIN subjects s ON p.subject_id = s.id
-            JOIN resources r ON p.resource_id = r.id
-            JOIN resource_types rt ON r.resource_type_id = rt.id
-            WHERE p.subject_id = $1
-            AND p.resource_id = $2`
+	                 s.id AS internal_subject_id,
+	                 s.subject_id AS subject_id,
+	                 s.subject_type AS subject_type,
+	                 r.id AS resource_id,
+	                 r.name AS resource_name,
+	                 rt.name AS resource_type,
+	                 pl.name AS permission_level
+	          FROM permissions p
+	          JOIN permission_levels pl ON p.permission_level_id = pl.id
+	          JOIN subjects s ON p.subject_id = s.id
+	          JOIN resources r ON p.resource_id = r.id
+	          JOIN resource_types rt ON r.resource_type_id = rt.id
+	          WHERE p.subject_id = $1
+	          AND p.resource_id = $2`
 	rows, err := tx.Query(query, string(subjectId), resourceId)
 	if err != nil {
 		return nil, err
