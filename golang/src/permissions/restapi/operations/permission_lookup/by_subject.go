@@ -29,7 +29,7 @@ func NewBySubject(ctx *middleware.Context, handler BySubjectHandler) *BySubject 
 
 /*BySubject swagger:route GET /transitive_permissions/subjects/{subject_type}/{subject_id} permissionLookup bySubject
 
-Look Up Permissions for a Subject
+Look Up by Subject
 
 */
 type BySubject struct {

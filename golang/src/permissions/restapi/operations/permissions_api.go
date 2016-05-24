@@ -66,6 +66,8 @@ type PermissionsAPI struct {
 	SubjectsAddSubjectHandler subjects.AddSubjectHandler
 	// PermissionLookupBySubjectHandler sets the operation handler for the by subject operation
 	PermissionLookupBySubjectHandler permission_lookup.BySubjectHandler
+	// PermissionLookupBySubjectAndResourceTypeHandler sets the operation handler for the by subject and resource type operation
+	PermissionLookupBySubjectAndResourceTypeHandler permission_lookup.BySubjectAndResourceTypeHandler
 	// ResourcesDeleteResourceHandler sets the operation handler for the delete resource operation
 	ResourcesDeleteResourceHandler resources.DeleteResourceHandler
 	// SubjectsDeleteSubjectHandler sets the operation handler for the delete subject operation
@@ -171,6 +173,10 @@ func (o *PermissionsAPI) Validate() error {
 
 	if o.PermissionLookupBySubjectHandler == nil {
 		unregistered = append(unregistered, "permission_lookup.BySubjectHandler")
+	}
+
+	if o.PermissionLookupBySubjectAndResourceTypeHandler == nil {
+		unregistered = append(unregistered, "permission_lookup.BySubjectAndResourceTypeHandler")
 	}
 
 	if o.ResourcesDeleteResourceHandler == nil {
@@ -325,6 +331,11 @@ func (o *PermissionsAPI) initHandlerCache() {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/transitive_permissions/subjects/{subject_type}/{subject_id}"] = permission_lookup.NewBySubject(o.context, o.PermissionLookupBySubjectHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/transitive_permissions/subjects/{subject_type}/{subject_id}/{resource_type}"] = permission_lookup.NewBySubjectAndResourceType(o.context, o.PermissionLookupBySubjectAndResourceTypeHandler)
 
 	if o.handlers["DELETE"] == nil {
 		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)
