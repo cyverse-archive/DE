@@ -29,7 +29,7 @@
     <ui:with field="westData"
              type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
         <ui:attributes margins="{westMargins}"
-                       size="200"
+                       size="235"
                        split="true"/>
     </ui:with>
     <ui:with field="centerData"
