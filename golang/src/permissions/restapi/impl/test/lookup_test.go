@@ -100,3 +100,25 @@ func TestBySubjectMultiplePermissions(t *testing.T) {
 	checkPerm(t, perms[0], 0, "r1", "s2", "own")
 	checkPerm(t, perms[1], 1, "r2", "g1id", "write")
 }
+
+func TestBySubjectIncorrectSubjectType(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Add some permissions.
+	putPermission(db, "user", "s2", "app", "r1", "own")
+	putPermission(db, "group", "g1id", "app", "r1", "read")
+	putPermission(db, "user", "s2", "app", "r2", "read")
+	putPermission(db, "group", "g1id", "app", "r2", "write")
+
+	// Look up permissions and verify that we get the expected number of results.
+	perms := lookupBySubject(db, "group", "s2").Permissions
+	if len(perms) != 0 {
+		t.Errorf("unexpected number of results: %d", len(perms))
+	}
+}

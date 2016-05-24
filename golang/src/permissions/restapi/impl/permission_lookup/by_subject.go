@@ -10,6 +10,10 @@ import (
 	"permissions/restapi/operations/permission_lookup"
 )
 
+func bySubjectOk(permissions []*models.Permission) middleware.Responder {
+	return permission_lookup.NewBySubjectOK().WithPayload(&models.PermissionList{permissions})
+}
+
 func bySubjectInternalServerError(reason string) middleware.Responder {
 	return permission_lookup.NewBySubjectInternalServerError().WithPayload(&models.ErrorOut{&reason})
 }
@@ -20,6 +24,8 @@ func BuildBySubjectHandler(
 
 	// Return the handler function.
 	return func(params permission_lookup.BySubjectParams) middleware.Responder {
+		subjectType := params.SubjectType
+		subjectId := params.SubjectID
 
 		// Create a transaction for the request.
 		tx, err := db.Begin()
@@ -28,8 +34,20 @@ func BuildBySubjectHandler(
 			return bySubjectInternalServerError(err.Error())
 		}
 
+		// Verify that the subject exists.
+		subject, err := permsdb.GetSubject(tx, models.ExternalSubjectID(subjectId), models.SubjectType(subjectType))
+		if err != nil {
+			tx.Rollback()
+			logcabin.Error.Print(err)
+			return bySubjectInternalServerError(err.Error())
+		}
+		if subject == nil {
+			tx.Rollback()
+			return bySubjectOk(make([]*models.Permission, 0))
+		}
+
 		// Get the list of group IDs.
-		groupIds, err := groupIdsForSubject(grouperClient, params.SubjectType, params.SubjectID)
+		groupIds, err := groupIdsForSubject(grouperClient, subjectType, subjectId)
 		if err != nil {
 			tx.Rollback()
 			logcabin.Error.Print(err)
@@ -37,7 +55,7 @@ func BuildBySubjectHandler(
 		}
 
 		// The list of subject IDs is just the current subject ID plus the list of group IDs.
-		subjectIds := append(groupIds, params.SubjectID)
+		subjectIds := append(groupIds, subjectId)
 
 		// Perform the lookup.
 		permissions, err := permsdb.PermissionsForSubjects(tx, subjectIds)
@@ -54,6 +72,6 @@ func BuildBySubjectHandler(
 			return bySubjectInternalServerError(err.Error())
 		}
 
-		return permission_lookup.NewBySubjectOK().WithPayload(&models.PermissionList{permissions})
+		return bySubjectOk(permissions)
 	}
 }
