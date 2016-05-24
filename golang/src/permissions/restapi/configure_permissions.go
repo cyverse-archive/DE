@@ -192,6 +192,10 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 		permission_lookup_impl.BuildBySubjectHandler(db, grouperClient),
 	)
 
+	api.PermissionLookupBySubjectAndResourceTypeHandler = permission_lookup.BySubjectAndResourceTypeHandlerFunc(
+		permission_lookup_impl.BuildBySubjectAndResourceTypeHandler(db, grouperClient),
+	)
+
 	api.ServerShutdown = cleanup
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))
