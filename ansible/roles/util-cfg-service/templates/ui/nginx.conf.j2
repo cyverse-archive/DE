@@ -1,3 +1,5 @@
+{% block header %}{% endblock %}
+
 events {
     worker_connections 4096;
 }
@@ -33,9 +35,11 @@ http {
 {% endif %}
 
     upstream de {
+{% block de_upstream %}
         ip_hash;
 
         server de-host:8080;
+{% endblock %}
     }
 
     upstream kifshare {
@@ -90,6 +94,7 @@ http {
         }
 
         location / {
+{% block location_slash %}
             gzip on;
             gzip_http_version 1.1;
             gzip_vary on;
@@ -110,9 +115,11 @@ http {
             proxy_read_timeout 3600s;
 
             proxy_pass http://de;
+{% endblock %}
         }
 
         location /de/websocket {
+{% block location_websocket %}
             proxy_http_version 1.1;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
@@ -124,6 +131,7 @@ http {
             proxy_read_timeout 3600s;
 
             proxy_pass http://de;
+{% endblock %}
         }
     }
 }

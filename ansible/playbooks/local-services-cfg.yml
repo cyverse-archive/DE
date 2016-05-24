@@ -196,6 +196,14 @@
         - ui
 
     - role: util-cfg-service
+      src: "ui/nginx.conf.tmpl.j2"
+      dest: "{{service_conf_dir}}/nginx/nginx.conf.tmpl"
+      service_name_short: "{{de.service_name_short}}"
+      tags:
+        - service_config
+        - ui
+
+    - role: util-cfg-service
       src: "docker-cleanup/docker-gc-exclude-containers.j2"
       dest: "{{service_conf_dir}}/docker-gc-exclude-containers"
       service_name_short: "docker-gc"
