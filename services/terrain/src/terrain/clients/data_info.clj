@@ -258,6 +258,7 @@
   "Gets the URL used to get saved tree URLs."
   [user path]
   (->> (raw/admin-get-avus user (uuid-for-path user path))
+    :body
     :irods-avus
     (filter #(= (:attr %) (cfg/tree-urls-attr)))
     first

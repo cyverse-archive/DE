@@ -187,7 +187,7 @@
 
 (defn get-avus
   "Get the set of iRODS AVUs for a data item."
-  [user path-uuid  & {:keys [as] :or {as :stream}}]
+  [user path-uuid & {:keys [as] :or {as :stream}}]
   (request :get ["data" path-uuid "avus"]
            (assoc (mk-req-map user)
                   :as as)))
@@ -196,7 +196,8 @@
   "Get the set of iRODS AVUs, including administrative AVUs, for a data-item."
   [user path-uuid]
   (request :get ["admin" "data" path-uuid "avus"]
-           (mk-req-map user)))
+           (assoc (mk-req-map user)
+                  :as :json)))
 
 (defn set-avus
   "Set the iRODs AVUs to a specific set."
