@@ -271,6 +271,7 @@
       has_iplant_data: true
       deploy_use_color: true
       service_name: "{{de.compose_service}}"
+      service_name_short: "de"
     - role: util-notify-chat
       msg: ":heavy_check_mark: Done deploying UI"
 
