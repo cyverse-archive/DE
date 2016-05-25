@@ -99,13 +99,12 @@
   [user template-attrs attrs [path path-info] values]
   (let [avus (map (partial zipmap [:attr :value :unit]) (map vector attrs values (repeat "")))
         template-attr? #(contains? template-attrs (:attr %))
-        [template-avus irods-avus] ((juxt filter remove) template-attr? avus)]
+        [template-avus irods-avus] ((juxt filter remove) template-attr? avus)
+        metadata {:metadata   {:avus template-avus}
+                  :irods-avus irods-avus}]
     (when-not (and (empty? template-avus) (empty? irods-avus))
-      (data-raw/add-avus user (get path-info "id") {:metadata   template-avus
-                                                    :irods-avus irods-avus}))
-    {:path path
-     :metadata template-avus
-     :irods-avus irods-avus}))
+      (data-raw/add-avus user (get path-info "id") metadata))
+    (merge {:path path} metadata)))
 
 (defn- parse-template-attrs
   "Fetches Metadata Template attributes from the metadata service if given a template-id UUID.
