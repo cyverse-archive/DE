@@ -129,7 +129,7 @@ public class AppCategoriesPresenterImplTest {
         /*** CALL METHOD UNDER TEST ***/
         uut.go(null, tabPanelMock);
 
-        verify(workspaceViewMock).mask(anyString());
+        verify(treeMock, times(2)).mask(anyString());
         verify(appServiceMock).getAppCategories(appCategoriesCaptor.capture());
 
         // Call failure with arbitrary exception
@@ -138,7 +138,7 @@ public class AppCategoriesPresenterImplTest {
 
         appCategoriesCaptor.getValue().onSuccess(Collections.<AppCategory>emptyList());
         verify(treeStoreMock).addSortInfo(Matchers.<Store.StoreSortInfo<AppCategory>>any());
-        verify(workspaceViewMock).unmask(); // At this point, it has been called 2 times
+        verify(treeMock, times(2)).unmask(); // At this point, it has been called 2 times
     }
 
     @Test public void testGetSelectedAppCategory() {

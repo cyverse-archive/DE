@@ -41,10 +41,6 @@
         <ui:attributes size="150"
                        hidden="true"/>
     </ui:with>
-    <ui:with field="workspaceTabConfig"
-             type="com.sencha.gxt.widget.core.client.TabItemConfig">
-        <ui:attributes text="My Apps"/>
-    </ui:with>
 
 
     <container:BorderLayoutContainer borders="true">

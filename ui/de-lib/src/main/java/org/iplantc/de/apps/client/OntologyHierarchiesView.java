@@ -27,10 +27,6 @@ public interface OntologyHierarchiesView extends IsWidget,
                                 AppSearchResultLoadEvent.AppSearchResultLoadEventHandler,
                                 OntologyHierarchySelectionChangedEvent.HasOntologyHierarchySelectionChangedEventHandlers {
 
-        OntologyHierarchy getSelectedHierarchy();
-
-        OntologyHierarchiesView getView();
-
         void go(TabPanel tabPanel);
 
         void setViewDebugId(String baseID);

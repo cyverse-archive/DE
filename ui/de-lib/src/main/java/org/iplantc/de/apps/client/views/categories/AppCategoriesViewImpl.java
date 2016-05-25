@@ -38,7 +38,6 @@ public class AppCategoriesViewImpl extends ContentPanel implements AppCategories
     @UiField Tree<AppCategory, String> tree;
     @UiField(provided = true) AppCategoriesAppearance appearance;
 
-    private static final String WEST_COLLAPSE_BTN_ID = "idCategoryCollapseBtn";
     private static final AppCategoriesViewImplUiBinder ourUiBinder = GWT.create(AppCategoriesViewImplUiBinder.class);
     private final AppCategoryHierarchyProvider hierarchyProvider;
     private final TreeStore<AppCategory> treeStore;
@@ -68,9 +67,9 @@ public class AppCategoriesViewImpl extends ContentPanel implements AppCategories
         final List<String> groupHierarchy = Lists.newArrayList();
         if(!event.getSelection().isEmpty()){
             groupHierarchy.addAll(hierarchyProvider.getGroupHierarchy(treeStore, event.getSelection().iterator().next()));
+            fireEvent(new AppCategorySelectionChangedEvent(event.getSelection(),
+                                                           groupHierarchy));
         }
-        fireEvent(new AppCategorySelectionChangedEvent(event.getSelection(),
-                                                       groupHierarchy));
     }
 
     @Override

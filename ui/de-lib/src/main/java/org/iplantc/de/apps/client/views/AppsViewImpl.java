@@ -52,11 +52,10 @@ public class AppsViewImpl extends Composite implements AppsView {
         categoryTabs.addSelectionHandler(new SelectionHandler<Widget>() {
             @Override
             public void onSelection(SelectionEvent<Widget> event) {
-                for (Widget next : categoryTabs) {
-                    if (event.getSelectedItem() instanceof AppCategoriesView && next instanceof Tree) {
-                        ((Tree)next).getSelectionModel().deselectAll();
-                    } else if (event.getSelectedItem() instanceof Tree && next instanceof AppCategoriesView) {
-                        ((AppCategoriesView)next).getTree().getSelectionModel().deselectAll();
+                Widget selectedItem = event.getSelectedItem();
+                for (Widget currentItem : categoryTabs) {
+                    if (currentItem != selectedItem) {
+                        ((Tree)currentItem).getSelectionModel().deselectAll();
                     }
                 }
             }

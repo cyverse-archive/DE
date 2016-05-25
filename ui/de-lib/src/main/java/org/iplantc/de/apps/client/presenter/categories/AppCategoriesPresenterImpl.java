@@ -80,8 +80,7 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     }
 
     protected static String FAVORITES;
-    protected static String HPC_ID = "00000000-0000-0000-0000-000000000001";
-    static AppCategory FAVORITES_CATEGORY;
+    protected static String HPC_ID;
     protected static String USER_APPS_GROUP;
     protected static String WORKSPACE;
     protected String searchRegexPattern;
@@ -122,7 +121,6 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
         for (AppCategory group : getGroupHierarchy(treeStore, appCategory, null)) {
             groupNames.add(group.getName());
         }
-        groupNames.add(appearance.workspaceTab());
 
         Collections.reverse(groupNames);
         return groupNames;
@@ -130,12 +128,10 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
 
     @Override
     public AppCategory getSelectedAppCategory() {
-        AppCategory selectedCategory;
+        AppCategory selectedCategory = null;
         Tree<AppCategory, String> tree = workspaceView.getTree();
-        if (tree == null || tree.getSelectionModel().getSelectedItem() == null) {
-            selectedCategory = FAVORITES_CATEGORY;
-        } else {
-            selectedCategory = workspaceView.getTree().getSelectionModel().getSelectedItem();
+        if (tree != null) {
+            selectedCategory = tree.getSelectionModel().getSelectedItem();
         }
         return selectedCategory;
     }
@@ -152,7 +148,8 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
         viewTabPanel.add(workspaceView.getTree(), new TabItemConfig(appearance.workspaceTab()));
         viewTabPanel.add(hpcView.getTree(), new TabItemConfig(appearance.hpcTab()));
 
-        workspaceView.mask(appearance.getAppCategoriesLoadingMask());
+        workspaceView.getTree().mask(appearance.getAppCategoriesLoadingMask());
+        hpcView.getTree().mask(appearance.getAppCategoriesLoadingMask());
         appService.getAppCategories(new AsyncCallback<List<AppCategory>>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -165,7 +162,8 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
                 filterCategories(result);
                 createWorkspaceTab(selectedAppCategory);
                 createHPCTab();
-                workspaceView.unmask();
+                workspaceView.getTree().unmask();
+                hpcView.getTree().unmask();
             }
         });
 
@@ -319,9 +317,6 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
         }
 
         for (AppCategory ag : children) {
-            if (FAVORITES.equals(ag.getName())) {
-                FAVORITES_CATEGORY = ag;
-            }
             addAppCategories(treeStore, ag, ag.getCategories());
         }
     }
@@ -352,6 +347,7 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     void initConstants(final DEProperties props,
                        final JsonUtil jsonUtil) {
         WORKSPACE = props.getPrivateWorkspace();
+        HPC_ID = props.getDefaultHpcCategoryId();
 
         if (props.getPrivateWorkspaceItems() != null) {
             JSONArray items = JSONParser.parseStrict(props.getPrivateWorkspaceItems()).isArray();

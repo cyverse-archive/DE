@@ -17,7 +17,6 @@ import org.iplantc.de.apps.client.views.details.dialogs.AppDetailsDialog;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.avu.Avu;
-import org.iplantc.de.client.models.avu.AvuAutoBeanFactory;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.services.OntologyServiceFacade;
@@ -125,7 +124,6 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
     private OntologyHierarchiesView.OntologyHierarchiesAppearance appearance;
     protected String searchRegexPattern;
     private final EventBus eventBus;
-    private AvuAutoBeanFactory avuFactory;
     HandlerManager handlerManager;
     Map<String, List<OntologyHierarchy>> iriToHierarchyMap = new FastMap<>();
     private OntologyHierarchiesViewFactory viewFactory;
@@ -136,28 +134,14 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
     public OntologyHierarchiesPresenterImpl(OntologyHierarchiesViewFactory viewFactory,
                                             OntologyServiceFacade serviceFacade,
                                             EventBus eventBus,
-                                            OntologyHierarchiesView.OntologyHierarchiesAppearance appearance,
-                                            AvuAutoBeanFactory avuFactory) {
+                                            OntologyHierarchiesView.OntologyHierarchiesAppearance appearance) {
 
         this.serviceFacade = serviceFacade;
         this.appearance = appearance;
-        this.avuFactory = avuFactory;
         this.viewFactory = viewFactory;
         this.eventBus = eventBus;
 
         this.ontologyUtil = OntologyUtil.getInstance();
-    }
-
-    @Override
-    public OntologyHierarchy getSelectedHierarchy() {
-        OntologyHierarchiesView view = (OntologyHierarchiesView)viewTabPanel.getActiveWidget();
-        return view.getTree().getSelectionModel().getSelectedItem();
-    }
-
-    @Override
-    public OntologyHierarchiesView getView() {
-        OntologyHierarchiesView view = (OntologyHierarchiesView)viewTabPanel.getActiveWidget();
-        return view;
     }
 
     @Override
