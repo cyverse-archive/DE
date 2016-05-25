@@ -625,7 +625,7 @@ paths:
         required: True
     get:
       tags:
-        - permissionLookup
+        - permission_lookup
       summary: "Look Up by Subject"
       operationId: bySubject
       responses:
@@ -659,9 +659,48 @@ paths:
         required: True
     get:
       tags:
-        - permissionLookup
+        - permission_lookup
       summary: "Look Up by Subject and Resource Type"
       operationId: bySubjectAndResourceType
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/permission_list"
+        400:
+          $ref: "#/responses/bad_request"
+        500:
+          $ref: "#/responses/internal_server_error"
+  /transitive_permissions/subjects/{subject_type}/{subject_id}/{resource_type}/{resource_name}:
+    parameters:
+      - name: subject_type
+        type: string
+        enum:
+          - user
+          - group
+        description: "The subject type name."
+        in: path
+        required: True
+      - name: subject_id
+        type: string
+        description: "The external subject identifier."
+        in: path
+        required: True
+      - name: resource_type
+        type: string
+        description: "The resource type name."
+        in: path
+        required: True
+      - name: resource_name
+        type: string
+        description: "The resource name."
+        in: path
+        required: True
+    get:
+      tags:
+        - permission_lookup
+      summary: "Look Up by Subject and Resource"
+      operationId: bySubjectAndResource
       responses:
         200:
           description: "OK"

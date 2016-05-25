@@ -27,7 +27,7 @@ func NewBySubject(ctx *middleware.Context, handler BySubjectHandler) *BySubject 
 	return &BySubject{Context: ctx, Handler: handler}
 }
 
-/*BySubject swagger:route GET /transitive_permissions/subjects/{subject_type}/{subject_id} permissionLookup bySubject
+/*BySubject swagger:route GET /transitive_permissions/subjects/{subject_type}/{subject_id} permission_lookup bySubject
 
 Look Up by Subject
 
