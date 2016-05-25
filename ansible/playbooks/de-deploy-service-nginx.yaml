@@ -236,7 +236,6 @@
   gather_facts: false
   tags:
     - ui
-    - uncolored
     - de-ui-nginx
   roles:
     - role: de-deploy-service
