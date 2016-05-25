@@ -22,8 +22,7 @@
     </ui:with>
     <ui:with field="westData"
              type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
-        <ui:attributes margins="{westMargins}"
-                       size=".5"
+        <ui:attributes size=".5"
                        split="true"/>
     </ui:with>
     <ui:with field="westMargins"
@@ -35,7 +34,7 @@
     </ui:with>
     <ui:with field="centerData"
              type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
-        <ui:attributes size="1"/>
+        <ui:attributes size=".5"/>
     </ui:with>
 
 
@@ -72,10 +71,10 @@
                 </toolbar:child>
             </toolbar:ToolBar>
         </container:north>
-        <container:west layoutData="{westData}">
+        <container:center layoutData="{centerData}">
             <gxt:ContentPanel headingText="NEW">
                 <container:BorderLayoutContainer borders="true">
-                    <container:west layoutData="{westData}">
+                    <container:center layoutData="{centerData}">
                         <container:CardLayoutContainer ui:field="cards">
                             <container:CenterLayoutContainer ui:field="noTreePanel">
                                 <g:Label text="No ontology version selected."/>
@@ -87,19 +86,19 @@
                                 <g:Label text="No hierarchies saved for this ontology version."/>
                             </container:CenterLayoutContainer>
                         </container:CardLayoutContainer>
-                    </container:west>
+                    </container:center>
                     <container:east layoutData="{eastData}">
                         <adminApps:AdminAppsGridView ui:field="newGridView"/>
                     </container:east>
                 </container:BorderLayoutContainer>
             </gxt:ContentPanel>
-        </container:west>
+        </container:center>
         <container:east layoutData="{eastData}">
-            <gxt:ContentPanel>
+            <gxt:ContentPanel headingText="CURRENT">
                 <container:BorderLayoutContainer>
-                    <container:east layoutData="{eastData}">
+                    <container:center layoutData="{centerData}">
                         <apps:AppCategoriesView ui:field="categoriesView"/>
-                    </container:east>
+                    </container:center>
                     <container:west layoutData="{westData}">
                         <adminApps:AdminAppsGridView ui:field="oldGridView"/>
                     </container:west>
