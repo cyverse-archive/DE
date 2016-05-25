@@ -19,15 +19,14 @@ func dburi() string {
 	uri := os.Getenv("DBURI")
 	if uri != "" {
 		return uri
-	} else {
-		return "postgres://de:notprod@dedb:5432/permissions?sslmode=disable"
 	}
+	return "postgres://de:notprod@dedb:5432/permissions?sslmode=disable"
 }
 
 func truncateTables(db *sql.DB) error {
 
 	// Truncate all tables.
-	tables := []string{"permissions", "permission_levels", "subjects", "resources", "resource_types"}
+	tables := []string{"permissions", "subjects", "resources", "resource_types"}
 	for _, table := range tables {
 		_, err := db.Exec(fmt.Sprintf("DELETE FROM %s", table))
 		if err != nil {

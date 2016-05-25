@@ -64,9 +64,8 @@ func GetResourceTypeByName(tx *sql.Tx, name *string) (*models.ResourceTypeOut, e
 	// Return the result.
 	if len(resourceTypes) < 1 {
 		return nil, nil
-	} else {
-		return resourceTypes[0], nil
 	}
+	return resourceTypes[0], nil
 }
 
 func GetDuplicateResourceTypeByName(tx *sql.Tx, id *string, name *string) (*models.ResourceTypeOut, error) {
@@ -100,9 +99,8 @@ func GetDuplicateResourceTypeByName(tx *sql.Tx, id *string, name *string) (*mode
 	// Return the result.
 	if len(resourceTypes) < 1 {
 		return nil, nil
-	} else {
-		return resourceTypes[0], nil
 	}
+	return resourceTypes[0], nil
 }
 
 func ResourceTypeExists(tx *sql.Tx, id *string) (bool, error) {

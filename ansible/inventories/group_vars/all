@@ -299,6 +299,9 @@ grouper:
   container_name: grouper
   db:
     url:
+    host:
+    port:
+    name:
     user:
     pass:
   http_server:

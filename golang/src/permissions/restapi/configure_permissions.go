@@ -15,12 +15,15 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/olebedev/config"
 
+	"permissions/clients/grouper"
 	"permissions/restapi/operations"
+	"permissions/restapi/operations/permissions"
 	"permissions/restapi/operations/resource_types"
 	"permissions/restapi/operations/resources"
 	"permissions/restapi/operations/status"
 	"permissions/restapi/operations/subjects"
 
+	permissions_impl "permissions/restapi/impl/permissions"
 	resource_types_impl "permissions/restapi/impl/resource_types"
 	resources_impl "permissions/restapi/impl/resources"
 	status_impl "permissions/restapi/impl/status"
@@ -52,6 +55,7 @@ func validateOptions() error {
 
 // The database connection.
 var db *sql.DB
+var grouperClient *grouper.GrouperClient
 
 // Initialize the service.
 func initService() error {
@@ -67,9 +71,23 @@ func initService() error {
 	if err != nil {
 		return err
 	}
-	logcabin.Info.Printf("DB URI: %s\n", dburi)
 
 	db, err = sql.Open("postgres", dburi)
+	if err != nil {
+		return err
+	}
+
+	grouperDburi, err := cfg.String("grouperdb.uri")
+	if err != nil {
+		return err
+	}
+
+	grouperFolderNamePrefix, err := cfg.String("grouperdb.folder_name_prefix")
+	if err != nil {
+		return err
+	}
+
+	grouperClient, err = grouper.NewGrouperClient(grouperDburi, grouperFolderNamePrefix)
 	if err != nil {
 		return err
 	}
@@ -150,6 +168,38 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 
 	api.SubjectsDeleteSubjectHandler = subjects.DeleteSubjectHandlerFunc(
 		subjects_impl.BuildDeleteSubjectHandler(db),
+	)
+
+	api.PermissionsListPermissionsHandler = permissions.ListPermissionsHandlerFunc(
+		permissions_impl.BuildListPermissionsHandler(db),
+	)
+
+	api.PermissionsGrantPermissionHandler = permissions.GrantPermissionHandlerFunc(
+		permissions_impl.BuildGrantPermissionHandler(db),
+	)
+
+	api.PermissionsRevokePermissionHandler = permissions.RevokePermissionHandlerFunc(
+		permissions_impl.BuildRevokePermissionHandler(db),
+	)
+
+	api.PermissionsPutPermissionHandler = permissions.PutPermissionHandlerFunc(
+		permissions_impl.BuildPutPermissionHandler(db),
+	)
+
+	api.PermissionsBySubjectHandler = permissions.BySubjectHandlerFunc(
+		permissions_impl.BuildBySubjectHandler(db, grouperClient),
+	)
+
+	api.PermissionsBySubjectAndResourceTypeHandler = permissions.BySubjectAndResourceTypeHandlerFunc(
+		permissions_impl.BuildBySubjectAndResourceTypeHandler(db, grouperClient),
+	)
+
+	api.PermissionsBySubjectAndResourceHandler = permissions.BySubjectAndResourceHandlerFunc(
+		permissions_impl.BuildBySubjectAndResourceHandler(db, grouperClient),
+	)
+
+	api.PermissionsListResourcePermissionsHandler = permissions.ListResourcePermissionsHandlerFunc(
+		permissions_impl.BuildListResourcePermissionsHandler(db),
 	)
 
 	api.ServerShutdown = cleanup

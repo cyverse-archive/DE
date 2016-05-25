@@ -31,6 +31,8 @@ func NewDeleteSubject(ctx *middleware.Context, handler DeleteSubjectHandler) *De
 
 Delete a Subject
 
+Deletes a subject from the database.
+
 */
 type DeleteSubject struct {
 	Context *middleware.Context

@@ -2,3 +2,7 @@
 
 db:
   uri: "postgresql://{{ permissions_db_user }}:{{ permissions_db_password }}@{{ permissions_db_host }}:{{ permissions_db_port }}/{{ permissions_db_name }}?sslmode=disable"
+
+grouperdb:
+  uri: "postgresql://{{ grouper.db.user }}:{{ grouper.db.pass }}@{{ grouper.db.host }}:{{ grouper.db.port }}/{{ grouper.db.name }}?sslmode=disable"
+  folder_name_prefix: "iplant:de:{{ environment_name }}"

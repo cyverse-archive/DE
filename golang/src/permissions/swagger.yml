@@ -182,6 +182,69 @@ definitions:
         description: "The list of subjects."
         items:
           $ref: "#/definitions/subject_out"
+  permission_id:
+    type: string
+    description: "The internal permission identifier."
+    minLength: 36
+    maxLength: 36
+  permission_level:
+    type: string
+    description: "A permission level name."
+    enum:
+      - read
+      - admin
+      - write
+      - own
+  permission_grant_request:
+    type: object
+    description: "Information for granting permission to a user."
+    required:
+      - subject
+      - resource
+      - permission_level
+    properties:
+      subject:
+        $ref: "#/definitions/subject_in"
+      resource:
+        $ref: "#/definitions/resource_in"
+      permission_level:
+        $ref: "#/definitions/permission_level"
+  permission_put_request:
+    type: object
+    description: "Specifies the permission level to assign."
+    required:
+      - permission_level
+    properties:
+      permission_level:
+        $ref: "#/definitions/permission_level"
+  permission:
+    type: object
+    description: "Information about permissions granted to a user."
+    required:
+      - id
+      - subject
+      - resource
+      - permission_level
+    properties:
+      id:
+        $ref: "#/definitions/permission_id"
+      subject:
+        $ref: "#/definitions/subject_out"
+      resource:
+        $ref: "#/definitions/resource_out"
+      permission_level:
+        $ref: "#/definitions/permission_level"
+  permission_list:
+    type: object
+    description: "A list of matching permissions."
+    required:
+      - permissions
+    properties:
+      permissions:
+        type: array
+        description: "The list of permissions."
+        items:
+          $ref: "#/definitions/permission"
 info:
   description: >-
     Manages Permissions for the CyVerse Discovery Environment and related applications.
@@ -390,6 +453,10 @@ paths:
       tags:
         - subjects
       summary: "Add a Subject"
+      description: >-
+        Adds a subject (an entity to which permissions may be granted) to the database. For full use of the
+        permissions service, the subject should be present in Grouper and have the same subject ID in Grouper
+        and the permissions service.
       parameters:
         - description: "The new subject to add."
           in: body
@@ -397,10 +464,6 @@ paths:
           required: True
           schema:
             $ref: "#/definitions/subject_in"
-      description: >-
-        Adds a subject (an entity to which permissions may be granted) to the database. For full use of the
-        permissions service, the subject should be present in Grouper and have the same subject ID in Grouper
-        and the permissions service.
       operationId: addSubject
       responses:
         201:
@@ -422,6 +485,9 @@ paths:
       tags:
         - subjects
       summary: "Update a Subject"
+      description: >-
+        Updates a subject in the database. For full use of the permissions service, the subject should be present
+        in Grouper and have the same subject ID in Grouper and the permissions service.
       parameters:
         - description: "The new subject information."
           in: body
@@ -445,12 +511,303 @@ paths:
       tags:
         - subjects
       summary: "Delete a Subject"
+      description: "Deletes a subject from the database."
       operationId: deleteSubject
       responses:
         200:
           description: "OK"
         404:
           $ref: "#/responses/not_found"
+        500:
+          $ref: "#/responses/internal_server_error"
+  /permissions:
+    get:
+      tags:
+        - permissions
+      summary: "List Permissions"
+      description: >-
+        Lists all permissions in the permission database. The total number of permissions for all resources is likely
+        to be quite large, so callers should be prepared to handle the response body. If this endpoint is used more
+        frequently than anticipated, limit and offset parameters will be added for paging later.
+      operationId: listPermissions
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/permission_list"
+        500:
+          $ref: "#/responses/internal_server_error"
+    post:
+      tags:
+        - permissions
+      summary: "Grant Permission to a Resource"
+      description: >-
+        Grants permission to access a resource to a subject. If the subject already has permission to access the
+        resource then the permission level will be updated (assuming the new permission level is different from
+        the existing permission level). Neither the resource nor the subject needs to be registered in the database
+        before this endpoint is called; they will be added to the database if necessary. This endpoint will return
+        an error response if the subject ID is already in use and associated with a different subject type. It will
+        also return an error if either the specified resource type or permission level does not exist.
+      parameters:
+        - description: "Information about the permission to add."
+          in: body
+          name: "permission_grant_request"
+          required: True
+          schema:
+            $ref: "#/definitions/permission_grant_request"
+      operationId: grantPermission
+      responses:
+        200:
+          description: "Created"
+          schema:
+            $ref: "#/definitions/permission"
+        400:
+          $ref: "#/responses/bad_request"
+        500:
+          $ref: "#/responses/internal_server_error"
+  /permissions/resources/{resource_type}/{resource_name}:
+    parameters:
+      - name: resource_type
+        type: string
+        description: "The resource type name."
+        in: path
+        required: True
+      - name: resource_name
+        type: string
+        description: "The resource name."
+        in: path
+        required: True
+    get:
+      tags:
+        - permissions
+      summary: "List Resource Permissions"
+      description: "Lists all of the permissions associated with a resource."
+      operationId: listResourcePermissions
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/permission_list"
+        500:
+          $ref: "#/responses/internal_server_error"
+  /permissions/resources/{resource_type}/{resource_name}/subjects/{subject_type}/{subject_id}:
+    parameters:
+      - name: resource_type
+        type: string
+        description: "The resource type name."
+        in: path
+        required: True
+      - name: resource_name
+        type: string
+        description: "The resource name."
+        in: path
+        required: True
+      - name: subject_type
+        type: string
+        enum:
+          - user
+          - group
+        description: "The subject type name."
+        in: path
+        required: True
+      - name: subject_id
+        type: string
+        description: "The external subject identifier."
+        in: path
+        required: True
+    delete:
+      tags:
+        - permissions
+      summary: "Revoke Permission to a Resource"
+      description: >-
+        Removes a permission entry from the database. This endpoint will return an error status if the resource type,
+        resource, subject or the permission itself does not exist.
+      operationId: revokePermission
+      responses:
+        200:
+          description: "OK"
+        404:
+          $ref: "#/responses/not_found"
+        500:
+          $ref: "#/responses/internal_server_error"
+    put:
+      tags:
+        - permissions
+      summary: "Grant Permission to a Resource"
+      description: >-
+        Grants permission to access a resource to a subject. If the subject already has permission to access the
+        resource then the permission level will be updated (assuming the new permission level is different from
+        the existing permission level). Neither the resource nor the subject needs to be registered in the database
+        before this endpoint is called; they will be added to the database if necessary. This endpoint will return
+        an error response if the subject ID is already in use and associated with a different subject type. It will
+        also return an error if either the specified resource type or permission level does not exist.
+      parameters:
+        - description: "The permission level to assign."
+          in: body
+          name: "permission"
+          required: True
+          schema:
+            $ref: "#/definitions/permission_put_request"
+      operationId: putPermission
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/permission"
+        400:
+          $ref: "#/responses/bad_request"
+        500:
+          $ref: "#/responses/internal_server_error"
+  /permissions/subjects/{subject_type}/{subject_id}:
+    parameters:
+      - name: subject_type
+        type: string
+        enum:
+          - user
+          - group
+        description: "The subject type name."
+        in: path
+        required: True
+      - name: subject_id
+        type: string
+        description: "The external subject identifier."
+        in: path
+        required: True
+      - name: lookup
+        type: boolean
+        description: >-
+          True if a permission lookup should be performed. A permission lookup differs from standard permisison
+          retrieval in two ways. First, only the most permissive permission level available to the subject is
+          returned for any given resource. Second, if the subject happens to be a user then permissions granted
+          to groups that the user belongs to are also included in the results. This parameter is optional and
+          defaults to False.
+        in: query
+        default: False
+    get:
+      tags:
+        - permissions
+      summary: "Look Up by Subject"
+      description: >-
+        Looks up all permissions granted to a subject. If lookup mode is enabled and the subject is a user, the most
+        lenient permissions granted to the subject or any groups the subject belongs to will be listed. If lookup mode
+        is not enabled or the subject is a group then only permissions assigned directly to the subject will be listed.
+        This endpoint will return an error status if the subject ID is in use and associated with a different subject
+        type.
+      operationId: bySubject
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/permission_list"
+        400:
+          $ref: "#/responses/bad_request"
+        500:
+          $ref: "#/responses/internal_server_error"
+  /permissions/subjects/{subject_type}/{subject_id}/{resource_type}:
+    parameters:
+      - name: subject_type
+        type: string
+        enum:
+          - user
+          - group
+        description: "The subject type name."
+        in: path
+        required: True
+      - name: subject_id
+        type: string
+        description: "The external subject identifier."
+        in: path
+        required: True
+      - name: resource_type
+        type: string
+        description: "The resource type name."
+        in: path
+        required: True
+      - name: lookup
+        type: boolean
+        description: >-
+          True if a permission lookup should be performed. A permission lookup differs from standard permisison
+          retrieval in two ways. First, only the most permissive permission level available to the subject is
+          returned for any given resource. Second, if the subject happens to be a user then permissions granted
+          to groups that the user belongs to are also included in the results. This parameter is optional and
+          defaults to False.
+        in: query
+        default: False
+    get:
+      tags:
+        - permissions
+      summary: "Look Up by Subject and Resource Type"
+      description: >-
+        Looks up all permissions granted to a subject for resources of the given type. If lookup mode is enabled and
+        the subject is a user, the most lenient permissions granted to the subject or any groups the subject belongs
+        to will be listed. If lookup mode is not enabled or the subject is a group then only permissions assigned
+        directly to the subject will be listed. This endpoint will return an error status if the subject ID is in use
+        and associated with a different subject type.
+      operationId: bySubjectAndResourceType
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/permission_list"
+        400:
+          $ref: "#/responses/bad_request"
+        500:
+          $ref: "#/responses/internal_server_error"
+  /permissions/subjects/{subject_type}/{subject_id}/{resource_type}/{resource_name}:
+    parameters:
+      - name: subject_type
+        type: string
+        enum:
+          - user
+          - group
+        description: "The subject type name."
+        in: path
+        required: True
+      - name: subject_id
+        type: string
+        description: "The external subject identifier."
+        in: path
+        required: True
+      - name: resource_type
+        type: string
+        description: "The resource type name."
+        in: path
+        required: True
+      - name: resource_name
+        type: string
+        description: "The resource name."
+        in: path
+        required: True
+      - name: lookup
+        type: boolean
+        description: >-
+          True if a permission lookup should be performed. A permission lookup differs from standard permisison
+          retrieval in two ways. First, only the most permissive permission level available to the subject is
+          returned for any given resource. Second, if the subject happens to be a user then permissions granted
+          to groups that the user belongs to are also included in the results. This parameter is optional and
+          defaults to False.
+        in: query
+        default: False
+    get:
+      tags:
+        - permissions
+      summary: "Look Up by Subject and Resource"
+      description: >-
+        Looks up  permissions granted to a subject for a resource. If lookup mode is enabled and the subject is a
+        user, the most lenient permission granted to the subject or any groups the subject belongs to will be listed.
+        If lookup mode is not enabled or the subject is a group then only permissions assigned directly to the subject
+        will be listed. This endpoint will currently list at most one permission, but the permission list format was
+        chosen in favor of returning a 404 status if a permission does not exist because this endpoint may be called
+        frequently when no corresponding permissions exist. This endpoint will return an error status if the subject
+        ID is in use and associated with a different subject type.
+      operationId: bySubjectAndResource
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/permission_list"
+        400:
+          $ref: "#/responses/bad_request"
         500:
           $ref: "#/responses/internal_server_error"
 produces:
