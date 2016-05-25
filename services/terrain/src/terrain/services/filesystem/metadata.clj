@@ -9,7 +9,7 @@
             [clojure-commons.file-utils :as ft]
             [cheshire.core :as json]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
-            [terrain.clients.metadata.raw :as metadata-client]
+            [terrain.clients.metadata :as metadata]
             [terrain.clients.data-info :as data]
             [terrain.clients.data-info.raw :as data-raw]
             [terrain.services.filesystem.validators :as validators]
@@ -103,14 +103,13 @@
 
 (defn- parse-template-attrs
   "Fetches Metadata Template attributes from the metadata service if given a template-id UUID.
-   Returns a map with the attribute names as keys, or nil."
+   Returns a set of the attribute names."
   [template-id]
   (when template-id
-    (->> (metadata-client/get-template template-id)
-         :body
-         service/decode-json
+    (->> (metadata/get-template template-id)
          :attributes
-         (group-by :name))))
+         (map :name)
+         set)))
 
 (defn- format-csv-metadata-filename
   [dest-dir ^String filename]
@@ -127,7 +126,7 @@
         paths (map (comp format-path first) csv-filename-values)
         path-info-map (-> (data-raw/collect-stats user :paths paths :validation-behavior "write") :body json/decode (get "paths"))
         value-lists (map rest csv-filename-values)
-        irods-attrs (clojure.set/difference (set attrs) (set (keys template-attrs)))]
+        irods-attrs (clojure.set/difference (set attrs) template-attrs)]
     (if-not force?
       (validate-batch-add-attrs user (map #(get-in path-info-map [% "id"]) paths) irods-attrs))
   (mapv (partial bulk-add-file-avus user template-attrs attrs)
