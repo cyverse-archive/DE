@@ -28,31 +28,31 @@ Please see the metadata service documentation for response information."
          :path-params [app-id :- AppIdPathParam]
          :query [params SecuredQueryParams]
          :middlewares [wrap-metadata-base-url]
-         :summary "Set Metadata AVUs"
+         :summary "Add/Update Metadata AVUs"
          :description
-"Sets Metadata AVUs on the app.
+"Adds or updates Metadata AVUs on the app.
  The authenticated user must have `write` permission to edit this metadata.
 
 #### Delegates to metadata service
     POST /avus/{target-type}/{target-id}
 Where `{target-type}` is `app`.
 Please see the metadata service documentation for request and response information."
-         (avus/set-avus current-user app-id body false))
+         (avus/update-avus current-user app-id body false))
 
   (PUT* "/" [:as {:keys [body]}]
         :path-params [app-id :- AppIdPathParam]
         :query [params SecuredQueryParams]
         :middlewares [wrap-metadata-base-url]
-        :summary "Add/Update Metadata AVUs"
+        :summary "Set Metadata AVUs"
         :description
-"Adds or updates Metadata AVUs on the app.
+"Sets Metadata AVUs on the app.
  The authenticated user must have `write` permission to edit this metadata.
 
 #### Delegates to metadata service
     PUT /avus/{target-type}/{target-id}
 Where `{target-type}` is `app`.
 Please see the metadata service documentation for request and response information."
-        (avus/update-avus current-user app-id body false))
+        (avus/set-avus current-user app-id body false))
 
   (route/not-found (service/unrecognized-path-response)))
 
@@ -76,28 +76,28 @@ Please see the metadata service documentation for response information."
          :path-params [app-id :- AppIdPathParam]
          :query [params SecuredQueryParams]
          :middlewares [wrap-metadata-base-url]
-         :summary "Set Metadata AVUs"
+         :summary "Add/Update Metadata AVUs"
          :description
-"Sets Metadata AVUs on the app.
+"Adds or updates Metadata AVUs on the app.
 
 #### Delegates to metadata service
     POST /avus/{target-type}/{target-id}
 Where `{target-type}` is `app`.
 Please see the metadata service documentation for request and response information."
-         (avus/set-avus current-user app-id body true))
+         (avus/update-avus current-user app-id body true))
 
   (PUT* "/" [:as {:keys [body]}]
         :path-params [app-id :- AppIdPathParam]
         :query [params SecuredQueryParams]
         :middlewares [wrap-metadata-base-url]
-        :summary "Add/Update Metadata AVUs"
+        :summary "Set Metadata AVUs"
         :description
-"Adds or updates Metadata AVUs on the app.
+"Sets Metadata AVUs on the app.
 
 #### Delegates to metadata service
     PUT /avus/{target-type}/{target-id}
 Where `{target-type}` is `app`.
 Please see the metadata service documentation for request and response information."
-        (avus/update-avus current-user app-id body true))
+        (avus/set-avus current-user app-id body true))
 
   (route/not-found (service/unrecognized-path-response)))

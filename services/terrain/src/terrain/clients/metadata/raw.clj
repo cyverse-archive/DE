@@ -49,8 +49,8 @@
 
 (defn add-metadata-avus
   [target-type target-id avus-req]
-  (http/put (metadata-url "avus" target-type target-id)
-            (put-options (json/encode avus-req))))
+  (http/post (metadata-url "avus" target-type target-id)
+             (post-options (json/encode avus-req))))
 
 (defn list-data-comments
   [target-id]

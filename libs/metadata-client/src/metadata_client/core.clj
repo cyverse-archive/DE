@@ -83,13 +83,13 @@
 
 (defn set-avus
   [username target-type target-id body]
-  (http/post (metadata-url-encoded "avus" target-type target-id)
-             (post-options body {:user username})))
+  (http/put (metadata-url-encoded "avus" target-type target-id)
+            (put-options body {:user username})))
 
 (defn update-avus
   [username target-type target-id body]
-  (http/put (metadata-url-encoded "avus" target-type target-id)
-            (put-options body {:user username})))
+  (http/post (metadata-url-encoded "avus" target-type target-id)
+             (post-options body {:user username})))
 
 (defn copy-metadata-avus
   [target-type target-id force? dest-items]

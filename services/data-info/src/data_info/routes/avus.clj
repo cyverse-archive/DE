@@ -11,7 +11,7 @@
     :path-params [data-id :- DataIdPathParam]
     :tags ["data-by-id"]
 
-    (GET* "/avus" [:as {uri :uri}]
+    (GET* "/metadata" [:as {uri :uri}]
       :query [{:keys [user]} StandardUserQueryParams]
       :return AVUGetResult
       :middlewares [wrap-metadata-base-url]
@@ -22,7 +22,7 @@
 (get-endpoint-delegate-block "metadata" "GET /avus/{target-type}/{target-id}"))
       (svc/trap uri meta/admin-metadata-get data-id))
 
-    (PUT* "/avus" [:as {uri :uri}]
+    (PATCH* "/metadata" [:as {uri :uri}]
       :query [{:keys [user]} StandardUserQueryParams]
       :body [body (describe AddMetadataRequest "The iRODS and Metadata AVUs to add")]
       :return AVUChangeResult
@@ -30,14 +30,14 @@
       :summary "Add AVUs (administrative)"
       :description (str "Associate iRODS and Metadata AVUs with a data item. Allow adding any AVU."
 (get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_AUTHORIZED")
-(get-endpoint-delegate-block "metadata" "PUT /avus/{target-type}/{target-id}"))
+(get-endpoint-delegate-block "metadata" "POST /avus/{target-type}/{target-id}"))
       (svc/trap uri meta/admin-metadata-add data-id body)))
 
   (context* "/data/:data-id" []
     :path-params [data-id :- DataIdPathParam]
     :tags ["data-by-id"]
 
-    (GET* "/avus" [:as {uri :uri}]
+    (GET* "/metadata" [:as {uri :uri}]
       :query [{:keys [user]} StandardUserQueryParams]
       :return AVUGetResult
       :middlewares [wrap-metadata-base-url]
@@ -47,7 +47,20 @@
 (get-endpoint-delegate-block "metadata" "GET /avus/{target-type}/{target-id}"))
       (svc/trap uri meta/metadata-get user data-id :system false))
 
-    (POST* "/avus" [:as {uri :uri}]
+    (PATCH* "/metadata" [:as {uri :uri}]
+      :query [{:keys [user]} StandardUserQueryParams]
+      :body [body (describe AddMetadataRequest "The iRODS and Metadata AVUs to add")]
+      :return AVUChangeResult
+      :middlewares [wrap-metadata-base-url]
+      :summary "Add AVUs"
+      :description
+            (str "Associate iRODS and Metadata AVUs with a data item.
+             Administrative iRODS AVUs may not be added with this endpoint."
+(get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_AUTHORIZED")
+(get-endpoint-delegate-block "metadata" "POST /avus/{target-type}/{target-id}"))
+      (svc/trap uri meta/metadata-add user data-id body))
+
+    (PUT* "/metadata" [:as {uri :uri}]
       :query [{:keys [user]} StandardUserQueryParams]
       :body [body (describe MetadataListing
                             "A list of AVUs to set for this file.
@@ -59,23 +72,10 @@
            (str "Set the iRODS and metadata AVUS for a data item to a provided set.
             The iRODS set may not include administrative AVUs, and similarly will not remove administrative AVUs."
 (get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_AUTHORIZED")
-(get-endpoint-delegate-block "metadata" "POST /avus/{target-type}/{target-id}"))
+(get-endpoint-delegate-block "metadata" "PUT /avus/{target-type}/{target-id}"))
       (svc/trap uri meta/metadata-set user data-id body))
 
-    (PUT* "/avus" [:as {uri :uri}]
-      :query [{:keys [user]} StandardUserQueryParams]
-      :body [body (describe AddMetadataRequest "The iRODS and Metadata AVUs to add")]
-      :return AVUChangeResult
-      :middlewares [wrap-metadata-base-url]
-      :summary "Add AVUs"
-      :description
-           (str "Associate iRODS and Metadata AVUs with a data item.
-            Administrative iRODS AVUs may not be added with this endpoint."
-(get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_AUTHORIZED")
-(get-endpoint-delegate-block "metadata" "PUT /avus/{target-type}/{target-id}"))
-      (svc/trap uri meta/metadata-add user data-id body))
-
-    (POST* "/avus/copy" [:as {uri :uri}]
+    (POST* "/metadata/copy" [:as {uri :uri}]
       :query [{:keys [user force]} MetadataCopyRequestParams]
       :body [{:keys [destination_ids]} (describe MetadataCopyRequest "The destination data items.")]
       :return MetadataCopyResult

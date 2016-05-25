@@ -32,36 +32,36 @@
            :path-params [target-id :- TargetIdPathParam
                          target-type :- TargetTypeEnum]
            :query [{:keys [user]} StandardUserQueryParams]
-           :body [body (describe SetAvuRequest "The Metadata AVU save request")]
+           :body [body (describe AvuListRequest "The Metadata AVU update request")]
            :return AvuList
-           :summary "Set Metadata AVUs on a Target"
+           :summary "Add/Update Metadata AVUs"
            :description "
-Sets Metadata AVUs on the given target item.
+Adds or updates Metadata AVUs on the given target item.
 
-Any AVUs not included in the request will be deleted. If the AVUs are omitted, then all AVUs for the
-given target ID will be deleted.
-
-Including an existing AVU’s ID in its JSON in the POST body will update its values and `modified` fields,
-only if that AVU does not already match the given `attr`, `value`, and `unit` values.
+Including an existing AVU’s ID in its JSON in the request body will update its values and `modified` fields,
+but only if the existing AVU does not already match the given `attr`, `value`, and `unit` values.
 AVUs included without an ID will be added to the target item, only if an AVU does not already exist with
 matching `attr`, `value`, `unit`, `target`, and `type`."
-           (ok (avus/set-avus user target-type target-id body)))
+           (ok (avus/update-avus user target-type target-id body)))
 
     (PUT* "/:target-type/:target-id" []
           :path-params [target-id :- TargetIdPathParam
                         target-type :- TargetTypeEnum]
           :query [{:keys [user]} StandardUserQueryParams]
-          :body [body (describe AvuListRequest "The Metadata AVU update request")]
+          :body [body (describe SetAvuRequest "The Metadata AVU save request")]
           :return AvuList
-          :summary "Add/Update Metadata AVUs"
+          :summary "Set Metadata AVUs on a Target"
           :description "
-Adds or updates Metadata AVUs on the given target item.
+Sets Metadata AVUs on the given target item.
 
-Including an existing AVU’s ID in its JSON in the PUT body will update its values and `modified` fields,
-only if that AVU does not already match the given `attr`, `value`, and `unit` values.
-AVUs included without an ID will be added to the target item, only if an AVU does not already exist with
-matching `attr`, `value`, `unit`, `target`, and `type`."
-          (ok (avus/update-avus user target-type target-id body)))
+Any AVUs not included in the request will be deleted. If the AVUs are omitted, then all AVUs for the
+given target ID will be deleted.
+
+Including an existing AVU’s ID in its JSON in the request body will update its values and `modified` fields,
+but only if the existing AVU does not already match the given `attr`, `value`, and `unit` values.
+All other existing AVUs (not included in the request with an ID) will be deleted from the target item,
+then all remaining AVUs in the request will be added to the target item."
+          (ok (avus/set-avus user target-type target-id body)))
 
     (POST* "/:target-type/:target-id/copy" []
            :path-params [target-id :- TargetIdPathParam
