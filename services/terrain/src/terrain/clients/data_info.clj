@@ -296,7 +296,7 @@
   (-> (raw/collect-stats user :ids [uuid])
       :body
       json/decode
-      (get-in ["ids" uuid])
+      (get-in ["ids" (str uuid)])
       walk/keywordize-keys))
 
 (defn ^ISeq stats-by-uuids-paged
