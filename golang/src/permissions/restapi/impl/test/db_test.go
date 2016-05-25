@@ -19,9 +19,8 @@ func dburi() string {
 	uri := os.Getenv("DBURI")
 	if uri != "" {
 		return uri
-	} else {
-		return "postgres://de:notprod@dedb:5432/permissions?sslmode=disable"
 	}
+	return "postgres://de:notprod@dedb:5432/permissions?sslmode=disable"
 }
 
 func truncateTables(db *sql.DB) error {

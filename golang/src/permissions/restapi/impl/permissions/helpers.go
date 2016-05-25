@@ -143,7 +143,6 @@ func buildSubjectIdList(grouperClient grouper.Grouper, subjectType, subjectId st
 			return nil, err
 		}
 		return append(groupIds, subjectId), nil
-	} else {
-		return []string{subjectId}, nil
 	}
+	return []string{subjectId}, nil
 }

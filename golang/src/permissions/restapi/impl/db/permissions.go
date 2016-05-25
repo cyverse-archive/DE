@@ -275,9 +275,8 @@ func UpsertPermission(
 		return nil, err
 	} else if permission == nil {
 		return nil, fmt.Errorf("unable to look up permission after upsert: %s", permissionId)
-	} else {
-		return permission, nil
 	}
+	return permission, nil
 }
 
 func GetPermission(
@@ -322,9 +321,8 @@ func GetPermission(
 	// Return the result.
 	if len(permissions) < 1 {
 		return nil, nil
-	} else {
-		return permissions[0], nil
 	}
+	return permissions[0], nil
 }
 
 func DeletePermission(tx *sql.Tx, id models.PermissionID) error {

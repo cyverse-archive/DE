@@ -64,9 +64,8 @@ func GetResourceByName(tx *sql.Tx, name *string, resourceTypeId *string) (*model
 	// Return the result.
 	if len(resources) < 1 {
 		return nil, nil
-	} else {
-		return resources[0], nil
 	}
+	return resources[0], nil
 }
 
 func GetDuplicateResourceByName(tx *sql.Tx, id *string, name *string) (*models.ResourceOut, error) {
@@ -101,9 +100,8 @@ func GetDuplicateResourceByName(tx *sql.Tx, id *string, name *string) (*models.R
 	// Return the result.
 	if len(resources) < 1 {
 		return nil, nil
-	} else {
-		return resources[0], nil
 	}
+	return resources[0], nil
 }
 
 func AddResource(tx *sql.Tx, name *string, resourceTypeId *string) (*models.ResourceOut, error) {

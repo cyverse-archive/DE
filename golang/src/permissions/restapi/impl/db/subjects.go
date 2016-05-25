@@ -174,9 +174,8 @@ func GetSubject(
 	// Return the result.
 	if len(subjects) < 1 {
 		return nil, nil
-	} else {
-		return subjects[0], nil
 	}
+	return subjects[0], nil
 }
 
 func GetSubjectByExternalId(tx *sql.Tx, subjectId models.ExternalSubjectID) (*models.SubjectOut, error) {
@@ -209,7 +208,6 @@ func GetSubjectByExternalId(tx *sql.Tx, subjectId models.ExternalSubjectID) (*mo
 	// Return the result.
 	if len(subjects) < 1 {
 		return nil, nil
-	} else {
-		return subjects[0], nil
 	}
+	return subjects[0], nil
 }
