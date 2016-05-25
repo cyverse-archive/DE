@@ -42,39 +42,53 @@
       (.findMetadataValuesForCollection collection-ao dir-path)
       (.findMetadataValuesForDataObject data-ao dir-path))))
 
-(defn- get-metadata-by-query
-  [{^DataObjectAO data-ao :dataObjectAO
-    ^CollectionAO collection-ao :collectionAO
-    :as cm} path query]
-  (validate-path-lengths path)
-  (mapv avu2map
-    (if (is-dir? cm path)
-      (.findMetadataValuesByMetadataQueryForCollection collection-ao query path)
-      (.findMetadataValuesForDataObjectUsingAVUQuery data-ao query path))))
+; use again when jargon doesn't trim the values
+;(defn- get-metadata-by-query
+;  [{^DataObjectAO data-ao :dataObjectAO
+;    ^CollectionAO collection-ao :collectionAO
+;    :as cm} path query]
+;  (validate-path-lengths path)
+;  (mapv avu2map
+;    (if (is-dir? cm path)
+;      (.findMetadataValuesByMetadataQueryForCollection collection-ao query path)
+;      (.findMetadataValuesForDataObjectUsingAVUQuery data-ao query path))))
 
 (defn get-attribute
   "Returns a list of avu maps for a specific attribute associated with dir-path"
   [{^DataObjectAO data-ao :dataObjectAO
     ^CollectionAO collection-ao :collectionAO
     :as cm} dir-path attr]
-  (let [query [(AVUQueryElement/instanceForValueQuery
-                AVUQueryElement$AVUQueryPart/ATTRIBUTE
-                AVUQueryOperatorEnum/EQUAL
-                attr)]]
-    (get-metadata-by-query cm dir-path query)))
+  (validate-path-lengths dir-path)
+  (filter
+    #(= (:attr %1) attr)
+    (get-metadata cm dir-path)))
+
+; go back to this once jargon doesn't trim the values
+;  (let [query [(AVUQueryElement/instanceForValueQuery
+;                AVUQueryElement$AVUQueryPart/ATTRIBUTE
+;                AVUQueryOperatorEnum/EQUAL
+;                attr)]]
+;    (get-metadata-by-query cm dir-path query)))
 
 (defn get-attribute-value
   [{^DataObjectAO data-ao :dataObjectAO
     ^CollectionAO collection-ao :collectionAO
     :as cm} apath attr val]
-  (let [query [(AVUQueryElement/instanceForValueQuery
-                AVUQueryElement$AVUQueryPart/ATTRIBUTE
-                AVUQueryOperatorEnum/EQUAL
-                attr) (AVUQueryElement/instanceForValueQuery
-                AVUQueryElement$AVUQueryPart/VALUE
-                AVUQueryOperatorEnum/EQUAL
-                (str val))]]
-    (get-metadata-by-query cm apath query)))
+  (validate-path-lengths dir-path)
+  (filter
+    #(and (= (:attr %1) attr)
+          (= (:value %1) val))
+    (get-metadata cm apath)))
+
+; use this once jargon doesn't trim the values
+;  (let [query [(AVUQueryElement/instanceForValueQuery
+;                AVUQueryElement$AVUQueryPart/ATTRIBUTE
+;                AVUQueryOperatorEnum/EQUAL
+;                attr) (AVUQueryElement/instanceForValueQuery
+;                AVUQueryElement$AVUQueryPart/VALUE
+;                AVUQueryOperatorEnum/EQUAL
+;                (str val))]]
+;    (get-metadata-by-query cm apath query)))
 
 (defn attribute?
   "Returns true if the path has the associated attribute."
