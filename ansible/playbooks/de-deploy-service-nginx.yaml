@@ -229,3 +229,16 @@
       deploy_use_color: false
       force_recreate: false
       service_name: "{{user_sessions.compose_service}}_nginx"
+
+- name: Redeploy de-ui-nginx
+  hosts: ui:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - ui
+    - de-ui-nginx
+  roles:
+    - role: de-deploy-service
+      has_iplant_data: true
+      deploy_use_color: false
+      service_name: "{{de.http_server.compose_service}}"
