@@ -153,7 +153,8 @@
 
 (defn- mk-files-in-folder
   [parent-path group-ids-query info-type-cond objs-cte avus-cte]
-  (str "SELECT 'dataobject'                      AS type,
+  (str "SELECT DISTINCT ON (full_path)
+               'dataobject'                      AS type,
                m.meta_attr_value                 AS uuid,
                '" parent-path "/' || d.data_name AS full_path,
                d.data_name                       AS base_name,
@@ -163,20 +164,20 @@
                d.modify_ts                       AS modify_ts,
                MAX(a.access_type_id)             AS access_type_id
           FROM " objs-cte " AS d
-            JOIN " avus-cte " AS m ON d.data_id = m.object_id
             JOIN r_objt_access AS a ON d.data_id = a.object_id
+            LEFT JOIN " avus-cte " AS m ON (d.data_id = m.object_id AND m.meta_attr_name = 'ipc_UUID')
             LEFT JOIN (" (mk-file-types avus-cte) ") AS f
               ON d.data_id = f.object_id
           WHERE a.user_id IN (" group-ids-query ")
-            AND m.meta_attr_name = 'ipc_UUID'
             AND (" info-type-cond ")
-          GROUP BY type, uuid, full_path, base_name, info_type, data_size, d.create_ts,
+          GROUP BY type, full_path, uuid, base_name, info_type, data_size, d.create_ts,
                    d.modify_ts"))
 
 
 (defn- mk-folders-in-folder
   [parent-path group-ids-query]
-  (str "SELECT 'collection'                           AS type,
+  (str "SELECT DISTINCT ON (full_path)
+               'collection'                           AS type,
                m.meta_attr_value                      AS uuid,
                c.coll_name                            AS full_path,
                REGEXP_REPLACE(c.coll_name, '.*/', '') AS base_name,
@@ -187,13 +188,12 @@
                MAX(a.access_type_id)                  AS access_type_id
           FROM r_coll_main AS c
             JOIN r_objt_metamap AS om ON om.object_id = c.coll_id
-            JOIN r_meta_main AS m ON m.meta_id = om.meta_id
             JOIN r_objt_access AS a ON c.coll_id = a.object_id
+            LEFT JOIN r_meta_main AS m ON (m.meta_id = om.meta_id AND m.meta_attr_name = 'ipc_UUID')
           WHERE c.parent_coll_name = '" parent-path "'
             AND c.coll_type != 'linkPoint'
-            AND m.meta_attr_name = 'ipc_UUID'
             AND a.user_id IN (" group-ids-query ")
-          GROUP BY type, uuid, full_path, base_name, info_type, data_size, c.create_ts,
+          GROUP BY type, full_path, uuid, base_name, info_type, data_size, c.create_ts,
                    c.modify_ts"))
 
 

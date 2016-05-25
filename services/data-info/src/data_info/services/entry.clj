@@ -144,10 +144,10 @@
   "Turns a entry in a paged listing result into a map containing file/directory information that can
    be consumed by the front-end."
   [mark-bad?
-   {:keys [access_type_id base_name create_ts data_size full_path info_type modify_ts uuid]}]
+   {:keys [access_type_id base_name create_ts data_size full_path info_type modify_ts uuid] :as dataobj}]
   (let [created  (* (Integer/parseInt create_ts) 1000)
         modified (* (Integer/parseInt modify_ts) 1000)
-        bad?     (mark-bad? full_path)
+        bad?     (mark-bad? dataobj)
         perm     (perm/fmt-perm access_type_id)]
     (fmt-entry uuid created modified bad? info_type full_path base_name perm data_size)))
 
@@ -166,9 +166,10 @@
 
 (defn- is-bad?
   "Returns true if the map is okay to include in a directory listing."
-  [bad-indicator path]
+  [bad-indicator {path :full_path id :uuid :as dataobj}]
   (let [basename (file/basename path)]
-    (or (contains? (:paths bad-indicator) path)
+    (or (= (str id) "")
+        (contains? (:paths bad-indicator) path)
         (contains? (:names bad-indicator) basename)
         (not (duv/good-string? (:chars bad-indicator) basename)))))
 
@@ -190,7 +191,7 @@
   "Provides paged directory listing as an alternative to (list-dir). Always contains files."
   [irods user path entity-type bad-indicator sfield sord offset limit info-types]
   (let [id           (irods/lookup-uuid irods path)
-        bad?         (is-bad? bad-indicator path)
+        bad?         (is-bad? bad-indicator {:uuid id :full_path path})
         perm         (perm/permission-for irods user path)
         stat         (item/stat irods path)
         date-created (:date-created stat)
