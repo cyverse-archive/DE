@@ -109,8 +109,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
     private final class NewSysMessageCountCallback implements AsyncCallback<Counts> {
 		@Override
 		public void onFailure(Throwable caught) {
-			// TODO Auto-generated method stub
-			
+			IplantAnnouncer.getInstance().schedule(new ErrorAnnouncementConfig(appearance.checkSysMessageError()));
 		}
 
 		@Override
@@ -118,7 +117,6 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
 			if(result.getNewSystemMessageCount() > 0) {
 				 eventBus.fireEvent(new NewSystemMessagesEvent());
 			}
-			
 		}
 	}
 
