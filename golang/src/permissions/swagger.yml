@@ -608,7 +608,7 @@ paths:
           $ref: "#/responses/bad_request"
         500:
           $ref: "#/responses/internal_server_error"
-  /transitive_permissions/subjects/{subject_type}/{subject_id}:
+  /permissions/subjects/{subject_type}/{subject_id}:
     parameters:
       - name: subject_type
         type: string
@@ -623,9 +623,19 @@ paths:
         description: "The external subject identifier."
         in: path
         required: True
+      - name: lookup
+        type: boolean
+        description: >-
+          True if a permission lookup should be performed. A permission lookup differs from standard permisison
+          retrieval in two ways. First, only the most permissive permission level available to the subject is
+          returned for any given resource. Second, if the subject happens to be a user then permissions granted
+          to groups that the user belongs to are also included in the results. This parameter is optional and
+          defaults to False.
+        in: query
+        default: False
     get:
       tags:
-        - permission_lookup
+        - permissions
       summary: "Look Up by Subject"
       operationId: bySubject
       responses:

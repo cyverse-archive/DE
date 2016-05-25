@@ -1,4 +1,4 @@
-package permission_lookup
+package permissions
 
 import (
 	"database/sql"
@@ -8,29 +8,35 @@ import (
 	"permissions/clients/grouper"
 	"permissions/models"
 	permsdb "permissions/restapi/impl/db"
-	"permissions/restapi/operations/permission_lookup"
+	"permissions/restapi/operations/permissions"
 )
 
-func bySubjectOk(permissions []*models.Permission) middleware.Responder {
-	return permission_lookup.NewBySubjectOK().WithPayload(&models.PermissionList{permissions})
+func bySubjectOk(perms []*models.Permission) middleware.Responder {
+	return permissions.NewBySubjectOK().WithPayload(&models.PermissionList{perms})
 }
 
 func bySubjectInternalServerError(reason string) middleware.Responder {
-	return permission_lookup.NewBySubjectInternalServerError().WithPayload(&models.ErrorOut{&reason})
+	return permissions.NewBySubjectInternalServerError().WithPayload(&models.ErrorOut{&reason})
 }
 
 func bySubjectBadRequest(reason string) middleware.Responder {
-	return permission_lookup.NewBySubjectBadRequest().WithPayload(&models.ErrorOut{&reason})
+	return permissions.NewBySubjectBadRequest().WithPayload(&models.ErrorOut{&reason})
 }
 
 func BuildBySubjectHandler(
 	db *sql.DB, grouperClient grouper.Grouper,
-) func(permission_lookup.BySubjectParams) middleware.Responder {
+) func(permissions.BySubjectParams) middleware.Responder {
 
 	// Return the handler function.
-	return func(params permission_lookup.BySubjectParams) middleware.Responder {
+	return func(params permissions.BySubjectParams) middleware.Responder {
 		subjectType := params.SubjectType
 		subjectId := params.SubjectID
+
+		// Extract the lookup flag.
+		lookup := false
+		if params.Lookup != nil {
+			lookup = *params.Lookup
+		}
 
 		// Create a transaction for the request.
 		tx, err := db.Begin()
@@ -52,16 +58,13 @@ func BuildBySubjectHandler(
 			return bySubjectBadRequest(reason)
 		}
 
-		// Get the list of group IDs.
-		groupIds, err := groupIdsForSubject(grouperClient, subjectType, subjectId)
+		// Get the list of subject IDs to use for the query.
+		subjectIds, err := buildSubjectIdList(grouperClient, subjectType, subjectId, lookup)
 		if err != nil {
 			tx.Rollback()
 			logcabin.Error.Print(err)
 			return bySubjectInternalServerError(err.Error())
 		}
-
-		// The list of subject IDs is just the current subject ID plus the list of group IDs.
-		subjectIds := append(groupIds, subjectId)
 
 		// Perform the lookup.
 		permissions, err := permsdb.PermissionsForSubjects(tx, subjectIds)

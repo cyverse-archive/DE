@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-swagger/go-swagger/httpkit/middleware"
 	"logcabin"
+	"permissions/clients/grouper"
 	"permissions/models"
 	permsdb "permissions/restapi/impl/db"
 )
@@ -104,4 +105,38 @@ func getPermissionLevel(
 	}
 
 	return permissionLevelId, nil
+}
+
+func groupIdsForSubject(grouperClient grouper.Grouper, subjectType, subjectId string) ([]string, error) {
+	groupIds := make([]string, 0)
+
+	// Simply return an empty slice if the subject is a group.
+	if subjectType == "group" {
+		return groupIds, nil
+	}
+
+	// Look up the groups.
+	groups, err := grouperClient.GroupsForSubject(subjectId)
+	if err != nil {
+		return nil, err
+	}
+
+	// Extract the identifiers from the list of groups.
+	for _, group := range groups {
+		groupIds = append(groupIds, group.ID)
+	}
+
+	return groupIds, nil
+}
+
+func buildSubjectIdList(grouperClient grouper.Grouper, subjectType, subjectId string, lookup bool) ([]string, error) {
+	if lookup {
+		groupIds, err := groupIdsForSubject(grouperClient, subjectType, subjectId)
+		if err != nil {
+			return nil, err
+		}
+		return append(groupIds, subjectId), nil
+	} else {
+		return []string{subjectId}, nil
+	}
 }

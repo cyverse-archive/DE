@@ -6,7 +6,9 @@ import (
 	"permissions/clients/grouper"
 	"permissions/models"
 	impl "permissions/restapi/impl/permission_lookup"
+	pimpl "permissions/restapi/impl/permissions"
 	lookup "permissions/restapi/operations/permission_lookup"
+	"permissions/restapi/operations/permissions"
 	"testing"
 )
 
@@ -24,19 +26,23 @@ var groupMemberships = map[string][]*grouper.GroupInfo{
 
 var mockGrouperClient = grouper.NewMockGrouperClient(groupMemberships)
 
-func lookupBySubjectAttempt(db *sql.DB, subjectType, subjectId string) middleware.Responder {
+func bySubjectAttempt(db *sql.DB, subjectType, subjectId string, lookup bool) middleware.Responder {
 
 	// Build the request handler.
-	handler := impl.BuildBySubjectHandler(db, grouper.Grouper(mockGrouperClient))
+	handler := pimpl.BuildBySubjectHandler(db, grouper.Grouper(mockGrouperClient))
 
 	// Attempt to look up the permissions.
-	params := lookup.BySubjectParams{SubjectType: subjectType, SubjectID: subjectId}
+	params := permissions.BySubjectParams{
+		SubjectType: subjectType,
+		SubjectID:   subjectId,
+		Lookup:      &lookup,
+	}
 	return handler(params)
 }
 
-func lookupBySubject(db *sql.DB, subjectType, subjectId string) *models.PermissionList {
-	responder := lookupBySubjectAttempt(db, subjectType, subjectId)
-	return responder.(*lookup.BySubjectOK).Payload
+func bySubject(db *sql.DB, subjectType, subjectId string, lookup bool) *models.PermissionList {
+	responder := bySubjectAttempt(db, subjectType, subjectId, lookup)
+	return responder.(*permissions.BySubjectOK).Payload
 }
 
 func lookupBySubjectAndResourceTypeAttempt(
@@ -111,7 +117,7 @@ func TestBySubject(t *testing.T) {
 	putPermission(db, "group", "g2id", "analysis", "r3", "read")
 
 	// Look up the permissions and verify that we get the expected number of results.
-	perms := lookupBySubject(db, "user", "s2").Permissions
+	perms := bySubject(db, "user", "s2", true).Permissions
 	if len(perms) != 2 {
 		t.Fatalf("unexpected number of results: %d", len(perms))
 	}
@@ -137,7 +143,7 @@ func TestBySubjectMultiplePermissions(t *testing.T) {
 	putPermission(db, "group", "g1id", "analysis", "r2", "write")
 
 	// Look up the permissions and verify that we get the expected number of results.
-	perms := lookupBySubject(db, "user", "s2").Permissions
+	perms := bySubject(db, "user", "s2", true).Permissions
 	if len(perms) != 2 {
 		t.Fatalf("unexpected number of results: %d", len(perms))
 	}
@@ -163,8 +169,8 @@ func TestBySubjectIncorrectSubjectType(t *testing.T) {
 	putPermission(db, "group", "g1id", "analysis", "r2", "write")
 
 	// Attempt the lookup.
-	responder := lookupBySubjectAttempt(db, "group", "s2")
-	errorOut := responder.(*lookup.BySubjectBadRequest).Payload
+	responder := bySubjectAttempt(db, "group", "s2", true)
+	errorOut := responder.(*permissions.BySubjectBadRequest).Payload
 	expected := "incorrect type for subject, s2: group"
 	if *errorOut.Reason != expected {
 		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
@@ -188,7 +194,44 @@ func TestBySubjectGroupsNotTransitive(t *testing.T) {
 	putPermission(db, "group", "g2id", "analysis", "r3", "own")
 
 	// Look up permissions and verify that we get the expected number of results.
-	perms := lookupBySubject(db, "group", "g1id").Permissions
+	perms := bySubject(db, "group", "g1id", true).Permissions
+	if len(perms) != 2 {
+		t.Fatalf("unexpected number of results: %d", len(perms))
+	}
+
+	// Verify that we got the expected results.
+	checkPerm(t, perms[0], 0, "r1", "g1id", "read")
+	checkPerm(t, perms[1], 1, "r2", "g1id", "write")
+}
+
+func TestBySubjectNonLookup(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Add some permissions.
+	putPermission(db, "user", "s2", "app", "r1", "own")
+	putPermission(db, "group", "g1id", "app", "r1", "read")
+	putPermission(db, "user", "s2", "analysis", "r2", "read")
+	putPermission(db, "group", "g1id", "analysis", "r2", "write")
+	putPermission(db, "group", "g2id", "analysis", "r3", "own")
+
+	// List permissions for s2 and verify that we get the expected results.
+	perms := bySubject(db, "user", "s2", false).Permissions
+	if len(perms) != 2 {
+		t.Fatalf("unexpected number of results: %d", len(perms))
+	}
+
+	// Verify that we got the expected results.
+	checkPerm(t, perms[0], 0, "r1", "s2", "own")
+	checkPerm(t, perms[1], 1, "r2", "s2", "read")
+
+	// List permissions for g1id and verify that we get the expected results.
+	perms = bySubject(db, "group", "g1id", false).Permissions
 	if len(perms) != 2 {
 		t.Fatalf("unexpected number of results: %d", len(perms))
 	}
