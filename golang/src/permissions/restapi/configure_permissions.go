@@ -17,14 +17,12 @@ import (
 
 	"permissions/clients/grouper"
 	"permissions/restapi/operations"
-	"permissions/restapi/operations/permission_lookup"
 	"permissions/restapi/operations/permissions"
 	"permissions/restapi/operations/resource_types"
 	"permissions/restapi/operations/resources"
 	"permissions/restapi/operations/status"
 	"permissions/restapi/operations/subjects"
 
-	permission_lookup_impl "permissions/restapi/impl/permission_lookup"
 	permissions_impl "permissions/restapi/impl/permissions"
 	resource_types_impl "permissions/restapi/impl/resource_types"
 	resources_impl "permissions/restapi/impl/resources"
@@ -196,8 +194,8 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 		permissions_impl.BuildBySubjectAndResourceTypeHandler(db, grouperClient),
 	)
 
-	api.PermissionLookupBySubjectAndResourceHandler = permission_lookup.BySubjectAndResourceHandlerFunc(
-		permission_lookup_impl.BuildBySubjectAndResourceHandler(db, grouperClient),
+	api.PermissionsBySubjectAndResourceHandler = permissions.BySubjectAndResourceHandlerFunc(
+		permissions_impl.BuildBySubjectAndResourceHandler(db, grouperClient),
 	)
 
 	api.ServerShutdown = cleanup

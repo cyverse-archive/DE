@@ -75,7 +75,7 @@ func BuildBySubjectAndResourceTypeHandler(
 		}
 
 		// Perform the lookup.
-		permissions, err := permsdb.PermissionsForSubjectsAndResourceType(tx, subjectIds, resourceTypeName)
+		perms, err := permsdb.PermissionsForSubjectsAndResourceType(tx, subjectIds, resourceTypeName)
 		if err != nil {
 			tx.Rollback()
 			logcabin.Error.Print(err)
@@ -89,6 +89,6 @@ func BuildBySubjectAndResourceTypeHandler(
 			return bySubjectAndResourceTypeInternalServerError(err.Error())
 		}
 
-		return bySubjectAndResourceTypeOk(permissions)
+		return bySubjectAndResourceTypeOk(perms)
 	}
 }

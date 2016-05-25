@@ -62,7 +62,7 @@ func BuildBySubjectHandler(
 		}
 
 		// Perform the lookup.
-		permissions, err := permsdb.PermissionsForSubjects(tx, subjectIds)
+		perms, err := permsdb.PermissionsForSubjects(tx, subjectIds)
 		if err != nil {
 			tx.Rollback()
 			logcabin.Error.Print(err)
@@ -76,6 +76,6 @@ func BuildBySubjectHandler(
 			return bySubjectInternalServerError(err.Error())
 		}
 
-		return bySubjectOk(permissions)
+		return bySubjectOk(perms)
 	}
 }

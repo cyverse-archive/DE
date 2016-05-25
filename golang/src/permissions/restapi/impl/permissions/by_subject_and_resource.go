@@ -1,4 +1,4 @@
-package permission_lookup
+package permissions
 
 import (
 	"database/sql"
@@ -8,31 +8,32 @@ import (
 	"permissions/clients/grouper"
 	"permissions/models"
 	permsdb "permissions/restapi/impl/db"
-	"permissions/restapi/operations/permission_lookup"
+	"permissions/restapi/operations/permissions"
 )
 
-func bySubjectAndResourceOk(permissions []*models.Permission) middleware.Responder {
-	return permission_lookup.NewBySubjectAndResourceOK().WithPayload(&models.PermissionList{permissions})
+func bySubjectAndResourceOk(perms []*models.Permission) middleware.Responder {
+	return permissions.NewBySubjectAndResourceOK().WithPayload(&models.PermissionList{perms})
 }
 
 func bySubjectAndResourceInternalServerError(reason string) middleware.Responder {
-	return permission_lookup.NewBySubjectAndResourceInternalServerError().WithPayload(&models.ErrorOut{&reason})
+	return permissions.NewBySubjectAndResourceInternalServerError().WithPayload(&models.ErrorOut{&reason})
 }
 
 func bySubjectAndResourceBadRequest(reason string) middleware.Responder {
-	return permission_lookup.NewBySubjectAndResourceBadRequest().WithPayload(&models.ErrorOut{&reason})
+	return permissions.NewBySubjectAndResourceBadRequest().WithPayload(&models.ErrorOut{&reason})
 }
 
 func BuildBySubjectAndResourceHandler(
 	db *sql.DB, grouperClient grouper.Grouper,
-) func(permission_lookup.BySubjectAndResourceParams) middleware.Responder {
+) func(permissions.BySubjectAndResourceParams) middleware.Responder {
 
 	// Return the handler function.
-	return func(params permission_lookup.BySubjectAndResourceParams) middleware.Responder {
+	return func(params permissions.BySubjectAndResourceParams) middleware.Responder {
 		subjectType := params.SubjectType
 		subjectId := params.SubjectID
 		resourceTypeName := params.ResourceType
 		resourceName := params.ResourceName
+		lookup := extractLookupFlag(params.Lookup)
 
 		// Start a transaction for the request.
 		tx, err := db.Begin()
@@ -78,19 +79,16 @@ func BuildBySubjectAndResourceHandler(
 			return bySubjectAndResourceOk(make([]*models.Permission, 0))
 		}
 
-		// Get the list of group IDs.
-		groupIds, err := groupIdsForSubject(grouperClient, subjectType, subjectId)
+		// Get the list of subject IDs to use for the query.
+		subjectIds, err := buildSubjectIdList(grouperClient, subjectType, subjectId, lookup)
 		if err != nil {
 			tx.Rollback()
 			logcabin.Error.Print(err)
-			return bySubjectAndResourceInternalServerError(err.Error())
+			return bySubjectInternalServerError(err.Error())
 		}
 
-		// The list of subject IDs is just the current subject ID plus the list of group IDs.
-		subjectIds := append(groupIds, subjectId)
-
 		// Perform the lookup.
-		permissions, err := permsdb.PermissionsForSubjectsAndResource(tx, subjectIds, resourceTypeName, resourceName)
+		perms, err := permsdb.PermissionsForSubjectsAndResource(tx, subjectIds, resourceTypeName, resourceName)
 		if err != nil {
 			tx.Rollback()
 			logcabin.Error.Print(err)
@@ -105,6 +103,6 @@ func BuildBySubjectAndResourceHandler(
 			return bySubjectAndResourceInternalServerError(err.Error())
 		}
 
-		return bySubjectAndResourceOk(permissions)
+		return bySubjectAndResourceOk(perms)
 	}
 }

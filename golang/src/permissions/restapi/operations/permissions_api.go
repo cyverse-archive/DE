@@ -14,7 +14,6 @@ import (
 	strfmt "github.com/go-swagger/go-swagger/strfmt"
 	"github.com/go-swagger/go-swagger/swag"
 
-	"permissions/restapi/operations/permission_lookup"
 	"permissions/restapi/operations/permissions"
 	"permissions/restapi/operations/resource_types"
 	"permissions/restapi/operations/resources"
@@ -66,8 +65,8 @@ type PermissionsAPI struct {
 	SubjectsAddSubjectHandler subjects.AddSubjectHandler
 	// PermissionsBySubjectHandler sets the operation handler for the by subject operation
 	PermissionsBySubjectHandler permissions.BySubjectHandler
-	// PermissionLookupBySubjectAndResourceHandler sets the operation handler for the by subject and resource operation
-	PermissionLookupBySubjectAndResourceHandler permission_lookup.BySubjectAndResourceHandler
+	// PermissionsBySubjectAndResourceHandler sets the operation handler for the by subject and resource operation
+	PermissionsBySubjectAndResourceHandler permissions.BySubjectAndResourceHandler
 	// PermissionsBySubjectAndResourceTypeHandler sets the operation handler for the by subject and resource type operation
 	PermissionsBySubjectAndResourceTypeHandler permissions.BySubjectAndResourceTypeHandler
 	// ResourcesDeleteResourceHandler sets the operation handler for the delete resource operation
@@ -177,8 +176,8 @@ func (o *PermissionsAPI) Validate() error {
 		unregistered = append(unregistered, "permissions.BySubjectHandler")
 	}
 
-	if o.PermissionLookupBySubjectAndResourceHandler == nil {
-		unregistered = append(unregistered, "permission_lookup.BySubjectAndResourceHandler")
+	if o.PermissionsBySubjectAndResourceHandler == nil {
+		unregistered = append(unregistered, "permissions.BySubjectAndResourceHandler")
 	}
 
 	if o.PermissionsBySubjectAndResourceTypeHandler == nil {
@@ -341,7 +340,7 @@ func (o *PermissionsAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/transitive_permissions/subjects/{subject_type}/{subject_id}/{resource_type}/{resource_name}"] = permission_lookup.NewBySubjectAndResource(o.context, o.PermissionLookupBySubjectAndResourceHandler)
+	o.handlers["GET"]["/permissions/subjects/{subject_type}/{subject_id}/{resource_type}/{resource_name}"] = permissions.NewBySubjectAndResource(o.context, o.PermissionsBySubjectAndResourceHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
