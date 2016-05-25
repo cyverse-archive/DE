@@ -208,6 +208,7 @@ public class DEProperties {
         keys.add(DEFAULT_BETA_CATEGORY_ID);
         keys.add(DEFAULT_TRASH_CATEGORY_ID);
         keys.add(UNPROTECTED_MULE_SERVICE_BASE_URL);
+        keys.add(DEFAULT_HPC_CATEGORY_ID);
         return keys;
     }
 
