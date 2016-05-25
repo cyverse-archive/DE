@@ -236,9 +236,9 @@
           {:keys [irods-avus]} (metadata-get user src-id)]
       (if-not force?
         (validate-batch-add-attrs cm irods-avus dest-items))
-      (metadata/copy-metadata-avus (resolve-data-type type)
+      (metadata/copy-metadata-avus user
+                                   (resolve-data-type type)
                                    src-id
-                                   force?
                                    (map format-copy-dest-item dest-items))
       (doseq [dest-id dest-ids]
         (metadata-add user dest-id {:irods-avus irods-avus}))

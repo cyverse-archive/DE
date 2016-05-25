@@ -214,7 +214,9 @@
 (defn metadata-copy
   [user force path-uuid copy-request]
   (request :post ["data" path-uuid "metadata" "copy"]
-           (mk-req-map user (json/encode copy-request) {:force force})))
+           (mk-req-map user
+                       (json/encode copy-request)
+                       (remove-vals nil? {:force force}))))
 
 (defn admin-add-avus
   "Add AVUs, allowing administrative AVUs to be included, for a data item."
