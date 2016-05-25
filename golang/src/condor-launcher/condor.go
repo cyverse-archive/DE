@@ -77,12 +77,13 @@ rank = mips
 arguments = --config config --job job
 output = script-output.log
 error = script-error.log
-log = condor.log
+log = condor.log{{if .Group}}
+accounting_group = {{.Group}}
+accounting_group_user = {{.Submitter}}{{end}}
 request_disk = {{.RequestDisk}}
 +IpcUuid = "{{.InvocationID}}"
 +IpcJobId = "generated_script"
-+IpcUsername = "{{.Submitter}}"{{if .Group}}
-+AccountingGroup = "{{.Group}}.{{.Submitter}}"{{end}}
++IpcUsername = "{{.Submitter}}"
 concurrency_limits = {{.UserIDForSubmission}}
 {{with $x := index .Steps 0}}+IpcExe = "{{$x.Component.Name}}"{{end}}
 {{with $x := index .Steps 0}}+IpcExePath = "{{$x.Component.Location}}"{{end}}
