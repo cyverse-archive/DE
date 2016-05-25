@@ -74,7 +74,7 @@
   [{^DataObjectAO data-ao :dataObjectAO
     ^CollectionAO collection-ao :collectionAO
     :as cm} apath attr val]
-  (validate-path-lengths dir-path)
+  (validate-path-lengths apath)
   (filter
     #(and (= (:attr %1) attr)
           (= (:value %1) val))
