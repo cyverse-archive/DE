@@ -31,6 +31,8 @@ func NewGrantPermission(ctx *middleware.Context, handler GrantPermissionHandler)
 
 Grant Permission to a Resource
 
+Grants permission to access a resource to a subject. If the subject already has permission to access the resource then the permission level will be updated (assuming the new permission level is different from the existing permission level). Neither the resource nor the subject needs to be registered in the database before this endpoint is called; they will be added to the database if necessary. This endpoint will return an error response if the subject ID is already in use and associated with a different subject type. It will also return an error if either the specified resource type or permission level does not exist.
+
 */
 type GrantPermission struct {
 	Context *middleware.Context

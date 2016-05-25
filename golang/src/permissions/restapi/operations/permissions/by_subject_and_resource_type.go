@@ -31,6 +31,8 @@ func NewBySubjectAndResourceType(ctx *middleware.Context, handler BySubjectAndRe
 
 Look Up by Subject and Resource Type
 
+Looks up all permissions granted to a subject for resources of the given type. If lookup mode is enabled and the subject is a user, the most lenient permissions granted to the subject or any groups the subject belongs to will be listed. If lookup mode is not enabled or the subject is a group then only permissions assigned directly to the subject will be listed. This endpoint will return an error status if the subject ID is in use and associated with a different subject type.
+
 */
 type BySubjectAndResourceType struct {
 	Context *middleware.Context

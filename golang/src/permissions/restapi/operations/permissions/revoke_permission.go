@@ -31,6 +31,8 @@ func NewRevokePermission(ctx *middleware.Context, handler RevokePermissionHandle
 
 Revoke Permission to a Resource
 
+Removes a permission entry from the database. This endpoint will return an error status if the resource type, resource, subject or the permission itself does not exist.
+
 */
 type RevokePermission struct {
 	Context *middleware.Context

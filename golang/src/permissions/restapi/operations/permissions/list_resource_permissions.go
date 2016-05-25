@@ -29,7 +29,9 @@ func NewListResourcePermissions(ctx *middleware.Context, handler ListResourcePer
 
 /*ListResourcePermissions swagger:route GET /permissions/resources/{resource_type}/{resource_name} permissions listResourcePermissions
 
-List Permissions for a Resource
+List Resource Permissions
+
+Lists all of the permissions associated with a resource.
 
 */
 type ListResourcePermissions struct {
