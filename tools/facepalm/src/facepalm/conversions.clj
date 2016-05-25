@@ -11,8 +11,7 @@
 
 (def ^:private default-repositories
   {"central" "http://repo1.maven.org/maven2"
-   "clojars" "http://clojars.org/repo/"
-   "iplant"  "http://katic.iplantcollaborative.org/archiva/repository/internal/"})
+   "clojars" "http://clojars.org/repo/"})
 
 (defn- drop-extension
   [fname]
