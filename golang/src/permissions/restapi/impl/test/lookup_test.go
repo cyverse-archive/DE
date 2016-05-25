@@ -92,7 +92,8 @@ func bySubjectAndResource(
 	return responder.(*permissions.BySubjectAndResourceOK).Payload
 }
 
-func checkPerm(t *testing.T, p *models.Permission, i int32, resource, subject, level string) {
+func checkPerm(t *testing.T, ps []*models.Permission, i int32, resource, subject, level string) {
+	p := ps[i]
 	if *p.Resource.Name != resource {
 		t.Errorf("unexpected resource in result %d: %s", i, *p.Resource.Name)
 	}
@@ -125,8 +126,8 @@ func TestBySubject(t *testing.T) {
 	}
 
 	// Verify that we got the expected results.
-	checkPerm(t, perms[0], 0, "r1", "s2", "own")
-	checkPerm(t, perms[1], 1, "r2", "g1id", "read")
+	checkPerm(t, perms, 0, "r1", "s2", "own")
+	checkPerm(t, perms, 1, "r2", "g1id", "read")
 }
 
 func TestBySubjectMultiplePermissions(t *testing.T) {
@@ -151,8 +152,8 @@ func TestBySubjectMultiplePermissions(t *testing.T) {
 	}
 
 	// Verify that we got the expected results.
-	checkPerm(t, perms[0], 0, "r1", "s2", "own")
-	checkPerm(t, perms[1], 1, "r2", "g1id", "write")
+	checkPerm(t, perms, 0, "r1", "s2", "own")
+	checkPerm(t, perms, 1, "r2", "g1id", "write")
 }
 
 func TestBySubjectIncorrectSubjectType(t *testing.T) {
@@ -202,8 +203,8 @@ func TestBySubjectGroupsNotTransitive(t *testing.T) {
 	}
 
 	// Verify that we got the expected results.
-	checkPerm(t, perms[0], 0, "r1", "g1id", "read")
-	checkPerm(t, perms[1], 1, "r2", "g1id", "write")
+	checkPerm(t, perms, 0, "r1", "g1id", "read")
+	checkPerm(t, perms, 1, "r2", "g1id", "write")
 }
 
 func TestBySubjectNonLookup(t *testing.T) {
@@ -229,8 +230,8 @@ func TestBySubjectNonLookup(t *testing.T) {
 	}
 
 	// Verify that we got the expected results.
-	checkPerm(t, perms[0], 0, "r1", "s2", "own")
-	checkPerm(t, perms[1], 1, "r2", "s2", "read")
+	checkPerm(t, perms, 0, "r1", "s2", "own")
+	checkPerm(t, perms, 1, "r2", "s2", "read")
 
 	// List permissions for g1id and verify that we get the expected results.
 	perms = bySubject(db, "group", "g1id", false).Permissions
@@ -239,8 +240,8 @@ func TestBySubjectNonLookup(t *testing.T) {
 	}
 
 	// Verify that we got the expected results.
-	checkPerm(t, perms[0], 0, "r1", "g1id", "read")
-	checkPerm(t, perms[1], 1, "r2", "g1id", "write")
+	checkPerm(t, perms, 0, "r1", "g1id", "read")
+	checkPerm(t, perms, 1, "r2", "g1id", "write")
 }
 
 func TestBySubjectAndResourceType(t *testing.T) {
@@ -271,8 +272,8 @@ func TestBySubjectAndResourceType(t *testing.T) {
 	}
 
 	// Verify that we got the expected results.
-	checkPerm(t, perms[0], 0, "app1", "s2", "own")
-	checkPerm(t, perms[1], 1, "app2", "g1id", "write")
+	checkPerm(t, perms, 0, "app1", "s2", "own")
+	checkPerm(t, perms, 1, "app2", "g1id", "write")
 
 	// Look up analysis permissions and verify that we get the expected number of results.
 	perms = bySubjectAndResourceType(db, "user", "s2", "analysis", true).Permissions
@@ -281,8 +282,8 @@ func TestBySubjectAndResourceType(t *testing.T) {
 	}
 
 	// Verify that we got the expected results.
-	checkPerm(t, perms[0], 0, "analysis1", "s2", "own")
-	checkPerm(t, perms[1], 1, "analysis2", "g1id", "write")
+	checkPerm(t, perms, 0, "analysis1", "s2", "own")
+	checkPerm(t, perms, 1, "analysis2", "g1id", "write")
 }
 
 func TestBySubjectAndResourceTypeIncorrectSubjectType(t *testing.T) {
@@ -356,8 +357,8 @@ func TestBySubjectAndResourceTypeGroupsNotTransitive(t *testing.T) {
 	}
 
 	// Verify that we got the expected results.
-	checkPerm(t, perms[0], 0, "app1", "g1id", "read")
-	checkPerm(t, perms[1], 1, "app2", "g1id", "write")
+	checkPerm(t, perms, 0, "app1", "g1id", "read")
+	checkPerm(t, perms, 1, "app2", "g1id", "write")
 }
 
 func TestBySubjectAndResourceTypeNonLookup(t *testing.T) {
@@ -388,8 +389,8 @@ func TestBySubjectAndResourceTypeNonLookup(t *testing.T) {
 	}
 
 	// Verify that we got the expected results.
-	checkPerm(t, perms[0], 0, "app1", "s2", "own")
-	checkPerm(t, perms[1], 1, "app2", "s2", "read")
+	checkPerm(t, perms, 0, "app1", "s2", "own")
+	checkPerm(t, perms, 1, "app2", "s2", "read")
 
 	// Look up the app permissions for g1id and verify that we get the expected number of results.
 	perms = bySubjectAndResourceType(db, "group", "g1id", "app", false).Permissions
@@ -398,8 +399,8 @@ func TestBySubjectAndResourceTypeNonLookup(t *testing.T) {
 	}
 
 	// Verify that we got the expected results.
-	checkPerm(t, perms[0], 0, "app1", "g1id", "read")
-	checkPerm(t, perms[1], 1, "app2", "g1id", "write")
+	checkPerm(t, perms, 0, "app1", "g1id", "read")
+	checkPerm(t, perms, 1, "app2", "g1id", "write")
 
 	// Look up the analysis permissions for s2 and verify that we got the expected number of results.
 	perms = bySubjectAndResourceType(db, "user", "s2", "analysis", false).Permissions
@@ -408,8 +409,8 @@ func TestBySubjectAndResourceTypeNonLookup(t *testing.T) {
 	}
 
 	// Verify that we got the expected results.
-	checkPerm(t, perms[0], 0, "analysis1", "s2", "own")
-	checkPerm(t, perms[1], 1, "analysis2", "s2", "read")
+	checkPerm(t, perms, 0, "analysis1", "s2", "own")
+	checkPerm(t, perms, 1, "analysis2", "s2", "read")
 
 	// Look up the analysis permissions for g1id and verify that we get the expected number of results.
 	perms = bySubjectAndResourceType(db, "group", "g1id", "analysis", false).Permissions
@@ -418,8 +419,8 @@ func TestBySubjectAndResourceTypeNonLookup(t *testing.T) {
 	}
 
 	// Verify that we go the expected results.
-	checkPerm(t, perms[0], 0, "analysis1", "g1id", "read")
-	checkPerm(t, perms[1], 1, "analysis2", "g1id", "write")
+	checkPerm(t, perms, 0, "analysis1", "g1id", "read")
+	checkPerm(t, perms, 1, "analysis2", "g1id", "write")
 }
 
 func TestBySubjectAndResource(t *testing.T) {
@@ -445,7 +446,7 @@ func TestBySubjectAndResource(t *testing.T) {
 	}
 
 	// Verify that we got the expected results.
-	checkPerm(t, perms[0], 0, "app1", "s2", "own")
+	checkPerm(t, perms, 0, "app1", "s2", "own")
 
 	// Look up permissions for app2 and verify that we get the expected number of results.
 	perms = bySubjectAndResource(db, "user", "s2", "app", "app2", true).Permissions
@@ -454,7 +455,7 @@ func TestBySubjectAndResource(t *testing.T) {
 	}
 
 	// Verify that we got the expected results.
-	checkPerm(t, perms[0], 0, "app2", "g1id", "write")
+	checkPerm(t, perms, 0, "app2", "g1id", "write")
 
 	// Look up permissions for app3 and verify that we get the expected number of results.
 	perms = bySubjectAndResource(db, "user", "s2", "app", "app3", true).Permissions
@@ -486,7 +487,7 @@ func TestBySubjectAndResourceNonLookup(t *testing.T) {
 	}
 
 	// Verify that we got the expected results.
-	checkPerm(t, perms[0], 0, "app1", "s2", "own")
+	checkPerm(t, perms, 0, "app1", "s2", "own")
 
 	// Look up permissions for app2 and verify that we get the expected number of results.
 	perms = bySubjectAndResource(db, "user", "s2", "app", "app2", false).Permissions
@@ -495,7 +496,7 @@ func TestBySubjectAndResourceNonLookup(t *testing.T) {
 	}
 
 	// Verify that we got the expected results.
-	checkPerm(t, perms[0], 0, "app2", "s2", "read")
+	checkPerm(t, perms, 0, "app2", "s2", "read")
 
 	// Look up permissions for app3 and verify that we get the expected number of results.
 	perms = bySubjectAndResource(db, "user", "s2", "app", "app3", true).Permissions
