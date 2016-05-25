@@ -9,7 +9,7 @@
 (defn- add-time-limit-column
   []
   (println "\t* Adding time_limit_seconds column to the tools table.")
-  (exec-sql-statement "ALTER TABLE tools ADD time_limit_seconds INTEGER DEFAULT 0"))
+  (exec-sql-statement "ALTER TABLE tools ADD time_limit_seconds INTEGER NOT NULL DEFAULT 0"))
 
 (defn convert
   "Performs the conversion for this database version"
