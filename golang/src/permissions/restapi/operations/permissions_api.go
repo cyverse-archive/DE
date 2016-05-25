@@ -68,8 +68,8 @@ type PermissionsAPI struct {
 	PermissionsBySubjectHandler permissions.BySubjectHandler
 	// PermissionLookupBySubjectAndResourceHandler sets the operation handler for the by subject and resource operation
 	PermissionLookupBySubjectAndResourceHandler permission_lookup.BySubjectAndResourceHandler
-	// PermissionLookupBySubjectAndResourceTypeHandler sets the operation handler for the by subject and resource type operation
-	PermissionLookupBySubjectAndResourceTypeHandler permission_lookup.BySubjectAndResourceTypeHandler
+	// PermissionsBySubjectAndResourceTypeHandler sets the operation handler for the by subject and resource type operation
+	PermissionsBySubjectAndResourceTypeHandler permissions.BySubjectAndResourceTypeHandler
 	// ResourcesDeleteResourceHandler sets the operation handler for the delete resource operation
 	ResourcesDeleteResourceHandler resources.DeleteResourceHandler
 	// SubjectsDeleteSubjectHandler sets the operation handler for the delete subject operation
@@ -181,8 +181,8 @@ func (o *PermissionsAPI) Validate() error {
 		unregistered = append(unregistered, "permission_lookup.BySubjectAndResourceHandler")
 	}
 
-	if o.PermissionLookupBySubjectAndResourceTypeHandler == nil {
-		unregistered = append(unregistered, "permission_lookup.BySubjectAndResourceTypeHandler")
+	if o.PermissionsBySubjectAndResourceTypeHandler == nil {
+		unregistered = append(unregistered, "permissions.BySubjectAndResourceTypeHandler")
 	}
 
 	if o.ResourcesDeleteResourceHandler == nil {
@@ -346,7 +346,7 @@ func (o *PermissionsAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/transitive_permissions/subjects/{subject_type}/{subject_id}/{resource_type}"] = permission_lookup.NewBySubjectAndResourceType(o.context, o.PermissionLookupBySubjectAndResourceTypeHandler)
+	o.handlers["GET"]["/permissions/subjects/{subject_type}/{subject_id}/{resource_type}"] = permissions.NewBySubjectAndResourceType(o.context, o.PermissionsBySubjectAndResourceTypeHandler)
 
 	if o.handlers["DELETE"] == nil {
 		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)

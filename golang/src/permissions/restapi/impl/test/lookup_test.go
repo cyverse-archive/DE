@@ -45,25 +45,28 @@ func bySubject(db *sql.DB, subjectType, subjectId string, lookup bool) *models.P
 	return responder.(*permissions.BySubjectOK).Payload
 }
 
-func lookupBySubjectAndResourceTypeAttempt(
-	db *sql.DB, subjectType, subjectId, resourceType string,
+func bySubjectAndResourceTypeAttempt(
+	db *sql.DB, subjectType, subjectId, resourceType string, lookup bool,
 ) middleware.Responder {
 
 	// Build the request handler.
-	handler := impl.BuildBySubjectAndResourceTypeHandler(db, grouper.Grouper(mockGrouperClient))
+	handler := pimpl.BuildBySubjectAndResourceTypeHandler(db, grouper.Grouper(mockGrouperClient))
 
 	// Attempt to look up the permissions.
-	params := lookup.BySubjectAndResourceTypeParams{
+	params := permissions.BySubjectAndResourceTypeParams{
 		SubjectType:  subjectType,
 		SubjectID:    subjectId,
 		ResourceType: resourceType,
+		Lookup:       &lookup,
 	}
 	return handler(params)
 }
 
-func lookupBySubjectAndResourceType(db *sql.DB, subjectType, subjectId, resourceType string) *models.PermissionList {
-	responder := lookupBySubjectAndResourceTypeAttempt(db, subjectType, subjectId, resourceType)
-	return responder.(*lookup.BySubjectAndResourceTypeOK).Payload
+func bySubjectAndResourceType(
+	db *sql.DB, subjectType, subjectId, resourceType string, lookup bool,
+) *models.PermissionList {
+	responder := bySubjectAndResourceTypeAttempt(db, subjectType, subjectId, resourceType, lookup)
+	return responder.(*permissions.BySubjectAndResourceTypeOK).Payload
 }
 
 func lookupBySubjectAndResourceAttempt(
@@ -263,7 +266,7 @@ func TestBySubjectAndResourceType(t *testing.T) {
 	putPermission(db, "group", "g2id", "analysis", "analysis3", "own")
 
 	// Look up app permissions and verify that we get the expected number of results.
-	perms := lookupBySubjectAndResourceType(db, "user", "s2", "app").Permissions
+	perms := bySubjectAndResourceType(db, "user", "s2", "app", true).Permissions
 	if len(perms) != 2 {
 		t.Fatalf("unexpected number of results: %d", len(perms))
 	}
@@ -273,7 +276,7 @@ func TestBySubjectAndResourceType(t *testing.T) {
 	checkPerm(t, perms[1], 1, "app2", "g1id", "write")
 
 	// Look up analysis permissions and verify that we get the expected number of results.
-	perms = lookupBySubjectAndResourceType(db, "user", "s2", "analysis").Permissions
+	perms = bySubjectAndResourceType(db, "user", "s2", "analysis", true).Permissions
 	if len(perms) != 2 {
 		t.Fatalf("unexpected number of results: %d", len(perms))
 	}
@@ -300,8 +303,8 @@ func TestBySubjectAndResourceTypeIncorrectSubjectType(t *testing.T) {
 	putPermission(db, "group", "g2id", "app", "app3", "own")
 
 	// Look up permissions and verify that we get the expected number of results.
-	responder := lookupBySubjectAndResourceTypeAttempt(db, "group", "s2", "app")
-	errorOut := responder.(*lookup.BySubjectAndResourceTypeBadRequest).Payload
+	responder := bySubjectAndResourceTypeAttempt(db, "group", "s2", "app", true)
+	errorOut := responder.(*permissions.BySubjectAndResourceTypeBadRequest).Payload
 	expected := "incorrect type for subject, s2: group"
 	if *errorOut.Reason != expected {
 		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
@@ -325,7 +328,7 @@ func TestBySubjectAndResourceTypeUnknownResourceType(t *testing.T) {
 	putPermission(db, "group", "g2id", "app", "app3", "own")
 
 	// Look up permissions and verify that we get the expected number of results.
-	perms := lookupBySubjectAndResourceType(db, "user", "s2", "blargle").Permissions
+	perms := bySubjectAndResourceType(db, "user", "s2", "blargle", true).Permissions
 	if len(perms) != 0 {
 		t.Errorf("unexpected number of results: %d", len(perms))
 	}
@@ -348,7 +351,7 @@ func TestBySubjectAndResourceTypeGroupsNotTransitive(t *testing.T) {
 	putPermission(db, "group", "g2id", "app", "app3", "own")
 
 	// Look up permissions and verify that we get the expected number of results.
-	perms := lookupBySubjectAndResourceType(db, "group", "g1id", "app").Permissions
+	perms := bySubjectAndResourceType(db, "group", "g1id", "app", true).Permissions
 	if len(perms) != 2 {
 		t.Fatalf("unexpected number of results: %d", len(perms))
 	}
@@ -356,6 +359,68 @@ func TestBySubjectAndResourceTypeGroupsNotTransitive(t *testing.T) {
 	// Verify that we got the expected results.
 	checkPerm(t, perms[0], 0, "app1", "g1id", "read")
 	checkPerm(t, perms[1], 1, "app2", "g1id", "write")
+}
+
+func TestBySubjectAndResourceTypeNonLookup(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Add some permissions.
+	putPermission(db, "user", "s2", "app", "app1", "own")
+	putPermission(db, "group", "g1id", "app", "app1", "read")
+	putPermission(db, "user", "s2", "app", "app2", "read")
+	putPermission(db, "group", "g1id", "app", "app2", "write")
+	putPermission(db, "group", "g2id", "app", "app3", "own")
+	putPermission(db, "user", "s2", "analysis", "analysis1", "own")
+	putPermission(db, "group", "g1id", "analysis", "analysis1", "read")
+	putPermission(db, "user", "s2", "analysis", "analysis2", "read")
+	putPermission(db, "group", "g1id", "analysis", "analysis2", "write")
+	putPermission(db, "group", "g2id", "analysis", "analysis3", "own")
+
+	// Look up the app permissions for s2 and verify that we get the expected number of results.
+	perms := bySubjectAndResourceType(db, "user", "s2", "app", false).Permissions
+	if len(perms) != 2 {
+		t.Fatalf("unexpected number of results: %d", len(perms))
+	}
+
+	// Verify that we got the expected results.
+	checkPerm(t, perms[0], 0, "app1", "s2", "own")
+	checkPerm(t, perms[1], 1, "app2", "s2", "read")
+
+	// Look up the app permissions for g1id and verify that we get the expected number of results.
+	perms = bySubjectAndResourceType(db, "group", "g1id", "app", false).Permissions
+	if len(perms) != 2 {
+		t.Fatalf("unexpected number of results: %d", len(perms))
+	}
+
+	// Verify that we got the expected results.
+	checkPerm(t, perms[0], 0, "app1", "g1id", "read")
+	checkPerm(t, perms[1], 1, "app2", "g1id", "write")
+
+	// Look up the analysis permissions for s2 and verify that we got the expected number of results.
+	perms = bySubjectAndResourceType(db, "user", "s2", "analysis", false).Permissions
+	if len(perms) != 2 {
+		t.Fatalf("unexpected number of results: %d", len(perms))
+	}
+
+	// Verify that we got the expected results.
+	checkPerm(t, perms[0], 0, "analysis1", "s2", "own")
+	checkPerm(t, perms[1], 1, "analysis2", "s2", "read")
+
+	// Look up the analysis permissions for g1id and verify that we get the expected number of results.
+	perms = bySubjectAndResourceType(db, "group", "g1id", "analysis", false).Permissions
+	if len(perms) != 2 {
+		t.Fatalf("unexpected number of results: %d", len(perms))
+	}
+
+	// Verify that we go the expected results.
+	checkPerm(t, perms[0], 0, "analysis1", "g1id", "read")
+	checkPerm(t, perms[1], 1, "analysis2", "g1id", "write")
 }
 
 func TestBySubjectAndResource(t *testing.T) {

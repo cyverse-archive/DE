@@ -31,12 +31,7 @@ func BuildBySubjectHandler(
 	return func(params permissions.BySubjectParams) middleware.Responder {
 		subjectType := params.SubjectType
 		subjectId := params.SubjectID
-
-		// Extract the lookup flag.
-		lookup := false
-		if params.Lookup != nil {
-			lookup = *params.Lookup
-		}
+		lookup := extractLookupFlag(params.Lookup)
 
 		// Create a transaction for the request.
 		tx, err := db.Begin()

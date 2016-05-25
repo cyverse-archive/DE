@@ -192,8 +192,8 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 		permissions_impl.BuildBySubjectHandler(db, grouperClient),
 	)
 
-	api.PermissionLookupBySubjectAndResourceTypeHandler = permission_lookup.BySubjectAndResourceTypeHandlerFunc(
-		permission_lookup_impl.BuildBySubjectAndResourceTypeHandler(db, grouperClient),
+	api.PermissionsBySubjectAndResourceTypeHandler = permissions.BySubjectAndResourceTypeHandlerFunc(
+		permissions_impl.BuildBySubjectAndResourceTypeHandler(db, grouperClient),
 	)
 
 	api.PermissionLookupBySubjectAndResourceHandler = permission_lookup.BySubjectAndResourceHandlerFunc(

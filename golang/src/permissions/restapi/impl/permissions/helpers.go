@@ -107,6 +107,13 @@ func getPermissionLevel(
 	return permissionLevelId, nil
 }
 
+func extractLookupFlag(lookup *bool) bool {
+	if lookup != nil {
+		return *lookup
+	}
+	return false
+}
+
 func groupIdsForSubject(grouperClient grouper.Grouper, subjectType, subjectId string) ([]string, error) {
 	groupIds := make([]string, 0)
 
