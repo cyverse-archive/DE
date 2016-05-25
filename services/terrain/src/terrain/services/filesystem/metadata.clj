@@ -5,19 +5,14 @@
         [terrain.services.filesystem.validators]
         [kameleon.uuids :only [uuidify]]
         [slingshot.slingshot :only [try+ throw+]])
-  (:require [clojure.tools.logging :as log]
-            [clojure.string :as string]
-            [clojure.walk :as walk]
+  (:require [clojure.string :as string]
             [clojure-commons.file-utils :as ft]
-            [cemerick.url :as url]
             [cheshire.core :as json]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
             [terrain.clients.metadata.raw :as metadata-client]
             [terrain.clients.data-info :as data]
             [terrain.clients.data-info.raw :as data-raw]
-            [terrain.services.filesystem.icat :as icat]
             [terrain.services.filesystem.validators :as validators]
-            [terrain.util.config :as cfg]
             [terrain.util.service :as service]))
 
 (defn- service-response->json
@@ -142,7 +137,7 @@
 
 (defn- deparse-csv-line
   [line]
-  (mapv second (into (sorted-map-by #(< (keyword-to-int %1) (keyword-to-int %2))) line)))
+  (mapv (comp string/trim second) (into (sorted-map-by #(< (keyword-to-int %1) (keyword-to-int %2))) line)))
 
 (defn- get-csv
   [user src separator]
