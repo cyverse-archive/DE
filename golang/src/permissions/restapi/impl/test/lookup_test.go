@@ -92,19 +92,6 @@ func bySubjectAndResource(
 	return responder.(*permissions.BySubjectAndResourceOK).Payload
 }
 
-func checkPerm(t *testing.T, ps []*models.Permission, i int32, resource, subject, level string) {
-	p := ps[i]
-	if *p.Resource.Name != resource {
-		t.Errorf("unexpected resource in result %d: %s", i, *p.Resource.Name)
-	}
-	if string(p.Subject.SubjectID) != subject {
-		t.Errorf("unexpected subject in result %d: %s", i, string(p.Subject.SubjectID))
-	}
-	if string(p.PermissionLevel) != level {
-		t.Errorf("unexpected permission level in result %d: %s", i, string(p.PermissionLevel))
-	}
-}
-
 func TestBySubject(t *testing.T) {
 	if !shouldrun() {
 		return

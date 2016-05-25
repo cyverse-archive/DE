@@ -51,6 +51,33 @@ func ListPermissions(tx *sql.Tx) ([]*models.Permission, error) {
 	return rowsToPermissionList(rows)
 }
 
+func ListResourcePermissions(tx *sql.Tx, resourceTypeName, resourceName string) ([]*models.Permission, error) {
+
+	// Query the database.
+	query := `SELECT p.id AS id,
+	                 s.id AS internal_subject_id,
+	                 s.subject_id AS subject_id,
+	                 s.subject_type AS subject_type,
+	                 r.id AS resource_id,
+	                 r.name AS resource_name,
+	                 rt.name AS resource_type,
+	                 pl.name AS permission_level
+	          FROM permissions p
+	          JOIN permission_levels pl ON p.permission_level_id = pl.id
+	          JOIN subjects s ON p.subject_id = s.id
+	          JOIN resources r ON p.resource_id = r.id
+	          JOIN resource_types rt ON r.resource_type_id = rt.id
+            WHERE rt.name = $1 AND r.name = $2
+	          ORDER BY s.subject_id`
+	rows, err := tx.Query(query, resourceTypeName, resourceName)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	return rowsToPermissionList(rows)
+}
+
 func PermissionsForSubjects(tx *sql.Tx, subjectIds []string) ([]*models.Permission, error) {
 	sa := StringArray(subjectIds)
 

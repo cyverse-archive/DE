@@ -550,6 +550,30 @@ paths:
           $ref: "#/responses/bad_request"
         500:
           $ref: "#/responses/internal_server_error"
+  /permissions/resources/{resource_type}/{resource_name}:
+    parameters:
+      - name: resource_type
+        type: string
+        description: "The resource type name."
+        in: path
+        required: True
+      - name: resource_name
+        type: string
+        description: "The resource name."
+        in: path
+        required: True
+    get:
+      tags:
+        - permissions
+      summary: "List Permissions for a Resource"
+      operationId: listResourcePermissions
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/permission_list"
+        500:
+          $ref: "#/responses/internal_server_error"
   /permissions/resources/{resource_type}/{resource_name}/subjects/{subject_type}/{subject_id}:
     parameters:
       - name: resource_type

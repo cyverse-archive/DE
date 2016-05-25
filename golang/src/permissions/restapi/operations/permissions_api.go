@@ -77,6 +77,8 @@ type PermissionsAPI struct {
 	PermissionsGrantPermissionHandler permissions.GrantPermissionHandler
 	// PermissionsListPermissionsHandler sets the operation handler for the list permissions operation
 	PermissionsListPermissionsHandler permissions.ListPermissionsHandler
+	// PermissionsListResourcePermissionsHandler sets the operation handler for the list resource permissions operation
+	PermissionsListResourcePermissionsHandler permissions.ListResourcePermissionsHandler
 	// ResourcesListResourcesHandler sets the operation handler for the list resources operation
 	ResourcesListResourcesHandler resources.ListResourcesHandler
 	// SubjectsListSubjectsHandler sets the operation handler for the list subjects operation
@@ -198,6 +200,10 @@ func (o *PermissionsAPI) Validate() error {
 
 	if o.PermissionsListPermissionsHandler == nil {
 		unregistered = append(unregistered, "permissions.ListPermissionsHandler")
+	}
+
+	if o.PermissionsListResourcePermissionsHandler == nil {
+		unregistered = append(unregistered, "permissions.ListResourcePermissionsHandler")
 	}
 
 	if o.ResourcesListResourcesHandler == nil {
@@ -366,6 +372,11 @@ func (o *PermissionsAPI) initHandlerCache() {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/permissions"] = permissions.NewListPermissions(o.context, o.PermissionsListPermissionsHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/permissions/resources/{resource_type}/{resource_name}"] = permissions.NewListResourcePermissions(o.context, o.PermissionsListResourcePermissionsHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)

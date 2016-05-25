@@ -10,6 +10,19 @@ import (
 	impl "permissions/restapi/impl/permissions"
 )
 
+func checkPerm(t *testing.T, ps []*models.Permission, i int32, resource, subject, level string) {
+	p := ps[i]
+	if *p.Resource.Name != resource {
+		t.Errorf("unexpected resource in result %d: %s", i, *p.Resource.Name)
+	}
+	if string(p.Subject.SubjectID) != subject {
+		t.Errorf("unexpected subject in result %d: %s", i, string(p.Subject.SubjectID))
+	}
+	if string(p.PermissionLevel) != level {
+		t.Errorf("unexpected permission level in result %d: %s", i, string(p.PermissionLevel))
+	}
+}
+
 func grantPermissionAttempt(
 	db *sql.DB,
 	subject *models.SubjectIn,
@@ -93,6 +106,41 @@ func listPermissionsAttempt(db *sql.DB) middleware.Responder {
 func listPermissions(db *sql.DB) *models.PermissionList {
 	responder := listPermissionsAttempt(db)
 	return responder.(*permissions.ListPermissionsOK).Payload
+}
+
+func listResourcePermissionsAttempt(db *sql.DB, resourceType, resourceName string) middleware.Responder {
+
+	// Build the request handler.
+	handler := impl.BuildListResourcePermissionsHandler(db)
+
+	// Attempt to list the permissions for the resource.
+	params := permissions.ListResourcePermissionsParams{
+		ResourceType: resourceType,
+		ResourceName: resourceName,
+	}
+	return handler(params)
+}
+
+func addDefaultPermissions(db *sql.DB) {
+	putPermission(db, "user", "s2", "app", "app1", "own")
+	putPermission(db, "group", "g1id", "app", "app1", "read")
+	putPermission(db, "group", "g2id", "app", "app1", "write")
+	putPermission(db, "user", "s3", "app", "app1", "read")
+	putPermission(db, "user", "s2", "app", "app2", "read")
+	putPermission(db, "group", "g1id", "app", "app2", "write")
+	putPermission(db, "group", "g2id", "app", "app3", "own")
+	putPermission(db, "user", "s2", "analysis", "analysis1", "own")
+	putPermission(db, "group", "g1id", "analysis", "analysis1", "read")
+	putPermission(db, "group", "g2id", "analysis", "analysis1", "write")
+	putPermission(db, "user", "s3", "analysis", "analysis1", "read")
+	putPermission(db, "user", "s2", "analysis", "analysis2", "read")
+	putPermission(db, "group", "g1id", "analysis", "analysis2", "write")
+	putPermission(db, "group", "g2id", "analysis", "analysis3", "own")
+}
+
+func listResourcePermissions(db *sql.DB, resourceType, resourceName string) *models.PermissionList {
+	responder := listResourcePermissionsAttempt(db, resourceType, resourceName)
+	return responder.(*permissions.ListResourcePermissionsOK).Payload
 }
 
 func TestGrantPermission(t *testing.T) {
@@ -654,4 +702,45 @@ func TestPutPermissionBogusResourceType(t *testing.T) {
 	if *errorOut.Reason != expected {
 		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
 	}
+}
+
+func TestListResourcePermissionsEmpty(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// List permissions and verify that we get the expected number of results.
+	perms := listResourcePermissions(db, "app", "r1").Permissions
+	if len(perms) != 0 {
+		t.Fatalf("unexpected number of results: %d", len(perms))
+	}
+}
+
+func TestListResourcePermissions(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Add some permissions.
+	addDefaultPermissions(db)
+
+	// List permissions and verify that we get the expected number of results.
+	perms := listResourcePermissions(db, "app", "app1").Permissions
+	if len(perms) != 4 {
+		t.Fatalf("unexpected number of results: %d", len(perms))
+	}
+
+	// Verify that we got the expected results.
+	checkPerm(t, perms, 0, "app1", "g1id", "read")
+	checkPerm(t, perms, 1, "app1", "g2id", "write")
+	checkPerm(t, perms, 2, "app1", "s2", "own")
+	checkPerm(t, perms, 3, "app1", "s3", "read")
 }
