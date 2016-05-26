@@ -1,5 +1,6 @@
 (ns data-info.routes.avus
-  (:use [common-swagger-api.schema]
+  (:use [common-swagger-api.routes]
+        [common-swagger-api.schema]
         [data-info.routes.domain.common]
         [data-info.routes.domain.avus]
         [data-info.routes.middleware :only [wrap-metadata-base-url]])
@@ -19,7 +20,9 @@
       :description
           (str "List all AVUs associated with a data item. Include administrative/system iRODS AVUs."
 (get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE")
-(get-endpoint-delegate-block "metadata" "GET /avus/{target-type}/{target-id}"))
+(get-endpoint-delegate-block
+  "metadata"
+  "GET /avus/{target-type}/{target-id}"))
       (svc/trap uri meta/admin-metadata-get data-id))
 
     (PATCH* "/metadata" [:as {uri :uri}]
@@ -30,7 +33,9 @@
       :summary "Add AVUs (administrative)"
       :description (str "Associate iRODS and Metadata AVUs with a data item. Allow adding any AVU."
 (get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_AUTHORIZED")
-(get-endpoint-delegate-block "metadata" "POST /avus/{target-type}/{target-id}"))
+(get-endpoint-delegate-block
+  "metadata"
+  "POST /avus/{target-type}/{target-id}"))
       (svc/trap uri meta/admin-metadata-add data-id body)))
 
   (context* "/data/:data-id" []
@@ -44,7 +49,9 @@
       :summary "List AVUs"
       :description (str "List all AVUs associated with a data item."
 (get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE")
-(get-endpoint-delegate-block "metadata" "GET /avus/{target-type}/{target-id}"))
+(get-endpoint-delegate-block
+  "metadata"
+  "GET /avus/{target-type}/{target-id}"))
       (svc/trap uri meta/metadata-get user data-id :system false))
 
     (PATCH* "/metadata" [:as {uri :uri}]
@@ -57,7 +64,9 @@
             (str "Associate iRODS and Metadata AVUs with a data item.
              Administrative iRODS AVUs may not be added with this endpoint."
 (get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_AUTHORIZED")
-(get-endpoint-delegate-block "metadata" "POST /avus/{target-type}/{target-id}"))
+(get-endpoint-delegate-block
+  "metadata"
+  "POST /avus/{target-type}/{target-id}"))
       (svc/trap uri meta/metadata-add user data-id body))
 
     (PUT* "/metadata" [:as {uri :uri}]
@@ -72,7 +81,9 @@
            (str "Set the iRODS and metadata AVUS for a data item to a provided set.
             The iRODS set may not include administrative AVUs, and similarly will not remove administrative AVUs."
 (get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_AUTHORIZED")
-(get-endpoint-delegate-block "metadata" "PUT /avus/{target-type}/{target-id}"))
+(get-endpoint-delegate-block
+  "metadata"
+  "PUT /avus/{target-type}/{target-id}"))
       (svc/trap uri meta/metadata-set user data-id body))
 
     (POST* "/metadata/copy" [:as {uri :uri}]
@@ -85,5 +96,7 @@
            (str "Copies all IRODS AVUs visible to the client and Metadata AVUs from the data
             item with the ID given in the URL to other data items with the IDs sent in the request body."
 (get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_AUTHORIZED, ERR_NOT_UNIQUE")
-(get-endpoint-delegate-block "metadata" "POST /avus/{target-type}/{target-id}/copy"))
+(get-endpoint-delegate-block
+  "metadata"
+  "POST /avus/{target-type}/{target-id}/copy"))
            (svc/trap uri meta/metadata-copy user force data-id destination_ids))))

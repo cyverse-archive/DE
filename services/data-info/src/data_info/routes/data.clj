@@ -1,5 +1,6 @@
 (ns data-info.routes.data
-  (:use [common-swagger-api.schema]
+  (:use [common-swagger-api.routes]
+        [common-swagger-api.schema]
         [data-info.routes.domain.common]
         [data-info.routes.domain.data]
         [data-info.routes.domain.stats]
@@ -146,5 +147,7 @@ with characters in a runtime-configurable parameter. Currently, this parameter l
     "ERR_INVALID_JSON, ERR_EXISTS, ERR_DOES_NOT_EXIST, ERR_NOT_READABLE,"
     "ERR_NOT_WRITEABLE, ERR_NOT_A_USER, ERR_BAD_PATH_LENGTH, ERR_BAD_DIRNAME_LENGTH,"
     "ERR_BAD_BASENAME_LENGTH, ERR_TOO_MANY_RESULTS")
-  (get-endpoint-delegate-block "metadata" "GET /avus/{target-type}/{target-id}"))
+  (get-endpoint-delegate-block
+    "metadata"
+    "GET /avus/{target-type}/{target-id}"))
         (svc/trap uri meta/do-metadata-save data-id params body)))))
