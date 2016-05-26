@@ -16,6 +16,7 @@ import org.iplantc.de.client.models.analysis.AnalysesAutoBeanFactory;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.notifications.Counts;
 import org.iplantc.de.client.models.notifications.Notification;
 import org.iplantc.de.client.models.notifications.NotificationAutoBeanFactory;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
@@ -105,9 +106,21 @@ import java.util.Map;
  */
 public class DesktopPresenterImpl implements DesktopView.Presenter {
 
+    private final class NewSysMessageCountCallback implements AsyncCallback<Counts> {
+		@Override
+		public void onFailure(Throwable caught) {
+			IplantAnnouncer.getInstance().schedule(new ErrorAnnouncementConfig(appearance.checkSysMessageError()));
+		}
 
+		@Override
+		public void onSuccess(Counts result) {
+			if(result.getNewSystemMessageCount() > 0) {
+				 eventBus.fireEvent(new NewSystemMessagesEvent());
+			}
+		}
+	}
 
-    interface AuthErrors {
+	interface AuthErrors {
         String API_NAME = "api_name";
         String ERROR = "error";
         String ERROR_DESCRIPTION = "error_description";
@@ -634,7 +647,9 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
         panel.add(view);
         processQueryStrings();
         messageServiceFacade.getRecentMessages(new InitializationCallbacks.GetInitialNotificationsCallback(view, appearance, announcer));
-    }
+        messageServiceFacade.getMessageCounts(new NewSysMessageCountCallback());
+   
+   }
 
     void restoreWindows(List<WindowState> windowStates) {
         for (WindowState ws : windowStates) {

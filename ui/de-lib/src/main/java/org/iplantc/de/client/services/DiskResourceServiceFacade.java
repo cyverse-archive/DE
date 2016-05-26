@@ -1,5 +1,7 @@
 package org.iplantc.de.client.services;
 
+import java.util.List;
+
 import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.dataLink.DataLink;
 import org.iplantc.de.client.models.diskResources.DiskResource;
@@ -20,12 +22,8 @@ import org.iplantc.de.client.models.viewer.InfoType;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.autobean.shared.Splittable;
-
 import com.sencha.gxt.core.shared.FastMap;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author jstroot

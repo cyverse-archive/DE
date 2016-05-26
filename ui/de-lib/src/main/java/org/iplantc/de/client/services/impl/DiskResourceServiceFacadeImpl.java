@@ -903,7 +903,6 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
                                                                                true);
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode(request));
-
         callService(wrapper, new AsyncCallbackConverter<String, DiskResourceMove>(callback) {
 
             @Override
