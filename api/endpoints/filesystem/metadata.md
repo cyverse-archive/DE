@@ -6,446 +6,97 @@ title: DE API Documentation
 Metadata
 ---------------------------
 
-The following commands allow the caller to set and get attributes on files and directories in iRODS. iRODS attributes take the form of Attribute Value Unit triples associated with directories and files. iRODS AVUs are only unique on the full triple, so duplicate AVUs may exist. DE tools do not, in general, use the unit field.
+The following endpoints allow the caller to set and get attributes on files and directories in both iRODS and the CyVerse metadata service.
+iRODS attributes take the form of Attribute Value Unit triples associated with directories and files.
+iRODS AVUs are only unique on the full triple, so AVUs with duplicate attributes may exist.
+DE tools do not, in general, use the unit field.
 
 Getting Metadata
 ------------------------------------
 
-__URL Path__: /secured/filesystem/{data-id}/metadata
+Secured Endpoint: GET /secured/filesystem/{data-id}/metadata
 
-__HTTP Method__: GET
+Delegates to data-info: GET /data/{data-id}/metadata
 
-__Error codes__: ERR_DOES_NOT_EXIST, ERR_NOT_READABLE, ERR_NOT_A_USER
-
-__Delegates to metadata__: `GET /filesystem/data/{data-id}/avus`
-
-__Request Query Parameters__:
-
-__Response__:
-
-```json
-{
-    "irods-avus": [
-        {
-             "attr": "avu_name",
-             "value": "avu_value",
-             "unit": "avu_unit"
-        }
-    ],
-    "metadata": {...}
-}
-```
-
-This `metadata` value is set with the response from the corresponding metadata service endpoint. Please see the metadata documentation for more information on the format of this object.
-
-The `irods-avus` value is pulled from data-info.
-
-__Curl Command__:
-
-    curl -H "$AUTH_HEADER" 'http://127.0.0.1:3000/secured/filesystem/$data_id/metadata'
+This endpoint is a passthrough to the data-info endpoint above.
+Please see the data-info documentation for more information.
 
 
 Setting Metadata
 -------------------------------------
 
-__URL Path__: /secured/filesystem/{data-id}/metadata
+Secured Endpoint: POST /secured/filesystem/{data-id}/metadata
 
-__HTTP Method__: POST
+Delegates to data-info: PUT /data/{data-id}/metadata
 
-__Delegates to metadata__: `POST /filesystem/data/{data-id}/avus`
+This endpoint is a passthrough to the data-info endpoint above.
+Please see the data-info documentation for more information.
 
-__Error codes__: ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_A_USER
-
-__Request Query Parameters__:
-
-__Request Body__:
-
-```json
-{
-    "irods-avus": [
-        {
-            "attr": "test-attr-1",
-            "value": "test-val-1",
-            "unit": ""
-        },
-        {
-            "attr": "test-attr-2",
-            "value": "test-val-2",
-            "unit": ""
-        },
-        {
-            "attr": "test-attr-3",
-            "value": "test-val-3",
-            "unit": ""
-        }
-    ],
-    "metadata": {...}
-}
-```
-
-This endpoint forwards the `metadata` value of the request to the corresponding metadata service endpoint. Please see the metadata documentation for more information on the format of this object. If the `metadata` key is omitted or set with an empty value, then an empty JSON body `{}` will be submitted to the corresponding metadata service endpoint.
-
-This endpoint forwards the `irods-avus` value to a corresponding data-info service endpoint.
-
-__Response__:
-
-```json
-{
-    "path": "/iplant/home/ipcuser/file.txt",
-    "user": "ipcuser"
-}
-```
-__Curl Command__:
-
-    curl -H "$AUTH_HEADER" -d '{"irods-avus" : [{"attr" : "attr", "value" : "value", "unit" : "unit"}], "metadata": {...}' 'http://127.0.0.1:3000/secured/filesystem/$data_id/metadata'
 
 Listing Metadata Templates
 --------------------------
 
-The `secured` and `admin` endpoints return the same listing, except the `admin` endpoint also includes Metadata Templates that have been marked as deleted.
+Secured Endpoint: GET /secured/filesystem/metadata/templates
 
-__URL Path__: /secured/filesystem/metadata/templates
+Delegates to metadata: GET /templates
 
-__URL Path__: /admin/filesystem/metadata/templates
+Secured Endpoint: GET /admin/filesystem/metadata/templates
 
-__HTTP Method__: GET
+Delegates to metadata: GET /admin/templates
 
-__Response__:
-
-```json
-{
-    "metadata_templates": [
-        {
-            "id": "59bd3d26-34d5-4e75-99f5-840a20089caf",
-            "name": "iDS Genome Sequences",
-            "deleted": false,
-            "created_by": "<public>",
-            "created_on": "2015-04-24T19:23:47Z",
-            "modified_by": "<public>",
-            "modified_on": "2015-04-24T19:23:47Z"
-        }
-    ]
-}
-```
-
-__Curl Command__:
-
-    curl -sH "$AUTH_HEADER" "http://127.0.0.1:3000/secured/filesystem/metadata/templates"
+These endpoints are passthroughs to the metadata endpoints above.
+Please see the metadata documentation for more information.
 
 
 Viewing a Metadata Template
 ---------------------------
 
-__URL Path__: /secured/filesystem/metadata/template/{template_id}
+Secured Endpoint: GET /secured/filesystem/metadata/template/{template-id}
 
-__HTTP Method__: GET
+Delegates to metadata: GET /templates/{template-id}
 
-__Error Codes__: ERR_NOT_FOUND
-
-__Response__:
-
-```json
-{
-    "attributes": [
-        {
-            "description": "project name",
-            "id": "33e3e3d8-cd48-4572-8b16-89207b1609ec",
-            "name": "project",
-            "required": true,
-            "synonyms": [],
-            "type": "String"
-        },
-        {
-            "id": "e7eb8aba-dc88-11e4-a4a9-2737bfa49b5e",
-            "name": "medical_relevance",
-            "description": "Indicate whether BioProject is of medical relevance",
-            "synonyms": [],
-            "required": true,
-            "type": "Enum",
-            "values": [
-                {
-                    "is_default": false,
-                    "value": "Yes",
-                    "id": "e7ec2b0a-dc88-11e4-a4aa-1f3133b20123"
-                },
-                {
-                    "is_default": false,
-                    "value": "No",
-                    "id": "e7ec83b6-dc88-11e4-a4ab-138d88f41d44"
-                }
-            ]
-        },
-        ...
-    ],
-    "id": "59bd3d26-34d5-4e75-99f5-840a20089caf",
-    "name": "iDS Genome Sequences"
-}
-```
-
-__Curl Command__:
-
-    curl -sH "$AUTH_HEADER" "http://127.0.0.1:3000/secured/filesystem/metadata/template/59bd3d26-34d5-4e75-99f5-840a20089caf"
+This endpoint is a passthrough to the metadata endpoint above.
+Please see the metadata documentation for more information.
 
 Viewing a Metadata Attribute
 ----------------------------
 
-__URL Path__: /secured/filesystem/metadata/template/attr/{attribute_id}
+Secured Endpoint: GET /secured/filesystem/metadata/template/attr/{attribute-id}
 
-__HTTP Method__: GET
+Delegates to metadata: GET /templates/attr/{attribute-id}
 
-__Error Codes__: ERR_NOT_FOUND
-
-__Response__:
-
-```json
-{
-    "description": "project name",
-    "id": "33e3e3d8-cd48-4572-8b16-89207b1609ec",
-    "name": "project",
-    "required": true,
-    "synonyms": [],
-    "type": "String"
-}
-```
-
-__Curl Command__:
-
-    curl -sH "$AUTH_HEADER" "http://127.0.0.1:3000/secured/filesystem/metadata/template/attr/33e3e3d8-cd48-4572-8b16-89207b1609ec"
+This endpoint is a passthrough to the metadata endpoint above.
+Please see the metadata documentation for more information.
 
 Adding Metadata Templates
 ---------------------------
 
-__URL Path__: /admin/filesystem/metadata/templates
+Secured Endpoint: POST /admin/filesystem/metadata/templates
 
-__HTTP Method__: POST
+Delegates to metadata: POST /admin/templates
 
-__Error Codes__: ERR_BAD_OR_MISSING_FIELD
-
-__Request Body__:
-
-```json
-{
-    "name": "iDS Genome Sequences",
-    "attributes": [
-        {
-            "name": "project",
-            "description": "project name",
-            "required": true,
-            "type": "String"
-        },
-        {
-            "name": "medical_relevance",
-            "description": "Indicate whether BioProject is of medical relevance",
-            "required": true,
-            "type": "Enum",
-            "values": [
-                {
-                    "value": "Yes",
-                    "is_default": false
-                },
-                {
-                    "value": "No",
-                    "is_default": false
-                }
-            ]
-        },
-        ...
-    ]
-}
-```
-
-__Response__:
-
-```json
-{
-    "attributes": [
-        {
-            "description": "project name",
-            "id": "33e3e3d8-cd48-4572-8b16-89207b1609ec",
-            "name": "project",
-            "modified_on": "2015-04-09T00:22:44Z",
-            "modified_by": "<public>",
-            "created_on": "2015-04-09T00:22:44Z",
-            "created_by": "<public>",
-            "required": true,
-            "synonyms": [],
-            "type": "String"
-        },
-        {
-            "id": "e7eb8aba-dc88-11e4-a4a9-2737bfa49b5e",
-            "name": "medical_relevance",
-            "description": "Indicate whether BioProject is of medical relevance",
-            "modified_on": "2015-04-09T00:22:44Z",
-            "modified_by": "<public>",
-            "created_on": "2015-04-09T00:22:44Z",
-            "created_by": "<public>",
-            "synonyms": [],
-            "required": true,
-            "type": "Enum",
-            "values": [
-                {
-                    "is_default": false,
-                    "value": "Yes",
-                    "id": "e7ec2b0a-dc88-11e4-a4aa-1f3133b20123"
-                },
-                {
-                    "is_default": false,
-                    "value": "No",
-                    "id": "e7ec83b6-dc88-11e4-a4ab-138d88f41d44"
-                }
-            ]
-        },
-        ...
-    ],
-    "modified_on": "2015-04-09T00:22:44Z",
-    "modified_by": "<public>",
-    "created_on": "2015-04-09T00:22:44Z",
-    "created_by": "<public>",
-    "id": "59bd3d26-34d5-4e75-99f5-840a20089caf",
-    "name": "iDS Genome Sequences"
-}
-```
-
-__Curl Command__:
-
-```json
-curl -sH "$AUTH_HEADER" -d '
-{
-    "name": "iDS Genome Sequences",
-    "attributes": [
-        ...
-    ]
-}
-' "http://127.0.0.1:3000/admin/filesystem/metadata/templates"
-```
+This endpoint is a passthrough to the metadata endpoint above.
+Please see the metadata documentation for more information.
 
 Updating Metadata Templates
 ---------------------------
 
-__URL Path__: /admin/filesystem/metadata/templates/{template-id}
+Secured Endpoint: POST /admin/filesystem/metadata/templates/{template-id}
 
-__HTTP Method__: POST
+Delegates to metadata: PUT /admin/templates/{template-id}
 
-__Error Codes__: ERR_NOT_FOUND, ERR_BAD_OR_MISSING_FIELD
-
-__Request Body__:
-
-```json
-{
-    "name": "iDS Genome Sequences",
-    "deleted": false,
-    "attributes": [
-        {
-            "description": "project name",
-            "id": "33e3e3d8-cd48-4572-8b16-89207b1609ec",
-            "name": "project",
-            "required": true,
-            "synonyms": [],
-            "type": "String"
-        },
-        {
-            "id": "e7eb8aba-dc88-11e4-a4a9-2737bfa49b5e",
-            "name": "medical_relevance",
-            "description": "Indicate whether BioProject is of medical relevance",
-            "synonyms": [],
-            "required": true,
-            "type": "Enum",
-            "values": [
-                {
-                    "is_default": false,
-                    "value": "Yes",
-                    "id": "e7ec2b0a-dc88-11e4-a4aa-1f3133b20123"
-                },
-                {
-                    "is_default": false,
-                    "value": "No",
-                    "id": "e7ec83b6-dc88-11e4-a4ab-138d88f41d44"
-                }
-            ]
-        },
-        ...
-    ]
-}
-```
-
-__Response__:
-
-```json
-{
-    "attributes": [
-        {
-            "description": "project name",
-            "id": "33e3e3d8-cd48-4572-8b16-89207b1609ec",
-            "name": "project",
-            "modified_on": "2015-04-09T00:38:31Z",
-            "modified_by": "<public>",
-            "created_on": "2015-04-09T00:22:44Z",
-            "created_by": "<public>",
-            "required": true,
-            "synonyms": [],
-            "type": "String"
-        },
-        {
-            "id": "e7eb8aba-dc88-11e4-a4a9-2737bfa49b5e",
-            "name": "medical_relevance",
-            "description": "Indicate whether BioProject is of medical relevance",
-            "modified_on": "2015-04-09T00:38:31Z",
-            "modified_by": "<public>",
-            "created_on": "2015-04-09T00:22:44Z",
-            "created_by": "<public>",
-            "synonyms": [],
-            "required": true,
-            "type": "Enum",
-            "values": [
-                {
-                    "is_default": false,
-                    "value": "Yes",
-                    "id": "e7ec2b0a-dc88-11e4-a4aa-1f3133b20123"
-                },
-                {
-                    "is_default": false,
-                    "value": "No",
-                    "id": "e7ec83b6-dc88-11e4-a4ab-138d88f41d44"
-                }
-            ]
-        },
-        ...
-    ],
-    "modified_on": "2015-04-09T00:38:31Z",
-    "modified_by": "<public>",
-    "created_on": "2015-04-09T00:22:44Z",
-    "created_by": "<public>",
-    "id": "59bd3d26-34d5-4e75-99f5-840a20089caf",
-    "name": "iDS Genome Sequences"
-}
-```
-
-__Curl Command__:
-
-```json
-curl -sH "$AUTH_HEADER" -d '
-{
-    "name": "iDS Genome Sequences",
-    "deleted": false,
-    "attributes": [
-        ...
-    ]
-}
-' "http://127.0.0.1:3000/admin/filesystem/metadata/templates/59bd3d26-34d5-4e75-99f5-840a20089caf"
-```
+This endpoint is a passthrough to the metadata endpoint above.
+Please see the metadata documentation for more information.
 
 Marking a Metadata Template as Deleted
 ----------------------------------------------------------
 
-__URL Path__: /admin/filesystem/metadata/templates/{template-id}
+Secured Endpoint: DELETE /admin/filesystem/metadata/templates/{template-id}
 
-__HTTP Method__: DELETE
+Delegates to metadata: DELETE /admin/templates/{template-id}
 
-__Error Codes__: ERR_DOES_NOT_EXIST
-
-__Curl Command__:
-
-    curl -H "$AUTH_HEADER" -X DELETE "http://127.0.0.1:3000/admin/filesystem/metadata/templates/59bd3d26-34d5-4e75-99f5-840a20089caf"
+This endpoint is a passthrough to the metadata endpoint above.
+Please see the metadata documentation for more information.
 
 Adding Batch Metadata to Multiple Paths from a CSV File
 -------------------------------------------------------
@@ -455,6 +106,8 @@ This endpoint will parse a CSV/TSV file, where the first column is absolute or r
 __URL Path__: /secured/filesystem/metadata/csv-parser
 
 __HTTP Method__: POST
+
+__Delegates to data-info__: `PATCH /data/{data-id}/metadata`
 
 __Error Codes__: ERR_NOT_READABLE, ERR_NOT_WRITEABLE, ERR_DOES_NOT_EXIST, ERR_NOT_A_USER, ERR_BAD_OR_MISSING_FIELD, ERR_NOT_UNIQUE
 
@@ -618,45 +271,12 @@ __Curl Command__:
 Copying all Metadata from a File/Folder
 -----------------------------------------------------
 
-Copies all IRODS AVUs visible to the client and Metadata Template AVUs from the data item with the ID given in the URL to other data items with the IDs sent in the request body.
+Secured Endpoint: POST /secured/filesystem/{data-id}/metadata/copy
 
-__URL Path__: /secured/filesystem/{data-id}/metadata/copy
+Delegates to data-info: POST /data/{data-id}/metadata/copy
 
-__HTTP Method__: POST
-
-__Error Codes__: ERR_NOT_READABLE, ERR_NOT_WRITEABLE, ERR_DOES_NOT_EXIST, ERR_NOT_A_USER, ERR_BAD_OR_MISSING_FIELD, ERR_NOT_UNIQUE
-
-__Request Query Parameters__:
-
-* force - Omitting this parameter, or setting its value to anything other than "true", will cause this endpoint to validate that none of the given "destination_ids" already have Metadata Template AVUs set with any of the attributes found in any of the Metadata Template AVUs associated with the source "data-id", otherwise an ERR_NOT_UNIQUE error is returned. IRODS allows duplicate attributes with different values on files and folders, so this endpoint will also allow copies of IRODS AVUs to destination files/folders of duplicate attributes if the source file/folder has a different value.
-
-__Request Body__:
-
-```json
-{
-    "destination_ids": [
-        "c5d42092-df89-11e3-bf8b-6abdce5a08d5",
-        "..."
-    ]
-}
-```
-
-__Response__:
-
-```json
-{
-    "user": "ipctest",
-    "src": "/iplant/home/ipctest/folder-1",
-    "paths": [
-        "/iplant/home/ipctest/folder-2",
-        "..."
-    ]
-}
-```
-
-__Curl Command__:
-
-    curl -sH "$AUTH_HEADER" -d '{"destination_ids": ["c5d42092-df89-11e3-bf8b-6abdce5a08d5"]}' "http://127.0.0.1:3000/secured/filesystem/cc20cbf8-df89-11e3-bf8b-6abdce5a08d5/metadata/copy?force=true"
+This endpoint is a passthrough to the data-info endpoint above.
+Please see the data-info documentation for more information.
 
 Exporting Metadata to a File
 ----------------------------
@@ -665,4 +285,5 @@ Secured Endpoint: POST /secured/filesystem/{data-id}/metadata/save
 
 Delegates to data-info: POST /data/{data-id}/metadata/save
 
-This endpoint is a passthrough to the data-info endpoint above. Please see the data-info documentation for more information.
+This endpoint is a passthrough to the data-info endpoint above.
+Please see the data-info documentation for more information.
