@@ -202,6 +202,7 @@
   [submission job-number path-map]
   (let [job-suffix (str "analysis-" (inc job-number))]
     (assoc (update-in submission [:config] (partial substitute-param-values path-map))
+      :group      (config/jex-batch-group-name)
       :name       (str (:name submission) "-" job-suffix)
       :output_dir (ft/path-join (:output_dir submission) job-suffix))))
 
