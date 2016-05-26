@@ -65,7 +65,13 @@
   (-> (select* :tasks)
       (join :tools {:tasks.tool_id :tools.id})
       (join :tool_types {:tools.tool_type_id :tool_types.id})
-      (fields :tools.description :tools.location :tools.name [:tool_types.name :type] :tools.id)
+      (fields :tools.description
+              :tools.location
+              :tools.name
+              [:tool_types.name :type]
+              :tools.id
+              :tools.restricted
+              :tools.time_limit_seconds)
       (where {:tasks.id task-id})
       (select)
       (first)
