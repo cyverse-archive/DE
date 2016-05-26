@@ -119,6 +119,7 @@
    :description          (:description submission "")
    :email                email
    :execution_target     "condor"
+   :group                (:group submission "")
    :name                 (:name submission)
    :notify               (:notify submission)
    :output_dir           (:output_dir submission)
