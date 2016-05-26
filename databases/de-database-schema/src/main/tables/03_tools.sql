@@ -13,5 +13,6 @@ CREATE TABLE tools (
     attribution text,
     integration_data_id uuid NOT NULL,
     container_images_id uuid,
-    time_limit_seconds integer NOT NULL DEFAULT 0
+    time_limit_seconds integer NOT NULL DEFAULT 0,
+    restricted boolean NOT NULL DEFAULT FALSE
 );
