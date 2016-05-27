@@ -32,7 +32,7 @@ func addPermission(handler requestHandler, resourceType, resourceName, subjectTy
 	default:
 		logcabin.Error.Fatalf("unexpected responder type: %T", responder)
 	case *perms.PutPermissionOK:
-		logcabin.Info.Printf("%s %s %s", resourceName, subjectID, level)
+		// Do nothing.
 	case *perms.PutPermissionBadRequest:
 		logcabin.Error.Fatal(*responder.(*perms.PutPermissionBadRequest).Payload.Reason)
 	case *perms.PutPermissionInternalServerError:
