@@ -15,8 +15,8 @@ import java.util.logging.Logger;
 
 /**
  * Detects when the user is not logged in to the application and redirects the user to the login page.  Under normal
- * circumstances, we'll receive a 302 status code if the user is not authenticated, but we also have to check for a
- * status code of 0 because GWT doesn't currently return the correct status code.
+ * circumstances, we'll receive a 302 status code if the user is not authenticated. Formerly this checked for status
+ * code 0, but that should no longer be necessary.
  *
  * @author Dennis Roberts
  *
@@ -66,7 +66,7 @@ public class AsyncCallbackWrapper<T> implements AsyncCallback<T> {
         if (error instanceof StatusCodeException) {
             int statusCode = ((StatusCodeException)error).getStatusCode();
             LOG.log(Level.SEVERE, "Status code: " + statusCode, error);
-            if (statusCode == HttpStatus.SC_MOVED_TEMPORARILY || statusCode == 0) {
+            if (statusCode == HttpStatus.SC_MOVED_TEMPORARILY) {
                 redirectToLandingPage();
                 return;
             }
