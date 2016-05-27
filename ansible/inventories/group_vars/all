@@ -585,6 +585,8 @@ permissions:
   compose_service: permissions
   service_name_short: permissions
 
+permissions_base: "http://{{ permissions.host }}:{{ permissions.port }}"
+
 permissions_db_driver: "{{ db_driver }}"
 permissions_db_vendor: "{{ db_vendor }}"
 permissions_db_port: "{{ db_port }}"
