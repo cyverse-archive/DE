@@ -20,7 +20,7 @@
 {{- with $service_query := (printf "%s.de" (env "DE_ENV")) }}
   {{- if service $service_query }}
     {{- range service $service_query }}
-        server {{.Address}}:{{.Port}} max_fails=3 fail_timeout=60 weight=1 {{- if not (.Tags.Contains (key_or_default (printf "%s/de/color" (env "DE_ENV")) "green"))}} backup{{end}}; # {{.ID}} {{.Tags}}
+        server {{.Address}}:{{.Port}} max_fails=3 fail_timeout=60 weight=1 {{- if not (.Tags.Contains (key_or_default (printf "%s/de/color" (env "DE_ENV")) "green"))}} down{{end}}; # {{.ID}} {{.Tags}}
     {{- end }}
   {{- else }}
         server 127.0.0.1:65535; # dummy server so config is valid
