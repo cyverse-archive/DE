@@ -3,6 +3,7 @@ package org.iplantc.de.diskResource.client.views.metadata;
 import java.util.List;
 
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
+import org.iplantc.de.client.models.diskResources.DiskResourceUserMetadata;
 import org.iplantc.de.diskResource.client.MetadataView;
 import org.iplantc.de.diskResource.client.model.DiskResourceMetadataProperties;
 import org.iplantc.de.diskResource.client.presenters.metadata.MetadataPresenterImpl;
@@ -119,6 +120,9 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     private final AccordionLayoutContainer alc;
     private final AccordionLayoutAppearance accordionLayoutAppearance =
             GWT.create(AccordionLayoutAppearance.class);
+   
+    
+    
     private final VerticalLayoutContainer centerPanel;
 
 
@@ -128,7 +132,6 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     private final boolean writable;
     private ListStore<DiskResourceMetadata> additionalMdListStore;
     private Grid<DiskResourceMetadata> additionalMdgrid;
-    private GridInlineEditing<DiskResourceMetadata> additionalGridInlineEditing;
     private GridInlineEditing<DiskResourceMetadata> userGridInlineEditing;
 
     private ListStore<DiskResourceMetadata> userMdListStore;
@@ -168,6 +171,11 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     @Override
     public List<DiskResourceMetadata> getAvus() {
         return additionalMdListStore.getAll();
+    }
+    
+    @Override
+    public List<DiskResourceMetadata> getUserMetadata() {
+    	return userMdListStore.getAll();
     }
 
 
@@ -335,35 +343,35 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         return retName;
     }
 
-    private void initAdditionalMdGridEditor() {
-        additionalGridInlineEditing = new GridInlineEditing<>(additionalMdgrid);
-        additionalGridInlineEditing.setClicksToEdit(ClicksToEdit.TWO);
-        ColumnConfig<DiskResourceMetadata, String> column1 = additionalMdgrid.getColumnModel().getColumn(0);
-        ColumnConfig<DiskResourceMetadata, String> column2 = additionalMdgrid.getColumnModel().getColumn(1);
-
-        TextField field1 = new TextField();
-        TextField field2 = new TextField();
-
-        field1.setAutoValidate(true);
-        field2.setAutoValidate(true);
-
-        field1.setAllowBlank(false);
-        field2.setAllowBlank(false);
-
-        AttributeValidationHandler validationHandler = new AttributeValidationHandler();
-        field1.addInvalidHandler(validationHandler);
-        field1.addValidHandler(validationHandler);
-
-        additionalGridInlineEditing.addEditor(column1, field1);
-        additionalGridInlineEditing.addEditor(column2, field2);
-        additionalGridInlineEditing.addCompleteEditHandler(new CompleteEditHandler<DiskResourceMetadata>() {
-
-            @Override
-            public void onCompleteEdit(CompleteEditEvent<DiskResourceMetadata> event) {
-                additionalMdListStore.commitChanges();
-            }
-        });
-    }
+//    private void initAdditionalMdGridEditor() {
+//        additionalGridInlineEditing = new GridInlineEditing<>(additionalMdgrid);
+//        additionalGridInlineEditing.setClicksToEdit(ClicksToEdit.TWO);
+//        ColumnConfig<DiskResourceMetadata, String> column1 = additionalMdgrid.getColumnModel().getColumn(0);
+//        ColumnConfig<DiskResourceMetadata, String> column2 = additionalMdgrid.getColumnModel().getColumn(1);
+//
+//        TextField field1 = new TextField();
+//        TextField field2 = new TextField();
+//
+//        field1.setAutoValidate(true);
+//        field2.setAutoValidate(true);
+//
+//        field1.setAllowBlank(false);
+//        field2.setAllowBlank(false);
+//
+//        AttributeValidationHandler validationHandler = new AttributeValidationHandler();
+//        field1.addInvalidHandler(validationHandler);
+//        field1.addValidHandler(validationHandler);
+//
+//        additionalGridInlineEditing.addEditor(column1, field1);
+//        additionalGridInlineEditing.addEditor(column2, field2);
+//        additionalGridInlineEditing.addCompleteEditHandler(new CompleteEditHandler<DiskResourceMetadata>() {
+//
+//            @Override
+//            public void onCompleteEdit(CompleteEditEvent<DiskResourceMetadata> event) {
+//                additionalMdListStore.commitChanges();
+//            }
+//        });
+//    }
     
     private void initUserMdGridEditor() {
         userGridInlineEditing = new GridInlineEditing<>(userMdGrid);
@@ -415,7 +423,6 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
 
         if (writable) {
         	initUserMdGridEditor();
-            initAdditionalMdGridEditor();
         }
         additionalMdgrid.getSelectionModel().addSelectionChangedHandler(new MetadataSelectionChangedListener());
         new QuickTip(additionalMdgrid);

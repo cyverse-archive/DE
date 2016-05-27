@@ -9,7 +9,7 @@ import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceExistMap;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadataList;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
+import org.iplantc.de.client.models.diskResources.DiskResourceUserMetadata;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.MetadataTemplate;
@@ -179,7 +179,7 @@ public interface DiskResourceServiceFacade {
      * @param callback executed when the service call completes.
      */
     void setDiskResourceMetaData(DiskResource resource,
-                                 DiskResourceMetadataTemplate metadata,
+                                 DiskResourceUserMetadata metadata,
                                  List<DiskResourceMetadata> irodsAvus,
                                  AsyncCallback<String> callback);
 

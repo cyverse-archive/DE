@@ -121,10 +121,12 @@ public class MetadataTemplateViewDialog extends IPlantDialog {
     }
     
     private DiskResourceMetadata findMetadataForAttribute(String attribute) {
-    	for(DiskResourceMetadata md: templateMd) {
-    		if(md.getAttribute().equals(attribute)) {
-    			return md;
-    		}
+    	if(templateMd != null) {
+	    	for(DiskResourceMetadata md: templateMd) {
+	    		if(md.getAttribute().equals(attribute)) {
+	    			return md;
+	    		}
+	    	}
     	}
 		return null;
     }

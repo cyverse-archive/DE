@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
+import org.iplantc.de.client.models.diskResources.DiskResourceUserMetadata;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceMetadataUpdateCallback;
 
@@ -107,5 +108,7 @@ public interface MetadataView extends IsWidget {
     void unmask();
     
     void updateMetadataFromTemplateView(List<DiskResourceMetadata> metadataList);
+
+	List<DiskResourceMetadata> getUserMetadata();
 
  }

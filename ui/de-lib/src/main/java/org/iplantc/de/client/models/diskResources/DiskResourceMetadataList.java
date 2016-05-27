@@ -13,8 +13,8 @@ import java.util.List;
 public interface DiskResourceMetadataList {
 
     @PropertyName("irods-avus")
-    List<DiskResourceMetadata> getMetadata();
+    List<DiskResourceMetadata> getOtherMetadata();
 
-    @PropertyName("metadata")
-    DiskResourceMetadataTemplateList getMetadataTemplates();
+    @PropertyName("avus")
+    List<DiskResourceMetadata> getUserMetadata();
 }
