@@ -263,7 +263,10 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
 
     @Override
     public void onAppUpdated(final AppUpdatedEvent event) {
-        listStore.update(event.getApp());
+        App app = event.getApp();
+        if (listStore.findModel(app) != null) {
+            listStore.update(app);
+        }
     }
 
     @Override

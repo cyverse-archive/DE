@@ -86,8 +86,10 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
                    final HasId selectedAppCategory,
                    final HasId selectedApp) {
         TabPanel tabPanel = view.getCategoryTabPanel();
-        categoriesPresenter.go(selectedAppCategory, tabPanel);
-        hierarchiesPresenter.go(tabPanel);
+        if (tabPanel.getWidgetCount() == 0) {
+            categoriesPresenter.go(selectedAppCategory, tabPanel);
+            hierarchiesPresenter.go(tabPanel);
+        }
         container.setWidget(view);
     }
 

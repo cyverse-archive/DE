@@ -197,6 +197,8 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     }
 
     void filterCategories(List<AppCategory> result) {
+        workspaceCategories.clear();
+        hpcCategories.clear();
         for (AppCategory category : result) {
             if (!category.isPublic()) {
                 workspaceCategories.addAll(category.getCategories());
@@ -311,6 +313,7 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
             return;
         }
         if (parent == null) {
+            treeStore.clear();
             treeStore.add(children);
         } else {
             treeStore.add(parent, children);
