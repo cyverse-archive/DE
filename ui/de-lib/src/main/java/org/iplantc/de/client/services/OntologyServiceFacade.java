@@ -13,7 +13,9 @@ import java.util.List;
  */
 public interface OntologyServiceFacade {
 
-    void getAppHierarchies(AsyncCallback<List<OntologyHierarchy>> callback);
+    void getRootHierarchies(AsyncCallback<List<OntologyHierarchy>> callback);
+
+    void getFilteredHierarchies(String rootIri, Avu avu, AsyncCallback<OntologyHierarchy> callback);
 
     void getAppsInCategory(String iri, Avu avu, AsyncCallback<List<App>> callback);
 

@@ -2,17 +2,18 @@ package org.iplantc.de.client.services.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
 
-import org.iplantc.de.client.models.apps.AppList;
-import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
-import org.iplantc.de.client.services.converters.AvuListCallbackConverter;
-import org.iplantc.de.client.services.converters.OntologyHierarchyListCallbackConverter;
 import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.apps.AppList;
 import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.client.models.avu.AvuAutoBeanFactory;
 import org.iplantc.de.client.models.ontologies.OntologyAutoBeanFactory;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.OntologyServiceFacade;
+import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
+import org.iplantc.de.client.services.converters.AvuListCallbackConverter;
+import org.iplantc.de.client.services.converters.OntologyHierarchyCallbackConverter;
+import org.iplantc.de.client.services.converters.OntologyHierarchyListCallbackConverter;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -36,11 +37,19 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
     @Inject AppServiceFacade.AppServiceAutoBeanFactory svcFactory;
 
     @Override
-    public void getAppHierarchies(AsyncCallback<List<OntologyHierarchy>> callback) {
+    public void getRootHierarchies(AsyncCallback<List<OntologyHierarchy>> callback) {
         String address = APPS_HIERARCHIES;
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, new OntologyHierarchyListCallbackConverter(callback, factory));
+    }
+
+    @Override
+    public void getFilteredHierarchies(String rootIri, Avu avu, AsyncCallback<OntologyHierarchy> callback) {
+        String address = APPS_HIERARCHIES + "/" + URL.encodeQueryString(rootIri) + "?attr=" + URL.encodeQueryString(avu.getAttr());
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
+        deService.getServiceData(wrapper, new OntologyHierarchyCallbackConverter(callback, factory));
     }
 
     @Override

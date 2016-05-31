@@ -147,7 +147,7 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
     @Override
     public void go(final TabPanel tabPanel) {
         viewTabPanel = tabPanel;
-        serviceFacade.getAppHierarchies(new AsyncCallback<List<OntologyHierarchy>>() {
+        serviceFacade.getRootHierarchies(new AsyncCallback<List<OntologyHierarchy>>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
@@ -186,9 +186,12 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
         for (OntologyHierarchy hierarchy : results) {
             TreeStore<OntologyHierarchy> treeStore = getTreeStore(hierarchy);
             OntologyHierarchiesView view = viewFactory.create(treeStore);
+            Tree<OntologyHierarchy, String> tree = view.getTree();
+            tree.mask(appearance.getAppCategoriesLoadingMask());
+            getFilteredHierarchies(hierarchy, tree);
             view.asWidget().ensureDebugId(baseID + "." + hierarchy.getLabel().toLowerCase());
             view.addOntologyHierarchySelectionChangedEventHandler(this);
-            viewTabPanel.add(view.getTree(), new TabItemConfig(appearance.hierarchyLabelName(hierarchy)));
+            viewTabPanel.add(tree, new TabItemConfig(appearance.hierarchyLabelName(hierarchy)));
         }
     }
 
@@ -206,12 +209,33 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
         TreeStore<OntologyHierarchy> treeStore = new OntologyHierarchyTreeStoreProvider().get();
         treeStore.addSortInfo(new Store.StoreSortInfo<>(ontologyUtil.getOntologyNameComparator(),
                                                         SortDir.ASC));
-        ontologyUtil.addUnclassifiedChild(hierarchy);
-        //Set the key for the current root (which won't appear in the tree, but will be the name of the tab)
-        // which will allow the children to know the full path from its parent to node
-        ontologyUtil.treeStoreModelKeyProvider(hierarchy);
-        addHierarchies(treeStore, null, hierarchy.getSubclasses());
         return treeStore;
+    }
+
+    void getFilteredHierarchies(OntologyHierarchy root, final Tree<OntologyHierarchy, String> tree) {
+        serviceFacade.getFilteredHierarchies(root.getIri(),
+                                             ontologyUtil.convertHierarchyToAvu(root),
+                                             new AsyncCallback<OntologyHierarchy>() {
+                                                 @Override
+                                                 public void onFailure(Throwable caught) {
+                                                     ErrorHandler.post(caught);
+                                                     tree.unmask();
+                                                 }
+
+                                                 @Override
+                                                 public void onSuccess(OntologyHierarchy result) {
+                                                     if (result != null) {
+                                                         ontologyUtil.addUnclassifiedChild(result);
+                                                         //Set the key for the current root (which won't appear in the tree, but will be the name of the tab)
+                                                         // which will allow the children to know the full path from its parent to node
+                                                         ontologyUtil.treeStoreModelKeyProvider(result);
+                                                         addHierarchies(tree.getStore(),
+                                                                        null,
+                                                                        result.getSubclasses());
+                                                         tree.unmask();
+                                                     }
+                                                 }
+                                             });
     }
 
     void addHierarchies(TreeStore<OntologyHierarchy> treeStore, OntologyHierarchy parent, List<OntologyHierarchy> children) {

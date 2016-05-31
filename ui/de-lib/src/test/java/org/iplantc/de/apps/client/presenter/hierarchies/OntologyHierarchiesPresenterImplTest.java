@@ -124,8 +124,7 @@ public class OntologyHierarchiesPresenterImplTest {
         uut = new OntologyHierarchiesPresenterImpl(factoryMock,
                                                    ontologyServiceMock,
                                                    eventBusMock,
-                                                   appearanceMock,
-                                                   avuFactoryMock);
+                                                   appearanceMock);
         uut.ontologyUtil = ontologyUtilMock;
         uut.announcer = announcerMock;
         uut.appDetailsDlgAsyncProvider = appDetailsDialogProviderMock;
@@ -142,8 +141,7 @@ public class OntologyHierarchiesPresenterImplTest {
         uut = new OntologyHierarchiesPresenterImpl(factoryMock,
                                                    ontologyServiceMock,
                                                    eventBusMock,
-                                                   appearanceMock,
-                                                   avuFactoryMock) {
+                                                   appearanceMock) {
             @Override
             void createViewTabs(List<OntologyHierarchy> results) {
             }
@@ -157,7 +155,7 @@ public class OntologyHierarchiesPresenterImplTest {
 
         /** CALL METHOD UNDER TEST **/
         uut.go(tabPanelMock);
-        verify(ontologyServiceMock).getAppHierarchies(hierarchyListCallback.capture());
+        verify(ontologyServiceMock).getRootHierarchies(hierarchyListCallback.capture());
 
         hierarchyListCallback.getValue().onSuccess(hierarchyListMock);
         verifyNoMoreInteractions(ontologyServiceMock, ontologyUtilMock, eventBusMock);
@@ -199,8 +197,7 @@ public class OntologyHierarchiesPresenterImplTest {
         uut = new OntologyHierarchiesPresenterImpl(factoryMock,
                                                    ontologyServiceMock,
                                                    eventBusMock,
-                                                   appearanceMock,
-                                                   avuFactoryMock) {
+                                                   appearanceMock) {
             @Override
             TreeStore<OntologyHierarchy> getTreeStore(OntologyHierarchy hierarchy) {
                 return treeStoreMock;
