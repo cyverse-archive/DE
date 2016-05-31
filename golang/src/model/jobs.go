@@ -91,7 +91,6 @@ type Job struct {
 	Steps              []Step         `json:"steps"`
 	SubmissionDate     string         `json:"submission_date"`
 	Submitter          string         `json:"username"`
-	TimeLimit          int64          `json:"time_limit"`
 	Type               string         `json:"type"`
 	UserID             string         `json:"user_id"`
 	WikiURL            string         `json:"wiki_url"`
@@ -130,7 +129,6 @@ func New(cfg *config.Config) *Job {
 		SubmissionDate: n,
 		ArchiveLogs:    true,
 		RequestDisk:    rq,
-		TimeLimit:      3600,
 		CondorLogPath:  lp,
 		FilterFiles:    paths,
 		IRODSBase:      irodsBase,
