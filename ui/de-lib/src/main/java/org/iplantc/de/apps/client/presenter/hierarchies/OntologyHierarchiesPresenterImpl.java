@@ -191,7 +191,8 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
             getFilteredHierarchies(hierarchy, tree);
             view.asWidget().ensureDebugId(baseID + "." + hierarchy.getLabel().toLowerCase());
             view.addOntologyHierarchySelectionChangedEventHandler(this);
-            viewTabPanel.add(tree, new TabItemConfig(appearance.hierarchyLabelName(hierarchy)));
+            //As a preference, insert the hierarchy tabs before the HPC tab
+            viewTabPanel.insert(tree, viewTabPanel.getWidgetCount() - 1, new TabItemConfig(appearance.hierarchyLabelName(hierarchy)));
         }
     }
 
