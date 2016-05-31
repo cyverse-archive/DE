@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.shared.DEProperties;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.IsHideable;
@@ -41,6 +40,7 @@ import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.commons.client.util.WindowUtil;
+import org.iplantc.de.commons.client.views.dialogs.AgaveAuthPrompt;
 import org.iplantc.de.commons.client.views.dialogs.IplantErrorDialog;
 import org.iplantc.de.commons.client.views.window.configs.AnalysisWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.AppWizardConfig;
@@ -59,6 +59,7 @@ import org.iplantc.de.fileViewers.client.callbacks.LoadGenomeInCoGeCallback;
 import org.iplantc.de.notifications.client.events.WindowShowRequestEvent;
 import org.iplantc.de.notifications.client.utils.NotifyInfo;
 import org.iplantc.de.notifications.client.views.dialogs.RequestHistoryDialog;
+import org.iplantc.de.shared.DEProperties;
 import org.iplantc.de.shared.services.PropertyServiceAsync;
 import org.iplantc.de.systemMessages.client.events.NewSystemMessagesEvent;
 import org.iplantc.de.systemMessages.client.view.NewMessageView;
@@ -422,7 +423,18 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
 
     @Override
     public void onAppsWinBtnSelect() {
-        desktopWindowManager.show(WindowType.APPS);
+        if (userInfo.hasAgaveRedirect()) {
+            AgaveAuthPrompt prompt = new AgaveAuthPrompt();
+            prompt.show();
+            prompt.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
+                @Override
+                public void onDialogHide(DialogHideEvent event) {
+                    desktopWindowManager.show(WindowType.APPS);
+                }
+            });
+        } else {
+            desktopWindowManager.show(WindowType.APPS);
+        }
     }
 
     /**

@@ -34,6 +34,10 @@
     <replace-with class="org.iplantc.de.theme.base.client.commons.error.ErrorHandlerDefaultAppearance">
         <when-type-is class="org.iplantc.de.commons.client.ErrorHandler.ErrorHandlerAppearance" />
     </replace-with>
+    
+    <replace-with class="org.iplantc.de.theme.base.client.commons.views.dialogs.AgaveAuthDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.views.dialogs.AgaveAuthPrompt.AgaveAuthAppearance"/>
+    </replace-with>
 
     <!-- Announcer -->
     <replace-with class="org.iplantc.de.theme.base.client.commons.announcer.IplantAnnouncementConfigDefaultAppearance">

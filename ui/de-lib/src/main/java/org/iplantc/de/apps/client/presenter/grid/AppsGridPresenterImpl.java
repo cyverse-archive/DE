@@ -32,6 +32,7 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.comments.view.dialogs.CommentsDialog;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.commons.client.views.dialogs.AgaveAuthPrompt;
 import org.iplantc.de.shared.AsyncProviderWrapper;
 import org.iplantc.de.shared.exceptions.HttpRedirectException;
 
@@ -46,7 +47,6 @@ import com.sencha.gxt.data.shared.event.StoreAddEvent;
 import com.sencha.gxt.data.shared.event.StoreClearEvent;
 import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
 import com.sencha.gxt.data.shared.event.StoreUpdateEvent;
-import com.sencha.gxt.widget.core.client.box.MessageBox;
 
 import java.util.List;
 
@@ -65,9 +65,8 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
         @Override
         public void onFailure(Throwable caught) {
             if (caught instanceof HttpRedirectException) {
-                MessageBox messageBox = new MessageBox(appearance.agaveAuthRequiredTitle(), appearance.agaveAuthRequiredMsg());
-                messageBox.setIcon(MessageBox.ICONS.info());
-                messageBox.show();
+                AgaveAuthPrompt prompt = new AgaveAuthPrompt();
+                prompt.show();
             } else {
                 ErrorHandler.post(caught);
             }
