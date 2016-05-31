@@ -278,12 +278,15 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
                 new ColumnConfig<>(props.attribute(), 150, appearance.attribute());
         ColumnConfig<DiskResourceMetadata, String> valueColumn =
                 new ColumnConfig<>(props.value(), 150, appearance.paramValue());
+        ColumnConfig<DiskResourceMetadata, String> unitColumn =
+                new ColumnConfig<>(props.unit(), 150, appearance.paramUnit());
 
         MetadataCell metadataCell = new MetadataCell();
         attributeColumn.setCell(metadataCell);
         valueColumn.setCell(metadataCell);
         columns.add(attributeColumn);
         columns.add(valueColumn);
+        columns.add(unitColumn);
 
         return new ColumnModel<>(columns);
     }

@@ -182,4 +182,9 @@ public class MetadataViewDefaultAppearance implements MetadataView.Appearance {
 	public String additionalMetadata() {
 		return displayStrings.additionalMetadata();
 	}
+
+	@Override
+	public String paramUnit() {
+		return iplantDisplayStrings.paramUnit();
+	}
 }

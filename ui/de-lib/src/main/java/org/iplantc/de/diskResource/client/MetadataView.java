@@ -60,6 +60,8 @@ public interface MetadataView extends IsWidget {
         ImageResource deleteIcon();
 
 		String additionalMetadata();
+
+		String paramUnit();
     }
 
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter {
