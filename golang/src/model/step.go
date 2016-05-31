@@ -15,7 +15,7 @@ type StepComponent struct {
 	Name        string    `json:"name"`
 	Location    string    `json:"location"`
 	Description string    `json:"description"`
-	TimeLimit   string    `json:"time_limit_seconds"`
+	TimeLimit   int       `json:"time_limit_seconds"`
 	Restricted  bool      `json:"restricted"`
 }
 
