@@ -25,6 +25,7 @@
                  [org.iplantc/clojure-commons "5.2.7.0"]
                  [org.iplantc/kameleon "5.2.7.0"]
                  [org.iplantc/mescal "5.2.7.0"]
+                 [org.iplantc/metadata-client "5.2.7.0"]
                  [org.iplantc/common-cli "5.2.7.0"]
                  [org.iplantc/common-cfg "5.2.7.0"]
                  [org.iplantc/common-swagger-api "5.2.7.0"]

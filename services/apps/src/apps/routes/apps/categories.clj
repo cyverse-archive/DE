@@ -1,8 +1,10 @@
 (ns apps.routes.apps.categories
-  (:use [common-swagger-api.schema]
+  (:use [common-swagger-api.routes]
+        [common-swagger-api.schema]
         [common-swagger-api.schema.ontologies]
         [apps.routes.domain.app :only [AppListing]]
         [apps.routes.domain.app.category]
+        [apps.routes.middleware :only [wrap-metadata-base-url]]
         [apps.routes.params]
         [apps.user :only [current-user]]
         [apps.util.coercions :only [coerce!]]
@@ -40,51 +42,55 @@
 
   (GET* "/" []
         :query [params SecuredQueryParams]
+        :middlewares [wrap-metadata-base-url]
         :summary "List App Hierarchies"
-        :description
-"Lists all hierarchies saved for the active ontology version.
-
-#### Delegates to metadata service
-    GET /ontologies/{ontology-version}
-Please see the metadata service documentation for response information."
+        :description (str
+"Lists all hierarchies saved for the active ontology version."
+(get-endpoint-delegate-block
+  "metadata"
+  "GET /ontologies/{ontology-version}")
+"Please see the metadata service documentation for response information.")
         (listings/list-hierarchies current-user))
 
   (GET* "/:root-iri" []
         :path-params [root-iri :- OntologyClassIRIParam]
         :query [{:keys [attr]} OntologyHierarchyFilterParams]
+        :middlewares [wrap-metadata-base-url]
         :summary "List App Category Hierarchy"
-        :description
+        :description (str
 "Gets the list of app categories that are visible to the user for the active ontology version,
- rooted at the given `root-iri`.
-
-#### Delegates to metadata service
-    POST /ontologies/{ontology-version}/{root-iri}/filter
-Please see the metadata service documentation for response information."
+ rooted at the given `root-iri`."
+(get-endpoint-delegate-block
+  "metadata"
+  "POST /ontologies/{ontology-version}/{root-iri}/filter")
+"Please see the metadata service documentation for response information.")
         (listings/get-app-hierarchy current-user root-iri attr))
 
   (GET* "/:class-iri/apps" []
         :path-params [class-iri :- OntologyClassIRIParam]
         :query [{:keys [attr] :as params} OntologyAppListingPagingParams]
+        :middlewares [wrap-metadata-base-url]
         :return AppListing
         :summary "List Apps in a Category"
-        :description
-"Lists all of the apps within an app category that are visible to the user.
-
-#### Delegates to metadata service
-    POST /avus/filter-targets"
+        :description (str
+"Lists all of the apps within an app category that are visible to the user."
+(get-endpoint-delegate-block
+  "metadata"
+  "POST /avus/filter-targets"))
         (ok (coerce! AppListing (apps/list-apps-with-metadata current-user attr class-iri params))))
 
   (GET* "/:root-iri/unclassified" []
         :path-params [root-iri :- OntologyClassIRIParam]
         :query [params OntologyAppListingPagingParams]
         :return AppListing
+        :middlewares [wrap-metadata-base-url]
         :summary "List Unclassified Apps"
-        :description
+        :description (str
 "Lists all of the apps that are visible to the user that are not under the given app category or any of
- its subcategories.
-
-#### Delegates to metadata service
-    POST /ontologies/{ontology-version}/{root-iri}/filter-unclassified"
+ its subcategories."
+(get-endpoint-delegate-block
+  "metadata"
+  "POST /ontologies/{ontology-version}/{root-iri}/filter-unclassified"))
         (ok (coerce! AppListing (listings/get-unclassified-app-listing current-user root-iri params))))
 
   (route/not-found (service/unrecognized-path-response)))

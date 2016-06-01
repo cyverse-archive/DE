@@ -13,11 +13,11 @@
         [apps.util.conversions :only [to-long remove-nil-vals]]
         [apps.workspace])
   (:require [apps.clients.iplant-groups :as iplant-groups]
-            [apps.clients.metadata :as metadata-client]
             [apps.persistence.app-metadata :refer [get-app get-app-tools] :as amp]
             [apps.persistence.categories :as db-categories]
             [apps.service.apps.de.permissions :as perms]
-            [cemerick.url :as curl]))
+            [cemerick.url :as curl]
+            [metadata-client.core :as metadata-client]))
 
 (def my-public-apps-id (uuidify "00000000-0000-0000-0000-000000000000"))
 (def shared-with-me-id (uuidify "EEEEEEEE-EEEE-EEEE-EEEE-EEEEEEEEEEEE"))
@@ -173,7 +173,7 @@
    (get-app-hierarchy user (get-active-hierarchy-version) root-iri attr))
   ([{:keys [username shortUsername]} ontology-version root-iri attr]
    (let [app-ids (get-visible-app-ids shortUsername)]
-     (metadata-client/filter-hierarchy username ontology-version root-iri attr app-ids))))
+     (metadata-client/filter-hierarchy username ontology-version root-iri attr ["app"] app-ids))))
 
 (defn get-admin-app-groups
   "Retrieves the list of app groups that are accessible to administrators. This includes all public
@@ -267,14 +267,14 @@
 
 (defn list-apps-with-metadata
   [{:keys [username] :as user} attr value params]
-  (let [metadata-filter (partial metadata-client/filter-by-attr-value username attr value)]
+  (let [metadata-filter (partial metadata-client/filter-by-attr-value username attr value ["app"])]
     (apps-listing-with-metadata-filter user params metadata-filter)))
 
 (defn get-unclassified-app-listing
   ([user root-iri params]
    (get-unclassified-app-listing user (get-active-hierarchy-version) root-iri params))
   ([{:keys [username] :as user} ontology-version root-iri {:keys [attr] :as params}]
-   (let [metadata-filter (partial metadata-client/filter-unclassified username ontology-version root-iri attr)]
+   (let [metadata-filter (partial metadata-client/filter-unclassified username ontology-version root-iri attr ["app"])]
      (apps-listing-with-metadata-filter user params metadata-filter))))
 
 (defn- list-apps-in-virtual-group

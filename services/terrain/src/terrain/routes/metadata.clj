@@ -226,10 +226,10 @@
       (service/success-response (apps/admin-list-avus app-id)))
 
     (POST "/apps/:app-id/metadata" [app-id :as {:keys [body]}]
-      (service/success-response (apps/admin-set-avus app-id body)))
+      (service/success-response (apps/admin-update-avus app-id body)))
 
     (PUT "/apps/:app-id/metadata" [app-id :as {:keys [body]}]
-      (service/success-response (apps/admin-update-avus app-id body)))))
+      (service/success-response (apps/admin-set-avus app-id body)))))
 
 (defn app-avu-routes
   []
@@ -241,10 +241,10 @@
       (service/success-response (apps/list-avus app-id)))
 
     (POST "/apps/:app-id/metadata" [app-id :as {:keys [body]}]
-      (service/success-response (apps/set-avus app-id body)))
+      (service/success-response (apps/update-avus app-id body)))
 
     (PUT "/apps/:app-id/metadata" [app-id :as {:keys [body]}]
-      (service/success-response (apps/update-avus app-id body)))))
+      (service/success-response (apps/set-avus app-id body)))))
 
 (defn analysis-routes
   []

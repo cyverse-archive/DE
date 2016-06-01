@@ -7,6 +7,7 @@
 (def TargetTypes (concat DataTypes ["analysis" "app" "user"]))
 
 (def TargetIdPathParam (describe UUID "The target item's UUID"))
+(def TargetIdParam TargetIdPathParam)
 (def TargetTypeEnum (apply s/enum TargetTypes))
 
 (def DataTypeEnum (apply s/enum DataTypes))
@@ -28,3 +29,10 @@
 
    :target-types
    (describe [TargetTypeEnum] "The types of the given IDs")})
+
+(s/defschema TargetItem
+  {:id   TargetIdParam
+   :type (describe TargetTypeEnum "The type of this data item")})
+
+(s/defschema TargetItemList
+  {:targets (describe [TargetItem] "A list of target items")})

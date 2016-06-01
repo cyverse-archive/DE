@@ -6,10 +6,10 @@
         [slingshot.slingshot :only [throw+]])
   (:require [clojure.tools.logging :as log]
             [kameleon.app-groups :as app-groups]
-            [apps.clients.metadata :as metadata-client]
             [apps.persistence.app-metadata :as persistence]
             [apps.persistence.categories :as db-categories]
-            [apps.service.apps.de.validation :as av]))
+            [apps.service.apps.de.validation :as av]
+            [metadata-client.core :as metadata-client]))
 
 (def ^:private max-app-category-name-len 255)
 
