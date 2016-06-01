@@ -26,6 +26,7 @@
                  [metosin/compojure-api "0.24.5"]
                  [org.apache.tika/tika-core "1.11"]
                  [net.sf.opencsv/opencsv "2.3"]
+                 [de.ubercode.clostache/clostache "1.4.0" :exclusions [org.clojure/core.incubator]]
                  [slingshot "0.12.2"]
                  [org.iplantc/clj-icat-direct "5.2.7.0"
                    :exclusions [[org.slf4j/slf4j-log4j12]
