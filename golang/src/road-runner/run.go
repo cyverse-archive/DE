@@ -8,6 +8,7 @@ import (
 	"model"
 	"os"
 	"strings"
+	"time"
 )
 
 // Environment returns a []string containing the environment variables that
@@ -17,6 +18,30 @@ func Environment(job *model.Job) []string {
 	current = append(current, fmt.Sprintf("IPLANT_USER=%s", job.Submitter))
 	current = append(current, fmt.Sprintf("IPLANT_EXECUTION_ID=%s", job.InvocationID))
 	return current
+}
+
+func getTicker(timeLimit int, exit chan messaging.StatusCode) (chan int, error) {
+	if timeLimit <= 0 {
+		return nil, fmt.Errorf("TimeLimit was not %d instead of > 0", timeLimit)
+	}
+
+	stepDuration, err := time.ParseDuration(fmt.Sprintf("%ds", timeLimit))
+	if err != nil {
+
+	}
+
+	stepTicker := time.NewTicker(stepDuration)
+	quitTicker := make(chan int)
+
+	go func(*time.Ticker, chan int) {
+		select {
+		case <-stepTicker.C:
+			exit <- messaging.StatusTimeLimit
+		case <-quitTicker:
+		}
+	}(stepTicker, quitTicker)
+
+	return quitTicker, nil
 }
 
 // Run executes the job, and returns the exit code on the exit channel.
@@ -126,7 +151,30 @@ func Run(client *messaging.Client, dckr *dockerops.Docker, exit chan messaging.S
 					strings.Join(step.Arguments(), " "),
 				),
 			)
+
+			// TimeLimits set to 0 mean that there isn't a time limit.
+			var timeLimitEnabled bool
+			if step.Component.TimeLimit > 0 {
+				timeLimitEnabled = true
+			}
+
+			// Start up the ticker
+			var tickerQuit chan int
+			if timeLimitEnabled {
+				tickerQuit, err = getTicker(step.Component.TimeLimit, exit)
+				if err != nil {
+					logcabin.Error.Print(err)
+					timeLimitEnabled = false
+				}
+			}
+
 			exitCode, err = dckr.RunStep(&step, job.InvocationID, idx)
+
+			// Shut down the ticker
+			if timeLimitEnabled {
+				tickerQuit <- 1
+			}
+
 			if exitCode != 0 || err != nil {
 				if err != nil {
 					logcabin.Error.Print(err)
