@@ -169,7 +169,8 @@
     (:body (http/get (build-url base-url "permissions") {:as :json})))
 
   (grant-permission [_ resource-type resource-name subject-type subject-id level]
-    (:body (http/put (build-url base-url "permissions" resource-type resource-name subject-type subject-id)
+    (:body (http/put (build-url base-url "permissions" "resources" resource-type resource-name "subjects"
+                                subject-type subject-id)
                      {:form-params  {:permission_level level}
                       :content-type :json
                       :as           :json})))
