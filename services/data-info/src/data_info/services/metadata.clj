@@ -84,9 +84,9 @@
     (validators/user-exists cm user)
     (let [{:keys [path type]} (get-readable-data-item cm user data-id)
           metadata-response   (metadata/list-avus user (resolve-data-type type) data-id :as :json)]
-      {:irods-avus (list-path-metadata cm path :system system)
-       :metadata   (:body metadata-response)
-       :path       path})))
+      (merge (:body metadata-response)
+             {:irods-avus (list-path-metadata cm path :system system)
+              :path       path}))))
 
 (defn admin-metadata-get
   "Lists metadata for a path, showing all AVUs."
@@ -144,16 +144,18 @@
       :unit unit-string
    }
 
-   The 'metadata' parameter must be nil or in a format expected by the metadata service add AVUs endpoint.
+   The 'metadata' parameter must be in a format expected by the metadata service add AVUs endpoint,
+   in addition to the 'irods-avus' key.
    Pass :system true to ignore restrictions on AVUs which may be added."
-  [user data-id {:keys [irods-avus metadata]} & {:keys [system] :or {system false}}]
+  [user data-id {:keys [irods-avus] :as metadata} & {:keys [system] :or {system false}}]
   (with-jargon (cfg/jargon-cfg) [cm]
     (validators/user-exists cm user)
     (let [{:keys [path type]} (get-readable-data-item cm user data-id)
-          path (ft/rm-last-slash path)]
+          path (ft/rm-last-slash path)
+          metadata (dissoc metadata :irods-avus)]
       (validators/path-writeable cm user path)
       (when-not system (authorized-avus irods-avus))
-      (when metadata
+      (when-not (empty? metadata)
         (metadata/update-avus user (resolve-data-type type) data-id (json/encode metadata)))
       (doseq [avu-map irods-avus]
         (common-metadata-add cm path avu-map))
@@ -167,18 +169,18 @@
   (metadata-add (cfg/irods-user) data-id body :system true))
 
 (defn metadata-set
-  "Allows user to set metadata on an item with the given data-id. The user must exist in iRODS and have
-   write permissions on the data item. The 'irods-avus' parameter should be an array of AVU maps following
-   the format used for (metadata-add). The 'metadata' parameter should be in a format expected by the
-   metadata service set AVUs endpoint, or nil."
-  [user data-id {:keys [irods-avus metadata]}]
+  "Allows user to set metadata on an item with the given data-id.
+   The user must exist in iRODS and have write permissions on the data item.
+   The 'metadata' parameter should be in a format expected by the metadata service set AVUs endpoint,
+   with an 'irods-avus' key following the format used for (metadata-add)."
+  [user data-id {:keys [irods-avus] :as metadata}]
   (with-jargon (cfg/jargon-cfg) [cm]
     (validators/user-exists cm user)
     (let [{:keys [path type]} (uuids/path-for-uuid cm user data-id)
           irods-avus (set (map #(select-keys % [:attr :value :unit]) irods-avus))
           current-avus (set (list-path-metadata cm path :system false))
           delete-irods-avus (s/difference current-avus irods-avus)
-          metadata-request (json/encode (or metadata {}))]
+          metadata-request (json/encode (dissoc metadata :irods-avus))]
       (validators/path-writeable cm user path)
       (authorized-avus irods-avus)
 
@@ -229,11 +231,12 @@
    validation is performed."
   [user force? src-id dest-ids]
   (with-jargon (cfg/jargon-cfg) [cm]
+    (validators/user-exists cm user)
     (let [{:keys [path type]} (get-readable-data-item cm user src-id)
           dest-items (get-writable-data-items cm user dest-ids)
           dest-paths (map :path dest-items)
           dest-ids (map :id dest-items)
-          {:keys [irods-avus]} (metadata-get user src-id)]
+          irods-avus (list-path-metadata cm path)]
       (if-not force?
         (validate-batch-add-attrs cm irods-avus dest-items))
       (metadata/copy-metadata-avus user

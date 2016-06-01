@@ -18,11 +18,14 @@
       :middlewares [wrap-metadata-base-url]
       :summary "List AVUs (administrative)"
       :description
-          (str "List all AVUs associated with a data item. Include administrative/system iRODS AVUs."
+          (str "List all AVUs associated with a data item. Include administrative/system iRODS AVUs.
+           This service appends the info described below in the Response Model (200) to the metadata
+           service response for the given `data-id`."
 (get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE")
 (get-endpoint-delegate-block
   "metadata"
-  "GET /avus/{target-type}/{target-id}"))
+  "GET /avus/{target-type}/{target-id}")
+"Please see the metadata service for additional response information.")
       (svc/trap uri meta/admin-metadata-get data-id))
 
     (PATCH* "/metadata" [:as {uri :uri}]
@@ -31,11 +34,15 @@
       :return AVUChangeResult
       :middlewares [wrap-metadata-base-url]
       :summary "Add AVUs (administrative)"
-      :description (str "Associate iRODS and Metadata AVUs with a data item. Allow adding any AVU."
+      :description
+            (str "Associate iRODS and Metadata AVUs with a data item. Allow adding any AVU.
+             The info described below in the `body` parameter's Model is processed by this endpoint,
+             and what's left of the request body is forwarded to the metadata service."
 (get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_AUTHORIZED")
 (get-endpoint-delegate-block
   "metadata"
-  "POST /avus/{target-type}/{target-id}"))
+  "POST /avus/{target-type}/{target-id}")
+"Please see the metadata service for additional request information.")
       (svc/trap uri meta/admin-metadata-add data-id body)))
 
   (context* "/data/:data-id" []
@@ -47,11 +54,15 @@
       :return AVUGetResult
       :middlewares [wrap-metadata-base-url]
       :summary "List AVUs"
-      :description (str "List all AVUs associated with a data item."
+      :description
+          (str "List all AVUs associated with a data item.
+           This service appends the info described below in the Response Model (200) to the metadata
+           service response for the given `data-id`."
 (get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE")
 (get-endpoint-delegate-block
   "metadata"
-  "GET /avus/{target-type}/{target-id}"))
+  "GET /avus/{target-type}/{target-id}")
+"Please see the metadata service for additional response information.")
       (svc/trap uri meta/metadata-get user data-id :system false))
 
     (PATCH* "/metadata" [:as {uri :uri}]
@@ -62,11 +73,14 @@
       :summary "Add AVUs"
       :description
             (str "Associate iRODS and Metadata AVUs with a data item.
-             Administrative iRODS AVUs may not be added with this endpoint."
+             Administrative iRODS AVUs may not be added with this endpoint.
+             The info described below in the `body` parameter's Model is processed by this endpoint,
+             and what's left of the request body is forwarded to the metadata service."
 (get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_AUTHORIZED")
 (get-endpoint-delegate-block
   "metadata"
-  "POST /avus/{target-type}/{target-id}"))
+  "POST /avus/{target-type}/{target-id}")
+"Please see the metadata service for additional request information.")
       (svc/trap uri meta/metadata-add user data-id body))
 
     (PUT* "/metadata" [:as {uri :uri}]
@@ -79,11 +93,15 @@
       :summary "Set AVUs"
       :description
            (str "Set the iRODS and metadata AVUS for a data item to a provided set.
-            The iRODS set may not include administrative AVUs, and similarly will not remove administrative AVUs."
+            The iRODS set may not include administrative AVUs,
+            and similarly will not remove administrative AVUs.
+            The info described below in the `body` parameter's Model is processed by this endpoint,
+            and what's left of the request body is forwarded to the metadata service."
 (get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_AUTHORIZED")
 (get-endpoint-delegate-block
   "metadata"
-  "PUT /avus/{target-type}/{target-id}"))
+  "PUT /avus/{target-type}/{target-id}")
+"Please see the metadata service for additional request information.")
       (svc/trap uri meta/metadata-set user data-id body))
 
     (POST* "/metadata/copy" [:as {uri :uri}]

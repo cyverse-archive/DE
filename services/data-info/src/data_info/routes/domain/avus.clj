@@ -20,9 +20,7 @@
   {s/Keyword s/Any})
 
 (s/defschema MetadataListing
-  (merge AVUListing
-         {(s/optional-key :metadata)
-          (describe MetadataServiceJSON "A metadata service request/response object")}))
+  (merge AVUListing MetadataServiceJSON))
 
 (s/defschema AVUGetResult
   (assoc MetadataListing
