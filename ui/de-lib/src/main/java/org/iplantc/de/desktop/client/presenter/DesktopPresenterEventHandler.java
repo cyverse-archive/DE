@@ -9,8 +9,10 @@ import org.iplantc.de.desktop.client.DesktopView;
 import org.iplantc.de.diskResource.client.events.DefaultUploadCompleteHandler;
 import org.iplantc.de.diskResource.client.events.FileUploadedEvent;
 import org.iplantc.de.notifications.client.events.NotificationCountUpdateEvent;
+import org.iplantc.de.shared.events.UserLoggedOutEvent;
 
 import com.google.common.collect.Lists;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONObject;
 import com.google.inject.Inject;
@@ -25,7 +27,8 @@ import java.util.List;
  */
 public class DesktopPresenterEventHandler implements LastSelectedPathChangedEvent.LastSelectedPathChangedEventHandler,
                                                      NotificationCountUpdateEvent.NotificationCountUpdateEventHandler,
-                                                     FileUploadedEvent.FileUploadedEventHandler {
+                                                     FileUploadedEvent.FileUploadedEventHandler,
+                                                     UserLoggedOutEvent.UserLoggedOutEventHandler {
 
     @Inject EventBus eventBus;
     @Inject UserSessionServiceFacade userSessionService;
@@ -77,5 +80,14 @@ public class DesktopPresenterEventHandler implements LastSelectedPathChangedEven
         handlerRegistrations.add(handlerRegistration);
         handlerRegistration = eventBus.addHandler(NotificationCountUpdateEvent.TYPE, this);
         handlerRegistrations.add(handlerRegistration);
+        handlerRegistration = eventBus.addHandler(UserLoggedOutEvent.TYPE,this);
+        handlerRegistrations.add(handlerRegistration);
+    }
+
+    @Override
+    public void OnLoggedOut(UserLoggedOutEvent event) {
+        GWT.log("logout request received...");
+        presenter.doLogout(true);
+        eventBus.clearHandlers();
     }
 }
