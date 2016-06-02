@@ -452,7 +452,7 @@ jwt:
   validity_window:
     end: 300
   wso2:
-    header: x-jwt-assertion-iplant-org
+    header: x-jwt-assertion-iplantc-org
 
 kifshare_external_url: "http://{{ de.host }}/{{ kifshare.external_url_suffix }}"
 kifshare:
