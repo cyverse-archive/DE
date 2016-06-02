@@ -6,10 +6,19 @@
   (:use [clj-http.fake]
         [clojure.test]))
 
+(defn success-fn
+  ([]
+   (success-fn ""))
+  ([body]
+   (constantly {:status 200 :body body})))
+
 (def fake-base-url "http://perms.example.org/")
 
 (defn fake-url [& components]
   (str (apply curl/url fake-base-url components)))
+
+(defn fake-lookup-url [lookup? & components]
+  (str (assoc (apply curl/url fake-base-url components) :query {:lookup lookup?})))
 
 (defn create-fake-client []
   (pc/new-permissions-client fake-base-url))
@@ -251,5 +260,37 @@
 (deftest test-grant-perm []
   (let [[rt rn st sn l] ["app" "a" "user" "ipcdev" "own"]]
     (with-fake-routes {(fake-url "permissions" "resources" rt rn "subjects" st sn) {:put grant-perm-response}}
-      (is (= (pc/grant-permission (create-fake-client) "app" "a" "user" "ipcdev" "own")
-             (fake-perm "app" "a" "user" "ipcdev" "own"))))))
+      (is (= (pc/grant-permission (create-fake-client) rt rn st sn l)
+             (fake-perm rt rn st sn l))))))
+
+(deftest test-revoke-perm []
+  (let [[rt rn st sn] ["app" "a" "user" "ipcdev"]]
+    (with-fake-routes {(fake-url "permissions" "resources" rt rn "subjects" st sn) {:delete (success-fn)}}
+      (pc/revoke-permission (create-fake-client) rt rn st sn)
+      (is true "Permission revoked successfully."))))
+
+(deftest test-list-resource-permissions []
+  (let [[rt rn] ["app" "a"]]
+    (with-fake-routes {(fake-url "permissions" "resources" rt rn) {:get list-perms-response}}
+      (is (= (pc/list-resource-permissions (create-fake-client) rt rn) fake-perms)))))
+
+(deftest test-get-subject-permissions []
+  (let [[st sn] ["user" "ipcdev"]]
+    (with-fake-routes {(fake-lookup-url false "permissions" "subjects" st sn) {:get list-perms-response}}
+      (is (= (pc/get-subject-permissions (create-fake-client) st sn false) fake-perms)))
+    (with-fake-routes {(fake-lookup-url true "permissions" "subjects" st sn) {:get list-perms-response}}
+      (is (= (pc/get-subject-permissions (create-fake-client) st sn true) fake-perms)))))
+
+(deftest test-get-subject-permissions-for-resource-type []
+  (let [[st sn rt] ["user" "ipcdev" "app"]]
+    (with-fake-routes {(fake-lookup-url false "permissions" "subjects" st sn rt) {:get list-perms-response}}
+      (is (= (pc/get-subject-permissions-for-resource-type (create-fake-client) st sn rt false) fake-perms)))
+    (with-fake-routes {(fake-lookup-url true "permissions" "subjects" st sn rt) {:get list-perms-response}}
+      (is (= (pc/get-subject-permissions-for-resource-type (create-fake-client) st sn rt true) fake-perms)))))
+
+(deftest test-get-subject-permissions-for-resource []
+  (let [[st sn rt rn] ["user" "ipcdev" "app" "a"]]
+    (with-fake-routes {(fake-lookup-url false "permissions" "subjects" st sn rt rn) {:get list-perms-response}}
+      (is (= (pc/get-subject-permissions-for-resource (create-fake-client) st sn rt rn false) fake-perms)))
+    (with-fake-routes {(fake-lookup-url true "permissions" "subjects" st sn rt rn) {:get list-perms-response}}
+      (is (= (pc/get-subject-permissions-for-resource (create-fake-client) st sn rt rn true) fake-perms)))))

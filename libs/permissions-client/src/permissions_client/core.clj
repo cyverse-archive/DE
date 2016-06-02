@@ -176,24 +176,25 @@
                       :as           :json})))
 
   (revoke-permission [_ resource-type resource-name subject-type subject-id]
-    (http/delete (build-url base-url "permissions" resource-type resource-name subject-type subject-id))
+    (http/delete (build-url base-url "permissions" "resources" resource-type resource-name "subjects" subject-type
+                            subject-id))
     nil)
 
   (list-resource-permissions [_ resource-type resource-name]
-    (:body (http/get (build-url base-url "permissions" resource-type resource-name) {:as :json})))
+    (:body (http/get (build-url base-url "permissions" "resources" resource-type resource-name) {:as :json})))
 
   (get-subject-permissions [_ subject-type subject-id lookup?]
-    (:body (http/get (build-url base-url "permissions" subject-type subject-id)
+    (:body (http/get (build-url base-url "permissions" "subjects" subject-type subject-id)
                      {:query-params {:lookup lookup?}
                       :as           :json})))
 
   (get-subject-permissions-for-resource-type [_ subject-type subject-id resource-type lookup?]
-    (:body (http/get (build-url base-url "permissions" subject-type subject-id resource-type)
+    (:body (http/get (build-url base-url "permissions" "subjects" subject-type subject-id resource-type)
                      {:query-params {:lookup lookup?}
                       :as           :json})))
 
   (get-subject-permissions-for-resource [_ subject-type subject-id resource-type resource-name lookup?]
-    (:body (http/get (build-url base-url "permissions" subject-type subject-id resource-type resource-name)
+    (:body (http/get (build-url base-url "permissions" "subjects" subject-type subject-id resource-type resource-name)
                      {:query-params {:lookup lookup?}
                       :as           :json}))))
 
