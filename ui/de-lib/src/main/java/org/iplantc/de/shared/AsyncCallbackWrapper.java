@@ -15,9 +15,7 @@ import java.util.logging.Logger;
 
 /**
  * Detects when the user is not logged in to the application and redirects the user to the login page.  Under normal
- * circumstances, we'll receive a 302 status code if the user is not authenticated. Formerly this checked for status
- * code 0, but that should no longer be necessary.
- *
+ * circumstances, we'll receive a 302 or 401 status code if the user is not authenticated.
  * @author Dennis Roberts
  *
  * @param <T> the type of the result we're expecting to get from the server.
@@ -50,7 +48,7 @@ public class AsyncCallbackWrapper<T> implements AsyncCallback<T> {
 
     /**
      * Called whenever a call to the server fails. If the call failed because of an HTTP status code and
-     * that status code represents a redirect request or wasn't recorded then we assume that the user isn't
+     * that status code represents a redirect request or user was unauthorized, then we assume that the user isn't
      * logged in and redirect the user to the login page. The callback that we're wrapping deals with all
      * other errors.
      *
@@ -63,23 +61,25 @@ public class AsyncCallbackWrapper<T> implements AsyncCallback<T> {
             redirectToLandingPage();
             return;
         }
+
         if (error instanceof StatusCodeException) {
             int statusCode = ((StatusCodeException)error).getStatusCode();
             LOG.log(Level.SEVERE, "Status code: " + statusCode, error);
-            if (statusCode == HttpStatus.SC_MOVED_TEMPORARILY) {
+            if (statusCode == HttpStatus.SC_MOVED_TEMPORARILY
+                || statusCode == HttpStatus.SC_UNAUTHORIZED) {
                 redirectToLandingPage();
                 return;
             }
         }
 
-        callback.onFailure(error);
-
         if (error instanceof HttpRedirectException) {
             LOG.log(Level.INFO, "Redirecting to", error);
-            HttpRedirectException e = (HttpRedirectException) error;
+            HttpRedirectException e = (HttpRedirectException)error;
             Window.Location.replace(e.getLocation());
+            return;
         }
 
+        callback.onFailure(error);
     }
 
     /**
