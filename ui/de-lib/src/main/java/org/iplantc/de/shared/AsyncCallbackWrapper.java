@@ -1,5 +1,7 @@
 package org.iplantc.de.shared;
 
+import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.shared.events.UserLoggedOutEvent;
 import org.iplantc.de.shared.exceptions.AuthenticationException;
 import org.iplantc.de.shared.exceptions.HttpRedirectException;
 
@@ -56,9 +58,9 @@ public class AsyncCallbackWrapper<T> implements AsyncCallback<T> {
      */
     @Override
     public void onFailure(Throwable error) {
-        if (error instanceof AuthenticationException) {
+       if (error instanceof AuthenticationException) {
+            EventBus.getInstance().fireEvent(new UserLoggedOutEvent());
             LOG.log(Level.SEVERE, "Auth error!!!!!", error);
-            redirectToLandingPage();
             return;
         }
 
@@ -67,20 +69,19 @@ public class AsyncCallbackWrapper<T> implements AsyncCallback<T> {
             LOG.log(Level.SEVERE, "Status code: " + statusCode, error);
             if (statusCode == HttpStatus.SC_MOVED_TEMPORARILY
                 || statusCode == HttpStatus.SC_UNAUTHORIZED) {
-                redirectToLandingPage();
+                EventBus.getInstance().fireEvent(new UserLoggedOutEvent());
                 return;
             }
         }
+
+        callback.onFailure(error);
 
         if (error instanceof HttpRedirectException) {
             LOG.log(Level.INFO, "Redirecting to", error);
             HttpRedirectException e = (HttpRedirectException)error;
             Window.Location.replace(e.getLocation());
-            return;
         }
-
-        callback.onFailure(error);
-    }
+   }
 
     /**
      * Called whenever a call to the server succeeds. The callback that we're wrapping deals with all
