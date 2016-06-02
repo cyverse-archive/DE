@@ -21,7 +21,7 @@
    to add. The set of valid keywords is stored in the variable, valid-privs."
   [folder subject privs & [{:keys [revoke-unselected?] :or {revoke-unselected? false}}]]
   (let [privs (set privs)]
-     (.grantPrivs folder subject
+    (.grantPrivs folder subject
                  (contains? privs :stem)
                  (contains? privs :create)
                  (contains? privs :attr-read)
