@@ -492,6 +492,7 @@ apps:
   user_subs: "[\"Apps under development\",\"Favorite Apps\"]"
   trash_category: Trash
   max_heap: "{{ max_heap.high }}"
+  grouper_user:
 
 metadata_db_driver: "{{ db_driver }}"
 metadata_db_vendor: "{{ db_vendor }}"
