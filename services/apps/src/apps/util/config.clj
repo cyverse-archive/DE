@@ -234,6 +234,11 @@
   [props config-valid configs]
   "apps.iplant-groups.base-url")
 
+(cc/defprop-str de-grouper-user
+  "The username that the DE uses to authenticate to Grouper."
+  [props config-valid configs]
+  "apps.iplant-groups.grouper-user")
+
 (cc/defprop-str metadata-base
   "The base URL for the metadata service."
   [props config-valid configs]
