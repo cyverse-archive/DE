@@ -218,7 +218,7 @@ public interface DesktopView extends IsWidget {
 
         void onIntroClick();
 
-        void doLogout();
+        void doLogout(boolean sessionTimeout);
 
         void onSystemMessagesClick();
     }
