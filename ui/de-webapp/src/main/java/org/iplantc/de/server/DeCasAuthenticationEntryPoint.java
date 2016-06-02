@@ -1,5 +1,6 @@
 package org.iplantc.de.server;
 
+import org.eclipse.jetty.server.Authentication;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -50,7 +51,10 @@ public class DeCasAuthenticationEntryPoint implements AuthenticationEntryPoint, 
 
         // Respond with a redirect if this is an RPC call.
         if (isRpcCall(httpServletRequest)) {
-            logoutSuccessHandler.onLogoutSuccess(httpServletRequest, httpServletResponse, null);
+          // logoutSuccessHandler.onLogoutSuccess(httpServletRequest, httpServletResponse, null);
+            httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            //throw authentication exception
+         //   throw new org.iplantc.de.shared.exceptions.AuthenticationException("Session timed out or redirect request received!");
         }
 
         // Display the landing page.
