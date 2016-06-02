@@ -1,8 +1,5 @@
 (ns sharkbait.consts)
 
-;; The username used by the DE.
-(def de-username "de_grouper")
-
 ;; Various folders used by the DE.
 (def folder-format-strings
   {:de          "iplant:de:%s"
