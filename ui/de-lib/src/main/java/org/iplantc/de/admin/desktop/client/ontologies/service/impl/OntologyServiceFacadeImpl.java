@@ -100,7 +100,7 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
         String address = APPS_ADMIN + "/" + app.getId() + "/metadata";
 
         final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(avus));
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(PUT, address, encode.getPayload());
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode.getPayload());
         deService.getServiceData(wrapper, new AvuListCallbackConverter(callback, avuFactory));
     }
 
@@ -109,7 +109,7 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
         String address = APPS_ADMIN + "/" + app.getId() + "/metadata";
 
         final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(avus));
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode.getPayload());
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(PUT, address, encode.getPayload());
         deService.getServiceData(wrapper, new AvuListCallbackConverter(callback, avuFactory));
     }
 
