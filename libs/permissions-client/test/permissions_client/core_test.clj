@@ -33,7 +33,7 @@
    :headers {"Content-Type" "application/json"}
    :body    (json/encode fake-status)})
 
-(deftest test-status []
+(deftest test-status
   (with-fake-routes {fake-base-url {:get fake-status-response}}
     (is (= (pc/get-status (create-fake-client)) fake-status))))
 
@@ -54,7 +54,7 @@
    :headers {"Content-Type" "application/json"}
    :body    (json/encode fake-subjects)})
 
-(deftest test-subjects []
+(deftest test-subjects
   (with-fake-routes {(fake-url "subjects") {:get fake-subjects-response}}
     (is (= (pc/list-subjects (create-fake-client)) fake-subjects))))
 
@@ -68,7 +68,7 @@
    :headers {"Content-Type" "application/json"}
    :body    (json/encode (fake-subject (json/decode (slurp (:body request)) true)))})
 
-(deftest test-add-subject []
+(deftest test-add-subject
   (with-fake-routes {(fake-url "subjects") {:post add-subject-response}}
     (is (= (pc/add-subject (create-fake-client) "ipctest" "user")
            (fake-subject {:subject_id "ipctest" :subject_type "user"})))))
@@ -79,7 +79,7 @@
       {:status 200 :body ""}
       {:status 400 :body ""})))
 
-(deftest test-delete-subject []
+(deftest test-delete-subject
   (let [subject-id "54430509-794e-497e-8ccd-ba01c713ef9f"]
     (with-fake-routes {(fake-url "subjects" subject-id) {:delete (delete-subject-response-fn subject-id)}}
       (pc/delete-subject (create-fake-client) subject-id)
@@ -91,7 +91,7 @@
       {:status 200 :body (json/encode (assoc (json/decode (slurp body) true) :id id))}
       {:status 400 :body ""})))
 
-(deftest test-update-subject []
+(deftest test-update-subject
   (let [subject (fake-subject {:subject_id "ipcdev" :subject_type "user"})]
     (with-fake-routes {(fake-url "subjects" (:id subject)) {:put (update-subject-response-fn (:id subject))}}
       (is (= (pc/update-subject (create-fake-client) (:id subject) (:subject_id subject) (:subject_type subject))
@@ -113,7 +113,7 @@
    :headers {"Content-Type" "application/json"}
    :body    (json/encode fake-resources)})
 
-(deftest test-list-resources []
+(deftest test-list-resources
   (with-fake-routes {(fake-url "resources") {:get list-resources-response}}
     (is (= (pc/list-resources (create-fake-client)) fake-resources))))
 
@@ -127,7 +127,7 @@
    :headers {"Content-Type" "application/json"}
    :body    (json/encode (fake-resource (json/decode (slurp body) true)))})
 
-(deftest test-add-resource []
+(deftest test-add-resource
   (let [resource (fake-resource {:name "d" :resource_type "analysis"})]
     (with-fake-routes {(fake-url "resources") {:post add-resource-response}}
       (is (= (pc/add-resource (create-fake-client) (:name resource) (:resource_type resource)) resource)))))
@@ -138,7 +138,7 @@
       {:status 200 :body ""}
       {:status 400 :body ""})))
 
-(deftest test-delete-resource []
+(deftest test-delete-resource
   (let [resource-id "20dbf604-a080-4706-acbc-8e65779cf638"]
     (with-fake-routes {(fake-url "resources" resource-id) {:delete (delete-resource-response-fn resource-id)}}
       (pc/delete-resource (create-fake-client) resource-id)
@@ -150,7 +150,7 @@
       {:status 200 :body (json/encode (assoc (json/decode (slurp body) true) :id id :resource_type resource-type))}
       {:status 400 :body ""})))
 
-(deftest test-update-resource []
+(deftest test-update-resource
   (let [{:keys [id name] resource-type :resource_type :as resource} (fake-resource {:name "e" :resource_type "app"})]
     (with-fake-routes {(fake-url "resources" id) (update-resource-response-fn id resource-type)}
       (is (= (pc/update-resource (create-fake-client) id name) resource)))))
@@ -197,7 +197,7 @@
       {:status 200 :body ""}
       {:status 400 :body ""})))
 
-(deftest test-delete-resource-type []
+(deftest test-delete-resource-type
   (let [id "f41c182b-721a-4e6d-94a5-d9db7144ddc7"]
     (with-fake-routes {(fake-url "resource_types" id) (delete-resource-type-response-fn id)}
       (pc/delete-resource-type (create-fake-client) id)
@@ -209,7 +209,7 @@
       {:status 200 :body (json/encode (assoc (json/decode (slurp body) true) :id id))}
       {:status 400 :body ""})))
 
-(deftest test-update-resource-type []
+(deftest test-update-resource-type
   (let [{:keys [id name description] :as resource-type} (fake-resource-type {:name "a" :description "b"})]
     (with-fake-routes {(fake-url "resource_types" id) {:put (update-resource-type-response-fn id)}}
       (is (= (pc/update-resource-type (create-fake-client) id name description) resource-type)))))
@@ -238,7 +238,7 @@
    :headers {"Content-Type" "application/json"}
    :body    (json/encode fake-perms)})
 
-(deftest test-list-perms []
+(deftest test-list-perms
   (with-fake-routes {(fake-url "permissions") {:get list-perms-response}}
     (is (= (pc/list-permissions (create-fake-client)) fake-perms))))
 
@@ -257,38 +257,38 @@
        :body    (json/encode (fake-perm resource-type resource-name subject-type subject-id level))})
     {:status 400 :body ""}))
 
-(deftest test-grant-perm []
+(deftest test-grant-perm
   (let [[rt rn st sn l] ["app" "a" "user" "ipcdev" "own"]]
     (with-fake-routes {(fake-url "permissions" "resources" rt rn "subjects" st sn) {:put grant-perm-response}}
       (is (= (pc/grant-permission (create-fake-client) rt rn st sn l)
              (fake-perm rt rn st sn l))))))
 
-(deftest test-revoke-perm []
+(deftest test-revoke-perm
   (let [[rt rn st sn] ["app" "a" "user" "ipcdev"]]
     (with-fake-routes {(fake-url "permissions" "resources" rt rn "subjects" st sn) {:delete (success-fn)}}
       (pc/revoke-permission (create-fake-client) rt rn st sn)
       (is true "Permission revoked successfully."))))
 
-(deftest test-list-resource-permissions []
+(deftest test-list-resource-permissions
   (let [[rt rn] ["app" "a"]]
     (with-fake-routes {(fake-url "permissions" "resources" rt rn) {:get list-perms-response}}
       (is (= (pc/list-resource-permissions (create-fake-client) rt rn) fake-perms)))))
 
-(deftest test-get-subject-permissions []
+(deftest test-get-subject-permissions
   (let [[st sn] ["user" "ipcdev"]]
     (with-fake-routes {(fake-lookup-url false "permissions" "subjects" st sn) {:get list-perms-response}}
       (is (= (pc/get-subject-permissions (create-fake-client) st sn false) fake-perms)))
     (with-fake-routes {(fake-lookup-url true "permissions" "subjects" st sn) {:get list-perms-response}}
       (is (= (pc/get-subject-permissions (create-fake-client) st sn true) fake-perms)))))
 
-(deftest test-get-subject-permissions-for-resource-type []
+(deftest test-get-subject-permissions-for-resource-type
   (let [[st sn rt] ["user" "ipcdev" "app"]]
     (with-fake-routes {(fake-lookup-url false "permissions" "subjects" st sn rt) {:get list-perms-response}}
       (is (= (pc/get-subject-permissions-for-resource-type (create-fake-client) st sn rt false) fake-perms)))
     (with-fake-routes {(fake-lookup-url true "permissions" "subjects" st sn rt) {:get list-perms-response}}
       (is (= (pc/get-subject-permissions-for-resource-type (create-fake-client) st sn rt true) fake-perms)))))
 
-(deftest test-get-subject-permissions-for-resource []
+(deftest test-get-subject-permissions-for-resource
   (let [[st sn rt rn] ["user" "ipcdev" "app" "a"]]
     (with-fake-routes {(fake-lookup-url false "permissions" "subjects" st sn rt rn) {:get list-perms-response}}
       (is (= (pc/get-subject-permissions-for-resource (create-fake-client) st sn rt rn false) fake-perms)))
