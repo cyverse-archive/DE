@@ -12,13 +12,9 @@ public interface OntologyAutoBeanFactory extends AutoBeanFactory {
 
     AutoBean<OntologyHierarchy> getHierarchy();
 
-    AutoBean<OntologyHierarchyFilterReq> getHierarchyReq();
-
     AutoBean<OntologyHierarchyList> getHierarchyList();
 
     AutoBean<OntologyList> getOntologyList();
-
-    AutoBean<TargetIDList> getTargetIdList();
 
     AutoBean<OntologyVersionDetail> getVersionDetail();
 

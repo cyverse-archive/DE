@@ -42,6 +42,12 @@ public interface OntologiesView extends IsWidget,
 
     OntologyHierarchy getSelectedHierarchy();
 
+    void clearStore();
+
+    void addToStore(List<OntologyHierarchy> children);
+
+    void addToStore(OntologyHierarchy parent, List<OntologyHierarchy> children);
+
     interface OntologiesViewAppearance {
         String addOntology();
 
@@ -128,6 +134,22 @@ public interface OntologiesView extends IsWidget,
         String appClassified(String name, List<Avu> result);
 
         String appClassified(String name, String label);
+
+        String loadingMask();
+
+        int publishDialogWidth();
+
+        int publishDialogMinHeight();
+
+        int publishDialogMinWidth();
+
+        int publishDialogHeight();
+
+        String activeOntologyFieldWidth();
+
+        String editedOntologyFieldWidth();
+
+        int rootIriLabelWidth();
     }
 
     interface Presenter {
@@ -143,5 +165,4 @@ public interface OntologiesView extends IsWidget,
 
         OntologyHierarchy getSelectedHierarchy();
     }
-
 }

@@ -90,6 +90,31 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         }
     }
 
+    private class SaveHierarchyAsyncCallback implements AsyncCallback<OntologyHierarchy> {
+        private final String iri;
+
+        public SaveHierarchyAsyncCallback(String iri) {
+            this.iri = iri;
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            ErrorHandler.post(caught);
+        }
+
+        @Override
+        public void onSuccess(OntologyHierarchy result) {
+            if (isValidHierarchy(result)) {
+                addHierarchies(null,
+                               Lists.newArrayList(result));
+            } else {
+                announcer.schedule(new ErrorAnnouncementConfig(
+                        appearance.invalidHierarchySubmitted(iri)));
+
+            }
+        }
+    }
+
 
     @Inject DEProperties properties;
     @Inject IplantAnnouncer announcer;
@@ -249,7 +274,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     @Override
     public void onSelectOntologyVersion(SelectOntologyVersionEvent event) {
-        treeStore.clear();
+        view.clearStore();
         iriToHierarchyMap.clear();
         serviceFacade.getOntologyHierarchies(event.getSelectedOntology().getVersion(), new AsyncCallback<List<OntologyHierarchy>>() {
             @Override
@@ -277,10 +302,10 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         }
         if (parent == null) {
             ontologyUtil.addUnclassifiedChild(children);
-            treeStore.add(children);
+            view.addToStore(children);
 
         } else {
-            treeStore.add(parent, children);
+            view.addToStore(parent, children);
         }
 
         helperMap(children);
@@ -308,26 +333,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
         for (final String iri : iris) {
             serviceFacade.saveOntologyHierarchy(event.getOntology().getVersion(),
-                                                iri,
-                                                new AsyncCallback<OntologyHierarchy>() {
-                                                    @Override
-                                                    public void onFailure(Throwable caught) {
-                                                        ErrorHandler.post(caught);
-                                                    }
-
-                                                    @Override
-                                                    public void onSuccess(OntologyHierarchy result) {
-                                                        if (isValidHierarchy(result)) {
-                                                            addHierarchies(null,
-                                                                           Lists.newArrayList(result));
-                                                        } else {
-                                                            announcer.schedule(new ErrorAnnouncementConfig(
-                                                                    appearance.invalidHierarchySubmitted(
-                                                                            iri)));
-
-                                                        }
-                                                    }
-                                                });
+                                                iri, new SaveHierarchyAsyncCallback(iri));
         }
 
         view.showTreePanel();
@@ -373,7 +379,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
         Avu avu = ontologyUtil.convertHierarchyToAvu(hierarchy);
 
-        newGridPresenter.getView().mask("Loading");
+        newGridPresenter.getView().mask(appearance.loadingMask());
         serviceFacade.getAppsByHierarchy(hierarchy.getIri(), avu, new AsyncCallback<List<App>>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -391,7 +397,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     void getUnclassifiedApps(OntologyHierarchy hierarchy, Ontology editedOntology) {
         String parentIri = ontologyUtil.getUnclassifiedParentIri(hierarchy);
-        newGridPresenter.getView().mask("Loading");
+        newGridPresenter.getView().mask(appearance.loadingMask());
         Avu avu = ontologyUtil.convertHierarchyToAvu(hierarchy);
         serviceFacade.getUnclassifiedApps(editedOntology.getVersion(), parentIri, avu, new AsyncCallback<List<App>>() {
             @Override

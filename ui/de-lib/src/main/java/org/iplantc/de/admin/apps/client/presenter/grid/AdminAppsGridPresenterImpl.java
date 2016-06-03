@@ -59,7 +59,7 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
 
         @Override
         public void onFailure(Throwable caught) {
-            announcer.schedule(new ErrorAnnouncementConfig(appearance.updateApplicationError()));
+            ErrorHandler.post(caught);
         }
 
         @Override
@@ -146,8 +146,7 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
 
             @Override
             public void onFailure(Throwable caught) {
-                IplantAnnouncer.getInstance()
-                               .schedule(new ErrorAnnouncementConfig("Documentation not found!"));
+                ErrorHandler.post(caught);
                 AutoBean<AppDoc> doc = AutoBeanCodex.decode(factory, AppDoc.class, "{}");
                 final AppEditor appEditor = new AppEditor(event.getSelectedApp(), doc.as());
                 appEditor.addSaveAppSelectedHandler(AdminAppsGridPresenterImpl.this);
@@ -184,7 +183,7 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
                                       @Override
                                       public void onFailure(Throwable caught) {
                                           view.unmask();
-                                          announcer.schedule(new ErrorAnnouncementConfig(appearance.deleteApplicationError(selectedApp.getName())));
+                                          ErrorHandler.post(caught);
                                       }
 
                                       @Override
@@ -247,7 +246,7 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
                 @Override
                 public void onFailure(Throwable caught) {
                     view.unmask();
-                    announcer.schedule(new ErrorAnnouncementConfig(appearance.updateApplicationError()));
+                    ErrorHandler.post(caught);
                 }
 
                 @Override

@@ -280,4 +280,44 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     public String appClassified(String name, String label) {
         return displayStrings.appClassified(name,label);
     }
+
+    @Override
+    public String loadingMask() {
+        return iplantDisplayStrings.loadingMask();
+    }
+
+    @Override
+    public int publishDialogWidth() {
+        return 500;
+    }
+
+    @Override
+    public int publishDialogMinHeight() {
+        return 200;
+    }
+
+    @Override
+    public int publishDialogMinWidth() {
+        return 500;
+    }
+
+    @Override
+    public int publishDialogHeight() {
+        return 200;
+    }
+
+    @Override
+    public String activeOntologyFieldWidth() {
+        return "400";
+    }
+
+    @Override
+    public String editedOntologyFieldWidth() {
+        return "400";
+    }
+
+    @Override
+    public int rootIriLabelWidth() {
+        return 400;
+    }
 }

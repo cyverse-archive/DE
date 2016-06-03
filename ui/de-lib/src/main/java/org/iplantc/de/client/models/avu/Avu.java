@@ -23,9 +23,6 @@ public interface Avu extends HasId {
 
     void setValue(String value);
 
-    @PropertyName("target_id")
-    String getTargetId();
-
     @PropertyName("created_on")
     Integer getCreatedOn();
 

@@ -48,9 +48,9 @@ public class SaveHierarchiesDialog extends IPlantDialog implements IsHideable {
         setHideOnButtonClick(false);
         setHeadingText(appearance.saveHierarchy());
         setResizable(true);
-        setPixelSize(500, 200);
-        setMinHeight(200);
-        setMinWidth(500);
+        setPixelSize(appearance.publishDialogWidth(), appearance.publishDialogHeight());
+        setMinHeight(appearance.publishDialogMinHeight());
+        setMinWidth(appearance.publishDialogMinWidth());
 
         setOnEsc(false);
 
@@ -100,7 +100,7 @@ public class SaveHierarchiesDialog extends IPlantDialog implements IsHideable {
 
         rootIriLabel.setText(appearance.rootIriLabel() + " #" + iriTextFields.size());
         rootIriValue.setEmptyText(appearance.enterIriEmptyText());
-        rootIriValue.setWidth("400");
+        rootIriValue.setWidth(appearance.rootIriLabelWidth());
         rootIriValue.addValidator(new UrlValidator());
         rootIriLabel.add(rootIriValue);
         con.add(rootIriLabel);

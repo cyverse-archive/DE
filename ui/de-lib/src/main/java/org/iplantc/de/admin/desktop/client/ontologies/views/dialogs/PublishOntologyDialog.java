@@ -37,9 +37,9 @@ public class PublishOntologyDialog extends IPlantDialog implements IsHideable {
         setHideOnButtonClick(false);
         setHeadingText(appearance.publishOntology());
         setResizable(true);
-        setPixelSize(500, 200);
-        setMinHeight(200);
-        setMinWidth(500);
+        setPixelSize(appearance.publishDialogWidth(), appearance.publishDialogHeight());
+        setMinHeight(appearance.publishDialogMinHeight());
+        setMinWidth(appearance.publishDialogMinWidth());
 
         setOnEsc(false);
 
@@ -62,7 +62,7 @@ public class PublishOntologyDialog extends IPlantDialog implements IsHideable {
         activeOntologyLabel.setText(appearance.activeOntologyLabel());
         HTML activeOntologyField = new HTML();
         activeOntologyField.setHTML(appearance.activeOntologyField(activeOntology.getVersion()));
-        activeOntologyField.setWidth("400");
+        activeOntologyField.setWidth(appearance.activeOntologyFieldWidth());
         activeOntologyLabel.add(activeOntologyField);
         con.add(activeOntologyLabel);
 
@@ -70,7 +70,7 @@ public class PublishOntologyDialog extends IPlantDialog implements IsHideable {
         editedOntologyLabel.setText(appearance.editedOntologyLabel());
         HTML editedOntologyField = new HTML();
         editedOntologyField.setHTML(appearance.editedOntologyField(editedOntology.getVersion()));
-        editedOntologyField.setWidth("400");
+        editedOntologyField.setWidth(appearance.editedOntologyFieldWidth());
         editedOntologyLabel.add(editedOntologyField);
         con.add(editedOntologyLabel);
     }

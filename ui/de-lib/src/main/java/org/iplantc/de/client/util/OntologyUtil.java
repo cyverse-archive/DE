@@ -26,7 +26,7 @@ public class OntologyUtil {
     final String UNCLASSIFIED_LABEL = "Unclassified";
     final String UNCLASSIFIED_IRI_APPEND = "_unclassified";
 
-    OntologyUtil() {
+    private OntologyUtil() {
         factory = GWT.create(OntologyAutoBeanFactory.class);
         avuFactory = GWT.create(AvuAutoBeanFactory.class);
     }

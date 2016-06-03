@@ -157,9 +157,9 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         targetApp = null;
         if (appSelection != null && appSelection.size() != 0) {
             if (event.getSource() == oldGridView) {
-                newGridView.getGrid().getSelectionModel().deselectAll();
+                newGridView.deselectAll();
             } else {
-                oldGridView.getGrid().getSelectionModel().deselectAll();
+                oldGridView.deselectAll();
             }
             targetApp = appSelection.get(0);
         }
@@ -197,6 +197,21 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @Override
     public OntologyHierarchy getSelectedHierarchy() {
         return tree.getSelectionModel().getSelectedItem();
+    }
+
+    @Override
+    public void clearStore() {
+        treeStore.clear();
+    }
+
+    @Override
+    public void addToStore(List<OntologyHierarchy> children) {
+        treeStore.add(children);
+    }
+
+    @Override
+    public void addToStore(OntologyHierarchy parent, List<OntologyHierarchy> children) {
+        treeStore.add(parent, children);
     }
 
     @UiFactory
