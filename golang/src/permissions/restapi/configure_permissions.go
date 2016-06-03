@@ -13,11 +13,21 @@ import (
 	httpkit "github.com/go-swagger/go-swagger/httpkit"
 	swag "github.com/go-swagger/go-swagger/swag"
 	_ "github.com/lib/pq"
+	"github.com/olebedev/config"
 
-	"permissions/restapi/impl"
+	"permissions/clients/grouper"
 	"permissions/restapi/operations"
+	"permissions/restapi/operations/permissions"
 	"permissions/restapi/operations/resource_types"
+	"permissions/restapi/operations/resources"
 	"permissions/restapi/operations/status"
+	"permissions/restapi/operations/subjects"
+
+	permissions_impl "permissions/restapi/impl/permissions"
+	resource_types_impl "permissions/restapi/impl/resource_types"
+	resources_impl "permissions/restapi/impl/resources"
+	status_impl "permissions/restapi/impl/status"
+	subjects_impl "permissions/restapi/impl/subjects"
 )
 
 // This file is safe to edit. Once it exists it will not be overwritten
@@ -45,20 +55,39 @@ func validateOptions() error {
 
 // The database connection.
 var db *sql.DB
+var grouperClient *grouper.GrouperClient
 
 // Initialize the service.
 func initService() error {
-	if err := configurate.Init(options.CfgPath); err != nil {
+	var (
+		err error
+		cfg *config.Config
+	)
+	if cfg, err = configurate.Init(options.CfgPath); err != nil {
 		return err
 	}
 
-	dburi, err := configurate.C.String("db.uri")
+	dburi, err := cfg.String("db.uri")
 	if err != nil {
 		return err
 	}
-	logcabin.Info.Printf("DB URI: %s\n", dburi)
 
 	db, err = sql.Open("postgres", dburi)
+	if err != nil {
+		return err
+	}
+
+	grouperDburi, err := cfg.String("grouperdb.uri")
+	if err != nil {
+		return err
+	}
+
+	grouperFolderNamePrefix, err := cfg.String("grouperdb.folder_name_prefix")
+	if err != nil {
+		return err
+	}
+
+	grouperClient, err = grouper.NewGrouperClient(grouperDburi, grouperFolderNamePrefix)
 	if err != nil {
 		return err
 	}
@@ -91,22 +120,86 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 
 	api.JSONProducer = httpkit.JSONProducer()
 
-	api.StatusGetHandler = status.GetHandlerFunc(impl.BuildStatusHandler(SwaggerJSON))
+	api.StatusGetHandler = status.GetHandlerFunc(status_impl.BuildStatusHandler(SwaggerJSON))
 
 	api.ResourceTypesGetResourceTypesHandler = resource_types.GetResourceTypesHandlerFunc(
-		impl.BuildResourceTypesGetHandler(db),
+		resource_types_impl.BuildResourceTypesGetHandler(db),
 	)
 
-	api.ResourceTypesPutResourceTypesHandler = resource_types.PutResourceTypesHandlerFunc(
-		impl.BuildResourceTypesPutHandler(db),
+	api.ResourceTypesPostResourceTypesHandler = resource_types.PostResourceTypesHandlerFunc(
+		resource_types_impl.BuildResourceTypesPostHandler(db),
 	)
 
-	api.ResourceTypesPostResourceTypesIDHandler = resource_types.PostResourceTypesIDHandlerFunc(
-		impl.BuildResourceTypesIDPostHandler(db),
+	api.ResourceTypesPutResourceTypesIDHandler = resource_types.PutResourceTypesIDHandlerFunc(
+		resource_types_impl.BuildResourceTypesIDPutHandler(db),
 	)
 
 	api.ResourceTypesDeleteResourceTypesIDHandler = resource_types.DeleteResourceTypesIDHandlerFunc(
-		impl.BuildResourceTypesIDDeleteHandler(db),
+		resource_types_impl.BuildResourceTypesIDDeleteHandler(db),
+	)
+
+	api.ResourcesAddResourceHandler = resources.AddResourceHandlerFunc(
+		resources_impl.BuildAddResourceHandler(db),
+	)
+
+	api.ResourcesListResourcesHandler = resources.ListResourcesHandlerFunc(
+		resources_impl.BuildListResourcesHandler(db),
+	)
+
+	api.ResourcesUpdateResourceHandler = resources.UpdateResourceHandlerFunc(
+		resources_impl.BuildUpdateResourceHandler(db),
+	)
+
+	api.ResourcesDeleteResourceHandler = resources.DeleteResourceHandlerFunc(
+		resources_impl.BuildDeleteResourceHandler(db),
+	)
+
+	api.SubjectsAddSubjectHandler = subjects.AddSubjectHandlerFunc(
+		subjects_impl.BuildAddSubjectHandler(db),
+	)
+
+	api.SubjectsListSubjectsHandler = subjects.ListSubjectsHandlerFunc(
+		subjects_impl.BuildListSubjectsHandler(db),
+	)
+
+	api.SubjectsUpdateSubjectHandler = subjects.UpdateSubjectHandlerFunc(
+		subjects_impl.BuildUpdateSubjectHandler(db),
+	)
+
+	api.SubjectsDeleteSubjectHandler = subjects.DeleteSubjectHandlerFunc(
+		subjects_impl.BuildDeleteSubjectHandler(db),
+	)
+
+	api.PermissionsListPermissionsHandler = permissions.ListPermissionsHandlerFunc(
+		permissions_impl.BuildListPermissionsHandler(db),
+	)
+
+	api.PermissionsGrantPermissionHandler = permissions.GrantPermissionHandlerFunc(
+		permissions_impl.BuildGrantPermissionHandler(db),
+	)
+
+	api.PermissionsRevokePermissionHandler = permissions.RevokePermissionHandlerFunc(
+		permissions_impl.BuildRevokePermissionHandler(db),
+	)
+
+	api.PermissionsPutPermissionHandler = permissions.PutPermissionHandlerFunc(
+		permissions_impl.BuildPutPermissionHandler(db),
+	)
+
+	api.PermissionsBySubjectHandler = permissions.BySubjectHandlerFunc(
+		permissions_impl.BuildBySubjectHandler(db, grouperClient),
+	)
+
+	api.PermissionsBySubjectAndResourceTypeHandler = permissions.BySubjectAndResourceTypeHandlerFunc(
+		permissions_impl.BuildBySubjectAndResourceTypeHandler(db, grouperClient),
+	)
+
+	api.PermissionsBySubjectAndResourceHandler = permissions.BySubjectAndResourceHandlerFunc(
+		permissions_impl.BuildBySubjectAndResourceHandler(db, grouperClient),
+	)
+
+	api.PermissionsListResourcePermissionsHandler = permissions.ListResourcePermissionsHandlerFunc(
+		permissions_impl.BuildListResourcePermissionsHandler(db),
 	)
 
 	api.ServerShutdown = cleanup

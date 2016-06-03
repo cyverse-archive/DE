@@ -1,10 +1,10 @@
 (ns apps.containers-test
   (:use [clojure.test]
         [apps.containers]
-        [korma.core]
+        [korma.core :exclude [update]]
         [korma.db]
         [kameleon.entities])
-  (:require [clojure.string :as string]))
+  (:require [korma.core :as sql]))
 
 ;;; These tests assume that you have a clean instance of the de
 ;;; database running locally on port 5432. It's recommended that you
@@ -28,7 +28,7 @@
                        :name_prefix "foo"
                        :read_only   true}))
 
-(deftest image-tests []
+(deftest image-tests
   (is (not (image? {:name "test" :tag "test"})))
 
   (is (image? {:name "discoenv/de-db" :tag "latest"}))
@@ -48,7 +48,7 @@
                                   :working_directory "/work"
                                   :tools_id (:id tool-map)}))
 
-(deftest settings-tests []
+(deftest settings-tests
   (is (not (nil? (:id settings-map))))
 
   (is (= {:name "test"
@@ -66,7 +66,7 @@
 
 (def devices-map (add-device (:id settings-map) {:host_path "/dev/null" :container_path "/dev/yay"}))
 
-(deftest devices-tests []
+(deftest devices-tests
   (is (not (nil? (:id devices-map))))
 
   (is (= {:host_path "/dev/null" :container_path "/dev/yay" :container_settings_id (:id settings-map)}
@@ -80,7 +80,7 @@
 
 (def volume-map (add-volume (:id settings-map) {:host_path "/tmp" :container_path "/foo"}))
 
-(deftest volumes-tests []
+(deftest volumes-tests
   (is (not (nil? (:id volume-map))))
 
   (is (= {:host_path "/tmp" :container_path "/foo" :container_settings_id (:id settings-map)}
@@ -94,10 +94,11 @@
 
 (def volumes-from-map (add-volumes-from (:id settings-map) (:id data-container-map)))
 
-(defn volumes-from-test []
+(deftest volumes-from-test
   (is (not (nil? (:id volumes-from-map))))
 
-  (is (= {:name "test-name" :container_settings_id (:id settings-map)}
+  (is (= {:container_settings_id (:id settings-map)
+          :data_containers_id    (:id data-container-map)}
          (dissoc (volumes-from (:id volumes-from-map)) :id)))
 
   (is (volumes-from? (:id volumes-from-map)))
@@ -107,12 +108,11 @@
   (is (settings-has-volumes-from? (:id settings-map) (:id volumes-from-map))))
 
 
-(def updated-tool (update tools
-                          (set-fields {:container_images_id (:id image-info-map)})
-                          (where {:id (:id tool-map)})))
+(deftest updated-tool-tests
+  (sql/update tools
+              (set-fields {:container_images_id (:id image-info-map)})
+              (where {:id (:id tool-map)}))
+  (let [updated-tool (first (select tools (where {:id (:id tool-map)})))]
+    (is (not (nil? (:id updated-tool))))
 
-(defn updated-tool-tests []
-  (is (not (nil? (:id updated-tool))))
-
-  (is (= (dissoc image-info-map :id)
-         (tool-image-info (:id updated-tool)))))
+    (is (= image-info-map (tool-image-info (:id updated-tool))))))

@@ -288,15 +288,8 @@
   (table :user_preferences)
   (belongs-to users {:fk :user_id}))
 
-(defentity tree-urls
-  (table :tree_urls))
-
 (defentity user-sessions
   (table :user_sessions)
-  (belongs-to users {:fk :user_id}))
-
-(defentity user-saved-searches
-  (table :user_saved_searches)
   (belongs-to users {:fk :user_id}))
 
 (defentity job-status-updates

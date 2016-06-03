@@ -366,7 +366,7 @@ public class DesktopViewImpl implements DesktopView, UnregisterEvent.UnregisterH
 
     @UiHandler("logoutBtn")
     void onLogoutClick(ClickEvent event){
-        presenter.doLogout();
+        presenter.doLogout(false);
     }
 
 }

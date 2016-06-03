@@ -180,6 +180,8 @@ public interface DesktopView extends IsWidget {
             String welcome();
 
             String requestHistoryError();
+            
+            String checkSysMessageError();
         }
 
         List<WindowState> getOrderedWindowStates();
@@ -218,7 +220,7 @@ public interface DesktopView extends IsWidget {
 
         void onIntroClick();
 
-        void doLogout();
+        void doLogout(boolean sessionTimeout);
 
         void onSystemMessagesClick();
     }

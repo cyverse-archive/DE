@@ -14,6 +14,7 @@ import (
 	"templeton/elasticsearch"
 	"templeton/model"
 
+	"github.com/olebedev/config"
 	"github.com/streadway/amqp"
 )
 
@@ -28,6 +29,7 @@ var (
 	gitref             string
 	appver             string
 	builtby            string
+	cfg                *config.Config
 )
 
 func init() {
@@ -67,7 +69,8 @@ func checkMode() {
 }
 
 func initConfig(cfgPath string) {
-	err := configurate.Init(cfgPath)
+	var err error
+	cfg, err = configurate.Init(cfgPath)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
@@ -75,11 +78,11 @@ func initConfig(cfgPath string) {
 
 func loadElasticsearchConfig() {
 	var err error
-	elasticsearchBase, err = configurate.C.String("elasticsearch.base")
+	elasticsearchBase, err = cfg.String("elasticsearch.base")
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
-	elasticsearchIndex, err = configurate.C.String("elasticsearch.index")
+	elasticsearchIndex, err = cfg.String("elasticsearch.index")
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
@@ -87,7 +90,7 @@ func loadElasticsearchConfig() {
 
 func loadAMQPConfig() {
 	var err error
-	amqpURI, err = configurate.C.String("amqp.uri")
+	amqpURI, err = cfg.String("amqp.uri")
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
@@ -95,7 +98,7 @@ func loadAMQPConfig() {
 
 func loadDBConfig() {
 	var err error
-	dbURI, err = configurate.C.String("db.uri")
+	dbURI, err = cfg.String("db.uri")
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
@@ -125,14 +128,15 @@ func doPeriodicMode(es *elasticsearch.Elasticer, d *database.Databaser, client *
 	go client.Listen()
 
 	// Accept and handle messages sent out with the index.all and index.templates routing keys
-	client.AddConsumer(messaging.ReindexExchange, "direct", "templeton.reindexAll", messaging.ReindexAllKey, func(del amqp.Delivery) {
-		es.Reindex(d)
-		del.Ack(false)
-	})
-	client.AddConsumer(messaging.ReindexExchange, "direct", "templeton.reindexTemplates", messaging.ReindexTemplatesKey, func(del amqp.Delivery) {
-		es.Reindex(d)
-		del.Ack(false)
-	})
+	client.AddConsumerMulti(
+		messaging.ReindexExchange,
+		"direct",
+		"templeton.periodic",
+		[]string{messaging.ReindexAllKey, messaging.ReindexTemplatesKey},
+		func(del amqp.Delivery) {
+			es.Reindex(d)
+			del.Ack(false)
+		})
 
 	spin()
 }

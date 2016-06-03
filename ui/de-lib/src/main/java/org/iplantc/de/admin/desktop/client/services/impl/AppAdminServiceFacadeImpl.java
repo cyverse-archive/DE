@@ -97,7 +97,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
     @Override
     public void getAppDetails(final HasId app,
                               final AsyncCallback<App> callback) {
-        String address = APPS + "/" + app.getId() + "/details";
+        String address = APPS_ADMIN + "/" + app.getId() + "/details";
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, new AsyncCallbackConverter<String, App>(callback) {

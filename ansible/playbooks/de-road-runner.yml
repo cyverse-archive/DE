@@ -3,6 +3,10 @@
   sudo: yes
   gather_facts: false
   tags:
-      - road-runner
+    - road-runner
   roles:
-      - de-road-runner
+    - role: util-notify-chat
+      msg: "Deploying road-runner"
+    - role: de-road-runner
+    - role: util-notify-chat
+      msg: ":heavy_check_mark: Done deploying road-runner"

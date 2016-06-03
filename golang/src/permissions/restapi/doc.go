@@ -7,7 +7,7 @@ Manages Permissions for the CyVerse Discovery Environment and related applicatio
       http
     Host: localhost
     BasePath: /
-    Version: 5.2.6.0
+    Version: 5.2.7.0
 
     Consumes:
     - application/json

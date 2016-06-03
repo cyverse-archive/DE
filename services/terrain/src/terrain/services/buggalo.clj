@@ -5,7 +5,7 @@
         [terrain.services.buggalo.nexml :only [is-nexml? extract-trees-from-nexml]]
         [terrain.util.service :only [success-response temp-dir-failure-response]]
         [terrain.auth.user-attributes :only [current-user]]
-        [terrain.clients.tree-urls]
+        [tree-urls-client.core]
         [slingshot.slingshot :only [throw+ try+]])
   (:require [cheshire.core :as cheshire]
             [clj-http.client :as client]

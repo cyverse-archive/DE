@@ -1,8 +1,7 @@
 (ns terrain.services.permanent-id-requests
   (:use [kameleon.uuids :only [uuidify]]
         [slingshot.slingshot :only [try+ throw+]]
-        [terrain.auth.user-attributes :only [current-user]]
-        [terrain.services.filesystem.metadata :only [metadata-get]])
+        [terrain.auth.user-attributes :only [current-user]])
   (:require [cheshire.core :as json]
             [clj-time.core :as time]
             [clojure.tools.logging :as log]
@@ -46,10 +45,10 @@
              :error "No metadata found for Permanent ID Request."}))
   (let [identifier (get ezid-metadata (config/permanent-id-identifier-attr))]
     (when-not (empty? identifier)
-    (throw+ {:type :clojure-commons.exception/bad-request
-             :error "The metadata already contains a Permanent Identifier attribute with a value."
-             :attribute (config/permanent-id-identifier-attr)
-             :identifier identifier})))
+      (throw+ {:type :clojure-commons.exception/bad-request
+               :error "The metadata already contains a Permanent Identifier attribute with a value."
+               :attribute (config/permanent-id-identifier-attr)
+               :identifier identifier})))
   ezid-metadata)
 
 (defn- validate-request-for-completion
@@ -73,8 +72,8 @@
     target-type))
 
 (defn- validate-owner
-  [user {:keys [id path] :as data-item}]
-  (when-not (data-info/owns? user path)
+  [user {:keys [id permission] :as data-item}]
+  (when-not (= (keyword permission) :own)
     (throw+ {:type :clojure-commons.exception/not-owner
              :error "User does not own given folder."
              :user user
@@ -176,9 +175,9 @@
     publish-path))
 
 (defn- publish-metadata
-  [{:keys [id type]} template-id publish-avus]
+  [{:keys [id type]} publish-avus]
   (let [data-type (metadata/resolve-data-type type)]
-    (metadata/add-metadata-template-avus id data-type template-id publish-avus)))
+    (metadata/add-metadata-avus data-type id publish-avus)))
 
 (defn- send-notification
   [user email subject contents request-id]
@@ -214,10 +213,9 @@
              :request-type type})))
 
 (defn- parse-valid-ezid-metadata
-  [{:keys [path]} irods-avus metadata]
-  (let [metadata (mapcat :avus (:templates metadata))
-        format-avus #(vector (:attr %) (:value %))
-        ezid-metadata (into {} (concat (map format-avus irods-avus) (map format-avus metadata)))]
+  [{:keys [path]} irods-avus {:keys [avus]}]
+  (let [format-avus #(vector (:attr %) (:value %))
+        ezid-metadata (into {} (concat (map format-avus irods-avus) (map format-avus avus)))]
     (validate-ezid-metadata ezid-metadata)
     (assoc ezid-metadata
       ezid-target-attr (format-metadata-target-url path)
@@ -227,44 +225,35 @@
   "Gets data-info stat for the given ID and checks if the data item is valid for a Permanent ID request."
   [user data-id]
   (let [data-item (->> data-id (data-info/stat-by-uuid user) (validate-data-item user))
-        {:keys [irods-avus metadata]} (metadata-get user data-id)]
+        {:keys [irods-avus metadata]} (data-info/get-metadata-json user data-id)]
     (parse-valid-ezid-metadata data-item irods-avus metadata)
     data-item))
 
 (defn- format-alt-id-avus
-  "Formats metadata service AVUs from the alt-identifiers-map, only if existing-alt-id is empty."
-  [existing-alt-id alt-identifiers-map]
-  (when (empty? existing-alt-id)
-    (mapcat (fn [[k v]] [{:attr (config/permanent-id-alt-identifier-attr)
-                          :value v
-                          :unit ""}
-                         {:attr (config/permanent-id-alt-identifier-type-attr)
-                          :value (name k)
-                          :unit ""}])
-            alt-identifiers-map)))
+  "Formats metadata service AVUs from the alt-identifiers-map."
+  [alt-identifiers-map]
+  (mapcat (fn [[k v]] [{:attr (config/permanent-id-alt-identifier-attr)
+                        :value v
+                        :unit ""}
+                       {:attr (config/permanent-id-alt-identifier-type-attr)
+                        :value (name k)
+                        :unit ""}])
+          alt-identifiers-map))
 
 (defn- format-publish-avus
   "Formats AVUs containing completed request information for saving with the metadata service."
-  [metadata ezid-metadata identifier alt-identifiers]
-  (let [publish-date    (get ezid-metadata (config/permanent-id-date-attr))
-        existing-alt-id (get ezid-metadata (config/permanent-id-alt-identifier-attr))
-        alt-id-avus     (format-alt-id-avus existing-alt-id alt-identifiers)
-        remove-attrs    (set (concat [(config/permanent-id-identifier-attr)
-                                      (config/permanent-id-date-attr)]
-                                     (when-not (empty? alt-id-avus)
-                                       [(config/permanent-id-alt-identifier-attr)
-                                        (config/permanent-id-alt-identifier-type-attr)])))
-        template        (-> metadata :templates first)]
-    (update template :avus
-      (comp (partial concat
-              alt-id-avus
-              [{:attr (config/permanent-id-identifier-attr)
-                :value identifier
-                :unit ""}
-               {:attr (config/permanent-id-date-attr)
-                :value publish-date
-                :unit ""}])
-            (partial remove #(contains? remove-attrs (:attr %)))))))
+  [ezid-metadata identifier alt-identifiers]
+  (let [publish-date (get ezid-metadata (config/permanent-id-date-attr))
+        alt-id-avus  (format-alt-id-avus alt-identifiers)]
+    {:avus
+     (concat
+       alt-id-avus
+       [{:attr  (config/permanent-id-identifier-attr)
+         :value identifier
+         :unit  ""}
+        {:attr  (config/permanent-id-date-attr)
+         :value publish-date
+         :unit  ""}])}))
 
 (defn- format-folder-details
   [user folder-id]
@@ -365,18 +354,17 @@
     (let [shoulder                      (request-type->shoulder type)
           folder                        (validate-publish-dest folder)
           folder-id                     (uuidify (:id folder))
-          {:keys [irods-avus metadata]} (metadata-get user folder-id)
-          template-id                   (-> metadata :templates first :template_id)
+          {:keys [irods-avus metadata]} (data-info/get-metadata-json user folder-id)
           ezid-metadata                 (parse-valid-ezid-metadata folder irods-avus metadata)
           ezid-response                 (ezid/mint-id shoulder ezid-metadata)
           identifier                    (get ezid-response (keyword type))
           alt-identifiers               (dissoc ezid-response (keyword type))
-          publish-avus                  (format-publish-avus metadata ezid-metadata identifier alt-identifiers)
+          publish-avus                  (format-publish-avus ezid-metadata identifier alt-identifiers)
           publish-path                  (publish-data-item user folder)]
       (email/send-permanent-id-request-complete type
                                                 publish-path
                                                 (json/encode ezid-response {:pretty true}))
-      (publish-metadata folder template-id publish-avus)
+      (publish-metadata folder publish-avus)
       identifier)
     (catch Object e
       (log/error e)

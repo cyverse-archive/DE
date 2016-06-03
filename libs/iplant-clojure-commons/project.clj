@@ -1,4 +1,4 @@
-(defproject org.iplantc/clojure-commons "5.2.6.0"
+(defproject org.iplantc/clojure-commons "5.2.7.0"
   :description "Common Utilities for Clojure Projects"
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"
@@ -8,7 +8,7 @@
                  [org.clojure/tools.logging "0.3.1"]
                  [buddy/buddy-sign "0.7.0"]
                  [metosin/ring-http-response "0.6.5"]
-                 [metosin/compojure-api "0.24.2"]
+                 [metosin/compojure-api "0.24.5"]
                  [cheshire "5.5.0"]
                  [clj-http "2.0.0"]
                  [clj-time "0.11.0"]
@@ -20,5 +20,5 @@
                  [ring "1.4.0"]
                  [slingshot "0.12.2"]
                  [trptcolin/versioneer "0.2.0"]
-                 [org.iplantc/service-logging "5.2.6.0"]]
+                 [org.iplantc/service-logging "5.2.7.0"]]
   :profiles {:test {:resource-paths ["resources" "test-resources"]}})

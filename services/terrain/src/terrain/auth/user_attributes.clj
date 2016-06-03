@@ -2,7 +2,6 @@
   (:require [clojure.string :as string]
             [clojure.tools.logging :as log]
             [clojure-commons.response :as resp]
-            [clj-cas.cas-proxy-auth :as cas]
             [clojure-commons.exception :as cx]
             [terrain.util.config :as cfg]
             [terrain.util.jwt :as jwt]))
@@ -13,10 +12,9 @@
     :dynamic true}
   current-user nil)
 
-;; TODO: fix common name retrieval when we add it as an attribute to CAS.
+;; TODO: fix common name retrieval when we add it as an attribute.
 (defn user-from-attributes
-  "Creates a map of values from user attributes stored in the request by
-   validate-cas-proxy-ticket."
+  "Creates a map of values from user attributes obtained during the authentication process."
   [{:keys [user-attributes]}]
   (log/trace user-attributes)
   (let [first-name (get user-attributes "firstName")
@@ -87,11 +85,6 @@
   [_]
   (System/getenv "IPLANT_CAS_FAKE"))
 
-(defn- get-cas-ticket
-  "Extracts a CAS ticket from the request, returning nil if none is found."
-  [request]
-  (get (:query-params request) "proxyToken"))
-
 (defn- get-de-jwt-assertion
   "Extracts a JWT assertion from the request header used by the DE, returning nil if none is
    found."
@@ -109,13 +102,6 @@
   [handler]
   (wrap-current-user handler fake-user-from-attributes))
 
-(defn- wrap-cas-auth
-  [handler]
-  (-> (wrap-current-user handler user-from-attributes)
-      (cas/extract-groups-from-user-attributes cfg/group-attr-name)
-      (cas/validate-cas-proxy-ticket
-        get-cas-ticket cfg/cas-server cfg/server-name)))
-
 (defn- wrap-de-jwt-auth
   [handler]
   (-> (wrap-current-user handler user-from-de-jwt-claims)
@@ -127,11 +113,10 @@
       (jwt/validate-jwt-assertion get-wso2-jwt-assertion jwt/user-from-wso2-assertion)))
 
 (defn authenticate-current-user
-  "Authenticates the user using validate-cas-proxy-ticket and binds current-user to a map that is
-   built from the user attributes that validate-cas-proxy-ticket stores in the request."
+  "Authenticates the user and binds current-user to a map that is built from the user attributes retrieved
+   during the authentication process."
   [handler]
   (wrap-auth-selection [[get-fake-auth          (wrap-fake-auth handler)]
-                        [get-cas-ticket         (wrap-cas-auth handler)]
                         [get-de-jwt-assertion   (wrap-de-jwt-auth handler)]
                         [get-wso2-jwt-assertion (wrap-wso2-jwt-auth handler)]]))
 
@@ -140,7 +125,6 @@
   [handler]
   (wrap-auth-selection
    [[get-fake-auth          handler]
-    [get-cas-ticket         (cas/validate-group-membership handler cfg/allowed-groups)]
     [get-de-jwt-assertion   (jwt/validate-group-membership handler cfg/allowed-groups)]
     [get-wso2-jwt-assertion (constantly (resp/forbidden "Admin not supported for WSO2."))]]))
 

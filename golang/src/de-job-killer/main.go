@@ -19,19 +19,10 @@ import (
 )
 
 var (
-	killJob   = flag.Bool("kill", false, "Send out a stop request. Conflicts with --send-status.")
-	statusMsg = flag.Bool("send-status", false, "Send out a job status. Conflicts with --kill.")
-	version   = flag.Bool("version", false, "Print the version information.")
-	config    = flag.String("config", "", "Path to the jobservices config. Required.")
-	uuid      = flag.String("uuid", "", "The job UUID to operate against.")
-	gitref    string
-	appver    string
-	builtby   string
+	gitref  string
+	appver  string
+	builtby string
 )
-
-func init() {
-	flag.Parse()
-}
 
 // AppVersion prints version information to stdout
 func AppVersion() {
@@ -71,36 +62,54 @@ func doStatusMessage(client *messaging.Client, uuid string) error {
 }
 
 func main() {
+	var (
+		killJob   = flag.Bool("kill", false, "Send out a stop request. Conflicts with --send-status.")
+		statusMsg = flag.Bool("send-status", false, "Send out a job status. Conflicts with --kill.")
+		version   = flag.Bool("version", false, "Print the version information.")
+		config    = flag.String("config", "", "Path to the jobservices config. Required.")
+		uuid      = flag.String("uuid", "", "The job UUID to operate against.")
+	)
+
+	flag.Parse()
+
 	if *version {
 		AppVersion()
 		os.Exit(0)
 	}
+
 	if *config == "" {
 		flag.PrintDefaults()
 		log.Fatal("--config must be set.")
 	}
+
 	if *uuid == "" {
 		flag.PrintDefaults()
 		log.Fatal("--uuid must be set.")
 	}
+
 	if *killJob && *statusMsg {
 		log.Fatal("--kill and --send-status conflict.")
 	}
-	err := configurate.Init(*config)
+
+	cfg, err := configurate.Init(*config)
 	if err != nil {
 		log.Fatal(err)
 	}
-	uri, err := configurate.C.String("amqp.uri")
+
+	uri, err := cfg.String("amqp.uri")
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	client, err := messaging.NewClient(uri, true)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
 	defer client.Close()
+
 	client.SetupPublishing(messaging.JobsExchange)
 	go client.Listen()
+
 	switch {
 	case *killJob:
 		if err = doKillJob(client, *uuid); err != nil {

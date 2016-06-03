@@ -3,6 +3,10 @@
   sudo: yes
   gather_facts: false
   tags:
-      - condor-launcher
+    - condor-launcher
   roles:
-      - de-condor-launcher
+    - role: util-notify-chat
+      msg: "Deploying condor-launcher"
+    - role: de-condor-launcher
+    - role: util-notify-chat
+      msg: ":heavy_check_mark: Done deploying condor-launcher"

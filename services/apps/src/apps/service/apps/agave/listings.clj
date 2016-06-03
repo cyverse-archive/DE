@@ -12,6 +12,13 @@
       (apply-offset params)
       (apply-limit params)))
 
+(defn list-apps-with-ontology
+  [agave term params]
+  (-> (select-keys (.listAppsWithOntology agave term) [:app_count :apps])
+      (sort-apps params {:default-sort-field "name"})
+      (apply-offset params)
+      (apply-limit params)))
+
 (defn search-apps
   [agave search-term params]
   (try+

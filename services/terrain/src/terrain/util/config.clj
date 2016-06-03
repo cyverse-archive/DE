@@ -34,21 +34,6 @@
   [props config-valid configs]
   "terrain.app.environment-name")
 
-(cc/defprop-str cas-server
-  "The base URL used to connect to the CAS server."
-  [props config-valid configs]
-  "terrain.cas.cas-server")
-
-(cc/defprop-str server-name
-  "The name of the local server."
-  [props config-valid configs]
-  "terrain.cas.server-name")
-
-(cc/defprop-str group-attr-name
-  "The name of the user attribute containing group membership information."
-  [props config-valid configs]
-  "terrain.cas.group-attr-name")
-
 (cc/defprop-vec allowed-groups
   "The names of the groups that are permitted to access secured admin services."
   [props config-valid configs]
@@ -332,22 +317,6 @@
   [props config-valid configs filesystem-routes-enabled]
   "terrain.fs.max-paths-in-request")
 
-(cc/defprop-str fs-anon-user
-  "The name of the anonymous user."
-  [props config-valid configs filesystem-routes-enabled]
-  "terrain.fs.anon-user")
-
-(cc/defprop-str anon-files-base-url
-  "The base url for the anon-files server."
-  [props config-valid configs filesystem-routes-enabled]
-  "terrain.fs.anon-files-base-url")
-
-(def anon-files-base
-  (memoize
-   (fn []
-     (if (System/getenv "ANON_FILES_PORT")
-       (cfg/env-setting "ANON_FILES_PORT")
-       (anon-files-base-url)))))
 ;;; End Filesystem configuration
 
 (cc/defprop-optint default-search-result-limit
@@ -583,7 +552,6 @@
   (log/warn "ENV? terrain.data-info.base-url -" (data-info-base))
   (log/warn "ENV? terrain.apps.base-url =" (apps-base))
   (log/warn "ENV? terrain.notificationagent.base-url =" (notificationagent-base))
-  (log/warn "ENV? terrain.anon-files.base-url =" (anon-files-base))
   (log/warn "ENV? terrain.sessions.host =" (sessions-base))
   (log/warn "ENV? terrain.saved-searches.host =" (saved-searches-base))
   (log/warn "ENV? terrain.tree-urls.host =" (tree-urls-base))

@@ -1,0 +1,37 @@
+# Swaps a service to a new version with zero downtime.
+# Needs other_color and current_color variables passed in, as well as service_name
+#
+# This role starts up the other_color services, uses consul to ensure they've
+# started and are ready for requests, switches the color (relying on
+# consul-template+nginx, or some other setup, to direct requests to the new
+# color), and then removes the current_color services.
+
+- include: restart-service.yaml
+  vars:
+    restart_service_name: "{{service_name}}_{{other_color}}"
+
+# We'll give it two whole minutes to come up. If that's not enough something's probably wrong anyway.
+- name: wait for {{other_color}} server to be up
+  uri: url=http://localhost:{{consul_port}}/v1/health/service/{{service_name_short}}?passing&tag={{environment_name}}-{{other_color}} method=GET return_content=yes
+  register: health_check
+  until: health_check.content != "[]"
+  retries: 60
+  delay: 2
+
+- fail: msg="The server did not come up"
+  when: health_check.content == "[]"
+
+- name: switch color to {{other_color}}
+  uri: url=http://localhost:{{consul_port}}/v1/kv/{{environment_name}}/{{service_name_short}}/color method=PUT body="{{other_color}}" return_content=yes
+  register: color_switch
+  failed_when: color_switch.content != "true"
+
+- include: stop.yaml
+  vars:
+    stop_service_name: "{{service_name}}_{{current_color}}"
+
+- include: rm.yaml
+  vars:
+    rm_service_name: "{{service_name}}_{{current_color}} {% if has_configs|default(true) %}config_{{service_name}}_{{current_color}}{% endif %} {% if has_iplant_data|default(false) %}iplant_data_{{service_name}}_{{current_color}}{% endif %}"
+  tags:
+    - docker_rm_service

@@ -23,6 +23,7 @@
   [request]
   (dissoc request
           :body
+          :params
           :user-info
           :user-attributes
           :compojure.api.middleware/options

@@ -7,7 +7,7 @@
       (string/trim (:out (sh "git" "rev-parse" "HEAD")))
       ""))
 
-(defproject org.iplantc/porklock "5.2.6.0"
+(defproject org.iplantc/porklock "5.2.7.0"
   :description "A command-line tool for interacting with iRODS."
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"
@@ -21,6 +21,6 @@
                  [org.clojure/tools.logging "0.3.1"]
                  [commons-io/commons-io "2.4"]
                  [slingshot "0.12.2"]
-                 [org.iplantc/clj-jargon "5.2.6.0"]
-                 [org.iplantc/clojure-commons "5.2.6.0"]
-                 [org.iplantc/common-cli "5.2.6.0"]])
+                 [org.iplantc/clj-jargon "5.2.7.0"]
+                 [org.iplantc/clojure-commons "5.2.7.0"]
+                 [org.iplantc/common-cli "5.2.7.0"]])

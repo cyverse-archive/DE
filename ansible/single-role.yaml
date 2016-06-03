@@ -9,9 +9,9 @@
 #
 # EXAMPLE
 # =======
-# To execute the `logstash-forwarder` one-to-one playbook;
+# To execute the `de-docker-network` one-to-one playbook;
 #
-#     ansible-playbook single-role.yaml -K --extra-vars "playbook=playbooks/de-ui.yaml"
+#     ansible-playbook single-role.yaml -K --extra-vars "playbook=playbooks/de-docker-network.yml"
 #
 # [1] http://docs.ansible.com/ansible/playbooks_best_practices.html
 ---

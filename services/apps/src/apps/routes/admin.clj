@@ -1,19 +1,24 @@
 (ns apps.routes.admin
-  (:use [common-swagger-api.schema]
+  (:use [common-swagger-api.routes]
+        [common-swagger-api.schema]
+        [common-swagger-api.schema.ontologies]
         [apps.metadata.reference-genomes :only [add-reference-genome
-                                                      delete-reference-genome
-                                                      replace-reference-genomes
-                                                      update-reference-genome]]
+                                                delete-reference-genome
+                                                replace-reference-genomes
+                                                update-reference-genome]]
         [apps.metadata.tool-requests]
         [apps.routes.domain.app]
         [apps.routes.domain.app.category]
         [apps.routes.domain.reference-genome]
         [apps.routes.domain.tool]
+        [apps.routes.middleware :only [wrap-metadata-base-url]]
         [apps.routes.params]
         [apps.user :only [current-user]]
         [apps.util.coercions :only [coerce!]]
         [ring.util.http-response :only [ok]])
   (:require [apps.service.apps :as apps]
+            [apps.service.apps.de.admin :as admin]
+            [apps.service.apps.de.listings :as listings]
             [apps.util.config :as config]))
 
 (defroutes* admin-tool-requests
@@ -85,6 +90,15 @@
           (ok (coerce! AppDetails
                 (apps/admin-update-app current-user (assoc body :id app-id)))))
 
+  (GET* "/:app-id/details" []
+        :path-params [app-id :- AppIdPathParam]
+        :query [params SecuredQueryParams]
+        :return AppDetails
+        :summary "Get App Details"
+        :description "This service allows administrative users to view detailed informaiton about private apps."
+        (ok (coerce! AppDetails
+               (apps/admin-get-app-details current-user app-id))))
+
   (PATCH* "/:app-id/documentation" []
           :path-params [app-id :- AppIdPathParam]
           :query [params SecuredQueryParams]
@@ -152,6 +166,61 @@
           :description "This service renames or moves an App Category to a new parent Category, depending
           on the fields included in the request."
           (ok (apps/admin-update-category current-user (assoc body :id category-id)))))
+
+(defroutes* admin-ontologies
+
+  (GET* "/" []
+        :query [params SecuredQueryParams]
+        :return ActiveOntologyDetailsList
+        :middlewares [wrap-metadata-base-url]
+        :summary "List Ontology Details"
+        :description (str
+"Lists Ontology details saved in the metadata service."
+(get-endpoint-delegate-block
+  "metadata"
+  "GET /ontologies"))
+        (ok (admin/list-ontologies current-user)))
+
+  (POST* "/:ontology-version" []
+         :path-params [ontology-version :- OntologyVersionParam]
+         :query [params SecuredQueryParams]
+         :return AppCategoryOntologyVersionDetails
+         :summary "Set Active Ontology Version"
+         :description
+         "Sets the active `ontology-version` to use in non-admin endpoints when querying the ontology
+          endpoints of the metadata service."
+         (ok (admin/set-category-ontology-version current-user ontology-version)))
+
+  (GET* "/:ontology-version/:root-iri" []
+        :path-params [ontology-version :- OntologyVersionParam
+                      root-iri :- OntologyClassIRIParam]
+        :query [{:keys [attr] :as params} OntologyHierarchyFilterParams]
+        :middlewares [wrap-metadata-base-url]
+        :summary "Get App Category Hierarchy"
+        :description (str
+"Gets the list of app categories that are visible to the user for the given `ontology-version`,
+ rooted at the given `root-iri`."
+(get-endpoint-delegate-block
+  "metadata"
+  "POST /ontologies/{ontology-version}/{root-iri}/filter")
+"Please see the metadata service documentation for response information.")
+        (listings/get-app-hierarchy current-user ontology-version root-iri attr))
+
+  (GET* "/:ontology-version/:root-iri/unclassified" [root-iri]
+        :path-params [ontology-version :- OntologyVersionParam
+                      root-iri :- OntologyClassIRIParam]
+        :query [params OntologyAppListingPagingParams]
+        :return AppListing
+        :middlewares [wrap-metadata-base-url]
+        :summary "List Unclassified Apps"
+        :description (str
+"Lists all of the apps that are visible to the user that are not under the given `root-iri`, or any of
+ its subcategories, for the given `ontology-version`."
+(get-endpoint-delegate-block
+  "metadata"
+  "POST /ontologies/{ontology-version}/{root-iri}/filter-unclassified"))
+        (ok (coerce! AppListing
+                     (listings/get-unclassified-app-listing current-user ontology-version root-iri params)))))
 
 (defroutes* reference-genomes
   (POST* "/" []

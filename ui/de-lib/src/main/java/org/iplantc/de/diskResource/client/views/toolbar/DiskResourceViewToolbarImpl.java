@@ -733,6 +733,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         metadataMenu.ensureDebugId(baseID + Ids.METADATA_MENU);
         copymetadataMi.ensureDebugId(baseID + Ids.METADATA_MENU + Ids.MENU_ITEM_METADATA_COPY);
         savemetadatami.ensureDebugId(baseID + Ids.METADATA_MENU + Ids.MENU_ITEM_METADATA_SAVE);
+        editmetadataMi.ensureDebugId(baseID + Ids.METADATA_MENU + Ids.MENU_ITEM_METADATA_EDIT);
         doiMi.ensureDebugId(baseID + Ids.METADATA_MENU + Ids.MENU_ITEM_REQUEST_DOI);
         bulkmetadataMi.ensureDebugId(baseID + Ids.METADATA_MENU + Ids.MENU_ITEM_BULK_METADATA);
         selectmetadataMi.ensureDebugId(

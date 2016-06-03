@@ -14,8 +14,10 @@
         [apps.workspace])
   (:require [apps.clients.iplant-groups :as iplant-groups]
             [apps.persistence.app-metadata :refer [get-app get-app-tools] :as amp]
+            [apps.persistence.categories :as db-categories]
             [apps.service.apps.de.permissions :as perms]
-            [cemerick.url :as curl]))
+            [cemerick.url :as curl]
+            [metadata-client.core :as metadata-client]))
 
 (def my-public-apps-id (uuidify "00000000-0000-0000-0000-000000000000"))
 (def shared-with-me-id (uuidify "EEEEEEEE-EEEE-EEEE-EEEE-EEEEEEEEEEEE"))
@@ -24,6 +26,22 @@
 (def default-sort-params
   {:sort-field :lower_case_name
    :sort-dir   :ASC})
+
+(defn- get-visible-app-ids
+  [shortUsername]
+  (set (keys (iplant-groups/load-app-permissions shortUsername))))
+
+(defn- get-active-hierarchy-version
+  []
+  (let [version (db-categories/get-active-hierarchy-version)]
+    (when-not version
+      (throw+ {:type  :clojure-commons.exception/not-found
+               :error "An app hierarchy version has not been set."}))
+    version))
+
+(defn list-hierarchies
+  [{:keys [username]}]
+  (metadata-client/list-hierarchies username (get-active-hierarchy-version)))
 
 (defn- fix-sort-params
   [params]
@@ -142,13 +160,20 @@
   "Retrieves the list of app groups that are visible to all users, the current user's app groups, or
    both, depending on the :public param."
   [user {:keys [public] :as params}]
-  (let [perms  (iplant-groups/load-app-permissions (:shortUsername user))
-        params (assoc params :app-ids (set (keys perms)))]
+  (let [app-ids (get-visible-app-ids (:shortUsername user))
+        params  (assoc params :app-ids app-ids)]
     (if (contains? params :public)
       (if-not public
         (get-workspace-app-groups user params)
         (get-visible-app-groups-for-workspace nil user params))
       (get-visible-app-groups user params))))
+
+(defn get-app-hierarchy
+  ([user root-iri attr]
+   (get-app-hierarchy user (get-active-hierarchy-version) root-iri attr))
+  ([{:keys [username shortUsername]} ontology-version root-iri attr]
+   (let [app-ids (get-visible-app-ids shortUsername)]
+     (metadata-client/filter-hierarchy username ontology-version root-iri attr ["app"] app-ids))))
 
 (defn get-admin-app-groups
   "Retrieves the list of app groups that are accessible to administrators. This includes all public
@@ -228,6 +253,29 @@
       (format-app-permissions perms)
       (assoc :can_favor true :can_rate true :app_type "DE")
       (remove-nil-vals)))
+
+(defn- apps-listing-with-metadata-filter
+  [{:keys [username shortUsername]} params metadata-filter]
+  (let [workspace       (get-optional-workspace username)
+        faves-index     (workspace-favorites-app-category-index)
+        perms           (iplant-groups/load-app-permissions shortUsername)
+        app-ids         (set (keys perms))
+        app-listing-ids (metadata-filter app-ids)
+        app-listing     (list-apps-by-id workspace faves-index app-listing-ids (fix-sort-params params))]
+    {:app_count (count app-listing-ids)
+     :apps      (map (partial format-app-listing perms) app-listing)}))
+
+(defn list-apps-with-metadata
+  [{:keys [username] :as user} attr value params]
+  (let [metadata-filter (partial metadata-client/filter-by-attr-value username attr value ["app"])]
+    (apps-listing-with-metadata-filter user params metadata-filter)))
+
+(defn get-unclassified-app-listing
+  ([user root-iri params]
+   (get-unclassified-app-listing user (get-active-hierarchy-version) root-iri params))
+  ([{:keys [username] :as user} ontology-version root-iri {:keys [attr] :as params}]
+   (let [metadata-filter (partial metadata-client/filter-unclassified username ontology-version root-iri attr ["app"])]
+     (apps-listing-with-metadata-filter user params metadata-filter))))
 
 (defn- list-apps-in-virtual-group
   "Formats a listing for a virtual group."
@@ -328,10 +376,13 @@
              :suggested_categories (get-suggested-groups-for-app app-id))
       format-wiki-url)))
 
+;; FIXME: remove the code to bypass the permission checks for admin users when we have a better
+;; way to implement this.
 (defn get-app-details
   "This service obtains the high-level details of an app."
-  [{username :shortUsername} app-id]
-  (perms/check-app-permissions username "read" [app-id])
+  [{username :shortUsername} app-id admin?]
+  (when-not admin?
+    (perms/check-app-permissions username "read" [app-id]))
   (let [details (load-app-details app-id)
         tools   (get-app-tools app-id)]
     (when (empty? tools)

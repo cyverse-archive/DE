@@ -9,18 +9,6 @@
   :language :clojure
   :archive? false}
 
- "clj-cas"
- {:type     :library
-  :type-num 7
-  :path     "libs/clj-cas"
-  :build    :lein
-  :install  :lein
-  :tarball? false
-  :uberjar? false
-  :install? true
-  :language :clojure
-  :archive? false}
-
  "clj-icat-direct"
  {:type     :library
   :type-num 9
@@ -37,6 +25,18 @@
  {:type     :library
   :type-num 8
   :path     "libs/clj-jargon"
+  :build    :lein
+  :install  :lein
+  :tarball? false
+  :uberjar? false
+  :install? true
+  :language :clojure
+  :archive? false}
+
+ "debug-utils"
+ {:type     :library
+  :type-num 1
+  :path     "libs/debug-utils"
   :build    :lein
   :install  :lein
   :tarball? false
@@ -117,6 +117,18 @@
   :language :clojure
   :archive? false}
 
+ "tree-urls-client"
+ {:type     :library
+  :type-num 16
+  :path     "libs/tree-urls-client"
+  :build    :lein
+  :install  :lein
+  :tarball? false
+  :uberjar? false
+  :install? true
+  :language :clojure
+  :archive? false}
+
  "kameleon"
  {:type     :library
   :type-num 6
@@ -145,6 +157,18 @@
  {:type     :library
   :type-num 11
   :path     "libs/mescal"
+  :build    :lein
+  :install  :lein
+  :tarball? false
+  :uberjar? false
+  :install? true
+  :language :clojure
+  :archive? false}
+
+ "metadata-client"
+ {:type     :library
+  :type-num 16
+  :path     "libs/metadata-client"
   :build    :lein
   :install  :lein
   :tarball? false
@@ -256,26 +280,6 @@
  "anon-files"
  {:type     :service
   :path     "services/anon-files"
-  :build    :lein
-  :tarball? false
-  :uberjar? true
-  :install? false
-  :language :clojure
-  :archive? true}
-
- "saved-searches"
- {:type     :service
-  :path     "services/saved-searches"
-  :build    :lein
-  :tarball? false
-  :uberjar? true
-  :install? false
-  :language :clojure
-  :archive? true}
-
- "tree-urls"
- {:type     :service
-  :path     "services/tree-urls"
   :build    :lein
   :tarball? false
   :uberjar? true

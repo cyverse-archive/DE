@@ -5,6 +5,9 @@ global_config_dir: /etc/iplant
 de_config_dir: "{{ global_config_dir }}/de"
 local_cfg_dest: cfg_files
 
+## zero-downtime
+use_color: false
+
 # A proxy host and port to be used by the database initialization utility,
 # facepalm. This does not affect network requests not made by facepalm.
 facepalm_proxy_host: null
@@ -17,8 +20,6 @@ docker:
   version: 1.11.1
   compose_path: /etc/docker-compose.yml
   registry:
-    host: "{{ groups['docker-registry'][0] }}"
-    port: 5000
     base: "{{ groups['docker-registry'][0] }}:5000"
 
 java:
@@ -129,7 +130,7 @@ de:
 #          ssl_certificate_key: "/etc/ssl/example.com.key"
 
 de_version_name: Phthalo
-de_version: 2.6.0
+de_version: 2.7.0
 
 de_feedback_to_addr: ""
 de_mail_from_addr: "{{ de_feedback_to_addr }}"
@@ -298,6 +299,9 @@ grouper:
   container_name: grouper
   db:
     url:
+    host:
+    port:
+    name:
     user:
     pass:
   http_server:
@@ -448,7 +452,7 @@ jwt:
   validity_window:
     end: 300
   wso2:
-    header: x-jwt-assertion-iplant-org
+    header: x-jwt-assertion-iplantc-org
 
 kifshare_external_url: "http://{{ de.host }}/{{ kifshare.external_url_suffix }}"
 kifshare:
@@ -488,6 +492,7 @@ apps:
   user_subs: "[\"Apps under development\",\"Favorite Apps\"]"
   trash_category: Trash
   max_heap: "{{ max_heap.high }}"
+  grouper_user:
 
 metadata_db_driver: "{{ db_driver }}"
 metadata_db_vendor: "{{ db_vendor }}"

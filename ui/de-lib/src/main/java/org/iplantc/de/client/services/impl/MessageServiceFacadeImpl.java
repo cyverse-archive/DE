@@ -1,12 +1,16 @@
 package org.iplantc.de.client.services.impl;
 
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.DELETE;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
+
+import java.util.Collections;
+import java.util.List;
 
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.notifications.Counts;
-import org.iplantc.de.client.models.notifications.Notification;
 import org.iplantc.de.client.models.notifications.NotificationAutoBeanFactory;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.models.notifications.NotificationList;
@@ -17,8 +21,8 @@ import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.services.converters.NotificationCallbackConverter;
 import org.iplantc.de.client.services.converters.StringToVoidCallbackConverter;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
+import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.http.client.URL;
@@ -28,9 +32,6 @@ import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Provides access to remote services to acquire messages and notifications.

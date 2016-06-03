@@ -15,6 +15,8 @@ type StepComponent struct {
 	Name        string    `json:"name"`
 	Location    string    `json:"location"`
 	Description string    `json:"description"`
+	TimeLimit   int       `json:"time_limit_seconds"`
+	Restricted  bool      `json:"restricted"`
 }
 
 // StepEnvironment defines the environment variables that should be set for a

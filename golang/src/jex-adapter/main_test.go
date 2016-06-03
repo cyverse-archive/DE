@@ -14,11 +14,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/olebedev/config"
 	"github.com/streadway/amqp"
 )
 
 var (
-	s *model.Job
+	s   *model.Job
+	cfg *config.Config
 )
 
 func shouldrun() bool {
@@ -47,24 +49,28 @@ func JSONData() ([]byte, error) {
 }
 
 func _inittests(t *testing.T, memoize bool) *model.Job {
+	var err error
 	if s == nil || !memoize {
-		configurate.Init("../test/test_config.yaml")
-		configurate.C.Set("irods.base", "/path/to/irodsbase")
-		configurate.C.Set("irods.host", "hostname")
-		configurate.C.Set("irods.port", "1247")
-		configurate.C.Set("irods.user", "user")
-		configurate.C.Set("irods.pass", "pass")
-		configurate.C.Set("irods.zone", "test")
-		configurate.C.Set("irods.resc", "")
-		configurate.C.Set("condor.log_path", "/path/to/logs")
-		configurate.C.Set("condor.porklock_tag", "test")
-		configurate.C.Set("condor.filter_files", "foo,bar,baz,blippy")
-		configurate.C.Set("condor.request_disk", "0")
+		cfg, err = configurate.Init("../test/test_config.yaml")
+		if err != nil {
+			t.Error(err)
+		}
+		cfg.Set("irods.base", "/path/to/irodsbase")
+		cfg.Set("irods.host", "hostname")
+		cfg.Set("irods.port", "1247")
+		cfg.Set("irods.user", "user")
+		cfg.Set("irods.pass", "pass")
+		cfg.Set("irods.zone", "test")
+		cfg.Set("irods.resc", "")
+		cfg.Set("condor.log_path", "/path/to/logs")
+		cfg.Set("condor.porklock_tag", "test")
+		cfg.Set("condor.filter_files", "foo,bar,baz,blippy")
+		cfg.Set("condor.request_disk", "0")
 		data, err := JSONData()
 		if err != nil {
 			t.Error(err)
 		}
-		s, err = model.NewFromData(data)
+		s, err = model.NewFromData(cfg, data)
 		if err != nil {
 			t.Error(err)
 		}
@@ -77,12 +83,13 @@ func inittests(t *testing.T) *model.Job {
 }
 
 func TestGetHome(t *testing.T) {
+	app := New(cfg)
 	req, err := http.NewRequest("GET", "http://for-a-test.org", nil)
 	if err != nil {
 		t.Error(err)
 	}
 	recorder := httptest.NewRecorder()
-	home(recorder, req)
+	app.home(recorder, req)
 	actual := recorder.Body.String()
 	expected := "Welcome to the JEX.\n"
 	if actual != expected {
@@ -94,6 +101,7 @@ func TestStop(t *testing.T) {
 	if !shouldrun() {
 		return
 	}
+	app := New(cfg)
 	invID := "test-invocation-id"
 	stopKey := fmt.Sprintf("%s.%s", messaging.StopsKey, invID)
 	exitChan := make(chan int)
@@ -135,7 +143,7 @@ func TestStop(t *testing.T) {
 		t.Error(err)
 	}
 	recorder := httptest.NewRecorder()
-	NewRouter().ServeHTTP(recorder, request)
+	app.NewRouter().ServeHTTP(recorder, request)
 	if recorder.Code != 200 {
 		t.Errorf("stop() didn't return a 200 status code: %d", recorder.Code)
 	}
@@ -146,6 +154,7 @@ func TestLaunch(t *testing.T) {
 	if !shouldrun() {
 		return
 	}
+	app := New(cfg)
 	job := inittests(t)
 	exitChan := make(chan int)
 	client, err := messaging.NewClient(uri(), false)
@@ -184,7 +193,7 @@ func TestLaunch(t *testing.T) {
 		t.Error(err)
 	}
 	recorder := httptest.NewRecorder()
-	NewRouter().ServeHTTP(recorder, request)
+	app.NewRouter().ServeHTTP(recorder, request)
 	if recorder.Code != 200 {
 		t.Errorf("launch() didn't return a 200 status code: %d", recorder.Code)
 	}
@@ -221,6 +230,7 @@ func TestLaunch(t *testing.T) {
 
 func TestPreview(t *testing.T) {
 	job := inittests(t)
+	app := New(cfg)
 	params := job.Steps[0].Config.Params
 	previewer := &Previewer{
 		Params: model.PreviewableStepParam(params),
@@ -234,7 +244,7 @@ func TestPreview(t *testing.T) {
 		t.Error(err)
 	}
 	recorder := httptest.NewRecorder()
-	NewRouter().ServeHTTP(recorder, request)
+	app.NewRouter().ServeHTTP(recorder, request)
 	if recorder.Code != 200 {
 		t.Errorf("preview() didn't return a 200 status code: %d", recorder.Code)
 	}

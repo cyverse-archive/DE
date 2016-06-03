@@ -134,4 +134,5 @@ public interface ToolbarDisplayMessages extends Messages {
 
     String needDOI();
 
+    String editViewMetadataMenuItem();
 }

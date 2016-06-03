@@ -19,25 +19,15 @@ import (
 	"strconv"
 
 	_ "github.com/lib/pq"
+	"github.com/olebedev/config"
 	"github.com/streadway/amqp"
 )
 
 var (
-	version    = flag.Bool("version", false, "Print the version information")
-	cfgPath    = flag.String("config", "", "The path to the config file")
-	dbURI      = flag.String("db", "", "The URI used to connect to the database")
-	amqpURI    = flag.String("amqp", "", "The URI used to connect to the amqp broker")
-	gitref     string
-	appver     string
-	builtby    string
-	amqpClient *messaging.Client
-	db         *sql.DB
+	gitref  string
+	appver  string
+	builtby string
 )
-
-func init() {
-	flag.Parse()
-	logcabin.Init("job-status-recorder", "job-status-recorder")
-}
 
 // AppVersion prints version information to stdout
 func AppVersion() {
@@ -47,13 +37,26 @@ func AppVersion() {
 	if gitref != "" {
 		fmt.Printf("Git-Ref: %s\n", gitref)
 	}
-
 	if builtby != "" {
 		fmt.Printf("Built-By: %s\n", builtby)
 	}
 }
 
-func insert(state, invID, msg, host, ip string, sentOn int64) (sql.Result, error) {
+// JobStatusRecorder contains the application state for job-status-recorder
+type JobStatusRecorder struct {
+	cfg        *config.Config
+	amqpClient *messaging.Client
+	db         *sql.DB
+}
+
+// New returns a *JobStatusRecorder
+func New(cfg *config.Config) *JobStatusRecorder {
+	return &JobStatusRecorder{
+		cfg: cfg,
+	}
+}
+
+func (r *JobStatusRecorder) insert(state, invID, msg, host, ip string, sentOn int64) (sql.Result, error) {
 	insertStr := `
 		INSERT INTO job_status_updates (
 			external_id,
@@ -70,39 +73,47 @@ func insert(state, invID, msg, host, ip string, sentOn int64) (sql.Result, error
 			$5,
 			$6
 		) RETURNING id`
-	return db.Exec(insertStr, invID, msg, state, ip, host, sentOn)
+	return r.db.Exec(insertStr, invID, msg, state, ip, host, sentOn)
 }
 
-func msg(delivery amqp.Delivery) {
+func (r *JobStatusRecorder) msg(delivery amqp.Delivery) {
 	if err := delivery.Ack(false); err != nil {
 		logcabin.Error.Print(err)
 	}
+
 	logcabin.Info.Println("Message received")
+
 	update := &messaging.UpdateMessage{}
+
 	err := json.Unmarshal(delivery.Body, update)
 	if err != nil {
 		logcabin.Error.Print(err)
 		return
 	}
+
 	if update.State == "" {
 		logcabin.Warning.Println("State was unset, dropping update")
 		return
 	}
 	logcabin.Info.Printf("State is %s\n", update.State)
+
 	if update.Job.InvocationID == "" {
 		logcabin.Warning.Println("InvocationID was unset, dropping update")
 	}
 	logcabin.Info.Printf("InvocationID is %s\n", update.Job.InvocationID)
+
 	if update.Message == "" {
 		logcabin.Warning.Println("Message set to empty string, setting to UNKNOWN")
 		update.Message = "UNKNOWN"
 	}
 	logcabin.Info.Printf("Message is: %s", update.Message)
+
 	var sentFromAddr string
 	if update.Sender == "" {
 		logcabin.Warning.Println("Unknown sender, setting from address to 0.0.0.0")
 		update.Sender = "0.0.0.0"
 	}
+
 	parsedIP := net.ParseIP(update.Sender)
 	if parsedIP != nil {
 		sentFromAddr = update.Sender
@@ -116,7 +127,9 @@ func msg(delivery amqp.Delivery) {
 			}
 		}
 	}
+
 	logcabin.Info.Printf("Sent from: %s", sentFromAddr)
+
 	logcabin.Info.Printf("Sent On, unparsed: %s", update.SentOn)
 	sentOn, err := strconv.ParseInt(update.SentOn, 10, 64)
 	if err != nil {
@@ -124,7 +137,8 @@ func msg(delivery amqp.Delivery) {
 		sentOn = 0
 	}
 	logcabin.Info.Printf("Sent On: %d", sentOn)
-	result, err := insert(
+
+	result, err := r.insert(
 		string(update.State),
 		update.Job.InvocationID,
 		update.Message,
@@ -136,6 +150,7 @@ func msg(delivery amqp.Delivery) {
 		logcabin.Error.Print(err)
 		return
 	}
+
 	rowCount, err := result.RowsAffected()
 	if err != nil {
 		logcabin.Error.Print(err)
@@ -145,52 +160,75 @@ func msg(delivery amqp.Delivery) {
 }
 
 func main() {
-	var err error
+	var (
+		err     error
+		app     *JobStatusRecorder
+		cfg     *config.Config
+		version = flag.Bool("version", false, "Print the version information")
+		cfgPath = flag.String("config", "", "The path to the config file")
+		dbURI   = flag.String("db", "", "The URI used to connect to the database")
+		amqpURI = flag.String("amqp", "", "The URI used to connect to the amqp broker")
+	)
+
+	flag.Parse()
+
+	logcabin.Init("job-status-recorder", "job-status-recorder")
 
 	if *version {
 		AppVersion()
 		os.Exit(0)
 	}
 
-	if *dbURI == "" || *amqpURI == "" {
-		if *cfgPath == "" {
-			logcabin.Error.Fatal("--config must be set.")
-		}
-		err := configurate.Init(*cfgPath)
+	if *cfgPath == "" {
+		logcabin.Error.Fatal("--config must be set.")
+	}
+
+	cfg, err = configurate.Init(*cfgPath)
+	if err != nil {
+		logcabin.Error.Fatal(err)
+	}
+
+	if *dbURI == "" {
+		*dbURI, err = cfg.String("db.uri")
 		if err != nil {
 			logcabin.Error.Fatal(err)
 		}
-		if *dbURI == "" {
-			*dbURI, err = configurate.C.String("db.uri")
-			if err != nil {
-				logcabin.Error.Fatal(err)
-			}
-		}
-		if *amqpURI == "" {
-			*amqpURI, err = configurate.C.String("amqp.uri")
-			if err != nil {
-				logcabin.Error.Fatal(err)
-			}
-		}
+	} else {
+		cfg.Set("db.uri", *dbURI)
 	}
+
+	if *amqpURI == "" {
+		*amqpURI, err = cfg.String("amqp.uri")
+		if err != nil {
+			logcabin.Error.Fatal(err)
+		}
+	} else {
+		cfg.Set("amqp.uri", *amqpURI)
+	}
+
+	app = New(cfg)
+
 	logcabin.Info.Printf("AMQP broker setting is %s\n", *amqpURI)
-	amqpClient, err := messaging.NewClient(*amqpURI, false)
+	app.amqpClient, err = messaging.NewClient(*amqpURI, false)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
-	defer amqpClient.Close()
+	defer app.amqpClient.Close()
+
 	logcabin.Info.Println("Connecting to the database...")
-	db, err = sql.Open("postgres", *dbURI)
+	app.db, err = sql.Open("postgres", *dbURI)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
-	err = db.Ping()
+	err = app.db.Ping()
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
 	logcabin.Info.Println("Connected to the database")
-	go amqpClient.Listen()
-	amqpClient.AddConsumer(messaging.JobsExchange, "topic", "job_status_recorder", messaging.UpdatesKey, msg)
+
+	go app.amqpClient.Listen()
+
+	app.amqpClient.AddConsumer(messaging.JobsExchange, "topic", "job_status_recorder", messaging.UpdatesKey, app.msg)
 	spinner := make(chan int)
 	<-spinner
 }

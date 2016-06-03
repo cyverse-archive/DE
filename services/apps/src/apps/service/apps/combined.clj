@@ -3,7 +3,8 @@
   or more other implementations. This implementation expects at most one the implementations that
   it interacts with to allow users to add new apps and edit existing ones. If this is not the case
   then the first app in the list that is capable of adding or editing apps wins."
-  (:use [apps.util.assertions :only [assert-not-nil]])
+  (:use [apps.service.util :only [apply-limit apply-offset sort-apps]]
+        [apps.util.assertions :only [assert-not-nil]])
   (:require [apps.persistence.jobs :as jp]
             [apps.service.apps.job-listings :as job-listings]
             [apps.service.apps.combined.job-view :as job-view]
@@ -34,6 +35,16 @@
      [:category-id category-id]
      (when-let [client (first (filter #(.hasCategory % category-id) clients))]
        (.listAppsInCategory client category-id params))))
+
+  (listAppsWithMetadata [_ attr value params]
+    (let [unpaged-params (dissoc params :limit :offset)
+          listing-maps   (map #(.listAppsWithMetadata % attr value unpaged-params) clients)
+          ;; Expects each client to return a map like {:app_count int, :apps []}
+          result-map     (apply merge-with #(if (integer? %1) (+ %1 %2) (into %1 %2)) listing-maps)]
+      (-> result-map
+          (sort-apps params {:default-sort-field "name"})
+          (apply-offset params)
+          (apply-limit params))))
 
   (searchApps [_ search-term params]
     (->> (map #(.searchApps % search-term (select-keys params [:search])) clients)
@@ -73,8 +84,10 @@
   (copyApp [_ app-id]
     (.copyApp (util/get-apps-client clients) app-id))
 
-  (getAppDetails [_ app-id]
-    (->> (map #(.getAppDetails % app-id) clients)
+  ;; FIXME: remove the admin flag when we have a better way to deal with administrative
+  ;; privileges.
+  (getAppDetails [_ app-id admin?]
+    (->> (map #(.getAppDetails % app-id admin?) clients)
          (remove nil?)
          (first)))
 

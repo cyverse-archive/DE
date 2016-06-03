@@ -7,22 +7,25 @@
       (string/trim (:out (sh "git" "rev-parse" "HEAD")))
       ""))
 
-(defproject org.iplantc/metadata "5.2.6.0"
+(defproject org.iplantc/metadata "5.2.7.0"
   :description "The REST API for the Discovery Environment Metadata services."
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD Standard License"
             :url "http://www.iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :manifest {"Git-Ref" ~(git-ref)}
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [metosin/compojure-api "0.24.2"]
+                 [net.sourceforge.owlapi/owlapi-api "3.5.0"]
+                 [net.sourceforge.owlapi/owlapi-apibinding "3.4.10"]
+                 [net.sourceforge.owlapi/owlapi-reasoner "3.3"]
+                 [metosin/compojure-api "0.24.5"]
                  [cheshire "5.5.0"]
                  [com.novemberain/langohr "3.5.1"]
-                 [org.iplantc/clojure-commons "5.2.6.0"]
-                 [org.iplantc/common-cfg "5.2.6.0"]
-                 [org.iplantc/common-cli "5.2.6.0"]
-                 [org.iplantc/common-swagger-api "5.2.6.0"]
-                 [org.iplantc/kameleon "5.2.6.0"]
-                 [org.iplantc/service-logging "5.2.6.0"]
+                 [org.iplantc/clojure-commons "5.2.7.0"]
+                 [org.iplantc/common-cfg "5.2.7.0"]
+                 [org.iplantc/common-cli "5.2.7.0"]
+                 [org.iplantc/common-swagger-api "5.2.7.0"]
+                 [org.iplantc/kameleon "5.2.7.0"]
+                 [org.iplantc/service-logging "5.2.7.0"]
                  [slingshot "0.12.2"]]
   :main metadata.core
   :ring {:handler metadata.core/dev-handler

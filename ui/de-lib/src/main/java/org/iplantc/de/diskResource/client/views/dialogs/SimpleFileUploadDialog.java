@@ -6,6 +6,7 @@ import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
@@ -19,6 +20,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeUri;
@@ -257,22 +260,29 @@ public class SimpleFileUploadDialog extends IPlantDialog {
                                    field.getValue()))));
         } else {
             String results = Format.stripTags(results2);
-            Splittable split = StringQuoter.split(results);
-
-            if (split == null) {
-                IplantAnnouncer.getInstance()
-                               .schedule(new ErrorAnnouncementConfig(appearance.fileUploadsFailed(Lists.newArrayList(
-                                       field.getValue()))));
-            } else {
-                if (split.isUndefined("file") || (split.get("file") == null)) {
-                    field.markInvalid(appearance.fileUploadsFailed(Lists.newArrayList(field.getValue())));
+            try {
+                JSONValue test = JSONParser.parseStrict(results);
+                Splittable split = StringQuoter.split(results);
+                if (split == null) {
                     IplantAnnouncer.getInstance()
                                    .schedule(new ErrorAnnouncementConfig(appearance.fileUploadsFailed(
                                            Lists.newArrayList(field.getValue()))));
                 } else {
-                   eventBus.fireEvent(new FileUploadedEvent(uploadDest, field.getValue(), results));
+                    if (split.isUndefined("file") || (split.get("file") == null)) {
+                        field.markInvalid(appearance.fileUploadsFailed(Lists.newArrayList(field.getValue())));
+                        IplantAnnouncer.getInstance()
+                                       .schedule(new ErrorAnnouncementConfig(appearance.fileUploadsFailed(
+                                               Lists.newArrayList(field.getValue()))));
+                    } else {
+                        eventBus.fireEvent(new FileUploadedEvent(uploadDest, field.getValue(), results));
+                    }
                 }
+            } catch (Exception e) {
+                ErrorHandler.post(appearance.fileUploadsFailed(Lists.newArrayList(field.getValue())),
+                                  new Throwable(results2));
             }
+
+
         }
 
         if (submittedForms.size() == 0) {

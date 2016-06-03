@@ -1,9 +1,0 @@
----
-
-- include: de-start-containers-color.yaml
-  when: color is defined
-
-- include: de-start-containers-legacy-colorless.yaml
-  when: color is undefined
-
-- include: de-start-containers-uncolored.yaml

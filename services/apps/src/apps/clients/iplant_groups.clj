@@ -11,7 +11,6 @@
             [clojure-commons.exception :as cx]
             [kameleon.uuids :refer [uuidify]]))
 
-(def grouper-user "de_grouper")
 (def grouper-user-group-fmt "iplant:de:%s:users:de-users")
 (def grouper-app-permission-def-fmt "iplant:de:%s:apps:app-permission-def")
 (def grouper-app-resource-name-fmt "iplant:de:%s:apps:%s")
@@ -86,12 +85,12 @@
   "Adds a user to the de-users group."
   [subject-id]
   (http/put (grouper-url "groups" (grouper-user-group) "members" subject-id)
-            {:query-params {:user grouper-user}}))
+            {:query-params {:user (config/de-grouper-user)}}))
 
 (defn- retrieve-permissions*
   "Retrieves permission assignments from Grouper."
   [role subject attribute-def attribute-def-names]
-  (->> {:user                grouper-user
+  (->> {:user                (config/de-grouper-user)
         :role                role
         :attribute_def       attribute-def
         :attribute_def_names attribute-def-names
@@ -154,7 +153,7 @@
   "Creates a new permission name in grouper."
   [resource-name permission-def]
   (:body (http/post (grouper-url "attributes")
-                    {:query-params {:user grouper-user}
+                    {:query-params {:user (config/de-grouper-user)}
                      :form-params  {:name                 resource-name
                                     :attribute_definition {:name permission-def}}
                      :content-type :json
@@ -164,13 +163,13 @@
   "Removes an existing permission name from grouper."
   [resource-name]
   (http/delete (grouper-url "attributes" resource-name)
-               {:query-params {:user grouper-user}}))
+               {:query-params {:user (config/de-grouper-user)}}))
 
 (defn- grant-role-user-permission
   "Grants permission to access a resource to an individual user."
   [user role resource-name action]
   (:body (http/put (grouper-url "attributes" resource-name "permissions" "memberships" role user action)
-                   {:query-params {:user grouper-user}
+                   {:query-params {:user (config/de-grouper-user)}
                     :form-params  {:allowed true}
                     :content-type :json
                     :as           :json})))
@@ -216,7 +215,7 @@
   "Makes an app publicly accessible in Grouper."
   [app-id]
   (:body (http/put (grouper-url "attributes" (grouper-app-resource-name app-id) "permissions")
-                   {:query-params {:user grouper-user}
+                   {:query-params {:user (config/de-grouper-user)}
                     :form-params  (public-permission-update-body)
                     :content-type :json
                     :as           :json})))
@@ -225,7 +224,7 @@
   "Shares a resource with a user."
   [resource-name role-name subject-id level]
   (http/put (grouper-url "attributes" resource-name "permissions" "memberships" role-name subject-id level)
-            {:query-params {:user grouper-user}
+            {:query-params {:user (config/de-grouper-user)}
              :form-params  {:allowed true}
              :content-type :json
              :as           :json})
@@ -235,7 +234,7 @@
   "Unshares a resource with a user."
   [resource-name role-name subject-id]
   (http/delete (grouper-url "attributes" resource-name "permissions" "memberships" role-name subject-id)
-               {:query-params {:user grouper-user}
+               {:query-params {:user (config/de-grouper-user)}
                 :as           :json})
   nil)
 

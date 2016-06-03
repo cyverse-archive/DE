@@ -14,8 +14,11 @@ import (
 	strfmt "github.com/go-swagger/go-swagger/strfmt"
 	"github.com/go-swagger/go-swagger/swag"
 
+	"permissions/restapi/operations/permissions"
 	"permissions/restapi/operations/resource_types"
+	"permissions/restapi/operations/resources"
 	"permissions/restapi/operations/status"
+	"permissions/restapi/operations/subjects"
 )
 
 // NewPermissionsAPI creates a new Permissions instance
@@ -52,10 +55,42 @@ type PermissionsAPI struct {
 	StatusGetHandler status.GetHandler
 	// ResourceTypesGetResourceTypesHandler sets the operation handler for the get resource types operation
 	ResourceTypesGetResourceTypesHandler resource_types.GetResourceTypesHandler
-	// ResourceTypesPostResourceTypesIDHandler sets the operation handler for the post resource types ID operation
-	ResourceTypesPostResourceTypesIDHandler resource_types.PostResourceTypesIDHandler
-	// ResourceTypesPutResourceTypesHandler sets the operation handler for the put resource types operation
-	ResourceTypesPutResourceTypesHandler resource_types.PutResourceTypesHandler
+	// ResourceTypesPostResourceTypesHandler sets the operation handler for the post resource types operation
+	ResourceTypesPostResourceTypesHandler resource_types.PostResourceTypesHandler
+	// ResourceTypesPutResourceTypesIDHandler sets the operation handler for the put resource types ID operation
+	ResourceTypesPutResourceTypesIDHandler resource_types.PutResourceTypesIDHandler
+	// ResourcesAddResourceHandler sets the operation handler for the add resource operation
+	ResourcesAddResourceHandler resources.AddResourceHandler
+	// SubjectsAddSubjectHandler sets the operation handler for the add subject operation
+	SubjectsAddSubjectHandler subjects.AddSubjectHandler
+	// PermissionsBySubjectHandler sets the operation handler for the by subject operation
+	PermissionsBySubjectHandler permissions.BySubjectHandler
+	// PermissionsBySubjectAndResourceHandler sets the operation handler for the by subject and resource operation
+	PermissionsBySubjectAndResourceHandler permissions.BySubjectAndResourceHandler
+	// PermissionsBySubjectAndResourceTypeHandler sets the operation handler for the by subject and resource type operation
+	PermissionsBySubjectAndResourceTypeHandler permissions.BySubjectAndResourceTypeHandler
+	// ResourcesDeleteResourceHandler sets the operation handler for the delete resource operation
+	ResourcesDeleteResourceHandler resources.DeleteResourceHandler
+	// SubjectsDeleteSubjectHandler sets the operation handler for the delete subject operation
+	SubjectsDeleteSubjectHandler subjects.DeleteSubjectHandler
+	// PermissionsGrantPermissionHandler sets the operation handler for the grant permission operation
+	PermissionsGrantPermissionHandler permissions.GrantPermissionHandler
+	// PermissionsListPermissionsHandler sets the operation handler for the list permissions operation
+	PermissionsListPermissionsHandler permissions.ListPermissionsHandler
+	// PermissionsListResourcePermissionsHandler sets the operation handler for the list resource permissions operation
+	PermissionsListResourcePermissionsHandler permissions.ListResourcePermissionsHandler
+	// ResourcesListResourcesHandler sets the operation handler for the list resources operation
+	ResourcesListResourcesHandler resources.ListResourcesHandler
+	// SubjectsListSubjectsHandler sets the operation handler for the list subjects operation
+	SubjectsListSubjectsHandler subjects.ListSubjectsHandler
+	// PermissionsPutPermissionHandler sets the operation handler for the put permission operation
+	PermissionsPutPermissionHandler permissions.PutPermissionHandler
+	// PermissionsRevokePermissionHandler sets the operation handler for the revoke permission operation
+	PermissionsRevokePermissionHandler permissions.RevokePermissionHandler
+	// ResourcesUpdateResourceHandler sets the operation handler for the update resource operation
+	ResourcesUpdateResourceHandler resources.UpdateResourceHandler
+	// SubjectsUpdateSubjectHandler sets the operation handler for the update subject operation
+	SubjectsUpdateSubjectHandler subjects.UpdateSubjectHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -123,12 +158,76 @@ func (o *PermissionsAPI) Validate() error {
 		unregistered = append(unregistered, "resource_types.GetResourceTypesHandler")
 	}
 
-	if o.ResourceTypesPostResourceTypesIDHandler == nil {
-		unregistered = append(unregistered, "resource_types.PostResourceTypesIDHandler")
+	if o.ResourceTypesPostResourceTypesHandler == nil {
+		unregistered = append(unregistered, "resource_types.PostResourceTypesHandler")
 	}
 
-	if o.ResourceTypesPutResourceTypesHandler == nil {
-		unregistered = append(unregistered, "resource_types.PutResourceTypesHandler")
+	if o.ResourceTypesPutResourceTypesIDHandler == nil {
+		unregistered = append(unregistered, "resource_types.PutResourceTypesIDHandler")
+	}
+
+	if o.ResourcesAddResourceHandler == nil {
+		unregistered = append(unregistered, "resources.AddResourceHandler")
+	}
+
+	if o.SubjectsAddSubjectHandler == nil {
+		unregistered = append(unregistered, "subjects.AddSubjectHandler")
+	}
+
+	if o.PermissionsBySubjectHandler == nil {
+		unregistered = append(unregistered, "permissions.BySubjectHandler")
+	}
+
+	if o.PermissionsBySubjectAndResourceHandler == nil {
+		unregistered = append(unregistered, "permissions.BySubjectAndResourceHandler")
+	}
+
+	if o.PermissionsBySubjectAndResourceTypeHandler == nil {
+		unregistered = append(unregistered, "permissions.BySubjectAndResourceTypeHandler")
+	}
+
+	if o.ResourcesDeleteResourceHandler == nil {
+		unregistered = append(unregistered, "resources.DeleteResourceHandler")
+	}
+
+	if o.SubjectsDeleteSubjectHandler == nil {
+		unregistered = append(unregistered, "subjects.DeleteSubjectHandler")
+	}
+
+	if o.PermissionsGrantPermissionHandler == nil {
+		unregistered = append(unregistered, "permissions.GrantPermissionHandler")
+	}
+
+	if o.PermissionsListPermissionsHandler == nil {
+		unregistered = append(unregistered, "permissions.ListPermissionsHandler")
+	}
+
+	if o.PermissionsListResourcePermissionsHandler == nil {
+		unregistered = append(unregistered, "permissions.ListResourcePermissionsHandler")
+	}
+
+	if o.ResourcesListResourcesHandler == nil {
+		unregistered = append(unregistered, "resources.ListResourcesHandler")
+	}
+
+	if o.SubjectsListSubjectsHandler == nil {
+		unregistered = append(unregistered, "subjects.ListSubjectsHandler")
+	}
+
+	if o.PermissionsPutPermissionHandler == nil {
+		unregistered = append(unregistered, "permissions.PutPermissionHandler")
+	}
+
+	if o.PermissionsRevokePermissionHandler == nil {
+		unregistered = append(unregistered, "permissions.RevokePermissionHandler")
+	}
+
+	if o.ResourcesUpdateResourceHandler == nil {
+		unregistered = append(unregistered, "resources.UpdateResourceHandler")
+	}
+
+	if o.SubjectsUpdateSubjectHandler == nil {
+		unregistered = append(unregistered, "subjects.UpdateSubjectHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -222,12 +321,92 @@ func (o *PermissionsAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers[strings.ToUpper("POST")] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/resource_types/{id}"] = resource_types.NewPostResourceTypesID(o.context, o.ResourceTypesPostResourceTypesIDHandler)
+	o.handlers["POST"]["/resource_types"] = resource_types.NewPostResourceTypes(o.context, o.ResourceTypesPostResourceTypesHandler)
 
 	if o.handlers["PUT"] == nil {
 		o.handlers[strings.ToUpper("PUT")] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/resource_types"] = resource_types.NewPutResourceTypes(o.context, o.ResourceTypesPutResourceTypesHandler)
+	o.handlers["PUT"]["/resource_types/{id}"] = resource_types.NewPutResourceTypesID(o.context, o.ResourceTypesPutResourceTypesIDHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers[strings.ToUpper("POST")] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/resources"] = resources.NewAddResource(o.context, o.ResourcesAddResourceHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers[strings.ToUpper("POST")] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/subjects"] = subjects.NewAddSubject(o.context, o.SubjectsAddSubjectHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/permissions/subjects/{subject_type}/{subject_id}"] = permissions.NewBySubject(o.context, o.PermissionsBySubjectHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/permissions/subjects/{subject_type}/{subject_id}/{resource_type}/{resource_name}"] = permissions.NewBySubjectAndResource(o.context, o.PermissionsBySubjectAndResourceHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/permissions/subjects/{subject_type}/{subject_id}/{resource_type}"] = permissions.NewBySubjectAndResourceType(o.context, o.PermissionsBySubjectAndResourceTypeHandler)
+
+	if o.handlers["DELETE"] == nil {
+		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/resources/{id}"] = resources.NewDeleteResource(o.context, o.ResourcesDeleteResourceHandler)
+
+	if o.handlers["DELETE"] == nil {
+		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/subjects/{id}"] = subjects.NewDeleteSubject(o.context, o.SubjectsDeleteSubjectHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers[strings.ToUpper("POST")] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/permissions"] = permissions.NewGrantPermission(o.context, o.PermissionsGrantPermissionHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/permissions"] = permissions.NewListPermissions(o.context, o.PermissionsListPermissionsHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/permissions/resources/{resource_type}/{resource_name}"] = permissions.NewListResourcePermissions(o.context, o.PermissionsListResourcePermissionsHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/resources"] = resources.NewListResources(o.context, o.ResourcesListResourcesHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/subjects"] = subjects.NewListSubjects(o.context, o.SubjectsListSubjectsHandler)
+
+	if o.handlers["PUT"] == nil {
+		o.handlers[strings.ToUpper("PUT")] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/permissions/resources/{resource_type}/{resource_name}/subjects/{subject_type}/{subject_id}"] = permissions.NewPutPermission(o.context, o.PermissionsPutPermissionHandler)
+
+	if o.handlers["DELETE"] == nil {
+		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/permissions/resources/{resource_type}/{resource_name}/subjects/{subject_type}/{subject_id}"] = permissions.NewRevokePermission(o.context, o.PermissionsRevokePermissionHandler)
+
+	if o.handlers["PUT"] == nil {
+		o.handlers[strings.ToUpper("PUT")] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/resources/{id}"] = resources.NewUpdateResource(o.context, o.ResourcesUpdateResourceHandler)
+
+	if o.handlers["PUT"] == nil {
+		o.handlers[strings.ToUpper("PUT")] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/subjects/{id}"] = subjects.NewUpdateSubject(o.context, o.SubjectsUpdateSubjectHandler)
 
 }
 

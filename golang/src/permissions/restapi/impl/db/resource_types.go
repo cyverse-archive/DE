@@ -17,7 +17,7 @@ func ListResourceTypes(tx *sql.Tx) ([]*models.ResourceTypeOut, error) {
 	defer rows.Close()
 
 	// Build the list of resource types.
-	var resourceTypes []*models.ResourceTypeOut
+	resourceTypes := make([]*models.ResourceTypeOut, 0)
 	for rows.Next() {
 		var resourceType models.ResourceTypeOut
 		if err := rows.Scan(&resourceType.ID, &resourceType.Name, &resourceType.Description); err != nil {
@@ -47,7 +47,7 @@ func GetResourceTypeByName(tx *sql.Tx, name *string) (*models.ResourceTypeOut, e
 	defer rows.Close()
 
 	// Get the resource type.
-	var resourceTypes []*models.ResourceTypeOut
+	resourceTypes := make([]*models.ResourceTypeOut, 0)
 	for rows.Next() {
 		var resourceType models.ResourceTypeOut
 		if err := rows.Scan(&resourceType.ID, &resourceType.Name, &resourceType.Description); err != nil {
@@ -64,9 +64,8 @@ func GetResourceTypeByName(tx *sql.Tx, name *string) (*models.ResourceTypeOut, e
 	// Return the result.
 	if len(resourceTypes) < 1 {
 		return nil, nil
-	} else {
-		return resourceTypes[0], nil
 	}
+	return resourceTypes[0], nil
 }
 
 func GetDuplicateResourceTypeByName(tx *sql.Tx, id *string, name *string) (*models.ResourceTypeOut, error) {
@@ -83,7 +82,7 @@ func GetDuplicateResourceTypeByName(tx *sql.Tx, id *string, name *string) (*mode
 	defer rows.Close()
 
 	// Get the resource type.
-	var resourceTypes []*models.ResourceTypeOut
+	resourceTypes := make([]*models.ResourceTypeOut, 0)
 	for rows.Next() {
 		var resourceType models.ResourceTypeOut
 		if err := rows.Scan(&resourceType.ID, &resourceType.Name, &resourceType.Description); err != nil {
@@ -100,9 +99,8 @@ func GetDuplicateResourceTypeByName(tx *sql.Tx, id *string, name *string) (*mode
 	// Return the result.
 	if len(resourceTypes) < 1 {
 		return nil, nil
-	} else {
-		return resourceTypes[0], nil
 	}
+	return resourceTypes[0], nil
 }
 
 func ResourceTypeExists(tx *sql.Tx, id *string) (bool, error) {

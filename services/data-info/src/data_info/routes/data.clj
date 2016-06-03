@@ -1,18 +1,25 @@
 (ns data-info.routes.data
-  (:use [common-swagger-api.schema]
+  (:use [common-swagger-api.routes]
+        [common-swagger-api.schema]
         [data-info.routes.domain.common]
         [data-info.routes.domain.data]
-        [data-info.routes.domain.stats])
+        [data-info.routes.domain.stats]
+        [data-info.routes.middleware :only [wrap-metadata-base-url]])
   (:require [data-info.services.create :as create]
             [data-info.services.metadata :as meta]
+            [data-info.services.manifest :as manifest]
+            [clojure.tools.logging :as log]
             [data-info.services.entry :as entry]
             [data-info.services.write :as write]
             [data-info.services.page-file :as page-file]
             [data-info.services.page-tabular :as page-tabular]
             [data-info.util.config :as cfg]
+            [tree-urls-client.middleware :refer [wrap-tree-urls-base]]
             [clojure-commons.error-codes :as ce]
             [data-info.util.service :as svc]
             [data-info.util.schema :as s]))
+
+(defn tree-urls-middleware [handler] (wrap-tree-urls-base handler cfg/tree-urls-base-url))
 
 (defroutes* data-operations
 
@@ -96,6 +103,16 @@ with characters in a runtime-configurable parameter. Currently, this parameter l
 (get-error-code-block "ERR_NOT_A_USER, ERR_DOES_NOT_EXIST, ERR_NOT_A_FILE, ERR_NOT_WRITEABLE"))
         (svc/trap uri write/do-upload params file))
 
+      (GET* "/manifest" [:as {uri :uri}]
+        :query [{:keys [user]} StandardUserQueryParams]
+        :middlewares [tree-urls-middleware]
+        :return Manifest
+        :summary "Return file manifest"
+        :description (str
+"Returns a manifest for a file."
+(get-error-code-block "ERR_NOT_A_USER, ERR_DOES_NOT_EXIST, ERR_NOT_A_FILE, ERR_NOT_READABLE"))
+        (svc/trap uri manifest/do-manifest-uuid user data-id))
+
       (GET* "/chunks" [:as {uri :uri}]
         :query [params ChunkParams]
         :return ChunkReturn
@@ -116,11 +133,11 @@ with characters in a runtime-configurable parameter. Currently, this parameter l
     "ERR_DOES_NOT_EXIST, ERR_NOT_A_FILE, ERR_NOT_READABLE, ERR_NOT_A_USER, ERR_INVALID_PAGE, ERR_PAGE_NOT_POS, ERR_CHUNK_TOO_SMALL"))
         (svc/trap uri page-tabular/do-read-csv-chunk params data-id))
 
-      ;; XXX: The logic coordinating this with the metadata service should be migrated up into terrain; it should just use POST /data
       (POST* "/metadata/save" [:as {uri :uri}]
         :query [params StandardUserQueryParams]
         :body [body (describe MetadataSaveRequest "The metadata save request.")]
         :return FileStat
+        :middlewares [wrap-metadata-base-url]
         :summary "Exporting Metadata to a File"
         :description (str
   "Exports file/folder details in a JSON format (similar to the /stat-gatherer endpoint response),
@@ -129,5 +146,8 @@ with characters in a runtime-configurable parameter. Currently, this parameter l
   (get-error-code-block
     "ERR_INVALID_JSON, ERR_EXISTS, ERR_DOES_NOT_EXIST, ERR_NOT_READABLE,"
     "ERR_NOT_WRITEABLE, ERR_NOT_A_USER, ERR_BAD_PATH_LENGTH, ERR_BAD_DIRNAME_LENGTH,"
-    "ERR_BAD_BASENAME_LENGTH, ERR_TOO_MANY_RESULTS"))
+    "ERR_BAD_BASENAME_LENGTH, ERR_TOO_MANY_RESULTS")
+  (get-endpoint-delegate-block
+    "metadata"
+    "GET /avus/{target-type}/{target-id}"))
         (svc/trap uri meta/do-metadata-save data-id params body)))))

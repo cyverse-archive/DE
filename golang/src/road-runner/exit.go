@@ -10,6 +10,7 @@ import (
 
 func cleanup(job *model.Job) {
 	logcabin.Info.Printf("Performing aggressive clean up routine...")
+
 	logcabin.Info.Println("Finding all input containers")
 	inputContainers, err := dckr.ContainersWithLabel(dockerops.TypeLabel, strconv.Itoa(dockerops.InputContainer), true)
 	if err != nil {
@@ -23,6 +24,7 @@ func cleanup(job *model.Job) {
 			logcabin.Error.Print(err)
 		}
 	}
+
 	logcabin.Info.Println("Finding all step containers")
 	stepContainers, err := dckr.ContainersWithLabel(dockerops.TypeLabel, strconv.Itoa(dockerops.StepContainer), true)
 	if err != nil {
@@ -35,6 +37,7 @@ func cleanup(job *model.Job) {
 			logcabin.Error.Print(err)
 		}
 	}
+
 	logcabin.Info.Println("Finding all data containers")
 	dataContainers, err := dckr.ContainersWithLabel(dockerops.TypeLabel, strconv.Itoa(dockerops.DataContainer), true)
 	if err != nil {
@@ -85,6 +88,7 @@ func Exit(exit, finalExit chan messaging.StatusCode) {
 
 	default:
 		logcabin.Warning.Printf("Received an exit code of %d, cleaning up", int(exitCode))
+
 		logcabin.Info.Printf("Finding all containers with the label %s=%s", model.DockerLabelKey, job.InvocationID)
 		jobContainers, err := dckr.ContainersWithLabel(model.DockerLabelKey, job.InvocationID, true)
 		if err != nil {
@@ -99,5 +103,6 @@ func Exit(exit, finalExit chan messaging.StatusCode) {
 			}
 		}
 	}
+
 	finalExit <- exitCode
 }

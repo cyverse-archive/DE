@@ -3,8 +3,9 @@
         [terrain.services.file-listing]
         [terrain.services.metadata.apps]
         [terrain.util])
-  (:require [clojure.tools.logging :as log]
-            [terrain.clients.apps.raw :as apps]
+  (:require [terrain.clients.apps.raw :as apps]
+            [terrain.clients.metadata :as metadata]
+            [terrain.clients.metadata.raw :as metadata-client]
             [terrain.util.config :as config]
             [terrain.util.service :as service]))
 
@@ -40,6 +41,52 @@
     (PATCH "/apps/categories/:category-id" [category-id :as {:keys [body]}]
            (service/success-response (apps/update-category category-id body)))))
 
+(defn app-ontology-routes
+  []
+  (optional-routes
+   [#(and (config/app-routes-enabled)
+          (config/metadata-routes-enabled))]
+
+   (GET "/apps/hierarchies" []
+     (service/success-response (apps/get-app-category-hierarchies)))
+
+   (GET "/apps/hierarchies/:root-iri" [root-iri :as {params :params}]
+     (service/success-response (apps/get-app-category-hierarchy root-iri params)))
+
+   (GET "/apps/hierarchies/:class-iri/apps" [class-iri :as {params :params}]
+     (service/success-response (apps/get-hierarchy-app-listing class-iri params)))
+
+   (GET "/apps/hierarchies/:root-iri/unclassified" [root-iri :as {params :params}]
+     (service/success-response (apps/get-unclassified-app-listing root-iri params)))))
+
+(defn admin-ontology-routes
+  []
+  (optional-routes
+   [#(and (config/admin-routes-enabled)
+          (config/app-routes-enabled)
+          (config/metadata-routes-enabled))]
+
+   (GET "/ontologies" []
+     (service/success-response (apps/list-ontologies)))
+
+   (POST "/ontologies" [:as request]
+     (service/success-response (metadata/upload-ontology request)))
+
+   (GET "/ontologies/:ontology-version" [ontology-version]
+     (service/success-response (metadata-client/get-ontology-hierarchies ontology-version)))
+
+   (POST "/ontologies/:ontology-version" [ontology-version]
+     (service/success-response (apps/set-ontology-version ontology-version)))
+
+   (GET "/ontologies/:ontology-version/:root-iri" [ontology-version root-iri :as {params :params}]
+     (service/success-response (apps/get-app-category-hierarchy ontology-version root-iri params)))
+
+   (PUT "/ontologies/:ontology-version/:root-iri" [ontology-version root-iri]
+     (service/success-response (metadata-client/save-ontology-hierarchy ontology-version root-iri)))
+
+   (GET "/ontologies/:ontology-version/:root-iri/unclassified" [ontology-version root-iri :as {params :params}]
+     (service/success-response (apps/get-unclassified-app-listing ontology-version root-iri params)))))
+
 (defn admin-apps-routes
   []
   (optional-routes
@@ -57,6 +104,9 @@
 
     (PATCH "/apps/:app-id" [app-id :as {:keys [body]}]
            (service/success-response (apps/admin-update-app app-id body)))
+
+    (GET "/apps/:app-id/details" [app-id]
+         (service/success-response (apps/get-admin-app-details app-id)))
 
     (POST "/apps/:app-id/documentation" [app-id :as {:keys [body]}]
           (service/success-response (apps/admin-add-app-docs app-id body)))
@@ -164,6 +214,37 @@
 
     (GET "/apps/:app-id/ui" [app-id]
          (service/success-response (apps/get-app-ui app-id)))))
+
+(defn admin-app-avu-routes
+  []
+  (optional-routes
+    [#(and (config/admin-routes-enabled)
+           (config/app-routes-enabled)
+           (config/metadata-routes-enabled))]
+
+    (GET "/apps/:app-id/metadata" [app-id]
+      (service/success-response (apps/admin-list-avus app-id)))
+
+    (POST "/apps/:app-id/metadata" [app-id :as {:keys [body]}]
+      (service/success-response (apps/admin-update-avus app-id body)))
+
+    (PUT "/apps/:app-id/metadata" [app-id :as {:keys [body]}]
+      (service/success-response (apps/admin-set-avus app-id body)))))
+
+(defn app-avu-routes
+  []
+  (optional-routes
+    [#(and (config/app-routes-enabled)
+           (config/metadata-routes-enabled))]
+
+    (GET "/apps/:app-id/metadata" [app-id]
+      (service/success-response (apps/list-avus app-id)))
+
+    (POST "/apps/:app-id/metadata" [app-id :as {:keys [body]}]
+      (service/success-response (apps/update-avus app-id body)))
+
+    (PUT "/apps/:app-id/metadata" [app-id :as {:keys [body]}]
+      (service/success-response (apps/set-avus app-id body)))))
 
 (defn analysis-routes
   []

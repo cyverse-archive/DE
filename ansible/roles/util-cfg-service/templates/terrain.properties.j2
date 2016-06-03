@@ -37,12 +37,7 @@ terrain.metadata.base-url = http://{{ metadata.host }}:{{ metadata.port }}
 # Notification agent connection settings.
 terrain.notificationagent.base-url = {{ notificationagent.base }}
 
-# CAS Settings
-terrain.cas.cas-server        = {{ cas_base }}/
-terrain.cas.server-name       = {{ terrain.base }}
-
 # The settings to use for authorization.
-terrain.cas.group-attr-name = {{ cas_group_attribute }}
 terrain.cas.allowed-groups  = {{ admin_groups }}
 
 # The domain name to append to the user id to get the fully qualified user id.
@@ -99,8 +94,6 @@ terrain.fs.bad-chars                  = {{ irods.bad_chars }}
 terrain.fs.max-paths-in-request       = {{ fs_max_paths_in_request }}
 terrain.fs.kifshare-download-template = {{ kifshare.de_url }}
 terrain.fs.kifshare-external-url      = {{ kifshare_external_url }}
-terrain.fs.anon-user                  = {{ anon_files.anon_user }}
-terrain.fs.anon-files-base-url        = {{ anon_files.proxy_url }}
 
 # JWT settings
 terrain.jwt.signing-key.private   = {{ jwt.signing_key.private }}

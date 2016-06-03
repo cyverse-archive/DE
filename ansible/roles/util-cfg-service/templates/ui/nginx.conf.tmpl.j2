@@ -1,0 +1,58 @@
+{% extends "nginx.conf.j2" %}
+
+{% block header %}
+{% raw %}
+# We're an nginx for the de
+# Here's what consul thinks of us (assuming we're registered as de-nginx):
+{{- range service "de-nginx" "any" }}
+# {{.ID}} {{.Address}}:{{.Port}} {{.Tags}}
+{{- range .Checks }}
+# * ({{.CheckID}} {{.Status}}: {{.Output | replaceAll "\n" "\n#"}})
+{{- end }}
+{{- end }}
+{% endraw %}
+{% endblock %}
+
+{% block de_upstream %}
+        ip_hash;
+
+{% raw %}
+{{- with $service_query := (printf "%s.de" (env "DE_ENV")) }}
+  {{- if service $service_query }}
+    {{- range service $service_query }}
+        server {{.Address}}:{{.Port}} max_fails=3 fail_timeout=60 weight=1 {{- if not (.Tags.Contains (key_or_default (printf "%s/de/color" (env "DE_ENV")) "green"))}} down{{end}}; # {{.ID}} {{.Tags}}
+    {{- end }}
+  {{- else }}
+        server 127.0.0.1:65535; # dummy server so config is valid
+  {{- end }}
+{{- end }}
+{% endraw %}
+{% endblock %}
+
+{% block location_slash %}
+{% raw %}
+{{- with $service_query := (printf "%s.de" (env "DE_ENV")) }}
+  {{- if service $service_query }}
+{% endraw %}
+{{ super() }}
+{% raw %}
+  {{- else }}
+            return 502;
+  {{- end }}
+{{- end }}
+{% endraw %}
+{% endblock %}
+
+{% block location_websocket %}
+{% raw %}
+{{- with $service_query := (printf "%s.de" (env "DE_ENV")) }}
+  {{- if service $service_query }}
+{% endraw %}
+{{ super() }}
+{% raw %}
+  {{- else }}
+            return 502;
+  {{- end }}
+{{- end }}
+{% endraw %}
+{% endblock %}

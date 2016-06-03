@@ -275,6 +275,11 @@ public class ToolbarViewDefaultAppearance implements ToolbarView.Appearance {
     }
 
     @Override
+    public String editViewMetadataMenuItem() {
+        return displayMessages.editViewMetadataMenuItem();
+    }
+
+    @Override
     public ImageResource metadataIcon() {
         return resources.metadataIcon();
     }

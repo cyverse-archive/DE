@@ -7,7 +7,9 @@
   (:require [clojure.tools.logging :as log]
             [kameleon.app-groups :as app-groups]
             [apps.persistence.app-metadata :as persistence]
-            [apps.service.apps.de.validation :as av]))
+            [apps.persistence.categories :as db-categories]
+            [apps.service.apps.de.validation :as av]
+            [metadata-client.core :as metadata-client]))
 
 (def ^:private max-app-category-name-len 255)
 
@@ -156,3 +158,15 @@
        (app-groups/decategorize-category category-id)
        (validate-category-not-ancestor-of-parent category-id parent_id)
        (app-groups/add-subgroup parent_id category-id)))))
+
+(defn list-ontologies
+  [{:keys [username]}]
+  (let [active-version              (db-categories/get-active-hierarchy-version)
+        {ontology-list :ontologies} (metadata-client/list-ontologies username)]
+    {:ontologies (map #(assoc % :active (= active-version (:version %))) ontology-list)}))
+
+(defn set-category-ontology-version
+  "Sets the active ontology-version for use in apps hierarchy endpoints."
+  [{:keys [username]} ontology-version]
+  (let [version-details (db-categories/add-hierarchy-version username ontology-version)]
+    (assoc version-details :applied_by username)))

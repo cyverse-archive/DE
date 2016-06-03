@@ -10,6 +10,10 @@
   [& components]
   (str (apply curl/url (config/metadata-base) components)))
 
+(defn- metadata-url-encoded
+  [& components]
+  (str (apply curl/url (config/metadata-base) (map curl/url-encode components))))
+
 (defn resolve-data-type
   "Returns a type converted from the type field of a stat result to a type expected by the
    metadata service endpoints."
@@ -43,32 +47,10 @@
 
 (def put-options post-options)
 
-(defn list-metadata-avus
-  [target-id]
-  (http/get (metadata-url "filesystem" "data" target-id "avus")
-    {:as               :stream
-     :follow_redirects false}))
-
-(defn set-metadata-template-avus
-  [target-id data-type avus-req]
-  (http/post (metadata-url "filesystem" "data" target-id "avus")
-    (post-options (json/encode avus-req) {:data-type data-type})))
-
-(defn copy-metadata-template-avus
-  [target-id force? dest-items]
-  (http/post (metadata-url "filesystem" "data" target-id "avus" "copy")
-    (post-options (json/encode {:filesystem dest-items}) {:force force?})))
-
-(defn list-metadata-template-avus
-  [target-id template-id]
-  (http/get (metadata-url "filesystem" "data" target-id "avus" template-id)
-    {:as               :stream
-     :follow_redirects false}))
-
-(defn add-metadata-template-avus
-  [target-id data-type template-id avus-req]
-  (http/post (metadata-url "filesystem" "data" target-id "avus" template-id)
-    (post-options (json/encode avus-req) {:data-type data-type})))
+(defn add-metadata-avus
+  [target-type target-id avus-req]
+  (http/post (metadata-url "avus" target-type target-id)
+             (post-options (json/encode avus-req))))
 
 (defn list-data-comments
   [target-id]
@@ -192,6 +174,24 @@
 (defn admin-delete-template
   [template-id]
   (http/delete (metadata-url "admin" "templates" template-id) (delete-options)))
+
+(defn get-ontology-hierarchies
+  [ontology-version]
+  (http/get (metadata-url-encoded "ontologies" ontology-version) (get-options)))
+
+(defn upload-ontology
+  [filename content-type istream]
+  (http/post (metadata-url "admin" "ontologies")
+             {:query-params     (user-params {})
+              :multipart        [{:part-name "ontology-xml"
+                                  :name      filename
+                                  :mime-type content-type
+                                  :content   istream}]
+              :follow-redirects false}))
+
+(defn save-ontology-hierarchy
+  [ontology-version root-iri]
+  (http/put (metadata-url-encoded "admin" "ontologies" ontology-version root-iri) (get-options)))
 
 (defn list-permanent-id-requests
   [params]

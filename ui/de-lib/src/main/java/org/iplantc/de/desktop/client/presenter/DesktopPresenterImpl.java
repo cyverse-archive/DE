@@ -16,6 +16,7 @@ import org.iplantc.de.client.models.analysis.AnalysesAutoBeanFactory;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.notifications.Counts;
 import org.iplantc.de.client.models.notifications.Notification;
 import org.iplantc.de.client.models.notifications.NotificationAutoBeanFactory;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
@@ -58,6 +59,7 @@ import org.iplantc.de.fileViewers.client.callbacks.LoadGenomeInCoGeCallback;
 import org.iplantc.de.notifications.client.events.WindowShowRequestEvent;
 import org.iplantc.de.notifications.client.utils.NotifyInfo;
 import org.iplantc.de.notifications.client.views.dialogs.RequestHistoryDialog;
+import org.iplantc.de.shared.events.UserLoggedOutEvent;
 import org.iplantc.de.shared.services.PropertyServiceAsync;
 import org.iplantc.de.systemMessages.client.events.NewSystemMessagesEvent;
 import org.iplantc.de.systemMessages.client.view.NewMessageView;
@@ -105,9 +107,21 @@ import java.util.Map;
  */
 public class DesktopPresenterImpl implements DesktopView.Presenter {
 
+    private final class NewSysMessageCountCallback implements AsyncCallback<Counts> {
+		@Override
+		public void onFailure(Throwable caught) {
+			IplantAnnouncer.getInstance().schedule(new ErrorAnnouncementConfig(appearance.checkSysMessageError()));
+		}
 
+		@Override
+		public void onSuccess(Counts result) {
+			if(result.getNewSystemMessageCount() > 0) {
+				 eventBus.fireEvent(new NewSystemMessagesEvent());
+			}
+		}
+	}
 
-    interface AuthErrors {
+	interface AuthErrors {
         String API_NAME = "api_name";
         String ERROR = "error";
         String ERROR_DESCRIPTION = "error_description";
@@ -309,20 +323,28 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
 		introjs.start();
     }-*/;
 
+
     @Override
-    public void doLogout() {
+    public void doLogout(boolean sessionTimeout) {
+       cleanUp();
+        //session is timed-out, following rpc call will fail and cause 401.
+        if(!sessionTimeout) {
+            userSessionService.logout(new RuntimeCallbacks.LogoutCallback(userSessionService,
+                                                                          deClientConstants,
+                                                                          userSettings,
+                                                                          appearance,
+                                                                          getOrderedWindowStates()));
+        } else {
+            final String redirectUrl = GWT.getHostPageBaseURL() + deClientConstants.logoutUrl();
+            Window.Location.assign(redirectUrl);
+        }
+    }
+
+    private void cleanUp() {
         loggedOut = true;
-        // Need to stop polling
         messagePoller.stop();
-//        cleanUp();
         notificationWebSocketManager.closeWebSocket();
         systemMessageWebSocketManager.closeWebSocket();
-
-        userSessionService.logout(new RuntimeCallbacks.LogoutCallback(userSessionService,
-                                                     deClientConstants,
-                                                     userSettings,
-                                                     appearance,
-                                                     getOrderedWindowStates()));
     }
 
     @Override
@@ -634,7 +656,9 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
         panel.add(view);
         processQueryStrings();
         messageServiceFacade.getRecentMessages(new InitializationCallbacks.GetInitialNotificationsCallback(view, appearance, announcer));
-    }
+        messageServiceFacade.getMessageCounts(new NewSysMessageCountCallback());
+   
+   }
 
     void restoreWindows(List<WindowState> windowStates) {
         for (WindowState ws : windowStates) {
