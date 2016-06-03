@@ -58,10 +58,13 @@ import com.sencha.gxt.dnd.core.client.DndDropEvent.DndDropHandler;
 import com.sencha.gxt.dnd.core.client.DropTarget;
 import com.sencha.gxt.dnd.core.client.StatusProxy;
 import com.sencha.gxt.widget.core.client.Composite;
+import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.HideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent.DialogHideHandler;
 import com.sencha.gxt.widget.core.client.form.IsField;
 import com.sencha.gxt.widget.core.client.form.error.DefaultEditorError;
 import com.sencha.gxt.widget.core.client.form.error.SideErrorHandler;
@@ -119,7 +122,7 @@ public class MultiFileSelectorField extends Composite implements
         ImageResource deleteIcon();
     }
 
-    private final class FileSelectDialogHideHandler implements HideHandler {
+    private final class FileSelectDialogHideHandler implements DialogHideHandler {
         private final FileSelectDialog dlg;
         private final ListStore<DiskResource> store;
 
@@ -130,23 +133,25 @@ public class MultiFileSelectorField extends Composite implements
         }
 
         @Override
-        public void onHide(HideEvent event) {
-            Set<File> files = diskResourceUtil.filterFiles(dlg.getDiskResources());
-            if (files.isEmpty()) {
-                return;
-            }
-            store.addAll(files);
-            if (userSettings.isRememberLastPath() && store.size() > 0) {
-                userSettings.setLastPath(diskResourceUtil.parseParent(store.get(0).getPath()));
-                eventBus.fireEvent(new LastSelectedPathChangedEvent(true));
-            }
-            ValueChangeEvent.fire(MultiFileSelectorField.this,
-                                  Lists.<HasPath> newArrayList(store.getAll()));
-            setValue(Lists.<HasPath> newArrayList(store.getAll()));
+        public void onDialogHide(DialogHideEvent event) {
+        	if(event.getHideButton().equals(PredefinedButton.OK)) {
+	            Set<File> files = diskResourceUtil.filterFiles(dlg.getDiskResources());
+	            if (files.isEmpty()) {
+	                return;
+	            }
+	            store.addAll(files);
+	            if (userSettings.isRememberLastPath() && store.size() > 0) {
+	                userSettings.setLastPath(diskResourceUtil.parseParent(store.get(0).getPath()));
+	                eventBus.fireEvent(new LastSelectedPathChangedEvent(true));
+	            }
+	            ValueChangeEvent.fire(MultiFileSelectorField.this,
+	                                  Lists.<HasPath> newArrayList(store.getAll()));
+	            setValue(Lists.<HasPath> newArrayList(store.getAll()));
+	        }
         }
     }
 
-    private final class FileFolderSelectDailogHideHandler implements HideHandler {
+    private final class FileFolderSelectDailogHideHandler implements DialogHideHandler {
 
         private final FileFolderSelectDialog dlg;
         private final ListStore<DiskResource> store;
@@ -158,16 +163,18 @@ public class MultiFileSelectorField extends Composite implements
         }
 
         @Override
-        public void onHide(HideEvent event) {
-            store.addAll(dlg.getValue());
-            if (userSettings.isRememberLastPath() && store.size() > 0) {
-                userSettings.setLastPath(diskResourceUtil.parseParent(store.get(0).getPath()));
-                eventBus.fireEvent(new LastSelectedPathChangedEvent(true));
-            }
-            ValueChangeEvent.fire(MultiFileSelectorField.this,
-                                  Lists.<HasPath> newArrayList(store.getAll()));
-            setValue(Lists.<HasPath> newArrayList(store.getAll()));
-
+        public void onDialogHide(DialogHideEvent event) {
+        	if(event.getHideButton().equals(PredefinedButton.OK)) {
+	            store.addAll(dlg.getValue());
+	            if (userSettings.isRememberLastPath() && store.size() > 0) {
+	                userSettings.setLastPath(diskResourceUtil.parseParent(store.get(0).getPath()));
+	                eventBus.fireEvent(new LastSelectedPathChangedEvent(true));
+	            }
+	            ValueChangeEvent.fire(MultiFileSelectorField.this,
+	                                  Lists.<HasPath> newArrayList(store.getAll()));
+	            setValue(Lists.<HasPath> newArrayList(store.getAll()));
+	
+	        }
         }
 
     }
@@ -452,7 +459,7 @@ public class MultiFileSelectorField extends Composite implements
                 @Override
                 public void onSuccess(FileSelectDialog result) {
                     HasPath hasPath = CommonModelUtils.getInstance().createHasPathFromString(path);
-                    result.addHideHandler(new FileSelectDialogHideHandler(result, listStore));
+                    result.addDialogHideHandler(new FileSelectDialogHideHandler(result, listStore));
                     result.show(false, hasPath, null, Collections.<InfoType> emptyList());
                 }
             });
@@ -468,7 +475,7 @@ public class MultiFileSelectorField extends Composite implements
                 @Override
                 public void onSuccess(FileFolderSelectDialog result) {
                     HasPath hasPath = CommonModelUtils.getInstance().createHasPathFromString(path);
-                    result.addHideHandler(new FileFolderSelectDailogHideHandler(result, listStore));
+                    result.addDialogHideHandler(new FileFolderSelectDailogHideHandler(result, listStore));
                     result.show(hasPath, null, null, false);
                 }
 
