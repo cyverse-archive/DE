@@ -5,6 +5,6 @@
             :url "http://iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :dependencies [[cheshire "5.6.1"]
                  [clj-http "2.2.0"]
-                 [clj-http-fake "1.0.2"]
                  [com.cemerick/url "0.1.1"]
-                 [org.clojure/clojure "1.7.0"]])
+                 [org.clojure/clojure "1.7.0"]]
+  :profiles {:test {:dependencies [[clj-http-fake "1.0.2"]]}})
