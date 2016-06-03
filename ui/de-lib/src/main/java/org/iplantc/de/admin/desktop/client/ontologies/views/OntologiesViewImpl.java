@@ -262,7 +262,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
     @UiHandler("categorize")
     void categorizeButtonClicked(SelectEvent event) {
-        fireEvent(new CategorizeButtonClickedEvent(targetApp, tree));
+        fireEvent(new CategorizeButtonClickedEvent(targetApp, treeStore.getRootItems()));
     }
 
     @UiFactory

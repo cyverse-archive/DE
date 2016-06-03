@@ -7,7 +7,7 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 
-import com.sencha.gxt.widget.core.client.tree.Tree;
+import java.util.List;
 
 /**
  * @author aramsey
@@ -26,19 +26,19 @@ public class CategorizeButtonClickedEvent extends GwtEvent<CategorizeButtonClick
             new Type<CategorizeButtonClickedEventHandler>();
 
     private App selectedApp;
-    private Tree<OntologyHierarchy, String> ontologyTree;
+    private List<OntologyHierarchy> hierarchyRoots;
 
-    public CategorizeButtonClickedEvent(App selectedApp, Tree<OntologyHierarchy, String> ontologyTree) {
+    public CategorizeButtonClickedEvent(App selectedApp, List<OntologyHierarchy> hierarchyRoots) {
         this.selectedApp = selectedApp;
-        this.ontologyTree = ontologyTree;
+        this.hierarchyRoots = hierarchyRoots;
     }
 
     public App getSelectedApp() {
         return selectedApp;
     }
 
-    public Tree<OntologyHierarchy, String> getOntologyTree() {
-        return ontologyTree;
+    public List<OntologyHierarchy> getHierarchyRoots() {
+        return hierarchyRoots;
     }
 
     public Type<CategorizeButtonClickedEventHandler> getAssociatedType() {

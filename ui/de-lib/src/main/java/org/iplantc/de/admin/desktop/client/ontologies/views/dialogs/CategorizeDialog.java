@@ -13,7 +13,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
-import com.sencha.gxt.widget.core.client.tree.Tree;
 
 import java.util.List;
 import java.util.Map;
@@ -23,24 +22,22 @@ import java.util.Map;
  */
 public class CategorizeDialog extends IPlantDialog implements CategorizeHierarchiesToAppEvent.HasCategorizeHierarchiesToAppEventHandlers {
 
-    OntologiesView.OntologiesViewAppearance appearance;
-    AppCategorizeView categorizeView;
-    Tree<OntologyHierarchy, String> tree;
-    List<Avu> selectedAvus;
-    Map<String, List<OntologyHierarchy>> iriToHierarchyMap;
-    App targetApp;
+    private OntologiesView.OntologiesViewAppearance appearance;
+    private AppCategorizeView categorizeView;
+    private List<Avu> selectedAvus;
+    private Map<String, List<OntologyHierarchy>> iriToHierarchyMap;
+    private App targetApp;
 
     public CategorizeDialog(OntologiesView.OntologiesViewAppearance appearance,
                             final App targetApp,
                             final AppCategorizeView categorizeView,
-                            Tree<OntologyHierarchy, String> tree,
+                            List<OntologyHierarchy> hierarchyRoots,
                             Map<String, List<OntologyHierarchy>> iriToHierarchyMap,
                             List<Avu> selectedAvus) {
         super(true);
 
         this.appearance = appearance;
         this.categorizeView = categorizeView;
-        this.tree = tree;
         this.selectedAvus = selectedAvus;
         this.iriToHierarchyMap = iriToHierarchyMap;
         this.targetApp = targetApp;
@@ -52,7 +49,7 @@ public class CategorizeDialog extends IPlantDialog implements CategorizeHierarch
 
         setOnEsc(false);
 
-        categorizeView.setHierarchies(tree.getStore().getRootItems());
+        categorizeView.setHierarchies(hierarchyRoots);
 
         markTaggedHierarchies();
 

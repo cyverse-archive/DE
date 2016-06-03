@@ -40,7 +40,6 @@ import com.google.inject.Inject;
 
 import com.sencha.gxt.core.shared.FastMap;
 import com.sencha.gxt.data.shared.TreeStore;
-import com.sencha.gxt.widget.core.client.tree.Tree;
 
 import java.util.Collections;
 import java.util.List;
@@ -59,12 +58,12 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     private class CategorizeCallback implements AsyncCallback<List<Avu>> {
         private final App selectedApp;
-        private final Tree<OntologyHierarchy, String> ontologyTree;
+        private final List<OntologyHierarchy> hierarchyRoots;
 
         public CategorizeCallback(App selectedApp,
-                                  Tree<OntologyHierarchy, String> ontologyTree) {
+                                  List<OntologyHierarchy> hierarchyRoots) {
             this.selectedApp = selectedApp;
-            this.ontologyTree = ontologyTree;
+            this.hierarchyRoots = hierarchyRoots;
         }
 
         @Override
@@ -76,7 +75,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         public void onSuccess(List<Avu> result) {
             CategorizeDialog dlg = new CategorizeDialog(appearance,
                                                         selectedApp, categorizeView,
-                                                        ontologyTree, iriToHierarchyMap, result);
+                                                        hierarchyRoots, iriToHierarchyMap, result);
             dlg.addCategorizeHierarchiesToAppEventHandler(new CategorizeHierarchiesToAppEvent.CategorizeHierarchiesToAppEventHandler() {
                 @Override
                 public void onCategorizeHierarchiesToApp(CategorizeHierarchiesToAppEvent event) {
@@ -337,8 +336,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     @Override
     public void onCategorizeButtonClicked(CategorizeButtonClickedEvent event) {
         final App selectedApp = event.getSelectedApp();
-        final Tree<OntologyHierarchy, String> ontologyTree = event.getOntologyTree();
-        serviceFacade.getAppAVUs(selectedApp, new CategorizeCallback(selectedApp, ontologyTree));
+        final List<OntologyHierarchy> hierarchyRoots = event.getHierarchyRoots();
+        serviceFacade.getAppAVUs(selectedApp, new CategorizeCallback(selectedApp, hierarchyRoots));
     }
 
     private boolean isValidHierarchy(OntologyHierarchy result) {
