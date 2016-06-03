@@ -12,9 +12,9 @@
             background-color: #fff;
         }
     </ui:style>
-    <ui:with field="margins5"
+    <ui:with field="margin3"
              type="com.sencha.gxt.core.client.util.Margins">
-        <ui:attributes top="5" right="5" bottom="5" left="5" />
+        <ui:attributes top="3" right="3" bottom="3" left="3" />
     </ui:with>
     <ui:with field="margins5505"
              type="com.sencha.gxt.core.client.util.Margins">
@@ -23,7 +23,7 @@
 
     <ui:with field="preferenceLayoutData"
              type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
-        <ui:attributes width="1" height="-1" margins="{margins5}"/>
+        <ui:attributes width="1" height="-1" margins="{margin3}"/>
     </ui:with>
     <ui:with field="fileSelLabel"
              type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
