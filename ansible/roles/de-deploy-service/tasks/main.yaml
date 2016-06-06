@@ -4,11 +4,15 @@
 - fail: msg="The service_name variable is required by de-deploy-service."
   when: not service_name
 
+- name: get IP of host
+  shell: "hostname -i"
+  register: hostname_i
+
 - name: get list of configured services
   environment:
     DE_TAG: "{{docker.tag}}"
     DE_ENV: "{{environment_name}}"
-    HOSTNAME: "{{inventory_hostname}}"
+    HOSTNAME: "{{ hostname_i.stdout_lines[0] }}"
   shell: "docker-compose -f {{docker_compose_path}} config --services"
   register: service_list
 

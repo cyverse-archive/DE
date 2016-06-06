@@ -36,10 +36,6 @@
   when: has_iplant_data|default(false)
 
 - name: Determine color of {{service_name_short}}
-  environment:
-    DE_TAG: "{{docker.tag}}"
-    DE_ENV: "{{environment_name}}"
-    HOSTNAME: "{{inventory_hostname}}"
   shell: "curl -f http://localhost:{{consul_port}}/v1/kv/{{environment_name}}/{{service_name_short}}/color?raw || printf 'green'"
   args:
     warn: no

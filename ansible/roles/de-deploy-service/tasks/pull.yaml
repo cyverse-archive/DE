@@ -5,7 +5,7 @@
   environment:
     DE_TAG: "{{docker.tag}}"
     DE_ENV: "{{environment_name}}"
-    HOSTNAME: "{{inventory_hostname}}"
+    HOSTNAME: "{{ hostname_i.stdout_lines[0] }}"
   shell: "docker-compose -f {{docker_compose_path}} pull {{pull_service_name}}"
   register: docker_pull_v
   changed_when: true
