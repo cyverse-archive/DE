@@ -17,8 +17,8 @@ import java.util.List;
 public class OntologyUtil {
 
     private static OntologyUtil INSTANCE;
-    private final OntologyAutoBeanFactory factory;
-    private final AvuAutoBeanFactory avuFactory;
+    OntologyAutoBeanFactory factory;
+    AvuAutoBeanFactory avuFactory;
 
     final String OPERATION_ATTR = "rdf:type";
     final String TOPIC_ATTR = "http://edamontology.org/has_topic";

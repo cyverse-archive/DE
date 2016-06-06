@@ -30,19 +30,19 @@ public class OntologyHierarchyTreeStoreProvider implements Provider<TreeStore<On
         });
     }
 
-    private void setChildrenParentTag(String key, OntologyHierarchy hierarchy) {
+    void setChildrenParentTag(String key, OntologyHierarchy hierarchy) {
         if (!Strings.isNullOrEmpty(key) && hierarchy != null && hierarchy.getSubclasses() != null) {
 
             for (OntologyHierarchy sub : hierarchy.getSubclasses()) {
-                final AutoBean<OntologyHierarchy> subAutoBean = AutoBeanUtils.getAutoBean(sub);
+                final AutoBean<OntologyHierarchy> subAutoBean = getHierarchyAutoBean(sub);
                 subAutoBean.setTag(HIERARCHY_PARENT_MODEL_KEY, key);
             }
         }
     }
 
-    private String getHierarchyPathTag(OntologyHierarchy hierarchy){
+    String getHierarchyPathTag(OntologyHierarchy hierarchy){
         if (hierarchy != null){
-            final AutoBean<OntologyHierarchy> hierarchyAutoBean = AutoBeanUtils.getAutoBean(hierarchy);
+            AutoBean<OntologyHierarchy> hierarchyAutoBean = getHierarchyAutoBean(hierarchy);
             String parentTag = hierarchyAutoBean.getTag(HIERARCHY_PARENT_MODEL_KEY);
             String childTag = hierarchyAutoBean.getTag(HIERARCHY_MODEL_KEY);
             if (parentTag == null){
@@ -58,5 +58,9 @@ public class OntologyHierarchyTreeStoreProvider implements Provider<TreeStore<On
             return childTag;
         }
         return "";
+    }
+
+    AutoBean<OntologyHierarchy> getHierarchyAutoBean(OntologyHierarchy hierarchy) {
+        return AutoBeanUtils.getAutoBean(hierarchy);
     }
 }

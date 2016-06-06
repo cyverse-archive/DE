@@ -261,7 +261,7 @@ public class OntologiesPresenterImplTest {
         /** CALL METHOD UNDER TEST **/
         uut.onSelectOntologyVersion(eventMock);
 
-        verify(treeStoreMock).clear();
+        verify(viewMock).clearStore();
 
         verify(serviceFacadeMock).getOntologyHierarchies(eq(eventMock.getSelectedOntology()
                                                                      .getVersion()),
@@ -297,7 +297,7 @@ public class OntologiesPresenterImplTest {
         /** CALL METHOD UNDER TEST **/
         uut.onSelectOntologyVersion(eventMock);
 
-        verify(treeStoreMock).clear();
+        verify(viewMock).clearStore();
 
         verify(serviceFacadeMock).getOntologyHierarchies(eq(eventMock.getSelectedOntology()
                                                                      .getVersion()),
