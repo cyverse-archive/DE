@@ -44,7 +44,9 @@
                [:tools.location :location]
                [:tool_types.name :type]
                [:tools.version :version]
-               [:tools.attribution :attribution])
+               [:tools.attribution :attribution]
+               [:tools.restricted :restricted]
+               [:tools.time_limit_seconds :time_limit_seconds])
        (join tool_types)))
   ([{search-term :search :keys [sort-field sort-dir limit offset include-hidden]
                          :or {include-hidden false}}]
