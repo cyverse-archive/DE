@@ -26,7 +26,7 @@ INSERT INTO parameter_types
 INSERT INTO parameter_types
     (id, name, description, label, deprecated, hidable, display_order, value_type_id)
     SELECT 'c5b85c6b-381e-44f6-a568-186f1fe7f03d', 'Info',
-           'Informative static text', NULL, TRUE, FALSE, '999', vt.id
+           'Informative static text', NULL, FALSE, FALSE, '999', vt.id
     FROM value_type vt WHERE vt.name = 'String';
 
 INSERT INTO parameter_types
