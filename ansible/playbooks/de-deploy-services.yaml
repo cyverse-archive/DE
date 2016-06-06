@@ -269,7 +269,7 @@
       msg: "Deploying UI"
     - role: de-deploy-service
       has_iplant_data: true
-      deploy_use_color: true
+      deploy_use_color: "{{use_color|default(false)}}"
       service_name: "{{de.compose_service}}"
       service_name_short: "de"
     - role: util-notify-chat
