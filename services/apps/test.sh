@@ -33,21 +33,14 @@ docker run --rm -v $(pwd):/build -w /build discoenv/buildenv lein eastwood \
     || error_exit 'lint errors were found'
 
 # Pull the DE database image.
-docker pull discoenv/de-db || error_exit 'unable to pull the DE database image'
+docker pull discoenv/unittest-dedb:dev || error_exit 'unable to pull the DE database image'
 
 # Start the DE database container.
-docker run --name $DBCONTAINER -e POSTGRES_PASSWORD=notprod -d -p 35432:5432 discoenv/de-db \
+docker run --name $DBCONTAINER -d discoenv/unittest-dedb:dev \
     || error_exit 'unable to start the DE database container'
 
 # Wait for the DE database container to start up.
 sleep 10
-
-# Pull the DE database loader.
-docker pull discoenv/de-db-loader:dev || error_exit 'unable to pull the DE database loader image'
-
-# Run the DE database loader.
-docker run --rm --link $DBCONTAINER:postgres discoenv/de-db-loader:dev \
-    || error_exit 'unable to run the DE database loader'
 
 # Run the tests.
 docker run --rm -v $(pwd):/build -w /build --link $DBCONTAINER:postgres discoenv/buildenv lein $CMD \
