@@ -6,14 +6,14 @@
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/tools.logging "0.3.1"]
                  [ch.qos.logback/logback-classic "1.1.3"]
-                 [org.irods.jargon/jargon-core "4.0.2.4-RELEASE"
+                 [org.irods.jargon/jargon-core "4.0.2.6-RELEASE"
                   :exclusions [[org.jglobus/JGlobus-Core]
                                [org.slf4j/slf4j-api]
                                [org.slf4j/slf4j-log4j12]]]
-                 [org.irods.jargon/jargon-data-utils "4.0.2.4-RELEASE"
+                 [org.irods.jargon/jargon-data-utils "4.0.2.6-RELEASE"
                   :exclusions [[org.slf4j/slf4j-api]
                                [org.slf4j/slf4j-log4j12]]]
-                 [org.irods.jargon/jargon-ticket "4.0.2.4-RELEASE"
+                 [org.irods.jargon/jargon-ticket "4.0.2.6-RELEASE"
                   :exclusions [[org.slf4j/slf4j-api]
                                [org.slf4j/slf4j-log4j12]]]
                  [slingshot "0.12.2"]
@@ -21,6 +21,4 @@
   :repositories [["dice.repository"
                   {:url "https://raw.github.com/DICE-UNC/DICE-Maven/master/releases"}]
                  ["renci-snapshot.repository"
-                  {:url "http://ci-dev.renci.org/nexus/content/repositories/renci-snapshot/"}]
-                 ["iplant.repository"
-                  {:url "https://everdene.iplantcollaborative.org/archiva/repository/internal/"}]])
+                  {:url "http://ci-dev.renci.org/nexus/content/repositories/renci-snapshot/"}]])
