@@ -37,7 +37,7 @@ import org.iplantc.de.diskResource.client.events.RequestSimpleDownloadEvent;
 import org.iplantc.de.diskResource.client.events.RequestSimpleUploadEvent;
 import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
 import org.iplantc.de.diskResource.client.views.dialogs.FileUploadByUrlDialog;
-import org.iplantc.de.diskResource.client.views.dialogs.SimpleFileUploadDialog;
+import org.iplantc.de.commons.client.views.dialogs.SimpleFileUploadDialog;
 import org.iplantc.de.fileViewers.client.callbacks.EnsemblUtil;
 import org.iplantc.de.notifications.client.events.WindowShowRequestEvent;
 import org.iplantc.de.systemMessages.client.events.ShowSystemMessagesEvent;

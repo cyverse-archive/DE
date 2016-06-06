@@ -32,6 +32,10 @@
              type="com.sencha.gxt.widget.core.client.TabItemConfig">
         <ui:attributes text="{appearance.applications}"/>
     </ui:with>
+    <ui:with field="ontologiesTabConfig"
+             type="com.sencha.gxt.widget.core.client.TabItemConfig">
+        <ui:attributes text="{appearance.ontologies}"/>
+    </ui:with>
     <ui:with field="refGenTabConfig"
              type="com.sencha.gxt.widget.core.client.TabItemConfig">
         <ui:attributes text="{appearance.referenceGenomes}"/>
@@ -66,6 +70,9 @@
                 <gxt:TabPanel>
                     <gxt:child config="{appsTabConfig}">
                         <con:SimpleContainer ui:field="appsPanel"/>
+                    </gxt:child>
+                    <gxt:child config="{ontologiesTabConfig}">
+                        <con:SimpleContainer ui:field="ontologiesPanel"/>
                     </gxt:child>
                     <gxt:child config="{refGenTabConfig}">
                         <con:SimpleContainer ui:field="refGenomePanel"/>

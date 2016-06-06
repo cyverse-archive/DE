@@ -15,6 +15,7 @@ public interface Belphegor {
         String SYSTEM_MESSAGE = ".systemMessage";
         String TOOL_ADMIN = ".toolAdmin";
         String TOOL_REQUEST = ".toolRequest";
+        String ONTOLOGIES = ".ontologies";
     }
 
     interface AppIds {

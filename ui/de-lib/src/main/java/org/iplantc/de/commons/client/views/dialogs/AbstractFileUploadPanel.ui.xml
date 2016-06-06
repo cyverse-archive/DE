@@ -8,7 +8,7 @@
              xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client">
 
     <ui:with field="appearance"
-             type="org.iplantc.de.diskResource.client.views.dialogs.SimpleFileUploadDialog.SimpleFileUploadDialogAppearance"/>
+             type="org.iplantc.de.commons.client.views.dialogs.AbstractFileUploadDialog.AbstractFileUploadDialogAppearance"/>
 
     <ui:with field="sideMargins"
              type="com.sencha.gxt.core.client.util.Margins">

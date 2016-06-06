@@ -203,4 +203,5 @@ public interface DiskResourceMessages extends Messages {
 
     String doiRequestSuccess();
 
+    String fileUploadsSuccess(@PluralCount List<String> files);
 }

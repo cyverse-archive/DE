@@ -116,6 +116,11 @@ public class BelphegorViewDefaultAppearance implements BelphegorView.BelphegorVi
     }
 
     @Override
+    public String ontologies() {
+        return belphegorDisplayStrings.ontologies();
+    }
+
+    @Override
     public String systemMessages() {
         return belphegorDisplayStrings.systemMessages();
     }

@@ -1,0 +1,30 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
+             xmlns:tree="urn:import:com.sencha.gxt.widget.core.client.tree">
+
+    <ui:with field="appearance"
+             type="org.iplantc.de.admin.desktop.client.ontologies.OntologiesView.OntologiesViewAppearance" />
+    <ui:with field="treeStore"
+             type="com.sencha.gxt.data.shared.TreeStore"/>
+    <ui:with type="com.sencha.gxt.core.client.util.Margins"
+             field="centerMargins">
+        <ui:attributes
+                top="4"
+                right="4"
+                bottom="0"
+                left="4"/>
+    </ui:with>
+    <ui:with field="layoutData"
+             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+        <ui:attributes height="-1"
+                       width=".90"
+                       margins="{centerMargins}"/>
+    </ui:with>
+
+    <gxt:ContentPanel ui:field="con"
+                      width="{appearance.categorizeDialogWidth}"
+                      height="{appearance.categorizeDialogHeight}">
+        <tree:Tree ui:field="tree"/>
+    </gxt:ContentPanel>
+</ui:UiBinder>

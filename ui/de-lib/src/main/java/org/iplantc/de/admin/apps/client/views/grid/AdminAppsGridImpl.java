@@ -1,6 +1,7 @@
 package org.iplantc.de.admin.apps.client.views.grid;
 
 import org.iplantc.de.admin.apps.client.AdminAppsGridView;
+import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEvent;
 import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.BeforeAppSearchEvent;
@@ -11,6 +12,7 @@ import org.iplantc.de.client.models.apps.App;
 
 import com.google.common.base.Joiner;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
@@ -25,6 +27,8 @@ import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.grid.GridView;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
+
+import java.util.List;
 
 /**
  * Created by jstroot on 3/9/15.
@@ -70,9 +74,20 @@ public class AdminAppsGridImpl extends ContentPanel implements AdminAppsGridView
     }
 
     @Override
+    public void clearAndAdd(List<App> apps) {
+        listStore.clear();
+        listStore.addAll(apps);
+    }
+
+    @Override
     public void onAppCategorySelectionChanged(AppCategorySelectionChangedEvent event) {
         // FIXME Move to appearance
         setHeadingText(Joiner.on(" >> ").join(event.getGroupHierarchy()));
+    }
+
+    @Override
+    public void onHierarchySelected(HierarchySelectedEvent event) {
+        setHeadingText(Joiner.on(" >> ").join(event.getPath()));
     }
 
     @Override
@@ -105,5 +120,22 @@ public class AdminAppsGridImpl extends ContentPanel implements AdminAppsGridView
         super.onEnsureDebugId(baseID);
 
         grid.asWidget().ensureDebugId(baseID + Belphegor.AppIds.GRID);
+    }
+
+    @Override
+    public App getAppFromElement(Element as) {
+        Element row = gridView.findRow(as);
+        int dropIndex = gridView.findRowIndex(row);
+        return listStore.get(dropIndex);
+    }
+
+    @Override
+    public List<App> getSelectedApps() {
+        return grid.getSelectionModel().getSelectedItems();
+    }
+
+    @Override
+    public void deselectAll() {
+        grid.getSelectionModel().deselectAll();
     }
 }

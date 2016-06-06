@@ -1,6 +1,7 @@
 package org.iplantc.de.admin.apps.client;
 
 import org.iplantc.de.admin.apps.client.events.selection.RestoreAppSelected;
+import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEvent;
 import org.iplantc.de.apps.client.AppsGridView;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.BeforeAppSearchEvent;
@@ -11,10 +12,13 @@ import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.apps.App;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.IsWidget;
 
 import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
 import com.sencha.gxt.widget.core.client.grid.Grid;
+
+import java.util.List;
 
 /**
  * Created by jstroot on 3/9/15.
@@ -26,7 +30,8 @@ public interface AdminAppsGridView extends IsWidget,
                                            AppNameSelectedEvent.HasAppNameSelectedEventHandlers,
                                            AppCategorySelectionChangedEvent.AppCategorySelectionChangedEventHandler,
                                            AppSearchResultLoadEvent.AppSearchResultLoadEventHandler,
-                                           BeforeAppSearchEvent.BeforeAppSearchEventHandler {
+                                           BeforeAppSearchEvent.BeforeAppSearchEventHandler,
+                                           HierarchySelectedEvent.HierarchySelectedEventHandler {
 
     interface Appearance extends AppsGridView.AppsGridAppearance {
 
@@ -67,7 +72,19 @@ public interface AdminAppsGridView extends IsWidget,
         }
 
         AdminAppsGridView getView();
+
+        App getAppFromElement(Element eventTarget);
+
+        List<App> getSelectedApps();
     }
 
     Grid<App> getGrid();
+
+    void clearAndAdd(List<App> apps);
+
+    App getAppFromElement(Element as);
+
+    List<App> getSelectedApps();
+
+    void deselectAll();
 }

@@ -2,6 +2,7 @@ package org.iplantc.de.admin.client.gin;
 
 import org.iplantc.de.admin.apps.client.gin.AdminAppsGinModule;
 import org.iplantc.de.admin.desktop.client.gin.BelphegorAppsGinModule;
+import org.iplantc.de.admin.desktop.client.ontologies.gin.OntologiesGinModule;
 import org.iplantc.de.admin.desktop.client.toolAdmin.gin.ToolAdminGinModule;
 import org.iplantc.de.admin.desktop.client.views.BelphegorView;
 import org.iplantc.de.commons.client.comments.gin.CommentsGinModule;
@@ -19,6 +20,7 @@ import com.google.gwt.inject.client.Ginjector;
 //                AppsGinModule.class,
 @GinModules({ BelphegorAppsGinModule.class,
               AdminAppsGinModule.class,
+              OntologiesGinModule.class,
               DiskResourceGinModule.class,
               CommentsGinModule.class,
               TagsGinModule.class,

@@ -86,6 +86,7 @@ public class DEProperties {
      */
     private static final String KEEPALIVE_INTERVAL = KEEPALIVE_PREFIX + "interval";
 
+
     /**
      * Default community data folder path
      * 
@@ -141,6 +142,7 @@ public class DEProperties {
     private String defaultTrashCategoryId;
 
     private String pathListFileIdentifier;
+
 
 
     public String getPathListFileIdentifier() {
@@ -359,5 +361,6 @@ public class DEProperties {
     public String getPermIdBaseUrl() {
         return permIdBaseUrl;
     }
+
 
 }

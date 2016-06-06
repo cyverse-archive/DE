@@ -25,6 +25,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONObject;
@@ -58,7 +59,7 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
 
         @Override
         public void onFailure(Throwable caught) {
-            announcer.schedule(new ErrorAnnouncementConfig(appearance.updateApplicationError()));
+            ErrorHandler.post(caught);
         }
 
         @Override
@@ -105,6 +106,16 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
     }
 
     @Override
+    public App getAppFromElement(Element eventTarget) {
+        return view.getAppFromElement(Element.as(eventTarget));
+    }
+
+    @Override
+    public List<App> getSelectedApps() {
+        return view.getSelectedApps();
+    }
+
+    @Override
     public void onAppCategorySelectionChanged(AppCategorySelectionChangedEvent event) {
         if (event.getAppCategorySelection().isEmpty()) {
             return;
@@ -135,8 +146,7 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
 
             @Override
             public void onFailure(Throwable caught) {
-                IplantAnnouncer.getInstance()
-                               .schedule(new ErrorAnnouncementConfig("Documentation not found!"));
+                ErrorHandler.post(caught);
                 AutoBean<AppDoc> doc = AutoBeanCodex.decode(factory, AppDoc.class, "{}");
                 final AppEditor appEditor = new AppEditor(event.getSelectedApp(), doc.as());
                 appEditor.addSaveAppSelectedHandler(AdminAppsGridPresenterImpl.this);
@@ -173,7 +183,7 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
                                       @Override
                                       public void onFailure(Throwable caught) {
                                           view.unmask();
-                                          announcer.schedule(new ErrorAnnouncementConfig(appearance.deleteApplicationError(selectedApp.getName())));
+                                          ErrorHandler.post(caught);
                                       }
 
                                       @Override
@@ -236,7 +246,7 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
                 @Override
                 public void onFailure(Throwable caught) {
                     view.unmask();
-                    announcer.schedule(new ErrorAnnouncementConfig(appearance.updateApplicationError()));
+                    ErrorHandler.post(caught);
                 }
 
                 @Override

@@ -62,8 +62,8 @@
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.FileUploadByUrlDialogDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.FileUploadByUrlDialog.FileUploadByUrlDialogAppearance"/>
     </replace-with>
-    <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.SimpleFileUploadDialogDefaultAppearance">
-        <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.SimpleFileUploadDialog.SimpleFileUploadDialogAppearance"/>
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.AbstractFileUploadDialogDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.views.dialogs.AbstractFileUploadDialog.AbstractFileUploadDialogAppearance"/>
     </replace-with>
 
     <!-- Navigation -->
