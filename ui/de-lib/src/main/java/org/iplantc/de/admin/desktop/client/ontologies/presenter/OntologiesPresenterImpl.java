@@ -105,6 +105,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         @Override
         public void onSuccess(OntologyHierarchy result) {
             if (isValidHierarchy(result)) {
+                view.clearStore();
                 addHierarchies(null,
                                Lists.newArrayList(result));
             } else {
