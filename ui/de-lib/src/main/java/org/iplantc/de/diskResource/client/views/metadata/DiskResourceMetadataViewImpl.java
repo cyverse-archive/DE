@@ -36,6 +36,7 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.ValidEvent;
 import com.sencha.gxt.widget.core.client.event.ValidEvent.ValidHandler;
 import com.sencha.gxt.widget.core.client.form.TextField;
+import com.sencha.gxt.widget.core.client.grid.CheckBoxSelectionModel;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -80,17 +81,6 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         }
     }
 
-    private final class MetadataSelectionChangedListener
-            implements SelectionChangedHandler<DiskResourceMetadata> {
-        @Override
-        public void onSelectionChanged(SelectionChangedEvent<DiskResourceMetadata> event) {
-            deleteMetadataButton.setEnabled(event.getSelection().size() > 0 && writable);
-            if (userGridInlineEditing != null) {
-                userGridInlineEditing.completeEditing();
-            }
-        }
-    }
-
     @UiTemplate("DiskResourceMetadataEditorPanel.ui.xml")
     interface DiskResourceMetadataEditorPanelUiBinder
             extends UiBinder<Widget, DiskResourceMetadataViewImpl> {
@@ -117,6 +107,8 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     @UiField
     TextButton selectButton;
     @UiField
+    TextButton importButton;
+    @UiField
     AccordionLayoutContainer alc;
     @UiField(provided = true)
     ContentPanel userMetadataPanel;
@@ -140,7 +132,6 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     ColumnModel<DiskResourceMetadata> acm;
 
 
-
     private GridInlineEditing<DiskResourceMetadata> userGridInlineEditing;
     private final boolean writable;
 
@@ -149,10 +140,14 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     private boolean valid;
     private MetadataView.Presenter presenter;
     private String baseId;
+    private CheckBoxSelectionModel<DiskResourceMetadata> userChxBoxModel;
+    private CheckBoxSelectionModel<DiskResourceMetadata> addChxBoxModel;
 
     public DiskResourceMetadataViewImpl(boolean isEditable) {
         writable = isEditable;
         valid = true;
+        userChxBoxModel = new CheckBoxSelectionModel<DiskResourceMetadata>();
+        addChxBoxModel = new CheckBoxSelectionModel<DiskResourceMetadata>();
         init();
         initWidget(uiBinder.createAndBindUi(this));
         alc.setActiveWidget(userMetadataPanel);
@@ -160,11 +155,16 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         deleteMetadataButton.disable();
         if (writable) {
             initUserMdGridEditor();
-            userMdGrid.getSelectionModel()
-                      .addSelectionChangedHandler(new MetadataSelectionChangedListener());
             new QuickTip(userMdGrid);
-
         }
+        userMdGrid.setSelectionModel(userChxBoxModel);
+        additionalMdgrid.setSelectionModel(addChxBoxModel);
+
+        userMdGrid.getSelectionModel()
+                  .addSelectionChangedHandler(new DiskResourceMetadataSelectionChangedHandler());
+
+        additionalMdgrid.getSelectionModel()
+                        .addSelectionChangedHandler(new DiskResourceAdditionalMetadataSelectionChangedHandler());
     }
 
     @Override
@@ -258,6 +258,11 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
 
     }
 
+    @UiHandler("importButton")
+    void onImportSelected(SelectEvent event) {
+        presenter.onImport(additionalMdgrid.getSelectionModel().getSelectedItems());
+    }
+
     private void setUserMetadataDebugIds() {
         userMetadataPanel.ensureDebugId(baseId + MetadataIds.USER_METADATA);
         getCollapseBtn(userMetadataPanel).ensureDebugId(
@@ -281,7 +286,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     }
 
 
-     void createColumnModel() {
+    void createColumnModel() {
         List<ColumnConfig<DiskResourceMetadata, ?>> columns = Lists.newArrayList();
         DiskResourceMetadataProperties props = GWT.create(DiskResourceMetadataProperties.class);
         ColumnConfig<DiskResourceMetadata, String> attributeColumn =
@@ -294,12 +299,20 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         MetadataCell metadataCell = new MetadataCell();
         attributeColumn.setCell(metadataCell);
         valueColumn.setCell(metadataCell);
+
         columns.add(attributeColumn);
         columns.add(valueColumn);
         columns.add(unitColumn);
 
-        ucm = new ColumnModel<>(columns);
-        acm = new ColumnModel<>(columns);
+        List<ColumnConfig<DiskResourceMetadata, ?>> userMdCols = Lists.newArrayList();
+        userMdCols.add(userChxBoxModel.getColumn());
+        userMdCols.addAll(columns);
+        ucm = new ColumnModel<>(userMdCols);
+
+        List<ColumnConfig<DiskResourceMetadata, ?>> addMdCols = Lists.newArrayList();
+        addMdCols.add(addChxBoxModel.getColumn());
+        addMdCols.addAll(columns);
+        acm = new ColumnModel<>(addMdCols);
 
     }
 
@@ -346,9 +359,9 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     private void initUserMdGridEditor() {
         userGridInlineEditing = new GridInlineEditing<>(userMdGrid);
         userGridInlineEditing.setClicksToEdit(ClicksToEdit.TWO);
-        ColumnConfig<DiskResourceMetadata, String> column1 = userMdGrid.getColumnModel().getColumn(0);
-        ColumnConfig<DiskResourceMetadata, String> column2 = userMdGrid.getColumnModel().getColumn(1);
-        ColumnConfig<DiskResourceMetadata, String> column3 = userMdGrid.getColumnModel().getColumn(2);
+        ColumnConfig<DiskResourceMetadata, String> column1 = userMdGrid.getColumnModel().getColumn(1);
+        ColumnConfig<DiskResourceMetadata, String> column2 = userMdGrid.getColumnModel().getColumn(2);
+        ColumnConfig<DiskResourceMetadata, String> column3 = userMdGrid.getColumnModel().getColumn(3);
 
         TextField field1 = new TextField();
         TextField field2 = new TextField();
@@ -382,21 +395,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         buildAdditionalMetadataPanel();
         buildUserMetadataPanel();
         createColumnModel();
-  /*      alc.setExpandMode(ExpandMode.SINGLE);
-
-        userMdGrid = new Grid<>(createUserListStore(), createColumnModel());
-        userMdGrid.getView().setStripeRows(true);
-        userMetadataPanel.add(userMdGrid);
-        alc.add(userMetadataPanel);
-
-        userMdGrid.getSelectionModel().addSelectionChangedHandler(new MetadataSelectionChangedListener());
-        new QuickTip(additionalMdgrid);
-
-        additionalMdgrid = new Grid<>(createAdditionalListStore(), createColumnModel());
-        additionalMdgrid.getView().setStripeRows(true);
-        additionalMetadataPanel.add(additionalMdgrid);
-        alc.add(additionalMetadataPanel);*/
-   }
+    }
 
     private Widget getCollapseBtn(ContentPanel panel) {
         return panel.getHeader().getTool(0);
@@ -421,4 +420,44 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         return valid;
     }
 
+    @Override
+    public void addToUserMetadata(List<DiskResourceMetadata> umd) {
+        userMdListStore.addAll(umd);
+    }
+
+    @Override
+    public void removeImportedMetadataFromStore(List<DiskResourceMetadata> umd) {
+        for (DiskResourceMetadata md : umd) {
+            additionalMdListStore.remove(md);
+        }
+    }
+
+    private class DiskResourceMetadataSelectionChangedHandler
+            implements SelectionChangedHandler<DiskResourceMetadata> {
+        @Override
+        public void onSelectionChanged(SelectionChangedEvent<DiskResourceMetadata> event) {
+            if (event.getSelection() != null && event.getSelection().size() > 0
+                && writable) {
+                if (userGridInlineEditing != null) {
+                    userGridInlineEditing.completeEditing();
+                }
+                deleteMetadataButton.enable();
+            } else {
+                deleteMetadataButton.disable();
+            }
+        }
+    }
+
+    private class DiskResourceAdditionalMetadataSelectionChangedHandler
+            implements SelectionChangedHandler<DiskResourceMetadata> {
+        @Override
+        public void onSelectionChanged(SelectionChangedEvent<DiskResourceMetadata> event) {
+            if (event.getSelection() != null && event.getSelection().size() > 0) {
+                importButton.enable();
+            } else {
+                importButton.disable();
+            }
+
+        }
+    }
 }

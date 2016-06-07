@@ -62,7 +62,8 @@
                             <toolbar:child>
                                 <button:TextButton ui:field="deleteMetadataButton"
                                                    text="{appearance.delete}"
-                                                   icon="{appearance.deleteIcon}"/>
+                                                   icon="{appearance.deleteIcon}"
+                                                    enabled="false"/>
                             </toolbar:child>
                             <toolbar:FillToolItem/>
                             <toolbar:child>
@@ -87,7 +88,8 @@
                             <toolbar:child>
                                 <button:TextButton ui:field="importButton"
                                                    text="Import to User Metadata"
-                                                   icon="{appearance.addIcon}"/>
+                                                   icon="{appearance.addIcon}"
+                                                    enabled="false"/>
                             </toolbar:child>
                         </toolbar:ToolBar>
                     </container:child>
