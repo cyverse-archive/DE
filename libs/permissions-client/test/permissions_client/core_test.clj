@@ -20,6 +20,9 @@
 (defn fake-lookup-url [lookup? & components]
   (str (assoc (apply curl/url fake-base-url components) :query {:lookup lookup?})))
 
+(defn fake-min-level-url [min-level & components]
+  (str (assoc (apply curl/url fake-base-url components) :query {:lookup true :min_level min-level})))
+
 (defn create-fake-client []
   (pc/new-permissions-client fake-base-url))
 
@@ -279,18 +282,24 @@
     (with-fake-routes {(fake-lookup-url false "permissions" "subjects" st sn) {:get list-perms-response}}
       (is (= (pc/get-subject-permissions (create-fake-client) st sn false) fake-perms)))
     (with-fake-routes {(fake-lookup-url true "permissions" "subjects" st sn) {:get list-perms-response}}
-      (is (= (pc/get-subject-permissions (create-fake-client) st sn true) fake-perms)))))
+      (is (= (pc/get-subject-permissions (create-fake-client) st sn true) fake-perms)))
+    (with-fake-routes {(fake-min-level-url "write" "permissions" "subjects" st sn) {:get list-perms-response}}
+      (is (= (pc/get-subject-permissions (create-fake-client) st sn true "write") fake-perms)))))
 
 (deftest test-get-subject-permissions-for-resource-type
   (let [[st sn rt] ["user" "ipcdev" "app"]]
     (with-fake-routes {(fake-lookup-url false "permissions" "subjects" st sn rt) {:get list-perms-response}}
       (is (= (pc/get-subject-permissions-for-resource-type (create-fake-client) st sn rt false) fake-perms)))
     (with-fake-routes {(fake-lookup-url true "permissions" "subjects" st sn rt) {:get list-perms-response}}
-      (is (= (pc/get-subject-permissions-for-resource-type (create-fake-client) st sn rt true) fake-perms)))))
+      (is (= (pc/get-subject-permissions-for-resource-type (create-fake-client) st sn rt true) fake-perms)))
+    (with-fake-routes {(fake-min-level-url "admin" "permissions" "subjects" st sn rt) {:get list-perms-response}}
+      (is (= (pc/get-subject-permissions-for-resource-type (create-fake-client) st sn rt true "admin") fake-perms)))))
 
 (deftest test-get-subject-permissions-for-resource
   (let [[st sn rt rn] ["user" "ipcdev" "app" "a"]]
     (with-fake-routes {(fake-lookup-url false "permissions" "subjects" st sn rt rn) {:get list-perms-response}}
       (is (= (pc/get-subject-permissions-for-resource (create-fake-client) st sn rt rn false) fake-perms)))
     (with-fake-routes {(fake-lookup-url true "permissions" "subjects" st sn rt rn) {:get list-perms-response}}
-      (is (= (pc/get-subject-permissions-for-resource (create-fake-client) st sn rt rn true) fake-perms)))))
+      (is (= (pc/get-subject-permissions-for-resource (create-fake-client) st sn rt rn true) fake-perms)))
+    (with-fake-routes {(fake-min-level-url "own" "permissions" "subjects" st sn rt rn) {:get list-perms-response}}
+      (is (= (pc/get-subject-permissions-for-resource (create-fake-client) st sn rt rn true "own") fake-perms)))))

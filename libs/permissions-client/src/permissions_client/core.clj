@@ -73,20 +73,26 @@
   (list-resource-permissions [_ resource-type resource-name]
     "Lists all permissions associated with a resource.")
 
-  (get-subject-permissions [_ subject-type subject-id lookup?]
+  (get-subject-permissions
+    [_ subject-type subject-id lookup?]
+    [_ subject-type subject-id lookup? min-level]
     "Looks up permissions that have been granted to a subject. If the 'lookup?' flag is set to 'true' and the
      subject happens to be a user then the most privileged permissions available to the user or any group that
      the user belongs to (as determined by Grouper) will be listed. If the 'lookup?' flag is set to 'false' or
      the subject is a group then only permissions that were granted directly to the subject will be listed.")
 
-  (get-subject-permissions-for-resource-type [_ subject-type subject-id resource-type lookup?]
+  (get-subject-permissions-for-resource-type
+    [_ subject-type subject-id resource-type lookup?]
+    [_ subject-type subject-id resource-type lookup? min-level]
     "Looks up permissions that have been granted to a subject for a single resource type. If the 'lookup?' flag
      is set to 'true' and the subject happens to be a user then the most privileged permissions available to the
      user or any group that the user belongs to (as determined by Grouper) will be listed. If the 'lookup?'
      flag is set to 'false' or the subject is a group then only permissions that were granted directly to the
      subject will be listed.")
 
-  (get-subject-permissions-for-resource [_ subject-type subject-id resource-type resource-name lookup?]
+  (get-subject-permissions-for-resource
+    [_ subject-type subject-id resource-type resource-name lookup?]
+    [_ subject-type subject-id resource-type resource-name lookup? min-level]
     "Looks up permissions that have been granted to a subject for a single resource. If the 'lookup?' flag is
      set to 'true' and the subject happens to be a user then the most privileged permissions available to the
      user or any group that the user belongs to (as determined by Grouper) will be listed. If the 'lookup?'
@@ -188,14 +194,29 @@
                      {:query-params {:lookup lookup?}
                       :as           :json})))
 
+  (get-subject-permissions [_ subject-type subject-id lookup? min-level]
+    (:body (http/get (build-url base-url "permissions" "subjects" subject-type subject-id)
+                     {:query-params {:lookup lookup? :min_level min-level}
+                      :as           :json})))
+
   (get-subject-permissions-for-resource-type [_ subject-type subject-id resource-type lookup?]
     (:body (http/get (build-url base-url "permissions" "subjects" subject-type subject-id resource-type)
                      {:query-params {:lookup lookup?}
                       :as           :json})))
 
+  (get-subject-permissions-for-resource-type [_ subject-type subject-id resource-type lookup? min-level]
+    (:body (http/get (build-url base-url "permissions" "subjects" subject-type subject-id resource-type)
+                     {:query-params {:lookup lookup? :min_level min-level}
+                      :as           :json})))
+
   (get-subject-permissions-for-resource [_ subject-type subject-id resource-type resource-name lookup?]
     (:body (http/get (build-url base-url "permissions" "subjects" subject-type subject-id resource-type resource-name)
                      {:query-params {:lookup lookup?}
+                      :as           :json})))
+
+  (get-subject-permissions-for-resource [_ subject-type subject-id resource-type resource-name lookup? min-level]
+    (:body (http/get (build-url base-url "permissions" "subjects" subject-type subject-id resource-type resource-name)
+                     {:query-params {:lookup lookup? :min_level min-level}
                       :as           :json}))))
 
 (defn new-permissions-client [base-url]
