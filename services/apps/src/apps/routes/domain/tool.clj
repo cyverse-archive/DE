@@ -12,6 +12,8 @@
 (def AttributionParam (describe String "The Tool's author or publisher"))
 (def SubmittedByParam (describe String "The username of the user that submitted the Tool Request"))
 (def ToolImplementationDocs "Information about the user who integrated the Tool into the DE")
+(def ToolRestricted (describe Boolean "Determines whether a time limit is applied and whether network access is granted"))
+(def ToolTimeLimit (describe Integer "The number of seconds that a tool is allowed to execute. A value of 0 means the time limit is disabled."))
 
 (defschema ToolUpdateParams
   (merge SecuredQueryParams
@@ -29,13 +31,15 @@
    :test              (describe ToolTestData "The test data for the Tool")})
 
 (defschema Tool
-  {:id                         ToolIdParam
-   :name                       ToolNameParam
-   (optional-key :description) ToolDescriptionParam
-   (optional-key :attribution) AttributionParam
-   :location                   (describe String "The path of the directory containing the Tool")
-   (optional-key :version)     VersionParam
-   :type                       (describe String "The Tool Type name")})
+  {:id                                ToolIdParam
+   :name                              ToolNameParam
+   (optional-key :description)        ToolDescriptionParam
+   (optional-key :attribution)        AttributionParam
+   :location                          (describe String "The path of the directory containing the Tool")
+   (optional-key :version)            VersionParam
+   :type                              (describe String "The Tool Type name")
+   (optional-key :restricted)         ToolRestricted
+   (optional-key :time_limit_seconds) ToolTimeLimit})
 
 (defschema ToolDetails
   (merge Tool

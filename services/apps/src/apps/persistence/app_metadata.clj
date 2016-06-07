@@ -48,6 +48,8 @@
                      :location
                      :version
                      :integration_data_id
+                     :restricted
+                     :time_limit_seconds
                      :tool_type_id]))
 
 (defn- filter-valid-task-values
