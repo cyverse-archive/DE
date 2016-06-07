@@ -251,6 +251,12 @@
     (is (looked-up-permission-correct? perms "app" "a" "user" "ipcdev" "own"))
     (is (looked-up-permission-correct? perms "analysis" "C" "user" "ipcdev" "own"))))
 
+(deftest test-get-subject-permissions-min-level
+  (let [client (create-permissions-client)
+        perms  (get-permission-map (pc/get-subject-permissions client "group" "ipcusers" false "admin"))]
+    (is (= (count perms) 1))
+    (is (looked-up-permission-correct? perms "app" "b" "group" "ipcusers" "admin"))))
+
 (deftest test-get-subject-permissions-for-resource-type
   (let [client (create-permissions-client)
         resp   (pc/get-subject-permissions-for-resource-type client "group" "ipcusers" "app" true)
@@ -259,9 +265,27 @@
     (is (looked-up-permission-correct? perms "app" "a" "group" "ipcusers" "read"))
     (is (looked-up-permission-correct? perms "app" "b" "group" "ipcusers" "admin"))))
 
+(deftest test-get-subject-permissions-for-resource-type-min-level
+  (let [client (create-permissions-client)
+        resp   (pc/get-subject-permissions-for-resource-type client "group" "ipcusers" "app" true "admin")
+        perms  (get-permission-map resp)]
+    (is (= (count perms) 1))
+    (is (looked-up-permission-correct? perms "app" "b" "group" "ipcusers" "admin"))))
+
 (deftest test-get-subject-permissions-for-resource
   (let [client (create-permissions-client)
         resp   (pc/get-subject-permissions-for-resource client "group" "ipcusers" "app" "a" true)
         perms  (get-permission-map resp)]
     (is (= (count perms) 1))
     (is (looked-up-permission-correct? perms "app" "a" "group" "ipcusers" "read"))))
+
+(deftest test-get-subject-permissions-for-resource-min-level
+  (let [client (create-permissions-client)
+        resp   (pc/get-subject-permissions-for-resource client "group" "ipcusers" "app" "a" true "admin")
+        perms  (get-permission-map resp)]
+    (is (= (count perms) 0)))
+  (let [client (create-permissions-client)
+        resp   (pc/get-subject-permissions-for-resource client "group" "ipcusers" "app" "b" true "admin")
+        perms  (get-permission-map resp)]
+    (is (= (count perms) 1))
+    (is (looked-up-permission-correct? perms "app" "b" "group" "ipcusers" "admin"))))
