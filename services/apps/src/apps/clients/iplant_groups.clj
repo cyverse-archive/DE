@@ -106,13 +106,6 @@
   [role subject ids get-attribute-def to-attribute-resource-name]
   (retrieve-permissions* role subject (get-attribute-def) (map to-attribute-resource-name ids)))
 
-(defn- retrieve-app-permissions
-  "Retrieves app permission assignments from Grouper."
-  ([subject app-ids]
-     (retrieve-app-permissions nil subject app-ids))
-  ([role subject app-ids]
-     (retrieve-permissions role subject app-ids grouper-app-permission-def grouper-app-resource-name)))
-
 (defn- retrieve-analysis-permissions
   "Retrieves analysis permission assignments from Grouper."
   ([subject analysis-ids]
@@ -124,18 +117,6 @@
   "Groups permissions by resource ID. The resource ID must be a UUID."
   [perms]
   (group-by (comp uuidify id-from-resource :name :attribute_definition_name) perms))
-
-(defn load-app-permissions
-  "Loads app permissions for a user from Grouper."
-  ([user]
-     (load-app-permissions user nil))
-  ([user app-ids]
-     (group-permissions (retrieve-app-permissions user app-ids))))
-
-(defn list-app-permissions
-  "Loads an app permission listing from Grouper."
-  [app-ids]
-  (group-permissions (retrieve-app-permissions nil app-ids)))
 
 (defn load-analysis-permissions
   "Loads analysis permissions for a user from Grouper."
@@ -173,13 +154,6 @@
                     :form-params  {:allowed true}
                     :content-type :json
                     :as           :json})))
-
-(defn register-private-app
-  "Registers a new private app in Grouper."
-  [user app-id]
-  (let [app-resource-name (grouper-app-resource-name app-id)]
-    (create-resource app-resource-name (grouper-app-permission-def))
-    (grant-role-user-permission user (grouper-user-group) app-resource-name "own")))
 
 (defn delete-app-resource
   "Deletes an app resource permission name in grouper."

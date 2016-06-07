@@ -5,7 +5,6 @@
         [kameleon.entities]
         [kameleon.uuids :only [uuidify]]
         [medley.core :only [find-first]]
-        [apps.clients.iplant-groups :as iplant-groups]
         [apps.persistence.app-metadata :only [add-app
                                                     add-mapping
                                                     add-step
@@ -18,7 +17,8 @@
         [apps.validation :only [validate-external-app-step
                                       validate-pipeline]]
         [apps.service.apps.de.edit :only [add-app-to-user-dev-category app-copy-name]])
-  (:require [apps.service.apps.de.listings :as listings]))
+  (:require [apps.clients.permissions :as permissions]
+            [apps.service.apps.de.listings :as listings]))
 
 (defn- add-app-type
   [step]
@@ -186,7 +186,7 @@
     (let [app-id (:id (add-app app))]
       (add-app-to-user-dev-category user app-id)
       (add-app-steps-mappings (assoc app :id app-id))
-      (iplant-groups/register-private-app (:shortUsername user) app-id)
+      (permissions/register-private-app (:shortUsername user) app-id)
       app-id)))
 
 (defn- update-pipeline-app
