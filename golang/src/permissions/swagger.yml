@@ -683,6 +683,17 @@ paths:
           defaults to False.
         in: query
         default: False
+      - name: min_level
+        type: string
+        enum:
+          - read
+          - admin
+          - write
+          - own
+        description: >-
+          The minimum permission level required to qualify for the result set. All permission levels qualify by
+          default.
+        in: query
     get:
       tags:
         - permissions
@@ -733,6 +744,17 @@ paths:
           defaults to False.
         in: query
         default: False
+      - name: min_level
+        type: string
+        enum:
+          - read
+          - admin
+          - write
+          - own
+        description: >-
+          The minimum permission level required to qualify for the result set. All permission levels qualify by
+          default.
+        in: query
     get:
       tags:
         - permissions
@@ -788,6 +810,17 @@ paths:
           defaults to False.
         in: query
         default: False
+      - name: min_level
+        type: string
+        enum:
+          - read
+          - admin
+          - write
+          - own
+        description: >-
+          The minimum permission level required to qualify for the result set. All permission levels qualify by
+          default.
+        in: query
     get:
       tags:
         - permissions

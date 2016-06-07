@@ -108,6 +108,37 @@ func PermissionsForSubjects(tx *sql.Tx, subjectIds []string) ([]*models.Permissi
 	return rowsToPermissionList(rows)
 }
 
+func PermissionsForSubjectsMinLevel(tx *sql.Tx, subjectIds []string, minLevel string) ([]*models.Permission, error) {
+	sa := StringArray(subjectIds)
+
+	// Query the database.
+	query := `SELECT DISTINCT ON (r.id)
+	              first_value(p.id) OVER w AS id,
+	              first_value(s.id) OVER w AS internal_subject_id,
+	              first_value(s.subject_id) OVER w AS subject_id,
+	              first_value(s.subject_type) OVER w AS subject_type,
+	              r.id AS resource_id,
+	              first_value(r.name) OVER w AS resource_name,
+	              first_value(rt.name) OVER w AS resource_type,
+	              first_value(pl.name) OVER w AS permission_level
+	          FROM permissions p
+	          JOIN permission_levels pl ON p.permission_level_id = pl.id
+	          JOIN subjects s ON p.subject_id = s.id
+	          JOIN resources r ON p.resource_id = r.id
+	          JOIN resource_types rt ON r.resource_type_id = rt.id
+	          WHERE s.subject_id = any($1)
+            AND pl.precedence <= (SELECT precedence FROM permission_levels WHERE name = $2)
+	          WINDOW w AS (PARTITION BY r.id ORDER BY pl.precedence)
+            ORDER BY r.id`
+	rows, err := tx.Query(query, &sa, minLevel)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	return rowsToPermissionList(rows)
+}
+
 func PermissionsForSubjectsAndResourceType(
 	tx *sql.Tx, subjectIds []string, resourceTypeName string,
 ) ([]*models.Permission, error) {
@@ -133,6 +164,40 @@ func PermissionsForSubjectsAndResourceType(
 	          WINDOW w AS (PARTITION BY r.id ORDER BY pl.precedence)
             ORDER BY r.id`
 	rows, err := tx.Query(query, &sa, resourceTypeName)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	return rowsToPermissionList(rows)
+}
+
+func PermissionsForSubjectsAndResourceTypeMinLevel(
+	tx *sql.Tx, subjectIds []string, resourceTypeName, minLevel string,
+) ([]*models.Permission, error) {
+	sa := StringArray(subjectIds)
+
+	// Query the database.
+	query := `SELECT DISTINCT ON (r.id)
+	              first_value(p.id) OVER w AS id,
+	              first_value(s.id) OVER w AS internal_subject_id,
+	              first_value(s.subject_id) OVER w AS subject_id,
+	              first_value(s.subject_type) OVER w AS subject_type,
+	              r.id AS resource_id,
+	              first_value(r.name) OVER w AS resource_name,
+	              first_value(rt.name) OVER w AS resource_type,
+	              first_value(pl.name) OVER w AS permission_level
+	          FROM permissions p
+	          JOIN permission_levels pl ON p.permission_level_id = pl.id
+	          JOIN subjects s ON p.subject_id = s.id
+	          JOIN resources r ON p.resource_id = r.id
+	          JOIN resource_types rt ON r.resource_type_id = rt.id
+	          WHERE s.subject_id = any($1)
+            AND rt.Name = $2
+            AND pl.precedence <= (SELECT precedence FROM permission_levels WHERE name = $3)
+	          WINDOW w AS (PARTITION BY r.id ORDER BY pl.precedence)
+            ORDER BY r.id`
+	rows, err := tx.Query(query, &sa, resourceTypeName, minLevel)
 	if err != nil {
 		return nil, err
 	}
@@ -167,6 +232,41 @@ func PermissionsForSubjectsAndResource(
 	          WINDOW w AS (PARTITION BY r.id ORDER BY pl.precedence)
             ORDER BY r.id`
 	rows, err := tx.Query(query, &sa, resourceTypeName, resourceName)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	return rowsToPermissionList(rows)
+}
+
+func PermissionsForSubjectsAndResourceMinLevel(
+	tx *sql.Tx, subjectIds []string, resourceTypeName, resourceName, minLevel string,
+) ([]*models.Permission, error) {
+	sa := StringArray(subjectIds)
+
+	// Query the database.
+	query := `SELECT DISTINCT ON (r.id)
+	              first_value(p.id) OVER w AS id,
+	              first_value(s.id) OVER w AS internal_subject_id,
+	              first_value(s.subject_id) OVER w AS subject_id,
+	              first_value(s.subject_type) OVER w AS subject_type,
+	              r.id AS resource_id,
+	              first_value(r.name) OVER w AS resource_name,
+	              first_value(rt.name) OVER w AS resource_type,
+	              first_value(pl.name) OVER w AS permission_level
+	          FROM permissions p
+	          JOIN permission_levels pl ON p.permission_level_id = pl.id
+	          JOIN subjects s ON p.subject_id = s.id
+	          JOIN resources r ON p.resource_id = r.id
+	          JOIN resource_types rt ON r.resource_type_id = rt.id
+	          WHERE s.subject_id = any($1)
+            AND rt.name = $2
+	          AND r.name = $3
+            AND pl.precedence <= (SELECT precedence FROM permission_levels WHERE name = $4)
+	          WINDOW w AS (PARTITION BY r.id ORDER BY pl.precedence)
+            ORDER BY r.id`
+	rows, err := tx.Query(query, &sa, resourceTypeName, resourceName, minLevel)
 	if err != nil {
 		return nil, err
 	}
