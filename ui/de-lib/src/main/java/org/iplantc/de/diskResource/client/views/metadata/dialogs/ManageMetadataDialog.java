@@ -6,40 +6,41 @@ import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.MetadataView;
+import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceMetadataUpdateCallback;
 import org.iplantc.de.diskResource.client.presenters.metadata.MetadataPresenterImpl;
 import org.iplantc.de.diskResource.client.views.metadata.DiskResourceMetadataViewImpl;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 
 import com.google.gwt.user.client.ui.HTML;
 import com.google.inject.Inject;
+
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 
 /**
  * @author jstroot
  */
 public class ManageMetadataDialog extends IPlantDialog {
-	
-	
-	private class OkSelectHandler implements SelectEvent.SelectHandler {
 
-		@Override
-		public void onSelect(SelectEvent event) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-	}
-	
-	private class CancelSelectHandler implements SelectEvent.SelectHandler {
 
-		@Override
-		public void onSelect(SelectEvent event) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-	}
-	
+    private class OkSelectHandler implements SelectEvent.SelectHandler {
+
+        @Override
+        public void onSelect(SelectEvent event) {
+            mdPresenter.setDiskResourceMetadata(new DiskResourceMetadataUpdateCallback(
+                    ManageMetadataDialog.this));
+        }
+
+    }
+
+    private class CancelSelectHandler implements SelectEvent.SelectHandler {
+
+        @Override
+        public void onSelect(SelectEvent event) {
+            hide();
+        }
+
+    }
+
 
     private final DiskResourceServiceFacade diskResourceService;
     private final GridView.Presenter.Appearance appearance;

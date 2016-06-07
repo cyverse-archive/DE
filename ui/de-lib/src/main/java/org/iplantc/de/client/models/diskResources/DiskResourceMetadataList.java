@@ -13,6 +13,12 @@ import java.util.List;
 public interface DiskResourceMetadataList {
 
     @PropertyName("irods-avus")
+    void setOtherMetadata(List<DiskResourceMetadata> otherMetadata);
+
+    @PropertyName("avus")
+    void setUserMetadata(List<DiskResourceMetadata> userMetadata);
+
+    @PropertyName("irods-avus")
     List<DiskResourceMetadata> getOtherMetadata();
 
     @PropertyName("avus")

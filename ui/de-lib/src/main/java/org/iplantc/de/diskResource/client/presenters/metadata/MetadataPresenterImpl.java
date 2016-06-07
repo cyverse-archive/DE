@@ -174,6 +174,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
         };
 
         DiskResourceUserMetadata umd = AutoBeanCodex.decode(autoBeanFactory, DiskResourceUserMetadata.class, "{}").as();
+        umd.setAvus(view.getUserMetadata());
         drService.setDiskResourceMetaData(resource,
                                           umd,
                                           view.getAvus(),

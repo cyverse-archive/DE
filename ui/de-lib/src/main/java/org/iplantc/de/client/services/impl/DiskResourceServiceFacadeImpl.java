@@ -674,9 +674,9 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         String address = deProperties.getDataMgmtBaseUrl() + resource.getId() + "/metadata"; //$NON-NLS-1$
 
         // Create request consisting of metadata to update and delete.
-        DiskResourceMetadataBatchRequest request = factory.metadataBatchRequest().as();
-        request.setMetadata(metadata);
-        request.setAvus(irodsAvus);
+        DiskResourceMetadataList request = factory.metadataList().as();
+        request.setUserMetadata(metadata.getAvus());
+        request.setOtherMetadata(irodsAvus);
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode(request));
         callService(wrapper, callback);
