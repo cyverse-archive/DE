@@ -320,4 +320,9 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     public int rootIriLabelWidth() {
         return 400;
     }
+
+    @Override
+    public String emptyDEOntologyLabel() {
+        return displayStrings.emptyDEOntologyLabel();
+    }
 }

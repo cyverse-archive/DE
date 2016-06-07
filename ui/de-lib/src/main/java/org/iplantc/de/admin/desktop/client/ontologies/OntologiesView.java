@@ -150,6 +150,8 @@ public interface OntologiesView extends IsWidget,
         String editedOntologyFieldWidth();
 
         int rootIriLabelWidth();
+
+        String emptyDEOntologyLabel();
     }
 
     interface Presenter {

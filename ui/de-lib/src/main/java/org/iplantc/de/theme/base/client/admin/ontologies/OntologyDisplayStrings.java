@@ -58,4 +58,6 @@ public interface OntologyDisplayStrings extends Messages{
     String appClassifiedList(String name, @PluralCount List<String> tags);
 
     String appClassified(String name, String label);
+
+    String emptyDEOntologyLabel();
 }

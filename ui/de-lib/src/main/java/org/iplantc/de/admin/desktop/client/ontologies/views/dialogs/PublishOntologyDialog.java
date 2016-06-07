@@ -61,7 +61,8 @@ public class PublishOntologyDialog extends IPlantDialog implements IsHideable {
         FieldLabel activeOntologyLabel = new FieldLabel();
         activeOntologyLabel.setText(appearance.activeOntologyLabel());
         HTML activeOntologyField = new HTML();
-        activeOntologyField.setHTML(appearance.activeOntologyField(activeOntology.getVersion()));
+        String activeVersion = getActiveVersion();
+        activeOntologyField.setHTML(appearance.activeOntologyField(activeVersion));
         activeOntologyField.setWidth(appearance.activeOntologyFieldWidth());
         activeOntologyLabel.add(activeOntologyField);
         con.add(activeOntologyLabel);
@@ -69,10 +70,29 @@ public class PublishOntologyDialog extends IPlantDialog implements IsHideable {
         FieldLabel editedOntologyLabel = new FieldLabel();
         editedOntologyLabel.setText(appearance.editedOntologyLabel());
         HTML editedOntologyField = new HTML();
-        editedOntologyField.setHTML(appearance.editedOntologyField(editedOntology.getVersion()));
+        String editedVersion = getEditedVersion();
+        editedOntologyField.setHTML(appearance.editedOntologyField(editedVersion));
         editedOntologyField.setWidth(appearance.editedOntologyFieldWidth());
         editedOntologyLabel.add(editedOntologyField);
         con.add(editedOntologyLabel);
+    }
+
+    private String getEditedVersion() {
+        if (editedOntology != null) {
+            return editedOntology.getVersion();
+        }
+        else {
+            return appearance.emptyDEOntologyLabel();
+        }
+    }
+
+    private String getActiveVersion() {
+        if (activeOntology != null) {
+            return activeOntology.getVersion();
+        }
+        else {
+            return appearance.emptyDEOntologyLabel();
+        }
     }
 
     private void setUpButtons() {
