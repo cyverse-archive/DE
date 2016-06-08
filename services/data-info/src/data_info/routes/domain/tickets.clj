@@ -22,3 +22,21 @@
 
    :tickets
    (describe [TicketDefinition] "The tickets created")})
+
+(s/defschema ListTicketsResponseMap
+  {(describe s/Keyword "The iRODS data item's path")
+   (describe [TicketDefinition] "The tickets for this path")})
+
+(s/defschema ListTicketsResponse
+  {:tickets
+   (describe ListTicketsResponseMap "Map of tickets")})
+
+;; used only for documentation
+(s/defschema ListTicketsPathsMap
+  {:/path/from/request/to/a/file/or/folder
+   (describe [TicketDefinition] "The tickets for this path")})
+
+;; used only for documentation
+(s/defschema ListTicketsDocumentation
+  {:tickets
+   (describe [ListTicketsPathsMap] "the tickets")})
