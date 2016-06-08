@@ -70,6 +70,21 @@ func deleteResourceType(db *sql.DB, id string) {
 	_ = responder.(*resource_types.DeleteResourceTypesIDOK)
 }
 
+func deleteResourceTypeByNameAttempt(db *sql.DB, name string) middleware.Responder {
+
+	// Build the request handler.
+	handler := impl.BuildDeleteResourceTypeByNameHandler(db)
+
+	// Attempt to remove the resource type from the database.
+	params := resource_types.DeleteResourceTypeByNameParams{ResourceTypeName: name}
+	return handler(params)
+}
+
+func deleteResourceTypeByName(db *sql.DB, name string) {
+	responder := deleteResourceTypeByNameAttempt(db, name)
+	_ = responder.(*resource_types.DeleteResourceTypeByNameOK)
+}
+
 func TestAddResourceType(t *testing.T) {
 	if !shouldrun() {
 		return
@@ -360,6 +375,44 @@ func TestDeleteResourceType(t *testing.T) {
 	}
 }
 
+func TestDeleteResourceTypeByName(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+
+	// Create two resource types.
+	rt1 := addResourceType(db, "rt1", "rt1")
+	rt2 := addResourceType(db, "rt2", "rt2")
+
+	// Delete the second resource type.
+	deleteResourceTypeByName(db, *rt2.Name)
+
+	// List the resource types.
+	resourceTypesOut := listResourceTypes(db, nil)
+
+	// Verify the number of resource types in the response.
+	resourceTypes := resourceTypesOut.ResourceTypes
+	if len(resourceTypes) != 1 {
+		t.Fatalf("unexpected number of resource types listed: %d", len(resourceTypes))
+		return
+	}
+
+	// Verify the resource type values.
+	listed := resourceTypes[0]
+	if *listed.ID != *rt1.ID {
+		t.Errorf("unexpected resource type ID listed: %s", *listed.ID)
+	}
+	if *listed.Name != *rt1.Name {
+		t.Errorf("unexpected resource type name listed: %s", *listed.Name)
+	}
+	if listed.Description != rt1.Description {
+		t.Errorf("unexpected resource type description listed: %s", listed.Description)
+	}
+}
+
 func TestDeleteNonExistentResourceType(t *testing.T) {
 	if !shouldrun() {
 		return
@@ -379,4 +432,67 @@ func TestDeleteNonExistentResourceType(t *testing.T) {
 	}
 }
 
-// TODO: add another test for an attempt to delete a resource type that is associated with a resource
+func TestDeleteNonExistentResourceTypeByName(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+
+	// Attempt to delete a non-existent resource type.
+	responder := deleteResourceTypeByNameAttempt(db, "missing_rt")
+	errorOut := responder.(*resource_types.DeleteResourceTypeByNameNotFound).Payload
+
+	// Verify that we got the expected error message.
+	expected := "resource type name not found: missing_rt"
+	if *errorOut.Reason != expected {
+		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
+	}
+}
+
+func TestDeleteResourceTypeWithResources(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+
+	// Create a resource type and a resource
+	rt := addResourceType(db, "rt", "rt")
+	addTestResource(db, "r", "rt", t)
+
+	// Attempt to delete the resource type.
+	responder := deleteResourceTypeAttempt(db, *rt.ID)
+	errorOut := responder.(*resource_types.DeleteResourceTypesIDBadRequest).Payload
+
+	// Verify that we got the expected error message.
+	expected := fmt.Sprintf("resource type %s has resources associated with it", *rt.ID)
+	if *errorOut.Reason != expected {
+		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
+	}
+}
+
+func TestDeleteResourceTypeWithResourcesByName(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+
+	// Create a resource type and a resource
+	rt := addResourceType(db, "rt", "rt")
+	addTestResource(db, "r", "rt", t)
+
+	// Attempt to delete the resource type.
+	responder := deleteResourceTypeByNameAttempt(db, *rt.Name)
+	errorOut := responder.(*resource_types.DeleteResourceTypeByNameBadRequest).Payload
+
+	// Verify that we got the expected error message.
+	expected := fmt.Sprintf("resource type has resources associated with it: %s", *rt.Name)
+	if *errorOut.Reason != expected {
+		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
+	}
+}

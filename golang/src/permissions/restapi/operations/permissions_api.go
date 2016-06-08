@@ -71,6 +71,8 @@ type PermissionsAPI struct {
 	PermissionsBySubjectAndResourceTypeHandler permissions.BySubjectAndResourceTypeHandler
 	// ResourcesDeleteResourceHandler sets the operation handler for the delete resource operation
 	ResourcesDeleteResourceHandler resources.DeleteResourceHandler
+	// ResourceTypesDeleteResourceTypeByNameHandler sets the operation handler for the delete resource type by name operation
+	ResourceTypesDeleteResourceTypeByNameHandler resource_types.DeleteResourceTypeByNameHandler
 	// SubjectsDeleteSubjectHandler sets the operation handler for the delete subject operation
 	SubjectsDeleteSubjectHandler subjects.DeleteSubjectHandler
 	// PermissionsGrantPermissionHandler sets the operation handler for the grant permission operation
@@ -188,6 +190,10 @@ func (o *PermissionsAPI) Validate() error {
 
 	if o.ResourcesDeleteResourceHandler == nil {
 		unregistered = append(unregistered, "resources.DeleteResourceHandler")
+	}
+
+	if o.ResourceTypesDeleteResourceTypeByNameHandler == nil {
+		unregistered = append(unregistered, "resource_types.DeleteResourceTypeByNameHandler")
 	}
 
 	if o.SubjectsDeleteSubjectHandler == nil {
@@ -357,6 +363,11 @@ func (o *PermissionsAPI) initHandlerCache() {
 		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/resources/{id}"] = resources.NewDeleteResource(o.context, o.ResourcesDeleteResourceHandler)
+
+	if o.handlers["DELETE"] == nil {
+		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/resource_types"] = resource_types.NewDeleteResourceTypeByName(o.context, o.ResourceTypesDeleteResourceTypeByNameHandler)
 
 	if o.handlers["DELETE"] == nil {
 		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)

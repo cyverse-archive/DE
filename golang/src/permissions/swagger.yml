@@ -285,6 +285,27 @@ paths:
             $ref: "#/definitions/resource_types_out"
         500:
           $ref: "#/responses/internal_server_error"
+    delete:
+      tags:
+        - resource_types
+      summary: "Delete a Resource Type by Name"
+      description: "Deletes the resource type with the given name."
+      operationId: deleteResourceTypeByName
+      parameters:
+        - name: "resource_type_name"
+          type: "string"
+          in: query
+          description: "The resource type name to search for."
+          required: True
+      responses:
+        200:
+          description: "Deleted"
+        400:
+          $ref: "#/responses/bad_request"
+        404:
+          $ref: "#/responses/not_found"
+        500:
+          $ref: "#/responses/internal_server_error"
     post:
       tags:
         - resource_types
