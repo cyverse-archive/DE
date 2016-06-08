@@ -10,16 +10,16 @@ import (
 )
 
 // ListResourcesHandlerFunc turns a function with the right signature into a list resources handler
-type ListResourcesHandlerFunc func() middleware.Responder
+type ListResourcesHandlerFunc func(ListResourcesParams) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn ListResourcesHandlerFunc) Handle() middleware.Responder {
-	return fn()
+func (fn ListResourcesHandlerFunc) Handle(params ListResourcesParams) middleware.Responder {
+	return fn(params)
 }
 
 // ListResourcesHandler interface for that can handle valid list resources params
 type ListResourcesHandler interface {
-	Handle() middleware.Responder
+	Handle(ListResourcesParams) middleware.Responder
 }
 
 // NewListResources creates a new http.Handler for the list resources operation
@@ -41,13 +41,14 @@ type ListResources struct {
 
 func (o *ListResources) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, _ := o.Context.RouteInfo(r)
+	var Params = NewListResourcesParams()
 
-	if err := o.Context.BindValidRequest(r, route, nil); err != nil { // bind params
+	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
-	res := o.Handler.Handle() // actually handle the request
+	res := o.Handler.Handle(Params) // actually handle the request
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 

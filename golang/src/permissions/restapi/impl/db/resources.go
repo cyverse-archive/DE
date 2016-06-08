@@ -134,12 +134,31 @@ func UpdateResource(tx *sql.Tx, id *string, name *string) (*models.ResourceOut, 
 	return &resource, nil
 }
 
-func ListResources(tx *sql.Tx) ([]*models.ResourceOut, error) {
+func ListResources(tx *sql.Tx, resourceTypeName, resourceName *string) ([]*models.ResourceOut, error) {
 
 	// Query the database.
-	query := `SELECT r.id, r.name, t.name AS resource_type
+	var rows *sql.Rows
+	var err error
+	if resourceTypeName != nil && resourceName != nil {
+		query := `SELECT r.id, r.name, t.name AS resource_type
+              FROM resources r JOIN resource_types t ON r.resource_type_id = t.id
+              WHERE t.name = $1 AND r.name = $2`
+		rows, err = tx.Query(query, *resourceTypeName, *resourceName)
+	} else if resourceTypeName != nil {
+		query := `SELECT r.id, r.name, t.name AS resource_type
+              FROM resources r JOIN resource_types t ON r.resource_type_id = t.id
+              WHERE t.name = $1`
+		rows, err = tx.Query(query, *resourceTypeName)
+	} else if resourceName != nil {
+		query := `SELECT r.id, r.name, t.name AS resource_type
+              FROM resources r JOIN resource_types t ON r.resource_type_id = t.id
+              WHERE r.name = $1`
+		rows, err = tx.Query(query, *resourceName)
+	} else {
+		query := `SELECT r.id, r.name, t.name AS resource_type
             FROM resources r JOIN resource_types t ON r.resource_type_id = t.id`
-	rows, err := tx.Query(query)
+		rows, err = tx.Query(query)
+	}
 	if err != nil {
 		return nil, err
 	}

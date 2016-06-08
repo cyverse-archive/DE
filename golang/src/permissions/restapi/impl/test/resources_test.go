@@ -22,7 +22,7 @@ func listResourcesDirectly(db *sql.DB, t *testing.T) []*models.ResourceOut {
 	defer tx.Rollback()
 
 	// List the resources.
-	resources, err := permsdb.ListResources(tx)
+	resources, err := permsdb.ListResources(tx, nil, nil)
 	if err != nil {
 		t.Fatalf("unable to list resources: %s", err)
 	}
@@ -46,17 +46,18 @@ func addResource(db *sql.DB, name, resourceType string) *models.ResourceOut {
 	return responder.(*resources.AddResourceCreated).Payload
 }
 
-func listResourcesAttempt(db *sql.DB) middleware.Responder {
+func listResourcesAttempt(db *sql.DB, resourceType, name *string) middleware.Responder {
 
 	// Build the request handler.
 	handler := impl.BuildListResourcesHandler(db)
 
 	// Attempt to list the resources.
-	return handler()
+	params := resources.ListResourcesParams{ResourceTypeName: resourceType, ResourceName: name}
+	return handler(params)
 }
 
-func listResources(db *sql.DB) *models.ResourcesOut {
-	responder := listResourcesAttempt(db)
+func listResources(db *sql.DB, resourceType, name *string) *models.ResourcesOut {
+	responder := listResourcesAttempt(db, resourceType, name)
 	return responder.(*resources.ListResourcesOK).Payload
 }
 
@@ -187,7 +188,96 @@ func TestListResources(t *testing.T) {
 	r1 := addResource(db, "r1", "app")
 
 	// List the resources and verify we get the expected number of results.
-	result := listResources(db)
+	result := listResources(db, nil, nil)
+	if len(result.Resources) != 1 {
+		t.Fatalf("unexpected number of resources listed: %d", len(result.Resources))
+	}
+
+	// Verify that we got the expected result.
+	resource := result.Resources[0]
+	if *resource.Name != *r1.Name {
+		t.Errorf("unexpected resource name: %s", *resource.Name)
+	}
+	if *resource.ResourceType != *r1.ResourceType {
+		t.Errorf("unexpected resource type: %s", *resource.ResourceType)
+	}
+}
+
+func TestListResourcesByName(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Add some resources to the database.
+	r1 := addResource(db, "r1", "app")
+	addResource(db, "r2", "app")
+
+	// List the resources and verify we get the expected number of results.
+	result := listResources(db, nil, r1.Name)
+	if len(result.Resources) != 1 {
+		t.Fatalf("unexpected number of resources listed: %d", len(result.Resources))
+	}
+
+	// Verify that we got the expected result.
+	resource := result.Resources[0]
+	if *resource.Name != *r1.Name {
+		t.Errorf("unexpected resource name: %s", *resource.Name)
+	}
+	if *resource.ResourceType != *r1.ResourceType {
+		t.Errorf("unexpected resource type: %s", *resource.ResourceType)
+	}
+}
+
+func TestListResourcesByType(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Add some resources to the database.
+	r1 := addResource(db, "r1", "app")
+	addResource(db, "r1", "analysis")
+
+	// List the resources and verify we get the expected number of results.
+	result := listResources(db, r1.ResourceType, nil)
+	if len(result.Resources) != 1 {
+		t.Fatalf("unexpected number of resources listed: %d", len(result.Resources))
+	}
+
+	// Verify that we got the expected result.
+	resource := result.Resources[0]
+	if *resource.Name != *r1.Name {
+		t.Errorf("unexpected resource name: %s", *resource.Name)
+	}
+	if *resource.ResourceType != *r1.ResourceType {
+		t.Errorf("unexpected resource type: %s", *resource.ResourceType)
+	}
+}
+
+func TestListResourcesByNameAndType(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Add some resources to the database.
+	r1 := addResource(db, "r1", "app")
+	addResource(db, "r2", "app")
+	addResource(db, "r1", "analysis")
+	addResource(db, "r2", "analysis")
+
+	// List the resources and verify we get the expected number of results.
+	result := listResources(db, r1.ResourceType, r1.Name)
 	if len(result.Resources) != 1 {
 		t.Fatalf("unexpected number of resources listed: %d", len(result.Resources))
 	}
@@ -211,7 +301,7 @@ func TestListResourcesEmpty(t *testing.T) {
 	addDefaultResourceTypes(db, t)
 
 	// Add a resource to the database.
-	result := listResources(db)
+	result := listResources(db, nil, nil)
 	if result.Resources == nil {
 		t.Errorf("recieved a nil resource list")
 	}
@@ -239,7 +329,7 @@ func TestUpdateResource(t *testing.T) {
 	}
 
 	// List the resources and verify that we get the expected number of results.
-	result := listResources(db)
+	result := listResources(db, nil, nil)
 	if len(result.Resources) != 1 {
 		t.Fatalf("unexpected number of resources listed: %d", len(result.Resources))
 	}
@@ -312,7 +402,7 @@ func TestDeleteResource(t *testing.T) {
 	deleteResource(db, *r1.ID)
 
 	// Verify that the resource was deleted.
-	result := listResources(db)
+	result := listResources(db, nil, nil)
 	if len(result.Resources) != 0 {
 		t.Fatalf("unexpected number of resources listed: %d", len(result.Resources))
 	}
