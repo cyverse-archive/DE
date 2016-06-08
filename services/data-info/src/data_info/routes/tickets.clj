@@ -31,4 +31,15 @@
     :description (str
 "This endpoint lists tickets for a set of provided paths."
 (get-error-code-block "ERR_NOT_A_USER, ..."))
-    (svc/trap uri tickets/do-list-tickets params body)))
+    (svc/trap uri tickets/do-list-tickets params body))
+
+  (POST* "/ticket-deleter" [:as {uri :uri}]
+    :tags ["bulk"]
+    :query [params StandardUserQueryParams]
+    :body [body Tickets]
+    :return DeleteTicketsResponse
+    :summary "Delete tickets"
+    :description (str
+"This endpoint deletes the provided set of tickets."
+(get-error-code-block "ERR_NOT_A_USER, ..."))
+    (svc/trap uri tickets/do-remove-tickets params body)))

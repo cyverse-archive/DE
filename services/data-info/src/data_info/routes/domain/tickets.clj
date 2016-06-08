@@ -40,3 +40,10 @@
 (s/defschema ListTicketsDocumentation
   {:tickets
    (describe [ListTicketsPathsMap] "the tickets")})
+
+(s/defschema Tickets
+  {:tickets (describe [NonBlankString] "A list of ticket IDs")})
+
+(s/defschema DeleteTicketsResponse
+  (assoc Tickets
+   :user (describe NonBlankString "The user performing the request.")))
