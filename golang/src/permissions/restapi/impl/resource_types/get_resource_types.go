@@ -8,7 +8,10 @@ import (
 	"permissions/restapi/operations/resource_types"
 )
 
-func buildResourceTypesGetResponse(db *sql.DB) (*models.ResourceTypesOut, error) {
+func buildResourceTypesGetResponse(
+	db *sql.DB, params resource_types.GetResourceTypesParams,
+) (*models.ResourceTypesOut, error) {
+	resourceTypeName := params.ResourceTypeName
 
 	// Start a transaction for the request.
 	tx, err := db.Begin()
@@ -18,7 +21,7 @@ func buildResourceTypesGetResponse(db *sql.DB) (*models.ResourceTypesOut, error)
 	defer tx.Commit()
 
 	// Get the list of resource types.
-	resourceTypes, err := permsdb.ListResourceTypes(tx)
+	resourceTypes, err := permsdb.ListResourceTypes(tx, resourceTypeName)
 	if err != nil {
 		return nil, err
 	}
@@ -26,11 +29,11 @@ func buildResourceTypesGetResponse(db *sql.DB) (*models.ResourceTypesOut, error)
 	return &models.ResourceTypesOut{resourceTypes}, nil
 }
 
-func BuildResourceTypesGetHandler(db *sql.DB) func() middleware.Responder {
+func BuildResourceTypesGetHandler(db *sql.DB) func(resource_types.GetResourceTypesParams) middleware.Responder {
 
 	// Return the handler function.
-	return func() middleware.Responder {
-		response, err := buildResourceTypesGetResponse(db)
+	return func(params resource_types.GetResourceTypesParams) middleware.Responder {
+		response, err := buildResourceTypesGetResponse(db, params)
 		if err != nil {
 			reason := err.Error()
 			return resource_types.NewGetResourceTypesInternalServerError().WithPayload(&models.ErrorOut{&reason})

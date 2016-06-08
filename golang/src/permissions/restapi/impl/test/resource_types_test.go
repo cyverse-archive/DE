@@ -27,13 +27,14 @@ func addResourceType(db *sql.DB, name string, description string) *models.Resour
 	return responder.(*resource_types.PostResourceTypesCreated).Payload
 }
 
-func listResourceTypes(db *sql.DB) *models.ResourceTypesOut {
+func listResourceTypes(db *sql.DB, resourceTypeName *string) *models.ResourceTypesOut {
 
 	// Build the request handler.
 	handler := impl.BuildResourceTypesGetHandler(db)
 
 	// Get the resource types from the database.
-	responder := handler().(*resource_types.GetResourceTypesOK)
+	params := resource_types.GetResourceTypesParams{ResourceTypeName: resourceTypeName}
+	responder := handler(params).(*resource_types.GetResourceTypesOK)
 
 	return responder.Payload
 }
@@ -126,7 +127,41 @@ func TestGetResourceTypes(t *testing.T) {
 	expected := addResourceType(db, "resource_type", "The resource type.")
 
 	// List the resource types.
-	resourceTypesOut := listResourceTypes(db)
+	resourceTypesOut := listResourceTypes(db, nil)
+
+	// Verify the number of resource types in the response.
+	resourceTypes := resourceTypesOut.ResourceTypes
+	if len(resourceTypes) != 1 {
+		t.Fatalf("unexpected number of resource types listed: %d", len(resourceTypes))
+	}
+
+	// Verify the resource type values.
+	actual := resourceTypes[0]
+	if *actual.ID != *expected.ID {
+		t.Errorf("unexpected resource type ID: %s", *actual.ID)
+	}
+	if *actual.Name != *expected.Name {
+		t.Errorf("unexpected resource type name: %s", *actual.Name)
+	}
+	if actual.Description != expected.Description {
+		t.Errorf("unexpected resource type description: %s", actual.Description)
+	}
+}
+
+func TestFindResourceType(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+
+	// Add some resource types.
+	addResourceType(db, "a", "a")
+	expected := addResourceType(db, "resource_type", "The resource type.")
+
+	// Search for a resource type.
+	resourceTypesOut := listResourceTypes(db, expected.Name)
 
 	// Verify the number of resource types in the response.
 	resourceTypes := resourceTypesOut.ResourceTypes
@@ -156,12 +191,41 @@ func TestGetResourceTypesEmpty(t *testing.T) {
 	db := initdb(t)
 
 	// List the resource types.
-	resourceTypesOut := listResourceTypes(db)
+	resourceTypesOut := listResourceTypes(db, nil)
 
 	// Verify that we got the expected result.
 	resourceTypes := resourceTypesOut.ResourceTypes
 	if resourceTypes == nil {
-		t.Errorf("a nil resource type list was returned")
+		t.Fatalf("a nil resource type list was returned")
+	}
+	if len(resourceTypes) != 0 {
+		t.Errorf("unexpected number of resource types listed: %d", len(resourceTypes))
+	}
+}
+
+func TestFindResourceTypeNotFound(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+
+	// Add some resource types.
+	addResourceType(db, "a", "a")
+	addResourceType(db, "b", "b")
+
+	// List the resource types.
+	search := "c"
+	resourceTypesOut := listResourceTypes(db, &search)
+
+	// Verify the number of resource types in the response.
+	resourceTypes := resourceTypesOut.ResourceTypes
+	if resourceTypes == nil {
+		t.Fatalf("a nil resource type list was returned")
+	}
+	if len(resourceTypes) != 0 {
+		t.Errorf("unexpected number of resource types listed: %d", len(resourceTypes))
 	}
 }
 
@@ -194,7 +258,7 @@ func TestModifyResourceType(t *testing.T) {
 	}
 
 	// List the resource types.
-	resourceTypesOut := listResourceTypes(db)
+	resourceTypesOut := listResourceTypes(db, nil)
 
 	// Verify the number of resource types in the response.
 	resourceTypes := resourceTypesOut.ResourceTypes
@@ -274,7 +338,7 @@ func TestDeleteResourceType(t *testing.T) {
 	deleteResourceType(db, *rt2.ID)
 
 	// List the resource types.
-	resourceTypesOut := listResourceTypes(db)
+	resourceTypesOut := listResourceTypes(db, nil)
 
 	// Verify the number of resource types in the response.
 	resourceTypes := resourceTypesOut.ResourceTypes

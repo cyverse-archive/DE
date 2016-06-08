@@ -6,11 +6,18 @@ import (
 	"permissions/models"
 )
 
-func ListResourceTypes(tx *sql.Tx) ([]*models.ResourceTypeOut, error) {
+func ListResourceTypes(tx *sql.Tx, resourceTypeName *string) ([]*models.ResourceTypeOut, error) {
 
 	// Query the database.
-	query := "SELECT id, name, description FROM resource_types"
-	rows, err := tx.Query(query)
+	var rows *sql.Rows
+	var err error
+	if resourceTypeName == nil {
+		query := "SELECT id, name, description FROM resource_types"
+		rows, err = tx.Query(query)
+	} else {
+		query := "SELECT id, name, description FROM resource_types WHERE name = $1"
+		rows, err = tx.Query(query, *resourceTypeName)
+	}
 	if err != nil {
 		return nil, err
 	}

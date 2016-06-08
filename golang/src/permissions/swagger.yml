@@ -273,6 +273,11 @@ paths:
         Lists resource types known to the permissions service. A resource type represents a class of resources to
         which permissions may be applied. For example, the Discovery environment has apps collectively defined as
         a single resource type in the permissions service.
+      parameters:
+        - name: "resource_type_name"
+          type: "string"
+          in: query
+          description: "The resource type name to search for."
       responses:
         200:
           description: "Success"
