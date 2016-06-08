@@ -169,7 +169,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
 
     @Override
     public void mask() {
-        con.mask();
+        con.mask(appearance.loadingMask());
     }
 
     @Override
@@ -237,11 +237,11 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         expandUserMetadataPanel();
         String attr = getUniqueAttrName(appearance.newAttribute(), 0);
         DiskResourceMetadata md =
-                MetadataPresenterImpl.newMetadata(attr, appearance.newValue(), ""); //$NON-NLS-1$
+                MetadataPresenterImpl.newMetadata(attr, appearance.newValue(), "New Unit"); //$NON-NLS-1$
         setAvuModelKey(md);
         userMdListStore.add(0, md);
-        userGridInlineEditing.startEditing(new GridCell(0, 0));
-        userGridInlineEditing.getEditor(userMdGrid.getColumnModel().getColumn(0)).validate(false);
+        userGridInlineEditing.startEditing(new GridCell(0, 1));
+        userGridInlineEditing.getEditor(userMdGrid.getColumnModel().getColumn(1)).validate(false);
     }
 
     @UiHandler("deleteMetadataButton")

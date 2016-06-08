@@ -101,7 +101,6 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
     private final MetadataView view;
     private final DiskResourceServiceFacade drService;
     private List<MetadataTemplateInfo> templates;
-    private List<DiskResourceMetadata> templateMd;
     private MetadataTemplateViewDialog templateView;
 
     final MetadataView.Presenter.Appearance appearance =
@@ -219,7 +218,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
                     templateView.hide();
                 }
                 templateView =
-                        new MetadataTemplateViewDialog(templateMd, isWritable(), result.getAttributes());
+                        new MetadataTemplateViewDialog(view.getUserMetadata(), isWritable(), result.getAttributes());
                 templateView.addOkButtonSelectHandler(new TemplateViewOkSelectHandler(isWritable(),
                                                                                       MetadataPresenterImpl.this,
                                                                                       templateView));

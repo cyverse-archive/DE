@@ -68,7 +68,7 @@
                             <toolbar:FillToolItem/>
                             <toolbar:child>
                                 <button:TextButton ui:field="selectButton"
-                                                   text="Select Template..."
+                                                   text="{appearance.selectTemplate}"
                                                    icon="{appearance.addIcon}"/>
                             </toolbar:child>
                         </toolbar:ToolBar>
@@ -87,7 +87,7 @@
                         <toolbar:ToolBar ui:field="otherToolbar">
                             <toolbar:child>
                                 <button:TextButton ui:field="importButton"
-                                                   text="Import to User Metadata"
+                                                   text="{appearance.importMd}"
                                                    icon="{appearance.addIcon}"
                                                     enabled="false"/>
                             </toolbar:child>

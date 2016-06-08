@@ -38,13 +38,15 @@ public interface MetadataView extends IsWidget {
 
         String newValue();
 
+        String newUnit();
+
         String paramValue();
 
         SafeHtml renderComboBoxHtml(MetadataTemplateInfo object);
 
         void renderMetadataCell(SafeHtmlBuilder sb, String value);
 
-        String templateSelectedLoadingMask();
+        String loadingMask();
 
         String userMetadata();
 
@@ -61,6 +63,10 @@ public interface MetadataView extends IsWidget {
 		String additionalMetadata();
 
 		String paramUnit();
+
+        String selectTemplate();
+
+        String importMd();
     }
 
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter {

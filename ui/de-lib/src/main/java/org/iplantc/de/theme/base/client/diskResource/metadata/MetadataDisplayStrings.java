@@ -19,6 +19,12 @@ public interface MetadataDisplayStrings extends Messages{
 
     String newValue();
 
+	String newUnit();
+
+	String selectTemplate();
+
+	String importMd();
+
     String userMetadata();
 
     String metadataTermGuide();
@@ -30,8 +36,6 @@ public interface MetadataDisplayStrings extends Messages{
 	String saveMetadataError();
 
 	String templateinfoError();
-
-	String selectTemplate();
 
 	String additionalMetadata();
 
