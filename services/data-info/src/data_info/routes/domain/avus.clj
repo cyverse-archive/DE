@@ -52,3 +52,21 @@
   (merge StandardUserQueryParams
          {:src   (describe String "The metadata source item's path")
           :paths (describe [String] "The list of paths to which metadata was copied")}))
+
+(s/defschema MetadataCSVParseParams
+  (merge StandardUserQueryParams
+         {:src
+          (describe String "Path to the CSV source file in IRODS")
+
+          (s/optional-key :separator)
+          (describe String
+                    "URL encoded separator character to use for parsing the CSV/TSV file.
+                     Comma (%2C) by default")}))
+
+(s/defschema MetadataCSVParseResultItem
+  {:path (describe NonBlankString "The iRODS path of the item where the metadata was applied")
+   :avus (describe [AVUMap] "The list of parsed AVUs applied to this data item")})
+
+(s/defschema MetadataCSVParseResult
+  {:path-metadata (describe [MetadataCSVParseResultItem]
+                            "The list of paths and their metadata that was parsed from the CSV file")})

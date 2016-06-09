@@ -2,7 +2,7 @@
   (:use [clojure-commons.error-codes]
         [clojure-commons.validators]
         [clj-jargon.init :only [with-jargon]]
-        [clj-jargon.item-ops :only [copy-stream]]
+        [clj-jargon.item-ops :only [copy-stream input-stream]]
         [clj-jargon.metadata]
         [kameleon.uuids :only [uuidify]]
         [slingshot.slingshot :only [try+ throw+]])
@@ -13,10 +13,10 @@
             [cheshire.core :as json]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
             [data-info.services.directory :as directory]
+            [data-info.services.page-tabular :as csv]
             [data-info.services.stat :as stat]
             [data-info.services.uuids :as uuids]
             [data-info.util.config :as cfg]
-            [data-info.util.logging :as dul]
             [data-info.util.paths :as paths]
             [data-info.util.validators :as validators]
             [metadata-client.core :as metadata]))
@@ -194,7 +194,7 @@
        :user user})))
 
 (defn- find-attributes
-  [cm attrs {:keys [path]}]
+  [cm attrs path]
   (let [irods-avus (list-path-metadata cm path)
         matching-avus (filter #(contains? attrs (:attr %)) irods-avus)]
     (if-not (empty? matching-avus)
@@ -205,9 +205,8 @@
 (defn- validate-batch-add-attrs
   "Throws an error if any of the given paths already have metadata set with any of the attrs found in the
   irods-avus list."
-  [cm irods-avus dest-items]
-  (let [attrs      (set (map :attr irods-avus))
-        duplicates (remove nil? (map (partial find-attributes cm attrs) dest-items))]
+  [cm attrs paths]
+  (let [duplicates (remove nil? (map (partial find-attributes cm attrs) paths))]
     (when-not (empty? duplicates)
       (throw+ {:error_code :clojure-commons.exception/not-unique
                :message    "Some paths already have metadata with some of the given attributes."
@@ -238,7 +237,7 @@
           dest-ids (map :id dest-items)
           irods-avus (list-path-metadata cm path)]
       (if-not force?
-        (validate-batch-add-attrs cm irods-avus dest-items))
+        (validate-batch-add-attrs cm (set (map :attr irods-avus)) dest-paths))
       (metadata/copy-metadata-avus user
                                    (resolve-data-type type)
                                    src-id
@@ -307,3 +306,52 @@
   "Entrypoint for the API. Calls (metadata-save)."
   [data-id {:keys [user]} {:keys [dest recursive]}]
   (metadata-save user (uuidify data-id) (ft/rm-last-slash dest) (boolean recursive)))
+
+(defn- bulk-add-file-avus
+  "Applies metadata from a list of attributes and values to the given path."
+  [cm user attrs path values]
+  (let [{:keys [type id]} (uuids/uuid-for-path cm user path)
+        avus (map (partial zipmap [:attr :value :unit]) (map vector attrs values (repeat "")))
+        metadata {:avus avus}]
+    (when-not (empty? avus)
+      (metadata/update-avus user (resolve-data-type type) id (json/encode {:avus avus})))
+    (merge {:path path} metadata)))
+
+(defn- format-csv-metadata-path
+  [dest-dir ^String path]
+  (ft/rm-last-slash
+    (if (.startsWith path "/")
+      path
+      (ft/path-join dest-dir path))))
+
+(defn- bulk-add-avus
+  "Applies metadata from a list of attributes and path/values to those paths found under dest-dir."
+  [cm user dest-dir attrs csv-path-values]
+  (let [format-path (partial format-csv-metadata-path dest-dir)
+        paths (map (comp format-path first) csv-path-values)
+        value-lists (map rest csv-path-values)]
+    (validators/all-paths-writeable cm user paths)
+    (mapv (partial bulk-add-file-avus cm user attrs)
+          paths value-lists)))
+
+(defn- get-csv
+  [cm src-path separator]
+  (let [stream-reader (java.io.InputStreamReader. (input-stream cm src-path) "UTF-8")]
+    (mapv (partial mapv string/trim) (csv/read-csv-stream separator stream-reader))))
+
+(defn- parse-metadata-csv
+  "Parses paths and metadata to apply from a source CSV file in the data store"
+  [user dest-id ^String separator src-path]
+  (with-jargon (cfg/jargon-cfg) [cm]
+    (validators/user-exists cm user)
+    (let [dest-dir (:path (get-readable-data-item cm user dest-id))
+          csv (get-csv cm src-path separator)
+          attrs (set (-> csv first rest))
+          csv-path-values (rest csv)]
+      {:path-metadata
+       (bulk-add-avus cm user dest-dir attrs csv-path-values)})))
+
+(defn parse-metadata-csv-file
+  "Parses paths and metadata to apply from a source CSV file in the data store"
+  [dest-id {:keys [user src separator] :or {separator ","}}]
+  (parse-metadata-csv user dest-id separator src))
