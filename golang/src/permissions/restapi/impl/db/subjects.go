@@ -6,6 +6,41 @@ import (
 	"permissions/models"
 )
 
+func rowsToSubjectList(rows *sql.Rows) ([]*models.SubjectOut, error) {
+
+	// Get the list of subjects.
+	subjects := make([]*models.SubjectOut, 0)
+	for rows.Next() {
+		var subjectDto SubjectDto
+		if err := rows.Scan(&subjectDto.ID, &subjectDto.SubjectID, &subjectDto.SubjectType); err != nil {
+			return nil, err
+		}
+		subjects = append(subjects, subjectDto.ToSubjectOut())
+	}
+
+	return subjects, nil
+}
+
+func rowsToSubject(rows *sql.Rows, duplicateErr error) (*models.SubjectOut, error) {
+
+	// Get the list of subjects.
+	subjects, err := rowsToSubjectList(rows)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check for duplicates. This shouldn't happen unless there's a bug in the query.
+	if len(subjects) > 1 {
+		return nil, duplicateErr
+	}
+
+	// Return the result.
+	if len(subjects) < 1 {
+		return nil, nil
+	}
+	return subjects[0], nil
+}
+
 func AddSubject(
 	tx *sql.Tx,
 	subjectId models.ExternalSubjectID,
@@ -92,27 +127,38 @@ func DuplicateSubjectExists(
 	return count > 0, nil
 }
 
-func ListSubjects(tx *sql.Tx) ([]*models.SubjectOut, error) {
+func ListSubjects(tx *sql.Tx, subjectType, subjectId *string) ([]*models.SubjectOut, error) {
 
 	// Query the database.
-	query := "SELECT id, subject_id, subject_type FROM subjects"
-	rows, err := tx.Query(query)
+	var rows *sql.Rows
+	var err error
+	if subjectType != nil && subjectId != nil {
+		query := `SELECT id, subject_id, subject_type FROM subjects
+		          WHERE subject_type = $1 AND subject_id = $2
+		          ORDER BY subject_type, subject_id`
+		rows, err = tx.Query(query, *subjectType, *subjectId)
+	} else if subjectType != nil {
+		query := `SELECT id, subject_id, subject_type FROM subjects
+		          WHERE subject_type = $1
+		          ORDER BY subject_type, subject_id`
+		rows, err = tx.Query(query, *subjectType)
+	} else if subjectId != nil {
+		query := `SELECT id, subject_id, subject_type FROM subjects
+		          WHERE subject_id = $1
+		          ORDER BY subject_type, subject_id`
+		rows, err = tx.Query(query, *subjectId)
+	} else {
+		query := `SELECT id, subject_id, subject_type FROM subjects
+		          ORDER BY subject_type, subject_id`
+		rows, err = tx.Query(query)
+	}
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
 	// Get the list of subjects.
-	subjects := make([]*models.SubjectOut, 0)
-	for rows.Next() {
-		var subjectDto SubjectDto
-		if err := rows.Scan(&subjectDto.ID, &subjectDto.SubjectID, &subjectDto.SubjectType); err != nil {
-			return nil, err
-		}
-		subjects = append(subjects, subjectDto.ToSubjectOut())
-	}
-
-	return subjects, nil
+	return rowsToSubjectList(rows)
 }
 
 func DeleteSubject(tx *sql.Tx, id models.InternalSubjectID) error {
@@ -155,27 +201,10 @@ func GetSubject(
 	defer rows.Close()
 
 	// Get the subject.
-	subjects := make([]*models.SubjectOut, 0)
-	for rows.Next() {
-		var subjectDto SubjectDto
-		if err := rows.Scan(&subjectDto.ID, &subjectDto.SubjectID, &subjectDto.SubjectType); err != nil {
-			return nil, err
-		}
-		subjects = append(subjects, subjectDto.ToSubjectOut())
-	}
-
-	// Check for duplicates. There's a uniqueness constraint on the database so this shouldn't happen.
-	if len(subjects) > 1 {
-		return nil, fmt.Errorf(
-			"found multiple subjects with ID, %s, and type, %s", string(subjectId), string(subjectType),
-		)
-	}
-
-	// Return the result.
-	if len(subjects) < 1 {
-		return nil, nil
-	}
-	return subjects[0], nil
+	duplicateErr := fmt.Errorf(
+		"found multiple subjects with ID, %s, and type, %s", string(subjectId), string(subjectType),
+	)
+	return rowsToSubject(rows, duplicateErr)
 }
 
 func GetSubjectByExternalId(tx *sql.Tx, subjectId models.ExternalSubjectID) (*models.SubjectOut, error) {
@@ -189,25 +218,6 @@ func GetSubjectByExternalId(tx *sql.Tx, subjectId models.ExternalSubjectID) (*mo
 	defer rows.Close()
 
 	// Get the subject.
-	subjects := make([]*models.SubjectOut, 0)
-	for rows.Next() {
-		var subjectDto SubjectDto
-		if err := rows.Scan(&subjectDto.ID, &subjectDto.SubjectID, &subjectDto.SubjectType); err != nil {
-			return nil, err
-		}
-		subjects = append(subjects, subjectDto.ToSubjectOut())
-	}
-
-	// Check for duplicates. There's a uniqueness constraint on the database so this shouldn't happen.
-	if len(subjects) > 1 {
-		return nil, fmt.Errorf(
-			"found multiple subjects with ID, %s", string(subjectId),
-		)
-	}
-
-	// Return the result.
-	if len(subjects) < 1 {
-		return nil, nil
-	}
-	return subjects[0], nil
+	duplicateErr := fmt.Errorf("found multiple subjects with ID, %s", string(subjectId))
+	return rowsToSubject(rows, duplicateErr)
 }

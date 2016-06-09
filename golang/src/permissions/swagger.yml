@@ -504,6 +504,18 @@ paths:
       description: >-
         Lists subjects (entities to which permissions may be gratned) that exist in the database.
       operationId: listSubjects
+      parameters:
+        - name: "subject_id"
+          type: "string"
+          in: query
+          description: "The external subject identifier."
+        - name: "subject_type"
+          type: "string"
+          enum:
+            - "user"
+            - "group"
+          in: query
+          description: "The subject type."
       responses:
         200:
           description: "OK"

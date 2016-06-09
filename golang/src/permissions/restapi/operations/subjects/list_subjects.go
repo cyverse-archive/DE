@@ -10,16 +10,16 @@ import (
 )
 
 // ListSubjectsHandlerFunc turns a function with the right signature into a list subjects handler
-type ListSubjectsHandlerFunc func() middleware.Responder
+type ListSubjectsHandlerFunc func(ListSubjectsParams) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn ListSubjectsHandlerFunc) Handle() middleware.Responder {
-	return fn()
+func (fn ListSubjectsHandlerFunc) Handle(params ListSubjectsParams) middleware.Responder {
+	return fn(params)
 }
 
 // ListSubjectsHandler interface for that can handle valid list subjects params
 type ListSubjectsHandler interface {
-	Handle() middleware.Responder
+	Handle(ListSubjectsParams) middleware.Responder
 }
 
 // NewListSubjects creates a new http.Handler for the list subjects operation
@@ -41,13 +41,14 @@ type ListSubjects struct {
 
 func (o *ListSubjects) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, _ := o.Context.RouteInfo(r)
+	var Params = NewListSubjectsParams()
 
-	if err := o.Context.BindValidRequest(r, route, nil); err != nil { // bind params
+	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
-	res := o.Handler.Handle() // actually handle the request
+	res := o.Handler.Handle(Params) // actually handle the request
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
