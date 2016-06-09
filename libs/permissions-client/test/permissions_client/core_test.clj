@@ -185,6 +185,11 @@
       (pc/delete-resource (create-fake-client) resource-id)
       (is true "Resource deleted successfully."))))
 
+(deftest test-delete-resource-by-name-and-type
+  (let [opts {:resource_name "a" :resource_type_name "app"}]
+    (with-fake-routes {(fake-query-url opts "resources") {:delete fake-status-response}}
+      (pc/delete-resource (create-fake-client) (:resource_name opts) (:resource_type_name opts)))))
+
 (defn update-resource-response-fn [id resource-type]
   (fn [{:keys [uri body]}]
     (if (= id (last (string/split uri #"/")))

@@ -197,6 +197,11 @@
     (pc/delete-resource client (:id a))
     (is (nil? ((get-resource-map) "a")))))
 
+(deftest test-delete-resource-by-name-and-type
+  (let [client (create-permissions-client)]
+    (pc/delete-resource client "a" "app")
+    (is (nil? ((get-resource-map) "a")))))
+
 (deftest test-update-resource
   (let [client   (create-permissions-client)
         mr-radar (pc/add-resource client "mr-radar" "app")

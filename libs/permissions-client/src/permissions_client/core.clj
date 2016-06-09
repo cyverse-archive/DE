@@ -35,7 +35,7 @@
       resource-type field is the name of the resource type, which must have been registered in the permission
       database already.")
 
-  (delete-resource [_ id]
+  (delete-resource [_ id] [_ resource-name resource-type]
     "Removes the resource with the given ID from the permissions service.")
 
   (update-resource [_ id resource-name]
@@ -163,6 +163,12 @@
 
   (delete-resource [_ id]
     (http/delete (build-url base-url "resources" id))
+    nil)
+
+  (delete-resource [_ resource-name resource-type]
+    (http/delete (build-url base-url "resources")
+                 {:query-params {:resource_type_name (str resource-type)
+                                 :resource_name      (str resource-name)}})
     nil)
 
   (update-resource [_ id resource-name]
