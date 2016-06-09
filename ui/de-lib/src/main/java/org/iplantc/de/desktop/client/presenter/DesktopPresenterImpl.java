@@ -58,6 +58,7 @@ import org.iplantc.de.fileViewers.client.callbacks.LoadGenomeInCoGeCallback;
 import org.iplantc.de.notifications.client.events.WindowShowRequestEvent;
 import org.iplantc.de.notifications.client.utils.NotifyInfo;
 import org.iplantc.de.notifications.client.views.dialogs.RequestHistoryDialog;
+import org.iplantc.de.shared.events.UserLoggedOutEvent;
 import org.iplantc.de.shared.services.PropertyServiceAsync;
 import org.iplantc.de.systemMessages.client.events.NewSystemMessagesEvent;
 import org.iplantc.de.systemMessages.client.view.NewMessageView;
@@ -309,20 +310,28 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
 		introjs.start();
     }-*/;
 
+
     @Override
-    public void doLogout() {
+    public void doLogout(boolean sessionTimeout) {
+       cleanUp();
+        //session is timed-out, following rpc call will fail and cause 401.
+        if(!sessionTimeout) {
+            userSessionService.logout(new RuntimeCallbacks.LogoutCallback(userSessionService,
+                                                                          deClientConstants,
+                                                                          userSettings,
+                                                                          appearance,
+                                                                          getOrderedWindowStates()));
+        } else {
+            final String redirectUrl = GWT.getHostPageBaseURL() + deClientConstants.logoutUrl();
+            Window.Location.assign(redirectUrl);
+        }
+    }
+
+    private void cleanUp() {
         loggedOut = true;
-        // Need to stop polling
         messagePoller.stop();
-//        cleanUp();
         notificationWebSocketManager.closeWebSocket();
         systemMessageWebSocketManager.closeWebSocket();
-
-        userSessionService.logout(new RuntimeCallbacks.LogoutCallback(userSessionService,
-                                                     deClientConstants,
-                                                     userSettings,
-                                                     appearance,
-                                                     getOrderedWindowStates()));
     }
 
     @Override

@@ -21,6 +21,7 @@ import org.iplantc.de.diskResource.client.model.DiskResourceProperties;
 import org.iplantc.de.diskResource.client.views.dialogs.FileFolderSelectDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.FileSelectDialog;
 import org.iplantc.de.resources.client.constants.IplantValidationConstants;
+import org.iplantc.de.shared.AsyncProviderWrapper;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -32,7 +33,6 @@ import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -214,10 +214,9 @@ public class MultiFileSelectorField extends Composite implements
     IplantValidationConstants validationConstants;
     @Inject
     EventBus eventBus;
+    @Inject AsyncProviderWrapper<FileSelectDialog> fileSelectDialogProvider;
     @Inject
-    AsyncProvider<FileSelectDialog> fileSelectDialogProvider;
-    @Inject
-    AsyncProvider<FileFolderSelectDialog> fileFolderSelectDialogProvider;
+    AsyncProviderWrapper<FileFolderSelectDialog> fileFolderSelectDialogProvider;
     @Inject
     DiskResourceUtil diskResourceUtil;
     private final boolean allowFolderSelect;

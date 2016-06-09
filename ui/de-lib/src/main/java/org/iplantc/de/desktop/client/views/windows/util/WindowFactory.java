@@ -3,9 +3,20 @@ package org.iplantc.de.desktop.client.views.windows.util;
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.commons.client.util.WindowUtil;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
-import org.iplantc.de.desktop.client.views.windows.*;
+import org.iplantc.de.desktop.client.views.windows.AboutApplicationWindow;
+import org.iplantc.de.desktop.client.views.windows.AppEditorWindow;
+import org.iplantc.de.desktop.client.views.windows.AppLaunchWindow;
+import org.iplantc.de.desktop.client.views.windows.DEAppsWindow;
+import org.iplantc.de.desktop.client.views.windows.DeDiskResourceWindow;
+import org.iplantc.de.desktop.client.views.windows.FileViewerWindow;
+import org.iplantc.de.desktop.client.views.windows.IPlantWindowInterface;
+import org.iplantc.de.desktop.client.views.windows.MyAnalysesWindow;
+import org.iplantc.de.desktop.client.views.windows.NotificationWindow;
+import org.iplantc.de.desktop.client.views.windows.PipelineEditorWindow;
+import org.iplantc.de.desktop.client.views.windows.SimpleDownloadWindow;
+import org.iplantc.de.desktop.client.views.windows.SystemMessagesWindow;
+import org.iplantc.de.shared.AsyncProviderWrapper;
 
-import com.google.gwt.inject.client.AsyncProvider;
 import com.google.inject.Inject;
 
 /**
@@ -17,17 +28,17 @@ public class WindowFactory {
 
     @Inject DEClientConstants constants;
 
-    @Inject AsyncProvider<AboutApplicationWindow> aboutApplicationWindowAsyncProvider;
-    @Inject AsyncProvider<MyAnalysesWindow> analysesWindowAsyncProvider;
-    @Inject AsyncProvider<AppEditorWindow> appEditorWindowAsyncProvider;
-    @Inject AsyncProvider<AppLaunchWindow> appLaunchWindowAsyncProvider;
-    @Inject AsyncProvider<DEAppsWindow> appsWindowAsyncProvider;
-    @Inject AsyncProvider<DeDiskResourceWindow> diskResourceWindowAsyncProvider;
-    @Inject AsyncProvider<FileViewerWindow> fileViewerWindowAsyncProvider;
-    @Inject AsyncProvider<NotificationWindow> notificationWindowAsyncProvider;
-    @Inject AsyncProvider<SimpleDownloadWindow> simpleDownloadWindowAsyncProvider;
-    @Inject AsyncProvider<PipelineEditorWindow> pipelineEditorWindowAsyncProvider;
-    @Inject AsyncProvider<SystemMessagesWindow> systemMessagesWindowAsyncProvider;
+    @Inject AsyncProviderWrapper<AboutApplicationWindow> aboutApplicationWindowAsyncProvider;
+    @Inject AsyncProviderWrapper<MyAnalysesWindow> analysesWindowAsyncProvider;
+    @Inject AsyncProviderWrapper<AppEditorWindow> appEditorWindowAsyncProvider;
+    @Inject AsyncProviderWrapper<AppLaunchWindow> appLaunchWindowAsyncProvider;
+    @Inject AsyncProviderWrapper<DEAppsWindow> appsWindowAsyncProvider;
+    @Inject AsyncProviderWrapper<DeDiskResourceWindow> diskResourceWindowAsyncProvider;
+    @Inject AsyncProviderWrapper<FileViewerWindow> fileViewerWindowAsyncProvider;
+    @Inject AsyncProviderWrapper<NotificationWindow> notificationWindowAsyncProvider;
+    @Inject AsyncProviderWrapper<SimpleDownloadWindow> simpleDownloadWindowAsyncProvider;
+    @Inject AsyncProviderWrapper<PipelineEditorWindow> pipelineEditorWindowAsyncProvider;
+    @Inject AsyncProviderWrapper<SystemMessagesWindow> systemMessagesWindowAsyncProvider;
 
     @Inject
     WindowFactory() { }
@@ -38,8 +49,8 @@ public class WindowFactory {
      * 
      * @return an asynchronous provider for the appropriate window.
      */
-    public <C extends WindowConfig> AsyncProvider<? extends IPlantWindowInterface> build(C config) {
-        AsyncProvider<? extends IPlantWindowInterface> ret = null;
+    public <C extends WindowConfig> AsyncProviderWrapper<? extends IPlantWindowInterface> build(C config) {
+        AsyncProviderWrapper<? extends IPlantWindowInterface> ret = null;
         switch (config.getWindowType()) {
             case ABOUT:
                 ret = aboutApplicationWindowAsyncProvider;

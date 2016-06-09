@@ -19,8 +19,8 @@ import org.iplantc.de.client.models.tool.ToolList;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
+import org.iplantc.de.shared.AsyncProviderWrapper;
 
-import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
@@ -47,8 +47,8 @@ public class ToolAdminPresenterImpl implements ToolAdminView.Presenter,
     private final ToolAdminView.ToolAdminViewAppearance appearance;
     private final ListStore<Tool> listStore;
     @Inject IplantAnnouncer announcer;
-    @Inject AsyncProvider<OverwriteToolDialog> overwriteAppDialog;
-    @Inject AsyncProvider<DeleteToolDialog> deleteAppDialog;
+    @Inject AsyncProviderWrapper<OverwriteToolDialog> overwriteAppDialog;
+    @Inject AsyncProviderWrapper<DeleteToolDialog> deleteAppDialog;
 
     @Inject
     public ToolAdminPresenterImpl(final ToolAdminViewFactory viewFactory,

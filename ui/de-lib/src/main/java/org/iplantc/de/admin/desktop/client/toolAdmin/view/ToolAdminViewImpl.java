@@ -11,13 +11,13 @@ import org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs.ToolAdminDetai
 import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.commons.client.ErrorHandler;
+import org.iplantc.de.shared.AsyncProviderWrapper;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -86,7 +86,7 @@ public class ToolAdminViewImpl extends Composite implements ToolAdminView {
     @UiField TextField filterField;
     @UiField(provided = true) ListStore<Tool> listStore;
     @UiField(provided = true) ToolAdminViewAppearance appearance;
-    @Inject AsyncProvider<ToolAdminDetailsDialog> toolDetailsDialog;
+    @Inject AsyncProviderWrapper<ToolAdminDetailsDialog> toolDetailsDialog;
 
     private final ToolProperties toolProps;
     private final NameFilter nameFilter;

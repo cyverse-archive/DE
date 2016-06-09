@@ -1,5 +1,6 @@
 package org.iplantc.de.admin.desktop.client.toolAdmin.presenter;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -7,8 +8,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-
-import static org.junit.Assert.assertEquals;
 
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
 import org.iplantc.de.admin.desktop.client.toolAdmin.events.AddToolSelectedEvent;
@@ -26,9 +25,9 @@ import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.client.models.tool.ToolAutoBeanFactory;
 import org.iplantc.de.client.models.tool.ToolList;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.shared.AsyncProviderWrapper;
 
 import com.google.common.collect.Lists;
-import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import com.google.web.bindery.autobean.shared.AutoBean;
@@ -64,8 +63,8 @@ public class ToolAdminPresenterImplTest {
     @Mock List<Tool> listToolMock;
     @Mock ListStore<Tool> listStoreToolMock;
     @Mock IplantAnnouncer iplantAnnouncerMock;
-    @Mock AsyncProvider<OverwriteToolDialog> overwriteAppDialogMock;
-    @Mock AsyncProvider<DeleteToolDialog> deleteAppDialogMock;
+    @Mock AsyncProviderWrapper<OverwriteToolDialog> overwriteAppDialogMock;
+    @Mock AsyncProviderWrapper<DeleteToolDialog> deleteAppDialogMock;
 
     @Captor ArgumentCaptor<AsyncCallback<Tool>> asyncCallbackToolCaptor;
     @Captor ArgumentCaptor<AsyncCallback<List<Tool>>> asyncCallbackToolListCaptor;

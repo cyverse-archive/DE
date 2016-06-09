@@ -23,13 +23,13 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.commons.client.ErrorHandler;
+import org.iplantc.de.shared.AsyncProviderWrapper;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -98,8 +98,7 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
     MenuItem requestTool;
     @UiField
     MenuItem shareCollab, sharePublic;
-    @Inject
-    AsyncProvider<SubmitAppForPublicDialog> submitAppDialogAsyncProvider;
+    @Inject AsyncProviderWrapper<SubmitAppForPublicDialog> submitAppDialogAsyncProvider;
     @UiField
     MenuItem wfRun;
     @UiField

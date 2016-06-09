@@ -8,10 +8,10 @@ import org.iplantc.de.client.models.IsHideable;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
+import org.iplantc.de.shared.AsyncProviderWrapper;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -51,7 +51,7 @@ public class AnalysisParametersViewImpl extends Composite implements AnalysisPar
     @UiField BorderLayoutData northData;
     @UiField TextButton btnSave;
 
-    @Inject AsyncProvider<SaveAsDialog> saveAsDialogProvider;
+    @Inject AsyncProviderWrapper<SaveAsDialog> saveAsDialogProvider;
 
     @Inject
     AnalysisParametersViewImpl(final AnalysesView.Appearance appearance,

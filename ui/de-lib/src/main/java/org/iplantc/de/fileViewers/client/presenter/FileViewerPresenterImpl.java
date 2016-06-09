@@ -36,6 +36,7 @@ import org.iplantc.de.fileViewers.client.views.ExternalVisualizationURLViewerImp
 import org.iplantc.de.fileViewers.client.views.SaveAsDialogCancelSelectHandler;
 import org.iplantc.de.fileViewers.client.views.SaveAsDialogOkSelectHandler;
 import org.iplantc.de.fileViewers.client.views.TextViewerImpl;
+import org.iplantc.de.shared.AsyncProviderWrapper;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -43,7 +44,6 @@ import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -135,7 +135,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     @Inject CommonModelAutoBeanFactory factory;
     @Inject FileEditorServiceFacade fileEditorService;
     @Inject FileViewer.FileViewerPresenterAppearance appearance;
-    @Inject AsyncProvider<SaveAsDialog> saveAsDialogProvider;
+    @Inject AsyncProviderWrapper<SaveAsDialog> saveAsDialogProvider;
     @Inject UserSessionServiceFacade userSessionService;
     @Inject DiskResourceServiceFacade diskResourceServiceFacade;
     @Inject DiskResourceUtil diskResourceUtil;

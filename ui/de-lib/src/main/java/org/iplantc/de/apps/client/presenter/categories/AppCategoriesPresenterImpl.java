@@ -30,10 +30,10 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
+import org.iplantc.de.shared.AsyncProviderWrapper;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -88,7 +88,7 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     protected static String WORKSPACE;
     protected String searchRegexPattern;
     @Inject IplantAnnouncer announcer;
-    @Inject AsyncProvider<AppDetailsDialog> appDetailsDlgAsyncProvider;
+    @Inject AsyncProviderWrapper<AppDetailsDialog> appDetailsDlgAsyncProvider;
     @Inject AppServiceFacade appService;
     @Inject AppUserServiceFacade appUserService;
     @Inject AppCategoriesView.AppCategoriesAppearance appearance;
