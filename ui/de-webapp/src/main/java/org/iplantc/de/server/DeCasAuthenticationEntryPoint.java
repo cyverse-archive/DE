@@ -1,6 +1,5 @@
 package org.iplantc.de.server;
 
-import org.eclipse.jetty.server.Authentication;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -8,7 +7,7 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import org.springframework.util.Assert;
 
 import java.io.IOException;
-
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author jstroot
  */
 public class DeCasAuthenticationEntryPoint implements AuthenticationEntryPoint, InitializingBean {
+
+    Logger LOG = Logger.getLogger(DeCasAuthenticationEntryPoint.class.getName());
 
     private LandingPage landingPage;
 
@@ -49,12 +50,8 @@ public class DeCasAuthenticationEntryPoint implements AuthenticationEntryPoint, 
     public void commence(final HttpServletRequest httpServletRequest, final HttpServletResponse httpServletResponse,
                          final AuthenticationException e) throws IOException, ServletException {
 
-        // Respond with a redirect if this is an RPC call.
-        if (isRpcCall(httpServletRequest)) {
-          // logoutSuccessHandler.onLogoutSuccess(httpServletRequest, httpServletResponse, null);
+        if (isRpcCall(httpServletRequest) || isGWTCodeSplit(httpServletRequest)) {
             httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-            //throw authentication exception
-         //   throw new org.iplantc.de.shared.exceptions.AuthenticationException("Session timed out or redirect request received!");
         }
 
         // Display the landing page.
@@ -64,4 +61,13 @@ public class DeCasAuthenticationEntryPoint implements AuthenticationEntryPoint, 
     private boolean isRpcCall(HttpServletRequest req) {
         return req.getRequestURI().endsWith(rpcSuffix);
     }
+
+    private boolean isGWTCodeSplit(HttpServletRequest req) {
+        if (req.getRequestURI().contains("/deferredjs/")) {
+            return true;
+        }
+        return false;
+    }
+
+
 }
