@@ -127,7 +127,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
         userMenu.add(new IPlantAnchor(appearance.logout(), -1, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                Window.Location.assign(appearance.logoutWindowUrl());
+                doLogout();
             }
         }));
 
@@ -169,5 +169,10 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
 
         permIdPanel.ensureDebugId(baseID + Belphegor.Ids.PERMID);
         permIdPresenter.setViewDebugId(baseID + Belphegor.Ids.PERMID);
+    }
+
+    @Override
+    public void doLogout() {
+        Window.Location.assign(appearance.logoutWindowUrl());
     }
 }

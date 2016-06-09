@@ -55,6 +55,7 @@ import org.iplantc.de.diskResource.client.views.grid.DiskResourceColumnModel;
 import org.iplantc.de.diskResource.client.views.metadata.dialogs.ManageMetadataDialog;
 import org.iplantc.de.diskResource.client.views.sharing.dialogs.DataSharingDialog;
 import org.iplantc.de.diskResource.client.views.sharing.dialogs.ShareResourceLinkDialog;
+import org.iplantc.de.shared.AsyncProviderWrapper;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
@@ -63,7 +64,6 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -204,17 +204,16 @@ public class GridViewPresenterImpl implements
     @Inject
     FileSystemMetadataServiceFacade metadataService;
     @Inject
-    AsyncProvider<InfoTypeEditorDialog> infoTypeDialogProvider;
+    AsyncProviderWrapper<InfoTypeEditorDialog> infoTypeDialogProvider;
+    @Inject AsyncProviderWrapper<CommentsDialog> commentDialogProvider;
     @Inject
-    AsyncProvider<CommentsDialog> commentDialogProvider;
+    AsyncProviderWrapper<ManageMetadataDialog> metadataDialogProvider;
     @Inject
-    AsyncProvider<ManageMetadataDialog> metadataDialogProvider;
+    AsyncProviderWrapper<DataSharingDialog> dataSharingDialogProvider;
     @Inject
-    AsyncProvider<DataSharingDialog> dataSharingDialogProvider;
+    AsyncProviderWrapper<ShareResourceLinkDialog> shareLinkDialogProvider;
     @Inject
-    AsyncProvider<ShareResourceLinkDialog> shareLinkDialogProvider;
-    @Inject
-    AsyncProvider<SaveAsDialog> saveAsDialogProvider;
+    AsyncProviderWrapper<SaveAsDialog> saveAsDialogProvider;
     @Inject
     DiskResourceErrorAutoBeanFactory drFactory;
     @Inject

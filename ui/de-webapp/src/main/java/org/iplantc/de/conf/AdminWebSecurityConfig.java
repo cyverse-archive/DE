@@ -98,11 +98,6 @@ public class AdminWebSecurityConfig extends WebSecurityConfigurerAdapter {
     public CasLogoutSuccessHandler adminLogoutSuccessHandler() {
         CasLogoutSuccessHandler logoutSuccessHandler = new CasLogoutSuccessHandler();
         logoutSuccessHandler.setLogoutUrl(casLogoutUrl);
-        logoutSuccessHandler.setDefaultRedirectUrl(serverName + "/logged-out");
-        logoutSuccessHandler.setRedirectUrlSelectorName("reason");
-        Map<String, String> redirectUrls = new HashMap<>();
-        redirectUrls.put("unauthorized", serverName);
-        logoutSuccessHandler.setRedirectUrls(redirectUrls);
         return logoutSuccessHandler;
     }
 

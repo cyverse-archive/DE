@@ -57,10 +57,10 @@ import org.iplantc.de.diskResource.client.views.dialogs.RenameFileDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.RenameFolderDialog;
 import org.iplantc.de.diskResource.client.views.search.DiskResourceSearchField;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
+import org.iplantc.de.shared.AsyncProviderWrapper;
 
 import com.google.common.base.Strings;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -101,7 +101,7 @@ public class DiskResourcePresenterImpl implements
     @Inject DiskResourceView.Presenter.Appearance appearance;
     @Inject DiskResourceServiceFacade diskResourceService;
     @Inject DiskResourceUtil diskResourceUtil;
-    @Inject AsyncProvider<FolderSelectDialog> folderSelectDialogProvider;
+    @Inject AsyncProviderWrapper<FolderSelectDialog> folderSelectDialogProvider;
     @Inject UserInfo userInfo;
     @Inject CommonUiConstants commonUiConstants;
 

@@ -27,12 +27,12 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.comments.view.dialogs.CommentsDialog;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.shared.AsyncProviderWrapper;
 import org.iplantc.de.shared.exceptions.HttpRedirectException;
 
 import com.google.common.base.Preconditions;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 
@@ -60,7 +60,7 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
     @Inject AppServiceFacade appService;
     @Inject AppUserServiceFacade appUserService;
     @Inject AppsGridView.AppsGridAppearance appearance;
-    @Inject AsyncProvider<CommentsDialog> commentsDialogProvider;
+    @Inject AsyncProviderWrapper<CommentsDialog> commentsDialogProvider;
     @Inject AppMetadataServiceFacade metadataFacade;
     @Inject UserInfo userInfo;
     private final EventBus eventBus;

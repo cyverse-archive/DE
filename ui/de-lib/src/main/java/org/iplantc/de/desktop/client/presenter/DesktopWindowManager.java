@@ -7,11 +7,11 @@ import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.desktop.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.desktop.client.views.windows.util.WindowFactory;
+import org.iplantc.de.shared.AsyncProviderWrapper;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -208,7 +208,7 @@ public class DesktopWindowManager {
      * @param config an object used to uniquely identify a window.
      * @return the window corresponding to the given config, null is the window could not be found.
      */
-    AsyncProvider<? extends IPlantWindowInterface> getOrCreateWindow(final WindowConfig config) {
+    AsyncProviderWrapper<? extends IPlantWindowInterface> getOrCreateWindow(final WindowConfig config) {
         return windowFactory.build(config);
     }
 
