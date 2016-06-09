@@ -218,6 +218,12 @@
                        (json/encode copy-request)
                        (remove-vals nil? {:force force}))))
 
+(defn metadata-csv-parser
+  [user path-uuid params]
+  (request :post ["data" path-uuid "metadata" "csv-parser"]
+           (mk-req-map user
+                       (remove-vals nil? (select-keys params [:src :separator])))))
+
 (defn admin-add-avus
   "Add AVUs, allowing administrative AVUs to be included, for a data item."
   [user path-uuid avu-map]

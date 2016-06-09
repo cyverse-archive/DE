@@ -9,15 +9,19 @@
             [cemerick.url :as url]
             [clojure.string :as string]
             [clojure-commons.file-utils :as ft]
-            [cheshire.core :as json]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
             [data-info.services.uuids :as uuids]
             [data-info.util.logging :as dul]
             [data-info.util.config :as cfg]
             [data-info.util.validators :as validators])
-  (:import [au.com.bytecode.opencsv CSVReader]))
+  (:import [au.com.bytecode.opencsv CSVReader]
+           [java.io InputStream]))
 
 (def ^:private ^String line-ending "\n")
+
+(defn read-csv-stream
+  [^String separator ^InputStream stream]
+  (.readAll (CSVReader. stream (.charAt separator 0))))
 
 (defn- chunk-start
   [page chunk-size]
@@ -62,7 +66,7 @@
     (let [ba  (java.io.ByteArrayInputStream. (.getBytes csv-str))
           isr (java.io.InputStreamReader. ba "UTF-8")]
       (map fix-record (mapv #(zipmap (mapv str (range (count %1))) %1)
-                           (mapv vec (.readAll (CSVReader. isr (.charAt separator 0)))))))
+                           (mapv vec (read-csv-stream separator isr)))))
     [{}]))
 
 (defn- num-pages
