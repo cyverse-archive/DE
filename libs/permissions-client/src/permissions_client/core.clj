@@ -10,7 +10,7 @@
     "Retrieves information about the status of the permissions service.")
 
   (list-subjects [_] [_ opts]
-    "Lists all subjects defined in the permissions service.")
+    "Lists subjects defined in the permissions service.")
 
   (add-subject [_ external-id subject-type]
     "Registers a subject in the permissions service. The external-id field is the subject ID known to the
@@ -26,8 +26,8 @@
      For clients that use Grouper, this subject ID should be the same as the one used by Grouper. The subject
      ID must be unique within the permissions database. The subject-type field can be either 'user' or 'group'.")
 
-  (list-resources [_]
-    "Lists all resources defined in the permissions service.")
+  (list-resources [_] [_ opts]
+    "Lists resources defined in the permissions service.")
 
   (add-resource [_ resource-name resource-type]
      "Adds a resource to the permissions service. The resource-name field is the name or identifier that is used
@@ -148,6 +148,11 @@
 
   (list-resources [_]
     (:body (http/get (build-url base-url "resources") {:as :json})))
+
+  (list-resources [_ opts]
+    (:body (http/get (build-url base-url "resources")
+                     {:query-params (prepare-opts opts [:resource_type_name :resource_name])
+                      :as           :json})))
 
   (add-resource [_ resource-name resource-type]
     (:body (http/post (build-url base-url "resources")

@@ -143,6 +143,21 @@
   (with-fake-routes {(fake-url "resources") {:get list-resources-response}}
     (is (= (pc/list-resources (create-fake-client)) fake-resources))))
 
+(deftest test-list-resources-by-name
+  (let [opts {:resource_name "a"}]
+    (with-fake-routes {(fake-query-url opts "resources") {:get list-resources-response}}
+      (is (= (pc/list-resources (create-fake-client) opts) fake-resources)))))
+
+(deftest test-list-resources-by-type
+  (let [opts {:resource_type_name "app"}]
+    (with-fake-routes {(fake-query-url opts "resources") {:get list-resources-response}}
+      (is (= (pc/list-resources (create-fake-client) opts) fake-resources)))))
+
+(deftest test-list-resources-by-name-and-type
+  (let [opts {:resource_name "a" :resource_type_name "app"}]
+    (with-fake-routes {(fake-query-url opts "resources") {:get list-resources-response}}
+      (is (= (pc/list-resources (create-fake-client) opts) fake-resources)))))
+
 (defn fake-resource [{name :name resource-type :resource_type}]
   {:id            "1aab7522-426a-411b-bef3-1c702ad9e89b"
    :name          name

@@ -165,6 +165,26 @@
     (is (resource-correct? (resources "C") "C" "analysis"))
     (is (resource-correct? (resources "D") "D" "analysis"))))
 
+(deftest test-list-resources-by-name
+  (let [resources (get-resource-map (pc/list-resources (create-permissions-client) {:resource_name "a"}))]
+    (is (= (count resources) 1))
+    (is (resource-correct? (resources "a") "a" "app"))))
+
+(deftest test-list-resources-by-type
+  (let [resources (get-resource-map (pc/list-resources (create-permissions-client) {:resource_type_name "app"}))]
+    (is (= (count resources) 2))
+    (is (resource-correct? (resources "a") "a" "app"))
+    (is (resource-correct? (resources "b") "b" "app"))))
+
+(deftest test-list-resources-by-name-and-type
+  (let [opts      {:resource_name "C" :resource_type_name "analysis"}
+        resources (get-resource-map (pc/list-resources (create-permissions-client) opts))]
+    (is (= (count resources) 1))
+    (is (resource-correct? (resources "C") "C" "analysis")))
+  (let [opts      {:resource_name "C" :resource_type_name "app"}
+        resources (get-resource-map (pc/list-resources (create-permissions-client) opts))]
+    (is (= (count resources) 0))))
+
 (deftest test-add-resource
   (let [client (create-permissions-client)]
     (is (resource-correct? (pc/add-resource client "e" "app") "e" "app"))
