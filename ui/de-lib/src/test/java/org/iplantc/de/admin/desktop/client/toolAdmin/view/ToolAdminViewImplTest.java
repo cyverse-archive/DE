@@ -14,8 +14,8 @@ import org.iplantc.de.admin.desktop.client.toolAdmin.events.SaveToolSelectedEven
 import org.iplantc.de.admin.desktop.client.toolAdmin.model.ToolProperties;
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs.ToolAdminDetailsDialog;
 import org.iplantc.de.client.models.tool.Tool;
+import org.iplantc.de.shared.AsyncProviderWrapper;
 
-import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwtmockito.GxtMockitoTestRunner;
 
@@ -43,7 +43,7 @@ public class ToolAdminViewImplTest {
     @Mock Grid<Tool> toolGridMock;
     @Mock GridSelectionModel<Tool> gridSelectionModelMock;
     @Mock Tool toolMock;
-    @Mock AsyncProvider<ToolAdminDetailsDialog> toolDetailsDialogMock;
+    @Mock AsyncProviderWrapper<ToolAdminDetailsDialog> toolDetailsDialogMock;
 
     @Captor ArgumentCaptor<AsyncCallback<ToolAdminDetailsDialog>> asyncCallbackDialogCaptor;
     @Captor ArgumentCaptor<SaveToolSelectedEvent.SaveToolSelectedEventHandler>

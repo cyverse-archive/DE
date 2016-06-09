@@ -1,6 +1,11 @@
 package org.iplantc.de.analysis.client.presenter.parameters;
 
-import static org.iplantc.de.client.models.apps.integration.ArgumentType.*;
+import static org.iplantc.de.client.models.apps.integration.ArgumentType.FileFolderInput;
+import static org.iplantc.de.client.models.apps.integration.ArgumentType.FileInput;
+import static org.iplantc.de.client.models.apps.integration.ArgumentType.FolderInput;
+import static org.iplantc.de.client.models.apps.integration.ArgumentType.Input;
+import static org.iplantc.de.client.models.apps.integration.ArgumentType.MultiFileSelector;
+
 import org.iplantc.de.analysis.client.AnalysisParametersView;
 import org.iplantc.de.analysis.client.events.SaveAnalysisParametersEvent;
 import org.iplantc.de.analysis.client.events.selection.AnalysisParamValueSelectedEvent;
@@ -24,9 +29,9 @@ import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
+import org.iplantc.de.shared.AsyncProviderWrapper;
 
 import com.google.common.collect.Lists;
-import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -160,8 +165,8 @@ public class AnalysisParametersPresenterImpl implements AnalysisParametersView.P
         }
     }
 
-    @Inject AsyncProvider<FileEditorServiceFacade> fileEditorServiceAsyncProvider;
-    @Inject AsyncProvider<DiskResourceServiceFacade> diskResourceServiceAsyncProvider;
+    @Inject AsyncProviderWrapper<FileEditorServiceFacade> fileEditorServiceAsyncProvider;
+    @Inject AsyncProviderWrapper<DiskResourceServiceFacade> diskResourceServiceAsyncProvider;
     @Inject AnalysisServiceFacade analysisService;
     @Inject EventBus eventBus;
     @Inject DiskResourceUtil diskResourceUtil;

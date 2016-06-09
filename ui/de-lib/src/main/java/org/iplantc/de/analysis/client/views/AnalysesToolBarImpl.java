@@ -19,6 +19,7 @@ import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
 import org.iplantc.de.commons.client.views.dialogs.IPlantPromptDialog;
+import org.iplantc.de.shared.AsyncProviderWrapper;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -28,7 +29,6 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -94,8 +94,7 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
     @UiField(provided = true)
     SimpleComboBox<AnalysisFilter> filterCombo;
 
-    @Inject
-    AsyncProvider<AnalysisParametersDialog> analysisParametersDialogAsyncProvider;
+    @Inject AsyncProviderWrapper<AnalysisParametersDialog> analysisParametersDialogAsyncProvider;
 
     @Inject
     UserInfo userInfo;

@@ -12,10 +12,10 @@ import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.events.LastSelectedPathChangedEvent;
 import org.iplantc.de.diskResource.client.views.dialogs.FileSelectDialog;
+import org.iplantc.de.shared.AsyncProviderWrapper;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
@@ -68,7 +68,7 @@ public class FileSelectorField extends AbstractDiskResourceSelector<File> {
 
     @Inject UserSettings userSettings;
     @Inject EventBus eventBus;
-    @Inject AsyncProvider<FileSelectDialog> fileSelectDialogProvider;
+    @Inject AsyncProviderWrapper<FileSelectDialog> fileSelectDialogProvider;
     @Inject DiskResourceUtil diskResourceUtil;
     @Inject CommonModelUtils commonModelUtils;
 
