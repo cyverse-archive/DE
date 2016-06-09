@@ -106,6 +106,11 @@
       (pc/delete-subject (create-fake-client) subject-id)
       (is true "Subject deleted successfully."))))
 
+(deftest test-delete-subject-by-external-id
+  (let [opts {:subject_id "ipctest" :subject_type "user"}]
+    (with-fake-routes {(fake-query-url opts "subjects") fake-status-response}
+      (pc/delete-subject (create-fake-client) (:subject_id opts) (:subject_type opts)))))
+
 (defn update-subject-response-fn [id]
   (fn [{:keys [uri body]}]
     (if (= id (last (string/split uri #"/")))

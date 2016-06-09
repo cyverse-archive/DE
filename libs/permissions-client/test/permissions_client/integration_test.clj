@@ -134,6 +134,11 @@
     (pc/delete-subject client (:id ipcdev))
     (is (nil? ((get-subject-map) "ipcdev")))))
 
+(deftest test-delete-subject-by-external-id
+  (let [client (create-permissions-client)]
+    (pc/delete-subject client "ipcdev" "user")
+    (is (nil? ((get-subject-map) "ipcdev")))))
+
 (deftest test-update-subject
   (let [client   (create-permissions-client)
         lonestar (pc/add-subject client "lonestar" "user")

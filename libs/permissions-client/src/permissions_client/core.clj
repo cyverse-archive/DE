@@ -18,8 +18,8 @@
      subject ID must be unique within the permissions database. The subject-type field can be either 'user'
      or 'group'.")
 
-  (delete-subject [_ id]
-    "Removes the subject with the given internal ID from the permissions database.")
+  (delete-subject [_ id] [_ external-id subject-type]
+    "Removes a subject from the permissions database.")
 
   (update-subject [_ id external-id subject-type]
     "Updates a subject in the permissions service. The external-id field is the subject ID known to the client.
@@ -131,6 +131,12 @@
 
   (delete-subject [_ id]
     (http/delete (build-url base-url "subjects" id))
+    nil)
+
+  (delete-subject [_ external-id subject-type]
+    (http/delete (build-url base-url "subjects")
+                 {:query-params {:subject_id   (str external-id)
+                                 :subject_type (str subject-type)}})
     nil)
 
   (update-subject [_ id external-id subject-type]
