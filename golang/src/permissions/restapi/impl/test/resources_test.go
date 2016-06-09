@@ -92,6 +92,21 @@ func deleteResource(db *sql.DB, id string) {
 	_ = responder.(*resources.DeleteResourceOK)
 }
 
+func deleteResourceByNameAttempt(db *sql.DB, resourceTypeName, name string) middleware.Responder {
+
+	// Build the request handler.
+	handler := impl.BuildDeleteResourceByNameHandler(db)
+
+	// Attempt to delete the resource.
+	params := resources.DeleteResourceByNameParams{ResourceTypeName: resourceTypeName, ResourceName: name}
+	return handler(params)
+}
+
+func deleteResourceByName(db *sql.DB, resourceTypeName, name string) {
+	responder := deleteResourceByNameAttempt(db, resourceTypeName, name)
+	_ = responder.(*resources.DeleteResourceByNameOK)
+}
+
 func TestAddResource(t *testing.T) {
 	if !shouldrun() {
 		return
@@ -408,6 +423,26 @@ func TestDeleteResource(t *testing.T) {
 	}
 }
 
+func TestDeleteResourceByName(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Add a resource to the database then delete it.
+	r1 := addResource(db, "r1", "app")
+	deleteResourceByName(db, *r1.ResourceType, *r1.Name)
+
+	// Verify that the resource was deleted.
+	result := listResources(db, nil, nil)
+	if len(result.Resources) != 0 {
+		t.Fatalf("unexpected number of resources listed: %d", len(result.Resources))
+	}
+}
+
 func TestDeleteNonExistentResource(t *testing.T) {
 	if !shouldrun() {
 		return
@@ -423,6 +458,26 @@ func TestDeleteNonExistentResource(t *testing.T) {
 	// Verify that we got the expected result.
 	errorOut := responder.(*resources.DeleteResourceNotFound).Payload
 	expected := fmt.Sprintf("resource, %s, not found", FAKE_ID)
+	if *errorOut.Reason != expected {
+		t.Errorf("unexpected failure message: %s", *errorOut.Reason)
+	}
+}
+
+func TestDeleteNonExistentResourceByName(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+	addDefaultResourceTypes(db, t)
+
+	// Attempt to delete a non-existent resource.
+	responder := deleteResourceByNameAttempt(db, "foo", "bar")
+
+	// Verify that we got the expected result.
+	errorOut := responder.(*resources.DeleteResourceByNameNotFound).Payload
+	expected := "resource not found: foo:bar"
 	if *errorOut.Reason != expected {
 		t.Errorf("unexpected failure message: %s", *errorOut.Reason)
 	}

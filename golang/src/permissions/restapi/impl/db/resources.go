@@ -6,6 +6,49 @@ import (
 	"permissions/models"
 )
 
+func rowsToResourceList(rows *sql.Rows) ([]*models.ResourceOut, error) {
+
+	// Get the resources.
+	resources := make([]*models.ResourceOut, 0)
+	for rows.Next() {
+		var resource models.ResourceOut
+		if err := rows.Scan(&resource.ID, &resource.Name, &resource.ResourceType); err != nil {
+			return nil, err
+		}
+		resources = append(resources, &resource)
+	}
+
+	return resources, nil
+}
+
+func rowsToResource(rows *sql.Rows, duplicateErr error) (*models.ResourceOut, error) {
+
+	// Get the resources.
+	resources, err := rowsToResourceList(rows)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check for duplicates. This shouldn't happen unless there's a bug in the query.
+	if len(resources) > 1 {
+		return nil, duplicateErr
+	}
+
+	// Return the result.
+	if len(resources) < 1 {
+		return nil, nil
+	}
+	return resources[0], nil
+}
+
+func rowToResource(row *sql.Row) (*models.ResourceOut, error) {
+	var resource models.ResourceOut
+	if err := row.Scan(&resource.ID, &resource.Name, &resource.ResourceType); err != nil {
+		return nil, err
+	}
+	return &resource, nil
+}
+
 func CountResourcesOfType(tx *sql.Tx, resourceTypeId *string) (int64, error) {
 
 	// Query the database.
@@ -46,26 +89,25 @@ func GetResourceByName(tx *sql.Tx, name *string, resourceTypeId *string) (*model
 	}
 	defer rows.Close()
 
-	// Get the resources.
-	resources := make([]*models.ResourceOut, 0)
-	for rows.Next() {
-		var resource models.ResourceOut
-		if err := rows.Scan(&resource.ID, &resource.Name, &resource.ResourceType); err != nil {
-			return nil, err
-		}
-		resources = append(resources, &resource)
-	}
+	// Get the resource.
+	return rowsToResource(rows, fmt.Errorf("found multiple resources of the same type named, '%s'", *name))
+}
 
-	// Check for duplicates. There's a uniqueness constraint on the database, so this shouldn't happen.
-	if len(resources) > 1 {
-		return nil, fmt.Errorf("found multiple resources of the same type named, '%s'", *name)
-	}
+func GetResourceByNameAndType(tx *sql.Tx, name, resourceTypeName string) (*models.ResourceOut, error) {
 
-	// Return the result.
-	if len(resources) < 1 {
-		return nil, nil
+	// Query the database.
+	query := `SELECT r.id, r.name, t.name AS resource_type
+            FROM resources r JOIN resource_types t ON r.resource_type_id = t.id
+            WHERE t.name = $1 and r.name = $2`
+	rows, err := tx.Query(query, resourceTypeName, name)
+	if err != nil {
+		return nil, err
 	}
-	return resources[0], nil
+	defer rows.Close()
+
+	// Get the resource.
+	duplicateErr := fmt.Errorf("found multiple resources with the same type and name: %s:%s", resourceTypeName, name)
+	return rowsToResource(rows, duplicateErr)
 }
 
 func GetDuplicateResourceByName(tx *sql.Tx, id *string, name *string) (*models.ResourceOut, error) {
@@ -82,26 +124,8 @@ func GetDuplicateResourceByName(tx *sql.Tx, id *string, name *string) (*models.R
 	}
 	defer rows.Close()
 
-	// Get the resources.
-	resources := make([]*models.ResourceOut, 0)
-	for rows.Next() {
-		var resource models.ResourceOut
-		if err := rows.Scan(&resource.ID, &resource.Name, &resource.ResourceType); err != nil {
-			return nil, err
-		}
-		resources = append(resources, &resource)
-	}
-
-	// Check for duplicates. There's a uniqueness constraint on the database, so this shouldn't happen.
-	if len(resources) > 1 {
-		return nil, fmt.Errorf("found multiple resources of the same type named, '%s'", *name)
-	}
-
-	// Return the result.
-	if len(resources) < 1 {
-		return nil, nil
-	}
-	return resources[0], nil
+	// Get the resource.
+	return rowsToResource(rows, fmt.Errorf("found multiple resources of the same type named, '%s'", *name))
 }
 
 func AddResource(tx *sql.Tx, name *string, resourceTypeId *string) (*models.ResourceOut, error) {
@@ -112,11 +136,7 @@ func AddResource(tx *sql.Tx, name *string, resourceTypeId *string) (*models.Reso
 	row := tx.QueryRow(query, name, resourceTypeId)
 
 	// Return the result.
-	var resource models.ResourceOut
-	if err := row.Scan(&resource.ID, &resource.Name, &resource.ResourceType); err != nil {
-		return nil, err
-	}
-	return &resource, nil
+	return rowToResource(row)
 }
 
 func UpdateResource(tx *sql.Tx, id *string, name *string) (*models.ResourceOut, error) {
@@ -127,11 +147,7 @@ func UpdateResource(tx *sql.Tx, id *string, name *string) (*models.ResourceOut, 
 	row := tx.QueryRow(query, name, id)
 
 	// Return the result.
-	var resource models.ResourceOut
-	if err := row.Scan(&resource.ID, &resource.Name, &resource.ResourceType); err != nil {
-		return nil, err
-	}
-	return &resource, nil
+	return rowToResource(row)
 }
 
 func ListResources(tx *sql.Tx, resourceTypeName, resourceName *string) ([]*models.ResourceOut, error) {
@@ -165,16 +181,7 @@ func ListResources(tx *sql.Tx, resourceTypeName, resourceName *string) ([]*model
 	defer rows.Close()
 
 	// Build the list of resources.
-	resources := make([]*models.ResourceOut, 0)
-	for rows.Next() {
-		var resource models.ResourceOut
-		if err := rows.Scan(&resource.ID, &resource.Name, &resource.ResourceType); err != nil {
-			return nil, err
-		}
-		resources = append(resources, &resource)
-	}
-
-	return resources, nil
+	return rowsToResourceList(rows)
 }
 
 func DeleteResource(tx *sql.Tx, id *string) error {

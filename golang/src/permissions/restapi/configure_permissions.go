@@ -146,6 +146,10 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 		resources_impl.BuildAddResourceHandler(db),
 	)
 
+	api.ResourcesDeleteResourceByNameHandler = resources.DeleteResourceByNameHandlerFunc(
+		resources_impl.BuildDeleteResourceByNameHandler(db),
+	)
+
 	api.ResourcesListResourcesHandler = resources.ListResourcesHandlerFunc(
 		resources_impl.BuildListResourcesHandler(db),
 	)

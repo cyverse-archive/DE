@@ -377,6 +377,33 @@ paths:
         500:
           $ref: "#/responses/internal_server_error"
   /resources:
+    delete:
+      tags:
+        - resources
+      summary: "Delete Resources by Name"
+      description: >-
+        Removes a resource from the database. A resource is a single item to which permissions may be applied. For
+        example. The Discovery Environment app, Word Count, would be defined as a resource in the permissions
+        service.
+      operationId: deleteResourceByName
+      parameters:
+        - name: "resource_type_name"
+          type: "string"
+          in: query
+          description: "The resource type name to search for."
+          required: True
+        - name: "resource_name"
+          type: "string"
+          in: query
+          description: "The resource name to search for."
+          required: True
+      responses:
+        200:
+          description: "OK"
+        404:
+          $ref: "#/responses/not_found"
+        500:
+          $ref: "#/responses/internal_server_error"
     get:
       tags:
         - resources
