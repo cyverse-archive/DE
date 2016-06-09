@@ -7,8 +7,8 @@ import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
+import org.iplantc.de.shared.AsyncProviderWrapper;
 
-import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 
@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class AppDetailsDialog extends IPlantDialog {
 
-    @Inject AsyncProvider<AppDetailsView.Presenter> presenterProvider;
+    @Inject AsyncProviderWrapper<AppDetailsView.Presenter> presenterProvider;
 
     @Inject
     AppDetailsDialog() {

@@ -1,5 +1,15 @@
 package org.iplantc.de.apps.client.presenter.grid;
 
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+
 import org.iplantc.de.apps.client.AppsGridView;
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
@@ -23,10 +33,10 @@ import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.services.AppMetadataServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.commons.client.comments.view.dialogs.CommentsDialog;
+import org.iplantc.de.shared.AsyncProviderWrapper;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwtmockito.GwtMockitoTestRunner;
@@ -39,7 +49,6 @@ import com.sencha.gxt.data.shared.event.StoreUpdateEvent;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.grid.GridSelectionModel;
 
-import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -71,7 +80,7 @@ public class AppsGridPresenterImplTest {
     @Mock UserInfo userInfoMock;
     @Mock AppUserServiceFacade appUserServiceMock;
 
-    @Mock AsyncProvider<CommentsDialog> commentsProviderMock;
+    @Mock AsyncProviderWrapper<CommentsDialog> commentsProviderMock;
     @Captor ArgumentCaptor<AsyncCallback<CommentsDialog>> commentsDlgCaptor;
 
     @Captor ArgumentCaptor<AsyncCallback<String>> stringCallbackCaptor;

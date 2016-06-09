@@ -5,7 +5,6 @@ import org.iplantc.de.shared.events.UserLoggedOutEvent;
 import org.iplantc.de.shared.exceptions.AuthenticationException;
 import org.iplantc.de.shared.exceptions.HttpRedirectException;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.StatusCodeException;
@@ -23,7 +22,6 @@ import java.util.logging.Logger;
  * @param <T> the type of the result we're expecting to get from the server.
  */
 public class AsyncCallbackWrapper<T> implements AsyncCallback<T> {
-    private static final String LANDING_PAGE = "logged-out";
 
     Logger LOG = Logger.getLogger(AsyncCallbackWrapper.class.getName());
     /**
@@ -39,13 +37,6 @@ public class AsyncCallbackWrapper<T> implements AsyncCallback<T> {
 
     public AsyncCallbackWrapper(AsyncCallback<T> callback) {
         this.callback = callback;
-    }
-
-    /**
-     * Redirects the user to the DE landing page.
-     */
-    private void redirectToLandingPage() {
-        Window.Location.replace(GWT.getHostPageBaseURL() + LANDING_PAGE);
     }
 
     /**
