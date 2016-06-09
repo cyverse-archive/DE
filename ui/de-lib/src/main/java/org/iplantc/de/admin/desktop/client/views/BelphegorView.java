@@ -59,4 +59,6 @@ public interface BelphegorView extends IsWidget {
 
         String footer();
     }
+
+    void doLogout();
 }
