@@ -166,6 +166,10 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 		subjects_impl.BuildAddSubjectHandler(db),
 	)
 
+	api.SubjectsDeleteSubjectByExternalIDHandler = subjects.DeleteSubjectByExternalIDHandlerFunc(
+		subjects_impl.BuildDeleteSubjectByExternalIdHandler(db),
+	)
+
 	api.SubjectsListSubjectsHandler = subjects.ListSubjectsHandlerFunc(
 		subjects_impl.BuildListSubjectsHandler(db),
 	)

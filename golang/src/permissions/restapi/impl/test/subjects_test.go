@@ -97,6 +97,21 @@ func deleteSubject(db *sql.DB, id models.InternalSubjectID) {
 	_ = responder.(*subjects.DeleteSubjectOK)
 }
 
+func deleteSubjectByExternalIdAttempt(db *sql.DB, subjectId, subjectType string) middleware.Responder {
+
+	// Build the request handler.
+	handler := impl.BuildDeleteSubjectByExternalIdHandler(db)
+
+	// Attempt to delete the subject.
+	params := subjects.DeleteSubjectByExternalIDParams{SubjectID: subjectId, SubjectType: subjectType}
+	return handler(params)
+}
+
+func deleteSubjectByExternalId(db *sql.DB, subjectId, subjectType string) {
+	responder := deleteSubjectByExternalIdAttempt(db, subjectId, subjectType)
+	_ = responder.(*subjects.DeleteSubjectByExternalIDOK)
+}
+
 func TestAddSubject(t *testing.T) {
 	if !shouldrun() {
 		return
@@ -414,6 +429,50 @@ func TestDeleteSubjectNotFound(t *testing.T) {
 
 	// Verify that we got the expected error message.
 	expected := fmt.Sprintf("subject, %s, not found", FAKE_ID)
+	if *errorOut.Reason != expected {
+		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
+	}
+}
+
+func TestDeleteSubjectByName(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+
+	// Add a subject to the database.
+	addSubject(db, models.ExternalSubjectID("a"), models.SubjectType("user"))
+	addSubject(db, models.ExternalSubjectID("b"), models.SubjectType("user"))
+
+	// Delete the subject.
+	deleteSubjectByExternalId(db, "a", "user")
+
+	// Verify that the subject was deleted.
+	subjectList := listSubjects(db, nil, nil).Subjects
+	if len(subjectList) != 1 {
+		t.Fatalf("unexpected number of results: %d", len(subjectList))
+	}
+
+	// Verify that the expected subject remains.
+	checkSubject(t, subjectList, 0, "b", "user")
+}
+
+func TestDeleteSubjectByNameNotFound(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+
+	// Attempt to delete a subject.
+	responder := deleteSubjectByExternalIdAttempt(db, "a", "user")
+	errorOut := responder.(*subjects.DeleteSubjectByExternalIDNotFound).Payload
+
+	// Verify that we got the expected error message.
+	expected := "subject not found: user:a"
 	if *errorOut.Reason != expected {
 		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
 	}

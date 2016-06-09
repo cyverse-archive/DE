@@ -77,6 +77,8 @@ type PermissionsAPI struct {
 	ResourceTypesDeleteResourceTypeByNameHandler resource_types.DeleteResourceTypeByNameHandler
 	// SubjectsDeleteSubjectHandler sets the operation handler for the delete subject operation
 	SubjectsDeleteSubjectHandler subjects.DeleteSubjectHandler
+	// SubjectsDeleteSubjectByExternalIDHandler sets the operation handler for the delete subject by external Id operation
+	SubjectsDeleteSubjectByExternalIDHandler subjects.DeleteSubjectByExternalIDHandler
 	// PermissionsGrantPermissionHandler sets the operation handler for the grant permission operation
 	PermissionsGrantPermissionHandler permissions.GrantPermissionHandler
 	// PermissionsListPermissionsHandler sets the operation handler for the list permissions operation
@@ -204,6 +206,10 @@ func (o *PermissionsAPI) Validate() error {
 
 	if o.SubjectsDeleteSubjectHandler == nil {
 		unregistered = append(unregistered, "subjects.DeleteSubjectHandler")
+	}
+
+	if o.SubjectsDeleteSubjectByExternalIDHandler == nil {
+		unregistered = append(unregistered, "subjects.DeleteSubjectByExternalIDHandler")
 	}
 
 	if o.PermissionsGrantPermissionHandler == nil {
@@ -384,6 +390,11 @@ func (o *PermissionsAPI) initHandlerCache() {
 		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/subjects/{id}"] = subjects.NewDeleteSubject(o.context, o.SubjectsDeleteSubjectHandler)
+
+	if o.handlers["DELETE"] == nil {
+		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/subjects"] = subjects.NewDeleteSubjectByExternalID(o.context, o.SubjectsDeleteSubjectByExternalIDHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers[strings.ToUpper("POST")] = make(map[string]http.Handler)
