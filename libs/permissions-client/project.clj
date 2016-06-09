@@ -6,5 +6,6 @@
   :dependencies [[cheshire "5.6.1"]
                  [clj-http "2.2.0"]
                  [com.cemerick/url "0.1.1"]
+                 [medley "0.8.2"]
                  [org.clojure/clojure "1.7.0"]]
   :profiles {:test {:dependencies [[clj-http-fake "1.0.2"]]}})

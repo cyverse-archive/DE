@@ -17,6 +17,9 @@
 (defn fake-url [& components]
   (str (apply curl/url fake-base-url components)))
 
+(defn fake-query-url [query & components]
+  (str (assoc (apply curl/url fake-base-url components) :query query)))
+
 (defn fake-lookup-url [lookup? & components]
   (str (assoc (apply curl/url fake-base-url components) :query {:lookup lookup?})))
 
@@ -60,6 +63,21 @@
 (deftest test-subjects
   (with-fake-routes {(fake-url "subjects") {:get fake-subjects-response}}
     (is (= (pc/list-subjects (create-fake-client)) fake-subjects))))
+
+(deftest test-subjects-by-id
+  (let [opts {:subject_id "ipctest"}]
+    (with-fake-routes {(fake-query-url opts "subjects") {:get fake-subjects-response}}
+      (is (= (pc/list-subjects (create-fake-client) opts) fake-subjects)))))
+
+(deftest test-subjects-by-type
+  (let [opts {:subject_type "user"}]
+    (with-fake-routes {(fake-query-url opts "subjects") {:get fake-subjects-response}}
+      (is (= (pc/list-subjects (create-fake-client) opts) fake-subjects)))))
+
+(deftest test-subjects-by-id-and-type
+  (let [opts {:subject_id "ipctest" :subject_type "user"}]
+    (with-fake-routes {(fake-query-url opts "subjects") {:get fake-subjects-response}}
+      (is (= (pc/list-subjects (create-fake-client) opts) fake-subjects)))))
 
 (defn fake-subject [{subject-id :subject_id subject-type :subject_type}]
   {:id           "acefbb43-00fe-4b16-a834-68f24207aba7"

@@ -1,13 +1,15 @@
 (ns permissions-client.core
+  (:use [medley.core :only [map-keys remove-vals]])
   (:require [cemerick.url :as curl]
-            [clj-http.client :as http]))
+            [clj-http.client :as http]
+            [clojure.string :as string]))
 
 (defprotocol Client
   "A client library for the Permissions API."
   (get-status [_]
     "Retrieves information about the status of the permissions service.")
 
-  (list-subjects [_]
+  (list-subjects [_] [_ opts]
     "Lists all subjects defined in the permissions service.")
 
   (add-subject [_ external-id subject-type]
@@ -102,6 +104,9 @@
 (defn- build-url [base-url & path-elements]
   (str (apply curl/url base-url path-elements)))
 
+(defn- prepare-opts [opts ks]
+  (remove-vals nil? (select-keys opts ks)))
+
 (deftype PermissionsClient [base-url]
   Client
 
@@ -111,6 +116,11 @@
   (list-subjects [_]
     (:body (http/get (build-url base-url "subjects")
                      {:as :json})))
+
+  (list-subjects [_ opts]
+    (:body (http/get (build-url base-url "subjects")
+                     {:query-params (prepare-opts opts [:subject_id :subject_type])
+                      :as           :json})))
 
   (add-subject [_ external-id subject-type]
     (:body (http/post (build-url base-url "subjects")

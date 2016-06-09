@@ -101,6 +101,26 @@
     (is (subject-correct? (subjects "ipctest") "ipctest" "user"))
     (is (subject-correct? (subjects "ipcusers") "ipcusers" "group"))))
 
+(deftest test-list-subjects-by-type
+  (let [subjects (get-subject-map (pc/list-subjects (create-permissions-client) {:subject_type "user"}))]
+    (is (= (count subjects) 2))
+    (is (subject-correct? (subjects "ipcdev") "ipcdev" "user"))
+    (is (subject-correct? (subjects "ipctest") "ipctest" "user"))))
+
+(deftest test-list-subjects-by-id
+  (let [subjects (get-subject-map (pc/list-subjects (create-permissions-client) {:subject_id "ipcdev"}))]
+    (is (= (count subjects) 1))
+    (is (subject-correct? (subjects "ipcdev") "ipcdev" "user"))))
+
+(deftest test-list-subjects-by-id-and-type
+  (let [opts     {:subject_id "ipcdev" :subject_type "user"}
+        subjects (get-subject-map (pc/list-subjects (create-permissions-client) opts))]
+    (is (= (count subjects) 1))
+    (is (subject-correct? (subjects "ipcdev") "ipcdev" "user")))
+  (let [opts     {:subject_id "ipcdev" :subject_type "group"}
+        subjects (get-subject-map (pc/list-subjects (create-permissions-client) opts))]
+    (is (= (count subjects) 0))))
+
 (deftest test-add-subject
   (let [client (create-permissions-client)]
     (is (subject-correct? (pc/add-subject client "dark-helmet" "user") "dark-helmet" "user"))
