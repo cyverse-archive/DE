@@ -1,6 +1,6 @@
 package org.iplantc.de.commons.client.views.dialogs;
 
-import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
+import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshOntologiesEvent;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
@@ -9,6 +9,7 @@ import org.iplantc.de.commons.client.widgets.IPCFileUploadField;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -33,13 +34,15 @@ public class EdamUploadDialog extends AbstractFileUploadDialog {
     interface EdamUploadDialogUiBinder extends UiBinder<Widget, EdamUploadDialog> {
     }
     private final EdamUploadDialogUiBinder BINDER = GWT.create(EdamUploadDialogUiBinder.class);
+    private HasHandlers handlers;
 
     @UiField(provided = true) AbstractFileUploadDialogAppearance appearance;
 
     @Inject
-    public EdamUploadDialog(final SafeUri ontologyUploadServlet) {
+    public EdamUploadDialog(final SafeUri ontologyUploadServlet, HasHandlers handlers) {
         super(ontologyUploadServlet);
         this.appearance = GWT.create(AbstractFileUploadDialogAppearance.class);
+        this.handlers = handlers;
 
         add(BINDER.createAndBindUi(this));
 
@@ -64,6 +67,9 @@ public class EdamUploadDialog extends AbstractFileUploadDialog {
             IplantAnnouncer.getInstance()
                            .schedule(new SuccessAnnouncementConfig(appearance.fileUploadsSuccess(Lists.newArrayList(field.getValue()))));
             hide();
+            if (handlers != null){
+                handlers.fireEvent(new RefreshOntologiesEvent());
+            }
         } else {
             IplantAnnouncer.getInstance()
                            .schedule(new ErrorAnnouncementConfig(appearance.fileUploadsFailed(Lists.newArrayList(field.getValue()))));

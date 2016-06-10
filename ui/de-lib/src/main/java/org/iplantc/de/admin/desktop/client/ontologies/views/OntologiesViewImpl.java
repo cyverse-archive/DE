@@ -57,7 +57,8 @@ import java.util.List;
 /**
  * @author aramsey
  */
-public class OntologiesViewImpl extends Composite implements OntologiesView {
+public class OntologiesViewImpl extends Composite implements OntologiesView,
+                                                             RefreshOntologiesEvent.RefreshOntologiesEventHandler {
 
     interface OntologiesViewImplUiBinder extends UiBinder<Widget, OntologiesViewImpl> {
 
@@ -122,8 +123,8 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     @Override
-    public HandlerRegistration addViewOntologyVersionEventHandler(ViewOntologyVersionEvent.ViewOntologyVersionEventHandler handler) {
-        return addHandler(handler, ViewOntologyVersionEvent.TYPE);
+    public HandlerRegistration addRefreshOntologiesEventHandler(RefreshOntologiesEvent.RefreshOntologiesEventHandler handler) {
+        return addHandler(handler, RefreshOntologiesEvent.TYPE);
     }
 
     @Override
@@ -214,6 +215,11 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         treeStore.add(parent, children);
     }
 
+    @Override
+    public void onRefreshOntologies(RefreshOntologiesEvent event) {
+        fireEvent(new RefreshOntologiesEvent());
+    }
+
     @UiFactory
     SimpleComboBox<Ontology> createComboBox() {
         final SimpleComboBox<Ontology> ontologySimpleComboBox = new SimpleComboBox<Ontology>(new LabelProvider<Ontology>() {
@@ -267,7 +273,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
     @UiHandler("addButton")
     void addButtonClicked(SelectEvent event) {
-        new EdamUploadDialog(UriUtils.fromTrustedString(clientConstants.ontologyUploadServlet())).show();
+        new EdamUploadDialog(UriUtils.fromTrustedString(clientConstants.ontologyUploadServlet()), this).show();
     }
 
     @UiHandler("saveHierarchy")
