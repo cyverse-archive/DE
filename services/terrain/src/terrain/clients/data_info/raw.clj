@@ -212,11 +212,9 @@
            (mk-req-map user (json/encode avu-map))))
 
 (defn metadata-copy
-  [user force path-uuid copy-request]
+  [user path-uuid copy-request]
   (request :post ["data" path-uuid "metadata" "copy"]
-           (mk-req-map user
-                       (json/encode copy-request)
-                       (remove-vals nil? {:force force}))))
+           (mk-req-map user (json/encode copy-request))))
 
 (defn metadata-csv-parser
   [user path-uuid params]

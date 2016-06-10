@@ -105,7 +105,7 @@
       (svc/trap uri meta/metadata-set user data-id body))
 
     (POST* "/metadata/copy" [:as {uri :uri}]
-      :query [{:keys [user force]} MetadataCopyRequestParams]
+      :query [{:keys [user]} StandardUserQueryParams]
       :body [{:keys [destination_ids]} (describe MetadataCopyRequest "The destination data items.")]
       :return MetadataCopyResult
       :middlewares [wrap-metadata-base-url]
@@ -113,11 +113,11 @@
       :description
            (str "Copies all IRODS AVUs visible to the client and Metadata AVUs from the data
             item with the ID given in the URL to other data items with the IDs sent in the request body."
-(get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_AUTHORIZED, ERR_NOT_UNIQUE")
+(get-error-code-block "ERR_NOT_A_USER, ERR_NOT_READABLE, ERR_DOES_NOT_EXIST, ERR_NOT_WRITEABLE, ERR_NOT_AUTHORIZED")
 (get-endpoint-delegate-block
   "metadata"
   "POST /avus/{target-type}/{target-id}/copy"))
-      (svc/trap uri meta/metadata-copy user force data-id destination_ids))
+      (svc/trap uri meta/metadata-copy user data-id destination_ids))
 
     (POST* "/metadata/csv-parser" [:as {uri :uri}]
       :query [params MetadataCSVParseParams]

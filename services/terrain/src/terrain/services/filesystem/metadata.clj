@@ -42,15 +42,13 @@
 
 (defn do-metadata-copy
   "Entrypoint for the API that calls (metadata-copy)."
-  [{:keys [user]} data-id force body]
-  (data-raw/metadata-copy user force data-id body))
+  [{:keys [user]} data-id body]
+  (data-raw/metadata-copy user data-id body))
 
 (with-pre-hook! #'do-metadata-copy
-  (fn [{:keys [user] :as params} data-id force {dest-ids :destination_ids :as body}]
+  (fn [params data-id body]
     (log-call "do-metadata-copy" params data-id body)
-    (validate-map params {:user string?})
-    (validate-map body {:destination_ids sequential?})
-    (validate-num-paths dest-ids)))
+    (validate-map params {:user string?})))
 
 (with-post-hook! #'do-metadata-copy (log-func "do-metadata-copy"))
 

@@ -35,16 +35,6 @@
    :user
    (describe NonBlankString "The effective user who performed the request.")})
 
-(s/defschema MetadataCopyRequestParams
-  (merge StandardUserQueryParams
-         {(s/optional-key :force)
-          (describe Boolean
-                    "Omitting this parameter, or setting its value to anything other than `true`,
-                     will cause this endpoint to validate that none of the given `destination_ids`
-                     already have Metadata Template AVUs set with any of the attributes found in any of
-                     the Metadata AVUs associated with the source `data-id`,
-                     otherwise an `ERR_NOT_UNIQUE` error is returned")}))
-
 (s/defschema MetadataCopyRequest
   {:destination_ids (describe [UUID] "The IDs of the target data items")})
 

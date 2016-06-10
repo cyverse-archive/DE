@@ -116,8 +116,8 @@
     (POST "/filesystem/:data-id/metadata" [data-id :as req]
       (controller req meta/do-metadata-set data-id :params :body))
 
-    (POST "/filesystem/:data-id/metadata/copy" [data-id force :as req]
-      (controller req meta/do-metadata-copy :params data-id force :body))
+    (POST "/filesystem/:data-id/metadata/copy" [data-id :as req]
+      (controller req meta/do-metadata-copy :params data-id :body))
 
     (POST "/filesystem/:data-id/metadata/save" [data-id :as req]
       (controller req meta/do-metadata-save data-id :params :body))))
