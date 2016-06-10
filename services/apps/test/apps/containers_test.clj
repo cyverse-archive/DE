@@ -1,6 +1,7 @@
 (ns apps.containers-test
   (:use [clojure.test]
         [apps.containers]
+        [apps.test-db-setup]
         [korma.core :exclude [update]]
         [korma.db]
         [kameleon.entities])
@@ -10,14 +11,6 @@
 ;;; database running locally on port 5432. It's recommended that you
 ;;; use the de-db and de-db-loader images to get a database running
 ;;; with docker.
-
-
-(defdb testdb (postgres {:db "de"
-                         :user "de"
-                         :password "notprod"
-                         :host (System/getenv "POSTGRES_PORT_5432_TCP_ADDR")
-                         :port (System/getenv "POSTGRES_PORT_5432_TCP_PORT")
-                         :delimiters ""}))
 
 (def image-info-map (add-image-info {:name "discoenv/de-db" :tag "latest" :url "https://www.google.com"}))
 
