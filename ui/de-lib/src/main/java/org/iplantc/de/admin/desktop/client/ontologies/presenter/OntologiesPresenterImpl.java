@@ -9,7 +9,7 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEv
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
-import org.iplantc.de.admin.desktop.client.ontologies.events.ViewOntologyVersionEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshOntologiesEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.gin.factory.OntologiesViewFactory;
 import org.iplantc.de.admin.desktop.client.ontologies.service.OntologyServiceFacade;
 import org.iplantc.de.admin.desktop.client.ontologies.views.AppCategorizeView;
@@ -49,7 +49,7 @@ import java.util.Map;
  * @author aramsey
  */
 public class OntologiesPresenterImpl implements OntologiesView.Presenter,
-                                                ViewOntologyVersionEvent.ViewOntologyVersionEventHandler,
+                                                RefreshOntologiesEvent.RefreshOntologiesEventHandler,
                                                 SelectOntologyVersionEvent.SelectOntologyVersionEventHandler,
                                                 SaveOntologyHierarchyEvent.SaveOntologyHierarchyEventHandler,
                                                 PublishOntologyClickEvent.PublishOntologyClickEventHandler,
@@ -165,7 +165,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         oldGridPresenter.getView().addAppSelectionChangedEventHandler(view);
         newGridPresenter.getView().addAppSelectionChangedEventHandler(view);
 
-        view.addViewOntologyVersionEventHandler(this);
+        view.addRefreshOntologiesEventHandler(this);
         view.addSelectOntologyVersionEventHandler(this);
         view.addHierarchySelectedEventHandler(this);
         view.addHierarchySelectedEventHandler(newGridPresenter.getView());
@@ -254,7 +254,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     }
 
     @Override
-    public void onViewOntologyVersion(ViewOntologyVersionEvent event) {
+    public void onRefreshOntologies(RefreshOntologiesEvent event) {
         getOntologies();
     }
 

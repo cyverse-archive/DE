@@ -45,7 +45,7 @@
                     <form:SimpleComboBox ui:field="ontologyDropDown"/>
                 </toolbar:child>
                 <toolbar:child>
-                    <button:TextButton ui:field="viewVersions"
+                    <button:TextButton ui:field="refreshOntologies"
                                        text="{appearance.ontologyList}"
                                        icon="{appearance.refreshIcon}"/>
                 </toolbar:child>

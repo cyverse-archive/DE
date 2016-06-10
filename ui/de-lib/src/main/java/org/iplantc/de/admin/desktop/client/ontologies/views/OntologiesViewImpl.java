@@ -7,7 +7,7 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEv
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
-import org.iplantc.de.admin.desktop.client.ontologies.events.ViewOntologyVersionEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshOntologiesEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.PublishOntologyDialog;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.SaveHierarchiesDialog;
 import org.iplantc.de.apps.client.AppCategoriesView;
@@ -75,7 +75,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
     @UiField TextButton addButton;
     @UiField SimpleComboBox<Ontology> ontologyDropDown;
-    @UiField TextButton viewVersions;
+    @UiField TextButton refreshOntologies;
     @UiField TextButton saveHierarchy;
     @UiField TextButton categorize;
     @UiField(provided = true) OntologiesViewAppearance appearance;
@@ -250,9 +250,10 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         saveHierarchy.setEnabled(selectedOntology != null);
         categorize.setEnabled(selectedOntology != null && targetApp != null);
     }
-    @UiHandler("viewVersions")
-    void viewVersionsClicked(SelectEvent event) {
-        fireEvent(new ViewOntologyVersionEvent());
+
+    @UiHandler("refreshOntologies")
+    void refreshOntologiesClicked(SelectEvent event) {
+        fireEvent(new RefreshOntologiesEvent());
     }
 
     @UiHandler("publishButton")
