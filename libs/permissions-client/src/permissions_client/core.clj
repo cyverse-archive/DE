@@ -36,7 +36,7 @@
       database already.")
 
   (delete-resource [_ id] [_ resource-name resource-type]
-    "Removes the resource with the given ID from the permissions service.")
+    "Removes a resource from the permissions service.")
 
   (update-resource [_ id resource-name]
     "Updates a resource in the permissions service. The resource-name field is the name or identifier that is
@@ -54,6 +54,10 @@
 
   (delete-resource-type [_ id]
     "Removes the resource type with the given ID from the permissions service. A resource type with associated
+     resources may not be deleted.")
+
+  (delete-resource-type-by-name [_ resource-type-name]
+    "Removes the resource type with the given name from the permissions service. A resource type with associated
      resources may not be deleted.")
 
   (update-resource-type [_ id resource-type-name description]
@@ -194,6 +198,11 @@
 
   (delete-resource-type [_ id]
     (http/delete (build-url base-url "resource_types" id))
+    nil)
+
+  (delete-resource-type-by-name [_ resource-type-name]
+    (http/delete (build-url base-url "resource_types")
+                 {:query-params {:resource_type_name (str resource-type-name)}})
     nil)
 
   (update-resource-type [_ id resource-type-name description]

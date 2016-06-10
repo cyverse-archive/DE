@@ -244,6 +244,13 @@
     (pc/delete-resource-type client (:id mog))
     (is (nil? ((get-resource-type-map) "mog")))))
 
+(deftest test-delete-resource-type-by-name
+  (let [client (create-permissions-client)
+        mog    (pc/add-resource-type client "mog" "half-man-half-dog")]
+    (is (resource-type-correct? mog "mog" "half-man-half-dog"))
+    (pc/delete-resource-type-by-name client (:name mog))
+    (is (nil? ((get-resource-type-map) "mog")))))
+
 (deftest test-update-resource-type
   (let [client (create-permissions-client)
         mog    (pc/add-resource-type client "mog" "half-man-half-dog")
