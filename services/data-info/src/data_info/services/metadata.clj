@@ -193,25 +193,6 @@
       {:path path
        :user user})))
 
-(defn- find-attributes
-  [cm attrs path]
-  (let [irods-avus (list-path-metadata cm path)
-        matching-avus (filter #(contains? attrs (:attr %)) irods-avus)]
-    (if-not (empty? matching-avus)
-      {:path path
-       :avus matching-avus}
-      nil)))
-
-(defn- validate-batch-add-attrs
-  "Throws an error if any of the given paths already have metadata set with any of the attrs found in the
-  irods-avus list."
-  [cm attrs paths]
-  (let [duplicates (remove nil? (map (partial find-attributes cm attrs) paths))]
-    (when-not (empty? duplicates)
-      (throw+ {:error_code :clojure-commons.exception/not-unique
-               :message    "Some paths already have metadata with some of the given attributes."
-               :duplicates duplicates}))))
-
 (defn- format-copy-dest-item
   [{:keys [id type]}]
   {:id   id
@@ -219,6 +200,7 @@
 
 (defn- get-writable-data-items
   [cm user data-ids]
+  (validators/validate-num-paths data-ids)
   (let [data-items (map (partial stat/uuid-stat cm user) data-ids)
         paths (map :path data-items)]
     (validators/all-paths-writeable cm user paths)
@@ -228,7 +210,7 @@
   "Copies all IRODS AVUs visible to the client, and Metadata AVUs, from the data item with
    src-id to the items with dest-ids. When the 'force?' parameter is false or not set, additional
    validation is performed."
-  [user force? src-id dest-ids]
+  [user src-id dest-ids]
   (with-jargon (cfg/jargon-cfg) [cm]
     (validators/user-exists cm user)
     (let [{:keys [path type]} (get-readable-data-item cm user src-id)
@@ -236,8 +218,6 @@
           dest-paths (map :path dest-items)
           dest-ids (map :id dest-items)
           irods-avus (list-path-metadata cm path)]
-      (if-not force?
-        (validate-batch-add-attrs cm (set (map :attr irods-avus)) dest-paths))
       (metadata/copy-metadata-avus user
                                    (resolve-data-type type)
                                    src-id
