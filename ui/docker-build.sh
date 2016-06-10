@@ -11,6 +11,14 @@ set -e
 # variable.
 #################################################################
 
+if [ -z "$DOCKER_USER" ]; then
+	DOCKER_USER=discoenv
+fi
+
+if [ -z "$DOCKER_TAG" ]; then
+	DOCKER_TAG=dev
+fi
+
 GIT_COMMIT=$(git rev-parse HEAD)
 
 docker pull $DOCKER_USER/buildenv:latest
@@ -29,5 +37,5 @@ docker run --rm -t -a stdout -a stderr \
     -PGIT_COMMIT=${GIT_COMMIT} \
     -PGIT_BRANCH=${GIT_BRANCH} 
 
-docker build --build-arg git_commit=$GIT_COMMIT --build-arg buildenv_git_commit=$BUILDENV_GIT_COMMIT --pull --rm -t "$DOCKER_USER/$DOCKER_REPO:dev" .
-docker push $DOCKER_USER/$DOCKER_REPO:dev
+docker build --build-arg git_commit=$GIT_COMMIT --build-arg buildenv_git_commit=$BUILDENV_GIT_COMMIT --pull --rm -t "$DOCKER_USER/$DOCKER_REPO:$DOCKER_TAG" .
+docker push $DOCKER_USER/$DOCKER_REPO:$DOCKER_TAG
