@@ -111,6 +111,18 @@
         json/decode
         (get-in ["paths" path]))))
 
+(defn list-tickets
+  [{:keys [user]} {:keys [paths]}]
+  (raw/list-tickets user paths))
+
+(defn add-tickets
+  [{:keys [user public]} {:keys [paths]}]
+  (raw/add-tickets user paths (and public (= public "1"))))
+
+(defn delete-tickets
+  [{:keys [user]} {:keys [tickets]}]
+  (raw/delete-tickets user tickets))
+
 (defn- url-encoded?
   [string-to-check]
   (re-seq #"\%[A-Fa-f0-9]{2}" string-to-check))
