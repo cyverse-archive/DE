@@ -36,7 +36,6 @@ import java.util.List;
  */
 public class MetadataPresenterImpl implements MetadataView.Presenter {
 
-
     private class TemplateViewCancelSelectHandler implements SelectEvent.SelectHandler {
 
         private MetadataTemplateViewDialog mdView;
@@ -102,6 +101,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
     private final DiskResourceServiceFacade drService;
     private List<MetadataTemplateInfo> templates;
     private MetadataTemplateViewDialog templateView;
+    private List<DiskResourceMetadata> userMdList;
 
     final MetadataView.Presenter.Appearance appearance =
             GWT.create(MetadataView.Presenter.Appearance.class);
@@ -132,28 +132,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
     }
 
     private void loadMetadata() {
-        drService.getDiskResourceMetaData(resource, new AsyncCallback<DiskResourceMetadataList>() {
-            @Override
-            public void onSuccess(final DiskResourceMetadataList result) {
-                view.loadMetadata(result.getOtherMetadata());
-
-                final List<DiskResourceMetadata> userMdList = result.getUserMetadata();
-                if (userMdList != null) {
-                    if (templates != null && !templates.isEmpty()) {
-                        view.loadUserMetadata(userMdList);
-                    }
-                }
-
-                view.unmask();
-            }
-
-
-            @Override
-            public void onFailure(Throwable caught) {
-                view.unmask();
-                ErrorHandler.post(caught);
-            }
-        });
+        drService.getDiskResourceMetaData(resource, new DiskResourceMetadataListAsyncCallback());
     }
 
     @Override
@@ -204,37 +183,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
 
     @Override
     public void onTemplateSelected(String templateId) {
-        drService.getMetadataTemplate(templateId, new AsyncCallback<MetadataTemplate>() {
-
-            @Override
-            public void onFailure(Throwable arg0) {
-                ErrorHandler.post(appearance.templateinfoError(), arg0);
-            }
-
-            @Override
-            public void onSuccess(MetadataTemplate result) {
-                //close exisitng view before opening one...
-                if (templateView != null) {
-                    templateView.hide();
-                }
-                templateView =
-                        new MetadataTemplateViewDialog(view.getUserMetadata(), isWritable(), result.getAttributes());
-                templateView.addOkButtonSelectHandler(new TemplateViewOkSelectHandler(isWritable(),
-                                                                                      MetadataPresenterImpl.this,
-                                                                                      templateView));
-                templateView.addCancelButtonSelectHandler(new TemplateViewCancelSelectHandler(
-                        templateView));
-                templateView.setHeadingText(result.getName());
-                templateView.setModal(false);
-                templateView.setSize("600px", "400px");
-                templateView.show();
-
-            }
-
-            private boolean isWritable() {
-                return DiskResourceUtil.getInstance().isWritable(resource);
-            }
-        });
+        drService.getMetadataTemplate(templateId, new MetadataTemplateAsyncCallback());
 
     }
 
@@ -251,6 +200,27 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
         view.unmask();
     }
 
+    @Override
+    public boolean isDirty() {
+        List<DiskResourceMetadata> userMetadata = view.getUserMetadata();
+        if(userMdList != null && userMetadata != null) {
+           if(userMdList.size() != userMetadata.size()) {
+               return true;
+           } else {
+              for(DiskResourceMetadata dmd : userMdList) {
+                  for(DiskResourceMetadata umd : userMetadata) {
+                      if(!umd.equals(dmd)) {
+                          return true;
+                      }
+                  }
+              }
+              return false;
+           }
+        } else {
+            return false;
+        }
+    }
+
     public static DiskResourceMetadata newMetadata(String attr, String value, String unit) {
         // FIXME Move to presenter. Autobean factory doesn't belong in view.
         DiskResourceMetadata avu = autoBeanFactory.metadata().as();
@@ -263,4 +233,59 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
     }
 
 
+    private class DiskResourceMetadataListAsyncCallback
+            implements AsyncCallback<DiskResourceMetadataList> {
+        @Override
+        public void onSuccess(final DiskResourceMetadataList result) {
+            view.loadMetadata(result.getOtherMetadata());
+            userMdList =  result.getUserMetadata();
+            if (userMdList != null) {
+                if (templates != null && !templates.isEmpty()) {
+                    view.loadUserMetadata(userMdList);
+                }
+            }
+
+            view.unmask();
+        }
+
+
+
+        @Override
+        public void onFailure(Throwable caught) {
+            view.unmask();
+            ErrorHandler.post(caught);
+        }
+    }
+
+    private class MetadataTemplateAsyncCallback implements AsyncCallback<MetadataTemplate> {
+
+        @Override
+        public void onFailure(Throwable arg0) {
+            ErrorHandler.post(appearance.templateinfoError(), arg0);
+        }
+
+        @Override
+        public void onSuccess(MetadataTemplate result) {
+            //close exisitng view before opening one...
+            if (templateView != null) {
+                templateView.hide();
+            }
+            templateView =
+                    new MetadataTemplateViewDialog(view.getUserMetadata(), isWritable(), result.getAttributes());
+            templateView.addOkButtonSelectHandler(new TemplateViewOkSelectHandler(isWritable(),
+                                                                                  MetadataPresenterImpl.this,
+                                                                                  templateView));
+            templateView.addCancelButtonSelectHandler(new TemplateViewCancelSelectHandler(
+                    templateView));
+            templateView.setHeadingText(result.getName());
+            templateView.setModal(false);
+            templateView.setSize("600px", "400px");
+            templateView.show();
+
+        }
+
+        private boolean isWritable() {
+            return DiskResourceUtil.getInstance().isWritable(resource);
+        }
+    }
 }

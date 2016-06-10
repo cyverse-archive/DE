@@ -1,5 +1,6 @@
 package org.iplantc.de.diskResource.client.presenters.callbacks;
 
+import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.errors.diskResources.DiskResourceErrorAutoBeanFactory;
 import org.iplantc.de.client.models.errors.diskResources.ErrorUpdateMetadata;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -21,16 +22,14 @@ public class DiskResourceMetadataUpdateCallback extends DiskResourceServiceCallb
 
     public DiskResourceMetadataUpdateCallback(IPlantDialog dialog) {
         super(dialog);
-
         this.dialog = dialog;
     }
 
     @Override
     public void onSuccess(String result) {
-
         super.onSuccess(result);
-
         if (dialog != null) {
+            dialog.clearHandlers();
             dialog.hide();
         }
 
@@ -44,8 +43,7 @@ public class DiskResourceMetadataUpdateCallback extends DiskResourceServiceCallb
         AutoBean<ErrorUpdateMetadata> errorBean = AutoBeanCodex.decode(factory,
                 ErrorUpdateMetadata.class, caught.getMessage());
 
-        ErrorHandler.post(errorBean.as(), caught);
-
+       ErrorHandler.post(errorBean.as(), caught);
     }
 
     @Override

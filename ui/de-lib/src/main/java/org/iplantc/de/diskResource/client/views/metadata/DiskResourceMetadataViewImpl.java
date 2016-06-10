@@ -237,7 +237,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         expandUserMetadataPanel();
         String attr = getUniqueAttrName(appearance.newAttribute(), 0);
         DiskResourceMetadata md =
-                MetadataPresenterImpl.newMetadata(attr, appearance.newValue(), "New Unit"); //$NON-NLS-1$
+                MetadataPresenterImpl.newMetadata(attr, appearance.newValue(), appearance.newUnit()); //$NON-NLS-1$
         setAvuModelKey(md);
         userMdListStore.add(0, md);
         userGridInlineEditing.startEditing(new GridCell(0, 1));
@@ -271,7 +271,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
 
     void buildUserMetadataPanel() {
         userMetadataPanel = new ContentPanel(accordionLayoutAppearance);
-        userMetadataPanel.setSize("575", "475"); //$NON-NLS-1$ //$NON-NLS-2$
+        userMetadataPanel.setSize(appearance.panelWidth(), appearance.panelHeight()); //$NON-NLS-1$ //$NON-NLS-2$
         userMetadataPanel.setCollapsible(true);
         userMetadataPanel.getHeader().addStyleName(ThemeStyles.get().style().borderTop());
         userMetadataPanel.setHeadingHtml(appearance.boldHeader(appearance.userMetadata()));
@@ -279,7 +279,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
 
     void buildAdditionalMetadataPanel() {
         additionalMetadataPanel = new ContentPanel(accordionLayoutAppearance);
-        additionalMetadataPanel.setSize("575", "475"); //$NON-NLS-1$ //$NON-NLS-2$
+        additionalMetadataPanel.setSize(appearance.panelWidth(), appearance.panelHeight()); //$NON-NLS-1$ //$NON-NLS-2$
         additionalMetadataPanel.setCollapsible(true);
         additionalMetadataPanel.getHeader().addStyleName(ThemeStyles.get().style().borderTop());
         additionalMetadataPanel.setHeadingHtml(appearance.boldHeader(appearance.additionalMetadata()));

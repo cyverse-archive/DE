@@ -67,6 +67,10 @@ public interface MetadataView extends IsWidget {
         String selectTemplate();
 
         String importMd();
+
+        String panelWidth();
+
+        String panelHeight();
     }
 
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter {
@@ -99,6 +103,8 @@ public interface MetadataView extends IsWidget {
         void onSelectTemplate();
 
         void onImport(List<DiskResourceMetadata> selectedItems);
+
+        boolean isDirty();
     }
 
 

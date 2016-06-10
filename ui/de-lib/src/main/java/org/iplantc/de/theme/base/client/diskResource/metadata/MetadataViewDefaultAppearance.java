@@ -202,4 +202,14 @@ public class MetadataViewDefaultAppearance implements MetadataView.Appearance {
     public String importMd() {
         return displayStrings.importMd();
     }
+
+    @Override
+    public String panelWidth() {
+        return "575";
+    }
+
+    @Override
+    public String panelHeight() {
+        return "575";
+    }
 }
