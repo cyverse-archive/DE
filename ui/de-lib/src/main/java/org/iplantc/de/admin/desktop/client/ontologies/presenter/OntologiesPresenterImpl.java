@@ -92,9 +92,13 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     private class SaveHierarchyAsyncCallback implements AsyncCallback<OntologyHierarchy> {
         private final String iri;
+        private boolean clearHierarchies;
+        private boolean isLast;
 
-        public SaveHierarchyAsyncCallback(String iri) {
+        public SaveHierarchyAsyncCallback(String iri, boolean clearHierarchies, boolean isLast) {
             this.iri = iri;
+            this.clearHierarchies = clearHierarchies;
+            this.isLast = isLast;
         }
 
         @Override
@@ -105,7 +109,9 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         @Override
         public void onSuccess(OntologyHierarchy result) {
             if (isValidHierarchy(result)) {
-                view.clearStore();
+                if (clearHierarchies) {
+                    view.clearStore();
+                }
                 addHierarchies(null,
                                Lists.newArrayList(result));
             } else {
@@ -331,10 +337,16 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     @Override
     public void onSaveOntologyHierarchy(SaveOntologyHierarchyEvent event) {
         List<String> iris = event.getIris();
-
-        for (final String iri : iris) {
+        boolean clearHierarchies = true;
+        boolean isLast = false;
+        for (String iri : iris) {
+            if (iris.indexOf(iri) == iris.size() - 1) {
+                isLast = true;
+            }
+            view.maskHierarchyTree();
             serviceFacade.saveOntologyHierarchy(event.getOntology().getVersion(),
-                                                iri, new SaveHierarchyAsyncCallback(iri));
+                                                iri, new SaveHierarchyAsyncCallback(iri, clearHierarchies, isLast));
+            clearHierarchies = false;
         }
 
         view.showTreePanel();
