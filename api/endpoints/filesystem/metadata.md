@@ -101,172 +101,24 @@ Please see the metadata documentation for more information.
 Adding Batch Metadata to Multiple Paths from a CSV File
 -------------------------------------------------------
 
-This endpoint will parse a CSV/TSV file, where the first column is absolute or relative paths to files in the data store, the remaining columns are metadata, attributes are listed in the first row, and filenames and attribute values are listed in the remaining rows. If a `template-id` parameter is provided, then any parsed AVUs with attributes that match the given template's attributes will be added as template AVUs, otherwise all other AVUs will be added as IRODS metadata AVUs.
+Secured Endpoint: POST /secured/filesystem/metadata/csv-parser
 
-__URL Path__: /secured/filesystem/metadata/csv-parser
+Delegates to data-info: POST /data/{data-id}/metadata/csv-parser
 
-__HTTP Method__: POST
-
-__Delegates to data-info__: `PATCH /data/{data-id}/metadata`
-
-__Error Codes__: ERR_NOT_READABLE, ERR_NOT_WRITEABLE, ERR_DOES_NOT_EXIST, ERR_NOT_A_USER, ERR_BAD_OR_MISSING_FIELD, ERR_NOT_UNIQUE
-
-__Request Query Parameters__:
+#### Request Query Parameters
 
 Parameter | Required | Description
 ----------|----------|------------
 dest | Yes | The folder path to look under for files listed in the CSV file.
 src | Yes | Path to the CSV source file in IRODS.
-force | No | If omitted or set to `false`, then existing IRODS AVUs will be checked for attributes matching those parsed from the CSV file. If a match is found, then an `ERR_NOT_UNIQUE` is returned and metadata is not saved.
-template-id | No | The UUID of the Metadata Template with which to associate the parsed metadata.
 separator | No | URL encoded separator character to use for parsing the CSV/TSV file. Comma (`%2C`) by default.
 
-__Request File Format__:
+This endpoint is a passthrough to the data-info endpoint above.
+Please see the data-info documentation for more information.
 
-filename | template_item | template_postal_code | template_department | template_institution | test-attr-1 | test-attr-2 | test-attr-3
----------|---|---|---|---|---|---|---
-library1/fake.1.fastq.gz | fake-1 | 85719 | BIO5 | iPlant | test-val-1 | test-val-2 | test-val-3
-/iplant/home/ipcuser/folder_2/library2/fake.2.fastq.gz | fake-2 | 85719 | BIO5 | iPlant | test-val-1 | test-val-2 | test-val-3
-library1 | lib-1 | 85719 | BIO5 | iPlant | test-val-1 | test-val-2 | test-val-3
+#### Curl Command
 
-__Response__:
-
-```json
-{
-    "path-metadata": [
-        {
-            "path": "/iplant/home/ipcuser/folder_1/library1/fake.1.fastq.gz",
-            "metadata": [
-                {
-                    "attr": "template_item",
-                    "value": "fake-1",
-                    "unit": ""
-                },
-                {
-                    "attr": "template_postal_code",
-                    "value": "85719",
-                    "unit": ""
-                },
-                {
-                    "attr": "template_department",
-                    "value": "BIO5",
-                    "unit": ""
-                },
-                {
-                    "attr": "template_institution",
-                    "value": "iPlant",
-                    "unit": ""
-                }
-            ],
-            "irods-avus": [
-                {
-                    "attr": "test-attr-1",
-                    "value": "test-val-1",
-                    "unit": ""
-                },
-                {
-                    "attr": "test-attr-2",
-                    "value": "test-val-2",
-                    "unit": ""
-                },
-                {
-                    "attr": "test-attr-3",
-                    "value": "test-val-3",
-                    "unit": ""
-                }
-            ]
-        },
-        {
-            "path": "/iplant/home/ipcuser/folder_2/library2/fake.2.fastq.gz",
-            "metadata": [
-                {
-                    "attr": "template_item",
-                    "value": "fake-2",
-                    "unit": ""
-                },
-                {
-                    "attr": "template_postal_code",
-                    "value": "85719",
-                    "unit": ""
-                },
-                {
-                    "attr": "template_department",
-                    "value": "BIO5",
-                    "unit": ""
-                },
-                {
-                    "attr": "template_institution",
-                    "value": "iPlant",
-                    "unit": ""
-                }
-            ],
-            "irods-avus": [
-                {
-                    "attr": "test-attr-1",
-                    "value": "test-val-1",
-                    "unit": ""
-                },
-                {
-                    "attr": "test-attr-2",
-                    "value": "test-val-2",
-                    "unit": ""
-                },
-                {
-                    "attr": "test-attr-3",
-                    "value": "test-val-3",
-                    "unit": ""
-                }
-            ]
-        },
-        {
-            "path": "/iplant/home/ipcuser/folder_1/library1",
-            "metadata": [
-                {
-                    "attr": "template_item",
-                    "value": "lib-1",
-                    "unit": ""
-                },
-                {
-                    "attr": "template_postal_code",
-                    "value": "85719",
-                    "unit": ""
-                },
-                {
-                    "attr": "template_department",
-                    "value": "BIO5",
-                    "unit": ""
-                },
-                {
-                    "attr": "template_institution",
-                    "value": "iPlant",
-                    "unit": ""
-                }
-            ],
-            "irods-avus": [
-                {
-                    "attr": "test-attr-1",
-                    "value": "test-val-1",
-                    "unit": ""
-                },
-                {
-                    "attr": "test-attr-2",
-                    "value": "test-val-2",
-                    "unit": ""
-                },
-                {
-                    "attr": "test-attr-3",
-                    "value": "test-val-3",
-                    "unit": ""
-                }
-            ]
-        }
-    ]
-}
-```
-
-__Curl Command__:
-
-    curl -sH "$AUTH_HEADER" -X POST "http://localhost:3000/secured/filesystem/metadata/csv-parser?template-id=e7e19316-dc88-11e4-a49a-77c52ae8901a&dest=/iplant/home/ipcuser/folder_1&src=/iplant/home/ipcuser/metadata.csv"
+    curl -sH "$AUTH_HEADER" -X POST "http://localhost:3000/secured/filesystem/metadata/csv-parser?dest=/iplant/home/ipcuser/folder_1&src=/iplant/home/ipcuser/metadata.csv"
 
 Copying all Metadata from a File/Folder
 -----------------------------------------------------
