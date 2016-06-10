@@ -222,6 +222,11 @@
   (with-fake-routes {(fake-url "resource_types") {:get list-resource-types-response}}
     (is (= (pc/list-resource-types (create-fake-client)) fake-resource-types))))
 
+(deftest test-list-resource-types-by-name
+  (let [opts {:resource_type_name "rtype"}]
+    (with-fake-routes {(fake-query-url opts "resource_types") {:get list-resource-types-response}}
+      (is (= (pc/list-resource-types (create-fake-client) opts) fake-resource-types)))))
+
 (defn fake-resource-type [{:keys [name description]}]
   {:id          "2bec53ae-4732-4768-86fd-344b9692332f"
    :name        name

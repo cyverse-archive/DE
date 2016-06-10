@@ -226,6 +226,12 @@
     (is (resource-type-correct? (rts "app") "app"))
     (is (resource-type-correct? (rts "analysis") "analysis"))))
 
+(deftest test-list-resource-types-by-name
+  (let [opts {:resource_type_name "app"}
+        rts  (get-resource-type-map (pc/list-resource-types (create-permissions-client) opts))]
+    (is (= (count rts) 1))
+    (is (resource-type-correct? (rts "app") "app"))))
+
 (deftest test-add-resource-type
   (let [client (create-permissions-client)]
     (is (resource-type-correct? (pc/add-resource-type client "mog" "half-man-half-dog") "mog" "half-man-half-dog"))

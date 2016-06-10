@@ -43,8 +43,8 @@
      used by the client to refer to the resource. This field must be unique among resources of the same type.
      The type of an existing resource may not be modified.")
 
-  (list-resource-types [_]
-    "Lists all resource types registered in the permissions service.")
+  (list-resource-types [_] [_ opts]
+    "Lists resource types registered in the permissions service.")
 
   (add-resource-type [_ resource-type-name description]
     "Adds a resource type to the permissions service. A resource type is a class of entities to which
@@ -179,6 +179,11 @@
 
   (list-resource-types [_]
     (:body (http/get (build-url base-url "resource_types") {:as :json})))
+
+  (list-resource-types [_ opts]
+    (:body (http/get (build-url base-url "resource_types")
+                     {:query-params (prepare-opts opts [:resource_type_name])
+                      :as           :json})))
 
   (add-resource-type [_ resource-type-name description]
     (:body (http/post (build-url base-url "resource_types")
