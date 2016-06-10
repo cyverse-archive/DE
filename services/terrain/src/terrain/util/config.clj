@@ -397,16 +397,6 @@
   [props config-valid configs coge-enabled]
   "terrain.coge.user")
 
-(cc/defprop-str kifshare-download-template
-  "The mustache template for the kifshare URL."
-  [props config-valid configs filesystem-routes-enabled]
-  "terrain.fs.kifshare-download-template")
-
-(cc/defprop-str kifshare-external-url
-  "The external URL for kifshare."
-  [props config-valid configs filesystem-routes-enabled]
-  "terrain.fs.kifshare-external-url")
-
 (cc/defprop-str default-output-dir
   "The default name of the default job output directory."
   [props config-valid configs]
