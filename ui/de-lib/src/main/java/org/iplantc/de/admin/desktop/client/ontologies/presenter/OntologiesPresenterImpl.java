@@ -104,6 +104,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         @Override
         public void onFailure(Throwable caught) {
             ErrorHandler.post(caught);
+            view.unMaskHierarchyTree();
         }
 
         @Override
@@ -114,6 +115,10 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                 }
                 addHierarchies(null,
                                Lists.newArrayList(result));
+                if (isLast) {
+                    view.unMaskHierarchyTree();
+                }
+
             } else {
                 announcer.schedule(new ErrorAnnouncementConfig(
                         appearance.invalidHierarchySubmitted(iri)));
@@ -240,6 +245,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
             @Override
             public void onSuccess(List<Avu> result) {
                 announcer.schedule(new SuccessAnnouncementConfig(appearance.appClassified(targetApp.getName(), hierarchy.getLabel())));
+                view.selectHierarchy(hierarchy);
             }
         });
     }
@@ -269,12 +275,14 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
+                view.unMaskHierarchyTree();
             }
 
             @Override
             public void onSuccess(List<Ontology> result) {
                 Collections.reverse(result);
                 view.showOntologyVersions(result);
+                view.unMaskHierarchyTree();
             }
         });
     }
@@ -283,10 +291,13 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     public void onSelectOntologyVersion(SelectOntologyVersionEvent event) {
         view.clearStore();
         iriToHierarchyMap.clear();
+        view.showTreePanel();
+        view.maskHierarchyTree();
         serviceFacade.getOntologyHierarchies(event.getSelectedOntology().getVersion(), new AsyncCallback<List<OntologyHierarchy>>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
+                view.unMaskHierarchyTree();
             }
 
             @Override
@@ -295,8 +306,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                     view.showEmptyTreePanel();
                 } else {
                     addHierarchies(null, result);
-                    view.showTreePanel();
                 }
+                view.unMaskHierarchyTree();
             }
         });
 

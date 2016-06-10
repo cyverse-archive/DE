@@ -221,6 +221,24 @@ public class OntologiesViewImpl extends Composite implements OntologiesView,
         fireEvent(new RefreshOntologiesEvent());
     }
 
+    @Override
+    public void maskHierarchyTree() {
+        treePanel.mask(appearance.loadingMask());
+    }
+
+    @Override
+    public void unMaskHierarchyTree() {
+        treePanel.unmask();
+    }
+
+    @Override
+    public void selectHierarchy(OntologyHierarchy hierarchy) {
+        if (hierarchy != null) {
+            tree.getSelectionModel().deselectAll();
+            tree.getSelectionModel().select(hierarchy, true);
+        }
+    }
+
     @UiFactory
     SimpleComboBox<Ontology> createComboBox() {
         final SimpleComboBox<Ontology> ontologySimpleComboBox = new SimpleComboBox<Ontology>(new LabelProvider<Ontology>() {

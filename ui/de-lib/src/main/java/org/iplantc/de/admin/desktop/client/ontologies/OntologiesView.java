@@ -48,6 +48,12 @@ public interface OntologiesView extends IsWidget,
 
     void addToStore(OntologyHierarchy parent, List<OntologyHierarchy> children);
 
+    void maskHierarchyTree();
+
+    void unMaskHierarchyTree();
+    
+    void selectHierarchy(OntologyHierarchy hierarchy);
+
     interface OntologiesViewAppearance {
         String addOntology();
 
