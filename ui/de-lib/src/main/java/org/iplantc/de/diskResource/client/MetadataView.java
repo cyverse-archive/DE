@@ -108,6 +108,7 @@ public interface MetadataView extends IsWidget {
     }
 
 
+    boolean isDirty();
 
     boolean isValid();
     

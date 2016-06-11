@@ -207,13 +207,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
            if(userMdList.size() != userMetadata.size()) {
                return true;
            } else {
-              for(DiskResourceMetadata dmd : userMdList) {
-                  if(userMetadata.indexOf(dmd) < 0) {
-                      return true;
-                  }
-
-              }
-              return false;
+             return view.isDirty();
            }
         } else {
             return false;

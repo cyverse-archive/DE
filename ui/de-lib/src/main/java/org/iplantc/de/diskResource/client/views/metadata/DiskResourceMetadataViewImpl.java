@@ -15,6 +15,7 @@ import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
@@ -93,6 +94,8 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
             GWT.create(AccordionLayoutAppearance.class);
 
     private static final String AVU_BEAN_TAG_MODEL_KEY = "model-key"; //$NON-NLS-1$
+
+    private boolean dirty;
 
     @UiField(provided = true)
     final MetadataView.Appearance appearance = GWT.create(MetadataView.Appearance.class);
@@ -386,6 +389,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
 
             @Override
             public void onCompleteEdit(CompleteEditEvent<DiskResourceMetadata> event) {
+                dirty = true;
                 userMdListStore.commitChanges();
             }
         });
@@ -430,6 +434,11 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         for (DiskResourceMetadata md : umd) {
             additionalMdListStore.remove(md);
         }
+    }
+
+    @Override
+    public boolean isDirty() {
+        return dirty;
     }
 
     private class DiskResourceMetadataSelectionChangedHandler
