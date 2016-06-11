@@ -83,6 +83,7 @@ func runConversion(handler requestHandler, grouperDb *sql.DB, permissionDefName 
 
 func main() {
 	config := flag.String("config", "", "The path to the configuration file.")
+	convertJobs := flag.Bool("jobs", true, "True if jobs should be included in the conversion.")
 
 	// Parse the command line arguments.
 	flag.Parse()
@@ -131,8 +132,15 @@ func main() {
 	// Create a handler to add permissions to the database.
 	handler := perms_impl.BuildPutPermissionHandler(db)
 
+	// Determine which conversions to run.
+	var permissionDefs []string
+	if *convertJobs {
+		permissionDefs = []string{"apps:app-permission-def", "analyses:analysis-permission-def"}
+	} else {
+		permissionDefs = []string{"apps:app-permission-def"}
+	}
+
 	// Run the conversion.
-	permissionDefs := []string{"apps:app-permission-def", "analyses:analysis-permission-def"}
 	for _, permissionDef := range permissionDefs {
 		permissionDefName := fmt.Sprintf("%s:%s", grouperFolderNamePrefix, permissionDef)
 		runConversion(requestHandler(handler), grouperDb, permissionDefName)
