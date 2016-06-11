@@ -208,11 +208,10 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
                return true;
            } else {
               for(DiskResourceMetadata dmd : userMdList) {
-                  for(DiskResourceMetadata umd : userMetadata) {
-                      if(!umd.equals(dmd)) {
-                          return true;
-                      }
+                  if(userMetadata.indexOf(dmd) < 0) {
+                      return true;
                   }
+
               }
               return false;
            }

@@ -210,6 +210,6 @@ public class MetadataViewDefaultAppearance implements MetadataView.Appearance {
 
     @Override
     public String panelHeight() {
-        return "575";
+        return "475";
     }
 }

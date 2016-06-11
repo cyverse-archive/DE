@@ -42,7 +42,7 @@ public class ManageMetadataDialog extends IPlantDialog {
                          final DiskResourceUtil diskResourceUtil,
                          final GridView.Presenter.Appearance appearance) {
         super(true);
-        setModal(false);
+        setModal(true);
         this.diskResourceService = diskResourceService;
         this.diskResourceUtil = diskResourceUtil;
         this.appearance = appearance;
@@ -137,6 +137,10 @@ public class ManageMetadataDialog extends IPlantDialog {
                 }
             });
             amb.show();
+            amb.toFront();
+        } else {
+            canHide = true;
+            hide();
         }
     }
 }
