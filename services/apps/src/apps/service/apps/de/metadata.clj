@@ -15,7 +15,7 @@
         [slingshot.slingshot :only [throw+]])
   (:require [cheshire.core :as cheshire]
             [clj-http.client :as client]
-            [apps.clients.iplant-groups :as iplant-groups]
+            [apps.clients.permissions :as perms-client]
             [apps.persistence.app-metadata :as amp]
             [apps.service.apps.de.docs :as app-docs]
             [apps.service.apps.de.permissions :as perms]
@@ -44,7 +44,7 @@
   "Permanently deletes a single app from the database."
   [app-id]
   (amp/permanently-delete-app app-id)
-  (iplant-groups/delete-app-resource app-id))
+  (perms-client/delete-app-resource app-id))
 
 (defn permanently-delete-apps
   "This service removes apps from the database rather than merely marking them as deleted."
@@ -146,7 +146,7 @@
     (amp/set-app-suggested-categories app-id categories)
     (decategorize-app app-id)
     (add-app-to-category app-id (workspace-beta-app-category-id))
-    (iplant-groups/make-app-public app-id))
+    (perms-client/make-app-public app-id))
   nil)
 
 (defn make-app-public

@@ -12,8 +12,7 @@
         [apps.util.config]
         [apps.util.conversions :only [to-long remove-nil-vals]]
         [apps.workspace])
-  (:require [apps.clients.iplant-groups :as iplant-groups]
-            [apps.clients.permissions :as perms-client]
+  (:require [apps.clients.permissions :as perms-client]
             [apps.persistence.app-metadata :refer [get-app get-app-tools] :as amp]
             [apps.persistence.categories :as db-categories]
             [apps.service.apps.de.permissions :as perms]

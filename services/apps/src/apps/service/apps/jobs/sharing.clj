@@ -2,7 +2,7 @@
   (:use [clostache.parser :only [render]]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [apps.clients.data-info :as data-info]
-            [apps.clients.iplant-groups :as iplant-groups]
+            [apps.clients.permissions :as perms-client]
             [apps.clients.notifications :as cn]
             [apps.persistence.jobs :as jp]
             [apps.service.apps.jobs.params :as job-params]
@@ -61,18 +61,9 @@
            {:analysis-id job-id
             :detail (or detail "unexpected error")})))
 
-(defn- load-analysis-permissions
-  [user analysis-id]
-  (try+
-   (iplant-groups/load-analysis-permissions user [analysis-id])
-   (catch ce/clj-http-error? {:keys [body]}
-     (throw+ {:type   ::permission-load-failure
-              :reason (:grouper_result_message (service/parse-json body))}))))
-
 (defn- has-analysis-permission
   [user job-id required-level]
-  (-> (iplant-groups/load-analysis-permissions user [job-id])
-      (iplant-groups/has-permission-level required-level job-id)))
+  (seq (perms-client/load-analysis-permissions user [job-id] required-level)))
 
 (defn- verify-accessible
   [sharer job-id]
@@ -130,7 +121,7 @@
 (defn- share-child-job
   [apps-client sharer sharee level job]
   (or (process-job-inputs (partial share-input-file sharer sharee) apps-client job)
-      (iplant-groups/share-analysis (:id job) sharee level)))
+      (perms-client/share-analysis (:id job) "user" sharee level)))
 
 (defn- share-job*
   [apps-client sharer sharee job-id job level]
@@ -139,7 +130,7 @@
       (verify-support apps-client job-id)
       (share-app-for-job apps-client sharer sharee job-id job)
       (share-output-folder sharer sharee job)
-      (iplant-groups/share-analysis job-id sharee level)
+      (perms-client/share-analysis job-id "user" sharee level)
       (process-job-inputs (partial share-input-file sharer sharee) apps-client job)
       (process-child-jobs (partial share-child-job apps-client sharer sharee level) job-id)))
 
@@ -184,7 +175,7 @@
 (defn- unshare-child-job
   [apps-client sharer sharee job]
   (or (process-job-inputs (partial unshare-input-file sharer sharee) apps-client job)
-      (iplant-groups/unshare-analysis (:id job) sharee)))
+      (perms-client/unshare-analysis (:id job) "user" sharee)))
 
 (defn- unshare-job*
   [apps-client sharer sharee job-id job]
@@ -193,7 +184,7 @@
       (verify-support apps-client job-id)
       (unshare-output-folder sharer sharee job)
       (process-job-inputs (partial unshare-input-file sharer sharee) apps-client job)
-      (iplant-groups/unshare-analysis job-id sharee)
+      (perms-client/unshare-analysis job-id "user" sharee)
       (process-child-jobs (partial unshare-child-job apps-client sharer sharee) job-id)))
 
 (defn- unshare-job
