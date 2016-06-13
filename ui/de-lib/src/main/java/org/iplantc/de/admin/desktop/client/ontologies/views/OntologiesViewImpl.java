@@ -240,6 +240,14 @@ public class OntologiesViewImpl extends Composite implements OntologiesView,
     }
 
     @Override
+    public void selectActiveOntology(Ontology ontology) {
+        if (ontology != null) {
+            ontologyDropDown.setValue(ontology);
+            fireEvent(new SelectOntologyVersionEvent(ontology));
+        }
+    }
+
+    @Override
     public void reSortHierarchies() {
         treeStore.applySort(false);
     }

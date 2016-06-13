@@ -192,7 +192,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         HasId betaGroup = CommonModelUtils.getInstance().createHasIdFromString(DEProperties.getInstance().getDefaultBetaCategoryId());
 
         categoriesPresenter.go(betaGroup);
-        getOntologies();
+        getOntologies(true);
         container.setWidget(view);
     }
 
@@ -268,10 +268,10 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     @Override
     public void onRefreshOntologies(RefreshOntologiesEvent event) {
-        getOntologies();
+        getOntologies(false);
     }
 
-    void getOntologies() {
+    void getOntologies(final boolean selectActiveOntology) {
         serviceFacade.getOntologies(new AsyncCallback<List<Ontology>>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -284,6 +284,14 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                 Collections.reverse(result);
                 view.showOntologyVersions(result);
                 view.unMaskHierarchyTree();
+                if (selectActiveOntology) {
+                    for (Ontology ontology : result) {
+                        if (ontology.isActive()){
+                            view.selectActiveOntology(ontology);
+                            return;
+                        }
+                    }
+                }
             }
         });
     }
