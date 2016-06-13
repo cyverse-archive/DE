@@ -310,10 +310,10 @@
       (str "bytes " lower "-" upper "/" filesize)
 
       "unbounded"
-      (str "bytes " lower "-" "/" filesize)
+      (str "bytes " lower "-" filesize "/" filesize)
 
       "unbounded-negative"
-      (str "bytes " lower "-" "/" filesize)
+      (str "bytes " lower "-" filesize "/" filesize)
 
       "byte"
       (str "bytes " lower "-" upper "/" filesize)
