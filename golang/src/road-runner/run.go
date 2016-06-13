@@ -27,7 +27,7 @@ func getTicker(timeLimit int, exit chan messaging.StatusCode) (chan int, error) 
 
 	stepDuration, err := time.ParseDuration(fmt.Sprintf("%ds", timeLimit))
 	if err != nil {
-
+		return nil, fmt.Errorf("Could not parse duration: %s", err)
 	}
 
 	stepTicker := time.NewTicker(stepDuration)
@@ -36,8 +36,10 @@ func getTicker(timeLimit int, exit chan messaging.StatusCode) (chan int, error) 
 	go func(*time.Ticker, chan int) {
 		select {
 		case <-stepTicker.C:
+			logcabin.Info.Print("ticker received message to exit")
 			exit <- messaging.StatusTimeLimit
 		case <-quitTicker:
+			logcabin.Info.Print("ticker received message to quit")
 		}
 	}(stepTicker, quitTicker)
 
@@ -135,7 +137,10 @@ func (r *JobRunner) runAllSteps(exit chan messaging.StatusCode) error {
 		// TimeLimits set to 0 mean that there isn't a time limit.
 		var timeLimitEnabled bool
 		if step.Component.TimeLimit > 0 {
+			logcabin.Info.Printf("Time limit is set to %d", step.Component.TimeLimit)
 			timeLimitEnabled = true
+		} else {
+			logcabin.Info.Print("time limit is disabled")
 		}
 
 		// Start up the ticker
@@ -145,6 +150,8 @@ func (r *JobRunner) runAllSteps(exit chan messaging.StatusCode) error {
 			if err != nil {
 				logcabin.Error.Print(err)
 				timeLimitEnabled = false
+			} else {
+				logcabin.Info.Print("started up time limit ticker")
 			}
 		}
 
@@ -153,6 +160,7 @@ func (r *JobRunner) runAllSteps(exit chan messaging.StatusCode) error {
 		// Shut down the ticker
 		if timeLimitEnabled {
 			tickerQuit <- 1
+			logcabin.Info.Print("sent message to stop time limit ticker")
 		}
 
 		if exitCode != 0 || err != nil {
