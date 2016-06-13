@@ -23,6 +23,8 @@ import (
 	"permissions/restapi/operations/status"
 	"permissions/restapi/operations/subjects"
 
+	"permissions/util"
+
 	permissions_impl "permissions/restapi/impl/permissions"
 	resource_types_impl "permissions/restapi/impl/resource_types"
 	resources_impl "permissions/restapi/impl/resources"
@@ -67,12 +69,17 @@ func initService() error {
 		return err
 	}
 
+	connector, err := util.NewDefaultConnector("1m")
+	if err != nil {
+		return err
+	}
+
 	dburi, err := cfg.String("db.uri")
 	if err != nil {
 		return err
 	}
 
-	db, err = sql.Open("postgres", dburi)
+	db, err = connector.Connect("postgres", dburi)
 	if err != nil {
 		return err
 	}
