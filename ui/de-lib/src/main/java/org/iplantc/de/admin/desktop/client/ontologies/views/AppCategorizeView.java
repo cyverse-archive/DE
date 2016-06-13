@@ -17,4 +17,8 @@ public interface AppCategorizeView extends IsWidget {
 
     void setSelectedHierarchies(List<OntologyHierarchy> categories);
 
+    void mask(String loadingMask);
+
+    void unmask();
+
 }

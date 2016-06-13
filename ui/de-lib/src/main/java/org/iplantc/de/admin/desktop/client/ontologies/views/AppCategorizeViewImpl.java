@@ -166,6 +166,16 @@ public class AppCategorizeViewImpl implements AppCategorizeView {
     }
 
     @Override
+    public void mask(String loadingMask) {
+        tree.mask(loadingMask);
+    }
+
+    @Override
+    public void unmask() {
+        tree.unmask();
+    }
+
+    @Override
     public List<OntologyHierarchy> getSelectedCategories() {
         if (tree.isCheckable()) {
             return tree.getCheckedSelection();
