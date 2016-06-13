@@ -76,9 +76,6 @@ func Exit(exit, finalExit chan messaging.StatusCode) {
 
 		cleanup(job)
 
-		//wait for the exit code from the Run function.
-		<-exit
-
 		//Aggressively clean up the rest of the job.
 		logcabin.Info.Printf("Nuking all containers with the label %s=%s", model.DockerLabelKey, job.InvocationID)
 		err = dckr.NukeContainersByLabel(model.DockerLabelKey, job.InvocationID)
