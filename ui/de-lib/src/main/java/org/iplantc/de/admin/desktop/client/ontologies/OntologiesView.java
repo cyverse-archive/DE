@@ -54,6 +54,8 @@ public interface OntologiesView extends IsWidget,
     
     void selectHierarchy(OntologyHierarchy hierarchy);
 
+    void reSortHierarchies();
+
     interface OntologiesViewAppearance {
         String addOntology();
 

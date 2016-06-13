@@ -116,6 +116,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                 addHierarchies(null,
                                Lists.newArrayList(result));
                 if (isLast) {
+                    view.reSortHierarchies();
                     view.unMaskHierarchyTree();
                 }
 

@@ -239,6 +239,11 @@ public class OntologiesViewImpl extends Composite implements OntologiesView,
         }
     }
 
+    @Override
+    public void reSortHierarchies() {
+        treeStore.applySort(false);
+    }
+
     @UiFactory
     SimpleComboBox<Ontology> createComboBox() {
         final SimpleComboBox<Ontology> ontologySimpleComboBox = new SimpleComboBox<Ontology>(new LabelProvider<Ontology>() {
