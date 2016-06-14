@@ -76,7 +76,9 @@ public class AdminAppsGridImpl extends ContentPanel implements AdminAppsGridView
     @Override
     public void clearAndAdd(List<App> apps) {
         listStore.clear();
-        listStore.addAll(apps);
+        if (apps != null && !apps.isEmpty()) {
+            listStore.addAll(apps);
+        }
     }
 
     @Override

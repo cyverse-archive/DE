@@ -217,6 +217,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView,
 
     @Override
     public void onRefreshOntologies(RefreshOntologiesEvent event) {
+        newGridView.clearAndAdd(null);
         fireEvent(new RefreshOntologiesEvent());
     }
 
@@ -243,6 +244,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView,
                 selectedOntology = event.getSelectedItem();
                 updateButtonStatus();
                 if (selectedOntology != null) {
+                    newGridView.clearAndAdd(null);
                     fireEvent(new SelectOntologyVersionEvent(selectedOntology));
                 }
 
@@ -259,6 +261,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView,
 
     @UiHandler("refreshOntologies")
     void refreshOntologiesClicked(SelectEvent event) {
+        newGridView.clearAndAdd(null);
         fireEvent(new RefreshOntologiesEvent());
     }
 
