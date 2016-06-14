@@ -24,7 +24,7 @@
                  [org.iplantc/common-cfg "5.2.8.0"]
                  [com.cemerick/url "0.1.1"]
                  [medley "0.6.0"]
-                 [compojure "1.3.4"]
-                 [ring "1.4.0"]]
+                 [compojure "1.5.0"]
+                 [ring "1.5.0"]]
   :plugins [[lein-ring "0.9.3"]
             [test2junit "1.1.3"]])
