@@ -103,9 +103,9 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
     private MetadataTemplateViewDialog templateView;
     private List<DiskResourceMetadata> userMdList;
 
-    final MetadataView.Presenter.Appearance appearance =
+    private MetadataView.Presenter.Appearance appearance =
             GWT.create(MetadataView.Presenter.Appearance.class);
-    private final static DiskResourceAutoBeanFactory autoBeanFactory =
+    private static DiskResourceAutoBeanFactory autoBeanFactory =
             GWT.create(DiskResourceAutoBeanFactory.class);
 
     public MetadataPresenterImpl(final DiskResource selected,
@@ -203,15 +203,12 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
     @Override
     public boolean isDirty() {
         List<DiskResourceMetadata> userMetadata = view.getUserMetadata();
-        if(userMdList != null && userMetadata != null) {
-           if(userMdList.size() != userMetadata.size()) {
+        if(userMdList != null && userMetadata != null && userMdList.size() != userMetadata.size()) {
                return true;
-           } else {
+         } else {
              return view.isDirty();
-           }
-        } else {
-            return false;
-        }
+         }
+
     }
 
     public static DiskResourceMetadata newMetadata(String attr, String value, String unit) {
