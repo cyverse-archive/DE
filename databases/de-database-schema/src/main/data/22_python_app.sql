@@ -31,7 +31,7 @@ INSERT INTO tools
          14400,
          'bad7e301-4442-4e82-8cc4-8db681cae364'
     FROM tool_types, integration_data
-   WHERE tool_types."name" = 'internal'
+   WHERE tool_types."name" = 'executable'
      AND integration_data.integrator_name = 'Default DE Tools'
    LIMIT 1;
 
