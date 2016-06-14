@@ -167,8 +167,20 @@
 
  "metadata-client"
  {:type     :library
-  :type-num 16
+  :type-num 17
   :path     "libs/metadata-client"
+  :build    :lein
+  :install  :lein
+  :tarball? false
+  :uberjar? false
+  :install? true
+  :language :clojure
+  :archive? false}
+
+ "permissions-client"
+ {:type     :library
+  :type-num 18
+  :path     "libs/permissions-client"
   :build    :lein
   :install  :lein
   :tarball? false
