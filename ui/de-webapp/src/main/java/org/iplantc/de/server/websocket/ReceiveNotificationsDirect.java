@@ -35,7 +35,7 @@ public class ReceiveNotificationsDirect {
      */
     public ReceiveNotificationsDirect() {
        connection = AMQPConnectionManager.getInstance().getConnection();
-       LOG.info("********** amqp Connection created created!!!!!!");
+       LOG.info("amqp Connection created created!");
     }
 
     /**
@@ -46,15 +46,15 @@ public class ReceiveNotificationsDirect {
     public Channel createChannel() {
         try {
             Channel channel = connection.createChannel();
-            LOG.info("********** amqp channel created!");
+            LOG.info("Amqp channel created!");
             return channel;
         } catch (IOException ioe) {
             ioe.printStackTrace();
-            LOG.error("***** IO Exception when creating channel*****");
+            LOG.error("IO Exception when creating channel:" + ioe.getMessage());
             return null;
         } catch (Exception e) {
             e.printStackTrace();
-            LOG.error("***** Exception when creating channel*****");
+            LOG.error("Exception when creating channel:" + e.getMessage());
             return null;
         }
     }
@@ -74,15 +74,15 @@ public class ReceiveNotificationsDirect {
                                  props.getProperty(
                                          "org.iplantc.discoveryenvironment.notification.amqp.exchange.name"),
                                  routing_key);
-            LOG.info("******* Binding complete *******");
+            LOG.info("Binding complete");
             return queueName;
         } catch (IOException e) {
             e.printStackTrace();
-            LOG.error("***** IO Exception when binding queue *****");
+            LOG.error("IO Exception when binding queue:" + e.getMessage());
             return null;
         } catch (Exception e) {
             e.printStackTrace();
-            LOG.error("******* Exception when binding queue *****");
+            LOG.error("Exception when binding queue:" + e.getMessage());
             return null;
         }
 
@@ -99,13 +99,13 @@ public class ReceiveNotificationsDirect {
     public void consumeMessage(Channel msgChannel, Consumer consumer, String queueName) {
         try {
             msgChannel.basicConsume(queueName, true, consumer);
-            LOG.error("***** comsumer reqistered *****");
+            LOG.info("comsumer reqistered ");
         } catch (IOException e) {
             e.printStackTrace();
-            LOG.error("***** IO Exception when consuming message*****");
+            LOG.error("IO Exception when consuming message:" + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            LOG.error("***** Exception when consuming message*****");
+            LOG.error("Exception when consuming message:" + e.getMessage());
         }
     }
 
