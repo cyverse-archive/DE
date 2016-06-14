@@ -59,6 +59,12 @@
 (s/defschema StandardUserQueryParams
   {:user (describe NonBlankString "The username of the authenticated, requesting user")})
 
+(s/defschema StatusParams
+  {(s/optional-key :expecting)
+   (describe NonBlankString "The service which the requesting client is expecting to see here.
+                             Should throw a 500 error if provided and does not match the actual
+                             service running here.")})
+
 ;; The SortField Docs and OptionalKey are defined seperately so that they can be used to describe
 ;; different enums in the PagingParams in different endpoints.
 (def SortFieldOptionalKey (s/optional-key :sort-field))
@@ -91,7 +97,8 @@
   {:service     (describe NonBlankString "The name of the service")
    :description (describe NonBlankString "The service description")
    :version     (describe NonBlankString "The service version")
-   :docs-url    (describe NonBlankString "The service API docs")})
+   :docs-url    (describe NonBlankString "The service API docs")
+   (s/optional-key :expecting) (describe String "The service the requesting client was expecting to see, if any")})
 
 (s/defschema ErrorResponse
   {:error_code              (describe NonBlankString "The code identifying the type of error")
