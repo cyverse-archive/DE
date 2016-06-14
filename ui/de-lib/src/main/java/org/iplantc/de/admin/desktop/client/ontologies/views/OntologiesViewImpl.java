@@ -57,8 +57,7 @@ import java.util.List;
 /**
  * @author aramsey
  */
-public class OntologiesViewImpl extends Composite implements OntologiesView,
-                                                             RefreshOntologiesEvent.RefreshOntologiesEventHandler {
+public class OntologiesViewImpl extends Composite implements OntologiesView {
 
     interface OntologiesViewImplUiBinder extends UiBinder<Widget, OntologiesViewImpl> {
 
@@ -216,12 +215,6 @@ public class OntologiesViewImpl extends Composite implements OntologiesView,
     }
 
     @Override
-    public void onRefreshOntologies(RefreshOntologiesEvent event) {
-        newGridView.clearAndAdd(null);
-        fireEvent(new RefreshOntologiesEvent());
-    }
-
-    @Override
     public void maskHierarchyTree() {
         treePanel.mask(appearance.loadingMask());
     }
@@ -275,7 +268,6 @@ public class OntologiesViewImpl extends Composite implements OntologiesView,
                 selectedOntology = event.getSelectedItem();
                 updateButtonStatus();
                 if (selectedOntology != null) {
-                    newGridView.clearAndAdd(null);
                     fireEvent(new SelectOntologyVersionEvent(selectedOntology));
                 }
 

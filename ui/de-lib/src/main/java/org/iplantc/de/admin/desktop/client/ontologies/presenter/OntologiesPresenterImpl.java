@@ -272,6 +272,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     }
 
     void getOntologies(final boolean selectActiveOntology) {
+        newGridPresenter.getView().clearAndAdd(null);
         serviceFacade.getOntologies(new AsyncCallback<List<Ontology>>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -299,7 +300,9 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     @Override
     public void onSelectOntologyVersion(SelectOntologyVersionEvent event) {
         view.clearStore();
+        newGridPresenter.getView().clearAndAdd(null);
         iriToHierarchyMap.clear();
+
         view.showTreePanel();
         view.maskHierarchyTree();
         serviceFacade.getOntologyHierarchies(event.getSelectedOntology().getVersion(), new AsyncCallback<List<OntologyHierarchy>>() {
