@@ -1,5 +1,14 @@
 package org.iplantc.de.admin.apps.client.presenter.grid;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+
 import org.iplantc.de.admin.apps.client.AdminAppsGridView;
 import org.iplantc.de.admin.apps.client.events.selection.RestoreAppSelected;
 import org.iplantc.de.admin.apps.client.events.selection.SaveAppSelected;
@@ -7,7 +16,7 @@ import org.iplantc.de.admin.apps.client.gin.factory.AdminAppsGridViewFactory;
 import org.iplantc.de.admin.desktop.client.services.AppAdminServiceFacade;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
-import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppInfoSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
@@ -24,8 +33,6 @@ import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.grid.GridSelectionModel;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -118,16 +125,16 @@ public class AdminAppsGridPresenterImplTest {
                                  listStoreMock);
     }
 
-    @Test public void verifyServiceCalled_onAppNameSelected() {
+    @Test public void verifyServiceCalled_onAppInfoSelected() {
         // Record keeping
-        verify(viewMock).addAppNameSelectedEventHandler(Matchers.<AppNameSelectedEvent.AppNameSelectedEventHandler>any());
+        verify(viewMock).addAppInfoSelectedEventHandler(Matchers.<AppInfoSelectedEvent.AppInfoSelectedEventHandler>any());
 
-        AppNameSelectedEvent eventMock = mock(AppNameSelectedEvent.class);
+        AppInfoSelectedEvent eventMock = mock(AppInfoSelectedEvent.class);
         App appMock = mock(App.class);
-        when(eventMock.getSelectedApp()).thenReturn(appMock);
+        when(eventMock.getApp()).thenReturn(appMock);
 
         /*** CALL METHOD UNDER TEST ***/
-        uut.onAppNameSelected(eventMock);
+        uut.onAppInfoSelected(eventMock);
 
         verify(adminAppServiceMock).getAppDoc(eq(appMock), Matchers.<AsyncCallback<AppDoc>>any());
 
@@ -155,7 +162,7 @@ public class AdminAppsGridPresenterImplTest {
 
     @Test public void verifyAppServiceCalled_onDeleteAppsSelected() {
         // Record keeping
-        verify(viewMock).addAppNameSelectedEventHandler(Matchers.<AppNameSelectedEvent.AppNameSelectedEventHandler>any());
+        verify(viewMock).addAppInfoSelectedEventHandler(Matchers.<AppInfoSelectedEvent.AppInfoSelectedEventHandler>any());
 
         DeleteAppsSelected eventMock = mock(DeleteAppsSelected.class);
         final App appMock = mock(App.class);
@@ -188,7 +195,7 @@ public class AdminAppsGridPresenterImplTest {
 
     @Test public void verifyServiceCalled_onRestoreAppSelected() {
         // Record keeping
-        verify(viewMock).addAppNameSelectedEventHandler(Matchers.<AppNameSelectedEvent.AppNameSelectedEventHandler>any());
+        verify(viewMock).addAppInfoSelectedEventHandler(Matchers.<AppInfoSelectedEvent.AppInfoSelectedEventHandler>any());
 
         RestoreAppSelected eventMock = mock(RestoreAppSelected.class);
         final App appMock = mock(App.class);
@@ -214,7 +221,7 @@ public class AdminAppsGridPresenterImplTest {
 
     @Test public void verifyDocSaved_onSaveAppSelected() {
         // Record keeping
-        verify(viewMock).addAppNameSelectedEventHandler(Matchers.<AppNameSelectedEvent.AppNameSelectedEventHandler>any());
+        verify(viewMock).addAppInfoSelectedEventHandler(Matchers.<AppInfoSelectedEvent.AppInfoSelectedEventHandler>any());
 
         uut.isDocUpdate = false;
         SaveAppSelected eventMock = mock(SaveAppSelected.class);
@@ -247,7 +254,7 @@ public class AdminAppsGridPresenterImplTest {
 
     @Test public void verifyDocUpdated_onSaveAppSelected() {
         // Record keeping
-        verify(viewMock).addAppNameSelectedEventHandler(Matchers.<AppNameSelectedEvent.AppNameSelectedEventHandler>any());
+        verify(viewMock).addAppInfoSelectedEventHandler(Matchers.<AppInfoSelectedEvent.AppInfoSelectedEventHandler>any());
 
         uut.isDocUpdate = true;
         SaveAppSelected eventMock = mock(SaveAppSelected.class);
