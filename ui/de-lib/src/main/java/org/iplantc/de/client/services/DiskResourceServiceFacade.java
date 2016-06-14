@@ -313,20 +313,18 @@ public interface DiskResourceServiceFacade {
      * 
      * @param srcUUID source DR's UUID
      * @param paths destination DR's path to which metadata will be copied.
-     * @param override
      * @param callback callback object
      */
             void
             copyMetadata(final String srcUUID,
-                          final Splittable paths,
-                       boolean override,
-                       final AsyncCallback<String> callback);
+                         final Splittable paths,
+                         final AsyncCallback<String> callback);
             
             /**
      * save metadata to a file
      * 
      * @param srcUUID source DR's UUID
-     * @param paths where the file will be created
+     * @param path where the file will be created
      * @param recursive should recursively store metadata of folder contents
      * @param callback callback object
      */
@@ -348,15 +346,11 @@ public interface DiskResourceServiceFacade {
     /**
      * 
      * @param metadataFilePath path to CSV/ TSV metadata file
-     * @param template_id template to match when applying metadata
      * @param destFolder folder containing files to which metadata will be applied
-     * @param force set true to overwrite metadata
      * @param callback callback object
      */
     void setBulkMetadataFromFile(String metadataFilePath,
-                                 String template_id,
                                  String destFolder,
-                                 boolean force,
                                  AsyncCallback<String> callback);
 
     /**

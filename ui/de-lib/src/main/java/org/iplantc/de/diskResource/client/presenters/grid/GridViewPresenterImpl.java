@@ -136,29 +136,7 @@ public class GridViewPresenterImpl implements
         @Override
         public void onFailure(Throwable caught) {
             win.unmask();
-            AutoBean<ErrorDiskResource> ab = AutoBeanCodex.decode(drFactory,
-                                                                  ErrorDiskResource.class,
-                                                                  caught.getMessage());
-            if (ab.as().getErrorCode().equals(ServiceErrorCode.ERR_NOT_UNIQUE.toString())) {
-                ConfirmMessageBox cmb = new ConfirmMessageBox(appearance.copyMetadata(),
-                                                              appearance.metadataOverwriteWarning(selected.getName()));
-                cmb.addDialogHideHandler(new DialogHideHandler() {
-
-                    @Override
-                    public void onDialogHide(DialogHideEvent event) {
-                        if (event.getHideButton().equals(PredefinedButton.YES)) {
-                            win.mask("Loading...");
-                            doCopyMetadata(selected, paths, true);
-                        }
-                    }
-
-                });
-
-                cmb.show();
-
-            } else {
-                ErrorHandler.post(appearance.copyMetadataFailure(), caught);
-            }
+            ErrorHandler.post(appearance.copyMetadataFailure(), caught);
 
         }
 
@@ -418,7 +396,7 @@ public class GridViewPresenterImpl implements
                     return;
                 }
                 mCopyDialog.mask("Loading...");
-                doCopyMetadata(mCopyDialog.getSource(), paths, false);
+                doCopyMetadata(mCopyDialog.getSource(), paths);
 
             }
         });
@@ -673,11 +651,9 @@ public class GridViewPresenterImpl implements
     }
 
     private void doCopyMetadata(final DiskResource selected,
-                                List<HasPath> paths,
-                                boolean override) {
+                                List<HasPath> paths) {
         diskResourceService.copyMetadata(selected.getId(),
                                           buildTargetPaths(paths),
-                                          override,
                                          new CopyMetadataCallback(selected, mCopyDialog, paths));
     }
 

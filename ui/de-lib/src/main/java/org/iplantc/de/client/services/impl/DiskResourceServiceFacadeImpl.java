@@ -988,15 +988,9 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     @Override
     public void copyMetadata(String srcUUID,
                               Splittable paths,
-                              boolean override,
                               AsyncCallback<String> callback) {
         String address = null;
-        if(override) {
-            address = deProperties.getDataMgmtBaseUrl() + srcUUID + "/metadata/copy?force="
-                + override;
-        } else {
-            address = deProperties.getDataMgmtBaseUrl() + srcUUID + "/metadata/copy";
-        }
+        address = deProperties.getDataMgmtBaseUrl() + srcUUID + "/metadata/copy";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, paths.getPayload());
         callService(wrapper, callback);
     }
@@ -1020,20 +1014,13 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
 
     @Override
     public void setBulkMetadataFromFile(String metadataFilePath,
-                                        String template_id,
                                         String destFolder,
-                                        boolean force,
                                         AsyncCallback<String> callback) {
         StringBuilder address = new StringBuilder(deProperties.getDataMgmtBaseUrl()
                 + "metadata/csv-parser?");
 
         address.append("dest=" + destFolder);
         address.append("&src=" + metadataFilePath);
-        address.append("&force=" + force);
-
-        if (!Strings.isNullOrEmpty(template_id)) {
-            address.append("&template-id=" + template_id);
-        }
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address.toString(), "{}");
         callService(wrapper, callback);

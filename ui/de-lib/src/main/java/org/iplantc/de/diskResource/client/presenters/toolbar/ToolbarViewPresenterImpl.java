@@ -77,41 +77,17 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter, SimpleDo
 
 
         private final String filePath;
-        private final String templateId;
         private final String destFolder;
 
-        public BulkMetadataCallback(String filePath, String templateId, String destFolder) {
+        public BulkMetadataCallback(String filePath, String destFolder) {
             this.filePath = filePath;
-            this.templateId = templateId;
             this.destFolder = destFolder;
         }
 
         @Override
         public void onFailure(Throwable caught) {
-
-            AutoBean<ErrorDiskResource> ab =
-                    AutoBeanCodex.decode(drFactory, ErrorDiskResource.class, caught.getMessage());
-            if (ab.as().getErrorCode().equals(ServiceErrorCode.ERR_NOT_UNIQUE.toString())) {
-                ConfirmMessageBox cmb = new ConfirmMessageBox(appearance.applyBulkMetadata(),
-                                                              appearance.overWiteMetadata());
-                cmb.addDialogHideHandler(new DialogHideHandler() {
-
-                    @Override
-                    public void onDialogHide(DialogHideEvent event) {
-                        if (event.getHideButton().equals(PredefinedButton.YES)) {
-                            submitBulkMetadataFromExistingFile(filePath, templateId, destFolder, true);
-                        }
-                    }
-
-                });
-
-                cmb.show();
-
-            } else {
                 IplantAnnouncer.getInstance()
                                .schedule(new ErrorAnnouncementConfig(appearance.bulkMetadataError()));
-            }
-
         }
 
         @Override
@@ -385,14 +361,10 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter, SimpleDo
 
     @Override
     public void submitBulkMetadataFromExistingFile(String filePath,
-                                                   String templateId,
-                                                   String destFolder,
-                                                   boolean force) {
+                                                   String destFolder) {
         drFacade.setBulkMetadataFromFile(filePath,
-                                         templateId,
                                          destFolder,
-                                         force,
-                                         new BulkMetadataCallback(filePath, templateId, destFolder));
+                                         new BulkMetadataCallback(filePath,  destFolder));
 
     }
 
