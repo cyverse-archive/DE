@@ -69,7 +69,7 @@
    to the conversion map."
   [opts]
   (let [conversion-dir (fs/file "conversions")]
-    (when (.exists conversion-dir)
+    (when (and (= :update (keyword (:mode opts))) (.exists conversion-dir))
       (println "Loading conversions...")
       (reset! conversions (cnv/conversion-map opts))
       (println "Done loading conversions.")
