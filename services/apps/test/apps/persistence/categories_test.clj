@@ -1,11 +1,14 @@
 (ns apps.persistence.categories-test
   (:use [clojure.test]
         [apps.persistence.categories]
-        [apps.test-fixtures :only [run-integration-tests with-test-db]]))
+        [apps.test-fixtures :only [run-integration-tests with-test-db]]
+        [korma.core]))
 
-;;; TODO: Modify these tests so that we can run them multiple times on the same database without them failing.
+(defn clean-up-hierarchy-versions [f]
+  (f)
+  (delete :app_hierarchy_version))
 
-(use-fixtures :once run-integration-tests with-test-db)
+(use-fixtures :each with-test-db run-integration-tests clean-up-hierarchy-versions)
 
 (deftest hierarchy-version-test
   (testing "Test setting and fetching app category hierarchy versions."

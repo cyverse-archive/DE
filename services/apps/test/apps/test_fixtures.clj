@@ -1,11 +1,12 @@
 (ns apps.test-fixtures
-  (:use [korma.db :only [default-connection]])
-  (:require [clojure.string :as string]))
+  (:use [korma.db :only [create-db default-connection]])
+  (:require [clojure.string :as string]
+            [clojure.tools.logging :as log]))
 
 (def default-uri "jdbc:postgresql://dedb/de?user=de&password=notprod")
 
 (defn with-test-db [f]
-  (default-connection {:connection-uri (or (System/getenv "DBURI") default-uri)})
+  (default-connection (create-db {:connection-uri (or (System/getenv "DBURI") default-uri)}))
   (f))
 
 (defn run-integration-tests [f]

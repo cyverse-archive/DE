@@ -91,7 +91,9 @@
   (let [tag  (get-tag image-map)
         name (:name image-map)
         url  (:url image-map)]
-    (when-not (image? image-map)
+    (if (image? image-map)
+      (first (select container-images
+                     (where {:name name :tag tag})))
       (insert container-images
               (values {:name name
                        :tag tag

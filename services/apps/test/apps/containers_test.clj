@@ -5,25 +5,84 @@
         [korma.core :exclude [update]]
         [korma.db]
         [kameleon.entities])
-  (:require [korma.core :as sql]))
+  (:require [clojure.tools.logging :as log]
+            [korma.core :as sql]))
 
-;;; TODO: Modify these tests so that we can run them multiple times on the same database without them failing.
+(def ^:dynamic image-info-map nil)
+(def ^:dynamic data-container-map nil)
+(def ^:dynamic tool-map nil)
+(def ^:dynamic settings-map nil)
+(def ^:dynamic devices-map nil)
+(def ^:dynamic volume-map nil)
+(def ^:dynamic volumes-from-map nil)
 
-;;; These tests assume that you have a clean instance of the de
-;;; database running locally on port 5432. It's recommended that you
-;;; use the de-db and de-db-loader images to get a database running
-;;; with docker.
+(defn- add-image-info-map []
+  (add-image-info {:name "discoenv/de-db" :tag "latest" :url "https://www.google.com"}))
 
-(use-fixtures :once run-integration-tests with-test-db)
-
-(def image-info-map (add-image-info {:name "discoenv/de-db" :tag "latest" :url "https://www.google.com"}))
-
-(def data-container-map
+(defn- add-data-container-map []
   (add-data-container {:name        "discoenv/foo"
                        :tag         "latest"
                        :url         "https://www.google.com"
                        :name_prefix "foo"
                        :read_only   true}))
+
+(defn- get-tool-map []
+  (first (select tools (where {:name "notreal"}))))
+
+(defn- add-settings-map [tool-id]
+  (add-settings {:name              "test"
+                 :cpu_shares        1024
+                 :memory_limit      2048
+                 :network_mode      "bridge"
+                 :working_directory "/work"
+                 :tools_id          tool-id}))
+
+(defn- add-devices-map [settings-id]
+  (add-device settings-id {:host_path "/dev/null" :container_path "/dev/yay"}))
+
+(defn- add-volume-map [settings-id]
+  (add-volume settings-id {:host_path "/tmp" :container_path "/foo"}))
+
+(defn- add-volumes-from-map [settings-id data-container-id]
+  (add-volumes-from settings-id data-container-id))
+
+(defn- add-test-data []
+  (let [image-info     (add-image-info-map)
+        data-container (add-data-container-map)
+        tool           (get-tool-map)
+        settings       (add-settings-map (:id tool))
+        device         (add-devices-map (:id settings))
+        volume         (add-volume-map (:id settings))
+        volumes-from   (add-volumes-from-map (:id settings) (:id data-container))]
+    (vector image-info data-container tool settings device volume volumes-from)))
+
+(defn- remove-container-image-references []
+  (sql/update tools
+              (set-fields {:container_images_id nil})
+              (where {:container_images_id (:id image-info-map)})))
+
+(defn- remove-test-data []
+  (delete container-volumes-from (where {:id (:id volumes-from-map)}))
+  (delete container-volumes (where {:id (:id volume-map)}))
+  (delete container-devices (where {:id (:id devices-map)}))
+  (delete container-settings (where {:id (:id settings-map)}))
+  (delete data-containers (where {:id (:id data-container-map)}))
+  (remove-container-image-references)
+  (delete container-images (where {:id (:id image-info-map)})))
+
+(defn- with-test-data [f]
+  (let [[image-info data-container tool settings device volume volumes-from] (add-test-data)]
+    (binding [image-info-map     image-info
+              data-container-map data-container
+              tool-map           tool
+              settings-map       settings
+              devices-map        device
+              volume-map         volume
+              volumes-from-map   volumes-from]
+      (f)
+      (remove-test-data))))
+
+(use-fixtures :each with-test-db run-integration-tests with-test-data)
 
 (deftest image-tests
   (is (not (image? {:name "test" :tag "test"})))
@@ -35,15 +94,6 @@
   (is (= {:name "discoenv/de-db" :tag "latest" :url "https://www.google.com"}
          (dissoc (image-info (image-id {:name "discoenv/de-db" :tag "latest"})) :id))))
 
-
-(def tool-map (first (select tools (where {:name "notreal"}))))
-
-(def settings-map  (add-settings {:name "test"
-                                  :cpu_shares 1024
-                                  :memory_limit 2048
-                                  :network_mode "bridge"
-                                  :working_directory "/work"
-                                  :tools_id (:id tool-map)}))
 
 (deftest settings-tests
   (is (not (nil? (:id settings-map))))
@@ -61,8 +111,6 @@
 
   (is (tool-has-settings? (:id tool-map))))
 
-(def devices-map (add-device (:id settings-map) {:host_path "/dev/null" :container_path "/dev/yay"}))
-
 (deftest devices-tests
   (is (not (nil? (:id devices-map))))
 
@@ -75,8 +123,6 @@
 
   (is (settings-has-device? (:id settings-map) (:id devices-map))))
 
-(def volume-map (add-volume (:id settings-map) {:host_path "/tmp" :container_path "/foo"}))
-
 (deftest volumes-tests
   (is (not (nil? (:id volume-map))))
 
@@ -88,8 +134,6 @@
   (is (volume-mapping? (:id settings-map) "/tmp" "/foo"))
 
   (is (settings-has-volume? (:id settings-map) (:id volume-map))))
-
-(def volumes-from-map (add-volumes-from (:id settings-map) (:id data-container-map)))
 
 (deftest volumes-from-test
   (is (not (nil? (:id volumes-from-map))))
