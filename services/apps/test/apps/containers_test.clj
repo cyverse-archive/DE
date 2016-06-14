@@ -1,16 +1,20 @@
 (ns apps.containers-test
   (:use [clojure.test]
         [apps.containers]
-        [apps.test-db-setup]
+        [apps.test-fixtures :only [run-integration-tests with-test-db]]
         [korma.core :exclude [update]]
         [korma.db]
         [kameleon.entities])
   (:require [korma.core :as sql]))
 
+;;; TODO: Modify these tests so that we can run them multiple times on the same database without them failing.
+
 ;;; These tests assume that you have a clean instance of the de
 ;;; database running locally on port 5432. It's recommended that you
 ;;; use the de-db and de-db-loader images to get a database running
 ;;; with docker.
+
+(use-fixtures :once run-integration-tests with-test-db)
 
 (def image-info-map (add-image-info {:name "discoenv/de-db" :tag "latest" :url "https://www.google.com"}))
 

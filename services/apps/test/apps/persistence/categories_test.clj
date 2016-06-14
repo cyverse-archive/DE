@@ -1,7 +1,11 @@
 (ns apps.persistence.categories-test
   (:use [clojure.test]
         [apps.persistence.categories]
-        [apps.test-db-setup]))
+        [apps.test-fixtures :only [run-integration-tests with-test-db]]))
+
+;;; TODO: Modify these tests so that we can run them multiple times on the same database without them failing.
+
+(use-fixtures :once run-integration-tests with-test-db)
 
 (deftest hierarchy-version-test
   (testing "Test setting and fetching app category hierarchy versions."
