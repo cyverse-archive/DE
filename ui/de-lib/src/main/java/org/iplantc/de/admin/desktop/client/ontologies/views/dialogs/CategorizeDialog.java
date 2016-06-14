@@ -49,15 +49,16 @@ public class CategorizeDialog extends IPlantDialog implements CategorizeHierarch
 
         setOnEsc(false);
 
-        categorizeView.setHierarchies(hierarchyRoots);
-
-        markTaggedHierarchies();
-
         VerticalLayoutContainer con = new VerticalLayoutContainer();
         con.add(categorizeView);
         add(con);
 
         show();
+
+        categorizeView.mask(appearance.loadingMask());
+        categorizeView.setHierarchies(hierarchyRoots);
+        markTaggedHierarchies();
+        categorizeView.unmask();
 
     }
 

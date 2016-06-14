@@ -7,6 +7,7 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
@@ -91,6 +92,9 @@ public class OntologiesPresenterImplTest {
     @Mock Avu avuMock;
     @Mock List<String> iriListMock;
     @Mock Iterator<String> iriIteratorMock;
+    @Mock Ontology activeOntologyMock;
+    @Mock Ontology ontologyMock;
+    @Mock Iterator<Ontology> ontologyIteratorMock;
 
 
     @Captor ArgumentCaptor<AsyncCallback<List<Ontology>>> asyncCallbackOntologyListCaptor;
@@ -125,6 +129,12 @@ public class OntologiesPresenterImplTest {
         when(iriListMock.size()).thenReturn(2);
         when(iriIteratorMock.hasNext()).thenReturn(true, true, false);
         when(iriIteratorMock.next()).thenReturn("iri1").thenReturn("iri2");
+        when(listOntologyMock.size()).thenReturn(2);
+        when(listOntologyMock.iterator()).thenReturn(ontologyIteratorMock);
+        when(ontologyIteratorMock.hasNext()).thenReturn(true, true, false);
+        when(ontologyIteratorMock.next()).thenReturn(ontologyMock).thenReturn(activeOntologyMock);
+        when(ontologyMock.isActive()).thenReturn(false);
+        when(activeOntologyMock.isActive()).thenReturn(true);
         when(factoryMock.create(Matchers.<TreeStore<OntologyHierarchy>>any(),
                                 isA(AppCategoriesView.class),
                                 isA(AdminAppsGridView.class),
@@ -155,7 +165,7 @@ public class OntologiesPresenterImplTest {
         verify(oldGridViewMock).addAppSelectionChangedEventHandler(eq(viewMock));
         verify(newGridViewMock).addAppSelectionChangedEventHandler(eq(viewMock));
 
-        verify(viewMock).addViewOntologyVersionEventHandler(eq(uut));
+        verify(viewMock).addRefreshOntologiesEventHandler(eq(uut));
         verify(viewMock).addSelectOntologyVersionEventHandler(eq(uut));
         verify(viewMock).addHierarchySelectedEventHandler(eq(uut));
         verify(viewMock).addHierarchySelectedEventHandler(eq(newGridViewMock));
@@ -165,15 +175,33 @@ public class OntologiesPresenterImplTest {
     }
 
     @Test
-    public void testGetOntologies() {
+    public void testGetOntologies_doNotSelectActiveOntology() {
 
         /** CALL METHOD UNDER TEST **/
-        uut.getOntologies();
+        uut.getOntologies(false);
 
         verify(serviceFacadeMock).getOntologies(asyncCallbackOntologyListCaptor.capture());
 
         asyncCallbackOntologyListCaptor.getValue().onSuccess(listOntologyMock);
         verify(viewMock).showOntologyVersions(eq(listOntologyMock));
+        verify(viewMock).unMaskHierarchyTree();
+        verifyNoMoreInteractions(viewMock);
+    }
+
+    @Test
+    public void testGetOntologies_selectActiveOntology() {
+
+        /** CALL METHOD UNDER TEST **/
+        uut.getOntologies(true);
+
+        verify(serviceFacadeMock).getOntologies(asyncCallbackOntologyListCaptor.capture());
+
+        asyncCallbackOntologyListCaptor.getValue().onSuccess(listOntologyMock);
+        verify(viewMock).showOntologyVersions(eq(listOntologyMock));
+        verify(viewMock).unMaskHierarchyTree();
+        verify(ontologyMock).isActive();
+        verify(activeOntologyMock).isActive();
+        verify(viewMock).selectActiveOntology(activeOntologyMock);
     }
 
     @Test

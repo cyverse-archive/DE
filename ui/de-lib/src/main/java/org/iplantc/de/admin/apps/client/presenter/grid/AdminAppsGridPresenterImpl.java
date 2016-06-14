@@ -8,7 +8,7 @@ import org.iplantc.de.admin.apps.client.views.editor.AppEditor;
 import org.iplantc.de.admin.desktop.client.services.AppAdminServiceFacade;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
-import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppInfoSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
@@ -44,7 +44,8 @@ import java.util.List;
  * @author jstroot
  */
 public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
-                                                   AppNameSelectedEvent.AppNameSelectedEventHandler, SaveAppSelected.SaveAppSelectedHandler {
+                                                   AppInfoSelectedEvent.AppInfoSelectedEventHandler,
+                                                   SaveAppSelected.SaveAppSelectedHandler {
 
 
     private static class DocSaveCallback implements AsyncCallback<AppDoc> {
@@ -86,7 +87,7 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
         this.listStore = listStore;
         view = viewFactory.create(listStore);
 
-        view.addAppNameSelectedEventHandler(this);
+        view.addAppInfoSelectedEventHandler(this);
 
     }
 
@@ -140,15 +141,16 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
         });
     }
 
+
     @Override
-    public void onAppNameSelected(final AppNameSelectedEvent event) {
-        adminAppService.getAppDoc(event.getSelectedApp(), new AsyncCallback<AppDoc>() {
+    public void onAppInfoSelected(final AppInfoSelectedEvent event) {
+        adminAppService.getAppDoc(event.getApp(), new AsyncCallback<AppDoc>() {
 
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
                 AutoBean<AppDoc> doc = AutoBeanCodex.decode(factory, AppDoc.class, "{}");
-                final AppEditor appEditor = new AppEditor(event.getSelectedApp(), doc.as());
+                final AppEditor appEditor = new AppEditor(event.getApp(), doc.as());
                 appEditor.addSaveAppSelectedHandler(AdminAppsGridPresenterImpl.this);
                 appEditor.show();
                 isDocUpdate = false;
@@ -157,13 +159,14 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
             @Override
             public void onSuccess(final AppDoc result) {
                 // Get result
-                final AppEditor appEditor = new AppEditor(event.getSelectedApp(), result);
+                final AppEditor appEditor = new AppEditor(event.getApp(), result);
                 appEditor.addSaveAppSelectedHandler(AdminAppsGridPresenterImpl.this);
                 appEditor.show();
                 isDocUpdate = true;
             }
         });
     }
+
 
     @Override
     public void onAppSearchResultLoad(AppSearchResultLoadEvent event) {

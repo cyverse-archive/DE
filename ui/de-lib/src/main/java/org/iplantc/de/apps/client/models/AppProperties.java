@@ -11,6 +11,8 @@ import com.sencha.gxt.data.shared.PropertyAccess;
  */
 public interface AppProperties extends PropertyAccess<App>{
 
+    ValueProvider<App, String> name();
+
     ValueProvider<App, String> integratorName();
 
     ValueProvider<App, AppFeedback> rating();

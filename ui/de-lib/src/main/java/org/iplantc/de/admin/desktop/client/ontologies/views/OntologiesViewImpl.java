@@ -7,7 +7,7 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEv
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
-import org.iplantc.de.admin.desktop.client.ontologies.events.ViewOntologyVersionEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshOntologiesEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.PublishOntologyDialog;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.SaveHierarchiesDialog;
 import org.iplantc.de.apps.client.AppCategoriesView;
@@ -75,7 +75,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
     @UiField TextButton addButton;
     @UiField SimpleComboBox<Ontology> ontologyDropDown;
-    @UiField TextButton viewVersions;
+    @UiField TextButton refreshOntologies;
     @UiField TextButton saveHierarchy;
     @UiField TextButton categorize;
     @UiField(provided = true) OntologiesViewAppearance appearance;
@@ -122,8 +122,8 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     @Override
-    public HandlerRegistration addViewOntologyVersionEventHandler(ViewOntologyVersionEvent.ViewOntologyVersionEventHandler handler) {
-        return addHandler(handler, ViewOntologyVersionEvent.TYPE);
+    public HandlerRegistration addRefreshOntologiesEventHandler(RefreshOntologiesEvent.RefreshOntologiesEventHandler handler) {
+        return addHandler(handler, RefreshOntologiesEvent.TYPE);
     }
 
     @Override
@@ -214,6 +214,37 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         treeStore.add(parent, children);
     }
 
+    @Override
+    public void maskHierarchyTree() {
+        treePanel.mask(appearance.loadingMask());
+    }
+
+    @Override
+    public void unMaskHierarchyTree() {
+        treePanel.unmask();
+    }
+
+    @Override
+    public void selectHierarchy(OntologyHierarchy hierarchy) {
+        if (hierarchy != null) {
+            tree.getSelectionModel().deselectAll();
+            tree.getSelectionModel().select(hierarchy, true);
+        }
+    }
+
+    @Override
+    public void selectActiveOntology(Ontology ontology) {
+        if (ontology != null) {
+            ontologyDropDown.setValue(ontology);
+            fireEvent(new SelectOntologyVersionEvent(ontology));
+        }
+    }
+
+    @Override
+    public void reSortHierarchies() {
+        treeStore.applySort(false);
+    }
+
     @UiFactory
     SimpleComboBox<Ontology> createComboBox() {
         final SimpleComboBox<Ontology> ontologySimpleComboBox = new SimpleComboBox<Ontology>(new LabelProvider<Ontology>() {
@@ -250,9 +281,11 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         saveHierarchy.setEnabled(selectedOntology != null);
         categorize.setEnabled(selectedOntology != null && targetApp != null);
     }
-    @UiHandler("viewVersions")
-    void viewVersionsClicked(SelectEvent event) {
-        fireEvent(new ViewOntologyVersionEvent());
+
+    @UiHandler("refreshOntologies")
+    void refreshOntologiesClicked(SelectEvent event) {
+        newGridView.clearAndAdd(null);
+        fireEvent(new RefreshOntologiesEvent());
     }
 
     @UiHandler("publishButton")
@@ -266,7 +299,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
     @UiHandler("addButton")
     void addButtonClicked(SelectEvent event) {
-        new EdamUploadDialog(UriUtils.fromTrustedString(clientConstants.ontologyUploadServlet())).show();
+        new EdamUploadDialog(UriUtils.fromTrustedString(clientConstants.ontologyUploadServlet()), this).show();
     }
 
     @UiHandler("saveHierarchy")

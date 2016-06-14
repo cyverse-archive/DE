@@ -9,7 +9,7 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEv
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
-import org.iplantc.de.admin.desktop.client.ontologies.events.ViewOntologyVersionEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshOntologiesEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.gin.factory.OntologiesViewFactory;
 import org.iplantc.de.admin.desktop.client.ontologies.service.OntologyServiceFacade;
 import org.iplantc.de.admin.desktop.client.ontologies.views.AppCategorizeView;
@@ -49,7 +49,7 @@ import java.util.Map;
  * @author aramsey
  */
 public class OntologiesPresenterImpl implements OntologiesView.Presenter,
-                                                ViewOntologyVersionEvent.ViewOntologyVersionEventHandler,
+                                                RefreshOntologiesEvent.RefreshOntologiesEventHandler,
                                                 SelectOntologyVersionEvent.SelectOntologyVersionEventHandler,
                                                 SaveOntologyHierarchyEvent.SaveOntologyHierarchyEventHandler,
                                                 PublishOntologyClickEvent.PublishOntologyClickEventHandler,
@@ -92,22 +92,34 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     private class SaveHierarchyAsyncCallback implements AsyncCallback<OntologyHierarchy> {
         private final String iri;
+        private boolean clearHierarchies;
+        private boolean isLast;
 
-        public SaveHierarchyAsyncCallback(String iri) {
+        public SaveHierarchyAsyncCallback(String iri, boolean clearHierarchies, boolean isLast) {
             this.iri = iri;
+            this.clearHierarchies = clearHierarchies;
+            this.isLast = isLast;
         }
 
         @Override
         public void onFailure(Throwable caught) {
             ErrorHandler.post(caught);
+            view.unMaskHierarchyTree();
         }
 
         @Override
         public void onSuccess(OntologyHierarchy result) {
             if (isValidHierarchy(result)) {
-                view.clearStore();
+                if (clearHierarchies) {
+                    view.clearStore();
+                }
                 addHierarchies(null,
                                Lists.newArrayList(result));
+                if (isLast) {
+                    view.reSortHierarchies();
+                    view.unMaskHierarchyTree();
+                }
+
             } else {
                 announcer.schedule(new ErrorAnnouncementConfig(
                         appearance.invalidHierarchySubmitted(iri)));
@@ -165,7 +177,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         oldGridPresenter.getView().addAppSelectionChangedEventHandler(view);
         newGridPresenter.getView().addAppSelectionChangedEventHandler(view);
 
-        view.addViewOntologyVersionEventHandler(this);
+        view.addRefreshOntologiesEventHandler(this);
         view.addSelectOntologyVersionEventHandler(this);
         view.addHierarchySelectedEventHandler(this);
         view.addHierarchySelectedEventHandler(newGridPresenter.getView());
@@ -180,7 +192,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         HasId betaGroup = CommonModelUtils.getInstance().createHasIdFromString(DEProperties.getInstance().getDefaultBetaCategoryId());
 
         categoriesPresenter.go(betaGroup);
-        getOntologies();
+        getOntologies(true);
         container.setWidget(view);
     }
 
@@ -234,6 +246,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
             @Override
             public void onSuccess(List<Avu> result) {
                 announcer.schedule(new SuccessAnnouncementConfig(appearance.appClassified(targetApp.getName(), hierarchy.getLabel())));
+                view.selectHierarchy(hierarchy);
             }
         });
     }
@@ -254,21 +267,32 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     }
 
     @Override
-    public void onViewOntologyVersion(ViewOntologyVersionEvent event) {
-        getOntologies();
+    public void onRefreshOntologies(RefreshOntologiesEvent event) {
+        getOntologies(false);
     }
 
-    void getOntologies() {
+    void getOntologies(final boolean selectActiveOntology) {
+        newGridPresenter.getView().clearAndAdd(null);
         serviceFacade.getOntologies(new AsyncCallback<List<Ontology>>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
+                view.unMaskHierarchyTree();
             }
 
             @Override
             public void onSuccess(List<Ontology> result) {
                 Collections.reverse(result);
                 view.showOntologyVersions(result);
+                view.unMaskHierarchyTree();
+                if (selectActiveOntology) {
+                    for (Ontology ontology : result) {
+                        if (ontology.isActive()){
+                            view.selectActiveOntology(ontology);
+                            return;
+                        }
+                    }
+                }
             }
         });
     }
@@ -276,11 +300,16 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     @Override
     public void onSelectOntologyVersion(SelectOntologyVersionEvent event) {
         view.clearStore();
+        newGridPresenter.getView().clearAndAdd(null);
         iriToHierarchyMap.clear();
+
+        view.showTreePanel();
+        view.maskHierarchyTree();
         serviceFacade.getOntologyHierarchies(event.getSelectedOntology().getVersion(), new AsyncCallback<List<OntologyHierarchy>>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
+                view.unMaskHierarchyTree();
             }
 
             @Override
@@ -289,8 +318,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                     view.showEmptyTreePanel();
                 } else {
                     addHierarchies(null, result);
-                    view.showTreePanel();
                 }
+                view.unMaskHierarchyTree();
             }
         });
 
@@ -331,10 +360,16 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     @Override
     public void onSaveOntologyHierarchy(SaveOntologyHierarchyEvent event) {
         List<String> iris = event.getIris();
-
-        for (final String iri : iris) {
+        boolean clearHierarchies = true;
+        boolean isLast = false;
+        for (String iri : iris) {
+            if (iris.indexOf(iri) == iris.size() - 1) {
+                isLast = true;
+            }
+            view.maskHierarchyTree();
             serviceFacade.saveOntologyHierarchy(event.getOntology().getVersion(),
-                                                iri, new SaveHierarchyAsyncCallback(iri));
+                                                iri, new SaveHierarchyAsyncCallback(iri, clearHierarchies, isLast));
+            clearHierarchies = false;
         }
 
         view.showTreePanel();

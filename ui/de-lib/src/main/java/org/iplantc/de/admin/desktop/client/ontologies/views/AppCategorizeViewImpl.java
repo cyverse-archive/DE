@@ -2,6 +2,7 @@ package org.iplantc.de.admin.desktop.client.ontologies.views;
 
 import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
+import org.iplantc.de.client.util.OntologyUtil;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
@@ -42,12 +43,14 @@ public class AppCategorizeViewImpl implements AppCategorizeView {
     @UiField(provided = true) OntologiesView.OntologiesViewAppearance appearance = GWT.create(OntologiesView.OntologiesViewAppearance.class);
 
     final private Widget widget;
+    private OntologyUtil ontologyUtil;
 
     @Inject
     public AppCategorizeViewImpl(final TreeStore<OntologyHierarchy> treeStore) {
         this.treeStore = treeStore;
         initCategoryTree();
         widget = uiBinder.createAndBindUi(this);
+        ontologyUtil = OntologyUtil.getInstance();
 
         addClearButton();
     }
@@ -122,10 +125,20 @@ public class AppCategorizeViewImpl implements AppCategorizeView {
         addHierarchies(null, hierarchies);
     }
 
+    private void removeUnclassifieds(List<OntologyHierarchy> hierarchies) {
+        for (OntologyHierarchy hierarchy : hierarchies) {
+            if (ontologyUtil.isUnclassified(hierarchy)) {
+                hierarchies.remove(hierarchy);
+            }
+        }
+    }
+
     private void addHierarchies(OntologyHierarchy parent, List<OntologyHierarchy> children) {
         if ((children == null) || children.isEmpty()) {
             return;
         }
+        
+        removeUnclassifieds(children);
 
         if (parent == null) {
             treeStore.add(children);
@@ -150,6 +163,16 @@ public class AppCategorizeViewImpl implements AppCategorizeView {
         }
 
         tree.setCheckedSelection(selection);
+    }
+
+    @Override
+    public void mask(String loadingMask) {
+        tree.mask(loadingMask);
+    }
+
+    @Override
+    public void unmask() {
+        tree.unmask();
     }
 
     @Override

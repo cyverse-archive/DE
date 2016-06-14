@@ -5,7 +5,7 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEv
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
-import org.iplantc.de.admin.desktop.client.ontologies.events.ViewOntologyVersionEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshOntologiesEvent;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.avu.Avu;
@@ -24,7 +24,7 @@ import java.util.List;
  * @author aramsey
  */
 public interface OntologiesView extends IsWidget,
-                                        ViewOntologyVersionEvent.HasViewOntologyVersionEventHandlers,
+                                        RefreshOntologiesEvent.HasViewOntologyVersionEventHandlers,
                                         SelectOntologyVersionEvent.HasSelectOntologyVersionEventHandlers,
                                         HierarchySelectedEvent.HasHierarchySelectedEventHandlers,
                                         SaveOntologyHierarchyEvent.HasSaveOntologyHierarchyEventHandlers,
@@ -47,6 +47,16 @@ public interface OntologiesView extends IsWidget,
     void addToStore(List<OntologyHierarchy> children);
 
     void addToStore(OntologyHierarchy parent, List<OntologyHierarchy> children);
+
+    void maskHierarchyTree();
+
+    void unMaskHierarchyTree();
+    
+    void selectHierarchy(OntologyHierarchy hierarchy);
+
+    void selectActiveOntology(Ontology activeOntology);
+
+    void reSortHierarchies();
 
     interface OntologiesViewAppearance {
         String addOntology();

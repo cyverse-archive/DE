@@ -6,7 +6,7 @@ import org.iplantc.de.apps.client.AppsGridView;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.BeforeAppSearchEvent;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
-import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppInfoSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
 import org.iplantc.de.client.models.IsMaskable;
@@ -27,7 +27,7 @@ import java.util.List;
 public interface AdminAppsGridView extends IsWidget,
                                            IsMaskable,
                                            AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers,
-                                           AppNameSelectedEvent.HasAppNameSelectedEventHandlers,
+                                           AppInfoSelectedEvent.HasAppInfoSelectedEventHandlers,
                                            AppCategorySelectionChangedEvent.AppCategorySelectionChangedEventHandler,
                                            AppSearchResultLoadEvent.AppSearchResultLoadEventHandler,
                                            BeforeAppSearchEvent.BeforeAppSearchEventHandler,
