@@ -32,7 +32,7 @@ INSERT INTO tools
          'bad7e301-4442-4e82-8cc4-8db681cae364'
     FROM tool_types, integration_data
    WHERE tool_types."name" = 'internal'
-     AND integration_data.integrator_name = 'Internal DE Tools'
+     AND integration_data.integrator_name = 'Default DE Tools'
    LIMIT 1;
 
 INSERT INTO container_settings (tools_id, network_mode, entrypoint, memory_limit, cpu_shares)
