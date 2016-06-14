@@ -11,30 +11,29 @@ INSERT INTO container_images (id, "name", tag, url) VALUES
 --
 -- The internal tool for Python 2.7
 --
-INSERT INTO tools (
-	id, 
-	"name", 
-	location, 
-	description, 
-	version, 
-	tool_type_id, 
-	integration_data_id, 
-	time_limit_seconds, 
-	container_images_id
-)
-	SELECT '4e3b1710-0f15-491f-aca9-812335356fdb',
-		   'python',
-		   '/usr/local/bin',
-		   'Python 2.7 with no networking, a 1GB RAM limit, and a 10% cpu share. Entrypoint is python.',
-		   '1.0.0',
-		   tool_types.id,
-		   integration_data.id,
-		   14400,
-		   'bad7e301-4442-4e82-8cc4-8db681cae364'
-	  FROM tool_types, integration_data
-	 WHERE tool_types."name" = 'internal'
-	   AND integration_data.integrator_name = 'Internal DE Tools'
-	 LIMIT 1;
+INSERT INTO tools
+	(id,
+	 "name",
+	 location,
+	 description,
+	 version,
+	 tool_type_id,
+	 integration_data_id,
+	 time_limit_seconds,
+	 container_images_id)
+  SELECT '4e3b1710-0f15-491f-aca9-812335356fdb',
+         'python',
+		 '/usr/local/bin',
+		 'Python 2.7 with no networking, a 1GB RAM limit, and a 10% cpu share. Entrypoint is python.',
+		 '1.0.0',
+		 tool_types.id,
+		 integration_data.id,
+		 14400,
+		 'bad7e301-4442-4e82-8cc4-8db681cae364'
+	FROM tool_types, integration_data
+   WHERE tool_types."name" = 'internal'
+     AND integration_data.integrator_name = 'Internal DE Tools'
+   LIMIT 1;
 
 INSERT INTO container_settings (tools_id, network_mode, entrypoint, memory_limit, cpu_shares)
   VALUES ('4e3b1710-0f15-491f-aca9-812335356fdb', 'none', 'python', 1000000000, 102);
@@ -42,23 +41,22 @@ INSERT INTO container_settings (tools_id, network_mode, entrypoint, memory_limit
 --
 -- The app for Python 2.7
 --
-INSERT INTO apps(
-	id,
+INSERT INTO apps
+	(id,
 	"name",
 	description,
 	integration_data_id,
 	wiki_url,
-	integration_date
-)
-	SELECT '336bbfb3-7899-493a-b4a2-ed3bc353ead8',
-		   'Python 2.7',
-		   'Runs an arbitrary Python script with a time limit of 4 hours, a 1GB RAM limit, a 10% cpu share, and no networking. Accepts a script and a data file as inputs.',
-		   integration_data.id,
-		   '',
-		   now()
-	  FROM integration_data
-     WHERE integrator_name = 'Default DE Tools'
-     LIMIT 1;
+	integration_date)
+  SELECT '336bbfb3-7899-493a-b4a2-ed3bc353ead8',
+         'Python 2.7',
+		 'Runs an arbitrary Python script with a time limit of 4 hours, a 1GB RAM limit, a 10% cpu share, and no networking. Accepts a script and a data file as inputs.',
+		 integration_data.id,
+		 '',
+		 now()
+	FROM integration_data
+   WHERE integrator_name = 'Default DE Tools'
+   LIMIT 1;
 
 INSERT INTO tasks (id, "name", description, label, tool_id) VALUES
 	('66b59035-6036-46c3-a30a-ee3bd4af47b6',
