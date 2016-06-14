@@ -4,6 +4,8 @@ import org.iplantc.de.client.models.HasId;
 
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
+import java.util.List;
+
 /**
  * @author aramsey
  */
@@ -34,5 +36,11 @@ public interface Avu extends HasId {
 
     @PropertyName("attr")
     String getAttribute();
+
+    @PropertyName("avus")
+    List<Avu> getAvus();
+
+    @PropertyName("avus")
+    void setAvus(List<Avu> avus);
 
 }
