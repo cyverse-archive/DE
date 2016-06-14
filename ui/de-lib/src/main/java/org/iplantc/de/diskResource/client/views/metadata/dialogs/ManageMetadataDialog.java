@@ -57,6 +57,7 @@ public class ManageMetadataDialog extends IPlantDialog {
         addOkButtonSelectHandler(new SelectEvent.SelectHandler() {
             @Override
             public void onSelect(SelectEvent event) {
+                canHide = true;
                 mdPresenter.setDiskResourceMetadata(new DiskResourceMetadataUpdateCallback(
                         ManageMetadataDialog.this));
             }
