@@ -13,7 +13,6 @@ import (
 
 	"github.com/docker/engine-api/client"
 	"github.com/docker/engine-api/types"
-	"github.com/docker/engine-api/types/container"
 	"github.com/docker/engine-api/types/filters"
 	"github.com/fsouza/go-dockerclient"
 	"github.com/olebedev/config"
