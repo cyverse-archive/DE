@@ -11,8 +11,8 @@
                 "container":{
                     "name" : "test-name",
                     "network_mode" : "none",
-                    "cpu_shares" : "2048",
-                    "memory_limit" : "2048M",
+                    "cpu_shares" : 2048,
+                    "memory_limit" : 2048,
                     "entrypoint" : "/bin/true",
                     "id":"16fd2a16-3ac6-11e5-a25d-2fa4b0893ef1",
                     "image":{

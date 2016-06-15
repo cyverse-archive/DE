@@ -42,8 +42,8 @@ type Container struct {
 	VolumesFrom []VolumesFrom  `json:"container_volumes_from"`
 	Name        string         `json:"name"`
 	NetworkMode string         `json:"network_mode"`
-	CPUShares   string         `json:"cpu_shares"`
-	MemoryLimit string         `json:"memory_limit"`
+	CPUShares   int64          `json:"cpu_shares"`
+	MemoryLimit int64          `json:"memory_limit"`
 	Image       ContainerImage `json:"image"`
 	EntryPoint  string         `json:"entrypoint"`
 	WorkingDir  string         `json:"working_directory"`

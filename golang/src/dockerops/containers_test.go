@@ -8,7 +8,6 @@ import (
 	"model"
 	"os"
 	"reflect"
-	"strconv"
 	"strings"
 	"testing"
 
@@ -150,20 +149,20 @@ func TestCreateIsContainerAndNukeByName(t *testing.T) {
 		t.Error("CreatecontainerFromStep created a nil opts")
 	}
 
-	expected := job.Steps[0].Component.Container.MemoryLimit
-	actual := strconv.FormatInt(opts.Config.Memory, 10)
-	if actual != expected {
-		t.Errorf("Config.Memory was %s instead of %s\n", actual, expected)
+	expectedInt := job.Steps[0].Component.Container.MemoryLimit
+	actualInt := opts.Config.Memory
+	if actualInt != expectedInt {
+		t.Errorf("Config.Memory was %s instead of %s\n", actualInt, expectedInt)
 	}
 
-	expected = job.Steps[0].Component.Container.CPUShares
-	actual = strconv.FormatInt(opts.Config.CPUShares, 10)
-	if actual != expected {
-		t.Errorf("Config.CPUShares was %s instead of %s\n", actual, expected)
+	expectedInt = job.Steps[0].Component.Container.CPUShares
+	actualInt = opts.Config.CPUShares
+	if actualInt != expectedInt {
+		t.Errorf("Config.CPUShares was %s instead of %s\n", actualInt, expectedInt)
 	}
 
-	expected = job.Steps[0].Component.Container.EntryPoint
-	actual = opts.Config.Entrypoint[0]
+	expected := job.Steps[0].Component.Container.EntryPoint
+	actual := opts.Config.Entrypoint[0]
 	if actual != expected {
 		t.Errorf("Config.Entrypoint was %s instead of %s\n", actual, expected)
 	}

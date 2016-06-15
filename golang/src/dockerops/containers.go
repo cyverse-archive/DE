@@ -265,20 +265,12 @@ func (d *Docker) CreateContainerFromStep(step *model.Step, invID string) (*docke
 
 	createConfig.Cmd = step.Arguments()
 
-	if step.Component.Container.MemoryLimit != "" {
-		if parsedMem, err := strconv.ParseInt(step.Component.Container.MemoryLimit, 10, 64); err == nil {
-			createConfig.Memory = parsedMem
-		} else {
-			logcabin.Error.Print(err)
-		}
+	if step.Component.Container.MemoryLimit != 0 {
+		createConfig.Memory = step.Component.Container.MemoryLimit
 	}
 
-	if step.Component.Container.CPUShares != "" {
-		if parsedCPU, err := strconv.ParseInt(step.Component.Container.CPUShares, 10, 64); err == nil {
-			createConfig.CPUShares = parsedCPU
-		} else {
-			logcabin.Error.Print(err)
-		}
+	if step.Component.Container.CPUShares != 0 {
+		createConfig.CPUShares = step.Component.Container.CPUShares
 	}
 
 	if step.Component.Container.NetworkMode != "" {
