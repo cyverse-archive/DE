@@ -308,8 +308,9 @@
 
 (defn load-config-from-file
   "Loads the configuration settings from a file."
-  [cfg-path]
+  [cfg-path & [{:keys [log-config?] :or {log-config? true}}]]
   (cc/load-config-from-file cfg-path props)
-  (cc/log-config props)
-  (log-environment)
+  (when log-config?
+    (cc/log-config props)
+    (log-environment))
   (validate-config))
