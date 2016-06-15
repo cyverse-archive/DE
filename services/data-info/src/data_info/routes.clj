@@ -17,6 +17,7 @@
             [data-info.routes.sharing :as sharing-routes]
             [data-info.routes.status :as status-routes]
             [data-info.routes.stats :as stat-routes]
+            [data-info.routes.tickets :as ticket-routes]
             [data-info.routes.trash :as trash-routes]
             [data-info.util :as util]
             [data-info.util.config :as config]
@@ -34,6 +35,7 @@
      :tags [{:name "service-info", :description "Service Information"}
             {:name "data-by-id", :description "Data Operations (by ID)"}
             {:name "data", :description "Data Operations"}
+            {:name "tickets", :description "Ticket Operations"}
             {:name "bulk", :description "Bulk Operations"}
             {:name "navigation", :description "Navigation"}
             {:name "filetypes", :description "File Type Metadata"}]})
@@ -55,5 +57,6 @@
     navigation-routes/navigation
     stat-routes/stat-gatherer
     sharing-routes/sharing-routes
+    ticket-routes/ticket-routes
     trash-routes/trash
     (route/not-found (svc/unrecognized-path-response))))

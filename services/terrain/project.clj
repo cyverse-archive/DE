@@ -25,7 +25,6 @@
                  [compojure "1.4.0"]
                  [metosin/compojure-api "0.24.5"]  ; should be held to the same version as the one
                                                    ; used by org.iplantc/clojure-commons
-                 [de.ubercode.clostache/clostache "1.4.0" :exclusions [org.clojure/core.incubator]]
                  [dire "0.5.3"]
                  [me.raynes/fs "1.4.6"]
                  [medley "0.7.0"]

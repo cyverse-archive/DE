@@ -96,6 +96,16 @@
 
 (defn tree-urls-attr [] "ipc-tree-urls")
 
+(cc/defprop-str kifshare-download-template
+  "The mustache template for the kifshare URL."
+  [props config-valid configs]
+  "data-info.kifshare-download-template")
+
+(cc/defprop-str kifshare-external-url
+  "The external URL for kifshare."
+  [props config-valid configs]
+  "data-info.kifshare-external-url")
+
 ; iRODS connection information
 
 (cc/defprop-str irods-home

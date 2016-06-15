@@ -150,29 +150,3 @@
       (throw+ {:error_code ERR_NOT_OWNER
                :user user
                :paths (filterv #(not (belongs-to? %)) paths)}))))
-
-(defn ticket-exists
-  [cm user ticket-id]
-  (when-not (ticket? cm (:username cm) ticket-id)
-    (throw+ {:error_code ERR_TICKET_DOES_NOT_EXIST
-             :user user
-             :ticket-id ticket-id})))
-
-(defn ticket-does-not-exist
-  [cm user ticket-id]
-  (when (ticket? cm (:username cm) ticket-id)
-    (throw+ {:error_code ERR_TICKET_EXISTS
-             :user user
-             :ticket-id ticket-id})))
-
-(defn all-tickets-exist
-  [cm user ticket-ids]
-  (when-not (every? #(ticket? cm (:username cm) %) ticket-ids)
-    (throw+ {:ticket-ids (filterv #(not (ticket? cm (:username cm) %)) ticket-ids)
-             :error_code ERR_TICKET_DOES_NOT_EXIST})))
-
-(defn all-tickets-nonexistant
-  [cm user ticket-ids]
-  (when (some #(ticket? cm (:username cm) %) ticket-ids)
-    (throw+ {:ticket-ids (filterv #(ticket? cm (:username cm) %) ticket-ids)
-             :error_code ERR_TICKET_EXISTS})))

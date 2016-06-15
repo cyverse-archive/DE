@@ -7,6 +7,7 @@
             [clj-jargon.init :as init]
             [clj-jargon.item-info :as item]
             [clj-jargon.permissions :as perm]
+            [clj-jargon.tickets :as tickets]
             [clj-jargon.users :as user]
             [clj-jargon.by-uuid :as uuid]
             [clojure-commons.error-codes :as error]
@@ -222,3 +223,29 @@
   (when-not (every? #(uuid/get-path cm %) uuids)
     (throw+ {:error_code error/ERR_DOES_NOT_EXIST
              :ids      (filterv #(not (uuid/get-path cm  %1)) uuids)})))
+
+(defn ticket-exists
+  [cm user ticket-id]
+  (when-not (tickets/ticket? cm (:username cm) ticket-id)
+    (throw+ {:error_code error/ERR_TICKET_DOES_NOT_EXIST
+             :user user
+             :ticket-id ticket-id})))
+
+(defn ticket-does-not-exist
+  [cm user ticket-id]
+  (when (tickets/ticket? cm (:username cm) ticket-id)
+    (throw+ {:error_code error/ERR_TICKET_EXISTS
+             :user user
+             :ticket-id ticket-id})))
+
+(defn all-tickets-exist
+  [cm user ticket-ids]
+  (when-not (every? #(tickets/ticket? cm (:username cm) %) ticket-ids)
+    (throw+ {:ticket-ids (filterv #(not (tickets/ticket? cm (:username cm) %)) ticket-ids)
+             :error_code error/ERR_TICKET_DOES_NOT_EXIST})))
+
+(defn all-tickets-nonexistant
+  [cm user ticket-ids]
+  (when (some #(tickets/ticket? cm (:username cm) %) ticket-ids)
+    (throw+ {:ticket-ids (filterv #(tickets/ticket? cm (:username cm) %) ticket-ids)
+             :error_code error/ERR_TICKET_EXISTS})))

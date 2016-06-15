@@ -10,7 +10,6 @@
             [terrain.services.filesystem.root :as root]
             [terrain.services.filesystem.sharing :as sharing]
             [terrain.services.filesystem.stat :as stat]
-            [terrain.services.filesystem.tickets :as ticket]
             [terrain.services.filesystem.updown :as ud]))
 
 (defn secured-filesystem-routes
@@ -71,13 +70,13 @@
       (controller req data/restore-files :params))
 
     (POST "/filesystem/tickets" [:as req]
-      (controller req ticket/do-add-tickets :params :body))
+      (controller req data/add-tickets :params :body))
 
     (POST "/filesystem/delete-tickets" [:as req]
-      (controller req ticket/do-remove-tickets :params :body))
+      (controller req data/delete-tickets :params :body))
 
     (POST "/filesystem/list-tickets" [:as req]
-      (controller req ticket/do-list-tickets :params :body))
+      (controller req data/list-tickets :params :body))
 
     (DELETE "/filesystem/trash" [:as req]
       (controller req data/delete-trash :params))

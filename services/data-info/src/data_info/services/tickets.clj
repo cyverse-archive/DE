@@ -1,7 +1,5 @@
-(ns terrain.services.filesystem.tickets
+(ns data-info.services.tickets
   (:use [clojure-commons.error-codes]
-        [clojure-commons.validators]
-        [terrain.services.filesystem.common-paths]
         [clj-jargon.init :only [with-jargon]]
         [clj-jargon.tickets]
         [slingshot.slingshot :only [try+ throw+]])
@@ -10,9 +8,9 @@
             [clojure-commons.file-utils :as ft]
             [clostache.parser :as stache]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
-            [terrain.util.config :as cfg]
-            [terrain.services.filesystem.icat :as icat]
-            [terrain.services.filesystem.validators :as validators])
+            [data-info.util.logging :as dul]
+            [data-info.util.config :as cfg]
+            [data-info.util.validators :as validators])
   (:import [java.util UUID]))
 
 (defn- ticket-uuids?
@@ -51,7 +49,7 @@
 
 (defn- add-tickets
   [user paths public?]
-  (with-jargon (icat/jargon-cfg) [cm]
+  (with-jargon (cfg/jargon-cfg) [cm]
     (let [new-uuids (gen-uuids cm user (count paths))]
       (validators/user-exists cm user)
       (validators/all-paths-exist cm paths)
@@ -67,7 +65,7 @@
 
 (defn- remove-tickets
   [user ticket-ids]
-  (with-jargon (icat/jargon-cfg) [cm]
+  (with-jargon (cfg/jargon-cfg) [cm]
     (validators/user-exists cm user)
     (validators/all-tickets-exist cm user ticket-ids)
     (let [all-paths (mapv #(.getIrodsAbsolutePath (ticket-by-id cm (:username cm) %)) ticket-ids)]
@@ -86,7 +84,7 @@
 
 (defn- list-tickets-for-paths
   [user paths]
-  (with-jargon (icat/jargon-cfg) [cm]
+  (with-jargon (cfg/jargon-cfg) [cm]
     (validators/user-exists cm user)
     (validators/all-paths-exist cm paths)
     (validators/all-paths-readable cm user paths)
@@ -94,19 +92,15 @@
      (apply merge (mapv #(hash-map %1 (returnable-tickets-for-path cm %1)) paths))}))
 
 (defn do-add-tickets
-  [{public :public user :user} {paths :paths}]
-  (let [pub-param public
-        public    (if (and public (= public "1")) true false)]
-    (add-tickets user paths public)))
+  [{public? :public user :user} {paths :paths}]
+  (add-tickets user paths public?))
 
 (with-pre-hook! #'do-add-tickets
   (fn [params body]
-    (log-call "do-add-tickets" params body)
-    (validate-map params {:user string?})
-    (validate-map body {:paths sequential?})
+    (dul/log-call "do-add-tickets" params body)
     (validators/validate-num-paths (:paths body))))
 
-(with-post-hook! #'do-add-tickets (log-func "do-add-tickets"))
+(with-post-hook! #'do-add-tickets (dul/log-func "do-add-tickets"))
 
 (defn do-remove-tickets
   [{user :user} {tickets :tickets}]
@@ -114,14 +108,9 @@
 
 (with-pre-hook! #'do-remove-tickets
   (fn [params body]
-    (log-call "do-remove-tickets" params body)
-    (validate-map params {:user string?})
-    (validate-map body {:tickets sequential?})
-    (when-not (every? true? (mapv string? (:tickets body)))
-      (throw+ {:error_code ERR_BAD_OR_MISSING_FIELD
-               :field     "tickets"}))))
+    (dul/log-call "do-remove-tickets" params body)))
 
-(with-post-hook! #'do-remove-tickets (log-func "do-remove-tickets"))
+(with-post-hook! #'do-remove-tickets (dul/log-func "do-remove-tickets"))
 
 (defn do-list-tickets
   [{user :user} {paths :paths}]
@@ -129,12 +118,7 @@
 
 (with-pre-hook! #'do-list-tickets
   (fn [params body]
-    (log-call "do-list-tickets" params body)
-    (validate-map params {:user string?})
-    (validate-map body {:paths sequential?})
-    (when-not (every? true? (mapv string? (:paths body)))
-      (throw+ {:error_code ERR_BAD_OR_MISSING_FIELD
-               :field      "paths"}))
+    (dul/log-call "do-list-tickets" params body)
     (validators/validate-num-paths (:paths body))))
 
-(with-post-hook! #'do-list-tickets (log-func "do-list-tickets"))
+(with-post-hook! #'do-list-tickets (dul/log-func "do-list-tickets"))

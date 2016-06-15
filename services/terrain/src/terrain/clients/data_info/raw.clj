@@ -242,6 +242,26 @@
   (request :post ["anonymizer"]
            (mk-req-map user (json/encode {:paths paths}))))
 
+;; TICKETS
+
+(defn list-tickets
+  "List tickets for a list of paths."
+  [user paths]
+  (request :post ["ticket-lister"]
+           (mk-req-map user (json/encode {:paths paths}))))
+
+(defn add-tickets
+  "Create potentially-public tickets for a list of paths."
+  [user paths public?]
+  (request :post ["tickets"]
+           (mk-req-map user (json/encode {:paths paths}) {:public public?})))
+
+(defn delete-tickets
+  "Delete tickets for a list of ticket IDs"
+  [user ticket-ids]
+  (request :post ["ticket-deleter"]
+           (mk-req-map user (json/encode {:tickets ticket-ids}))))
+
 ;; MISC
 
 (defn collect-permissions
