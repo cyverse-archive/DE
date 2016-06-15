@@ -82,7 +82,8 @@
       (f)
       (remove-test-data))))
 
-(use-fixtures :each with-test-db run-integration-tests with-test-data)
+(use-fixtures :once with-test-db run-integration-tests)
+(use-fixtures :each with-test-data)
 
 (deftest image-tests
   (is (not (image? {:name "test" :tag "test"})))

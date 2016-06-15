@@ -73,7 +73,8 @@
   (dorun (comp workspace/get-workspace get-user) (keys users))
   (f))
 
-(use-fixtures :each tf/with-test-db tf/with-config tf/run-integration-tests with-workspaces with-test-app)
+(use-fixtures :once tf/with-test-db tf/with-config tf/run-integration-tests with-workspaces)
+(use-fixtures :each with-test-app)
 
 (deftest test-app-search
   (is (= 1 (:app_count (apps/search-apps (get-user :testde1) {:search "Test App"})))))

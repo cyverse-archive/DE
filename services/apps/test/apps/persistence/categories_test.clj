@@ -8,7 +8,8 @@
   (f)
   (delete :app_hierarchy_version))
 
-(use-fixtures :each with-test-db run-integration-tests clean-up-hierarchy-versions)
+(use-fixtures :once with-test-db run-integration-tests)
+(use-fixtures :each clean-up-hierarchy-versions)
 
 (deftest hierarchy-version-test
   (testing "Test setting and fetching app category hierarchy versions."
