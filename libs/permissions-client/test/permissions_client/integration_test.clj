@@ -17,6 +17,15 @@
       (f))
     (f)))
 
+(defn ensure-resource-type-defined [name description]
+  (let [client (create-permissions-client)]
+    (when (empty? (:resource_types (pc/list-resource-types client {:resource_type_name name})))
+      (pc/add-resource-type client name description))))
+
+(defn with-default-resource-types [f]
+  (ensure-resource-type-defined "app" "A Discovery Environment application.")
+  (ensure-resource-type-defined "analysis" "The results of running a Discovery Environment application."))
+
 (defn add-test-subjects []
   (let [client (create-permissions-client)]
     (pc/add-subject client "ipcdev" "user")
@@ -76,7 +85,8 @@
   (remove-test-resource-types)
   (remove-test-permissions))
 
-(use-fixtures :each run-integration-tests with-base-uri with-test-data)
+(use-fixtures :once run-integration-tests with-base-uri with-default-resource-types)
+(use-fixtures :each with-test-data)
 
 (deftest test-get-status
   (let [status-info (pc/get-status (create-permissions-client))]
