@@ -13,7 +13,7 @@
         [notification-agent.query]
         [notification-agent.seen]
         [slingshot.slingshot :only [try+]]
-        [ring.util.http-response :only [ok]]
+        [ring.util.http-response :only [ok internal-server-error]]
         [ring.util.response :only [content-type]])
   (:require [compojure.route :as route]
             [clojure.tools.logging :as log]
@@ -35,8 +35,10 @@
        (content-type "application/json; charset=utf-8"))))
 
 (defroutes notificationagent-routes
-  (GET  "/" []
-        "Welcome to the notification agent!\n")
+  (GET "/" [:as {{expecting :expecting} :params :as req}]
+       (if (and expecting (not= expecting "notification-agent"))
+         (internal-server-error (str "Welcome to the notification agent!\nError: expecting " expecting "."))
+         "Welcome to the notification agent!\n"))
 
   (POST "/notification" [:as {body :body}]
         (success-resp (transaction (handle-notification-request body))))
