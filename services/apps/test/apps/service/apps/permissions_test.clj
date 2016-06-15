@@ -14,7 +14,7 @@
 
 (defn- create-user-map []
   (->> (take 10 (iterate inc 1))
-       (mapv (comp (comp (juxt (comp keyword :user) identity) create-user)))
+       (mapv (comp (juxt (comp keyword :user) identity) create-user))
        (into {})))
 
 (def users (create-user-map))
