@@ -73,7 +73,7 @@
   (dorun (comp workspace/get-workspace get-user) (keys users))
   (f))
 
-(use-fixtures :once tf/with-test-db tf/with-config tf/run-integration-tests with-workspaces)
+(use-fixtures :once tf/with-test-db tf/run-integration-tests tf/with-config with-workspaces)
 (use-fixtures :each with-test-app)
 
 (deftest test-app-search
