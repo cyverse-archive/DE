@@ -127,7 +127,7 @@ public class OntologyUtilTest {
         when(hierarchyMock.getLabel()).thenReturn("Label");
 
         uut.convertHierarchyToAvu(hierarchyMock);
-        verify(avuMock).setAttr(anyString());
+        verify(avuMock).setAttribute(anyString());
         verify(avuMock).setValue(eq(hierarchyMock.getIri()));
         verify(avuMock).setUnit(eq(hierarchyMock.getLabel()));
 
