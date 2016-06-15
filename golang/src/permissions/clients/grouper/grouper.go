@@ -3,7 +3,7 @@ package grouper
 import (
 	"database/sql"
 
-	"permissions/util"
+	"dbutil"
 
 	_ "github.com/lib/pq"
 )
@@ -25,7 +25,7 @@ type GrouperClient struct {
 }
 
 func NewGrouperClient(dburi, prefix string) (*GrouperClient, error) {
-	connector, err := util.NewDefaultConnector("1m")
+	connector, err := dbutil.NewDefaultConnector("1m")
 	if err != nil {
 		return nil, err
 	}

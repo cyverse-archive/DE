@@ -3,6 +3,7 @@ package main
 import (
 	"configurate"
 	"database/sql"
+	"dbutil"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -403,8 +404,13 @@ func main() {
 		logcabin.Error.Fatal(err)
 	}
 
+	connector, err := dbutil.NewDefaultConnector("1m")
+	if err != nil {
+		logcabin.Error.Fatal(err)
+	}
+
 	logcabin.Info.Println("Connecting to the database...")
-	db, err := sql.Open("postgres", dburi)
+	db, err := connector.Connect("postgres", dburi)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
