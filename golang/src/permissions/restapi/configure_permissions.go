@@ -4,6 +4,7 @@ import (
 	"configurate"
 	"crypto/tls"
 	"database/sql"
+	"dbutil"
 	"fmt"
 	"logcabin"
 	"net/http"
@@ -22,8 +23,6 @@ import (
 	"permissions/restapi/operations/resources"
 	"permissions/restapi/operations/status"
 	"permissions/restapi/operations/subjects"
-
-	"permissions/util"
 
 	permissions_impl "permissions/restapi/impl/permissions"
 	resource_types_impl "permissions/restapi/impl/resource_types"
@@ -69,7 +68,7 @@ func initService() error {
 		return err
 	}
 
-	connector, err := util.NewDefaultConnector("1m")
+	connector, err := dbutil.NewDefaultConnector("1m")
 	if err != nil {
 		return err
 	}
