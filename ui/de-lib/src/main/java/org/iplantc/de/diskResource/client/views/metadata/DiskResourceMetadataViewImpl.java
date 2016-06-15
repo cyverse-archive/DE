@@ -93,7 +93,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     private final AccordionLayoutAppearance accordionLayoutAppearance =
             GWT.create(AccordionLayoutAppearance.class);
 
-    private static final String AVU_BEAN_TAG_MODEL_KEY = "model-key"; //$NON-NLS-1$
+    private static final String AVU_BEAN_TAG_MODEL_KEY = "model-key";
 
     private boolean dirty;
 
@@ -240,7 +240,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         expandUserMetadataPanel();
         String attr = getUniqueAttrName(appearance.newAttribute(), 0);
         DiskResourceMetadata md =
-                MetadataPresenterImpl.newMetadata(attr, appearance.newValue(), appearance.newUnit()); //$NON-NLS-1$
+                MetadataPresenterImpl.newMetadata(attr, appearance.newValue(), appearance.newUnit());
         setAvuModelKey(md);
         userMdListStore.add(0, md);
         userGridInlineEditing.startEditing(new GridCell(0, 1));
@@ -274,7 +274,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
 
     void buildUserMetadataPanel() {
         userMetadataPanel = new ContentPanel(accordionLayoutAppearance);
-        userMetadataPanel.setSize(appearance.panelWidth(), appearance.panelHeight()); //$NON-NLS-1$ //$NON-NLS-2$
+        userMetadataPanel.setSize(appearance.panelWidth(), appearance.panelHeight());
         userMetadataPanel.setCollapsible(true);
         userMetadataPanel.getHeader().addStyleName(ThemeStyles.get().style().borderTop());
         userMetadataPanel.setHeadingHtml(appearance.boldHeader(appearance.userMetadata()));
@@ -282,7 +282,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
 
     void buildAdditionalMetadataPanel() {
         additionalMetadataPanel = new ContentPanel(accordionLayoutAppearance);
-        additionalMetadataPanel.setSize(appearance.panelWidth(), appearance.panelHeight()); //$NON-NLS-1$ //$NON-NLS-2$
+        additionalMetadataPanel.setSize(appearance.panelWidth(), appearance.panelHeight());
         additionalMetadataPanel.setCollapsible(true);
         additionalMetadataPanel.getHeader().addStyleName(ThemeStyles.get().style().borderTop());
         additionalMetadataPanel.setHeadingHtml(appearance.boldHeader(appearance.additionalMetadata()));
@@ -350,7 +350,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     }
 
     private String getUniqueAttrName(String attrName, int i) {
-        String retName = i > 0 ? attrName + "_(" + i + ")" : attrName; //$NON-NLS-1$ //$NON-NLS-2$
+        String retName = i > 0 ? attrName + "_(" + i + ")" : attrName;
         for (DiskResourceMetadata md : additionalMdListStore.getAll()) {
             if (md.getAttribute().equals(retName)) {
                 return getUniqueAttrName(attrName, ++i);
