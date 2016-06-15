@@ -1,7 +1,7 @@
 package org.iplantc.de.client.services.impl.models;
 
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
+import org.iplantc.de.client.models.diskResources.DiskResourceUserMetadata;
 
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface DiskResourceMetadataBatchRequest {
 
-    DiskResourceMetadataTemplate getMetadata();
+    DiskResourceUserMetadata getMetadata();
 
-    void setMetadata(DiskResourceMetadataTemplate metadata);
+    void setMetadata(DiskResourceUserMetadata metadata);
 
     @PropertyName("irods-avus")
     List<DiskResourceMetadata> getAvus();

@@ -1,9 +1,10 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
              xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
              xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
-             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
+             xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid">
 
     <ui:with field="appearance"
              type="org.iplantc.de.diskResource.client.MetadataView.Appearance"/>
@@ -13,32 +14,93 @@
         <ui:attributes size="30" maxSize="30"/>
     </ui:with>
 
+    <ui:with
+            type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData"
+            field="toolBarLayoutData">
+        <ui:attributes width="1" height="-1"/>
+    </ui:with>
+
+    <ui:with
+            type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData"
+            field="gridLayoutData">
+        <ui:attributes width="1" height="1"/>
+    </ui:with>
+
+
+    <ui:with type="com.sencha.gxt.data.shared.ListStore" field="userMdListStore"/>
+    <ui:with type="com.sencha.gxt.data.shared.ListStore" field="additionalMdListStore"/>
+
+    <ui:with type="com.sencha.gxt.widget.core.client.grid.ColumnModel" field="ucm"/>
+
+    <ui:with type="com.sencha.gxt.widget.core.client.grid.GridView" field="uview">
+        <ui:attributes stripeRows="true"></ui:attributes>
+    </ui:with>
+
+    <ui:with type="com.sencha.gxt.widget.core.client.grid.ColumnModel" field="acm"/>
+
+    <ui:with type="com.sencha.gxt.widget.core.client.grid.GridView" field="aview">
+        <ui:attributes stripeRows="true"></ui:attributes>
+    </ui:with>
+
+    <ui:with
+            type="com.sencha.gxt.widget.core.client.container.AccordionLayoutContainer.AccordionLayoutAppearance"
+            field="aLayoutAppearance"/>
+
     <container:BorderLayoutContainer ui:field="con"
                                      borders="true">
-        <container:north layoutData="{northData}">
-            <toolbar:ToolBar ui:field="toolbar">
-                <toolbar:child>
-                    <button:TextButton ui:field="addMetadataButton"
-                                       text="{appearance.add}"
-                                       icon="{appearance.addIcon}"/>
-                </toolbar:child>
-                <toolbar:child>
-                    <button:TextButton ui:field="deleteMetadataButton"
-                                       text="{appearance.delete}"
-                                       icon="{appearance.deleteIcon}"/>
-                </toolbar:child>
-                <toolbar:FillToolItem/>
-                <toolbar:child>
-                    <form:ComboBox ui:field="templateCombo"
-                                   allowBlank="true"
-                                   forceSelection="true"
-                                   triggerAction="ALL"/>
-                </toolbar:child>
-            </toolbar:ToolBar>
-        </container:north>
 
-        <container:center>
-
-        </container:center>
+        <container:AccordionLayoutContainer ui:field="alc" expandMode="SINGLE_FILL">
+            <gxt:ContentPanel ui:field="userMetadataPanel">
+                <container:VerticalLayoutContainer>
+                    <container:child layoutData="{toolBarLayoutData}">
+                        <toolbar:ToolBar ui:field="toolbar">
+                            <toolbar:child>
+                                <button:TextButton ui:field="addMetadataButton"
+                                                   text="{appearance.add}"
+                                                   icon="{appearance.addIcon}"/>
+                            </toolbar:child>
+                            <toolbar:child>
+                                <button:TextButton ui:field="deleteMetadataButton"
+                                                   text="{appearance.delete}"
+                                                   icon="{appearance.deleteIcon}"
+                                                    enabled="false"/>
+                            </toolbar:child>
+                            <toolbar:FillToolItem/>
+                            <toolbar:child>
+                                <button:TextButton ui:field="selectButton"
+                                                   text="{appearance.selectTemplate}"
+                                                   icon="{appearance.addIcon}"/>
+                            </toolbar:child>
+                        </toolbar:ToolBar>
+                    </container:child>
+                    <container:child layoutData="{gridLayoutData}">
+                        <grid:Grid ui:field="userMdGrid" store="{userMdListStore}" cm="{ucm}"
+                                   view="{uview}"
+                                   borders="false" columnReordering="false"
+                        />
+                    </container:child>
+                </container:VerticalLayoutContainer>
+            </gxt:ContentPanel>
+            <gxt:ContentPanel ui:field="additionalMetadataPanel">
+                <container:VerticalLayoutContainer>
+                    <container:child layoutData="{toolBarLayoutData}">
+                        <toolbar:ToolBar ui:field="otherToolbar">
+                            <toolbar:child>
+                                <button:TextButton ui:field="importButton"
+                                                   text="{appearance.importMd}"
+                                                   icon="{appearance.addIcon}"
+                                                    enabled="false"/>
+                            </toolbar:child>
+                        </toolbar:ToolBar>
+                    </container:child>
+                    <container:child layoutData="{gridLayoutData}">
+                        <grid:Grid ui:field="additionalMdgrid" store="{additionalMdListStore}" cm="{acm}"
+                                   view="{aview}"
+                                   borders="false" columnReordering="false"
+                        />
+                    </container:child>
+                </container:VerticalLayoutContainer>
+            </gxt:ContentPanel>
+        </container:AccordionLayoutContainer>
     </container:BorderLayoutContainer>
 </ui:UiBinder>

@@ -309,9 +309,7 @@ public interface ToolbarView extends IsWidget,
         void onBulkMetadataSelected(BULK_MODE mode);
 
         void submitBulkMetadataFromExistingFile(String filePath,
-                                                String destFolder,
-                                                String templateId,
-                                                boolean force);
+                                                String destFolder);
 
         void onDoiRequest(String uuid);
 

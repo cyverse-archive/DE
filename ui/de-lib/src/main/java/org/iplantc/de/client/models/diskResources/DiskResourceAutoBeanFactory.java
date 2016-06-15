@@ -51,9 +51,7 @@ public interface DiskResourceAutoBeanFactory extends AutoBeanFactory {
 
     AutoBean<DiskResourceMetadataBatchRequest> metadataBatchRequest();
 
-    AutoBean<DiskResourceMetadataTemplateList> templateAvuList();
-
-    AutoBean<DiskResourceMetadataTemplate> templateAvus();
+    AutoBean<DiskResourceUserMetadata> userMetadata();
 
     AutoBean<DiskResourceFavorite> getFavortieFolder();
 

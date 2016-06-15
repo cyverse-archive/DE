@@ -126,6 +126,11 @@ public class MetadataViewDefaultAppearance implements MetadataView.Appearance {
     }
 
     @Override
+    public String newUnit() {
+        return displayStrings.newUnit();
+    }
+
+    @Override
     public String paramValue() {
         return iplantDisplayStrings.paramValue();
     }
@@ -144,7 +149,7 @@ public class MetadataViewDefaultAppearance implements MetadataView.Appearance {
     }
 
     @Override
-    public String templateSelectedLoadingMask() {
+    public String loadingMask() {
         return iplantDisplayStrings.loadingMask();
     }
 
@@ -176,5 +181,35 @@ public class MetadataViewDefaultAppearance implements MetadataView.Appearance {
     @Override
     public String metadataTermGuide() {
         return displayStrings.metadataTermGuide();
+    }
+
+	@Override
+	public String additionalMetadata() {
+		return displayStrings.additionalMetadata();
+	}
+
+	@Override
+	public String paramUnit() {
+		return iplantDisplayStrings.paramUnit();
+	}
+
+    @Override
+    public String selectTemplate() {
+        return displayStrings.selectTemplate();
+    }
+
+    @Override
+    public String importMd() {
+        return displayStrings.importMd();
+    }
+
+    @Override
+    public String panelWidth() {
+        return "575";
+    }
+
+    @Override
+    public String panelHeight() {
+        return "475";
     }
 }

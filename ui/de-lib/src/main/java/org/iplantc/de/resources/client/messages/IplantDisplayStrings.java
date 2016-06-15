@@ -2970,4 +2970,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Agave Redirect")
     @Key("agaveAuthRequiredTitle")
     String agaveAuthRequiredTitle();
+
+	String paramUnit();
 }

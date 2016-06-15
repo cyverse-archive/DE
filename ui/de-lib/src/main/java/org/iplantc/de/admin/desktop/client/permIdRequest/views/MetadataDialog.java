@@ -80,16 +80,13 @@ public class MetadataDialog extends IPlantDialog {
     @Override
     public void show() {
         super.show();
-
         ensureDebugId(Belphegor.PermIds.METADATA_DIALOG);
     }
 
     @Override
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
-
         getButton(PredefinedButton.OK).ensureDebugId(baseID + Belphegor.PermIds.OK);
-
         metadataView.asWidget().ensureDebugId(baseID + Belphegor.PermIds.VIEW);
     }
 }

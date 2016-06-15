@@ -19,7 +19,29 @@ public interface MetadataDisplayStrings extends Messages{
 
     String newValue();
 
+	String newUnit();
+
+	String selectTemplate();
+
+	String importMd();
+
     String userMetadata();
 
     String metadataTermGuide();
+
+	String templateListingError();
+
+	String loadMetadataError();
+
+	String saveMetadataError();
+
+	String templateinfoError();
+
+	String additionalMetadata();
+
+	String templates();
+
+	String error();
+
+	String incomplete();
 }
