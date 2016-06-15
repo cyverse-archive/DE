@@ -9,15 +9,21 @@ import (
 	"strconv"
 	"strings"
 
+	"golang.org/x/net/context"
+
+	"github.com/docker/engine-api/client"
+	"github.com/docker/engine-api/types"
+	"github.com/docker/engine-api/types/filters"
 	"github.com/fsouza/go-dockerclient"
 	"github.com/olebedev/config"
 )
 
 // Docker provides operations that runner needs from the docker client.
 type Docker struct {
-	Client        *docker.Client
+	Client        *client.Client
 	TransferImage string
 	cfg           *config.Config
+	ctx           context.Context
 }
 
 // WORKDIR is the path to the working directory inside all of the containers
@@ -43,22 +49,24 @@ const (
 
 // NewDocker returns a *Docker that connects to the docker client listening at
 // 'uri'.
-func NewDocker(cfg *config.Config, uri string) (*Docker, error) {
-	cl, err := docker.NewClient(uri)
+func NewDocker(ctx context.Context, cfg *config.Config, uri string) (*Docker, error) {
+	defaultHeaders := map[string]string{"User-Agent": "cyverse-road-runner-1.0"}
+	cl, err := client.NewClient(uri, "v1.23", nil, defaultHeaders)
 	if err != nil {
 		return nil, err
 	}
 	d := &Docker{
 		Client: cl,
 		cfg:    cfg,
+		ctx:    ctx,
 	}
 	return d, err
 }
 
 // IsContainer returns true if the provided 'name' is a container on the system
 func (d *Docker) IsContainer(name string) (bool, error) {
-	opts := docker.ListContainersOptions{All: true}
-	list, err := d.Client.ListContainers(opts)
+	opts := types.ContainerListOptions{All: true}
+	list, err := d.Client.ContainerList(d.ctx, opts)
 	if err != nil {
 		return false, err
 	}
@@ -74,8 +82,8 @@ func (d *Docker) IsContainer(name string) (bool, error) {
 
 // IsRunning returns true if the contain with 'name' is running.
 func (d *Docker) IsRunning(name string) (bool, error) {
-	opts := docker.ListContainersOptions{}
-	list, err := d.Client.ListContainers(opts)
+	opts := types.ContainerListOptions{}
+	list, err := d.Client.ContainerList(d.ctx, opts)
 	if err != nil {
 		return false, err
 	}
@@ -92,14 +100,13 @@ func (d *Docker) IsRunning(name string) (bool, error) {
 // ContainersWithLabel returns the id of all containers that have the label
 // "key=value" applied to it.
 func (d *Docker) ContainersWithLabel(key, value string, all bool) ([]string, error) {
-	filters := map[string][]string{
-		"label": []string{fmt.Sprintf("%s=%s", key, value)},
+	f := filters.NewArgs()
+	f.Add(key, value)
+	opts := types.ContainerListOptions{
+		All:    all,
+		Filter: f,
 	}
-	opts := docker.ListContainersOptions{
-		All:     all,
-		Filters: filters,
-	}
-	list, err := d.Client.ListContainers(opts)
+	list, err := d.Client.ContainerList(d.ctx, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -112,12 +119,11 @@ func (d *Docker) ContainersWithLabel(key, value string, all bool) ([]string, err
 
 // NukeContainer kills the container with the provided id.
 func (d *Docker) NukeContainer(id string) error {
-	opts := docker.RemoveContainerOptions{
-		ID:            id,
+	return d.Client.ContainerRemove(d.ctx, id, types.ContainerRemoveOptions{
 		RemoveVolumes: true,
+		RemoveLinks:   true,
 		Force:         true,
-	}
-	return d.Client.RemoveContainer(opts)
+	})
 }
 
 // NukeContainersByLabel kills all running containers that have the provided
@@ -138,8 +144,7 @@ func (d *Docker) NukeContainersByLabel(key, value string) error {
 
 // NukeContainerByName kills and remove the named container.
 func (d *Docker) NukeContainerByName(name string) error {
-	listopts := docker.ListContainersOptions{All: true}
-	list, err := d.Client.ListContainers(listopts)
+	list, err := d.Client.ContainerList(d.ctx, types.ContainerListOptions{All: true})
 	if err != nil {
 		return err
 	}
@@ -153,30 +158,68 @@ func (d *Docker) NukeContainerByName(name string) error {
 	return nil
 }
 
-// SafelyRemoveImage will delete the image with force set to false
-func (d *Docker) SafelyRemoveImage(name, tag string) error {
-	opts := docker.RemoveImageOptions{
-		Force: false,
+// ImageID returns the image ID as a string for image with the given name and tag.
+func (d *Docker) ImageID(name, tag string) (string, error) {
+	images, err := d.Client.ImageList(d.ctx, types.ImageListOptions{
+		MatchName: name,
+		All:       true,
+	})
+	if err != nil {
+		return "", nil
 	}
-	imageName := fmt.Sprintf("%s:%s", name, tag)
-	return d.Client.RemoveImageExtended(imageName, opts)
+	repoTag := fmt.Sprintf("%s:%s", name, tag)
+	found := ""
+	for _, img := range images {
+		for _, rt := range img.RepoTags {
+			if rt == repoTag {
+				found = img.ID
+			}
+		}
+	}
+	return found, err
+}
+
+func (d *Docker) removeImage(id string, force, prune bool) error {
+	removed, err := d.Client.ImageRemove(d.ctx, id, types.ImageRemoveOptions{
+		Force:         force,
+		PruneChildren: prune,
+	})
+	if err != nil {
+		return err
+	}
+	for _, rm := range removed {
+		logcabin.Info.Printf("untagged: %s\tdeleted: %s\n", rm.Untagged, rm.Deleted)
+	}
+	return err
 }
 
 // SafelyRemoveImageByID will delete the image referenced by its ID.
 func (d *Docker) SafelyRemoveImageByID(id string) error {
-	opts := docker.RemoveImageOptions{
-		Force: false,
+	return d.removeImage(id, false, false)
+}
+
+// SafelyRemoveImage will delete the image with force set to false
+func (d *Docker) SafelyRemoveImage(name, tag string) error {
+	imageID, err := d.ImageID(name, tag)
+	if err != nil {
+		return err
 	}
-	return d.Client.RemoveImageExtended(id, opts)
+	if imageID == "" {
+		return fmt.Errorf("image not found: %s:%s", name, tag)
+	}
+	return d.SafelyRemoveImageByID(imageID)
 }
 
 // NukeImage will delete the image with force set to true.
 func (d *Docker) NukeImage(name, tag string) error {
-	opts := docker.RemoveImageOptions{
-		Force: true,
+	imageID, err := d.ImageID(name, tag)
+	if err != nil {
+		return err
 	}
-	imageName := fmt.Sprintf("%s:%s", name, tag)
-	return d.Client.RemoveImageExtended(imageName, opts)
+	if imageID == "" {
+		return fmt.Errorf("image not found: %s:%s", name, tag)
+	}
+	return d.removeImage(imageID, true, true)
 }
 
 // Images will returns a list of the repo tags for all the images currently
