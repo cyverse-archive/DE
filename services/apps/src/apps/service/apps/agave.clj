@@ -2,6 +2,7 @@
   (:use [kameleon.uuids :only [uuidify]])
   (:require [clojure.string :as string]
             [apps.persistence.jobs :as jp]
+            [apps.protocols]
             [apps.service.apps.agave.listings :as listings]
             [apps.service.apps.agave.pipelines :as pipelines]
             [apps.service.apps.agave.jobs :as agave-jobs]
