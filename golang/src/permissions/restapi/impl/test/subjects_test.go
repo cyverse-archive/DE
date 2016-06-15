@@ -11,6 +11,16 @@ import (
 	impl "permissions/restapi/impl/subjects"
 )
 
+func checkSubject(t *testing.T, subjects []*models.SubjectOut, i int32, subjectId, subjectType string) {
+	actual := subjects[i]
+	if actual.SubjectID != models.ExternalSubjectID(subjectId) {
+		t.Errorf("unexpected subject ID: %s", string(actual.SubjectID))
+	}
+	if actual.SubjectType != models.SubjectType(subjectType) {
+		t.Errorf("unexpected subject type: %s", string(actual.SubjectType))
+	}
+}
+
 func addSubjectAttempt(
 	db *sql.DB,
 	subjectId models.ExternalSubjectID,
@@ -31,17 +41,18 @@ func addSubject(db *sql.DB, subjectId models.ExternalSubjectID, subjectType mode
 	return responder.(*subjects.AddSubjectCreated).Payload
 }
 
-func listSubjectsAttempt(db *sql.DB) middleware.Responder {
+func listSubjectsAttempt(db *sql.DB, subjectType, subjectId *string) middleware.Responder {
 
 	// Build the request handler.
 	handler := impl.BuildListSubjectsHandler(db)
 
 	// Attempt to list the subjects.
-	return handler()
+	params := subjects.ListSubjectsParams{SubjectType: subjectType, SubjectID: subjectId}
+	return handler(params)
 }
 
-func listSubjects(db *sql.DB) *models.SubjectsOut {
-	responder := listSubjectsAttempt(db)
+func listSubjects(db *sql.DB, subjectType, subjectId *string) *models.SubjectsOut {
+	responder := listSubjectsAttempt(db, subjectType, subjectId)
 	return responder.(*subjects.ListSubjectsOK).Payload
 }
 
@@ -84,6 +95,21 @@ func deleteSubjectAttempt(db *sql.DB, id models.InternalSubjectID) middleware.Re
 func deleteSubject(db *sql.DB, id models.InternalSubjectID) {
 	responder := deleteSubjectAttempt(db, id)
 	_ = responder.(*subjects.DeleteSubjectOK)
+}
+
+func deleteSubjectByExternalIdAttempt(db *sql.DB, subjectId, subjectType string) middleware.Responder {
+
+	// Build the request handler.
+	handler := impl.BuildDeleteSubjectByExternalIdHandler(db)
+
+	// Attempt to delete the subject.
+	params := subjects.DeleteSubjectByExternalIDParams{SubjectID: subjectId, SubjectType: subjectType}
+	return handler(params)
+}
+
+func deleteSubjectByExternalId(db *sql.DB, subjectId, subjectType string) {
+	responder := deleteSubjectByExternalIdAttempt(db, subjectId, subjectType)
+	_ = responder.(*subjects.DeleteSubjectByExternalIDOK)
 }
 
 func TestAddSubject(t *testing.T) {
@@ -146,7 +172,7 @@ func TestListSubjects(t *testing.T) {
 	expected := addSubject(db, subjectId, subjectType)
 
 	// List the subjects and verify that we get the expected number of results.
-	subjectList := listSubjects(db).Subjects
+	subjectList := listSubjects(db, nil, nil).Subjects
 	if len(subjectList) != 1 {
 		t.Fatalf("unexpected number of subjects listed: %d", len(subjectList))
 	}
@@ -164,6 +190,92 @@ func TestListSubjects(t *testing.T) {
 	}
 }
 
+func TestListSubjectsByExternalId(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+
+	// Add a subject.
+	expected := addSubject(db, models.ExternalSubjectID("a"), models.SubjectType("user"))
+	addSubject(db, models.ExternalSubjectID("b"), models.SubjectType("group"))
+	addSubject(db, models.ExternalSubjectID("c"), models.SubjectType("user"))
+	addSubject(db, models.ExternalSubjectID("d"), models.SubjectType("group"))
+
+	// List the subjects and verify that we get the expected number of results.
+	subjectId := "a"
+	subjectList := listSubjects(db, nil, &subjectId).Subjects
+	if len(subjectList) != 1 {
+		t.Fatalf("unexpected number of subjects listed: %d", len(subjectList))
+	}
+
+	// Verify that we got the expected result.
+	actual := subjectList[0]
+	if expected.ID != actual.ID {
+		t.Errorf("unexpected ID: %s", string(actual.ID))
+	}
+	if expected.SubjectID != actual.SubjectID {
+		t.Errorf("unexpected subject ID: %s", string(actual.SubjectID))
+	}
+	if expected.SubjectType != actual.SubjectType {
+		t.Errorf("unexpected subject type: %s", string(actual.SubjectType))
+	}
+}
+
+func TestListSubjectsByType(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+
+	// Add a subject.
+	addSubject(db, models.ExternalSubjectID("a"), models.SubjectType("user"))
+	addSubject(db, models.ExternalSubjectID("b"), models.SubjectType("group"))
+	addSubject(db, models.ExternalSubjectID("c"), models.SubjectType("user"))
+	addSubject(db, models.ExternalSubjectID("d"), models.SubjectType("group"))
+
+	// List the subjects and verify that we get the expected number of results.
+	subjectType := "user"
+	subjectList := listSubjects(db, &subjectType, nil).Subjects
+	if len(subjectList) != 2 {
+		t.Fatalf("unexpected number of subjects listed: %d", len(subjectList))
+	}
+
+	// Verify that we got the expected result.
+	checkSubject(t, subjectList, 0, "a", "user")
+	checkSubject(t, subjectList, 1, "c", "user")
+}
+
+func TestListSubjectsByExternalIdAndType(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+
+	// Add a subject.
+	addSubject(db, models.ExternalSubjectID("a"), models.SubjectType("user"))
+	addSubject(db, models.ExternalSubjectID("b"), models.SubjectType("group"))
+	addSubject(db, models.ExternalSubjectID("c"), models.SubjectType("user"))
+	addSubject(db, models.ExternalSubjectID("d"), models.SubjectType("group"))
+
+	// List the subjects and verify that we get the expected number of results.
+	subjectId := "a"
+	subjectType := "user"
+	subjectList := listSubjects(db, &subjectType, &subjectId).Subjects
+	if len(subjectList) != 1 {
+		t.Fatalf("unexpected number of subjects listed: %d", len(subjectList))
+	}
+
+	// Verify that we got the expected result.
+	checkSubject(t, subjectList, 0, "a", "user")
+}
+
 func TestListSubjectsEmpty(t *testing.T) {
 	if !shouldrun() {
 		return
@@ -173,7 +285,7 @@ func TestListSubjectsEmpty(t *testing.T) {
 	db := initdb(t)
 
 	// List the subjects and verify that we get the expected result.
-	subjectList := listSubjects(db).Subjects
+	subjectList := listSubjects(db, nil, nil).Subjects
 	if subjectList == nil {
 		t.Error("nil value returned as a subject list")
 	}
@@ -212,7 +324,7 @@ func TestUpdateSubject(t *testing.T) {
 	}
 
 	// List the subjects and verify that we get the expected number of results.
-	subjectList := listSubjects(db).Subjects
+	subjectList := listSubjects(db, nil, nil).Subjects
 	if len(subjectList) != 1 {
 		t.Fatalf("unexpected number of results: %d", len(subjectList))
 	}
@@ -297,7 +409,7 @@ func TestDeleteSubject(t *testing.T) {
 	deleteSubject(db, s1.ID)
 
 	// Verify that the subject was deleted.
-	subjectList := listSubjects(db).Subjects
+	subjectList := listSubjects(db, nil, nil).Subjects
 	if len(subjectList) != 0 {
 		t.Fatalf("unexpected number of results: %d", len(subjectList))
 	}
@@ -317,6 +429,50 @@ func TestDeleteSubjectNotFound(t *testing.T) {
 
 	// Verify that we got the expected error message.
 	expected := fmt.Sprintf("subject, %s, not found", FAKE_ID)
+	if *errorOut.Reason != expected {
+		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
+	}
+}
+
+func TestDeleteSubjectByName(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+
+	// Add a subject to the database.
+	addSubject(db, models.ExternalSubjectID("a"), models.SubjectType("user"))
+	addSubject(db, models.ExternalSubjectID("b"), models.SubjectType("user"))
+
+	// Delete the subject.
+	deleteSubjectByExternalId(db, "a", "user")
+
+	// Verify that the subject was deleted.
+	subjectList := listSubjects(db, nil, nil).Subjects
+	if len(subjectList) != 1 {
+		t.Fatalf("unexpected number of results: %d", len(subjectList))
+	}
+
+	// Verify that the expected subject remains.
+	checkSubject(t, subjectList, 0, "b", "user")
+}
+
+func TestDeleteSubjectByNameNotFound(t *testing.T) {
+	if !shouldrun() {
+		return
+	}
+
+	// Initialize the database.
+	db := initdb(t)
+
+	// Attempt to delete a subject.
+	responder := deleteSubjectByExternalIdAttempt(db, "a", "user")
+	errorOut := responder.(*subjects.DeleteSubjectByExternalIDNotFound).Payload
+
+	// Verify that we got the expected error message.
+	expected := "subject not found: user:a"
 	if *errorOut.Reason != expected {
 		t.Errorf("unexpected failure reason: %s", *errorOut.Reason)
 	}

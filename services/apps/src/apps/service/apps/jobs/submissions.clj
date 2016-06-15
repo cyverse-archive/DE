@@ -8,7 +8,7 @@
             [clojure-commons.file-utils :as ft]
             [kameleon.db :as db]
             [apps.clients.data-info :as data-info]
-            [apps.clients.iplant-groups :as iplant-groups]
+            [apps.clients.permissions :as perms-client]
             [apps.persistence.app-metadata :as ap]
             [apps.persistence.jobs :as jp]
             [apps.service.apps.job-listings :as job-listings]
@@ -210,7 +210,7 @@
   [apps-client user submission paths-exist job-number path-map]
   (when (every? (partial get paths-exist) (map keyword (vals path-map)))
     (let [job-info (.submitJob apps-client (format-submission-in-batch submission job-number path-map))]
-      (iplant-groups/register-analysis (:shortUsername user) (:id job-info))
+      (perms-client/register-private-analysis (:shortUsername user) (:id job-info))
       job-info)))
 
 (defn- preprocess-batch-submission

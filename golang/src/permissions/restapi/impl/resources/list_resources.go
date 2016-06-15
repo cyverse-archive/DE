@@ -9,10 +9,10 @@ import (
 	"permissions/restapi/operations/resources"
 )
 
-func BuildListResourcesHandler(db *sql.DB) func() middleware.Responder {
+func BuildListResourcesHandler(db *sql.DB) func(resources.ListResourcesParams) middleware.Responder {
 
 	// Return the handler function.
-	return func() middleware.Responder {
+	return func(params resources.ListResourcesParams) middleware.Responder {
 
 		// Start a transaction for this request.
 		tx, err := db.Begin()
@@ -24,7 +24,7 @@ func BuildListResourcesHandler(db *sql.DB) func() middleware.Responder {
 		defer tx.Commit()
 
 		// List all resources.
-		result, err := permsdb.ListResources(tx)
+		result, err := permsdb.ListResources(tx, params.ResourceTypeName, params.ResourceName)
 		if err != nil {
 			logcabin.Error.Print(err)
 			reason := err.Error()

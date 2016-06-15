@@ -23,6 +23,8 @@ import (
 	"permissions/restapi/operations/status"
 	"permissions/restapi/operations/subjects"
 
+	"permissions/util"
+
 	permissions_impl "permissions/restapi/impl/permissions"
 	resource_types_impl "permissions/restapi/impl/resource_types"
 	resources_impl "permissions/restapi/impl/resources"
@@ -67,12 +69,17 @@ func initService() error {
 		return err
 	}
 
+	connector, err := util.NewDefaultConnector("1m")
+	if err != nil {
+		return err
+	}
+
 	dburi, err := cfg.String("db.uri")
 	if err != nil {
 		return err
 	}
 
-	db, err = sql.Open("postgres", dburi)
+	db, err = connector.Connect("postgres", dburi)
 	if err != nil {
 		return err
 	}
@@ -126,6 +133,10 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 		resource_types_impl.BuildResourceTypesGetHandler(db),
 	)
 
+	api.ResourceTypesDeleteResourceTypeByNameHandler = resource_types.DeleteResourceTypeByNameHandlerFunc(
+		resource_types_impl.BuildDeleteResourceTypeByNameHandler(db),
+	)
+
 	api.ResourceTypesPostResourceTypesHandler = resource_types.PostResourceTypesHandlerFunc(
 		resource_types_impl.BuildResourceTypesPostHandler(db),
 	)
@@ -142,6 +153,10 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 		resources_impl.BuildAddResourceHandler(db),
 	)
 
+	api.ResourcesDeleteResourceByNameHandler = resources.DeleteResourceByNameHandlerFunc(
+		resources_impl.BuildDeleteResourceByNameHandler(db),
+	)
+
 	api.ResourcesListResourcesHandler = resources.ListResourcesHandlerFunc(
 		resources_impl.BuildListResourcesHandler(db),
 	)
@@ -156,6 +171,10 @@ func configureAPI(api *operations.PermissionsAPI) http.Handler {
 
 	api.SubjectsAddSubjectHandler = subjects.AddSubjectHandlerFunc(
 		subjects_impl.BuildAddSubjectHandler(db),
+	)
+
+	api.SubjectsDeleteSubjectByExternalIDHandler = subjects.DeleteSubjectByExternalIDHandlerFunc(
+		subjects_impl.BuildDeleteSubjectByExternalIdHandler(db),
 	)
 
 	api.SubjectsListSubjectsHandler = subjects.ListSubjectsHandlerFunc(

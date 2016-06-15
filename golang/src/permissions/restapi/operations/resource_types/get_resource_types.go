@@ -10,16 +10,16 @@ import (
 )
 
 // GetResourceTypesHandlerFunc turns a function with the right signature into a get resource types handler
-type GetResourceTypesHandlerFunc func() middleware.Responder
+type GetResourceTypesHandlerFunc func(GetResourceTypesParams) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn GetResourceTypesHandlerFunc) Handle() middleware.Responder {
-	return fn()
+func (fn GetResourceTypesHandlerFunc) Handle(params GetResourceTypesParams) middleware.Responder {
+	return fn(params)
 }
 
 // GetResourceTypesHandler interface for that can handle valid get resource types params
 type GetResourceTypesHandler interface {
-	Handle() middleware.Responder
+	Handle(GetResourceTypesParams) middleware.Responder
 }
 
 // NewGetResourceTypes creates a new http.Handler for the get resource types operation
@@ -41,13 +41,14 @@ type GetResourceTypes struct {
 
 func (o *GetResourceTypes) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, _ := o.Context.RouteInfo(r)
+	var Params = NewGetResourceTypesParams()
 
-	if err := o.Context.BindValidRequest(r, route, nil); err != nil { // bind params
+	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
-	res := o.Handler.Handle() // actually handle the request
+	res := o.Handler.Handle(Params) // actually handle the request
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 

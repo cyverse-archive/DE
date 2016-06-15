@@ -40,6 +40,10 @@ type BySubjectParams struct {
 	  Default: false
 	*/
 	Lookup *bool
+	/*The minimum permission level required to qualify for the result set. All permission levels qualify by default.
+	  In: query
+	*/
+	MinLevel *string
 	/*The external subject identifier.
 	  Required: true
 	  In: path
@@ -62,6 +66,11 @@ func (o *BySubjectParams) BindRequest(r *http.Request, route *middleware.Matched
 
 	qLookup, qhkLookup, _ := qs.GetOK("lookup")
 	if err := o.bindLookup(qLookup, qhkLookup, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qMinLevel, qhkMinLevel, _ := qs.GetOK("min_level")
+	if err := o.bindMinLevel(qMinLevel, qhkMinLevel, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -97,6 +106,33 @@ func (o *BySubjectParams) bindLookup(rawData []string, hasKey bool, formats strf
 		return errors.InvalidType("lookup", "query", "bool", raw)
 	}
 	o.Lookup = &value
+
+	return nil
+}
+
+func (o *BySubjectParams) bindMinLevel(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+	if raw == "" { // empty values pass all other validations
+		return nil
+	}
+
+	o.MinLevel = &raw
+
+	if err := o.validateMinLevel(formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *BySubjectParams) validateMinLevel(formats strfmt.Registry) error {
+
+	if err := validate.Enum("min_level", "query", *o.MinLevel, []interface{}{"read", "admin", "write", "own"}); err != nil {
+		return err
+	}
 
 	return nil
 }

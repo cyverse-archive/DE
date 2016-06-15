@@ -4,7 +4,8 @@
             [cheshire.core :as cheshire]
             [clojure-commons.config :as cc]
             [clojure.tools.logging :as log]
-            [common-cfg.cfg :as cfg]))
+            [common-cfg.cfg :as cfg]
+            [permissions-client.core :as pc]))
 
 (def docs-uri "/docs")
 
@@ -249,6 +250,11 @@
   [props config-valid configs]
   "apps.jobs.poll-interval")
 
+(cc/defprop-str permissions-base
+  "The base URL for the permissions service."
+  [props config-valid configs]
+  "apps.permissions.base-url")
+
 (def get-default-app-categories
   (memoize
    (fn []
@@ -275,6 +281,21 @@
      (agave-redirect-uri)
      (agave-oauth-refresh-window))))
 
+(def permissions-client
+  (memoize #(pc/new-permissions-client (permissions-base))))
+
+(defn app-resource-type
+  "The app resource type name. This value is hard-coded for now, but placed in this namespace so that we can easily
+   convert it to a configuration setting if necessary."
+  []
+  "app")
+
+(defn analysis-resource-type
+  "The analysis resource type name. This value is hard-coded for now, but placed in this namespace so that we can
+   easily convert it to a configuration setting if necessary."
+  []
+  "analysis")
+
 (defn log-environment
   []
   (log/warn "ENV?: apps.data-info.base-url = " (data-info-base)))
@@ -287,8 +308,9 @@
 
 (defn load-config-from-file
   "Loads the configuration settings from a file."
-  [cfg-path]
+  [cfg-path & [{:keys [log-config?] :or {log-config? true}}]]
   (cc/load-config-from-file cfg-path props)
-  (cc/log-config props)
-  (log-environment)
+  (when log-config?
+    (cc/log-config props)
+    (log-environment))
   (validate-config))

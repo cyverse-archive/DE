@@ -6,8 +6,8 @@
             [clojure-commons.error-codes :as ce]
             [clojure-commons.exception-util :as cxu]
             [kameleon.db :as db]
-            [apps.clients.iplant-groups :as iplant-groups]
             [apps.clients.notifications :as cn]
+            [apps.clients.permissions :as perms-client]
             [apps.persistence.jobs :as jp]
             [apps.service.apps.job-listings :as listings]
             [apps.service.apps.jobs.params :as job-params]
@@ -178,7 +178,7 @@
   [apps-client user submission]
   (transaction
    (let [job-info (submissions/submit apps-client user submission)]
-     (iplant-groups/register-analysis (:shortUsername user) (:id job-info))
+     (perms-client/register-private-analysis (:shortUsername user) (:id job-info))
      job-info)))
 
 (defn list-job-permissions

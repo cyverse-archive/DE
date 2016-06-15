@@ -17,8 +17,14 @@
 (defn fake-url [& components]
   (str (apply curl/url fake-base-url components)))
 
+(defn fake-query-url [query & components]
+  (str (assoc (apply curl/url fake-base-url components) :query query)))
+
 (defn fake-lookup-url [lookup? & components]
   (str (assoc (apply curl/url fake-base-url components) :query {:lookup lookup?})))
+
+(defn fake-min-level-url [min-level & components]
+  (str (assoc (apply curl/url fake-base-url components) :query {:lookup true :min_level min-level})))
 
 (defn create-fake-client []
   (pc/new-permissions-client fake-base-url))
@@ -58,6 +64,21 @@
   (with-fake-routes {(fake-url "subjects") {:get fake-subjects-response}}
     (is (= (pc/list-subjects (create-fake-client)) fake-subjects))))
 
+(deftest test-subjects-by-id
+  (let [opts {:subject_id "ipctest"}]
+    (with-fake-routes {(fake-query-url opts "subjects") {:get fake-subjects-response}}
+      (is (= (pc/list-subjects (create-fake-client) opts) fake-subjects)))))
+
+(deftest test-subjects-by-type
+  (let [opts {:subject_type "user"}]
+    (with-fake-routes {(fake-query-url opts "subjects") {:get fake-subjects-response}}
+      (is (= (pc/list-subjects (create-fake-client) opts) fake-subjects)))))
+
+(deftest test-subjects-by-id-and-type
+  (let [opts {:subject_id "ipctest" :subject_type "user"}]
+    (with-fake-routes {(fake-query-url opts "subjects") {:get fake-subjects-response}}
+      (is (= (pc/list-subjects (create-fake-client) opts) fake-subjects)))))
+
 (defn fake-subject [{subject-id :subject_id subject-type :subject_type}]
   {:id           "acefbb43-00fe-4b16-a834-68f24207aba7"
    :subject_id   subject-id
@@ -84,6 +105,11 @@
     (with-fake-routes {(fake-url "subjects" subject-id) {:delete (delete-subject-response-fn subject-id)}}
       (pc/delete-subject (create-fake-client) subject-id)
       (is true "Subject deleted successfully."))))
+
+(deftest test-delete-subject-by-external-id
+  (let [opts {:subject_id "ipctest" :subject_type "user"}]
+    (with-fake-routes {(fake-query-url opts "subjects") fake-status-response}
+      (pc/delete-subject (create-fake-client) (:subject_id opts) (:subject_type opts)))))
 
 (defn update-subject-response-fn [id]
   (fn [{:keys [uri body]}]
@@ -117,6 +143,21 @@
   (with-fake-routes {(fake-url "resources") {:get list-resources-response}}
     (is (= (pc/list-resources (create-fake-client)) fake-resources))))
 
+(deftest test-list-resources-by-name
+  (let [opts {:resource_name "a"}]
+    (with-fake-routes {(fake-query-url opts "resources") {:get list-resources-response}}
+      (is (= (pc/list-resources (create-fake-client) opts) fake-resources)))))
+
+(deftest test-list-resources-by-type
+  (let [opts {:resource_type_name "app"}]
+    (with-fake-routes {(fake-query-url opts "resources") {:get list-resources-response}}
+      (is (= (pc/list-resources (create-fake-client) opts) fake-resources)))))
+
+(deftest test-list-resources-by-name-and-type
+  (let [opts {:resource_name "a" :resource_type_name "app"}]
+    (with-fake-routes {(fake-query-url opts "resources") {:get list-resources-response}}
+      (is (= (pc/list-resources (create-fake-client) opts) fake-resources)))))
+
 (defn fake-resource [{name :name resource-type :resource_type}]
   {:id            "1aab7522-426a-411b-bef3-1c702ad9e89b"
    :name          name
@@ -143,6 +184,11 @@
     (with-fake-routes {(fake-url "resources" resource-id) {:delete (delete-resource-response-fn resource-id)}}
       (pc/delete-resource (create-fake-client) resource-id)
       (is true "Resource deleted successfully."))))
+
+(deftest test-delete-resource-by-name-and-type
+  (let [opts {:resource_name "a" :resource_type_name "app"}]
+    (with-fake-routes {(fake-query-url opts "resources") {:delete fake-status-response}}
+      (pc/delete-resource (create-fake-client) (:resource_name opts) (:resource_type_name opts)))))
 
 (defn update-resource-response-fn [id resource-type]
   (fn [{:keys [uri body]}]
@@ -176,6 +222,11 @@
   (with-fake-routes {(fake-url "resource_types") {:get list-resource-types-response}}
     (is (= (pc/list-resource-types (create-fake-client)) fake-resource-types))))
 
+(deftest test-list-resource-types-by-name
+  (let [opts {:resource_type_name "rtype"}]
+    (with-fake-routes {(fake-query-url opts "resource_types") {:get list-resource-types-response}}
+      (is (= (pc/list-resource-types (create-fake-client) opts) fake-resource-types)))))
+
 (defn fake-resource-type [{:keys [name description]}]
   {:id          "2bec53ae-4732-4768-86fd-344b9692332f"
    :name        name
@@ -202,6 +253,11 @@
     (with-fake-routes {(fake-url "resource_types" id) (delete-resource-type-response-fn id)}
       (pc/delete-resource-type (create-fake-client) id)
       (is true "Resource type deleted successfully."))))
+
+(deftest test-delete-resource-type-by-name
+  (let [opts {:resource_type_name "app"}]
+    (with-fake-routes {(fake-query-url opts "resource_types") {:delete fake-status-response}}
+      (pc/delete-resource-type-by-name (create-fake-client) (:resource_type_name opts)))))
 
 (defn update-resource-type-response-fn [id]
   (fn [{:keys [uri body]}]
@@ -279,18 +335,24 @@
     (with-fake-routes {(fake-lookup-url false "permissions" "subjects" st sn) {:get list-perms-response}}
       (is (= (pc/get-subject-permissions (create-fake-client) st sn false) fake-perms)))
     (with-fake-routes {(fake-lookup-url true "permissions" "subjects" st sn) {:get list-perms-response}}
-      (is (= (pc/get-subject-permissions (create-fake-client) st sn true) fake-perms)))))
+      (is (= (pc/get-subject-permissions (create-fake-client) st sn true) fake-perms)))
+    (with-fake-routes {(fake-min-level-url "write" "permissions" "subjects" st sn) {:get list-perms-response}}
+      (is (= (pc/get-subject-permissions (create-fake-client) st sn true "write") fake-perms)))))
 
 (deftest test-get-subject-permissions-for-resource-type
   (let [[st sn rt] ["user" "ipcdev" "app"]]
     (with-fake-routes {(fake-lookup-url false "permissions" "subjects" st sn rt) {:get list-perms-response}}
       (is (= (pc/get-subject-permissions-for-resource-type (create-fake-client) st sn rt false) fake-perms)))
     (with-fake-routes {(fake-lookup-url true "permissions" "subjects" st sn rt) {:get list-perms-response}}
-      (is (= (pc/get-subject-permissions-for-resource-type (create-fake-client) st sn rt true) fake-perms)))))
+      (is (= (pc/get-subject-permissions-for-resource-type (create-fake-client) st sn rt true) fake-perms)))
+    (with-fake-routes {(fake-min-level-url "admin" "permissions" "subjects" st sn rt) {:get list-perms-response}}
+      (is (= (pc/get-subject-permissions-for-resource-type (create-fake-client) st sn rt true "admin") fake-perms)))))
 
 (deftest test-get-subject-permissions-for-resource
   (let [[st sn rt rn] ["user" "ipcdev" "app" "a"]]
     (with-fake-routes {(fake-lookup-url false "permissions" "subjects" st sn rt rn) {:get list-perms-response}}
       (is (= (pc/get-subject-permissions-for-resource (create-fake-client) st sn rt rn false) fake-perms)))
     (with-fake-routes {(fake-lookup-url true "permissions" "subjects" st sn rt rn) {:get list-perms-response}}
-      (is (= (pc/get-subject-permissions-for-resource (create-fake-client) st sn rt rn true) fake-perms)))))
+      (is (= (pc/get-subject-permissions-for-resource (create-fake-client) st sn rt rn true) fake-perms)))
+    (with-fake-routes {(fake-min-level-url "own" "permissions" "subjects" st sn rt rn) {:get list-perms-response}}
+      (is (= (pc/get-subject-permissions-for-resource (create-fake-client) st sn rt rn true "own") fake-perms)))))

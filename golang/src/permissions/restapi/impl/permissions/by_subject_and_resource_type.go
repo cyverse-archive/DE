@@ -33,6 +33,7 @@ func BuildBySubjectAndResourceTypeHandler(
 		subjectId := params.SubjectID
 		resourceTypeName := params.ResourceType
 		lookup := extractLookupFlag(params.Lookup)
+		minLevel := params.MinLevel
 
 		// Create a transaction for the request.
 		tx, err := db.Begin()
@@ -75,11 +76,21 @@ func BuildBySubjectAndResourceTypeHandler(
 		}
 
 		// Perform the lookup.
-		perms, err := permsdb.PermissionsForSubjectsAndResourceType(tx, subjectIds, resourceTypeName)
-		if err != nil {
-			tx.Rollback()
-			logcabin.Error.Print(err)
-			return bySubjectAndResourceTypeInternalServerError(err.Error())
+		var perms []*models.Permission
+		if minLevel == nil {
+			perms, err = permsdb.PermissionsForSubjectsAndResourceType(tx, subjectIds, resourceTypeName)
+			if err != nil {
+				tx.Rollback()
+				logcabin.Error.Print(err)
+				return bySubjectAndResourceTypeInternalServerError(err.Error())
+			}
+		} else {
+			perms, err = permsdb.PermissionsForSubjectsAndResourceTypeMinLevel(tx, subjectIds, resourceTypeName, *minLevel)
+			if err != nil {
+				tx.Rollback()
+				logcabin.Error.Print(err)
+				return bySubjectAndResourceTypeInternalServerError(err.Error())
+			}
 		}
 
 		// Commit the transaction.

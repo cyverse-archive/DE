@@ -12,7 +12,7 @@
         [apps.util.config]
         [apps.util.conversions :only [to-long remove-nil-vals]]
         [apps.workspace])
-  (:require [apps.clients.iplant-groups :as iplant-groups]
+  (:require [apps.clients.permissions :as perms-client]
             [apps.persistence.app-metadata :refer [get-app get-app-tools] :as amp]
             [apps.persistence.categories :as db-categories]
             [apps.service.apps.de.permissions :as perms]
@@ -28,8 +28,8 @@
    :sort-dir   :ASC})
 
 (defn- get-visible-app-ids
-  [shortUsername]
-  (set (keys (iplant-groups/load-app-permissions shortUsername))))
+  [short-username]
+  (set (keys (perms-client/load-app-permissions short-username))))
 
 (defn- get-active-hierarchy-version
   []
@@ -241,7 +241,7 @@
   For the time being we'll deal with that by defaulting the permission level to the empty string,
   indicating that the user has no explicit permissions on the app."
   [app perms]
-  (assoc app :permission (or (iplant-groups/get-permission-level perms (:id app)) "")))
+  (assoc app :permission (or (perms (:id app)) "")))
 
 (defn- format-app-listing
   "Formats certain app fields into types more suitable for the client."
@@ -258,7 +258,7 @@
   [{:keys [username shortUsername]} params metadata-filter]
   (let [workspace       (get-optional-workspace username)
         faves-index     (workspace-favorites-app-category-index)
-        perms           (iplant-groups/load-app-permissions shortUsername)
+        perms           (perms-client/load-app-permissions shortUsername)
         app-ids         (set (keys perms))
         app-listing-ids (metadata-filter app-ids)
         app-listing     (list-apps-by-id workspace faves-index app-listing-ids (fix-sort-params params))]
@@ -318,7 +318,7 @@
    descendents."
   [user app-group-id params]
   (let [workspace (get-optional-workspace (:username user))
-        perms     (iplant-groups/load-app-permissions (:shortUsername user))
+        perms     (perms-client/load-app-permissions (:shortUsername user))
         params    (fix-sort-params (assoc params :app-ids (set (keys perms))))]
     (or (list-apps-in-virtual-group user workspace app-group-id perms params)
         (list-apps-in-real-group user workspace app-group-id perms params))))
@@ -335,7 +335,7 @@
   [user params]
   (let [search_term (curl/url-decode (:search params))
         workspace (get-workspace (:username user))
-        perms (iplant-groups/load-app-permissions (:shortUsername user))
+        perms (perms-client/load-app-permissions (:shortUsername user))
         params (fix-sort-params (assoc params :app-ids (set (keys perms))))
         total (count-search-apps-for-user search_term (:id workspace) params)
         search_results (search-apps-for-user

@@ -1,18 +1,13 @@
 (ns apps.tools-test
-  (:use [clojure.test]
+  (:use [apps.test-fixtures :only [run-integration-tests with-test-db]]
+        [clojure.test]
         [apps.tools]
         [korma.db]
         [korma.core]
         [kameleon.entities])
   (:require [korma.core :as sql]))
 
-(defdb testdb
-  (postgres {:db "de"
-             :user "de"
-             :password "notprod"
-             :host (System/getenv "POSTGRES_PORT_5432_TCP_ADDR")
-             :port (System/getenv "POSTGRES_PORT_5432_TCP_PORT")
-             :delimiters ""}))
+(use-fixtures :each with-test-db run-integration-tests)
 
 (deftest test-get-tool
   (let [tool-map (first (select tools (where {:name "notreal"})))]

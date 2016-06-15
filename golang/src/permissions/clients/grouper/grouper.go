@@ -3,6 +3,8 @@ package grouper
 import (
 	"database/sql"
 
+	"permissions/util"
+
 	_ "github.com/lib/pq"
 )
 
@@ -23,7 +25,12 @@ type GrouperClient struct {
 }
 
 func NewGrouperClient(dburi, prefix string) (*GrouperClient, error) {
-	db, err := sql.Open("postgres", dburi)
+	connector, err := util.NewDefaultConnector("1m")
+	if err != nil {
+		return nil, err
+	}
+
+	db, err := connector.Connect("postgres", dburi)
 	if err != nil {
 		return nil, err
 	}

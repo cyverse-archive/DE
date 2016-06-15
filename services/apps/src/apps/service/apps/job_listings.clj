@@ -1,11 +1,11 @@
 (ns apps.service.apps.job-listings
   (:use [kameleon.uuids :only [uuidify]]
         [apps.util.conversions :only [remove-nil-vals]])
-  (:require [kameleon.db :as db]
-            [apps.clients.iplant-groups :as iplant-groups]
+  (:require [apps.clients.permissions :as perms-client]
             [apps.persistence.jobs :as jp]
             [apps.service.apps.jobs.permissions :as job-permissions]
-            [apps.service.util :as util]))
+            [apps.service.util :as util]
+            [kameleon.db :as db]))
 
 (defn is-completed?
   [job-status]
@@ -80,8 +80,7 @@
 
 (defn list-jobs
   [apps-client user {:keys [sort-field] :as params}]
-  (let [perms            (iplant-groups/load-analysis-permissions (:shortUsername user))
-        analysis-ids     (set (keys perms))
+  (let [analysis-ids     (set (keys (perms-client/load-analysis-permissions (:shortUsername user))))
         default-sort-dir (if (nil? sort-field) :desc :asc)
         search-params    (util/default-search-params params :startdate default-sort-dir)
         types            (.getJobTypes apps-client)

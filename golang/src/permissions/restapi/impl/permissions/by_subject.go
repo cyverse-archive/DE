@@ -32,6 +32,7 @@ func BuildBySubjectHandler(
 		subjectType := params.SubjectType
 		subjectId := params.SubjectID
 		lookup := extractLookupFlag(params.Lookup)
+		minLevel := params.MinLevel
 
 		// Create a transaction for the request.
 		tx, err := db.Begin()
@@ -62,11 +63,21 @@ func BuildBySubjectHandler(
 		}
 
 		// Perform the lookup.
-		perms, err := permsdb.PermissionsForSubjects(tx, subjectIds)
-		if err != nil {
-			tx.Rollback()
-			logcabin.Error.Print(err)
-			return bySubjectInternalServerError(err.Error())
+		var perms []*models.Permission
+		if minLevel == nil {
+			perms, err = permsdb.PermissionsForSubjects(tx, subjectIds)
+			if err != nil {
+				tx.Rollback()
+				logcabin.Error.Print(err)
+				return bySubjectInternalServerError(err.Error())
+			}
+		} else {
+			perms, err = permsdb.PermissionsForSubjectsMinLevel(tx, subjectIds, *minLevel)
+			if err != nil {
+				tx.Rollback()
+				logcabin.Error.Print(err)
+				return bySubjectInternalServerError(err.Error())
+			}
 		}
 
 		// Commit the transaction.

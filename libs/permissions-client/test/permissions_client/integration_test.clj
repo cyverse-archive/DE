@@ -101,6 +101,26 @@
     (is (subject-correct? (subjects "ipctest") "ipctest" "user"))
     (is (subject-correct? (subjects "ipcusers") "ipcusers" "group"))))
 
+(deftest test-list-subjects-by-type
+  (let [subjects (get-subject-map (pc/list-subjects (create-permissions-client) {:subject_type "user"}))]
+    (is (= (count subjects) 2))
+    (is (subject-correct? (subjects "ipcdev") "ipcdev" "user"))
+    (is (subject-correct? (subjects "ipctest") "ipctest" "user"))))
+
+(deftest test-list-subjects-by-id
+  (let [subjects (get-subject-map (pc/list-subjects (create-permissions-client) {:subject_id "ipcdev"}))]
+    (is (= (count subjects) 1))
+    (is (subject-correct? (subjects "ipcdev") "ipcdev" "user"))))
+
+(deftest test-list-subjects-by-id-and-type
+  (let [opts     {:subject_id "ipcdev" :subject_type "user"}
+        subjects (get-subject-map (pc/list-subjects (create-permissions-client) opts))]
+    (is (= (count subjects) 1))
+    (is (subject-correct? (subjects "ipcdev") "ipcdev" "user")))
+  (let [opts     {:subject_id "ipcdev" :subject_type "group"}
+        subjects (get-subject-map (pc/list-subjects (create-permissions-client) opts))]
+    (is (= (count subjects) 0))))
+
 (deftest test-add-subject
   (let [client (create-permissions-client)]
     (is (subject-correct? (pc/add-subject client "dark-helmet" "user") "dark-helmet" "user"))
@@ -112,6 +132,11 @@
         ipcdev ((get-subject-map) "ipcdev")]
     (is (subject-correct? ipcdev "ipcdev" "user"))
     (pc/delete-subject client (:id ipcdev))
+    (is (nil? ((get-subject-map) "ipcdev")))))
+
+(deftest test-delete-subject-by-external-id
+  (let [client (create-permissions-client)]
+    (pc/delete-subject client "ipcdev" "user")
     (is (nil? ((get-subject-map) "ipcdev")))))
 
 (deftest test-update-subject
@@ -140,6 +165,26 @@
     (is (resource-correct? (resources "C") "C" "analysis"))
     (is (resource-correct? (resources "D") "D" "analysis"))))
 
+(deftest test-list-resources-by-name
+  (let [resources (get-resource-map (pc/list-resources (create-permissions-client) {:resource_name "a"}))]
+    (is (= (count resources) 1))
+    (is (resource-correct? (resources "a") "a" "app"))))
+
+(deftest test-list-resources-by-type
+  (let [resources (get-resource-map (pc/list-resources (create-permissions-client) {:resource_type_name "app"}))]
+    (is (= (count resources) 2))
+    (is (resource-correct? (resources "a") "a" "app"))
+    (is (resource-correct? (resources "b") "b" "app"))))
+
+(deftest test-list-resources-by-name-and-type
+  (let [opts      {:resource_name "C" :resource_type_name "analysis"}
+        resources (get-resource-map (pc/list-resources (create-permissions-client) opts))]
+    (is (= (count resources) 1))
+    (is (resource-correct? (resources "C") "C" "analysis")))
+  (let [opts      {:resource_name "C" :resource_type_name "app"}
+        resources (get-resource-map (pc/list-resources (create-permissions-client) opts))]
+    (is (= (count resources) 0))))
+
 (deftest test-add-resource
   (let [client (create-permissions-client)]
     (is (resource-correct? (pc/add-resource client "e" "app") "e" "app"))
@@ -150,6 +195,11 @@
         a      ((get-resource-map) "a")]
     (is (resource-correct? a "a" "app"))
     (pc/delete-resource client (:id a))
+    (is (nil? ((get-resource-map) "a")))))
+
+(deftest test-delete-resource-by-name-and-type
+  (let [client (create-permissions-client)]
+    (pc/delete-resource client "a" "app")
     (is (nil? ((get-resource-map) "a")))))
 
 (deftest test-update-resource
@@ -176,6 +226,12 @@
     (is (resource-type-correct? (rts "app") "app"))
     (is (resource-type-correct? (rts "analysis") "analysis"))))
 
+(deftest test-list-resource-types-by-name
+  (let [opts {:resource_type_name "app"}
+        rts  (get-resource-type-map (pc/list-resource-types (create-permissions-client) opts))]
+    (is (= (count rts) 1))
+    (is (resource-type-correct? (rts "app") "app"))))
+
 (deftest test-add-resource-type
   (let [client (create-permissions-client)]
     (is (resource-type-correct? (pc/add-resource-type client "mog" "half-man-half-dog") "mog" "half-man-half-dog"))
@@ -186,6 +242,13 @@
         mog    (pc/add-resource-type client "mog" "half-man-half-dog")]
     (is (resource-type-correct? mog "mog" "half-man-half-dog"))
     (pc/delete-resource-type client (:id mog))
+    (is (nil? ((get-resource-type-map) "mog")))))
+
+(deftest test-delete-resource-type-by-name
+  (let [client (create-permissions-client)
+        mog    (pc/add-resource-type client "mog" "half-man-half-dog")]
+    (is (resource-type-correct? mog "mog" "half-man-half-dog"))
+    (pc/delete-resource-type-by-name client (:name mog))
     (is (nil? ((get-resource-type-map) "mog")))))
 
 (deftest test-update-resource-type
@@ -251,6 +314,12 @@
     (is (looked-up-permission-correct? perms "app" "a" "user" "ipcdev" "own"))
     (is (looked-up-permission-correct? perms "analysis" "C" "user" "ipcdev" "own"))))
 
+(deftest test-get-subject-permissions-min-level
+  (let [client (create-permissions-client)
+        perms  (get-permission-map (pc/get-subject-permissions client "group" "ipcusers" false "admin"))]
+    (is (= (count perms) 1))
+    (is (looked-up-permission-correct? perms "app" "b" "group" "ipcusers" "admin"))))
+
 (deftest test-get-subject-permissions-for-resource-type
   (let [client (create-permissions-client)
         resp   (pc/get-subject-permissions-for-resource-type client "group" "ipcusers" "app" true)
@@ -259,9 +328,27 @@
     (is (looked-up-permission-correct? perms "app" "a" "group" "ipcusers" "read"))
     (is (looked-up-permission-correct? perms "app" "b" "group" "ipcusers" "admin"))))
 
+(deftest test-get-subject-permissions-for-resource-type-min-level
+  (let [client (create-permissions-client)
+        resp   (pc/get-subject-permissions-for-resource-type client "group" "ipcusers" "app" true "admin")
+        perms  (get-permission-map resp)]
+    (is (= (count perms) 1))
+    (is (looked-up-permission-correct? perms "app" "b" "group" "ipcusers" "admin"))))
+
 (deftest test-get-subject-permissions-for-resource
   (let [client (create-permissions-client)
         resp   (pc/get-subject-permissions-for-resource client "group" "ipcusers" "app" "a" true)
         perms  (get-permission-map resp)]
     (is (= (count perms) 1))
     (is (looked-up-permission-correct? perms "app" "a" "group" "ipcusers" "read"))))
+
+(deftest test-get-subject-permissions-for-resource-min-level
+  (let [client (create-permissions-client)
+        resp   (pc/get-subject-permissions-for-resource client "group" "ipcusers" "app" "a" true "admin")
+        perms  (get-permission-map resp)]
+    (is (= (count perms) 0)))
+  (let [client (create-permissions-client)
+        resp   (pc/get-subject-permissions-for-resource client "group" "ipcusers" "app" "b" true "admin")
+        perms  (get-permission-map resp)]
+    (is (= (count perms) 1))
+    (is (looked-up-permission-correct? perms "app" "b" "group" "ipcusers" "admin"))))
