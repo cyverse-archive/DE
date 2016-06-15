@@ -146,7 +146,7 @@
     (amp/set-app-suggested-categories app-id categories)
     (decategorize-app app-id)
     (add-app-to-category app-id (workspace-beta-app-category-id))
-    (perms-client/make-app-public app-id))
+    (perms-client/make-app-public (:username user) app-id))
   nil)
 
 (defn make-app-public
