@@ -5,6 +5,7 @@
             [apps.clients.jex :as jex]
             [apps.persistence.app-metadata :as ap]
             [apps.persistence.jobs :as jp]
+            [apps.protocols]
             [apps.service.apps.de.admin :as app-admin]
             [apps.service.apps.de.categorization :as app-categorization]
             [apps.service.apps.de.docs :as docs]

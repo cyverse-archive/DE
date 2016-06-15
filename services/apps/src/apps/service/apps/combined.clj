@@ -6,6 +6,7 @@
   (:use [apps.service.util :only [apply-limit apply-offset sort-apps]]
         [apps.util.assertions :only [assert-not-nil]])
   (:require [apps.persistence.jobs :as jp]
+            [apps.protocols]
             [apps.service.apps.job-listings :as job-listings]
             [apps.service.apps.combined.job-view :as job-view]
             [apps.service.apps.combined.jobs :as combined-jobs]
