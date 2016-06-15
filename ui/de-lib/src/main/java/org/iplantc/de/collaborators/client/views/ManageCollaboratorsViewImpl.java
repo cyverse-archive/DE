@@ -24,6 +24,7 @@ import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.HorizontalLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.ViewReadyEvent;
 import com.sencha.gxt.widget.core.client.grid.CheckBoxSelectionModel;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -68,6 +69,12 @@ public class ManageCollaboratorsViewImpl extends Composite implements ManageColl
         grid.setSelectionModel(checkBoxModel);
         checkBoxModel.setSelectionMode(SelectionMode.MULTI);
         grid.getView().setEmptyText(I18N.DISPLAY.noCollaborators());
+        grid.addViewReadyHandler(new ViewReadyEvent.ViewReadyHandler() {
+            @Override
+            public void onViewReady(ViewReadyEvent event) {
+                setGridCheckBoxDebugIds();
+            }
+        });
         init();
         setMode(mode);
     }
@@ -75,9 +82,7 @@ public class ManageCollaboratorsViewImpl extends Composite implements ManageColl
     @Override
     public void addCollaborators(List<Collaborator> models) {
         listStore.addAll(models);
-        for (int i = 0; i < listStore.size(); i++) {
-            grid.getView().getCell(i, 0).setId(baseID + CollaboratorsModule.Ids.CHECKBOX_ITEM + i);
-        }
+        setGridCheckBoxDebugIds();
     }
 
     @Override
@@ -165,10 +170,13 @@ public class ManageCollaboratorsViewImpl extends Composite implements ManageColl
         deleteBtn.ensureDebugId(baseID + CollaboratorsModule.Ids.DELETE);
         //Checkbox column config is at index 0
         grid.getView().getHeader().getHead(0).getElement().setId(baseID + CollaboratorsModule.Ids.CHECKBOX_HEADER);
+        searchField.setViewDebugId(CollaboratorsModule.Ids.SEARCH_LIST);
+    }
+
+    void setGridCheckBoxDebugIds() {
         for (int i = 0; i < listStore.size(); i++) {
             grid.getView().getCell(i, 0).setId(baseID + CollaboratorsModule.Ids.CHECKBOX_ITEM + i);
         }
-        searchField.setViewDebugId(CollaboratorsModule.Ids.SEARCH_LIST);
     }
 
     @UiFactory
