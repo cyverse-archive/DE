@@ -1,10 +1,9 @@
 package org.iplantc.de.diskResource.client.presenters.metadata;
 
+import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadataList;
-import org.iplantc.de.client.models.diskResources.DiskResourceUserMetadata;
 import org.iplantc.de.client.models.diskResources.MetadataTemplate;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
@@ -91,7 +90,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
 
         private void updateMetadataFromTemplateView() {
             mdView.mask(I18N.DISPLAY.loadingMask());
-            ArrayList<DiskResourceMetadata> mdList = mdView.getMetadataFromTemplate();
+            ArrayList<Avu> mdList = mdView.getMetadataFromTemplate();
             view.updateMetadataFromTemplateView(mdList);
         }
     }
@@ -101,7 +100,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
     private final DiskResourceServiceFacade drService;
     private List<MetadataTemplateInfo> templates;
     private MetadataTemplateViewDialog templateView;
-    private List<DiskResourceMetadata> userMdList;
+    private List<Avu> userMdList;
 
     private MetadataView.Presenter.Appearance appearance =
             GWT.create(MetadataView.Presenter.Appearance.class);
@@ -155,10 +154,11 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
             }
         };
 
-        DiskResourceUserMetadata umd =
-                AutoBeanCodex.decode(autoBeanFactory, DiskResourceUserMetadata.class, "{}").as();
-        umd.setAvus(view.getUserMetadata());
-        drService.setDiskResourceMetaData(resource, umd, view.getAvus(), batchAvuCallback);
+        DiskResourceMetadataList umd =
+                AutoBeanCodex.decode(autoBeanFactory, DiskResourceMetadataList.class, "{}").as();
+        umd.setUserMetadata(view.getUserMetadata());
+        umd.setOtherMetadata(view.getAvus());
+        drService.setDiskResourceMetaData(resource, umd, batchAvuCallback);
     }
 
     @Override
@@ -193,7 +193,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
     }
 
     @Override
-    public void onImport(List<DiskResourceMetadata> selectedItems) {
+    public void onImport(List<Avu> selectedItems) {
         view.mask();
         view.addToUserMetadata(selectedItems);
         view.removeImportedMetadataFromStore(selectedItems);
@@ -202,7 +202,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
 
     @Override
     public boolean isDirty() {
-        List<DiskResourceMetadata> userMetadata = view.getUserMetadata();
+        List<Avu> userMetadata = view.getUserMetadata();
         if(userMdList != null && userMetadata != null && userMdList.size() != userMetadata.size()) {
                return true;
          } else {
@@ -211,9 +211,9 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
 
     }
 
-    public static DiskResourceMetadata newMetadata(String attr, String value, String unit) {
+    public static Avu newMetadata(String attr, String value, String unit) {
         // FIXME Move to presenter. Autobean factory doesn't belong in view.
-        DiskResourceMetadata avu = autoBeanFactory.metadata().as();
+        Avu avu = autoBeanFactory.avu().as();
 
         avu.setAttribute(attr);
         avu.setValue(value);

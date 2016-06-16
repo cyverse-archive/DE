@@ -1,5 +1,7 @@
 package org.iplantc.de.client.models.diskResources;
 
+import org.iplantc.de.client.models.avu.Avu;
+
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
 import java.util.List;
@@ -13,14 +15,14 @@ import java.util.List;
 public interface DiskResourceMetadataList {
 
     @PropertyName("irods-avus")
-    void setOtherMetadata(List<DiskResourceMetadata> otherMetadata);
+    void setOtherMetadata(List<Avu> otherMetadata);
 
     @PropertyName("avus")
-    void setUserMetadata(List<DiskResourceMetadata> userMetadata);
+    void setUserMetadata(List<Avu> userMetadata);
 
     @PropertyName("irods-avus")
-    List<DiskResourceMetadata> getOtherMetadata();
+    List<Avu> getOtherMetadata();
 
     @PropertyName("avus")
-    List<DiskResourceMetadata> getUserMetadata();
+    List<Avu> getUserMetadata();
 }

@@ -1,10 +1,6 @@
 package org.iplantc.de.diskResource.client.views.metadata.dialogs;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
+import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateAttribute;
 import org.iplantc.de.client.models.diskResources.TemplateAttributeSelectionItem;
 import org.iplantc.de.commons.client.validators.UrlValidator;
@@ -22,6 +18,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IsWidget;
+
 import com.sencha.gxt.cell.core.client.form.ComboBoxCell;
 import com.sencha.gxt.core.client.dom.ScrollSupport;
 import com.sencha.gxt.core.shared.FastMap;
@@ -45,6 +42,10 @@ import com.sencha.gxt.widget.core.client.form.TextArea;
 import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.tips.QuickTip;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 /**
  * Created by sriram on 5/9/16.
  */
@@ -53,13 +54,13 @@ public class MetadataTemplateViewDialog extends IPlantDialog {
     private VerticalLayoutContainer widget;
     private final DateTimeFormat timestampFormat;
     private boolean writable;
-    private final FastMap<DiskResourceMetadata> templateAttrAvuMap = new FastMap<>();
+    private final FastMap<Avu> templateAttrAvuMap = new FastMap<>();
     private final FastMap<Field<?>> templateAttrFieldMap = new FastMap<>();
     private List<MetadataTemplateAttribute> attributes;
-    private List<DiskResourceMetadata> templateMd;
+    private List<Avu> templateMd;
     private boolean valid;
 
-    public MetadataTemplateViewDialog(List<DiskResourceMetadata> templateMd, boolean writable,
+    public MetadataTemplateViewDialog(List<Avu> templateMd, boolean writable,
                                       List<MetadataTemplateAttribute> attributes) {
         timestampFormat = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT);
         this.writable = writable;
@@ -74,10 +75,10 @@ public class MetadataTemplateViewDialog extends IPlantDialog {
         add(widget);
     }
     
-    public ArrayList<DiskResourceMetadata> getMetadataFromTemplate() {
-        ArrayList<DiskResourceMetadata> avus = Lists.newArrayList();
+    public ArrayList<Avu> getMetadataFromTemplate() {
+        ArrayList<Avu> avus = Lists.newArrayList();
         for (String attr : templateAttrFieldMap.keySet()) {
-            DiskResourceMetadata avu = templateAttrAvuMap.get(attr);
+            Avu avu = templateAttrAvuMap.get(attr);
             if (avu == null) {
                 avu = MetadataPresenterImpl.newMetadata(attr, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
                 templateAttrAvuMap.put(attr, avu);
@@ -115,14 +116,14 @@ public class MetadataTemplateViewDialog extends IPlantDialog {
     
     private void buildAvuMap() {
     	for (MetadataTemplateAttribute attribute: attributes) {
-    		DiskResourceMetadata md = findMetadataForAttribute(attribute.getName());
+    		Avu md = findMetadataForAttribute(attribute.getName());
     		templateAttrAvuMap.put(attribute.getName(),md);
     	}
     }
     
-    private DiskResourceMetadata findMetadataForAttribute(String attribute) {
+    private Avu findMetadataForAttribute(String attribute) {
     	if(templateMd != null) {
-	    	for(DiskResourceMetadata md: templateMd) {
+	    	for(Avu md: templateMd) {
 	    		if(md.getAttribute().equals(attribute)) {
 	    			return md;
 	    		}
@@ -134,7 +135,7 @@ public class MetadataTemplateViewDialog extends IPlantDialog {
     private CheckBox buildBooleanField(MetadataTemplateAttribute attribute) {
         CheckBox cb = new CheckBox();
 
-        DiskResourceMetadata avu = templateAttrAvuMap.get(attribute.getName());
+        Avu avu = templateAttrAvuMap.get(attribute.getName());
         if (avu != null && !Strings.isNullOrEmpty(avu.getValue())) {
             cb.setValue(Boolean.valueOf(avu.getValue()));
         }
@@ -152,7 +153,7 @@ public class MetadataTemplateViewDialog extends IPlantDialog {
             tf.setEmptyText(timestampFormat.format(new Date(0)));
         }
 
-        DiskResourceMetadata avu = templateAttrAvuMap.get(attribute.getName());
+        Avu avu = templateAttrAvuMap.get(attribute.getName());
         if (avu != null && !Strings.isNullOrEmpty(avu.getValue())) {
             try {
                 tf.setValue(timestampFormat.parse(avu.getValue()));
@@ -186,7 +187,7 @@ public class MetadataTemplateViewDialog extends IPlantDialog {
         nf.setAllowDecimals(false);
         nf.setAllowNegative(true);
 
-        DiskResourceMetadata avu = templateAttrAvuMap.get(attribute.getName());
+        Avu avu = templateAttrAvuMap.get(attribute.getName());
         if (avu != null && !Strings.isNullOrEmpty(avu.getValue())) {
             nf.setValue(new Integer(avu.getValue()));
         }
@@ -200,7 +201,7 @@ public class MetadataTemplateViewDialog extends IPlantDialog {
         nf.setAllowDecimals(true);
         nf.setAllowNegative(true);
 
-        DiskResourceMetadata avu = templateAttrAvuMap.get(attribute.getName());
+        Avu avu = templateAttrAvuMap.get(attribute.getName());
         if (avu != null && !Strings.isNullOrEmpty(avu.getValue())) {
             nf.setValue(new Double(avu.getValue()));
         }
@@ -213,7 +214,7 @@ public class MetadataTemplateViewDialog extends IPlantDialog {
         area.setAllowBlank(!attribute.isRequired());
         area.setHeight(200);
 
-        DiskResourceMetadata avu = templateAttrAvuMap.get(attribute.getName());
+        Avu avu = templateAttrAvuMap.get(attribute.getName());
         if (avu != null) {
             area.setValue(avu.getValue());
         }
@@ -225,7 +226,7 @@ public class MetadataTemplateViewDialog extends IPlantDialog {
         TextField fld = new TextField();
         fld.setAllowBlank(!attribute.isRequired());
 
-        DiskResourceMetadata avu = templateAttrAvuMap.get(attribute.getName());
+        Avu avu = templateAttrAvuMap.get(attribute.getName());
         if (avu != null) {
             fld.setValue(avu.getValue());
         }
@@ -310,7 +311,7 @@ public class MetadataTemplateViewDialog extends IPlantDialog {
                         return item.getValue();
                     }
                 });
-        DiskResourceMetadata avu = templateAttrAvuMap.get(attribute.getName());
+        Avu avu = templateAttrAvuMap.get(attribute.getName());
         if (avu != null) {
             String val = avu.getValue();
             for (TemplateAttributeSelectionItem item : attribute.getValues()) {

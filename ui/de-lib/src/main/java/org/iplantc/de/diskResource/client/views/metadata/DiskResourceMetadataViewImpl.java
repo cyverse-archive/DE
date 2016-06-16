@@ -1,6 +1,7 @@
 package org.iplantc.de.diskResource.client.views.metadata;
 
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
+import org.iplantc.de.client.models.avu.Avu;
+import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.diskResource.client.MetadataView;
 import org.iplantc.de.diskResource.client.model.DiskResourceMetadataProperties;
 import org.iplantc.de.diskResource.client.presenters.metadata.MetadataPresenterImpl;
@@ -15,7 +16,6 @@ import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
@@ -118,24 +118,24 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     @UiField(provided = true)
     ContentPanel additionalMetadataPanel;
     @UiField
-    ListStore<DiskResourceMetadata> userMdListStore;
+    ListStore<Avu> userMdListStore;
     @UiField
-    ListStore<DiskResourceMetadata> additionalMdListStore;
+    ListStore<Avu> additionalMdListStore;
     @UiField
-    Grid<DiskResourceMetadata> additionalMdgrid;
+    Grid<Avu> additionalMdgrid;
     @UiField
-    Grid<DiskResourceMetadata> userMdGrid;
+    Grid<Avu> userMdGrid;
     @UiField
-    GridView<DiskResourceMetadata> uview;
+    GridView<Avu> uview;
     @UiField
-    GridView<DiskResourceMetadata> aview;
+    GridView<Avu> aview;
     @UiField(provided = true)
-    ColumnModel<DiskResourceMetadata> ucm;
+    ColumnModel<Avu> ucm;
     @UiField(provided = true)
-    ColumnModel<DiskResourceMetadata> acm;
+    ColumnModel<Avu> acm;
 
 
-    private GridInlineEditing<DiskResourceMetadata> userGridInlineEditing;
+    private GridInlineEditing<Avu> userGridInlineEditing;
     private final boolean writable;
 
 
@@ -143,14 +143,14 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     private boolean valid;
     private MetadataView.Presenter presenter;
     private String baseId;
-    private CheckBoxSelectionModel<DiskResourceMetadata> userChxBoxModel;
-    private CheckBoxSelectionModel<DiskResourceMetadata> addChxBoxModel;
+    private CheckBoxSelectionModel<Avu> userChxBoxModel;
+    private CheckBoxSelectionModel<Avu> addChxBoxModel;
 
     public DiskResourceMetadataViewImpl(boolean isEditable) {
         writable = isEditable;
         valid = true;
-        userChxBoxModel = new CheckBoxSelectionModel<DiskResourceMetadata>();
-        addChxBoxModel = new CheckBoxSelectionModel<DiskResourceMetadata>();
+        userChxBoxModel = new CheckBoxSelectionModel<Avu>();
+        addChxBoxModel = new CheckBoxSelectionModel<Avu>();
         init();
         initWidget(uiBinder.createAndBindUi(this));
         alc.setActiveWidget(userMetadataPanel);
@@ -182,19 +182,19 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
 
 
     @Override
-    public List<DiskResourceMetadata> getAvus() {
+    public List<Avu> getAvus() {
         return additionalMdListStore.getAll();
     }
 
     @Override
-    public List<DiskResourceMetadata> getUserMetadata() {
+    public List<Avu> getUserMetadata() {
         return userMdListStore.getAll();
     }
 
 
     @Override
-    public void loadMetadata(final List<DiskResourceMetadata> metadataList) {
-        for (DiskResourceMetadata avu : metadataList) {
+    public void loadMetadata(final List<Avu> metadataList) {
+        for (Avu avu : metadataList) {
             setAvuModelKey(avu);
         }
 
@@ -206,8 +206,8 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     }
 
     @Override
-    public void loadUserMetadata(final List<DiskResourceMetadata> metadataList) {
-        for (DiskResourceMetadata avu : metadataList) {
+    public void loadUserMetadata(final List<Avu> metadataList) {
+        for (Avu avu : metadataList) {
             setAvuModelKey(avu);
         }
 
@@ -239,7 +239,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     void onAddMetadataSelected(SelectEvent event) {
         expandUserMetadataPanel();
         String attr = getUniqueAttrName(appearance.newAttribute(), 0);
-        DiskResourceMetadata md =
+        Avu md =
                 MetadataPresenterImpl.newMetadata(attr, appearance.newValue(), appearance.newUnit());
         setAvuModelKey(md);
         userMdListStore.add(0, md);
@@ -250,7 +250,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     @UiHandler("deleteMetadataButton")
     void onDeleteMetadataSelected(SelectEvent event) {
         expandUserMetadataPanel();
-        for (DiskResourceMetadata md : userMdGrid.getSelectionModel().getSelectedItems()) {
+        for (Avu md : userMdGrid.getSelectionModel().getSelectedItems()) {
             userMdListStore.remove(md);
         }
     }
@@ -290,13 +290,13 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
 
 
     void createColumnModel() {
-        List<ColumnConfig<DiskResourceMetadata, ?>> columns = Lists.newArrayList();
+        List<ColumnConfig<Avu, ?>> columns = Lists.newArrayList();
         DiskResourceMetadataProperties props = GWT.create(DiskResourceMetadataProperties.class);
-        ColumnConfig<DiskResourceMetadata, String> attributeColumn =
+        ColumnConfig<Avu, String> attributeColumn =
                 new ColumnConfig<>(props.attribute(), 150, appearance.attribute());
-        ColumnConfig<DiskResourceMetadata, String> valueColumn =
+        ColumnConfig<Avu, String> valueColumn =
                 new ColumnConfig<>(props.value(), 150, appearance.paramValue());
-        ColumnConfig<DiskResourceMetadata, String> unitColumn =
+        ColumnConfig<Avu, String> unitColumn =
                 new ColumnConfig<>(props.unit(), 150, appearance.paramUnit());
 
         MetadataCell metadataCell = new MetadataCell();
@@ -307,12 +307,12 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         columns.add(valueColumn);
         columns.add(unitColumn);
 
-        List<ColumnConfig<DiskResourceMetadata, ?>> userMdCols = Lists.newArrayList();
+        List<ColumnConfig<Avu, ?>> userMdCols = Lists.newArrayList();
         userMdCols.add(userChxBoxModel.getColumn());
         userMdCols.addAll(columns);
         ucm = new ColumnModel<>(userMdCols);
 
-        List<ColumnConfig<DiskResourceMetadata, ?>> addMdCols = Lists.newArrayList();
+        List<ColumnConfig<Avu, ?>> addMdCols = Lists.newArrayList();
         addMdCols.add(addChxBoxModel.getColumn());
         addMdCols.addAll(columns);
         acm = new ColumnModel<>(addMdCols);
@@ -320,10 +320,10 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     }
 
     @UiFactory
-    ListStore<DiskResourceMetadata> createAdditionalListStore() {
-        return new ListStore<>(new ModelKeyProvider<DiskResourceMetadata>() {
+    ListStore<Avu> createAdditionalListStore() {
+        return new ListStore<>(new ModelKeyProvider<Avu>() {
             @Override
-            public String getKey(DiskResourceMetadata item) {
+            public String getKey(Avu item) {
                 if (item != null) {
                     final AutoBean<Object> metadataBean = AutoBeanUtils.getAutoBean(item);
                     return metadataBean.getTag(AVU_BEAN_TAG_MODEL_KEY);
@@ -336,9 +336,9 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
 
     }
 
-    private void setAvuModelKey(DiskResourceMetadata avu) {
+    private void setAvuModelKey(Avu avu) {
         if (avu != null) {
-            final AutoBean<DiskResourceMetadata> avuBean = AutoBeanUtils.getAutoBean(avu);
+            final AutoBean<Avu> avuBean = AutoBeanUtils.getAutoBean(avu);
             avuBean.setTag(AVU_BEAN_TAG_MODEL_KEY, String.valueOf(unique_avu_id++));
         }
     }
@@ -351,7 +351,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
 
     private String getUniqueAttrName(String attrName, int i) {
         String retName = i > 0 ? attrName + "_(" + i + ")" : attrName;
-        for (DiskResourceMetadata md : additionalMdListStore.getAll()) {
+        for (Avu md : additionalMdListStore.getAll()) {
             if (md.getAttribute().equals(retName)) {
                 return getUniqueAttrName(attrName, ++i);
             }
@@ -362,9 +362,9 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     private void initUserMdGridEditor() {
         userGridInlineEditing = new GridInlineEditing<>(userMdGrid);
         userGridInlineEditing.setClicksToEdit(ClicksToEdit.TWO);
-        ColumnConfig<DiskResourceMetadata, String> column1 = userMdGrid.getColumnModel().getColumn(1);
-        ColumnConfig<DiskResourceMetadata, String> column2 = userMdGrid.getColumnModel().getColumn(2);
-        ColumnConfig<DiskResourceMetadata, String> column3 = userMdGrid.getColumnModel().getColumn(3);
+        ColumnConfig<Avu, String> column1 = userMdGrid.getColumnModel().getColumn(1);
+        ColumnConfig<Avu, String> column2 = userMdGrid.getColumnModel().getColumn(2);
+        ColumnConfig<Avu, String> column3 = userMdGrid.getColumnModel().getColumn(3);
 
         TextField field1 = new TextField();
         TextField field2 = new TextField();
@@ -385,10 +385,10 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         userGridInlineEditing.addEditor(column1, field1);
         userGridInlineEditing.addEditor(column2, field2);
         userGridInlineEditing.addEditor(column3, field3);
-        userGridInlineEditing.addCompleteEditHandler(new CompleteEditHandler<DiskResourceMetadata>() {
+        userGridInlineEditing.addCompleteEditHandler(new CompleteEditHandler<Avu>() {
 
             @Override
-            public void onCompleteEdit(CompleteEditEvent<DiskResourceMetadata> event) {
+            public void onCompleteEdit(CompleteEditEvent<Avu> event) {
                 dirty = true;
                 userMdListStore.commitChanges();
             }
@@ -406,10 +406,10 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     }
 
     @Override
-    public void updateMetadataFromTemplateView(List<DiskResourceMetadata> metadataList) {
+    public void updateMetadataFromTemplateView(List<Avu> metadataList) {
         userMdGrid.mask();
-        for (DiskResourceMetadata md : metadataList) {
-            for (DiskResourceMetadata storemd : userMdListStore.getAll()) {
+        for (Avu md : metadataList) {
+            for (Avu storemd : userMdListStore.getAll()) {
                 if (storemd.getAttribute().equals(md.getAttribute())) {
                     storemd.setValue(md.getValue());
                     userMdListStore.update(storemd);
@@ -425,13 +425,13 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     }
 
     @Override
-    public void addToUserMetadata(List<DiskResourceMetadata> umd) {
+    public void addToUserMetadata(List<Avu> umd) {
         userMdListStore.addAll(umd);
     }
 
     @Override
-    public void removeImportedMetadataFromStore(List<DiskResourceMetadata> umd) {
-        for (DiskResourceMetadata md : umd) {
+    public void removeImportedMetadataFromStore(List<Avu> umd) {
+        for (Avu md : umd) {
             additionalMdListStore.remove(md);
         }
     }
@@ -442,9 +442,9 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     }
 
     private class DiskResourceMetadataSelectionChangedHandler
-            implements SelectionChangedHandler<DiskResourceMetadata> {
+            implements SelectionChangedHandler<Avu> {
         @Override
-        public void onSelectionChanged(SelectionChangedEvent<DiskResourceMetadata> event) {
+        public void onSelectionChanged(SelectionChangedEvent<Avu> event) {
             if (event.getSelection() != null && event.getSelection().size() > 0
                 && writable) {
                 if (userGridInlineEditing != null) {
@@ -458,9 +458,9 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     }
 
     private class DiskResourceAdditionalMetadataSelectionChangedHandler
-            implements SelectionChangedHandler<DiskResourceMetadata> {
+            implements SelectionChangedHandler<Avu> {
         @Override
-        public void onSelectionChanged(SelectionChangedEvent<DiskResourceMetadata> event) {
+        public void onSelectionChanged(SelectionChangedEvent<Avu> event) {
             if (event.getSelection() != null && event.getSelection().size() > 0) {
                 importButton.enable();
             } else {

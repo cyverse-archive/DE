@@ -18,9 +18,7 @@ import org.iplantc.de.client.models.dataLink.DataLinkList;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceExistMap;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadataList;
-import org.iplantc.de.client.models.diskResources.DiskResourceUserMetadata;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.MetadataTemplate;
@@ -33,7 +31,6 @@ import org.iplantc.de.client.models.services.DiskResourceRename;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
-import org.iplantc.de.client.services.impl.models.DiskResourceMetadataBatchRequest;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
@@ -668,17 +665,11 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
 
     @Override
     public void setDiskResourceMetaData(DiskResource resource,
-                                        DiskResourceUserMetadata metadata,
-                                        List<DiskResourceMetadata> irodsAvus,
+                                        DiskResourceMetadataList mdList,
                                         AsyncCallback<String> callback) {
         String address = deProperties.getDataMgmtBaseUrl() + resource.getId() + "/metadata"; //$NON-NLS-1$
 
-        // Create request consisting of metadata to update and delete.
-        DiskResourceMetadataList request = factory.metadataList().as();
-        request.setUserMetadata(metadata.getAvus());
-        request.setOtherMetadata(irodsAvus);
-
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode(request));
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode(mdList));
         callService(wrapper, callback);
     }
 

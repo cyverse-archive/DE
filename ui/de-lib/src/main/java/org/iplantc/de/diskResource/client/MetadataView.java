@@ -1,7 +1,7 @@
 package org.iplantc.de.diskResource.client;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
+import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceMetadataUpdateCallback;
 
@@ -103,7 +103,7 @@ public interface MetadataView extends IsWidget {
 
         void onSelectTemplate();
 
-        void onImport(List<DiskResourceMetadata> selectedItems);
+        void onImport(List<Avu> selectedItems);
 
         boolean isDirty();
     }
@@ -113,11 +113,11 @@ public interface MetadataView extends IsWidget {
 
     boolean isValid();
 
-    List<DiskResourceMetadata> getAvus();
+    List<Avu> getAvus();
 
-    void loadMetadata(List<DiskResourceMetadata> metadataList);
+    void loadMetadata(List<Avu> metadataList);
 
-    void loadUserMetadata(List<DiskResourceMetadata> metadataList);
+    void loadUserMetadata(List<Avu> metadataList);
 
     void setPresenter(Presenter p);
 
@@ -125,12 +125,12 @@ public interface MetadataView extends IsWidget {
 
     void unmask();
 
-    void updateMetadataFromTemplateView(List<DiskResourceMetadata> metadataList);
+    void updateMetadataFromTemplateView(List<Avu> metadataList);
 
-    List<DiskResourceMetadata> getUserMetadata();
+    List<Avu> getUserMetadata();
 
-    void addToUserMetadata(List<DiskResourceMetadata> umd);
+    void addToUserMetadata(List<Avu> umd);
 
-    void removeImportedMetadataFromStore(List<DiskResourceMetadata> umd);
+    void removeImportedMetadataFromStore(List<Avu> umd);
 
 }
