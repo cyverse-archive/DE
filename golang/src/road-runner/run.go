@@ -11,15 +11,6 @@ import (
 	"time"
 )
 
-// Environment returns a []string containing the environment variables that
-// need to get set for every job.
-func Environment(job *model.Job) []string {
-	current := os.Environ()
-	current = append(current, fmt.Sprintf("IPLANT_USER=%s", job.Submitter))
-	current = append(current, fmt.Sprintf("IPLANT_EXECUTION_ID=%s", job.InvocationID))
-	return current
-}
-
 func getTicker(timeLimit int, exit chan messaging.StatusCode) (chan int, error) {
 	if timeLimit <= 0 {
 		return nil, fmt.Errorf("TimeLimit was not %d instead of > 0", timeLimit)
@@ -133,6 +124,9 @@ func (r *JobRunner) runAllSteps(exit chan messaging.StatusCode) error {
 				strings.Join(step.Arguments(), " "),
 			),
 		)
+
+		step.Environment["IPLANT_USER"] = job.Submitter
+		step.Environment["IPLANT_EXECUTION_ID"] = job.InvocationID
 
 		// TimeLimits set to 0 mean that there isn't a time limit.
 		var timeLimitEnabled bool
