@@ -148,12 +148,12 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
 
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post(caught);
                 AutoBean<AppDoc> doc = AutoBeanCodex.decode(factory, AppDoc.class, "{}");
                 final AppEditor appEditor = new AppEditor(event.getApp(), doc.as());
                 appEditor.addSaveAppSelectedHandler(AdminAppsGridPresenterImpl.this);
                 appEditor.show();
                 isDocUpdate = false;
+                ErrorHandler.post(caught);
             }
 
             @Override
