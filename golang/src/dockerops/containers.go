@@ -13,6 +13,7 @@ import (
 
 	"github.com/docker/engine-api/client"
 	"github.com/docker/engine-api/types"
+	"github.com/docker/engine-api/types/container"
 	"github.com/docker/engine-api/types/filters"
 	"github.com/fsouza/go-dockerclient"
 	"github.com/olebedev/config"
@@ -225,15 +226,12 @@ func (d *Docker) NukeImage(name, tag string) error {
 // Images will returns a list of the repo tags for all the images currently
 // downloaded.
 func (d *Docker) Images() ([]string, error) {
-	opts := docker.ListImagesOptions{
-		All: true,
-	}
-	apiImages, err := d.Client.ListImages(opts)
+	images, err := d.Client.ImageList(d.ctx, types.ImageListOptions{All: true})
 	if err != nil {
 		return nil, err
 	}
 	var retval []string
-	for _, img := range apiImages {
+	for _, img := range images {
 		repos := img.RepoTags
 		for _, r := range repos {
 			retval = append(retval, r)
@@ -244,17 +242,13 @@ func (d *Docker) Images() ([]string, error) {
 
 // DanglingImages will return a list of IDs for all dangling images.
 func (d *Docker) DanglingImages() ([]string, error) {
-	opts := docker.ListImagesOptions{
-		Filters: map[string][]string{
-			"dangling": {"true"},
-		},
-	}
-	apiImages, err := d.Client.ListImages(opts)
-	if err != nil {
-		return nil, err
-	}
+	imageFilter := filters.NewArgs()
+	imageFilter.Add("dangling", "true")
+	images, err := d.Client.ImageList(d.ctx, types.ImageListOptions{
+		Filters: imageFilter,
+	})
 	var retval []string
-	for _, img := range apiImages {
+	for _, img := range images {
 		retval = append(retval, img.ID)
 	}
 	return retval, nil
@@ -265,21 +259,11 @@ func (d *Docker) DanglingImages() ([]string, error) {
 // is assumed to be "base" and the provided name will be set to repository.
 // This assumes that no authentication is required.
 func (d *Docker) Pull(name, tag string) error {
-	auth := docker.AuthConfiguration{}
-	reg := "base"
-	if strings.Contains(name, "/") {
-		parts := strings.Split(name, "/")
-		if strings.Contains(parts[0], ".") {
-			reg = parts[0]
-		}
-	}
-	opts := docker.PullImageOptions{
-		Repository:   name,
-		Registry:     reg,
-		Tag:          tag,
-		OutputStream: logcabin.InfoLincoln,
-	}
-	return d.Client.PullImage(opts, auth)
+	imageRef := fmt.Sprintf("%s:%s", name, tag)
+	body, err := d.Client.ImagePull(d.ctx, imageRef, types.ImagePullOptions{})
+	defer body.Close()
+	logcabin.Info.Print(body)
+	return err
 }
 
 func pathExists(p string) (bool, error) {
@@ -295,34 +279,29 @@ func pathExists(p string) (bool, error) {
 
 // CreateContainerFromStep creates a container from a step in the a job.
 func (d *Docker) CreateContainerFromStep(step *model.Step, invID string) (*docker.Container, *docker.CreateContainerOptions, error) {
-	createOpts := docker.CreateContainerOptions{}
-	if step.Component.Container.Name != "" {
-		createOpts.Name = step.Component.Container.Name
-	}
-	createConfig := &docker.Config{}
-	createHostConfig := &docker.HostConfig{}
+	config := &container.Config{}
+	hostConfig := &container.HostConfig{}
+	containerName := step.Component.Container.Name
 
 	if step.Component.Container.EntryPoint != "" {
-		createConfig.Entrypoint = []string{step.Component.Container.EntryPoint}
+		config.Entrypoint = []string{step.Component.Container.EntryPoint}
 	}
 
-	createConfig.Cmd = step.Arguments()
+	config.Cmd = step.Arguments()
 
-	if step.Component.Container.MemoryLimit != 0 {
-		createConfig.Memory = step.Component.Container.MemoryLimit
+	if step.Component.Container.MemoryLimit > 0 {
+		hostConfig.Memory = step.Component.Container.MemoryLimit
 	}
 
-	if step.Component.Container.CPUShares != 0 {
-		createConfig.CPUShares = step.Component.Container.CPUShares
+	if step.Component.Container.CPUShares > 0 {
+		hostConfig.CPUShares = step.Component.Container.CPUShares
 	}
 
 	if step.Component.Container.NetworkMode != "" {
 		if step.Component.Container.NetworkMode == "none" {
-			createConfig.NetworkDisabled = true
-			createHostConfig.NetworkMode = "none"
-		} else {
-			createHostConfig.NetworkMode = step.Component.Container.NetworkMode
+			config.NetworkDisabled = true
 		}
+		hostConfig.NetworkMode = step.Component.Container.NetworkMode
 	}
 
 	var fullName string
@@ -335,12 +314,11 @@ func (d *Docker) CreateContainerFromStep(step *model.Step, invID string) (*docke
 	} else {
 		fullName = step.Component.Container.Image.Name
 	}
-
-	createConfig.Image = fullName
+	config.Image = fullName
 
 	for _, vf := range step.Component.Container.VolumesFrom {
-		createHostConfig.VolumesFrom = append(
-			createHostConfig.VolumesFrom,
+		hostConfig.VolumesFrom = append(
+			hostConfig.VolumesFrom,
 			fmt.Sprintf(
 				"%s-%s",
 				vf.NamePrefix,
