@@ -81,7 +81,7 @@ public class ArgumentValidatorEditor extends Composite implements ValueAwareEdit
             final AutoBean<ArgumentValidator> autoBean = AutoBeanUtils.getAutoBean(dlg.getArgumentValidator());
             autoBean.setTag(ArgumentValidator.TMP_ID_TAG, "tmpId-" + uniqueIdNum++);
             validators.getStore().add(autoBean.as());
-            ValueChangeEvent.fire(ArgumentValidatorEditor.this, validators.getStore().getAll());
+            ValueChangeEvent.fire(ArgumentValidatorEditor.this, getValidators());
         }
     }
 
@@ -317,7 +317,7 @@ public class ArgumentValidatorEditor extends Composite implements ValueAwareEdit
         for (ArgumentValidator av : selection) {
             validatorStore.remove(av);
         }
-        ValueChangeEvent.fire(this, selection);
+        ValueChangeEvent.fire(this, getValidators());
     }
 
     @UiHandler("edit")
@@ -329,13 +329,19 @@ public class ArgumentValidatorEditor extends Composite implements ValueAwareEdit
         // JDS Remove
         final int selectedItemIndex = validators.getStore().indexOf(selectedItem);
         validators.getStore().remove(selectedItem);
-        ValueChangeEvent.fire(this, Lists.newArrayList(selectedItem));
+        ValueChangeEvent.fire(this, getValidators());
         AddValidatorDialog dlg = new AddValidatorDialog(supportedValidatorTypes, avMessages);
         dlg.addOkButtonSelectHandler(new AddValidatorOkBtnSelectHandler(dlg));
         dlg.addCancelButtonSelectHandler(new AddValidatorCancelBtnSelectHandler(selectedItemIndex, selectedItem));
 
         dlg.setArgumentValidator(selectedItem);
         dlg.show();
+    }
+
+    List<ArgumentValidator> getValidators() {
+        List<ArgumentValidator> values = Lists.newArrayList();
+        values.addAll(validatorStore.getAll());
+        return values;
     }
 
 }

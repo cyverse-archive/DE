@@ -142,14 +142,11 @@ public class ArgumentEditorConverter<T> extends Composite implements IArgumentEd
 
                 }
 
-                // If validation is not disabled, Re-apply the actual validator
-                if (!isValidationDisabled) {
-                    Object validator = autoBean.getTag(ArgumentValidator.VALIDATOR);
-                    if ((field instanceof Field<?>) && (validator != null)) {
-                        @SuppressWarnings("unchecked")
-                        Validator<T> val = (Validator<T>)validator;
-                        ((Field<T>)field).addValidator(val);
-                    }
+                // Re-apply the actual validator
+                Object validator = autoBean.getTag(ArgumentValidator.VALIDATOR);
+                if ((field instanceof Field<?>) && (validator != null)) {
+                    @SuppressWarnings("unchecked") Validator<T> val = (Validator<T>)validator;
+                    ((Field<T>)field).addValidator(val);
                 }
             }
         }
