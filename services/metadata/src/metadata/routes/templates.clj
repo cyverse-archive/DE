@@ -24,13 +24,31 @@
       :description "This endpoint returns the details of a single metadata attribute."
       (ok (templates/view-attribute attr-id)))
 
-    (GET* "/:template-id" []
+    (context* "/:template-id" []
       :path-params [template-id :- TemplateIdPathParam]
-      :query [params StandardUserQueryParams]
-      :return MetadataTemplate
-      :summary "View a Metadata Template"
-      :description "This endpoint returns the details of a single metadata template."
-      (ok (templates/view-template template-id)))))
+
+      (GET* "/" []
+        :query [params StandardUserQueryParams]
+        :return MetadataTemplate
+        :summary "View a Metadata Template"
+        :description "This endpoint returns the details of a single metadata template."
+        (ok (templates/view-template template-id)))
+
+      (GET* "/blank-csv" []
+        :query [params StandardUserQueryParams]
+        :summary "Get a blank CSV template file for a metadata template."
+        :description "This endpoint returns a CSV file suitable for a specific template, ready to be filled in with specific values. It's intended to be downloaded to be filled out by the user, then reuploaded for use with the bulk metadata endpoints."
+        (assoc (ok (templates/view-template-csv template-id))
+               :headers {"Content-Type" "text/csv; charset=utf-8"
+                         "Content-Disposition" "attachment; filename=\"metadata.csv\""}))
+
+      (GET* "/guide-csv" []
+        :query [params StandardUserQueryParams]
+        :summary "Get a CSV guide file for a metadata template."
+        :description "This endpoint returns a CSV file providing a guide for a specific template. It's intended to be downloaded to be used as a reference while filling out a file from the blank-csv endpoint for the same template."
+        (assoc (ok (templates/view-template-guide template-id))
+               :headers {"Content-Type" "text/csv; charset=utf-8"
+                         "Content-Disposition" "attachment; filename=\"guide.csv\""})))))
 
 (defroutes* admin-templates
   (context* "/admin/templates" []
