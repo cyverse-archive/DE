@@ -4,7 +4,6 @@
         [ring.util.http-response :only [ok]])
   (:require [clojure-commons.assertions :as ca]
             [clojure.string :as string]
-            [clojure.tools.logging :as log]
             [metadata.persistence.templates :as tp]
             [metadata.util.csv :as csv]))
 
@@ -36,7 +35,6 @@
 
 (defn csv-download-resp
   [attachment filename body]
-  (log/warn attachment filename body)
   (let [attachment? (or (nil? attachment) attachment)
         disposition (str (if attachment? "attachment; " "") "filename=\"" filename "\"")]
     (assoc (ok body)
