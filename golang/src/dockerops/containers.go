@@ -15,7 +15,6 @@ import (
 	"github.com/docker/engine-api/types"
 	"github.com/docker/engine-api/types/container"
 	"github.com/docker/engine-api/types/filters"
-	"github.com/fsouza/go-dockerclient"
 	"github.com/olebedev/config"
 )
 
@@ -242,11 +241,15 @@ func (d *Docker) Images() ([]string, error) {
 
 // DanglingImages will return a list of IDs for all dangling images.
 func (d *Docker) DanglingImages() ([]string, error) {
+	var err error
 	imageFilter := filters.NewArgs()
 	imageFilter.Add("dangling", "true")
 	images, err := d.Client.ImageList(d.ctx, types.ImageListOptions{
 		Filters: imageFilter,
 	})
+	if err != nil {
+		return nil, err
+	}
 	var retval []string
 	for _, img := range images {
 		retval = append(retval, img.ID)
@@ -278,10 +281,10 @@ func pathExists(p string) (bool, error) {
 }
 
 // CreateContainerFromStep creates a container from a step in the a job.
-func (d *Docker) CreateContainerFromStep(step *model.Step, invID string) (*docker.Container, *docker.CreateContainerOptions, error) {
+// Returns the ID of the created container.
+func (d *Docker) CreateContainerFromStep(step *model.Step, invID string) (string, error) {
 	config := &container.Config{}
 	hostConfig := &container.HostConfig{}
-	containerName := step.Component.Container.Name
 
 	if step.Component.Container.EntryPoint != "" {
 		config.Entrypoint = []string{step.Component.Container.EntryPoint}
@@ -301,9 +304,10 @@ func (d *Docker) CreateContainerFromStep(step *model.Step, invID string) (*docke
 		if step.Component.Container.NetworkMode == "none" {
 			config.NetworkDisabled = true
 		}
-		hostConfig.NetworkMode = step.Component.Container.NetworkMode
+		hostConfig.NetworkMode = container.NetworkMode(step.Component.Container.NetworkMode)
 	}
 
+	// Set the name of the image for the container.
 	var fullName string
 	if step.Component.Container.Image.Tag != "" {
 		fullName = fmt.Sprintf(
@@ -327,286 +331,348 @@ func (d *Docker) CreateContainerFromStep(step *model.Step, invID string) (*docke
 		)
 	}
 
+	// We conflated volumes and binds. declare all of the volumes
+	// as volumes and only turn them into mounts if a source path
+	// is also set.
 	for _, vol := range step.Component.Container.Volumes {
-		mount := docker.Mount{
-			Source:      vol.HostPath,
-			Destination: vol.ContainerPath,
-			RW:          !vol.ReadOnly,
+		// declare all of the destinations as volumes
+		config.Volumes[vol.ContainerPath] = struct{}{}
+
+		// only add the volume as a mount if the HostPath is set.
+		if vol.HostPath != "" {
+			var rw string
+			if vol.ReadOnly {
+				rw = "ro"
+			} else {
+				rw = "rw"
+			}
+			hostConfig.Binds = append(
+				hostConfig.Binds,
+				fmt.Sprintf("%s:%s:%s", vol.HostPath, vol.ContainerPath, rw),
+			)
 		}
-		createConfig.Mounts = append(createConfig.Mounts, mount)
-		createHostConfig.Binds = append(
-			createHostConfig.Binds,
-			fmt.Sprintf("%s:%s", vol.HostPath, vol.ContainerPath),
-		)
 	}
+
+	// Add the hosts working directory as a binding to the container's
+	// working directory.
 	wd, err := os.Getwd()
 	if err != nil {
-		return nil, nil, err
+		return "", err
 	}
-	localMounts := []docker.Mount{
-		docker.Mount{
-			Source:      wd,
-			Destination: step.Component.Container.WorkingDirectory(),
-			RW:          true,
-		},
-	}
-	var e bool
-	for _, lm := range localMounts {
-		if e, err = pathExists(lm.Source); err != nil || !e {
-			continue
-		}
-		createConfig.Mounts = append(createConfig.Mounts, lm)
-		createHostConfig.Binds = append(
-			createHostConfig.Binds,
-			fmt.Sprintf("%s:%s", lm.Source, lm.Destination),
-		)
-	}
-	logcabin.Info.Printf("Mounts: %#v\n", createConfig.Mounts)
-	logcabin.Info.Printf("Binds: %#v\n", createHostConfig.Binds)
+	hostConfig.Binds = append(
+		hostConfig.Binds,
+		fmt.Sprintf("%s:%s:%s", wd, step.Component.Container.WorkingDirectory(), "rw"),
+	)
 
+	logcabin.Info.Printf("Volumes: %#v", config.Volumes)
+	logcabin.Info.Printf("Binds: %#v", hostConfig.Binds)
+
+	// Add devices mounts to the container.
 	for _, dev := range step.Component.Container.Devices {
-		device := docker.Device{
+		device := container.DeviceMapping{
 			PathOnHost:        dev.HostPath,
 			PathInContainer:   dev.ContainerPath,
 			CgroupPermissions: dev.CgroupPermissions,
 		}
-		createHostConfig.Devices = append(createHostConfig.Devices, device)
+		hostConfig.Devices = append(hostConfig.Devices, device)
 	}
 
-	createConfig.WorkingDir = step.Component.Container.WorkingDirectory()
+	config.WorkingDir = step.Component.Container.WorkingDirectory()
 
 	for k, v := range step.Environment {
-		createConfig.Env = append(createConfig.Env, fmt.Sprintf("%s=%s", k, v))
+		config.Env = append(config.Env, fmt.Sprintf("%s=%s", k, v))
 	}
 
-	createConfig.Labels = make(map[string]string)
-	createConfig.Labels[model.DockerLabelKey] = invID
-	createConfig.Labels[TypeLabel] = strconv.Itoa(StepContainer)
+	config.Labels = make(map[string]string)
+	config.Labels[model.DockerLabelKey] = invID
+	config.Labels[TypeLabel] = strconv.Itoa(StepContainer)
 
-	createHostConfig.LogConfig = docker.LogConfig{Type: "none"}
-	createOpts.Config = createConfig
-	createOpts.HostConfig = createHostConfig
-	container, err := d.Client.CreateContainer(createOpts)
-	return container, &createOpts, err
+	hostConfig.LogConfig = container.LogConfig{Type: "none"}
+	containerName := step.Component.Container.Name
+
+	response, err := d.Client.ContainerCreate(d.ctx, config, hostConfig, nil, containerName)
+	if err == nil {
+		logcabin.Info.Printf("created container %s", response.ID)
+		for _, warning := range response.Warnings {
+			logcabin.Info.Printf("Warning creating %s: %s", response.ID, warning)
+		}
+	}
+	return response.ID, err
 }
 
-// Attach attaches to the container and redirects stdout and stderr to the
-// files at the provided paths. Returns a Success chan that will be sent a
-// struct{} when the attach completes. A struct{} must then be sent over the
-// channel for the streaming to begin.
-func (d *Docker) Attach(container *docker.Container, stdout, stderr io.Writer, sentinel chan struct{}) error {
-	opts := docker.AttachToContainerOptions{
-		Container:    container.ID,
-		Stream:       true,
-		OutputStream: stdout,
-		ErrorStream:  stderr,
-		Stdout:       true,
-		Stderr:       true,
-		Success:      sentinel,
-	}
-	err := d.Client.AttachToContainer(opts)
+// Attach will attach to a container and copy the stream output to writer.
+func (d *Docker) Attach(containerID string, stdout, stderr bool, writer io.Writer) error {
+	resp, err := d.Client.ContainerAttach(
+		d.ctx,
+		containerID,
+		types.ContainerAttachOptions{
+			Stream: true,
+			Stdout: stdout,
+			Stderr: stderr,
+		},
+	)
 	if err != nil {
 		return err
 	}
-	return err
-}
 
-func (d *Docker) runContainer(container *docker.Container, opts *docker.CreateContainerOptions, stdoutFile, stderrFile io.Writer) (int, error) {
-	var err error
-	successChan := make(chan struct{})
 	go func() {
-		err = d.Attach(container, stdoutFile, stderrFile, successChan)
-		if err != nil {
+		var (
+			written int64
+			err     error
+		)
+		if written, err = io.Copy(writer, resp.Reader); err != nil {
 			logcabin.Error.Print(err)
 		}
+		logcabin.Info.Printf("wrote %d", written)
 	}()
-	successChan <- <-successChan
+
+	return nil
+}
+
+func (d *Docker) runContainer(containerID string, stdout, stderr io.Writer) (int, error) {
+	var err error
+
+	//attach to stdout
+	if err = d.Attach(containerID, true, false, stdout); err != nil {
+		return -1, err
+	}
+
+	//attach to stderr
+	if err = d.Attach(containerID, false, true, stderr); err != nil {
+		return -1, err
+	}
+
 	//run the container
-	err = d.Client.StartContainer(container.ID, opts.HostConfig)
-	if err != nil {
+	if err = d.Client.ContainerStart(d.ctx, containerID, types.ContainerStartOptions{}); err != nil {
 		return -1, err
 	}
+
 	//wait for container to exit
-	exitCode, err := d.Client.WaitContainer(container.ID)
-	if err != nil {
-		return -1, err
-	}
-	return exitCode, err
+	return d.Client.ContainerWait(d.ctx, containerID)
 }
 
 // RunStep will run the steps in a job. If a step fails, the function will
 // return with a non-zero exit code. If an error occurs, the function will
 // return with a non-zero exit code and a non-nil error.
 func (d *Docker) RunStep(step *model.Step, invID string, idx int) (int, error) {
+	var (
+		err         error
+		containerID string
+	)
+
 	stepIdx := strconv.Itoa(idx)
-	container, opts, err := d.CreateContainerFromStep(step, invID)
-	if err != nil {
+
+	if containerID, err = d.CreateContainerFromStep(step, invID); err != nil {
 		return -1, err
 	}
+
 	stdoutFile, err := os.Create(step.Stdout(stepIdx))
 	if err != nil {
 		return -1, err
 	}
 	defer stdoutFile.Close()
+
 	stderrFile, err := os.Create(step.Stderr(stepIdx))
 	if err != nil {
 		return -1, err
 	}
 	defer stderrFile.Close()
-	return d.runContainer(container, opts, stdoutFile, stderrFile)
+
+	return d.runContainer(containerID, stdoutFile, stderrFile)
 }
 
 // CreateDownloadContainer creates a container that can be used to download
 // input files.
-func (d *Docker) CreateDownloadContainer(job *model.Job, input *model.StepInput, idx string) (*docker.Container, *docker.CreateContainerOptions, error) {
-	invID := job.InvocationID
-	opts := docker.CreateContainerOptions{
-		Config:     &docker.Config{},
-		HostConfig: &docker.HostConfig{},
-	}
-	image, err := d.cfg.String("porklock.image")
-	if err != nil {
-		return nil, nil, err
-	}
-	tag, err := d.cfg.String("porklock.tag")
-	if err != nil {
-		return nil, nil, err
-	}
-	err = d.Pull(image, tag)
-	if err != nil {
-		return nil, nil, err
-	}
-	opts.Config.Image = fmt.Sprintf("%s:%s", image, tag)
-	opts.Name = fmt.Sprintf("input-%s-%s", idx, invID)
-	opts.HostConfig.LogConfig = docker.LogConfig{Type: "none"}
-	wd, err := os.Getwd()
-	if err != nil {
-		return nil, nil, err
-	}
-	opts.Config.WorkingDir = WORKDIR
-	opts.Config.Mounts = append(opts.Config.Mounts, docker.Mount{
-		Source:      wd,
-		Destination: WORKDIR,
-		RW:          true,
-	})
-	opts.HostConfig.Binds = append(
-		opts.HostConfig.Binds,
-		fmt.Sprintf("%s:%s", wd, WORKDIR),
+func (d *Docker) CreateDownloadContainer(job *model.Job, input *model.StepInput, idx string) (string, error) {
+	var (
+		wd, name, image, tag string
+		response             types.ContainerCreateResponse
+		err                  error
 	)
-	opts.Config.Labels = make(map[string]string)
-	opts.Config.Labels[model.DockerLabelKey] = invID
-	opts.Config.Labels[TypeLabel] = strconv.Itoa(InputContainer)
-	opts.Config.Cmd = input.Arguments(job.Submitter, job.FileMetadata)
-	container, err := d.Client.CreateContainer(opts)
-	return container, &opts, err
+
+	config := &container.Config{}
+	hostConfig := &container.HostConfig{}
+	invID := job.InvocationID
+
+	if image, err = d.cfg.String("porklock.image"); err != nil {
+		return "", err
+	}
+
+	if tag, err = d.cfg.String("porklock.tag"); err != nil {
+		return "", err
+	}
+
+	if err = d.Pull(image, tag); err != nil {
+		return "", err
+	}
+
+	config.Image = fmt.Sprintf("%s:%s", image, tag)
+	hostConfig.LogConfig = container.LogConfig{Type: "none"}
+
+	// make sure the host working dir is mounted and make it the default
+	// working dir inside the container.
+	if wd, err = os.Getwd(); err != nil {
+		return "", err
+	}
+	config.WorkingDir = WORKDIR
+	hostConfig.Binds = append(hostConfig.Binds, fmt.Sprintf("%s:%s:%s", wd, WORKDIR, "rw"))
+
+	config.Labels = make(map[string]string)
+	config.Labels[model.DockerLabelKey] = invID
+	config.Labels[TypeLabel] = strconv.Itoa(InputContainer)
+	config.Cmd = input.Arguments(job.Submitter, job.FileMetadata)
+
+	name = fmt.Sprintf("input-%s-%s", idx, invID)
+	if response, err = d.Client.ContainerCreate(d.ctx, config, hostConfig, nil, name); err == nil {
+		logcabin.Info.Printf("created container %s", response.ID)
+		for _, warning := range response.Warnings {
+			logcabin.Info.Printf("Warning creating %s: %s", response.ID, warning)
+		}
+	}
+
+	return response.ID, nil
 }
 
 // DownloadInputs will run the docker containers that down input files into
 // the local working directory.
 func (d *Docker) DownloadInputs(job *model.Job, input *model.StepInput, idx int) (int, error) {
+	var (
+		err                    error
+		containerID            string
+		stdoutFile, stderrFile io.WriteCloser
+	)
+
 	inputIdx := strconv.Itoa(idx)
-	container, opts, err := d.CreateDownloadContainer(job, input, inputIdx)
-	if err != nil {
+
+	if containerID, err = d.CreateDownloadContainer(job, input, inputIdx); err != nil {
 		return -1, err
 	}
-	stdoutFile, err := os.Create(input.Stdout(inputIdx))
-	if err != nil {
+
+	if stdoutFile, err = os.Create(input.Stdout(inputIdx)); err != nil {
 		return -1, err
 	}
 	defer stdoutFile.Close()
-	stderrFile, err := os.Create(input.Stderr(inputIdx))
-	if err != nil {
+
+	if stderrFile, err = os.Create(input.Stderr(inputIdx)); err != nil {
 		return -1, err
 	}
 	defer stderrFile.Close()
-	return d.runContainer(container, opts, stdoutFile, stderrFile)
+
+	return d.runContainer(containerID, stdoutFile, stderrFile)
 }
 
 // CreateUploadContainer will initialize a container that will be used to
 // upload job outputs into a directory in iRODS.
-func (d *Docker) CreateUploadContainer(job *model.Job) (*docker.Container, *docker.CreateContainerOptions, error) {
-	opts := docker.CreateContainerOptions{
-		Config:     &docker.Config{},
-		HostConfig: &docker.HostConfig{},
-	}
-	image, err := d.cfg.String("porklock.image")
-	if err != nil {
-		return nil, nil, err
-	}
-	tag, err := d.cfg.String("porklock.tag")
-	if err != nil {
-		return nil, nil, err
-	}
-	err = d.Pull(image, tag)
-	if err != nil {
-		return nil, nil, err
-	}
-	opts.Config.Image = fmt.Sprintf("%s:%s", image, tag)
-	opts.Name = fmt.Sprintf("output-%s", job.InvocationID)
-	opts.HostConfig.LogConfig = docker.LogConfig{Type: "none"}
-	wd, err := os.Getwd()
-	if err != nil {
-		return nil, nil, err
-	}
-	opts.Config.WorkingDir = WORKDIR
-	opts.Config.Mounts = append(opts.Config.Mounts, docker.Mount{
-		Source:      wd,
-		Destination: WORKDIR,
-		RW:          true,
-	})
-	opts.HostConfig.Binds = append(
-		opts.HostConfig.Binds,
-		fmt.Sprintf("%s:%s", wd, WORKDIR),
+func (d *Docker) CreateUploadContainer(job *model.Job) (string, error) {
+	var (
+		err                  error
+		image, tag, name, wd string
+		response             types.ContainerCreateResponse
 	)
-	opts.Config.Labels = make(map[string]string)
-	opts.Config.Labels[model.DockerLabelKey] = job.InvocationID
-	opts.Config.Labels[TypeLabel] = strconv.Itoa(OutputContainer)
-	opts.Config.Cmd = job.FinalOutputArguments()
-	container, err := d.Client.CreateContainer(opts)
-	return container, &opts, err
+
+	config := &container.Config{}
+	hostConfig := &container.HostConfig{}
+
+	if image, err = d.cfg.String("porklock.image"); err != nil {
+		return "", err
+	}
+
+	if tag, err = d.cfg.String("porklock.tag"); err != nil {
+		return "", err
+	}
+
+	if err = d.Pull(image, tag); err != nil {
+		return "", err
+	}
+
+	config.Image = fmt.Sprintf("%s:%s", image, tag)
+	hostConfig.LogConfig = container.LogConfig{Type: "none"}
+
+	if wd, err = os.Getwd(); err != nil {
+		return "", err
+	}
+	config.WorkingDir = WORKDIR
+	hostConfig.Binds = append(hostConfig.Binds, fmt.Sprintf("%s:%s:%s", wd, WORKDIR, "rw"))
+
+	config.Labels = make(map[string]string)
+	config.Labels[model.DockerLabelKey] = job.InvocationID
+	config.Labels[TypeLabel] = strconv.Itoa(OutputContainer)
+
+	config.Cmd = job.FinalOutputArguments()
+
+	name = fmt.Sprintf("output-%s", job.InvocationID)
+	if response, err = d.Client.ContainerCreate(d.ctx, config, hostConfig, nil, name); err == nil {
+		logcabin.Info.Printf("created container %s", response.ID)
+		for _, warning := range response.Warnings {
+			logcabin.Info.Printf("Warning creating %s: %s", response.ID, warning)
+		}
+	}
+
+	return response.ID, nil
 }
 
 // UploadOutputs will upload files to iRODS from the local working directory.
 func (d *Docker) UploadOutputs(job *model.Job) (int, error) {
-	container, opts, err := d.CreateUploadContainer(job)
-	if err != nil {
+	var (
+		err                    error
+		containerID            string
+		stdoutFile, stderrFile io.WriteCloser
+	)
+	if containerID, err = d.CreateUploadContainer(job); err != nil {
 		return -1, err
 	}
-	stdoutFile, err := os.Create("logs/logs-stdout-output")
-	if err != nil {
+
+	if stdoutFile, err = os.Create("logs/logs-stdout-output"); err != nil {
 		return -1, err
 	}
 	defer stdoutFile.Close()
-	stderrFile, err := os.Create("logs/logs-stderr-output")
-	if err != nil {
+
+	if stderrFile, err = os.Create("logs/logs-stderr-output"); err != nil {
 		return -1, err
 	}
 	defer stderrFile.Close()
-	return d.runContainer(container, opts, stdoutFile, stderrFile)
+
+	return d.runContainer(containerID, stdoutFile, stderrFile)
 }
 
 // CreateDataContainer will create a data container that is required for the job.
-func (d *Docker) CreateDataContainer(vf *model.VolumesFrom, invID string) (*docker.Container, *docker.CreateContainerOptions, error) {
-	opts := docker.CreateContainerOptions{
-		Config:     &docker.Config{},
-		HostConfig: &docker.HostConfig{},
-	}
-	opts.Name = fmt.Sprintf("%s-%s", vf.NamePrefix, invID)
-	opts.Config.Image = fmt.Sprintf("%s:%s", vf.Name, vf.Tag)
-	opts.HostConfig.LogConfig = docker.LogConfig{Type: "none"}
-	opts.Config.Labels = make(map[string]string)
-	opts.Config.Labels[model.DockerLabelKey] = invID
-	opts.Config.Labels[TypeLabel] = strconv.Itoa(DataContainer)
+func (d *Docker) CreateDataContainer(vf *model.VolumesFrom, invID string) (string, error) {
+	var (
+		err      error
+		rw, name string
+		response types.ContainerCreateResponse
+	)
+
+	config := &container.Config{}
+	hostConfig := &container.HostConfig{}
+
+	config.Image = fmt.Sprintf("%s:%s", vf.Name, vf.Tag)
+	hostConfig.LogConfig = container.LogConfig{Type: "none"}
+
+	config.Labels = make(map[string]string)
+	config.Labels[model.DockerLabelKey] = invID
+	config.Labels[TypeLabel] = strconv.Itoa(DataContainer)
+
 	if vf.HostPath != "" || vf.ContainerPath != "" {
-		mount := docker.Mount{}
-		if vf.HostPath != "" {
-			mount.Source = vf.HostPath
+		if vf.ReadOnly {
+			rw = "ro"
+		} else {
+			rw = "rw"
 		}
-		mount.Destination = vf.ContainerPath
-		mount.RW = !vf.ReadOnly
-		opts.Config.Mounts = append(opts.Config.Mounts, mount)
+		hostConfig.Binds = append(
+			hostConfig.Binds,
+			fmt.Sprintf("%s:%s:%s", vf.HostPath, vf.ContainerPath, rw),
+		)
 	}
-	opts.Config.Cmd = []string{"/bin/true"}
-	container, err := d.Client.CreateContainer(opts)
-	return container, &opts, err
+
+	config.Cmd = []string{"/bin/true"}
+	name = fmt.Sprintf("%s-%s", vf.NamePrefix, invID)
+	if response, err = d.Client.ContainerCreate(d.ctx, config, hostConfig, nil, name); err == nil {
+		logcabin.Info.Printf("created container %s", response.ID)
+		for _, warning := range response.Warnings {
+			logcabin.Info.Printf("Warning creating %s: %s", response.ID, warning)
+		}
+	}
+
+	return response.ID, nil
 }
