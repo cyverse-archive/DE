@@ -124,15 +124,21 @@ func TestCreateIsContainerAndNukeByName(t *testing.T) {
 	if !shouldrun() {
 		return
 	}
+
 	job := inittests(t)
+
 	dc, err := NewDocker(context.Background(), cfg, uri())
 	if err != nil {
 		t.Error(err)
 	}
+
 	err = dc.Pull("alpine", "latest")
 	if err != nil {
 		t.Error(err)
 	}
+
+	// If the container already exists, it could be left over from a previous,
+	// test, therefore nuke it.
 	exists, err := dc.IsContainer(job.Steps[0].Component.Container.Name)
 	if err != nil {
 		t.Error(err)
@@ -140,6 +146,8 @@ func TestCreateIsContainerAndNukeByName(t *testing.T) {
 	if exists {
 		dc.NukeContainerByName(job.Steps[0].Component.Container.Name)
 	}
+
+	// Create the container we actually want to test against
 	containerID, err := dc.CreateContainerFromStep(&job.Steps[0], job.InvocationID)
 	if err != nil {
 		t.Error(err)
