@@ -15,7 +15,7 @@
 (defn- format-avu
   "Formats the given AVU for adding or updating."
   [target-type target-id {:keys [attr] :as avu}]
-  (-> (select-keys avu [:id :value :unit])
+  (-> (select-keys avu [:id :value :unit :avus])
       (assoc
         :attribute   attr
         :target_type target-type
@@ -25,20 +25,29 @@
   [target-type target-id]
   {:avus (persistence/avu-list target-type target-id)})
 
+(defn- add-or-update-avu
+  "Adds or Updates an AVU and its attached AVUs for the given user ID."
+  [user-id {:keys [avus] :as avu}]
+  (let [{:keys [id]} (persistence/add-or-update-avu user-id avu)]
+  (doseq [child-avu avus]
+    (add-or-update-avu user-id (format-avu "avu" id child-avu)))))
+
 (defn update-avus
   [user-id target-type target-id {avus :avus}]
   (transaction
    (doseq [avu avus]
-     (persistence/add-or-update-avu user-id
-                                    (format-avu target-type target-id avu))))
+     (add-or-update-avu user-id (format-avu target-type target-id avu))))
   (amqp/publish-metadata-update user-id target-id)
   (list-avus target-type target-id))
 
 (defn- remove-orphaned-avus
   "Removes any AVU for the given target-type and target-id that does not have a matching ID in the given
    set of avus."
-  [target-type target-id avus]
-  (->> avus
+  [target-type target-id avus-to-keep]
+  ;; Cleanup orphaned sub-AVUs of any AVUs to be kept by this request
+  (doseq [{:keys [id avus]} avus-to-keep]
+    (remove-orphaned-avus "avu" id avus))
+  (->> avus-to-keep
        (map :id)
        (remove nil?)
        (persistence/get-avus-by-ids)
@@ -51,8 +60,7 @@
   (transaction
    (remove-orphaned-avus target-type target-id avus)
    (doseq [avu avus]
-     (persistence/add-or-update-avu user-id
-                                    (format-avu target-type target-id avu))))
+     (add-or-update-avu user-id (format-avu target-type target-id avu))))
   (amqp/publish-metadata-update user-id target-id)
   (list-avus target-type target-id))
 

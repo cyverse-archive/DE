@@ -5,7 +5,11 @@
   (:require [kameleon.db :as db]
             [korma.core :as sql]))
 
-(def ^:private data-types [(db/->enum-val "file") (db/->enum-val "folder")])
+(defn- target-where-clause
+  "Adds a where-clause to the given query for the given target."
+  [query target-type target-id]
+  (where query {:target_id   target-id
+                :target_type (db/->enum-val target-type)}))
 
 (defn filter-targets-by-attr-values
   "Finds the given targets that have the given attribute and any of the given values."
@@ -32,9 +36,7 @@
 (defn get-avus-for-target
   "Gets AVUs for the given target."
   [target-type target-id]
-  (select :avus
-          (where {:target_id   target-id
-                  :target_type (db/->enum-val target-type)})))
+  (select :avus (target-where-clause target-type target-id)))
 
 (defn get-avus-by-attr
   "Finds all existing AVUs by the given targets and the given set of attributes."
@@ -59,9 +61,12 @@
 (defn add-avus
   "Adds the given AVUs to the Metadata database."
   [user-id avus]
-  (let [fmt-avu (comp #(update % :target_type db/->enum-val)
-                      #(assoc % :created_by  user-id
-                                :modified_by user-id))]
+  (let [fmt-avu (fn [avu]
+                  (-> avu
+                      (select-keys [:id :attribute :value :unit :target_type :target_id])
+                      (update :target_type db/->enum-val)
+                      (assoc :created_by  user-id
+                             :modified_by user-id)))]
     (insert :avus (values (map fmt-avu avus)))))
 
 (defn update-avu
@@ -98,25 +103,38 @@
       existing-avu
       (add-avus user-id [avu]))))
 
+(defn- add-orphaned-ids-where-clause
+  [query avu-ids-to-keep]
+  (if (empty? avu-ids-to-keep)
+    query
+    (where query {:id [not-in avu-ids-to-keep]})))
+
 (defn remove-orphaned-avus
-  "Removes AVUs for the given target-id that are not in the given set of avu-ids."
-  [target-type target-id avu-ids]
-  (let [query (-> (delete* :avus)
-                  (where {:target_id target-id
-                          :target_type (db/->enum-val target-type)}))]
-    (if (empty? avu-ids)
-      (delete query)
-      (delete (where query {:id [not-in avu-ids]})))))
+  "Removes AVUs for the given target-id that are not in the given set of avu-ids-to-keep."
+  [target-type target-id avu-ids-to-keep]
+  (let [avus-to-remove (-> (select* :avus)
+                           (target-where-clause target-type target-id)
+                           (add-orphaned-ids-where-clause avu-ids-to-keep)
+                           select)]
+    ;; Remove orphaned sub-AVUs of any AVUs to be removed by this request.
+    (doseq [{:keys [id]} avus-to-remove]
+      (remove-orphaned-avus "avu" id nil))
+    (-> (delete* :avus)
+        (target-where-clause target-type target-id)
+        (add-orphaned-ids-where-clause avu-ids-to-keep)
+        delete)))
 
 (defn format-avu
   "Formats a Metadata AVU for JSON responses."
-  [avu]
-  (let [convert-timestamp #(assoc %1 %2 (db/millis-from-timestamp (%2 %1)))]
+  [{:keys [id attribute] :as avu}]
+  (let [convert-timestamp #(update %1 %2 db/millis-from-timestamp)
+        attached-avus (map format-avu (get-avus-for-target "avu" id))]
     (-> avu
-      (convert-timestamp :created_on)
-      (convert-timestamp :modified_on)
-      (assoc :attr (:attribute avu))
-      (dissoc :attribute :target_type))))
+        (convert-timestamp :created_on)
+        (convert-timestamp :modified_on)
+        (assoc :attr attribute
+               :avus attached-avus)
+        (dissoc :attribute :target_type))))
 
 (defn avu-list
   "Lists AVUs for the given target."
