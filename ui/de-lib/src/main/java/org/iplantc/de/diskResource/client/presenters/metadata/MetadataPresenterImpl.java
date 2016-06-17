@@ -1,5 +1,8 @@
 package org.iplantc.de.diskResource.client.presenters.metadata;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
@@ -18,17 +21,12 @@ import org.iplantc.de.resources.client.messages.I18N;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
-import com.google.web.bindery.autobean.shared.AutoBeanCodex;
-
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent.DialogHideHandler;
 import com.sencha.gxt.widget.core.client.event.HideEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author jstroot sriram
@@ -53,14 +51,11 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
 
         private MetadataTemplateViewDialog mdView;
         private boolean writable;
-        private MetadataView.Presenter mdPresenter;
 
         public TemplateViewOkSelectHandler(boolean writable,
-                                           MetadataView.Presenter mdPresenter,
                                            MetadataTemplateViewDialog mdView) {
             this.writable = writable;
             this.mdView = mdView;
-            this.mdPresenter = mdPresenter;
         }
 
         @Override
@@ -154,9 +149,9 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
             }
         };
 
-        DiskResourceMetadataList umd =
-                AutoBeanCodex.decode(autoBeanFactory, DiskResourceMetadataList.class, "{}").as();
-        umd.setUserMetadata(view.getUserMetadata());
+        DiskResourceMetadataList umd = autoBeanFactory.metadataList().as();
+                
+        umd.setAvus(view.getUserMetadata());
         umd.setOtherMetadata(view.getAvus());
         drService.setDiskResourceMetaData(resource, umd, batchAvuCallback);
     }
@@ -228,7 +223,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
         @Override
         public void onSuccess(final DiskResourceMetadataList result) {
             view.loadMetadata(result.getOtherMetadata());
-            userMdList =  result.getUserMetadata();
+            userMdList =  result.getAvus();
             if (userMdList != null) {
                 if (templates != null && !templates.isEmpty()) {
                     view.loadUserMetadata(userMdList);
@@ -263,8 +258,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
             templateView =
                     new MetadataTemplateViewDialog(view.getUserMetadata(), isWritable(), result.getAttributes());
             templateView.addOkButtonSelectHandler(new TemplateViewOkSelectHandler(isWritable(),
-                                                                                  MetadataPresenterImpl.this,
-                                                                                  templateView));
+                                                                                   templateView));
             templateView.addCancelButtonSelectHandler(new TemplateViewCancelSelectHandler(
                     templateView));
             templateView.setHeadingText(result.getName());
