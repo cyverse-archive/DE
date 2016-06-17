@@ -2,6 +2,7 @@ package org.iplantc.de.apps.integration.client.view.propertyEditors;
 
 import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.Ids;
 import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.PropertyPanelIds;
+
 import org.iplantc.de.apps.integration.client.view.propertyEditors.widgets.ArgumentValidatorEditor;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.ArgumentEditorConverter;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.SplittableToStringConverter;
@@ -149,6 +150,7 @@ public class TextInputPropertyEditor extends AbstractArgumentPropertyEditor {
 
     @UiHandler("validatorsEditor")
     void onValidatorListChanged(@SuppressWarnings("unused") ValueChangeEvent<List<ArgumentValidator>> event) {
+        model.setValidators(event.getValue());
         editorDriver.flush();
         this.getBoundEditorDelegate().accept(new Refresher());
     }
