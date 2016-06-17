@@ -30,7 +30,9 @@
     (->> (view-template template-id)
       :attributes
       (map (juxt :name :description :required :type #(if (:values %) (string/join ", " (map :value (:values %))) "")))
-      (cons ["attribute name", "attribute description", "required (If you cannot provide,  enter 'not collected', 'not applicable' or 'missing'.)", "value type definition", "enum value options (you must enter one of these values)"]))))
+      (cons ["attribute name", "attribute description",
+             "required (If you cannot provide,  enter 'not collected', 'not applicable' or 'missing'.)",
+             "value type definition", "enum value options (you must enter one of these values)"]))))
 
 ;; This function alias relies on view-template's error checking to throw an exception if a template
 ;; with the given ID doesn't exist.
