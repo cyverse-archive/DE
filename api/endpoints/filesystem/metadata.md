@@ -58,6 +58,26 @@ Delegates to metadata: GET /templates/{template-id}
 This endpoint is a passthrough to the metadata endpoint above.
 Please see the metadata documentation for more information.
 
+Downloading a blank template
+----------------------------
+
+Secured Endpoint: GET /secured/filesystem/metadata/template/{template-id}/blank-csv
+
+Delegates to metadata: GET /templates/{template-id}/blank-csv
+
+This endpoint is a passthrough to the metadata endpoint above.
+Please see the metadata documentation for more information.
+
+Downloading a template guide
+----------------------------
+
+Secured Endpoint: GET /secured/filesystem/metadata/template/{template-id}/guide-csv
+
+Delegates to metadata: GET /templates/{template-id}/guide-csv
+
+This endpoint is a passthrough to the metadata endpoint above.
+Please see the metadata documentation for more information.
+
 Viewing a Metadata Attribute
 ----------------------------
 

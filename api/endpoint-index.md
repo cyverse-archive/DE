@@ -161,6 +161,8 @@ title: DE API Documentation
 * [POST /secured/filesystem/metadata/csv-parser](endpoints/filesystem/metadata.html#adding-batch-metadata-to-multiple-paths-from-a-csv-file)
 * [GET /secured/filesystem/metadata/template/attr/{attribute-id}](endpoints/filesystem/metadata.html#viewing-a-metadata-attribute)
 * [GET /secured/filesystem/metadata/template/{template-id}](endpoints/filesystem/metadata.html#viewing-a-metadata-template)
+* [GET /secured/filesystem/metadata/template/{template-id}/blank-csv](endpoints/filesystem/metadata.html#downloading-a-blank-template)
+* [GET /secured/filesystem/metadata/template/{template-id}/guide-csv](endpoints/filesystem/metadata.html#downloading-a-template-guide)
 * [GET /secured/filesystem/metadata/templates](endpoints/filesystem/metadata.html#listing-metadata-templates)
 * [POST /secured/filesystem/move](endpoints/filesystem/move.html#moving-files-andor-directories)
 * [POST /secured/filesystem/move-contents](endpoints/filesystem/move.html#moving-all-items-in-a-directory)
