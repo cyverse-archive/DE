@@ -44,16 +44,16 @@ public class AMQPConnectionManager {
         factory.setPassword(password);
         try {
             connection = factory.newConnection();
-            LOG.error("**********amqp connection created!");
+            LOG.info("amqp connection created!");
         } catch (IOException e) {
             e.printStackTrace();
-            LOG.error("**********IOEException when creating amqp connection!");
+            LOG.error("IOEException when creating amqp connection!" + e.getMessage());
         } catch (TimeoutException e) {
             e.printStackTrace();
-            LOG.error("**********Timeout Exception when creating amqp connection!");
+            LOG.error("Timeout Exception when creating amqp connection!" + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            LOG.error("Exception when creating AMQP connection!");
+            LOG.error("Exception when creating AMQP connection!" + e.getMessage());
         }
 
     }
