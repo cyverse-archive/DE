@@ -153,6 +153,13 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/opencontainers/runc/libcontainer/user",
+			"repository": "https://github.com/opencontainers/runc",
+			"revision": "5dc3f3576efb5262bf582217e93f86c93944374d",
+			"branch": "master",
+			"path": "/libcontainer/user"
+		},
+		{
 			"importpath": "github.com/opennota/urlesc",
 			"repository": "https://github.com/opennota/urlesc",
 			"revision": "5fa9ff0392746aeae1c4b37fcc42c65afa7a9587",
