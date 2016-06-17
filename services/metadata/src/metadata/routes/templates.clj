@@ -5,6 +5,14 @@
         [ring.util.http-response :only [ok]])
   (:require [metadata.services.templates :as templates]))
 
+(defn- csv-download-resp
+  [attachment filename body]
+  (let [attachment? (or (nil? attachment) attachment)
+        disposition (str (if attachment? "attachment; " "") "filename=\"" filename "\"")]
+    (assoc (ok body)
+           :headers {"Content-Type" "text/csv; charset=utf-8"
+                     "Content-Disposition" disposition})))
+
 (defroutes* templates
   (context* "/templates" []
     :tags ["template-info"]
@@ -24,13 +32,32 @@
       :description "This endpoint returns the details of a single metadata attribute."
       (ok (templates/view-attribute attr-id)))
 
-    (GET* "/:template-id" []
+    (context* "/:template-id" []
       :path-params [template-id :- TemplateIdPathParam]
-      :query [params StandardUserQueryParams]
-      :return MetadataTemplate
-      :summary "View a Metadata Template"
-      :description "This endpoint returns the details of a single metadata template."
-      (ok (templates/view-template template-id)))))
+
+      (GET* "/" []
+        :query [params StandardUserQueryParams]
+        :return MetadataTemplate
+        :summary "View a Metadata Template"
+        :description "This endpoint returns the details of a single metadata template."
+        (ok (templates/view-template template-id)))
+
+      (GET* "/blank-csv" []
+        :query [{:keys [attachment]} CSVDownloadQueryParams]
+        :summary "Get a blank CSV template file for a metadata template."
+        :description "This endpoint returns a CSV file suitable for a specific template,
+                     ready to be filled in with specific values. It's intended to be
+                     downloaded and filled out by the user, then reuploaded for use with
+                     the bulk metadata endpoints."
+        (csv-download-resp attachment "metadata.csv" (templates/view-template-csv template-id)))
+
+      (GET* "/guide-csv" []
+        :query [{:keys [attachment]} CSVDownloadQueryParams]
+        :summary "Get a CSV guide file for a metadata template."
+        :description "This endpoint returns a CSV file guide for a specific template.
+                     It's intended to be downloaded and used as a reference while
+                     filling out a file from the blank-csv endpoint for the same template."
+        (csv-download-resp attachment "guide.csv" (templates/view-template-guide template-id))))))
 
 (defroutes* admin-templates
   (context* "/admin/templates" []

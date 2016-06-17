@@ -19,6 +19,7 @@
                  [net.sourceforge.owlapi/owlapi-reasoner "3.3"]
                  [metosin/compojure-api "0.24.5"]
                  [cheshire "5.5.0"]
+                 [org.clojure/data.csv "0.1.3"]
                  [com.novemberain/langohr "3.5.1"]
                  [org.iplantc/clojure-commons "5.2.7.0"]
                  [org.iplantc/common-cfg "5.2.7.0"]
