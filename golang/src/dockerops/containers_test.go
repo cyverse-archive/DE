@@ -11,7 +11,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/fsouza/go-dockerclient"
+	"golang.org/x/net/context"
+
+	"github.com/docker/engine-api/types/container"
 	"github.com/olebedev/config"
 )
 
@@ -81,7 +83,7 @@ func TestNewDocker(t *testing.T) {
 	if !shouldrun() {
 		return
 	}
-	_, err := NewDocker(cfg, uri())
+	_, err := NewDocker(context.Background(), cfg, uri())
 	if err != nil {
 		t.Error(err)
 	}
@@ -91,7 +93,7 @@ func TestIsContainer(t *testing.T) {
 	if !shouldrun() {
 		return
 	}
-	dc, err := NewDocker(cfg, uri())
+	dc, err := NewDocker(context.Background(), cfg, uri())
 	if err != nil {
 		t.Error(err)
 	}
@@ -108,7 +110,7 @@ func TestPull(t *testing.T) {
 	if !shouldrun() {
 		return
 	}
-	dc, err := NewDocker(cfg, uri())
+	dc, err := NewDocker(context.Background(), cfg, uri())
 	if err != nil {
 		t.Error(err)
 	}
@@ -123,7 +125,7 @@ func TestCreateIsContainerAndNukeByName(t *testing.T) {
 		return
 	}
 	job := inittests(t)
-	dc, err := NewDocker(cfg, uri())
+	dc, err := NewDocker(context.Background(), cfg, uri())
 	if err != nil {
 		t.Error(err)
 	}
@@ -138,55 +140,57 @@ func TestCreateIsContainerAndNukeByName(t *testing.T) {
 	if exists {
 		dc.NukeContainerByName(job.Steps[0].Component.Container.Name)
 	}
-	container, opts, err := dc.CreateContainerFromStep(&job.Steps[0], job.InvocationID)
+	containerID, err := dc.CreateContainerFromStep(&job.Steps[0], job.InvocationID)
 	if err != nil {
 		t.Error(err)
 	}
-	if container.ID == "" {
+	if containerID == "" {
 		t.Error("CreateContainerFromStep created a container with a blank ID")
 	}
-	if opts == nil {
-		t.Error("CreatecontainerFromStep created a nil opts")
+
+	containerJSON, err := dc.Client.ContainerInspect(dc.ctx, containerID)
+	if err != nil {
+		t.Error(err)
 	}
 
 	expectedInt := job.Steps[0].Component.Container.MemoryLimit
-	actualInt := opts.Config.Memory
+	actualInt := containerJSON.HostConfig.Memory
 	if actualInt != expectedInt {
 		t.Errorf("Config.Memory was %s instead of %s\n", actualInt, expectedInt)
 	}
 
 	expectedInt = job.Steps[0].Component.Container.CPUShares
-	actualInt = opts.Config.CPUShares
+	actualInt = containerJSON.HostConfig.CPUShares
 	if actualInt != expectedInt {
 		t.Errorf("Config.CPUShares was %s instead of %s\n", actualInt, expectedInt)
 	}
 
 	expected := job.Steps[0].Component.Container.EntryPoint
-	actual := opts.Config.Entrypoint[0]
+	actual := containerJSON.Config.Entrypoint[0]
 	if actual != expected {
 		t.Errorf("Config.Entrypoint was %s instead of %s\n", actual, expected)
 	}
 
 	expected = job.Steps[0].Component.Container.NetworkMode
-	actual = opts.HostConfig.NetworkMode
+	actual = string(containerJSON.HostConfig.NetworkMode)
 	if actual != expected {
 		t.Errorf("HostConfig.NetworkMode was %s instead of %s\n", actual, expected)
 	}
 
 	expected = "alpine:latest"
-	actual = opts.Config.Image
+	actual = containerJSON.Config.Image
 	if actual != expected {
 		t.Errorf("Config.Image was %s instead of %s\n", actual, expected)
 	}
 
 	expected = "/work"
-	actual = opts.Config.WorkingDir
+	actual = containerJSON.Config.WorkingDir
 	if actual != expected {
 		t.Errorf("Config.WorkingDir was %s instead of %s\n", actual, expected)
 	}
 
 	found := false
-	for _, e := range opts.Config.Env {
+	for _, e := range containerJSON.Config.Env {
 		if e == "food=banana" {
 			found = true
 		}
@@ -196,7 +200,7 @@ func TestCreateIsContainerAndNukeByName(t *testing.T) {
 	}
 
 	found = false
-	for _, e := range opts.Config.Env {
+	for _, e := range containerJSON.Config.Env {
 		if e == "foo=bar" {
 			found = true
 		}
@@ -205,14 +209,14 @@ func TestCreateIsContainerAndNukeByName(t *testing.T) {
 		t.Error("Didn't find 'foo=bar' in Config.Env.")
 	}
 
-	expectedConfig := docker.LogConfig{Type: "none"}
-	actualConfig := opts.HostConfig.LogConfig
+	expectedConfig := container.LogConfig{Type: "none"}
+	actualConfig := containerJSON.HostConfig.LogConfig
 	if !reflect.DeepEqual(actualConfig, expectedConfig) {
 		t.Errorf("HostConfig.LogConfig was %#v instead of %#v\n", actualConfig, expectedConfig)
 	}
 
 	expectedList := []string{"This is a test"}
-	actualList := opts.Config.Cmd
+	actualList := containerJSON.Config.Cmd
 	if !reflect.DeepEqual(expectedList, actualList) {
 		t.Errorf("Config.Cmd was:\n\t%#v\ninstead of:\n\t%#v\n", actualList, expectedList)
 	}
@@ -234,86 +238,98 @@ func TestCreateDownloadContainer(t *testing.T) {
 	if !shouldrun() {
 		return
 	}
+
 	job := inittests(t)
-	dc, err := NewDocker(cfg, uri())
+
+	dc, err := NewDocker(context.Background(), cfg, uri())
 	if err != nil {
 		t.Error(err)
 	}
+
 	image, err := cfg.String("porklock.image")
 	if err != nil {
 		t.Error(err)
 	}
+
 	tag, err := cfg.String("porklock.tag")
 	if err != nil {
 		t.Error(err)
 	}
+
 	err = dc.Pull(image, tag)
 	if err != nil {
 		t.Error(err)
 	}
+
 	cName := fmt.Sprintf("input-0-%s", job.InvocationID)
 	exists, err := dc.IsContainer(cName)
 	if err != nil {
 		t.Error(err)
 	}
+
 	if exists {
 		dc.NukeContainerByName(cName)
 	}
-	container, opts, err := dc.CreateDownloadContainer(job, &job.Steps[0].Config.Inputs[0], "0")
+
+	containerID, err := dc.CreateDownloadContainer(job, &job.Steps[0].Config.Inputs[0], "0")
 	if err != nil {
 		t.Error(err)
 	}
 
-	if container.Name != cName {
-		t.Errorf("container name was %s instead of %s", container.Name, cName)
+	containerJSON, err := dc.Client.ContainerInspect(dc.ctx, containerID)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if containerJSON.Name != cName {
+		t.Errorf("container name was %s instead of %s", containerJSON.Name, cName)
 	}
 
 	expected := fmt.Sprintf("%s:%s", image, tag)
-	actual := opts.Config.Image
+	actual := containerJSON.Config.Image
 	if actual != expected {
 		t.Errorf("Image was %s instead of %s", actual, expected)
 	}
 
 	expected = "/de-app-work"
-	actual = opts.Config.WorkingDir
+	actual = containerJSON.Config.WorkingDir
 	if actual != expected {
 		t.Errorf("WorkingDir was %s instead of %s", actual, expected)
 	}
 
 	expectedList := job.Steps[0].Config.Inputs[0].Arguments(job.Submitter, job.FileMetadata)
-	actualList := opts.Config.Cmd
+	actualList := containerJSON.Config.Cmd
 	if !reflect.DeepEqual(actualList, expectedList) {
 		t.Errorf("Cmd was:\n%#v\ninstead of:\n%#v\n", actualList, expectedList)
 	}
+
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Error(err)
 	}
-	expectedMount := docker.Mount{
-		Source:      wd,
-		Destination: "/de-app-work",
-		RW:          true,
-	}
-	if len(opts.Config.Mounts) != 1 {
-		t.Errorf("Number of mounts was %d instead of 1", len(opts.Config.Mounts))
+
+	expectedBind := fmt.Sprintf("%s:%s:%s", wd, "/de-app-work", "rw")
+	if len(containerJSON.HostConfig.Binds) != 1 {
+		t.Errorf("Number of binds was %d instead of 1", len(containerJSON.HostConfig.Binds))
 	} else {
-		actualMount := opts.Config.Mounts[0]
-		if !reflect.DeepEqual(actualMount, expectedMount) {
-			t.Errorf("Mount was:\n%#v\ninstead of:\n%#v", actualMount, expectedMount)
+		actualBind := containerJSON.HostConfig.Binds[0]
+		if !reflect.DeepEqual(actualBind, expectedBind) {
+			t.Errorf("Bind was:\n%#v\ninstead of:\n%#v", actualBind, expectedBind)
 		}
 	}
-	if _, ok := opts.Config.Labels[model.DockerLabelKey]; !ok {
+
+	if _, ok := containerJSON.Config.Labels[model.DockerLabelKey]; !ok {
 		t.Error("Label was not set")
 	} else {
-		actual = opts.Config.Labels[model.DockerLabelKey]
+		actual = containerJSON.Config.Labels[model.DockerLabelKey]
 		expected = job.InvocationID
 		if actual != expected {
 			t.Errorf("The label was set to %s instead of %s", actual, expected)
 		}
 	}
 
-	expectedLogConfig := docker.LogConfig{Type: "none"}
-	actualLogConfig := opts.HostConfig.LogConfig
+	expectedLogConfig := container.LogConfig{Type: "none"}
+	actualLogConfig := containerJSON.HostConfig.LogConfig
 	if !reflect.DeepEqual(actualLogConfig, expectedLogConfig) {
 		t.Errorf("LogConfig was:\n%#v\ninstead of:\n%#v\n", actualLogConfig, expectedLogConfig)
 	}
@@ -323,19 +339,24 @@ func TestCreateUploadContainer(t *testing.T) {
 	if !shouldrun() {
 		return
 	}
+
 	job := inittests(t)
-	dc, err := NewDocker(cfg, uri())
+
+	dc, err := NewDocker(context.Background(), cfg, uri())
 	if err != nil {
 		t.Error(err)
 	}
+
 	image, err := cfg.String("porklock.image")
 	if err != nil {
 		t.Error(err)
 	}
+
 	tag, err := cfg.String("porklock.tag")
 	if err != nil {
 		t.Error(err)
 	}
+
 	containerName := fmt.Sprintf("output-%s", job.InvocationID)
 	exists, err := dc.IsContainer(containerName)
 	if err != nil {
@@ -344,60 +365,66 @@ func TestCreateUploadContainer(t *testing.T) {
 	if exists {
 		dc.NukeContainerByName(containerName)
 	}
-	container, opts, err := dc.CreateUploadContainer(job)
+
+	containerID, err := dc.CreateUploadContainer(job)
 	if err != nil {
 		t.Error(err)
 	}
-	if container.Name != containerName {
-		t.Errorf("container name was %s instead of %s", container.Name, containerName)
+
+	containerJSON, err := dc.Client.ContainerInspect(dc.ctx, containerID)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if containerJSON.Name != containerName {
+		t.Errorf("container name was %s instead of %s", containerJSON.Name, containerName)
 	}
 
 	expected := fmt.Sprintf("%s:%s", image, tag)
-	actual := opts.Config.Image
+	actual := containerJSON.Config.Image
 	if actual != expected {
 		t.Errorf("Image was %s instead of %s", actual, expected)
 	}
 
 	expected = "/de-app-work"
-	actual = opts.Config.WorkingDir
+	actual = containerJSON.Config.WorkingDir
 	if actual != expected {
 		t.Errorf("WorkingDir was %s instead of %s", actual, expected)
 	}
 
 	expectedList := job.FinalOutputArguments()
-	actualList := opts.Config.Cmd
+	actualList := containerJSON.Config.Cmd
 	if !reflect.DeepEqual(actualList, expectedList) {
 		t.Errorf("Cmd was:\n%#v\ninstead of:\n%#v\n", actualList, expectedList)
 	}
+
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Error(err)
 	}
-	expectedMount := docker.Mount{
-		Source:      wd,
-		Destination: "/de-app-work",
-		RW:          true,
-	}
-	if len(opts.Config.Mounts) != 1 {
-		t.Errorf("Number of mounts was %d instead of 1", len(opts.Config.Mounts))
+
+	expectedBind := fmt.Sprintf("%s:%s:%s", wd, "/de-app-work", "rw")
+	if len(containerJSON.HostConfig.Binds) != 1 {
+		t.Errorf("Number of binds was %d instead of 1", len(containerJSON.HostConfig.Binds))
 	} else {
-		actualMount := opts.Config.Mounts[0]
-		if !reflect.DeepEqual(actualMount, expectedMount) {
-			t.Errorf("Mount was:\n%#v\ninstead of:\n%#v", actualMount, expectedMount)
+		actualBind := containerJSON.HostConfig.Binds[0]
+		if !reflect.DeepEqual(actualBind, expectedBind) {
+			t.Errorf("Mount was:\n%#v\ninstead of:\n%#v", actualBind, expectedBind)
 		}
 	}
-	if _, ok := opts.Config.Labels[model.DockerLabelKey]; !ok {
+
+	if _, ok := containerJSON.Config.Labels[model.DockerLabelKey]; !ok {
 		t.Error("Label was not set")
 	} else {
-		actual = opts.Config.Labels[model.DockerLabelKey]
+		actual = containerJSON.Config.Labels[model.DockerLabelKey]
 		expected = job.InvocationID
 		if actual != expected {
 			t.Errorf("The label was set to %s instead of %s", actual, expected)
 		}
 	}
 
-	expectedLogConfig := docker.LogConfig{Type: "none"}
-	actualLogConfig := opts.HostConfig.LogConfig
+	expectedLogConfig := container.LogConfig{Type: "none"}
+	actualLogConfig := containerJSON.HostConfig.LogConfig
 	if !reflect.DeepEqual(actualLogConfig, expectedLogConfig) {
 		t.Errorf("LogConfig was:\n%#v\ninstead of:\n%#v\n", actualLogConfig, expectedLogConfig)
 	}
@@ -407,41 +434,51 @@ func TestAttach(t *testing.T) {
 	if !shouldrun() {
 		return
 	}
+
 	job := inittests(t)
-	dc, err := NewDocker(cfg, uri())
+
+	dc, err := NewDocker(context.Background(), cfg, uri())
 	if err != nil {
 		t.Error(err)
 	}
+
 	err = dc.Pull("alpine", "latest")
 	if err != nil {
 		t.Error(err)
 	}
+
 	exists, err := dc.IsContainer(job.Steps[0].Component.Container.Name)
 	if err != nil {
 		t.Error(err)
 	}
+
 	if exists {
 		dc.NukeContainerByName(job.Steps[0].Component.Container.Name)
 	}
-	container, _, err := dc.CreateContainerFromStep(&job.Steps[0], job.InvocationID)
+
+	containerID, err := dc.CreateContainerFromStep(&job.Steps[0], job.InvocationID)
 	if err != nil {
 		t.Error(err)
 	}
+
 	stdout := bytes.NewBufferString("")
 	stderr := bytes.NewBufferString("")
-	success := make(chan struct{})
-	go func() {
-		err = dc.Attach(container, stdout, stderr, success)
-		if err != nil {
-			t.Error(err)
-		}
-	}()
-	<-success
+
+	err = dc.Attach(containerID, true, false, stdout)
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = dc.Attach(containerID, false, true, stderr)
+	if err != nil {
+		t.Error(err)
+	}
 
 	exists, err = dc.IsContainer(job.Steps[0].Component.Container.Name)
 	if err != nil {
 		t.Error(err)
 	}
+
 	if exists {
 		dc.NukeContainerByName(job.Steps[0].Component.Container.Name)
 	}
@@ -451,58 +488,73 @@ func TestRunStep(t *testing.T) {
 	if !shouldrun() {
 		return
 	}
+
 	job := inittests(t)
-	dc, err := NewDocker(cfg, uri())
+
+	dc, err := NewDocker(context.Background(), cfg, uri())
 	if err != nil {
 		t.Error(err)
 	}
+
 	err = dc.Pull("alpine", "latest")
 	if err != nil {
 		t.Error(err)
 	}
+
 	exists, err := dc.IsContainer(job.Steps[0].Component.Container.Name)
 	if err != nil {
 		t.Error(err)
 	}
+
 	if exists {
 		dc.NukeContainerByName(job.Steps[0].Component.Container.Name)
 	}
+
 	if _, err = os.Stat("logs"); os.IsNotExist(err) {
 		err = os.MkdirAll("logs", 0755)
 		if err != nil {
 			t.Error(err)
 		}
 	}
+
 	exitCode, err := dc.RunStep(&job.Steps[0], job.InvocationID, 0)
 	if err != nil {
 		t.Error(err)
 	}
+
 	if exitCode != 0 {
 		t.Errorf("RunStep's exit code was %d instead of 0\n", exitCode)
 	}
+
 	if _, err = os.Stat(job.Steps[0].Stdout("0")); os.IsNotExist(err) {
 		t.Error(err)
 	}
+
 	if _, err = os.Stat(job.Steps[0].Stderr("0")); os.IsNotExist(err) {
 		t.Error(err)
 	}
+
 	expected := "This is a test"
 	actualBytes, err := ioutil.ReadFile(job.Steps[0].Stdout("0"))
 	if err != nil {
 		t.Error(err)
 	}
+
 	actual := strings.TrimSpace(string(actualBytes))
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("stdout contained '%s' instead of '%s'\n", string(actual), string(expected))
 	}
+
 	err = os.RemoveAll("logs")
 	if err != nil {
 		t.Error(err)
 	}
+
 	exists, err = dc.IsContainer(job.Steps[0].Component.Container.Name)
 	if err != nil {
 		t.Error(err)
 	}
+
 	if exists {
 		dc.NukeContainerByName(job.Steps[0].Component.Container.Name)
 	}
@@ -512,70 +564,88 @@ func TestDownloadInputs(t *testing.T) {
 	if !shouldrun() {
 		return
 	}
+
 	job := inittests(t)
-	dc, err := NewDocker(cfg, uri())
+
+	dc, err := NewDocker(context.Background(), cfg, uri())
 	if err != nil {
 		t.Error(err)
 	}
+
 	image, err := cfg.String("porklock.image")
 	if err != nil {
 		t.Error(err)
 	}
+
 	tag, err := cfg.String("porklock.tag")
 	if err != nil {
 		t.Error(err)
 	}
+
 	err = dc.Pull(image, tag)
 	if err != nil {
 		t.Error(err)
 	}
+
 	cName := fmt.Sprintf("input-0-%s", job.InvocationID)
 	exists, err := dc.IsContainer(cName)
 	if err != nil {
 		t.Error(err)
 	}
+
 	if exists {
 		dc.NukeContainerByName(cName)
 	}
+
 	if _, err = os.Stat("logs"); os.IsNotExist(err) {
 		err = os.MkdirAll("logs", 0755)
 		if err != nil {
 			t.Error(err)
 		}
 	}
+
 	exitCode, err := dc.DownloadInputs(job, &job.Steps[0].Config.Inputs[0], 0)
 	if err != nil {
 		t.Error(err)
 	}
+
 	if exitCode != 0 {
 		t.Errorf("DownloadInputs's exit code was %d instead of 0\n", exitCode)
 	}
+
 	if _, err = os.Stat(job.Steps[0].Config.Inputs[0].Stdout("0")); os.IsNotExist(err) {
 		t.Error(err)
 	}
+
 	if _, err = os.Stat(job.Steps[0].Config.Inputs[0].Stderr("0")); os.IsNotExist(err) {
 		t.Error(err)
 	}
+
 	expected := strings.Join(
 		job.Steps[0].Config.Inputs[0].Arguments(job.Submitter, job.FileMetadata),
 		" ",
 	)
+
 	actualBytes, err := ioutil.ReadFile(job.Steps[0].Config.Inputs[0].Stdout("0"))
 	if err != nil {
 		t.Error(err)
 	}
+
 	actual := strings.TrimSpace(string(actualBytes))
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("stdout contained '%s' instead of '%s'\n", string(actual), string(expected))
 	}
+
 	err = os.RemoveAll("logs")
 	if err != nil {
 		t.Error(err)
 	}
+
 	exists, err = dc.IsContainer(cName)
 	if err != nil {
 		t.Error(err)
 	}
+
 	if exists {
 		dc.NukeContainerByName(cName)
 	}
@@ -585,70 +655,88 @@ func TestUploadOutputs(t *testing.T) {
 	if !shouldrun() {
 		return
 	}
+
 	job := inittests(t)
-	dc, err := NewDocker(cfg, uri())
+
+	dc, err := NewDocker(context.Background(), cfg, uri())
 	if err != nil {
 		t.Error(err)
 	}
+
 	image, err := cfg.String("porklock.image")
 	if err != nil {
 		t.Error(err)
 	}
+
 	tag, err := cfg.String("porklock.tag")
 	if err != nil {
 		t.Error(err)
 	}
+
 	err = dc.Pull(image, tag)
 	if err != nil {
 		t.Error(err)
 	}
+
 	cName := fmt.Sprintf("output-%s", job.InvocationID)
 	exists, err := dc.IsContainer(cName)
 	if err != nil {
 		t.Error(err)
 	}
+
 	if exists {
 		dc.NukeContainerByName(cName)
 	}
+
 	if _, err = os.Stat("logs"); os.IsNotExist(err) {
 		err = os.MkdirAll("logs", 0755)
 		if err != nil {
 			t.Error(err)
 		}
 	}
+
 	exitCode, err := dc.UploadOutputs(job)
 	if err != nil {
 		t.Error(err)
 	}
+
 	if exitCode != 0 {
 		t.Errorf("UploadOutputs exit code was %d instead of 0\n", exitCode)
 	}
+
 	if _, err = os.Stat("logs/logs-stdout-output"); os.IsNotExist(err) {
 		t.Error(err)
 	}
+
 	if _, err = os.Stat("logs/logs-stderr-output"); os.IsNotExist(err) {
 		t.Error(err)
 	}
+
 	expected := strings.Join(
 		job.FinalOutputArguments(),
 		" ",
 	)
+
 	actualBytes, err := ioutil.ReadFile("logs/logs-stdout-output")
 	if err != nil {
 		t.Error(err)
 	}
+
 	actual := strings.TrimSpace(string(actualBytes))
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("stdout contained '%s' instead of '%s'\n", string(actual), string(expected))
 	}
+
 	err = os.RemoveAll("logs")
 	if err != nil {
 		t.Error(err)
 	}
+
 	exists, err = dc.IsContainer(cName)
 	if err != nil {
 		t.Error(err)
 	}
+
 	if exists {
 		dc.NukeContainerByName(cName)
 	}
@@ -658,23 +746,29 @@ func TestCreateDataContainer(t *testing.T) {
 	if !shouldrun() {
 		return
 	}
+
 	job := inittests(t)
-	dc, err := NewDocker(cfg, uri())
+
+	dc, err := NewDocker(context.Background(), cfg, uri())
 	if err != nil {
 		t.Error(err)
 	}
+
 	image, err := cfg.String("porklock.image")
 	if err != nil {
 		t.Error(err)
 	}
+
 	tag, err := cfg.String("porklock.tag")
 	if err != nil {
 		t.Error(err)
 	}
+
 	err = dc.Pull(image, tag)
 	if err != nil {
 		t.Error(err)
 	}
+
 	vf := &model.VolumesFrom{
 		Name:          "discoenv/echo",
 		NamePrefix:    "echo-test",
@@ -684,30 +778,32 @@ func TestCreateDataContainer(t *testing.T) {
 		HostPath:      "/tmp",
 		ContainerPath: "/test",
 	}
+
 	cName := fmt.Sprintf("%s-%s", vf.NamePrefix, job.InvocationID)
 	exists, err := dc.IsContainer(cName)
 	if err != nil {
 		t.Error(err)
 	}
-	if exists {
-		dc.NukeContainerByName(cName)
-	}
-	container, opts, err := dc.CreateDataContainer(vf, job.InvocationID)
-	if err != nil {
-		t.Error(err)
-	}
-	if container == nil {
-		t.Error("container was nil")
-	}
-	if opts == nil {
-		t.Error("opts was nil")
-	}
-	exists, err = dc.IsContainer(cName)
-	if err != nil {
-		t.Error(err)
-	}
+
 	if exists {
 		dc.NukeContainerByName(cName)
 	}
 
+	containerID, err := dc.CreateDataContainer(vf, job.InvocationID)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if containerID == "" {
+		t.Error("containerID was empty")
+	}
+
+	exists, err = dc.IsContainer(cName)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if exists {
+		dc.NukeContainerByName(cName)
+	}
 }
