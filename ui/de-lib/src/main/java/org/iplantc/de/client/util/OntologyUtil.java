@@ -67,7 +67,7 @@ public class OntologyUtil {
 
     public Avu convertHierarchyToAvu(OntologyHierarchy hierarchy) {
         Avu avu = avuFactory.getAvu().as();
-        avu.setAttr(getAttr(hierarchy));
+        avu.setAttribute(getAttr(hierarchy));
         avu.setValue(hierarchy.getIri());
         avu.setUnit(hierarchy.getLabel());
         return avu;

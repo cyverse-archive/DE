@@ -1,12 +1,12 @@
 package org.iplantc.de.client.models.diskResources;
 
 import org.iplantc.de.client.models.HasPaths;
+import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.client.models.dataLink.DataLinkList;
 import org.iplantc.de.client.models.diskResources.RestoreResponse.RestoredResource;
 import org.iplantc.de.client.models.errorHandling.SimpleServiceError;
 import org.iplantc.de.client.models.services.DiskResourceMove;
 import org.iplantc.de.client.models.services.DiskResourceRename;
-import org.iplantc.de.client.services.impl.models.DiskResourceMetadataBatchRequest;
 
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanFactory;
@@ -24,8 +24,6 @@ public interface DiskResourceAutoBeanFactory extends AutoBeanFactory {
     AutoBean<File> file();
 
     AutoBean<RootFolders> rootFolders();
-
-    AutoBean<DiskResourceMetadata> metadata();
 
     AutoBean<DiskResourceMetadataList> metadataList();
 
@@ -49,10 +47,6 @@ public interface DiskResourceAutoBeanFactory extends AutoBeanFactory {
 
     AutoBean<MetadataTemplate> getTemplate();
 
-    AutoBean<DiskResourceMetadataBatchRequest> metadataBatchRequest();
-
-    AutoBean<DiskResourceUserMetadata> userMetadata();
-
     AutoBean<DiskResourceFavorite> getFavortieFolder();
 
     AutoBean<DataLinkList> dataLinkList();
@@ -62,4 +56,6 @@ public interface DiskResourceAutoBeanFactory extends AutoBeanFactory {
     AutoBean<TemplateAttributeSelectionItem> templateAttributeSelectionItem();
 
     AutoBean<MetadataTemplate> metadataTemplate();
+
+    AutoBean<Avu> avu();
 }

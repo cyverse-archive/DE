@@ -30,9 +30,9 @@ public interface Avu extends HasId {
     String getCreatedBy();
 
     @PropertyName("attr")
-    void setAttr(String attribute);
+    void setAttribute(String attribute);
 
     @PropertyName("attr")
-    String getAttr();
+    String getAttribute();
 
 }

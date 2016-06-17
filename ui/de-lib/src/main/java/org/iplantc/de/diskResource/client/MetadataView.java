@@ -1,9 +1,7 @@
 package org.iplantc.de.diskResource.client;
 
-import java.util.List;
-
 import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
+import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceMetadataUpdateCallback;
 
@@ -12,8 +10,11 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.IsWidget;
 
+import java.util.List;
+
 /**
  * Created by jstroot on 2/10/15.
+ *
  * @author jstroot
  */
 public interface MetadataView extends IsWidget {
@@ -60,9 +61,9 @@ public interface MetadataView extends IsWidget {
 
         ImageResource deleteIcon();
 
-		String additionalMetadata();
+        String additionalMetadata();
 
-		String paramUnit();
+        String paramUnit();
 
         String selectTemplate();
 
@@ -76,23 +77,23 @@ public interface MetadataView extends IsWidget {
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter {
 
         interface Appearance {
-    		
-    		String templateListingError();
-    		
-    		String loadMetadataError();
-    		
-    		String saveMetadataError();
-    		
-    		String templateinfoError();
 
-			String selectTemplate();
+            String templateListingError();
 
-			String templates();
-			
-			String error();
-			
-			String incomplete();
-    	}
+            String loadMetadataError();
+
+            String saveMetadataError();
+
+            String templateinfoError();
+
+            String selectTemplate();
+
+            String templates();
+
+            String error();
+
+            String incomplete();
+        }
 
         DiskResource getSelectedResource();
 
@@ -102,7 +103,7 @@ public interface MetadataView extends IsWidget {
 
         void onSelectTemplate();
 
-        void onImport(List<DiskResourceMetadata> selectedItems);
+        void onImport(List<Avu> selectedItems);
 
         boolean isDirty();
     }
@@ -111,25 +112,25 @@ public interface MetadataView extends IsWidget {
     boolean isDirty();
 
     boolean isValid();
-    
-    List<DiskResourceMetadata> getAvus();
 
-    void loadMetadata(List<DiskResourceMetadata> metadataList);
+    List<Avu> getAvus();
 
-    void loadUserMetadata(List<DiskResourceMetadata> metadataList);
+    void loadMetadata(List<Avu> metadataList);
+
+    void loadUserMetadata(List<Avu> metadataList);
 
     void setPresenter(Presenter p);
-    
+
     void mask();
-    
+
     void unmask();
-    
-    void updateMetadataFromTemplateView(List<DiskResourceMetadata> metadataList);
 
-	List<DiskResourceMetadata> getUserMetadata();
+    void updateMetadataFromTemplateView(List<Avu> metadataList);
 
-    void addToUserMetadata(List<DiskResourceMetadata> umd);
+    List<Avu> getUserMetadata();
 
-    void removeImportedMetadataFromStore(List<DiskResourceMetadata> umd);
+    void addToUserMetadata(List<Avu> umd);
 
- }
+    void removeImportedMetadataFromStore(List<Avu> umd);
+
+}
