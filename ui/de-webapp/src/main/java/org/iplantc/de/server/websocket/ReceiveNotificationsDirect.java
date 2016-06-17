@@ -49,12 +49,10 @@ public class ReceiveNotificationsDirect {
             LOG.info("Amqp channel created!");
             return channel;
         } catch (IOException ioe) {
-            ioe.printStackTrace();
-            LOG.error("IO Exception when creating channel:" + ioe.getMessage());
+            LOG.error("IO Exception when creating channel", ioe);
             return null;
         } catch (Exception e) {
-            e.printStackTrace();
-            LOG.error("Exception when creating channel:" + e.getMessage());
+            LOG.error("Exception when creating channel", e);
             return null;
         }
     }
@@ -77,12 +75,10 @@ public class ReceiveNotificationsDirect {
             LOG.info("Binding complete");
             return queueName;
         } catch (IOException e) {
-            e.printStackTrace();
-            LOG.error("IO Exception when binding queue:" + e.getMessage());
+            LOG.error("IO Exception when binding queue",e);
             return null;
         } catch (Exception e) {
-            e.printStackTrace();
-            LOG.error("Exception when binding queue:" + e.getMessage());
+            LOG.error("Exception when binding queue", e);
             return null;
         }
 
@@ -101,11 +97,9 @@ public class ReceiveNotificationsDirect {
             msgChannel.basicConsume(queueName, true, consumer);
             LOG.info("comsumer reqistered ");
         } catch (IOException e) {
-            e.printStackTrace();
-            LOG.error("IO Exception when consuming message:" + e.getMessage());
+            LOG.error("IO Exception when consuming message",e);
         } catch (Exception e) {
-            e.printStackTrace();
-            LOG.error("Exception when consuming message:" + e.getMessage());
+            LOG.error("Exception when consuming message", e);
         }
     }
 

@@ -64,8 +64,7 @@ public abstract class MessageHandler extends WebSocketHandlerAdapter {
                         msgChannel.abort();
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
-                    logger.error("Exception aborting channel:" + e.getMessage());
+                    logger.error("Exception aborting channel",e);
 
                 }
             }
@@ -81,7 +80,7 @@ public abstract class MessageHandler extends WebSocketHandlerAdapter {
 
     @Override
     public void onError(WebSocket webSocket, WebSocketProcessor.WebSocketException t) {
-        logger.error("websocket connection error!" + t.getMessage());
+        logger.error("websocket connection error!",t);
     }
 
 
