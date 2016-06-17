@@ -1,8 +1,10 @@
 (ns metadata.services.templates
   (:use [clojure-commons.core :only [remove-nil-values]]
-        [korma.db :only [transaction]])
+        [korma.db :only [transaction]]
+        [ring.util.http-response :only [ok]])
   (:require [clojure-commons.assertions :as ca]
             [clojure.string :as string]
+            [clojure.tools.logging :as log]
             [metadata.persistence.templates :as tp]
             [metadata.util.csv :as csv]))
 
@@ -31,6 +33,15 @@
       :attributes
       (map (juxt :name :description :required :type #(if (:values %) (string/join ", " (map :value (:values %))) "")))
       (cons ["attribute name", "attribute description", "required (If you cannot provide,  enter 'not collected', 'not applicable' or 'missing'.)", "value type definition", "enum value options (you must enter one of these values)"]))))
+
+(defn csv-download-resp
+  [attachment filename body]
+  (log/warn attachment filename body)
+  (let [attachment? (or (nil? attachment) attachment)
+        disposition (str (if attachment? "attachment; " "") "filename=\"" filename "\"")]
+    (assoc (ok body)
+           :headers {"Content-Type" "text/csv; charset=utf-8"
+                     "Content-Disposition" disposition})))
 
 ;; This function alias relies on view-template's error checking to throw an exception if a template
 ;; with the given ID doesn't exist.

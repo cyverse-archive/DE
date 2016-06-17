@@ -1,5 +1,5 @@
 (ns metadata.routes.domain.template
-  (:use [common-swagger-api.schema :only [describe]])
+  (:use [common-swagger-api.schema :only [describe StandardUserQueryParams]])
   (:require [schema.core :as s]
             [metadata.persistence.templates :as tp])
   (:import [java.util Date UUID]))
@@ -105,3 +105,8 @@
 
    :name
    (describe String "The metadata template name")})
+
+(s/defschema CSVDownloadQueryParams
+  (assoc StandardUserQueryParams
+    (s/optional-key :attachment)
+    (describe Boolean "Download file contents as attachment. Default true.")))

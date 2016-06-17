@@ -35,20 +35,16 @@
         (ok (templates/view-template template-id)))
 
       (GET* "/blank-csv" []
-        :query [params StandardUserQueryParams]
+        :query [{:keys [attachment]} CSVDownloadQueryParams]
         :summary "Get a blank CSV template file for a metadata template."
         :description "This endpoint returns a CSV file suitable for a specific template, ready to be filled in with specific values. It's intended to be downloaded to be filled out by the user, then reuploaded for use with the bulk metadata endpoints."
-        (assoc (ok (templates/view-template-csv template-id))
-               :headers {"Content-Type" "text/csv; charset=utf-8"
-                         "Content-Disposition" "attachment; filename=\"metadata.csv\""}))
+        (templates/csv-download-resp attachment "metadata.csv" (templates/view-template-csv template-id)))
 
       (GET* "/guide-csv" []
-        :query [params StandardUserQueryParams]
+        :query [{:keys [attachment]} CSVDownloadQueryParams]
         :summary "Get a CSV guide file for a metadata template."
         :description "This endpoint returns a CSV file providing a guide for a specific template. It's intended to be downloaded to be used as a reference while filling out a file from the blank-csv endpoint for the same template."
-        (assoc (ok (templates/view-template-guide template-id))
-               :headers {"Content-Type" "text/csv; charset=utf-8"
-                         "Content-Disposition" "attachment; filename=\"guide.csv\""})))))
+        (templates/csv-download-resp attachment "guide.csv" (templates/view-template-guide template-id))))))
 
 (defroutes* admin-templates
   (context* "/admin/templates" []
