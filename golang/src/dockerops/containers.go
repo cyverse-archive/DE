@@ -263,10 +263,19 @@ func (d *Docker) DanglingImages() ([]string, error) {
 // This assumes that no authentication is required.
 func (d *Docker) Pull(name, tag string) error {
 	imageRef := fmt.Sprintf("%s:%s", name, tag)
+
 	body, err := d.Client.ImagePull(d.ctx, imageRef, types.ImagePullOptions{})
 	defer body.Close()
-	logcabin.Info.Print(body)
-	return err
+	if err != nil {
+		return err
+	}
+
+	_, err = io.Copy(os.Stdout, body)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func pathExists(p string) (bool, error) {
