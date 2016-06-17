@@ -154,6 +154,14 @@
   [template-id]
   (http/get (metadata-url "templates" template-id) (get-options)))
 
+(defn get-template-csv
+  [template-id]
+  (http/get (metadata-url "templates" template-id "blank-csv") (get-options)))
+
+(defn get-template-guide
+  [template-id]
+  (http/get (metadata-url "templates" template-id "guide-csv") (get-options)))
+
 (defn get-attribute
   [attr-id]
   (http/get (metadata-url "templates" "attr" attr-id) (get-options)))
