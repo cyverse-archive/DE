@@ -26,4 +26,4 @@ COPY run-nginx.sh /usr/local/bin/run-nginx.sh
 COPY nginx.conf.tmpl /templates/nginx.conf.tmpl
 COPY nginx.conf.dummy /etc/nginx/nginx.conf
 
-ENTRYPOINT ["codep", "/usr/local/bin/run-consul-template.sh", "/usr/local/bin/run-nginx.sh"]
+ENTRYPOINT ["prehook", "/usr/local/bin/run-consul-template.sh -once", "--", "codep", "/usr/local/bin/run-consul-template.sh", "/usr/local/bin/run-nginx.sh"]
