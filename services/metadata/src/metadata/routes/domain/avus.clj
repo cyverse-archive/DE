@@ -7,7 +7,7 @@
   (:require [schema.core :as s])
   (:import [java.util UUID]))
 
-(def AvuIdPathParam (describe UUID "The Metadata Template AVU's UUID"))
+(def AvuIdPathParam (describe UUID "The AVU's UUID"))
 (def AvuIdParam AvuIdPathParam)
 
 (s/defschema FilterByAvuParams
@@ -43,8 +43,7 @@
 
 (s/defschema AvuListRequest
   {:avus
-   (describe [AvuRequest]
-             "The AVUs to save for the target data item and to associate with the Metadata Template.")})
+   (describe [AvuRequest] "The AVUs to save for the target data item")})
 
 (s/defschema SetAvuRequest
   (->optional-param AvuListRequest :avus))

@@ -56,26 +56,26 @@
 
 
 (deftest update-avus-test
-    (let [test-avu {:id (uuid) :attr "x" :value "y" :unit "z"}
-          modified-avu (assoc test-avu :value "w")]
+  (let [test-avu {:id (uuid) :attr "x" :value "y" :unit "z"}
+        modified-avu (assoc test-avu :value "w")]
 
-      (testing "Add an AVU"
-        (update-avus test-user-id test-target-type test-target-id {:avus [test-avu]})
-        (is (= (list-avus->set) (set (conj (:avus test-metadata-avus) test-avu)))))
+    (testing "Add an AVU"
+      (update-avus test-user-id test-target-type test-target-id {:avus [test-avu]})
+      (is (= (list-avus->set) (set (conj (:avus test-metadata-avus) test-avu)))))
 
-      (testing "Update existing AVU without changes (noop)"
-        (update-avus test-user-id test-target-type test-target-id {:avus [(dissoc test-avu :id)]})
-        (is (= (list-avus->set) (set (conj (:avus test-metadata-avus) test-avu)))))
+    (testing "Update existing AVU without changes (noop)"
+      (update-avus test-user-id test-target-type test-target-id {:avus [(dissoc test-avu :id)]})
+      (is (= (list-avus->set) (set (conj (:avus test-metadata-avus) test-avu)))))
 
-      (testing "Exception from adding duplicate AVU"
-        (is (thrown-with-msg? org.postgresql.util.PSQLException
-                              #"duplicate key value violates unique constraint"
-                              (update-avus test-user-id test-target-type test-target-id
-                                           {:avus [(assoc test-avu :id (uuid))]}))))
+    (testing "Exception from adding duplicate AVU"
+      (is (thrown-with-msg? org.postgresql.util.PSQLException
+                            #"duplicate key value violates unique constraint"
+                            (update-avus test-user-id test-target-type test-target-id
+                                         {:avus [(assoc test-avu :id (uuid))]}))))
 
-      (testing "Update existing AVU with changes"
-        (update-avus test-user-id test-target-type test-target-id {:avus [modified-avu]})
-        (is (= (list-avus->set) (set (conj (:avus test-metadata-avus) modified-avu)))))))
+    (testing "Update existing AVU with changes"
+      (update-avus test-user-id test-target-type test-target-id {:avus [modified-avu]})
+      (is (= (list-avus->set) (set (conj (:avus test-metadata-avus) modified-avu)))))))
 
 
 (deftest set-avus-test
