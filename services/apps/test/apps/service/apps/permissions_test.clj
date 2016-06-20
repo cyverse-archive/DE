@@ -72,6 +72,22 @@
             :type        "executable"
             :version     "0.0.1"}]})
 
+(def pipeline-definition
+  {:mappings    [{:map         {(uuidify "13914010-89cd-406d-99c3-9c4ff8b023c3")
+                                (uuidify "13914010-89cd-406d-99c3-9c4ff8b023c3")}
+                  :source_step 0
+                  :target_step 1}]
+   :steps       [{:name        "DE Word Count"
+                  :description "Counts the number of words in a file."
+                  :app_type    "DE"
+                  :task_id     (uuidify "1ac31629-231a-4090-b3b4-63ee078a0c37")}
+                 {:name        "DE Word Count"
+                  :description "Counts the number of words in a file."
+                  :app_type    "DE"
+                  :task_id     (uuidify "1ac31629-231a-4090-b3b4-63ee078a0c37")}]
+   :name        "Word Count Inception"
+   :description "Counts the number of words in a word count."})
+
 (def ^:dynamic test-app nil)
 (def ^:dynamic public-apps nil)
 (def ^:dynamic beta-apps nil)
@@ -84,6 +100,11 @@
    (let [app (apps/add-app user (assoc app-definition :name name))]
      (apps/owner-add-app-docs user (:id app) {:documentation "This is a test."})
      app)))
+
+(defn create-pipeline
+  [user]
+  (sql/delete :apps (sql/where {:name (:name pipeline-definition)}))
+  (apps/add-pipeline user pipeline-definition))
 
 (defn with-test-app [f]
   (binding [test-app (create-test-app (get-user :testde1))]
@@ -514,3 +535,29 @@
     (is (seq (:resources (pc/list-resources (config/permissions-client) {:resource_name (:id app)}))))
     (apps/permanently-delete-apps user {:app_ids [(:id app)]})
     (is (empty? (:resources (pc/list-resources (config/permissions-client) {:resource_name (:id app)}))))))
+
+(defn- favorite? [user app-id]
+  (let [faves-id (:id (get-category user "Favorite Apps"))]
+    (->> (:apps (apps/list-apps-in-category user faves-id {}))
+         (filter (comp (partial = app-id) :id))
+         seq)))
+
+(deftest test-shared-favorites
+  (let [{username :shortUsername :as user} (get-user :testde2)]
+    (pc/grant-permission (config/permissions-client) "app" (:id test-app) "user" username "read")
+    (apps/add-app-favorite user (:id test-app))
+    (is (favorite? user (:id test-app)))
+    (pc/revoke-permission (config/permissions-client) "app" (:id test-app) "user" username)
+    (is (not (favorite? user (:id test-app))))))
+
+(deftest test-public-app-labels-update
+  (let [{username :shortUsername :as user} (get-user :testde1)]
+    (sql/delete :app_documentation (sql/where {:app_id (:id test-app)}))
+    (apps/make-app-public user test-app)
+    (is (check-edit-app-docs user))))
+
+(deftest test-create-pipeline
+  (let [{username :shortUsername :as user} (get-user :testde1)
+        pipeline                           (create-pipeline user)]
+    (is (has-permission? "app" (:id pipeline) "user" username "own"))
+    (apps/permanently-delete-apps user {:app_ids [(:id pipeline)]})))
