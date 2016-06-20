@@ -1,6 +1,6 @@
 package org.iplantc.de.client.services.impl;
 
-import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.shared.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;

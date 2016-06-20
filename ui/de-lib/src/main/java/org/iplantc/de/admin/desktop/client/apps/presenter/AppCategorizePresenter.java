@@ -1,7 +1,7 @@
 package org.iplantc.de.admin.desktop.client.apps.presenter;
 
 import org.iplantc.de.admin.apps.client.AppCategorizeView;
-import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.shared.DEProperties;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
 

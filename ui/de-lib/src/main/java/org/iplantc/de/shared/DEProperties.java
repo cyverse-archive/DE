@@ -1,5 +1,7 @@
-package org.iplantc.de.client.models;
+package org.iplantc.de.shared;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("nls")
@@ -211,6 +213,27 @@ public class DEProperties {
     }
 
     /**
+     * list of properties UI needs
+     *
+     * @return list of properties
+     */
+    public List<String> getPropertyList() {
+        List<String> keys = new ArrayList<>();
+        keys.add("org.iplantc.communitydata.path");
+        keys.add("org.iplantc.pathList.fileIdentifier");
+        keys.add("org.iplantc.discoveryenvironment.muleServiceBaseUrl");
+        keys.add("org.iplantc.services.de-data-mgmt.base");
+        keys.add("org.iplantc.services.permIdRequests");
+        keys.add("org.iplantc.services.permIdRequests");
+        keys.add( "org.iplantc.services.admin.de-data-mgmt.base");
+        keys.add("org.iplantc.services.file-io.base.secured");
+        keys.add("org.iplantc.discoveryenvironment.notifications.poll-interval");
+        keys.add("org.iplantc.discoveryenvironment.contextMenu.enabled");
+        keys.add("org.iplantc.communitydata.path");
+        return keys;
+    }
+
+    /**
      * Initializes this class from the given set of properties.
      *
      * @param properties the properties that were fetched from the server.
@@ -361,6 +384,5 @@ public class DEProperties {
     public String getPermIdBaseUrl() {
         return permIdBaseUrl;
     }
-
 
 }

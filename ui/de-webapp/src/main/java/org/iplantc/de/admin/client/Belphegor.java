@@ -2,7 +2,7 @@ package org.iplantc.de.admin.client;
 
 import org.iplantc.de.admin.client.gin.BelphegorAppInjector;
 import org.iplantc.de.admin.desktop.client.views.BelphegorView;
-import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.shared.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
