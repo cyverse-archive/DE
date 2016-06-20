@@ -11,6 +11,7 @@ import (
 
 	"golang.org/x/net/context"
 
+	"github.com/docker/docker/pkg/stdcopy"
 	"github.com/docker/engine-api/client"
 	"github.com/docker/engine-api/types"
 	"github.com/docker/engine-api/types/container"
@@ -119,6 +120,11 @@ func (d *Docker) ContainersWithLabel(key, value string, all bool) ([]string, err
 
 // NukeContainer kills the container with the provided id.
 func (d *Docker) NukeContainer(id string) error {
+	fmt.Printf("Nuking container %s", id)
+	err := d.Client.ContainerRename(d.ctx, id, fmt.Sprintf("remove-%s", id))
+	if err != nil {
+		return err
+	}
 	return d.Client.ContainerRemove(d.ctx, id, types.ContainerRemoveOptions{
 		RemoveVolumes: true,
 		RemoveLinks:   true,
@@ -409,45 +415,40 @@ func (d *Docker) CreateContainerFromStep(step *model.Step, invID string) (string
 	return response.ID, err
 }
 
-// Attach will attach to a container and copy the stream output to writer.
-func (d *Docker) Attach(containerID string, stdout, stderr bool, writer io.Writer) error {
+// Attach will attach to a container and copy the stream output to writer. Returns an exit channel..
+func (d *Docker) Attach(containerID string, outputWriter, errorWriter io.Writer) error {
 	resp, err := d.Client.ContainerAttach(
 		d.ctx,
 		containerID,
 		types.ContainerAttachOptions{
 			Stream: true,
-			Stdout: stdout,
-			Stderr: stderr,
+			Stdout: true,
+			Stderr: true,
 		},
 	)
+
 	if err != nil {
 		return err
 	}
 
 	go func() {
-		var (
-			written int64
-			err     error
-		)
-		if written, err = io.Copy(writer, resp.Reader); err != nil {
+		defer resp.Close()
+		var err error
+		if _, err = stdcopy.StdCopy(outputWriter, errorWriter, resp.Reader); err != nil {
 			logcabin.Error.Print(err)
 		}
-		logcabin.Info.Printf("wrote %d", written)
 	}()
 
 	return nil
 }
 
 func (d *Docker) runContainer(containerID string, stdout, stderr io.Writer) (int, error) {
-	var err error
+	var (
+		err      error
+		exitCode int
+	)
 
-	//attach to stdout
-	if err = d.Attach(containerID, true, false, stdout); err != nil {
-		return -1, err
-	}
-
-	//attach to stderr
-	if err = d.Attach(containerID, false, true, stderr); err != nil {
+	if err = d.Attach(containerID, stdout, stderr); err != nil {
 		return -1, err
 	}
 
@@ -457,7 +458,11 @@ func (d *Docker) runContainer(containerID string, stdout, stderr io.Writer) (int
 	}
 
 	//wait for container to exit
-	return d.Client.ContainerWait(d.ctx, containerID)
+	if exitCode, err = d.Client.ContainerWait(d.ctx, containerID); err != nil {
+		return exitCode, err
+	}
+
+	return exitCode, err
 }
 
 // RunStep will run the steps in a job. If a step fails, the function will

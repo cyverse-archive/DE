@@ -14,6 +14,7 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/docker/engine-api/types/container"
+	"github.com/docker/engine-api/types/strslice"
 	"github.com/olebedev/config"
 )
 
@@ -30,7 +31,7 @@ func shouldrun() bool {
 }
 
 func uri() string {
-	return "http://dind:2375"
+	return "tcp://dind:2375"
 }
 
 func JSONData() ([]byte, error) {
@@ -144,7 +145,10 @@ func TestCreateIsContainerAndNukeByName(t *testing.T) {
 		t.Error(err)
 	}
 	if exists {
-		dc.NukeContainerByName(job.Steps[0].Component.Container.Name)
+		err = dc.NukeContainerByName(job.Steps[0].Component.Container.Name)
+		if err != nil {
+			t.Error(err)
+		}
 	}
 
 	// Create the container we actually want to test against
@@ -219,11 +223,11 @@ func TestCreateIsContainerAndNukeByName(t *testing.T) {
 
 	expectedConfig := container.LogConfig{Type: "none"}
 	actualConfig := containerJSON.HostConfig.LogConfig
-	if !reflect.DeepEqual(actualConfig, expectedConfig) {
-		t.Errorf("HostConfig.LogConfig was %#v instead of %#v\n", actualConfig, expectedConfig)
+	if expectedConfig.Type != actualConfig.Type {
+		t.Errorf("HostConfig.LogConfig was %s instead of %s", actualConfig.Type, expectedConfig.Type)
 	}
 
-	expectedList := []string{"This is a test"}
+	expectedList := strslice.StrSlice{"This is a test"}
 	actualList := containerJSON.Config.Cmd
 	if !reflect.DeepEqual(expectedList, actualList) {
 		t.Errorf("Config.Cmd was:\n\t%#v\ninstead of:\n\t%#v\n", actualList, expectedList)
@@ -269,14 +273,16 @@ func TestCreateDownloadContainer(t *testing.T) {
 		t.Error(err)
 	}
 
-	cName := fmt.Sprintf("input-0-%s", job.InvocationID)
+	cName := fmt.Sprintf("/input-0-%s", job.InvocationID)
 	exists, err := dc.IsContainer(cName)
 	if err != nil {
 		t.Error(err)
 	}
 
 	if exists {
-		dc.NukeContainerByName(cName)
+		if err = dc.NukeContainerByName(cName); err != nil {
+			t.Error(err)
+		}
 	}
 
 	containerID, err := dc.CreateDownloadContainer(job, &job.Steps[0].Config.Inputs[0], "0")
@@ -306,7 +312,7 @@ func TestCreateDownloadContainer(t *testing.T) {
 	}
 
 	expectedList := job.Steps[0].Config.Inputs[0].Arguments(job.Submitter, job.FileMetadata)
-	actualList := containerJSON.Config.Cmd
+	actualList := []string(containerJSON.Config.Cmd)
 	if !reflect.DeepEqual(actualList, expectedList) {
 		t.Errorf("Cmd was:\n%#v\ninstead of:\n%#v\n", actualList, expectedList)
 	}
@@ -338,7 +344,7 @@ func TestCreateDownloadContainer(t *testing.T) {
 
 	expectedLogConfig := container.LogConfig{Type: "none"}
 	actualLogConfig := containerJSON.HostConfig.LogConfig
-	if !reflect.DeepEqual(actualLogConfig, expectedLogConfig) {
+	if actualLogConfig.Type != expectedLogConfig.Type {
 		t.Errorf("LogConfig was:\n%#v\ninstead of:\n%#v\n", actualLogConfig, expectedLogConfig)
 	}
 }
@@ -365,7 +371,7 @@ func TestCreateUploadContainer(t *testing.T) {
 		t.Error(err)
 	}
 
-	containerName := fmt.Sprintf("output-%s", job.InvocationID)
+	containerName := fmt.Sprintf("/output-%s", job.InvocationID)
 	exists, err := dc.IsContainer(containerName)
 	if err != nil {
 		t.Error(err)
@@ -401,7 +407,7 @@ func TestCreateUploadContainer(t *testing.T) {
 	}
 
 	expectedList := job.FinalOutputArguments()
-	actualList := containerJSON.Config.Cmd
+	actualList := []string(containerJSON.Config.Cmd)
 	if !reflect.DeepEqual(actualList, expectedList) {
 		t.Errorf("Cmd was:\n%#v\ninstead of:\n%#v\n", actualList, expectedList)
 	}
@@ -433,7 +439,7 @@ func TestCreateUploadContainer(t *testing.T) {
 
 	expectedLogConfig := container.LogConfig{Type: "none"}
 	actualLogConfig := containerJSON.HostConfig.LogConfig
-	if !reflect.DeepEqual(actualLogConfig, expectedLogConfig) {
+	if actualLogConfig.Type != expectedLogConfig.Type {
 		t.Errorf("LogConfig was:\n%#v\ninstead of:\n%#v\n", actualLogConfig, expectedLogConfig)
 	}
 }
@@ -461,7 +467,9 @@ func TestAttach(t *testing.T) {
 	}
 
 	if exists {
-		dc.NukeContainerByName(job.Steps[0].Component.Container.Name)
+		if err = dc.NukeContainerByName(job.Steps[0].Component.Container.Name); err != nil {
+			t.Error(err)
+		}
 	}
 
 	containerID, err := dc.CreateContainerFromStep(&job.Steps[0], job.InvocationID)
@@ -472,12 +480,7 @@ func TestAttach(t *testing.T) {
 	stdout := bytes.NewBufferString("")
 	stderr := bytes.NewBufferString("")
 
-	err = dc.Attach(containerID, true, false, stdout)
-	if err != nil {
-		t.Error(err)
-	}
-
-	err = dc.Attach(containerID, false, true, stderr)
+	err = dc.Attach(containerID, stdout, stderr)
 	if err != nil {
 		t.Error(err)
 	}
@@ -542,15 +545,15 @@ func TestRunStep(t *testing.T) {
 		t.Error(err)
 	}
 
-	expected := "This is a test"
-	actualBytes, err := ioutil.ReadFile(job.Steps[0].Stdout("0"))
+	expected := []byte("This is a test")
+	actual, err := ioutil.ReadFile(job.Steps[0].Stdout("0"))
 	if err != nil {
 		t.Error(err)
 	}
 
-	actual := strings.TrimSpace(string(actualBytes))
-	if !reflect.DeepEqual(actual, expected) {
-		t.Errorf("stdout contained '%s' instead of '%s'\n", string(actual), string(expected))
+	actual = bytes.TrimSpace(actual)
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("stdout contained '%s' instead of '%s'\n", actual, expected)
 	}
 
 	err = os.RemoveAll("logs")
@@ -629,18 +632,18 @@ func TestDownloadInputs(t *testing.T) {
 		t.Error(err)
 	}
 
-	expected := strings.Join(
+	expected := []byte(strings.Join(
 		job.Steps[0].Config.Inputs[0].Arguments(job.Submitter, job.FileMetadata),
 		" ",
-	)
+	))
 
 	actualBytes, err := ioutil.ReadFile(job.Steps[0].Config.Inputs[0].Stdout("0"))
 	if err != nil {
 		t.Error(err)
 	}
 
-	actual := strings.TrimSpace(string(actualBytes))
-	if !reflect.DeepEqual(actual, expected) {
+	actual := bytes.TrimSpace(actualBytes)
+	if !bytes.Equal(actual, expected) {
 		t.Errorf("stdout contained '%s' instead of '%s'\n", string(actual), string(expected))
 	}
 
@@ -720,18 +723,20 @@ func TestUploadOutputs(t *testing.T) {
 		t.Error(err)
 	}
 
-	expected := strings.Join(
+	expected := []byte(strings.Join(
 		job.FinalOutputArguments(),
 		" ",
-	)
+	))
+
+	fmt.Printf("%s\n", expected)
 
 	actualBytes, err := ioutil.ReadFile("logs/logs-stdout-output")
 	if err != nil {
 		t.Error(err)
 	}
 
-	actual := strings.TrimSpace(string(actualBytes))
-	if !reflect.DeepEqual(actual, expected) {
+	actual := bytes.TrimSpace(actualBytes)
+	if !bytes.Equal(actual, expected) {
 		t.Errorf("stdout contained '%s' instead of '%s'\n", string(actual), string(expected))
 	}
 
@@ -778,10 +783,10 @@ func TestCreateDataContainer(t *testing.T) {
 	}
 
 	vf := &model.VolumesFrom{
-		Name:          "discoenv/echo",
+		Name:          "alpine",
 		NamePrefix:    "echo-test",
 		Tag:           "latest",
-		URL:           "https://hub.docker.com/r/discoenv/echo/",
+		URL:           "https://hub.docker.com/r/alpine/",
 		ReadOnly:      false,
 		HostPath:      "/tmp",
 		ContainerPath: "/test",
