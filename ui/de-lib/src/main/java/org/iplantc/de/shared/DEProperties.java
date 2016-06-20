@@ -11,12 +11,14 @@ public class DEProperties {
     /**
      * The base URL used to access the Mule services.
      */
-    private static final String MULE_SERVICE_BASE_URL = "org.iplantc.discoveryenvironment.muleServiceBaseUrl";
+    private static final String MULE_SERVICE_BASE_URL =
+            "org.iplantc.discoveryenvironment.muleServiceBaseUrl";
 
     /**
      * The base URL used to access the Mule services.
      */
-    private static final String UNPROTECTED_MULE_SERVICE_BASE_URL = "org.iplantc.discoveryenvironment.unprotectedMuleServiceBaseUrl";
+    private static final String UNPROTECTED_MULE_SERVICE_BASE_URL =
+            "org.iplantc.discoveryenvironment.unprotectedMuleServiceBaseUrl";
 
     /**
      * Properties key of the base URL of the data management services.
@@ -27,11 +29,11 @@ public class DEProperties {
 
     /**
      * Perm Id request
-     * 
      */
     private static final String PERM_REQUEST_BASE_URL = "org.iplantc.services.permIdRequests";
 
-    private static final String DATA_MGMT_ADMIN_BASE_URL = "org.iplantc.services.admin.de-data-mgmt.base";
+    private static final String DATA_MGMT_ADMIN_BASE_URL =
+            "org.iplantc.services.admin.de-data-mgmt.base";
 
     /**
      * Properties key of the base URL of the file I/O services.
@@ -41,12 +43,14 @@ public class DEProperties {
     /**
      * Properties key of the notification polling interval
      */
-    private static final String NOTIFICATION_POLL_INTERVAL = "org.iplantc.discoveryenvironment.notifications.poll-interval";
+    private static final String NOTIFICATION_POLL_INTERVAL =
+            "org.iplantc.discoveryenvironment.notifications.poll-interval";
 
     /**
      * Properties key of the context click enabled option
      */
-    private static final String CONTEXT_CLICK_ENABLED = "org.iplantc.discoveryenvironment.contextMenu.enabled";
+    private static final String CONTEXT_CLICK_ENABLED =
+            "org.iplantc.discoveryenvironment.contextMenu.enabled";
 
     /**
      * The prefix used in each of the private workspace property names.
@@ -71,7 +75,8 @@ public class DEProperties {
     /**
      * Properties key of the default Beta Category ID.
      */
-    private static final String DEFAULT_TRASH_CATEGORY_ID = WORKSPACE_PREFIX + "defaultTrashAppCategoryId";
+    private static final String DEFAULT_TRASH_CATEGORY_ID =
+            WORKSPACE_PREFIX + "defaultTrashAppCategoryId";
 
     /**
      * The prefix used for each of the keepalive configuration parameters.
@@ -91,7 +96,6 @@ public class DEProperties {
 
     /**
      * Default community data folder path
-     * 
      */
     private static final String COMMUNITY_DATA_PATH = "org.iplantc.communitydata.path";
 
@@ -132,7 +136,6 @@ public class DEProperties {
 
     /**
      * private workspace items
-     *
      */
     private String privateWorkspaceItems;
 
@@ -144,7 +147,6 @@ public class DEProperties {
     private String defaultTrashCategoryId;
 
     private String pathListFileIdentifier;
-
 
 
     public String getPathListFileIdentifier() {
@@ -175,20 +177,9 @@ public class DEProperties {
         return unproctedMuleServiceBaseUrl;
     }
 
-    /**
-     * The target URL that we use for keepalive requests.
-     */
-    private String keepaliveTarget;
 
     /**
-     * The number of minutes between keepalive requests.
-     */
-    private int keepaliveInterval;
-
-    /**
-     * 
      * Community data path
-     * 
      */
     private String communityDataPath;
 
@@ -225,7 +216,7 @@ public class DEProperties {
         keys.add("org.iplantc.services.de-data-mgmt.base");
         keys.add("org.iplantc.services.permIdRequests");
         keys.add("org.iplantc.services.permIdRequests");
-        keys.add( "org.iplantc.services.admin.de-data-mgmt.base");
+        keys.add("org.iplantc.services.admin.de-data-mgmt.base");
         keys.add("org.iplantc.services.file-io.base.secured");
         keys.add("org.iplantc.discoveryenvironment.notifications.poll-interval");
         keys.add("org.iplantc.discoveryenvironment.contextMenu.enabled");
@@ -250,8 +241,6 @@ public class DEProperties {
         defaultTrashCategoryId = properties.get(DEFAULT_TRASH_CATEGORY_ID);
         contextClickEnabled = getBoolean(properties, CONTEXT_CLICK_ENABLED, false);
         notificationPollInterval = getInt(properties, NOTIFICATION_POLL_INTERVAL, 60);
-        keepaliveTarget = properties.get(KEEPALIVE_TARGET);
-        keepaliveInterval = getInt(properties, KEEPALIVE_INTERVAL, -1);
         pathListFileIdentifier = properties.get(PATH_LIST_FILE_IDENTIFIER);
         communityDataPath = properties.get(COMMUNITY_DATA_PATH);
         permIdBaseUrl = properties.get(PERM_ID_BASE_URL);
@@ -260,8 +249,8 @@ public class DEProperties {
     /**
      * Obtains a boolean property value.
      *
-     * @param properties the property map.
-     * @param name the name of the property.
+     * @param properties   the property map.
+     * @param name         the name of the property.
      * @param defaultValue the default value to use.
      * @return the property value or its default value.
      */
@@ -276,8 +265,8 @@ public class DEProperties {
     /**
      * Obtains an integer property value.
      *
-     * @param properties the property map.
-     * @param name the name of the property.
+     * @param properties   the property map.
+     * @param name         the name of the property.
      * @param defaultValue the default value to use.
      * @return the property value or its default value.
      */
@@ -358,27 +347,11 @@ public class DEProperties {
         return defaultTrashCategoryId;
     }
 
-    /**
-     * @return the URL that we use for keepalive requests.
-     */
-    public String getKeepaliveTarget() {
-        return keepaliveTarget;
-    }
-
-    /**
-     * @return the number of minutes between keepalive requests.
-     */
-    public int getKeepaliveInterval() {
-        return keepaliveInterval;
-    }
-
     public String getCommunityDataPath() {
         return communityDataPath;
     }
 
     /**
-     * 
-     * 
      * @return
      */
     public String getPermIdBaseUrl() {
