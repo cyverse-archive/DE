@@ -1,6 +1,6 @@
 package org.iplantc.de.theme.base.client.apps.cells;
 
-import org.iplantc.de.apps.client.views.grid.cells.AppHyperlinkCell;
+import org.iplantc.de.apps.client.views.grid.cells.AppNameCell;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.theme.base.client.apps.AppSearchHighlightAppearance;
@@ -19,16 +19,18 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 /**
  * @author jstroot
  */
-public class AppHyperlinkCellDefaultAppearance implements AppHyperlinkCell.AppHyperlinkCellAppearance {
+public class AppNameCellDefaultAppearance implements AppNameCell.AppNameCellAppearance {
 
     public interface MyCss extends CssResource {
+        String appHyperlinkName();
+
         String appName();
 
         String appDisabled();
     }
 
     public interface Resources extends ClientBundle {
-        @Source("AppHyperlinkCell.css")
+        @Source("AppNameCell.css")
         MyCss css();
     }
 
@@ -47,7 +49,7 @@ public class AppHyperlinkCellDefaultAppearance implements AppHyperlinkCell.AppHy
     private final AppsMessages appsMessages;
     private final AppSearchHighlightAppearance highlightAppearance;
 
-    public AppHyperlinkCellDefaultAppearance() {
+    public AppNameCellDefaultAppearance() {
         this(GWT.<Templates> create(Templates.class),
              GWT.<Resources> create(Resources.class),
              GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class),
@@ -55,11 +57,11 @@ public class AppHyperlinkCellDefaultAppearance implements AppHyperlinkCell.AppHy
              GWT.<AppSearchHighlightAppearance> create(AppSearchHighlightAppearance.class));
     }
 
-    AppHyperlinkCellDefaultAppearance(final Templates templates,
-                                      final Resources resources,
-                                      final IplantDisplayStrings iplantDisplayStrings,
-                                      final AppsMessages appsMessages,
-                                      final AppSearchHighlightAppearance highlightAppearance) {
+    AppNameCellDefaultAppearance(final Templates templates,
+                                 final Resources resources,
+                                 final IplantDisplayStrings iplantDisplayStrings,
+                                 final AppsMessages appsMessages,
+                                 final AppSearchHighlightAppearance highlightAppearance) {
         this.templates = templates;
         this.resources = resources;
         this.iplantDisplayStrings = iplantDisplayStrings;
@@ -74,8 +76,8 @@ public class AppHyperlinkCellDefaultAppearance implements AppHyperlinkCell.AppHy
     }
 
     @Override
-    public String appNameClass() {
-        return resources.css().appName();
+    public String appHyperlinkNameClass() {
+        return resources.css().appHyperlinkName();
     }
 
     @Override

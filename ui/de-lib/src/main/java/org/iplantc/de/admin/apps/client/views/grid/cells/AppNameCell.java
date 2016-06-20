@@ -1,6 +1,5 @@
 package org.iplantc.de.admin.apps.client.views.grid.cells;
 
-import org.iplantc.de.apps.client.views.grid.cells.AppHyperlinkCell;
 import org.iplantc.de.client.models.apps.App;
 
 import com.google.gwt.cell.client.Cell;
@@ -10,9 +9,9 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 /**
  * @author jstroot
  */
-public class AppNameCell extends AppHyperlinkCell {
+public class AppNameCell extends org.iplantc.de.apps.client.views.grid.cells.AppNameCell {
 
-    public interface AppNameCellAppearance extends AppHyperlinkCellAppearance {
+    public interface AppNameCellAppearance extends org.iplantc.de.apps.client.views.grid.cells.AppNameCell.AppNameCellAppearance {
 
         String editApp();
 

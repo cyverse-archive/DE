@@ -1,10 +1,11 @@
 package org.iplantc.de.apps.client.views.grid.cells;
 
+import static com.google.gwt.dom.client.BrowserEvents.CLICK;
+
 import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
 import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.apps.App;
 
-import static com.google.gwt.dom.client.BrowserEvents.CLICK;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
@@ -23,14 +24,14 @@ import com.google.gwt.user.client.Event;
  * @author jstroot
  * 
  */
-public class AppHyperlinkCell extends AbstractCell<App> {
+public class AppNameCell extends AbstractCell<App> {
 
-    public interface AppHyperlinkCellAppearance {
+    public interface AppNameCellAppearance {
         String ELEMENT_NAME = "appName";
 
         String appDisabledClass();
 
-        String appNameClass();
+        String appHyperlinkNameClass();
 
         String appUnavailable();
 
@@ -41,16 +42,16 @@ public class AppHyperlinkCell extends AbstractCell<App> {
     }
 
     protected final AppFavoriteCell favoriteCell = new AppFavoriteCell();
-    private final AppHyperlinkCellAppearance appearance;
+    private final AppNameCellAppearance appearance;
     private String baseID;
     private HasHandlers hasHandlers;
     protected String pattern;
 
-    public AppHyperlinkCell() {
-        this(GWT.<AppHyperlinkCellAppearance> create(AppHyperlinkCellAppearance.class));
+    public AppNameCell() {
+        this(GWT.<AppNameCellAppearance> create(AppNameCellAppearance.class));
     }
 
-    public AppHyperlinkCell(final AppHyperlinkCellAppearance appearance) {
+    public AppNameCell(final AppNameCellAppearance appearance) {
         super(CLICK);
         this.appearance = appearance;
     }
@@ -63,7 +64,7 @@ public class AppHyperlinkCell extends AbstractCell<App> {
         favoriteCell.render(context, value, sb);
         String textClassName, textToolTip;
         if (!value.isDisabled()) {
-            textClassName = appearance.appNameClass();
+            textClassName = appearance.appHyperlinkNameClass();
             textToolTip = appearance.run();
         } else {
             textClassName = appearance.appDisabledClass();
@@ -118,7 +119,7 @@ public class AppHyperlinkCell extends AbstractCell<App> {
 
             if (Element.is(childNode)) {
                 Element child = Element.as(childNode);
-                if (child.getAttribute("name").equalsIgnoreCase(AppHyperlinkCellAppearance.ELEMENT_NAME)) { //$NON-NLS-1$
+                if (child.getAttribute("name").equalsIgnoreCase(AppNameCellAppearance.ELEMENT_NAME)) { //$NON-NLS-1$
                     return child;
                 }
             }

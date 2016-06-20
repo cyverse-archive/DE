@@ -36,8 +36,8 @@
         <when-type-is class="org.iplantc.de.apps.client.views.grid.cells.AppFavoriteCell.AppFavoriteCellAppearance"/>
     </replace-with>
 
-    <replace-with class="org.iplantc.de.theme.base.client.apps.cells.AppHyperlinkCellDefaultAppearance">
-        <when-type-is class="org.iplantc.de.apps.client.views.grid.cells.AppHyperlinkCell.AppHyperlinkCellAppearance"/>
+    <replace-with class="org.iplantc.de.theme.base.client.apps.cells.AppNameCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.apps.client.views.grid.cells.AppNameCell.AppNameCellAppearance"/>
     </replace-with>
 
     <replace-with class="org.iplantc.de.theme.base.client.apps.cells.AppInfoCellDefaultAppearance">
