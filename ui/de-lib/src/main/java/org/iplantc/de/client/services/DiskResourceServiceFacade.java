@@ -7,9 +7,7 @@ import org.iplantc.de.client.models.dataLink.DataLink;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceExistMap;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadataList;
-import org.iplantc.de.client.models.diskResources.DiskResourceUserMetadata;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.MetadataTemplate;
@@ -174,14 +172,12 @@ public interface DiskResourceServiceFacade {
      * Calls service to set disk resource metadata.
      * 
      * @param resource the <code>DiskResource</code> whose metadata will be updated
-     * @param metadata the <code>DiskResourceMetadataTemplate</code> to save
-     * @param irodsAvus the <code>DiskResourceMetadata</code> to save
+     * @param  mdList metadata list
      * @param callback executed when the service call completes.
      */
     void setDiskResourceMetaData(DiskResource resource,
-                                 DiskResourceUserMetadata metadata,
-                                 List<DiskResourceMetadata> irodsAvus,
-                                 AsyncCallback<String> callback);
+                                DiskResourceMetadataList mdList,
+                                AsyncCallback<String> callback);
 
     /**
      * 

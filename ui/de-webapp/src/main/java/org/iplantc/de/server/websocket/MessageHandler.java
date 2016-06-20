@@ -41,9 +41,9 @@ public abstract class MessageHandler extends WebSocketHandlerAdapter {
     @Override
     public void onOpen(WebSocket webSocket) throws IOException {
         notificationReceiver = new ReceiveNotificationsDirect();
-        logger.info("^^^^^^^^^Web socket connection opened!^^^^^");
+        logger.info("Web socket connection opened!");
         String username = getUserName(webSocket);
-        logger.info("**************user info***********" + username);
+        logger.info("user name:" + username);
 
         final Channel msgChannel = notificationReceiver.createChannel();
         String queue = bindQueue(username, msgChannel);
@@ -53,10 +53,10 @@ public abstract class MessageHandler extends WebSocketHandlerAdapter {
             @Override
             public void onDisconnect(AtmosphereResourceEvent event) {
                 if (event.isCancelled()) {
-                    logger.error("unexpectedly disconnected",
+                    logger.info("Unexpectedly disconnected",
                                  event.getResource().uuid());
                 } else if (event.isClosedByClient()) {
-                    logger.error("client closed the connection",
+                    logger.info("Client closed the connection",
                                  event.getResource().uuid());
                 }
                 try {
@@ -64,8 +64,7 @@ public abstract class MessageHandler extends WebSocketHandlerAdapter {
                         msgChannel.abort();
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
-                    logger.error("^^^^^^^^^^^ exception aborting channel! ^^^^^^^^");
+                    logger.error("Exception aborting channel",e);
 
                 }
             }
@@ -76,12 +75,12 @@ public abstract class MessageHandler extends WebSocketHandlerAdapter {
 
     @Override
     public void onClose(WebSocket webSocket) {
-        logger.info("^^^^^^^^^connection closed!^^^^^");
+        logger.info("connection closed!");
     }
 
     @Override
     public void onError(WebSocket webSocket, WebSocketProcessor.WebSocketException t) {
-        logger.error("^^^^^^^^^websocket connection error!^^^^^");
+        logger.error("websocket connection error!",t);
     }
 
 

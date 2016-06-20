@@ -7,7 +7,7 @@ import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
 import java.util.Collections;
 import java.util.List;
 
-import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.shared.DEProperties;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.notifications.Counts;

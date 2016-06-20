@@ -40,6 +40,7 @@
             [test2junit "1.1.3"]
             [jonase/eastwood "0.2.3"]]
   :profiles {:dev {:resource-paths ["conf/test"]}}
+  :repl-options {:timeout 120000}
   ;; compojure-api route macros should not be AOT compiled:
   ;; https://github.com/metosin/compojure-api/issues/135#issuecomment-121388539
   ;; https://github.com/metosin/compojure-api/issues/102

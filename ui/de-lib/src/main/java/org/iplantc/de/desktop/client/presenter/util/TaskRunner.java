@@ -1,6 +1,6 @@
 package org.iplantc.de.desktop.client.presenter.util;
 
-import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.shared.DEProperties;
 
 import com.google.gwt.user.client.Timer;
 

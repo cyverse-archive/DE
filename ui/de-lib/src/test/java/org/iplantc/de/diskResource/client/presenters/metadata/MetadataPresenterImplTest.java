@@ -1,14 +1,16 @@
 package org.iplantc.de.diskResource.client.presenters.metadata;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.diskResource.client.MetadataView;
 import org.iplantc.de.diskResource.client.views.metadata.dialogs.MetadataTemplateViewDialog;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwtmockito.GxtMockitoTestRunner;
 
 import org.junit.Assert;
@@ -16,10 +18,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +33,7 @@ public class MetadataPresenterImplTest {
     @Mock  DiskResourceServiceFacade drService;
     @Mock  List<MetadataTemplateInfo> templates;
     @Mock  MetadataTemplateViewDialog templateView;
-    @Mock  List<DiskResourceMetadata> userMdList;
+    @Mock  List<Avu> userMdList;
     @Mock  DiskResourceAutoBeanFactory autoBeanFactory;
     @Mock MetadataView.Presenter.Appearance appearance;
 
@@ -47,7 +45,7 @@ public class MetadataPresenterImplTest {
 
     @Test
     public void testIsDirtyOnEmpty(){
-        List<DiskResourceMetadata> userMetadata = new ArrayList<>();
+        List<Avu> userMetadata = new ArrayList<>();
         when(view.getUserMetadata()).thenReturn(userMetadata);
         when(userMdList.size()).thenReturn(0);
         when(view.isDirty()).thenReturn(false);
@@ -56,9 +54,9 @@ public class MetadataPresenterImplTest {
 
     @Test
     public void testIsDirtyNonEmpty() {
-        List<DiskResourceMetadata> userMetadata = new ArrayList<>();
-        DiskResourceMetadata md1 = mock(DiskResourceMetadata.class);
-        DiskResourceMetadata md2 = mock(DiskResourceMetadata.class);
+        List<Avu> userMetadata = new ArrayList<>();
+        Avu md1 = mock(Avu.class);
+        Avu md2 = mock(Avu.class);
         userMetadata.add(md1);
         userMetadata.add(md2);
         when(view.getUserMetadata()).thenReturn(userMetadata);
@@ -69,9 +67,9 @@ public class MetadataPresenterImplTest {
 
     @Test
     public void testIsDirtyEdited() {
-        List<DiskResourceMetadata> userMetadata = new ArrayList<>();
-        DiskResourceMetadata md1 = mock(DiskResourceMetadata.class);
-        DiskResourceMetadata md2 = mock(DiskResourceMetadata.class);
+        List<Avu> userMetadata = new ArrayList<>();
+        Avu md1 = mock(Avu.class);
+        Avu md2 = mock(Avu.class);
         userMetadata.add(md1);
         userMetadata.add(md2);
         when(view.getUserMetadata()).thenReturn(userMetadata);
@@ -88,9 +86,9 @@ public class MetadataPresenterImplTest {
 
     @Test
     public void testOnImportFromIrodsAvu() {
-        List<DiskResourceMetadata> irodsAvu = new ArrayList<>();
-        DiskResourceMetadata md1 = mock(DiskResourceMetadata.class);
-        DiskResourceMetadata md2 = mock(DiskResourceMetadata.class);
+        List<Avu> irodsAvu = new ArrayList<>();
+        Avu md1 = mock(Avu.class);
+        Avu md2 = mock(Avu.class);
         irodsAvu.add(md1);
         irodsAvu.add(md2);
         view.addToUserMetadata(irodsAvu);

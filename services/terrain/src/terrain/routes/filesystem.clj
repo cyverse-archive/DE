@@ -7,6 +7,7 @@
             [terrain.services.filesystem.directory :as dir]
             [terrain.services.filesystem.metadata :as meta]
             [terrain.services.filesystem.metadata-templates :as mt]
+            [terrain.clients.metadata.raw :as meta-raw]
             [terrain.services.filesystem.root :as root]
             [terrain.services.filesystem.sharing :as sharing]
             [terrain.services.filesystem.stat :as stat]
@@ -105,6 +106,12 @@
 
     (GET "/filesystem/metadata/template/:template-id" [template-id :as req]
       (controller req mt/do-metadata-template-view template-id))
+
+    (GET "/filesystem/metadata/template/:template-id/blank-csv" [template-id :as req]
+      (controller req meta-raw/get-template-csv template-id))
+
+    (GET "/filesystem/metadata/template/:template-id/guide-csv" [template-id :as req]
+      (controller req meta-raw/get-template-guide template-id))
 
     (GET "/filesystem/metadata/template/attr/:attr-id" [attr-id :as req]
       (controller req mt/do-metadata-attribute-view attr-id))

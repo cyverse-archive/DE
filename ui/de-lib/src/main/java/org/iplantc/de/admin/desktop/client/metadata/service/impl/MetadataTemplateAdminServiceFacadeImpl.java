@@ -3,7 +3,7 @@ package org.iplantc.de.admin.desktop.client.metadata.service.impl;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
 
 import org.iplantc.de.admin.desktop.client.metadata.service.MetadataTemplateAdminServiceFacade;
-import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.shared.DEProperties;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfoList;

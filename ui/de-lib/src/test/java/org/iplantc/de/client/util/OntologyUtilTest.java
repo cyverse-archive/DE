@@ -41,17 +41,20 @@ public class OntologyUtilTest {
     @Mock AutoBean<OntologyHierarchy> hierarchyAutoBeanMock;
     @Mock OntologyHierarchy hierarchyMock;
     @Mock Avu avuMock;
+    @Mock Avu subAvuMock;
     @Mock AutoBean<AvuList> avuListAutoBeanMock;
     @Mock AvuList avuListMock;
     @Mock AutoBean<Avu> avuAutoBeanMock;
+    @Mock AutoBean<Avu> subAvuAutoBeanMock;
     @Mock OntologyHierarchy unclassifiedMock;
 
 
     @Before
     public void setUp() {
         when(avuAutoBeanMock.as()).thenReturn(avuMock);
+        when(subAvuAutoBeanMock.as()).thenReturn(subAvuMock);
         when(avuListAutoBeanMock.as()).thenReturn(avuListMock);
-        when(avuAutoBeanFactoryMock.getAvu()).thenReturn(avuAutoBeanMock);
+        when(avuAutoBeanFactoryMock.getAvu()).thenReturn(avuAutoBeanMock).thenReturn(subAvuAutoBeanMock);
         when(avuAutoBeanFactoryMock.getAvuList()).thenReturn(avuListAutoBeanMock);
         when(hierarchyMock.getIri()).thenReturn("http://edamontology.org/topic_1234");
         when(hierarchyMock.getSubclasses()).thenReturn(ontologyHierarchyListMock);
@@ -127,9 +130,14 @@ public class OntologyUtilTest {
         when(hierarchyMock.getLabel()).thenReturn("Label");
 
         uut.convertHierarchyToAvu(hierarchyMock);
-        verify(avuMock).setAttr(anyString());
+        verify(avuMock).setAttribute(anyString());
         verify(avuMock).setValue(eq(hierarchyMock.getIri()));
-        verify(avuMock).setUnit(eq(hierarchyMock.getLabel()));
+
+        verify(subAvuMock).setAttribute("rdfs:label");
+        verify(subAvuMock).setValue(eq(hierarchyMock.getLabel()));
+        verify(subAvuMock).setUnit(anyString());
+
+        verify(avuMock).setAvus(anyList());
 
     }
 }

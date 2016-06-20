@@ -11,7 +11,7 @@ import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.models.AppProperties;
 import org.iplantc.de.apps.client.views.grid.cells.AppCommentCell;
 import org.iplantc.de.apps.client.views.grid.cells.AppFavoriteCell;
-import org.iplantc.de.apps.client.views.grid.cells.AppHyperlinkCell;
+import org.iplantc.de.apps.client.views.grid.cells.AppNameCell;
 import org.iplantc.de.apps.client.views.grid.cells.AppInfoCell;
 import org.iplantc.de.apps.client.views.grid.cells.AppIntegratorCell;
 import org.iplantc.de.apps.client.views.grid.cells.AppRatingCell;
@@ -49,8 +49,8 @@ public class AppColumnModel extends ColumnModel<App> implements AppInfoSelectedE
             Cell<?> cell = colConfig.getCell();
             if (cell instanceof AppInfoCell) {
                 ((AppInfoCell)cell).setHasHandlers(ensureHandlers());
-            } else if (cell instanceof AppHyperlinkCell) {
-                ((AppHyperlinkCell)cell).setHasHandlers(ensureHandlers());
+            } else if (cell instanceof AppNameCell) {
+                ((AppNameCell)cell).setHasHandlers(ensureHandlers());
             } else if (cell instanceof AppFavoriteCell) {
                 ((AppFavoriteCell)cell).setHasHandlers(ensureHandlers());
             } else if (cell instanceof AppCommentCell) {
@@ -100,7 +100,7 @@ public class AppColumnModel extends ColumnModel<App> implements AppInfoSelectedE
         comment.setHideable(false);
 
         info.setCell(new AppInfoCell());
-        name.setCell(new AppHyperlinkCell());
+        name.setCell(new AppNameCell());
         integrator.setCell(new AppIntegratorCell());
         rating.setCell(new AppRatingCell());
         comment.setCell(new AppCommentCell());
@@ -152,8 +152,8 @@ public class AppColumnModel extends ColumnModel<App> implements AppInfoSelectedE
         for (ColumnConfig<App, ?> cc : configs) {
             if (cc.getCell() instanceof AppInfoCell) {
                 ((AppInfoCell)cc.getCell()).setBaseDebugId(baseID);
-            } else if (cc.getCell() instanceof AppHyperlinkCell) {
-                ((AppHyperlinkCell)cc.getCell()).setBaseDebugId(baseID);
+            } else if (cc.getCell() instanceof AppNameCell) {
+                ((AppNameCell)cc.getCell()).setBaseDebugId(baseID);
             }
         }
 
@@ -161,8 +161,8 @@ public class AppColumnModel extends ColumnModel<App> implements AppInfoSelectedE
 
     public void setSearchRegexPattern(String pattern) {
         for (ColumnConfig<App, ?> cc : configs) {
-            if (cc.getCell() instanceof AppHyperlinkCell) {
-                ((AppHyperlinkCell)cc.getCell()).setSearchRegexPattern(pattern);
+            if (cc.getCell() instanceof AppNameCell) {
+                ((AppNameCell)cc.getCell()).setSearchRegexPattern(pattern);
             } else if (cc.getCell() instanceof AppIntegratorCell) {
                 ((AppIntegratorCell)cc.getCell()).setSearchRegexPattern(pattern);
             }

@@ -22,6 +22,8 @@ public class OntologyUtil {
 
     final String OPERATION_ATTR = "rdf:type";
     final String TOPIC_ATTR = "http://edamontology.org/has_topic";
+    final String LABEL_ATTR = "rdfs:label";
+    final String LABEL_UNIT = "value";
 
     final String UNCLASSIFIED_LABEL = "Unclassified";
     final String UNCLASSIFIED_IRI_APPEND = "_unclassified";
@@ -67,9 +69,18 @@ public class OntologyUtil {
 
     public Avu convertHierarchyToAvu(OntologyHierarchy hierarchy) {
         Avu avu = avuFactory.getAvu().as();
-        avu.setAttr(getAttr(hierarchy));
+        avu.setAttribute(getAttr(hierarchy));
         avu.setValue(hierarchy.getIri());
-        avu.setUnit(hierarchy.getLabel());
+        avu.setUnit("");
+
+        List<Avu> avus = Lists.newArrayList();
+        Avu subAvu = avuFactory.getAvu().as();
+        subAvu.setAttribute(LABEL_ATTR);
+        subAvu.setValue(hierarchy.getLabel());
+        subAvu.setUnit(LABEL_UNIT);
+        avus.add(subAvu);
+
+        avu.setAvus(avus);
         return avu;
     }
 
