@@ -121,13 +121,9 @@ func (d *Docker) ContainersWithLabel(key, value string, all bool) ([]string, err
 // NukeContainer kills the container with the provided id.
 func (d *Docker) NukeContainer(id string) error {
 	fmt.Printf("Nuking container %s", id)
-	err := d.Client.ContainerRename(d.ctx, id, fmt.Sprintf("remove-%s", id))
-	if err != nil {
-		return err
-	}
 	return d.Client.ContainerRemove(d.ctx, id, types.ContainerRemoveOptions{
 		RemoveVolumes: true,
-		RemoveLinks:   true,
+		RemoveLinks:   false,
 		Force:         true,
 	})
 }
