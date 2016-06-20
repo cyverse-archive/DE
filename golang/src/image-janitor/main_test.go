@@ -6,6 +6,8 @@ import (
 	"os"
 	"testing"
 
+	"golang.org/x/net/context"
+
 	"github.com/olebedev/config"
 )
 
@@ -25,7 +27,7 @@ func uri() string {
 }
 
 func Client() (*dockerops.Docker, error) {
-	client, err := dockerops.NewDocker(cfg, uri())
+	client, err := dockerops.NewDocker(context.Background(), cfg, uri())
 	if err != nil {
 		return nil, err
 	}

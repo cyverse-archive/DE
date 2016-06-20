@@ -15,6 +15,8 @@ import (
 	"strings"
 	"time"
 
+	"golang.org/x/net/context"
+
 	"github.com/olebedev/config"
 )
 
@@ -301,7 +303,7 @@ func main() {
 	app := New(cfg)
 
 	logcabin.Info.Printf("Connecting to Docker at %s", *dockerURI)
-	client, err := dockerops.NewDocker(cfg, *dockerURI)
+	client, err := dockerops.NewDocker(context.Background(), cfg, *dockerURI)
 	if err != nil {
 		logcabin.Error.Fatal(err)
 	}
