@@ -1,9 +1,9 @@
 package org.iplantc.de.theme.base.client.admin.apps;
 
-import org.iplantc.de.admin.apps.client.views.grid.cells.AppNameCell;
+import org.iplantc.de.admin.apps.client.views.grid.cells.AdminAppNameCell;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.theme.base.client.admin.BelphegorDisplayStrings;
-import org.iplantc.de.theme.base.client.apps.cells.AppHyperlinkCellDefaultAppearance;
+import org.iplantc.de.theme.base.client.apps.cells.AppNameCellDefaultAppearance;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -11,7 +11,8 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 /**
  * @author jstroot
  */
-public class AppNameCellDefaultAppearance extends AppHyperlinkCellDefaultAppearance implements AppNameCell.AppNameCellAppearance {
+public class AdminAppNameCellDefaultAppearance extends AppNameCellDefaultAppearance
+        implements AdminAppNameCell.AdminAppNameCellAppearance {
     private final BelphegorDisplayStrings displayStrings;
 
     @Override
@@ -35,11 +36,11 @@ public class AppNameCellDefaultAppearance extends AppHyperlinkCellDefaultAppeara
         }
     }
 
-    public AppNameCellDefaultAppearance() {
+    public AdminAppNameCellDefaultAppearance() {
         this(GWT.<BelphegorDisplayStrings> create(BelphegorDisplayStrings.class));
     }
 
-    AppNameCellDefaultAppearance(final BelphegorDisplayStrings displayStrings) {
+    AdminAppNameCellDefaultAppearance(final BelphegorDisplayStrings displayStrings) {
         this.displayStrings = displayStrings;
     }
 
