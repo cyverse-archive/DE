@@ -1,6 +1,7 @@
 package org.iplantc.de.admin.apps.client.views.grid;
 
 import org.iplantc.de.admin.apps.client.AdminAppsView;
+import org.iplantc.de.admin.apps.client.views.grid.cells.AdminAppNameCell;
 import org.iplantc.de.apps.client.events.selection.AppInfoSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.models.AppProperties;
@@ -25,11 +26,11 @@ import java.util.List;
 public class AdminAppsColumnModel extends ColumnModel<App> implements AppNameSelectedEvent.HasAppNameSelectedEventHandlers,
                                                                       AppInfoSelectedEvent.HasAppInfoSelectedEventHandlers {
 
-    public static class AppStringNameComparator implements Comparator<String> {
+    public static class AppStringNameComparator implements Comparator<App> {
 
         @Override
-        public int compare(String o1, String o2) {
-            return o1.compareToIgnoreCase(o2);
+        public int compare(App o1, App o2) {
+            return o1.getName().compareToIgnoreCase(o2.getName());
         }
     }
 
@@ -48,7 +49,7 @@ public class AdminAppsColumnModel extends ColumnModel<App> implements AppNameSel
         AppProperties props = GWT.create(AppProperties.class);
         List<ColumnConfig<App, ?>> list = new ArrayList<>();
 
-        ColumnConfig<App, String> name = new ColumnConfig<>(props.name(),
+        ColumnConfig<App, App> name = new ColumnConfig<>(new IdentityValueProvider<App>("name"),
                                                          appearance.nameColumnWidth(),
                                                          appearance.nameColumnLabel());
         ColumnConfig<App, String> integrator = new ColumnConfig<>(props.integratorName(),
@@ -59,6 +60,7 @@ public class AdminAppsColumnModel extends ColumnModel<App> implements AppNameSel
         info.setHeader("");
 
         name.setComparator(new AppStringNameComparator());
+        name.setCell(new AdminAppNameCell());
 
         name.setSortable(true);
         integrator.setSortable(true);
