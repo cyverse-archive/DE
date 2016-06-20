@@ -183,7 +183,7 @@
   [user app]
   (validate-pipeline app)
   (transaction
-    (let [app-id (:id (add-app app))]
+    (let [app-id (:id (add-app app user))]
       (add-app-to-user-dev-category user app-id)
       (add-app-steps-mappings (assoc app :id app-id))
       (permissions/register-private-app (:shortUsername user) app-id)
