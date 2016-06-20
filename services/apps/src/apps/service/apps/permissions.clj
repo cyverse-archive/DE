@@ -2,7 +2,6 @@
   (:use [medley.core :only [map-kv]])
   (:require [apps.clients.notifications :as cn]
             [apps.service.apps.util :as apps-util]
-            [clojure.tools.logging :as log]
             [clojure-commons.error-codes :as ce]))
 
 ;; TODO: this will have to change to account for the possibility of duplicate app IDs
@@ -11,7 +10,7 @@
 (defn- load-app-names
   [apps-client requests]
   (->> (mapcat :apps requests)
-       (map #(if (string? %) % (:app_id %)))
+       (map #(if (map? %) (:app_id %) %))
        set
        (#(.loadAppTables apps-client %))
        (apply merge)

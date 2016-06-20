@@ -441,3 +441,76 @@
       (is (= testde2-username (-> perms first :user)))
       (is (= "write" (-> perms first :permission))))
     (pc/revoke-permission (config/permissions-client) "app" (:id test-app) "user" testde2-username)))
+
+(deftest test-permission-listings-no-privs
+  (let [{username :shortUsername :as user} (get-user :testde2)]
+    (is (thrown-with-msg? ExceptionInfo #"insufficient privileges" (apps/list-app-permissions user [(:id test-app)])))))
+
+(deftest test-permission-listings-read-privs
+  (let [{testde1-username :shortUsername :as testde1} (get-user :testde1)
+        {testde2-username :shortUsername :as testde2} (get-user :testde2)]
+    (pc/grant-permission (config/permissions-client) "app" (:id test-app) "user" testde2-username "read")
+    (let [perms (-> (apps/list-app-permissions testde2 [(:id test-app)]) :apps first :permissions)]
+      (is (= 1 (count perms)))
+      (is (= testde1-username (-> perms first :user)))
+      (is (= "own" (-> perms first :permission))))))
+
+(deftest test-unsharing
+  (let [{testde1-username :shortUsername :as testde1} (get-user :testde1)
+        {testde2-username :shortUsername :as testde2} (get-user :testde2)]
+    (pc/grant-permission (config/permissions-client) "app" (:id test-app) "user" testde2-username "read")
+    (let [responses (:unsharing (apps/unshare-apps testde1 [{:user testde2-username :apps [(:id test-app)]}]))
+          user-resp (first responses)
+          app-resp  (first (:apps user-resp))]
+      (is (= 1 (count responses)))
+      (is (= testde2-username (:user user-resp)))
+      (is (= 1 (count (:apps user-resp))))
+      (is (= (:id test-app) (uuidify (:app_id app-resp))))
+      (is (true? (:success app-resp))))))
+
+(deftest test-unsharing-read-privs
+  (let [{testde2-username :shortUsername :as testde2} (get-user :testde2)
+        {testde3-username :shortUsername :as testde3} (get-user :testde3)]
+    (pc/grant-permission (config/permissions-client) "app" (:id test-app) "user" testde2-username "read")
+    (let [responses (:unsharing (apps/unshare-apps testde2 [{:user testde3-username :apps [(:id test-app)]}]))
+          user-resp (first responses)
+          app-resp  (first (:apps user-resp))]
+      (is (= 1 (count responses)))
+      (is (= testde3-username (:user user-resp)))
+      (is (= 1 (count (:apps user-resp))))
+      (is (= (:id test-app) (uuidify (:app_id app-resp))))
+      (is (false? (:success app-resp)))
+      (is (re-find #"insufficient privileges" (-> app-resp :error :reason))))))
+
+(deftest test-unsharing-write-privs
+  (let [{testde2-username :shortUsername :as testde2} (get-user :testde2)
+        {testde3-username :shortUsername :as testde3} (get-user :testde3)]
+    (pc/grant-permission (config/permissions-client) "app" (:id test-app) "user" testde2-username "write")
+    (let [responses (:unsharing (apps/unshare-apps testde2 [{:user testde3-username :apps [(:id test-app)]}]))
+          user-resp (first responses)
+          app-resp  (first (:apps user-resp))]
+      (is (= 1 (count responses)))
+      (is (= testde3-username (:user user-resp)))
+      (is (= 1 (count (:apps user-resp))))
+      (is (= (:id test-app) (uuidify (:app_id app-resp))))
+      (is (false? (:success app-resp)))
+      (is (re-find #"insufficient privileges" (-> app-resp :error :reason))))))
+
+(deftest test-unsharing-non-existent-app
+  (let [{testde1-username :shortUsername :as testde1} (get-user :testde1)
+        {testde2-username :shortUsername :as testde2} (get-user :testde2)]
+    (let [responses (:unsharing (apps/unshare-apps testde1 [{:user testde2-username :apps [(uuid)]}]))
+          user-resp (first responses)
+          app-resp  (first (:apps user-resp))]
+      (is (= 1 (count responses)))
+      (is (= testde2-username (:user user-resp)))
+      (is (= 1 (count (:apps user-resp))))
+      (is (false? (:success app-resp)))
+      (is (re-find #"does not exist" (-> app-resp :error :reason))))))
+
+(deftest test-deleted-app-resource-removal
+  (let [user (get-user :testde1)
+        app  (create-test-app user "To be deleted")]
+    (is (seq (:resources (pc/list-resources (config/permissions-client) {:resource_name (:id app)}))))
+    (apps/permanently-delete-apps user {:app_ids [(:id app)]})
+    (is (empty? (:resources (pc/list-resources (config/permissions-client) {:resource_name (:id app)}))))))
