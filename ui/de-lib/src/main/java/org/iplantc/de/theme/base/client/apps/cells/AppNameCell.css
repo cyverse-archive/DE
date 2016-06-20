@@ -1,4 +1,4 @@
-.appName {
+.appHyperlinkName {
     cursor: pointer;
     text-decoration: none;
     color: black;
@@ -8,8 +8,17 @@
     padding-bottom: 2px;
 }
 
-.appName:hover {
+.appHyperlinkName:hover {
     text-decoration: underline;
+}
+
+.appName {
+    text-decoration: none;
+    color: black;
+    font-size: 12px;
+    height: 15px;
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 
 .appDisabled {
