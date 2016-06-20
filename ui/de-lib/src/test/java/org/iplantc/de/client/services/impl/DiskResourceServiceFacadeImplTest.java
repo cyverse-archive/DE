@@ -3,7 +3,7 @@ package org.iplantc.de.client.services.impl;
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.diskResources.FolderRefreshedEvent;
-import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.shared.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.Folder;

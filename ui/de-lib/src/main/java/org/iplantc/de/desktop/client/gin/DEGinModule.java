@@ -2,7 +2,7 @@ package org.iplantc.de.desktop.client.gin;
 
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.gin.ServicesInjector;
-import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.shared.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.services.*;

@@ -1,8 +1,7 @@
 package org.iplantc.de.desktop.client.presenter;
 
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.models.DEProperties;
-import org.iplantc.de.client.models.notifications.Notification;
+import org.iplantc.de.shared.DEProperties;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.models.notifications.NotificationList;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
@@ -36,8 +35,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
-
-import java.util.List;
 
 /**
  * @author jstroot

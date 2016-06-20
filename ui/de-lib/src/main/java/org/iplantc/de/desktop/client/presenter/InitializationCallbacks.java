@@ -1,6 +1,6 @@
 package org.iplantc.de.desktop.client.presenter;
 
-import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.shared.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.notifications.Notification;
@@ -24,7 +24,6 @@ import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent.DialogHideHandler;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.logging.Logger;
 
 /**

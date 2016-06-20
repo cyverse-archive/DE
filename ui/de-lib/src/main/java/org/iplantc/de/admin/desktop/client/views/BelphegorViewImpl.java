@@ -9,7 +9,7 @@ import org.iplantc.de.admin.desktop.client.systemMessage.SystemMessageView;
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
 import org.iplantc.de.admin.desktop.client.toolRequest.ToolRequestView;
 import org.iplantc.de.admin.desktop.shared.Belphegor;
-import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.shared.DEProperties;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.util.CommonModelUtils;
