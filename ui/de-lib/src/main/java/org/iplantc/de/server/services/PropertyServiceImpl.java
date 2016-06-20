@@ -37,10 +37,7 @@ public class PropertyServiceImpl implements PropertyService{
     @Override
     public HashMap<String, String> getProperties() throws SerializationException {
         List<String> uikeys = DEProperties.getInstance().getPropertyList();
-        LOG.error("^^^^^^^property list ^^^^^^^ ---->" + uikeys);
-        LOG.error("^^^^^^^property list size ^^^^^^^ ---->" + uikeys.size());
-
-
+        LOG.info("property list:" + uikeys);
         HashMap<String, Object> propertyMap = new HashMap<>();
         for(Iterator it = ((AbstractEnvironment) environment).getPropertySources().iterator(); it.hasNext(); ) {
             PropertySource propertySource = (PropertySource) it.next();
