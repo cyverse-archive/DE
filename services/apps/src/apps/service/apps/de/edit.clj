@@ -389,7 +389,7 @@
   (transaction
     (let [cat-id  (get-user-subcategory username (workspace-dev-app-category-index))
           _       (validate-app-name app-name nil (workspace-beta-app-category-id) [cat-id])
-          app-id  (:id (persistence/add-app app))
+          app-id  (:id (persistence/add-app app user))
           tool-id (->> app :tools first :id)
           task-id (-> (assoc app :id app-id :tool_id tool-id)
                       (add-single-step-task)

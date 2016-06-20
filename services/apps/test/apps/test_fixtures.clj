@@ -25,7 +25,8 @@
 (defn with-config [f]
   (let [config-path (getenv "APPS_CONFIG_PATH" default-config-path)]
     (require 'apps.util.config :reload)
-    (apps.util.config/load-config-from-file config-path {:log-config? false})))
+    (apps.util.config/load-config-from-file config-path {:log-config? false})
+    (f)))
 
 (defn with-service-uris [f]
   (binding [jex-uri                (getenv "JEX_URI" default-jex-uri)
