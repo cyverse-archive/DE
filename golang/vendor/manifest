@@ -59,9 +59,16 @@
 			"path": "/reference"
 		},
 		{
+			"importpath": "github.com/docker/docker/pkg/stdcopy",
+			"repository": "https://github.com/docker/docker",
+			"revision": "1bbac428de015a24a0724a9d0990d500c445dcad",
+			"branch": "master",
+			"path": "/pkg/stdcopy"
+		},
+		{
 			"importpath": "github.com/docker/engine-api",
 			"repository": "https://github.com/docker/engine-api",
-			"revision": "f50fbe5f9c4c8eeed591549d2c8187f4076f3717",
+			"revision": "f90ecdb1e989f834dabbd91807e891094aa069fe",
 			"branch": "master"
 		},
 		{
