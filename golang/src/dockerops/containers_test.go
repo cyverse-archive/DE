@@ -242,7 +242,9 @@ func TestCreateIsContainerAndNukeByName(t *testing.T) {
 		t.Error(err)
 	}
 	if exists {
-		dc.NukeContainerByName(job.Steps[0].Component.Container.Name)
+		if err = dc.NukeContainerByName(job.Steps[0].Component.Container.Name); err != nil {
+			t.Error(err)
+		}
 	}
 }
 
@@ -377,7 +379,9 @@ func TestCreateUploadContainer(t *testing.T) {
 		t.Error(err)
 	}
 	if exists {
-		dc.NukeContainerByName(containerName)
+		if err = dc.NukeContainerByName(containerName); err != nil {
+			t.Error(err)
+		}
 	}
 
 	containerID, err := dc.CreateUploadContainer(job)
@@ -491,7 +495,9 @@ func TestAttach(t *testing.T) {
 	}
 
 	if exists {
-		dc.NukeContainerByName(job.Steps[0].Component.Container.Name)
+		if err = dc.NukeContainerByName(job.Steps[0].Component.Container.Name); err != nil {
+			t.Error(err)
+		}
 	}
 }
 
@@ -518,7 +524,9 @@ func TestRunStep(t *testing.T) {
 	}
 
 	if exists {
-		dc.NukeContainerByName(job.Steps[0].Component.Container.Name)
+		if err = dc.NukeContainerByName(job.Steps[0].Component.Container.Name); err != nil {
+			t.Error(err)
+		}
 	}
 
 	if _, err = os.Stat("logs"); os.IsNotExist(err) {
@@ -567,7 +575,9 @@ func TestRunStep(t *testing.T) {
 	}
 
 	if exists {
-		dc.NukeContainerByName(job.Steps[0].Component.Container.Name)
+		if err = dc.NukeContainerByName(job.Steps[0].Component.Container.Name); err != nil {
+			t.Error(err)
+		}
 	}
 }
 
@@ -605,7 +615,9 @@ func TestDownloadInputs(t *testing.T) {
 	}
 
 	if exists {
-		dc.NukeContainerByName(cName)
+		if err = dc.NukeContainerByName(cName); err != nil {
+			t.Error(err)
+		}
 	}
 
 	if _, err = os.Stat("logs"); os.IsNotExist(err) {
@@ -658,7 +670,9 @@ func TestDownloadInputs(t *testing.T) {
 	}
 
 	if exists {
-		dc.NukeContainerByName(cName)
+		if err = dc.NukeContainerByName(cName); err != nil {
+			t.Error(err)
+		}
 	}
 }
 
@@ -696,7 +710,9 @@ func TestUploadOutputs(t *testing.T) {
 	}
 
 	if exists {
-		dc.NukeContainerByName(cName)
+		if err = dc.NukeContainerByName(cName); err != nil {
+			t.Error(err)
+		}
 	}
 
 	if _, err = os.Stat("logs"); os.IsNotExist(err) {
@@ -751,7 +767,9 @@ func TestUploadOutputs(t *testing.T) {
 	}
 
 	if exists {
-		dc.NukeContainerByName(cName)
+		if err = dc.NukeContainerByName(cName); err != nil {
+			t.Error(err)
+		}
 	}
 }
 
@@ -799,7 +817,9 @@ func TestCreateDataContainer(t *testing.T) {
 	}
 
 	if exists {
-		dc.NukeContainerByName(cName)
+		if err = dc.NukeContainerByName(cName); err != nil {
+			t.Error(err)
+		}
 	}
 
 	containerID, err := dc.CreateDataContainer(vf, job.InvocationID)
@@ -817,6 +837,8 @@ func TestCreateDataContainer(t *testing.T) {
 	}
 
 	if exists {
-		dc.NukeContainerByName(cName)
+		if err = dc.NukeContainerByName(cName); err != nil {
+			t.Error(err)
+		}
 	}
 }
