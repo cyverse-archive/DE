@@ -7,7 +7,6 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.services.*;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.commons.client.requests.KeepaliveTimer;
 import org.iplantc.de.desktop.client.DesktopView;
 import org.iplantc.de.desktop.client.presenter.DesktopPresenterEventHandler;
 import org.iplantc.de.desktop.client.presenter.DesktopPresenterImpl;
@@ -120,10 +119,6 @@ public class DEGinModule extends AbstractGinModule {
 
     @Provides @Singleton public DEProperties getDeProperties() {
         return DEProperties.getInstance();
-    }
-
-    @Provides @Singleton public KeepaliveTimer createKeepaliveTimer() {
-        return KeepaliveTimer.getInstance();
     }
 
     @Provides @Singleton public MessagePoller createMessagePoller() {
