@@ -51,6 +51,7 @@ import org.iplantc.de.commons.client.views.window.configs.DiskResourceWindowConf
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.desktop.client.DesktopView;
 import org.iplantc.de.desktop.client.presenter.util.MessagePoller;
+import org.iplantc.de.desktop.client.presenter.util.NotificationUtil;
 import org.iplantc.de.desktop.client.presenter.util.NotificationWebSocketManager;
 import org.iplantc.de.desktop.client.presenter.util.SystemMessageWebSocketManager;
 import org.iplantc.de.desktop.client.views.windows.IPlantWindowInterface;
@@ -59,7 +60,6 @@ import org.iplantc.de.fileViewers.client.callbacks.LoadGenomeInCoGeCallback;
 import org.iplantc.de.notifications.client.events.WindowShowRequestEvent;
 import org.iplantc.de.notifications.client.utils.NotifyInfo;
 import org.iplantc.de.notifications.client.views.dialogs.RequestHistoryDialog;
-import org.iplantc.de.shared.events.UserLoggedOutEvent;
 import org.iplantc.de.shared.services.PropertyServiceAsync;
 import org.iplantc.de.systemMessages.client.events.NewSystemMessagesEvent;
 import org.iplantc.de.systemMessages.client.view.NewMessageView;
@@ -289,13 +289,13 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
     }
 
     private void loadMessageInView(Notification n) {
-        NotificationMessage newMessage = n.getMessage();
+        NotificationMessage newMessage = NotificationUtil.getMessage(n, notificationFactory);
         ListStore<NotificationMessage> nmStore = view.getNotificationStore();
         final NotificationMessage modelWithKey =
                 nmStore.findModelWithKey(Long.toString(newMessage.getTimestamp()));
         if (modelWithKey == null) {
             nmStore.add(newMessage);
-                displayNotificationPopup(newMessage);
+            displayNotificationPopup(newMessage);
         }
     }
 
