@@ -5,7 +5,6 @@ import org.iplantc.de.admin.desktop.client.views.BelphegorView;
 import org.iplantc.de.shared.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.commons.client.requests.KeepaliveTimer;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.PropertyService;
 import org.iplantc.de.shared.services.PropertyServiceAsync;
@@ -25,7 +24,6 @@ import java.util.HashMap;
 public class Belphegor implements EntryPoint {
     private final String BOOTSTRAP = "org.iplantc.services.bootstrap";
     private final BelphegorAppInjector injector = GWT.create(BelphegorAppInjector.class);
-    private final KeepaliveTimer keepaliveTimer = KeepaliveTimer.getInstance();
     private final PropertyServiceAsync propertyService = GWT.create(PropertyService.class);
     private final DiscEnvApiService deService = injector.getApiService();
     private final DEProperties adminProperties = DEProperties.getInstance();
@@ -87,10 +85,6 @@ public class Belphegor implements EntryPoint {
     private void initApp() {
         BelphegorView.Presenter belphegorPresenter = injector.getBelphegorPresenter();
         belphegorPresenter.go(RootPanel.get());
-
-        String keepaliveTarget = adminProperties.getKeepaliveTarget();
-        int keepaliveInterval = adminProperties.getKeepaliveInterval();
-        keepaliveTimer.start(keepaliveTarget, keepaliveInterval);
     }
 
     private void parseWorkspaceInfo(String json) {
