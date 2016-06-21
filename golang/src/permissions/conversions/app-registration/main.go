@@ -270,6 +270,9 @@ func main() {
 		logcabin.Error.Fatal(err.Error())
 	}
 	defer db.Close()
+	if err := db.Ping(); err != nil {
+		logcabin.Error.Fatal(err.Error())
+	}
 
 	// Retrieve the Grouper database URI.
 	grouperDburi, err := cfg.String("grouperdb.uri")
@@ -283,6 +286,9 @@ func main() {
 		logcabin.Error.Fatal(err.Error())
 	}
 	defer grouperDb.Close()
+	if err := grouperDb.Ping(); err != nil {
+		logcabin.Error.Fatal(err.Error())
+	}
 
 	// Retrieve the Grouper folder name prefix.
 	grouperFolderNamePrefix, err := cfg.String("grouperdb.folder_name_prefix")
@@ -308,6 +314,9 @@ func main() {
 		logcabin.Error.Fatal(err.Error())
 	}
 	defer deDb.Close()
+	if err := deDb.Ping(); err != nil {
+		logcabin.Error.Fatal(err.Error())
+	}
 
 	// Run the conversion.
 	if err := runConversion(db, deDb, deUsersGroupID); err != nil {
