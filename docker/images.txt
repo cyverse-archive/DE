@@ -19,7 +19,6 @@ metadata
 monkey
 nginx-consul-template
 notification-agent
-permissions
 porklock
 saved-searches
 sharkbait
