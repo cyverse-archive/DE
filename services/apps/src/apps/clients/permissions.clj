@@ -82,9 +82,10 @@
 
 (defn- list-resource-permissions
   [resource-type user resource-ids]
-  (for [resource-id resource-ids]
-    [(uuidify resource-id)
-     (format-perms-listing user (pc/list-resource-permissions (client) resource-type resource-id))]))
+  (into {}
+        (for [resource-id resource-ids]
+          [(uuidify resource-id)
+           (format-perms-listing user (pc/list-resource-permissions (client) resource-type resource-id))])))
 
 (def list-app-permissions (partial list-resource-permissions (rt-app)))
 (def list-analysis-permissions (partial list-resource-permissions (rt-analysis)))

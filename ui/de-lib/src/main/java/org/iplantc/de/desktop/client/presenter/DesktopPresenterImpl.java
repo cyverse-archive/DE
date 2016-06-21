@@ -40,7 +40,6 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
-import org.iplantc.de.commons.client.requests.KeepaliveTimer;
 import org.iplantc.de.commons.client.util.WindowUtil;
 import org.iplantc.de.commons.client.views.dialogs.IplantErrorDialog;
 import org.iplantc.de.commons.client.views.window.configs.AnalysisWindowConfig;
@@ -160,7 +159,6 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
     @Inject DesktopPresenterAppearance appearance;
 
     private final EventBus eventBus;
-    private final KeepaliveTimer keepaliveTimer;
     private final MessagePoller messagePoller;
     private final SaveSessionPeriodic ssp;
     private final NewMessageView.Presenter systemMsgPresenter;
@@ -180,13 +178,11 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
                                 final NewMessageView.Presenter systemMsgPresenter,
                                 final WindowManager windowManager,
                                 final DesktopWindowManager desktopWindowManager,
-                                final MessagePoller messagePoller,
-                                final KeepaliveTimer keepaliveTimer) {
+                                final MessagePoller messagePoller) {
         this.view = view;
         this.eventBus = eventBus;
         this.systemMsgPresenter = systemMsgPresenter;
         this.windowManager = windowManager;
-        this.keepaliveTimer = keepaliveTimer;
         this.messagePoller = messagePoller;
         this.desktopWindowManager = desktopWindowManager;
         this.desktopWindowManager.setDesktopContainer(view.getDesktopContainer());
@@ -645,12 +641,6 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
 
    void postBootstrap(final Panel panel) {
         setBrowserContextMenuEnabled(deProperties.isContextClickEnabled());
-        // Initialize keepalive timer
-        String target = deProperties.getKeepaliveTarget();
-        int interval = deProperties.getKeepaliveInterval();
-        if (target != null && !target.equals("") && interval > 0) {
-            keepaliveTimer.start(target, interval);
-        }
         messagePoller.start();
         initKBShortCuts();
         panel.add(view);
