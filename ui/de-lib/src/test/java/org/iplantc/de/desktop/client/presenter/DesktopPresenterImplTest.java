@@ -4,7 +4,6 @@ import org.iplantc.de.desktop.client.DesktopView;
 import org.iplantc.de.desktop.client.presenter.util.MessagePoller;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.WindowType;
-import org.iplantc.de.commons.client.requests.KeepaliveTimer;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.systemMessages.client.view.NewMessageView;
 
@@ -30,7 +29,6 @@ public class DesktopPresenterImplTest {
     @Mock DesktopWindowManager desktopWindowManagerMock;
     @Mock EventBus eventBusMock;
     @Mock DesktopPresenterEventHandler globalEventHandlerMock;
-    @Mock KeepaliveTimer keepaliveTimerMock;
     @Mock MessagePoller messagePollerMock;
     @Mock NewMessageView.Presenter sysMsgPresenterMock;
     @Mock
@@ -47,8 +45,7 @@ public class DesktopPresenterImplTest {
                                           sysMsgPresenterMock,
                                           windowManagerMock,
                                           desktopWindowManagerMock,
-                                          messagePollerMock,
-                                          keepaliveTimerMock);
+                                          messagePollerMock);
 
     }
 

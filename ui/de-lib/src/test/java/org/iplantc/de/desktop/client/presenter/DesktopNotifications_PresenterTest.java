@@ -7,7 +7,6 @@ import org.iplantc.de.client.models.notifications.NotificationList;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.commons.client.requests.KeepaliveTimer;
 import org.iplantc.de.desktop.client.DesktopView;
 import org.iplantc.de.desktop.client.presenter.util.MessagePoller;
 import org.iplantc.de.desktop.client.views.widgets.UnseenNotificationsView;
@@ -53,7 +52,6 @@ public class DesktopNotifications_PresenterTest {
     @Mock NewMessageView.Presenter sysMsgPresenterMock;
     @Mock DesktopWindowManager desktopWindowManagerMock;
     @Mock MessagePoller msgPollerMock;
-    @Mock KeepaliveTimer keepAliveTimerMock;
     @Mock NotifyInfo notifyInfoMock;
 
     @Mock ListStore<NotificationMessage> msgStoreMock;
@@ -73,8 +71,7 @@ public class DesktopNotifications_PresenterTest {
                                                                   sysMsgPresenterMock,
                                                                   windowMangerMock,
                                                                   desktopWindowManagerMock,
-                                                                  msgPollerMock,
-                                                                  keepAliveTimerMock){
+                                                                  msgPollerMock){
             @Override
             void setBrowserContextMenuEnabled(boolean enabled) {
                 // Test stub, Do nothing
@@ -107,8 +104,7 @@ public class DesktopNotifications_PresenterTest {
                                                                   sysMsgPresenterMock,
                                                                   windowMangerMock,
                                                                   desktopWindowManagerMock,
-                                                                  msgPollerMock,
-                                                                  keepAliveTimerMock);
+                                                                  msgPollerMock);
         uut.messageServiceFacade = mock(MessageServiceFacade.class);
 
         final NotificationMessage mockMsg = mock(NotificationMessage.class);
@@ -135,8 +131,7 @@ public class DesktopNotifications_PresenterTest {
                                                                             sysMsgPresenterMock,
                                                                             windowMangerMock,
                                                                             desktopWindowManagerMock,
-                                                                            msgPollerMock,
-                                                                            keepAliveTimerMock));
+                                                                            msgPollerMock));
         testPresenter.messageServiceFacade = mock(MessageServiceFacade.class);
         testPresenter.announcer = mock(IplantAnnouncer.class);
         testPresenter.appearance = mock(DesktopView.Presenter.DesktopPresenterAppearance.class);
