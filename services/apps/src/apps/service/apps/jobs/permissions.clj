@@ -4,6 +4,7 @@
             [apps.persistence.jobs :as jp]
             [apps.service.apps.jobs.util :as ju]
             [clojure.string :as string]
+            [clojure.tools.logging :as log]
             [clojure-commons.exception-util :as cxu]))
 
 (defn supports-job-sharing?
@@ -24,7 +25,7 @@
 (defn validate-job-permissions
   [{short-username :shortUsername :as user} required-level job-ids]
   (let [perms (perms-client/load-analysis-permissions short-username job-ids required-level)]
-    (when-let [forbidden-ids (remove (set (keys perms)) job-ids)]
+    (when-let [forbidden-ids (seq (remove (set (keys perms)) job-ids))]
       (cxu/forbidden (str "insufficient privileges for analyses: " (string/join ", " forbidden-ids))))))
 
 (defn- format-job-permissions
