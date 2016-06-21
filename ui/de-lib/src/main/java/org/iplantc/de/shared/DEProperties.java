@@ -79,22 +79,6 @@ public class DEProperties {
             WORKSPACE_PREFIX + "defaultTrashAppCategoryId";
 
     /**
-     * The prefix used for each of the keepalive configuration parameters.
-     */
-    private static final String KEEPALIVE_PREFIX = "org.iplantc.discoveryenvironment.keepalive.";
-
-    /**
-     * The URL that we use for keepalive requests.
-     */
-    private static final String KEEPALIVE_TARGET = KEEPALIVE_PREFIX + "target";
-
-    /**
-     * The number of minutes between keepalive requests.
-     */
-    private static final String KEEPALIVE_INTERVAL = KEEPALIVE_PREFIX + "interval";
-
-
-    /**
      * Default community data folder path
      */
     private static final String COMMUNITY_DATA_PATH = "org.iplantc.communitydata.path";
@@ -210,17 +194,20 @@ public class DEProperties {
      */
     public List<String> getPropertyList() {
         List<String> keys = new ArrayList<>();
-        keys.add("org.iplantc.communitydata.path");
-        keys.add("org.iplantc.pathList.fileIdentifier");
-        keys.add("org.iplantc.discoveryenvironment.muleServiceBaseUrl");
-        keys.add("org.iplantc.services.de-data-mgmt.base");
-        keys.add("org.iplantc.services.permIdRequests");
-        keys.add("org.iplantc.services.permIdRequests");
-        keys.add("org.iplantc.services.admin.de-data-mgmt.base");
-        keys.add("org.iplantc.services.file-io.base.secured");
-        keys.add("org.iplantc.discoveryenvironment.notifications.poll-interval");
-        keys.add("org.iplantc.discoveryenvironment.contextMenu.enabled");
-        keys.add("org.iplantc.communitydata.path");
+        keys.add(COMMUNITY_DATA_PATH);
+        keys.add(PATH_LIST_FILE_IDENTIFIER);
+        keys.add(MULE_SERVICE_BASE_URL);
+        keys.add(DATA_MGMT_BASE_URL);
+        keys.add(PERM_ID_BASE_URL);
+        keys.add(DATA_MGMT_ADMIN_BASE_URL);
+        keys.add(FILE_IO_BASE_URL);
+        keys.add(NOTIFICATION_POLL_INTERVAL);
+        keys.add(CONTEXT_CLICK_ENABLED);
+        keys.add(PRIVATE_WORKSPACE);
+        keys.add(PRIVATE_WORKSPACE_ITEMS);
+        keys.add(DEFAULT_BETA_CATEGORY_ID);
+        keys.add(DEFAULT_TRASH_CATEGORY_ID);
+        keys.add(UNPROTECTED_MULE_SERVICE_BASE_URL);
         return keys;
     }
 
