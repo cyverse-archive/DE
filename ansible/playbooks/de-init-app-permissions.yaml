@@ -1,0 +1,14 @@
+---
+- name: initialize the permissions database
+  hosts: permissions:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - permissions
+  roles:
+    - role: util-notify-chat
+      msg: "Initializing app permissions"
+    - role: de-init-app-permissions
+    - role: util-notify-chat
+      msg: "Done initializing app permissions"
