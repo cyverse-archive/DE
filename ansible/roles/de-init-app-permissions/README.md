@@ -1,7 +1,10 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+Registers existing apps in the DE database in the new permissions service. For public apps, `read` permissions
+are granted to everyone in the de-users group. For private apps, `own` permissions are granted to the original
+app integrator. Uncategorized apps (that is, apps that are not currently in any app category, private or public)
+are not registered at this time.
 
 Role Variables
 --------------
