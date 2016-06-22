@@ -1,5 +1,5 @@
-Role Name
-=========
+de-init-app-permissions
+=======================
 
 Registers existing apps in the DE database in the new permissions service. For public apps, `read` permissions
 are granted to everyone in the de-users group. For private apps, `own` permissions are granted to the original
