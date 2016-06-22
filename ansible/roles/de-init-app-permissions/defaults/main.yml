@@ -1,0 +1,7 @@
+---
+docker_tag: "{{ docker.tag | default(dev) }}"
+app_registration_repo: "discoenv/app-registration"
+config_image_name: "de-configs-{{ environment_name }}"
+config_repo: "{{ docker.registry.base }}/{{ config_image_name }}"
+config_path: "/etc/iplant/de/permissions.yaml"
+de_database_name: "{{ db_name }}"
