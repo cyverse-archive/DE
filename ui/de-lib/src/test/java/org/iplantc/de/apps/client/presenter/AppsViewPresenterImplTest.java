@@ -42,7 +42,7 @@ public class AppsViewPresenterImplTest {
     @Mock AppsViewFactory viewFactoryMock;
 
     @Before public void setUp() {
-        when(categoriesPresenterMock.getView()).thenReturn(categoriesViewMock);
+        when(categoriesPresenterMock.getWorkspaceView()).thenReturn(categoriesViewMock);
         when(gridPresenterMock.getView()).thenReturn(gridViewMock);
         when(toolbarPresenterMock.getView()).thenReturn(toolbarViewMock);
         uut = new AppsViewPresenterImpl(viewFactoryMock,

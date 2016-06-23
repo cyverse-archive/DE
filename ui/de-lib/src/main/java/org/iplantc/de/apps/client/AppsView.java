@@ -22,7 +22,7 @@ public interface AppsView extends IsWidget,
                                   IsMaskable {
 
     interface AppsViewAppearance {
-
+        String viewCategoriesHeader();
     }
 
     /**

@@ -137,7 +137,7 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     }
 
     @Override
-    public AppCategoriesView getView() {
+    public AppCategoriesView getWorkspaceView() {
         return workspaceView;
     }
 

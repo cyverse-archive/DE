@@ -70,7 +70,7 @@ public interface AppCategoriesView extends IsWidget,
 
         AppCategory getSelectedAppCategory();
 
-        AppCategoriesView getView();
+        AppCategoriesView getWorkspaceView();
 
         void go(HasId selectedAppCategory, TabPanel tabPanel);
 

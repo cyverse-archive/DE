@@ -29,6 +29,7 @@
     <ui:with field="westData"
              type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
         <ui:attributes margins="{westMargins}"
+                       collapsible="true"
                        size="235"
                        split="true"/>
     </ui:with>
@@ -41,6 +42,8 @@
         <ui:attributes size="150"
                        hidden="true"/>
     </ui:with>
+    <ui:with field="appearance"
+             type="org.iplantc.de.apps.client.AppsView.AppsViewAppearance"/>
 
 
     <container:BorderLayoutContainer borders="true">
@@ -51,9 +54,11 @@
 
         <!-- This is the navigation panel -->
         <container:west layoutData="{westData}">
-            <gxt:TabPanel ui:field="categoryTabs">
+            <gxt:ContentPanel headingText="{appearance.viewCategoriesHeader}">
+                <gxt:TabPanel ui:field="categoryTabs">
 
-            </gxt:TabPanel>
+                </gxt:TabPanel>
+            </gxt:ContentPanel>
         </container:west>
 
         <!-- This is the main panel -->

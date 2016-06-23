@@ -86,11 +86,15 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
                    final HasId selectedAppCategory,
                    final HasId selectedApp) {
         TabPanel tabPanel = view.getCategoryTabPanel();
-        if (tabPanel.getWidgetCount() == 0) {
+        if (isEmpty(tabPanel)) {
             categoriesPresenter.go(selectedAppCategory, tabPanel);
             hierarchiesPresenter.go(tabPanel);
         }
         container.setWidget(view);
+    }
+
+    boolean isEmpty(TabPanel tabPanel) {
+        return tabPanel.getWidgetCount() == 0;
     }
 
     @Override

@@ -187,11 +187,12 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
             TreeStore<OntologyHierarchy> treeStore = getTreeStore(hierarchy);
             OntologyHierarchiesView view = viewFactory.create(treeStore);
             Tree<OntologyHierarchy, String> tree = view.getTree();
+
             tree.mask(appearance.getAppCategoriesLoadingMask());
             getFilteredHierarchies(hierarchy, tree);
             view.asWidget().ensureDebugId(baseID + "." + hierarchy.getLabel().toLowerCase());
             view.addOntologyHierarchySelectionChangedEventHandler(this);
-            //As a preference, insert the hierarchy tabs before the HPC tab
+            //As a preference, insert the hierarchy tabs before the HPC tab which is last
             viewTabPanel.insert(tree, viewTabPanel.getWidgetCount() - 1, new TabItemConfig(appearance.hierarchyLabelName(hierarchy)));
         }
     }

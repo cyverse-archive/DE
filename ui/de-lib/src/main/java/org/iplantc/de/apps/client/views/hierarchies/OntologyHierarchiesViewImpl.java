@@ -11,7 +11,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
@@ -29,7 +28,7 @@ import java.util.List;
  */
 public class OntologyHierarchiesViewImpl extends ContentPanel implements OntologyHierarchiesView {
 
-    interface OntologyHierarchiesViewImplUiBinder extends UiBinder<Widget, OntologyHierarchiesViewImpl> {}
+    interface OntologyHierarchiesViewImplUiBinder extends UiBinder<Tree<OntologyHierarchy, String>, OntologyHierarchiesViewImpl> {}
 
     private static final OntologyHierarchiesViewImplUiBinder uiBinder = GWT.create(OntologyHierarchiesViewImplUiBinder.class);
     @UiField Tree<OntologyHierarchy, String> tree;

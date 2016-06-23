@@ -14,7 +14,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
@@ -33,10 +32,10 @@ import java.util.List;
 public class AppCategoriesViewImpl extends ContentPanel implements AppCategoriesView,
                                                                    SelectionChangedEvent.SelectionChangedHandler<AppCategory> {
 
-    interface AppCategoriesViewImplUiBinder extends UiBinder<Widget, AppCategoriesViewImpl> {
+    interface AppCategoriesViewImplUiBinder extends UiBinder<Tree<AppCategory, String>, AppCategoriesViewImpl> {
     }
     @UiField Tree<AppCategory, String> tree;
-    @UiField(provided = true) AppCategoriesAppearance appearance;
+    AppCategoriesAppearance appearance;
 
     private static final AppCategoriesViewImplUiBinder ourUiBinder = GWT.create(AppCategoriesViewImplUiBinder.class);
     private final AppCategoryHierarchyProvider hierarchyProvider;
