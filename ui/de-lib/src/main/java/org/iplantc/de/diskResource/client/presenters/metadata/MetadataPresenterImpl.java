@@ -1,8 +1,5 @@
 package org.iplantc.de.diskResource.client.presenters.metadata;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
@@ -19,14 +16,21 @@ import org.iplantc.de.diskResource.client.views.metadata.dialogs.SelectMetadataT
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
+import com.google.web.bindery.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBeanUtils;
+
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent.DialogHideHandler;
 import com.sencha.gxt.widget.core.client.event.HideEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author jstroot sriram
@@ -90,6 +94,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
         }
     }
 
+    private int unique_avu_id = 0;
     private final DiskResource resource;
     private final MetadataView view;
     private final DiskResourceServiceFacade drService;
@@ -217,6 +222,16 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
         return avu;
     }
 
+    @Override
+    public Avu  setAvuModelKey(Avu avu) {
+        if (avu != null) {
+            final AutoBean<Avu> avuBean = AutoBeanUtils.getAutoBean(avu);
+            avuBean.setTag(AVU_BEAN_TAG_MODEL_KEY, String.valueOf(unique_avu_id++));
+            return avuBean.as();
+        }
+        return null;
+    }
+
 
     private class DiskResourceMetadataListAsyncCallback
             implements AsyncCallback<DiskResourceMetadataList> {
@@ -255,12 +270,13 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
             if (templateView != null) {
                 templateView.hide();
             }
-            templateView =
-                    new MetadataTemplateViewDialog(view.getUserMetadata(), isWritable(), result.getAttributes());
+            templateView = new MetadataTemplateViewDialog(MetadataPresenterImpl.this,
+                                                          view.getUserMetadata(),
+                                                          isWritable(),
+                                                          result.getAttributes());
             templateView.addOkButtonSelectHandler(new TemplateViewOkSelectHandler(isWritable(),
-                                                                                   templateView));
-            templateView.addCancelButtonSelectHandler(new TemplateViewCancelSelectHandler(
-                    templateView));
+                                                                                  templateView));
+            templateView.addCancelButtonSelectHandler(new TemplateViewCancelSelectHandler(templateView));
             templateView.setHeadingText(result.getName());
             templateView.setModal(false);
             templateView.setSize("600px", "400px");

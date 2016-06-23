@@ -51,18 +51,22 @@ import java.util.List;
  */
 public class MetadataTemplateViewDialog extends IPlantDialog {
    final MetadataView.Appearance appearance = GWT.create(MetadataView.Appearance.class);
+    private final MetadataView.Presenter presenter;
     private VerticalLayoutContainer widget;
     private final DateTimeFormat timestampFormat;
     private boolean writable;
-    private final FastMap<Avu> templateAttrAvuMap = new FastMap<>();
-    private final FastMap<Field<?>> templateAttrFieldMap = new FastMap<>();
+    private final FastMap<Avu> templateAttrAvuMap;
+    private final FastMap<Field<?>> templateAttrFieldMap;
     private List<MetadataTemplateAttribute> attributes;
     private List<Avu> templateMd;
     private boolean valid;
 
-    public MetadataTemplateViewDialog(List<Avu> templateMd, boolean writable,
+    public MetadataTemplateViewDialog(MetadataView.Presenter presenter,List<Avu> templateMd, boolean writable,
                                       List<MetadataTemplateAttribute> attributes) {
+        templateAttrAvuMap = new FastMap<>();
+        templateAttrFieldMap = new FastMap<>();
         timestampFormat = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT);
+        this.presenter = presenter;
         this.writable = writable;
         this.attributes = attributes;
         this.templateMd = templateMd;
@@ -76,12 +80,12 @@ public class MetadataTemplateViewDialog extends IPlantDialog {
     }
     
     public ArrayList<Avu> getMetadataFromTemplate() {
-        ArrayList<Avu> avus = Lists.newArrayList();
+        ArrayList<Avu> avus =new ArrayList<>();
         for (String attr : templateAttrFieldMap.keySet()) {
             Avu avu = templateAttrAvuMap.get(attr);
             if (avu == null) {
                 avu = MetadataPresenterImpl.newMetadata(attr, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
-                templateAttrAvuMap.put(attr, avu);
+                templateAttrAvuMap.put(attr, presenter.setAvuModelKey(avu));
             }
 
             Field<?> field = templateAttrFieldMap.get(attr);
@@ -100,7 +104,7 @@ public class MetadataTemplateViewDialog extends IPlantDialog {
 
             avus.add(avu);
         }
-        		return avus;
+        return avus;
     }
     
     public boolean isValid() {

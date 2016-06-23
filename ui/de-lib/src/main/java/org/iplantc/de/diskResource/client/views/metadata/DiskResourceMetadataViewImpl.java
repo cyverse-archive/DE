@@ -1,7 +1,6 @@
 package org.iplantc.de.diskResource.client.views.metadata;
 
 import org.iplantc.de.client.models.avu.Avu;
-import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.diskResource.client.MetadataView;
 import org.iplantc.de.diskResource.client.model.DiskResourceMetadataProperties;
 import org.iplantc.de.diskResource.client.presenters.metadata.MetadataPresenterImpl;
@@ -45,11 +44,13 @@ import com.sencha.gxt.widget.core.client.grid.Grid.GridCell;
 import com.sencha.gxt.widget.core.client.grid.GridView;
 import com.sencha.gxt.widget.core.client.grid.editing.ClicksToEdit;
 import com.sencha.gxt.widget.core.client.grid.editing.GridInlineEditing;
+import com.sencha.gxt.widget.core.client.grid.editing.GridRowEditing;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
 import com.sencha.gxt.widget.core.client.tips.QuickTip;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -93,8 +94,6 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     private final AccordionLayoutAppearance accordionLayoutAppearance =
             GWT.create(AccordionLayoutAppearance.class);
 
-    private static final String AVU_BEAN_TAG_MODEL_KEY = "model-key";
-
     private boolean dirty;
 
     @UiField(provided = true)
@@ -137,9 +136,6 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
 
     private GridInlineEditing<Avu> userGridInlineEditing;
     private final boolean writable;
-
-
-    private int unique_avu_id;
     private boolean valid;
     private MetadataView.Presenter presenter;
     private String baseId;
@@ -194,26 +190,23 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
 
     @Override
     public void loadMetadata(final List<Avu> metadataList) {
-        for (Avu avu : metadataList) {
-            setAvuModelKey(avu);
-        }
-
         additionalMdListStore.clear();
         additionalMdListStore.commitChanges();
-        additionalMdListStore.addAll(metadataList);
+        for (Avu avu : metadataList) {
+            additionalMdListStore.add(presenter.setAvuModelKey(avu));
+        }
 
         additionalMdgrid.getStore().setEnableFilters(true);
     }
 
     @Override
     public void loadUserMetadata(final List<Avu> metadataList) {
-        for (Avu avu : metadataList) {
-            setAvuModelKey(avu);
-        }
-
         userMdListStore.clear();
         userMdListStore.commitChanges();
-        userMdListStore.addAll(metadataList);
+
+        for (Avu avu : metadataList) {
+            userMdListStore.add(presenter.setAvuModelKey(avu));
+        }
 
         userMdGrid.getStore().setEnableFilters(true);
     }
@@ -241,7 +234,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         String attr = getUniqueAttrName(appearance.newAttribute(), 0);
         Avu md =
                 MetadataPresenterImpl.newMetadata(attr, appearance.newValue(), appearance.newUnit());
-        setAvuModelKey(md);
+        presenter.setAvuModelKey(md);
         userMdListStore.add(0, md);
         userGridInlineEditing.startEditing(new GridCell(0, 1));
         userGridInlineEditing.getEditor(userMdGrid.getColumnModel().getColumn(1)).validate(false);
@@ -326,7 +319,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
             public String getKey(Avu item) {
                 if (item != null) {
                     final AutoBean<Object> metadataBean = AutoBeanUtils.getAutoBean(item);
-                    return metadataBean.getTag(AVU_BEAN_TAG_MODEL_KEY);
+                    return metadataBean.getTag(presenter.AVU_BEAN_TAG_MODEL_KEY);
                 } else {
                     return ""; //$NON-NLS-1$
                 }
@@ -334,13 +327,6 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         });
 
 
-    }
-
-    private void setAvuModelKey(Avu avu) {
-        if (avu != null) {
-            final AutoBean<Avu> avuBean = AutoBeanUtils.getAutoBean(avu);
-            avuBean.setTag(AVU_BEAN_TAG_MODEL_KEY, String.valueOf(unique_avu_id++));
-        }
     }
 
     private void expandUserMetadataPanel() {
@@ -408,14 +394,22 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     @Override
     public void updateMetadataFromTemplateView(List<Avu> metadataList) {
         userMdGrid.mask();
+        if(userMdListStore.size() == 0) {
+           userMdListStore.addAll(metadataList);
+           userMdGrid.unmask();
+           return;
+        }
+        List<Avu> itemsToAdd = new ArrayList<>();
         for (Avu md : metadataList) {
-            for (Avu storemd : userMdListStore.getAll()) {
-                if (storemd.getAttribute().equals(md.getAttribute())) {
-                    storemd.setValue(md.getValue());
-                    userMdListStore.update(storemd);
-                }
+            Avu model = userMdListStore.findModel(md);
+            if (model != null) {
+                model.setValue(md.getValue());
+                userMdListStore.update(model);
+            } else {
+                itemsToAdd.add(presenter.setAvuModelKey(md));
             }
         }
+        userMdListStore.addAll(itemsToAdd);
         userMdGrid.unmask();
     }
 
