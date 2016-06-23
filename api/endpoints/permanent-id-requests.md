@@ -6,6 +6,7 @@ title: DE Permanent ID Request API Documentation
 # Table of Contents
 
 * [Permanent ID Requests](#permanent-id-requests)
+    * [Workflow Overview](#workflow-overview)
     * [List all Permanent ID Requests](#list-all-permanent-id-requests)
     * [Get any Permanent ID Request Details](#get-any-permanent-id-request-details)
     * [Update the Status of a Permanent ID Request](#update-the-status-of-a-permanent-id-request)
@@ -23,7 +24,7 @@ including ARKs and DataCite DOIs, for data the user wishes to make public.
 
 The persistent identifiers will be created and managed using the [EZID](http://ezid.cdlib.org/) API.
 
-# Workflow Overview
+## Workflow Overview
 
 1. User reviews [DOI FAQ page on wiki](https://pods.iplantcollaborative.org/wiki/display/DC/Requesting+a+Permanent+Identifier+in+the+CyVerse+Data+Commons+Repository)
    and determines that a CyVerse DOI is appropriate for their data.
