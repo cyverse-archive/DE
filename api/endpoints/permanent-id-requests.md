@@ -23,6 +23,57 @@ including ARKs and DataCite DOIs, for data the user wishes to make public.
 
 The persistent identifiers will be created and managed using the [EZID](http://ezid.cdlib.org/) API.
 
+# Workflow Overview
+
+1. User reviews [DOI FAQ page on wiki](https://pods.iplantcollaborative.org/wiki/display/DC/Requesting+a+Permanent+Identifier+in+the+CyVerse+Data+Commons+Repository)
+   and determines that a CyVerse DOI is appropriate for their data.
+2. User organizes their data in a single folder per Permanent ID, according to very general CyVerse guidelines.
+3. Based on what they learned from tutorial, user will complete DataCite metadata template on that folder.
+4. User [creates a Permanent ID Request](#create-a-permanent-id-request)
+   for this folder.
+    * Request must be for one of the [available Permanent ID Request types](#list-permanent-id-request-types).
+    * Request triggers the validation check within the DE of the metadata and folder name
+      (must not conflict with any folder names in the data commons repo `staging` or `curated` folders).
+    * If pass:
+        * Results of request are emailed to curation team.
+        * Folder automatically moved to data commons repo `staging` folder.
+            * Curators automatically given `own` permission.
+            * User automatically given `write` permission.
+        * User may [view all Permanent ID Requests](#list-permanent-id-requests) they have submitted.
+        * User may [view details for any of their Permanent ID Requests](#list-permanent-id-request-details).
+    * If fail, user returns to Step 3.
+5. Curator finds request with [Permanent ID Request listing](#list-all-permanent-id-requests).
+    * Curator may [view the Permanent ID Request details](#get-any-permanent-id-request-details),
+      which includes the request's status history (initially only `Submitted`).
+    * Curator checks metadata and data structure.
+    * Curator may [update the status of the Permanent ID Request](#update-the-status-of-a-permanent-id-request)
+      in this or any subsequent step.
+        * Curator may use any previously created
+          [Permanent ID Request Status Codes](#list-permanent-id-request-status-codes),
+          or add a new status (which is saved for future reuse).
+    * If pass or minor changes that can be made by curator: go to Step 6
+    * If changes needed by user: Curator emails user and asks them to make changes
+    * Once corrections are made, go to Step 6.
+6. Curator [creates Permanent ID](#create-a-permanent-id) for this request.
+    * Folder name must not conflict with any folder names in the data commons repo `curated` folder.
+    * Metadata from folder is submitted to [EZID](http://ezid.cdlib.org/) API
+      in order to create the requested Permanent ID.
+    * Fails:
+        * Permanent ID not generated and error reported to curator.
+        * [Request status automatically updated](#update-the-status-of-a-permanent-id-request) to `Failed`.
+        * Curator corrects any errors.
+        * Repeat Step 6 until pass.
+    * Passes:
+        * Permanent ID is generated and notification sent to curator and user.
+        * [Request status automatically updated](#update-the-status-of-a-permanent-id-request) to `Completion`.
+        * Folder metadata automatically updated to include new Permanent ID and current date.
+        * Folder automatically moved to data commons repo `curated` folder.
+            * Curators automatically given `own` permission.
+            * Public automatically given `read` permission.
+        * Curator checks that data is public and visible on mirrors,
+          that metadata appears correct on the [EZID](http://ezid.cdlib.org/) landing page,
+          and that the Permanent ID redirect works.
+
 ## List all Permanent ID Requests
 
 `GET /admin/permanent-id-requests`
