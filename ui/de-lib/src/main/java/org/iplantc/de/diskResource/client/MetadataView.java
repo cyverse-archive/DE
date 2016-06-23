@@ -76,6 +76,8 @@ public interface MetadataView extends IsWidget {
 
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter {
 
+        final String AVU_BEAN_TAG_MODEL_KEY = "model-key";
+
         interface Appearance {
 
             String templateListingError();
@@ -94,6 +96,8 @@ public interface MetadataView extends IsWidget {
 
             String incomplete();
         }
+
+        Avu setAvuModelKey(Avu avu);
 
         DiskResource getSelectedResource();
 
