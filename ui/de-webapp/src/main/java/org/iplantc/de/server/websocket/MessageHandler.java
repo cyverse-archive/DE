@@ -52,13 +52,6 @@ public abstract class MessageHandler extends WebSocketHandlerAdapter {
         webSocket.resource().addEventListener(new WebSocketEventListenerAdapter() {
             @Override
             public void onDisconnect(AtmosphereResourceEvent event) {
-                if (event.isCancelled()) {
-                    logger.info("Unexpectedly disconnected",
-                                 event.getResource().uuid());
-                } else if (event.isClosedByClient()) {
-                    logger.info("Client closed the connection",
-                                 event.getResource().uuid());
-                }
                 try {
                     if (msgChannel != null) {
                         msgChannel.abort();
