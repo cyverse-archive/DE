@@ -1,10 +1,10 @@
 (ns apps.service.apps
-  (:use [kameleon.uuids :only [uuidify]]
+  (:use [apps.service.oauth :only [authorization-uri]]
+        [kameleon.uuids :only [uuidify]]
         [korma.db :only [transaction]]
         [slingshot.slingshot :only [try+ throw+]]
         [service-logging.thread-context :only [with-logging-context]])
-  (:require [cemerick.url :as curl]
-            [clojure.tools.logging :as log]
+  (:require [clojure.tools.logging :as log]
             [mescal.de :as agave]
             [apps.clients.notifications :as cn]
             [apps.persistence.jobs :as jp]
@@ -18,14 +18,6 @@
             [apps.util.config :as config]
             [apps.util.json :as json-util]
             [service-logging.thread-context :as tc]))
-
-(defn- authorization-uri
-  [server-info username state-info]
-  (str (assoc (curl/url (:auth-uri server-info))
-         :query {:response_type "code"
-                 :client_id     (:client-key server-info)
-                 :redirect_uri  (:redirect-uri server-info)
-                 :state         (op/store-authorization-request username state-info)})))
 
 (defn- authorization-redirect
   [server-info username state-info]

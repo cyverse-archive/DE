@@ -19,7 +19,13 @@
     :query       [params SecuredQueryParams]
     :return      TokenInfo
     :summary     "Return information about an OAuth access token, not including the token itself."
-    (ok (oauth/get-token-info api-name current-user))))
+    (ok (oauth/get-token-info api-name current-user)))
+
+  (GET* "/redirect-uris" []
+    :query   [params SecuredQueryParams]
+    :return  (doc-only RedirectUris RedirectUrisDoc)
+    :summary "Return a set of OAuth redirect URIs if the user hasn't authenticated with the remote API yet."
+    (ok (oauth/get-redirect-uris current-user))))
 
 (defroutes* admin-oauth
   (GET* "/token-info/:api-name" []

@@ -13,3 +13,10 @@
 
 (s/defschema TokenInfo
   (select-keys AdminTokenInfo [:expires_at :webapp]))
+
+(s/defschema RedirectUris
+  {(describe s/Keyword "The name of the API")
+   (describe String "The redirect URI")})
+
+(s/defschema RedirectUrisDoc
+  {:api-name (describe String "The redirect URI.")})

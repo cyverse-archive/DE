@@ -1,10 +1,12 @@
 (ns apps.service.oauth
   "Service implementations dealing with OAuth 2.0 authentication."
   (:use [apps.user :only [current-user]]
+        [medley.core :only [remove-vals]]
         [slingshot.slingshot :only [throw+]])
   (:require [apps.persistence.oauth :as op]
             [apps.util.config :as config]
             [apps.util.service :as service]
+            [cemerick.url :as curl]
             [clojure-commons.exception-util :as cxu]
             [authy.core :as authy]))
 
@@ -62,3 +64,19 @@
   [api-name {:keys [username]}]
   (or (format-admin-token-info (op/get-access-token api-name username))
       (cxu/not-found "access token not found" :api_name api-name)))
+
+(defn authorization-uri
+  "Generates an authorization URI for a remote API."
+  [{:keys [api-name] :as server-info} username state-info]
+  (when-not (op/get-access-token api-name username)
+    (str (assoc (curl/url (:auth-uri server-info))
+                :query {:response_type "code"
+                        :client_id     (:client-key server-info)
+                        :redirect_uri  (:redirect-uri server-info)
+                        :state         (op/store-authorization-request username state-info)}))))
+
+(defn get-redirect-uris
+  "Retrieves the redirect URIs that can be used for a user to authenticate to a remote API."
+  [{:keys [username]}]
+  (let [build-auth-uri (fn [[_ server-info-fn]] (authorization-uri (server-info-fn) username ""))]
+    (remove-vals nil? (into {} (map (juxt key build-auth-uri) server-info-fn-for)))))
