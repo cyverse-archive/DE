@@ -384,16 +384,10 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     }
 
     private void setButtonState() {
-        if (selectedSet.size() == 0) {
-            deleteMetadataButton.disable();
-            editMetadataButton.disable();
-        } else if (selectedSet.size() == 1) {
-            deleteMetadataButton.enable();
-            editMetadataButton.enable();
-        } else {
-            deleteMetadataButton.enable();
-            editMetadataButton.disable();
-        }
+        boolean deleteEnabled = (selectedSet.size() > 0) && writable;
+        boolean editEnabled = (selectedSet.size() == 1) && writable;
+        deleteMetadataButton.setEnabled(deleteEnabled);
+        editMetadataButton.setEnabled(editEnabled);
     }
 
     private void expandUserMetadataPanel() {
