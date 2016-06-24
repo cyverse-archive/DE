@@ -35,6 +35,10 @@
   (-> SecuredQueryParamsEmailRequired
     (->optional-param :email)))
 
+(s/defschema SecuredProxyQueryParams
+  (assoc SecuredQueryParams
+    (s/optional-key :proxy-user) (describe NonBlankString "The name of the proxy user for admin service calls.")))
+
 (s/defschema OAuthCallbackQueryParams
   (assoc SecuredQueryParams
     :code  (describe NonBlankString "The authorization code used to obtain the access token.")

@@ -2,7 +2,7 @@
   (:use [common-swagger-api.schema]
         [apps.routes.domain.oauth]
         [apps.routes.params]
-        [apps.user :only [current-user]]
+        [apps.user :only [current-user load-user]]
         [ring.util.http-response :only [ok]])
   (:require [apps.service.oauth :as oauth]))
 
@@ -18,5 +18,15 @@
     :path-params [api-name :- ApiName]
     :query       [params SecuredQueryParams]
     :return      TokenInfo
-    :summary     "Return information about an OAuth access token."
+    :summary     "Return information about an OAuth access token, not including the token itself."
     (ok (oauth/get-token-info api-name current-user))))
+
+(defroutes* admin-oauth
+  (GET* "/token-info/:api-name" []
+    :path-params [api-name :- ApiName]
+    :query       [params SecuredProxyQueryParams]
+    :return      AdminTokenInfo
+    :summary     "Return information about an OAuth access token."
+    (ok (oauth/get-admin-token-info api-name (if (:proxy-user params)
+                                               (load-user (:proxy-user params))
+                                               current-user)))))

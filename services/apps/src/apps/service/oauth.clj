@@ -35,15 +35,30 @@
     (authy/get-access-token (build-authy-server-info server-info token-callback) code)
     {:state_info state-info}))
 
+(defn- format-admin-token-info
+  "Formats access token info for administrative endpoints."
+  [token-info]
+  (when token-info
+    {:access_token  (:access-token token-info)
+     :expires_at    (.. (:expires-at token-info) toInstant toEpochMilli)
+     :refresh_token (:refresh-token token-info)
+     :webapp        (:webapp token-info)}))
+
 (defn- format-token-info
   "Formats access token info."
   [token-info]
   (when token-info
-    (-> (assoc token-info :expires_at (.. (:expires-at token-info) toInstant toEpochMilli))
+    (-> (format-admin-token-info token-info)
         (select-keys [:expires_at :webapp]))))
 
 (defn get-token-info
-  "Retrieves the user's token information for for an external API if it exists."
+  "Retrieves the user's token information, excluding the actual tokens, for an external API if it exists."
   [api-name {:keys [username]}]
   (or (format-token-info (op/get-access-token api-name username))
+      (cxu/not-found "access token not found" :api_name api-name)))
+
+(defn get-admin-token-info
+  "Retrieves the user's token information for an external API if it exists."
+  [api-name {:keys [username]}]
+  (or (format-admin-token-info (op/get-access-token api-name username))
       (cxu/not-found "access token not found" :api_name api-name)))
