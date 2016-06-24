@@ -14,7 +14,6 @@ import org.iplantc.de.apps.client.gin.factory.AppCategoriesViewFactory;
 import org.iplantc.de.apps.client.views.details.dialogs.AppDetailsDialog;
 import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.shared.DEProperties;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
@@ -26,6 +25,7 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.shared.AsyncProviderWrapper;
+import org.iplantc.de.shared.DEProperties;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -36,6 +36,8 @@ import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import com.google.web.bindery.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
@@ -46,7 +48,7 @@ import com.sencha.gxt.widget.core.client.TabItemConfig;
 import com.sencha.gxt.widget.core.client.TabPanel;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -83,6 +85,7 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     protected static String HPC_ID;
     protected static String USER_APPS_GROUP;
     protected static String WORKSPACE;
+    protected static String PATH_KEY = "category_path";
     protected String searchRegexPattern;
     @Inject IplantAnnouncer announcer;
     @Inject AsyncProviderWrapper<AppDetailsDialog> appDetailsDlgAsyncProvider;
@@ -115,14 +118,13 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     }
 
     @Override
-    public List<String> getGroupHierarchy(TreeStore<AppCategory> treeStore, AppCategory appCategory) {
-        List<String> groupNames = Lists.newArrayList();
+    public List<String> getGroupHierarchy(AppCategory appCategory) {
+        List<String> groupNames;
 
-        for (AppCategory group : getGroupHierarchy(treeStore, appCategory, null)) {
-            groupNames.add(group.getName());
-        }
+        final AutoBean<AppCategory> categoryAutoBean = AutoBeanUtils.getAutoBean(appCategory);
+        String path = categoryAutoBean.getTag(PATH_KEY);
+        groupNames = Arrays.asList(path.split("/"));
 
-        Collections.reverse(groupNames);
         return groupNames;
     }
 
@@ -319,8 +321,27 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
             treeStore.add(parent, children);
         }
 
+        setCategoryPathTag(parent, children);
+
         for (AppCategory ag : children) {
             addAppCategories(treeStore, ag, ag.getCategories());
+        }
+    }
+
+    void setCategoryPathTag(AppCategory parent, List<AppCategory> children) {
+        String parentPath = "";
+        if (parent != null) {
+            final AutoBean<AppCategory> parentAutoBean = AutoBeanUtils.getAutoBean(parent);
+            parentPath = parentAutoBean.getTag(PATH_KEY);
+            if (children != null) {
+                parentPath += "/";
+            }
+        }
+        if (children != null) {
+            for (AppCategory child : children) {
+                final AutoBean<AppCategory> childAutoBean = AutoBeanUtils.getAutoBean(child);
+                childAutoBean.setTag(PATH_KEY, parentPath + child.getName());
+            }
         }
     }
 
@@ -332,19 +353,6 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
         }
 
         return null;
-    }
-
-    List<AppCategory> getGroupHierarchy(TreeStore<AppCategory> treeStore, AppCategory grp, List<AppCategory> groups) {
-        if (groups == null) {
-            groups = Lists.newArrayList();
-        }
-        groups.add(grp);
-        for (AppCategory ap : treeStore.getRootItems()) {
-            if (ap.getId().equals(grp.getId())) {
-                return groups;
-            }
-        }
-        return getGroupHierarchy(treeStore, treeStore.getParent(grp), groups);
     }
 
     void initConstants(final DEProperties props,

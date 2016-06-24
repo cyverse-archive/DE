@@ -31,11 +31,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import com.google.web.bindery.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -45,6 +48,7 @@ import java.util.List;
 public class AdminAppsCategoriesPresenterImpl implements AdminCategoriesView.Presenter,
                                                          AppCategoriesView.AppCategoryHierarchyProvider {
 
+    protected static String PATH_KEY = "category_path";
     @Inject AppAdminServiceFacade adminAppService;
     @Inject IplantAnnouncer announcer;
     @Inject AppServiceFacade appService;
@@ -63,13 +67,13 @@ public class AdminAppsCategoriesPresenterImpl implements AdminCategoriesView.Pre
     }
 
     @Override
-    public List<String> getGroupHierarchy(TreeStore<AppCategory> treeStore, AppCategory appCategory) {
-        List<String> groupNames = Lists.newArrayList();
+    public List<String> getGroupHierarchy(AppCategory appCategory) {
+        List<String> groupNames;
 
-        for (AppCategory group : getGroupHierarchy(appCategory, null)) {
-            groupNames.add(group.getName());
-        }
-        Collections.reverse(groupNames);
+        final AutoBean<AppCategory> categoryAutoBean = AutoBeanUtils.getAutoBean(appCategory);
+        String path = categoryAutoBean.getTag(PATH_KEY);
+        groupNames = Arrays.asList(path.split("/"));
+
         return groupNames;
     }
 
@@ -266,8 +270,27 @@ public class AdminAppsCategoriesPresenterImpl implements AdminCategoriesView.Pre
             treeStore.add(parent, children);
         }
 
+        setCategoryPathTag(parent, children);
+
         for (AppCategory ag : children) {
             addAppCategories(ag, ag.getCategories());
+        }
+    }
+
+    void setCategoryPathTag(AppCategory parent, List<AppCategory> children) {
+        String parentPath = "";
+        if (parent != null) {
+            final AutoBean<AppCategory> parentAutoBean = AutoBeanUtils.getAutoBean(parent);
+            parentPath = parentAutoBean.getTag(PATH_KEY);
+            if (children != null) {
+                parentPath += "/";
+            }
+        }
+        if (children != null) {
+            for (AppCategory child : children) {
+                final AutoBean<AppCategory> childAutoBean = AutoBeanUtils.getAutoBean(child);
+                childAutoBean.setTag(PATH_KEY, parentPath + child.getName());
+            }
         }
     }
 

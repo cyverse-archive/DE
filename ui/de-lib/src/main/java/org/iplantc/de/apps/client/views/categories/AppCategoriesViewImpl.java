@@ -65,7 +65,7 @@ public class AppCategoriesViewImpl extends ContentPanel implements AppCategories
     public void onSelectionChanged(SelectionChangedEvent<AppCategory> event) {
         final List<String> groupHierarchy = Lists.newArrayList();
         if(!event.getSelection().isEmpty()){
-            groupHierarchy.addAll(hierarchyProvider.getGroupHierarchy(treeStore, event.getSelection().iterator().next()));
+            groupHierarchy.addAll(hierarchyProvider.getGroupHierarchy(event.getSelection().iterator().next()));
             fireEvent(new AppCategorySelectionChangedEvent(event.getSelection(),
                                                            groupHierarchy));
         }
