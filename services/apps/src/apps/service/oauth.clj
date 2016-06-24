@@ -2,9 +2,11 @@
   "Service implementations dealing with OAuth 2.0 authentication."
   (:use [apps.user :only [current-user]]
         [slingshot.slingshot :only [throw+]])
-  (:require [authy.core :as authy]
-            [apps.persistence.oauth :as op]
-            [apps.util.config :as config]))
+  (:require [apps.persistence.oauth :as op]
+            [apps.util.config :as config]
+            [apps.util.service :as service]
+            [clojure-commons.exception-util :as cxu]
+            [authy.core :as authy]))
 
 (defn- build-authy-server-info
   "Builds the server info to pass to authy."
@@ -32,3 +34,16 @@
         token-callback (partial op/store-access-token api-name username)]
     (authy/get-access-token (build-authy-server-info server-info token-callback) code)
     {:state_info state-info}))
+
+(defn- format-token-info
+  "Formats access token info."
+  [token-info]
+  (when token-info
+    (-> (assoc token-info :expires_at (.. (:expires-at token-info) toInstant toEpochMilli))
+        (select-keys [:expires_at :webapp]))))
+
+(defn get-token-info
+  "Retrieves the user's token information for for an external API if it exists."
+  [api-name {:keys [username]}]
+  (or (format-token-info (op/get-access-token api-name username))
+      (cxu/not-found "access token not found" :api_name api-name)))
