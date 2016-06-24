@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"version"
 
 	"templeton/database"
 	"templeton/elasticsearch"
@@ -19,36 +20,19 @@ import (
 )
 
 var (
-	version            = flag.Bool("version", false, "Print version information")
+	showVersion        = flag.Bool("version", false, "Print version information")
 	mode               = flag.String("mode", "", "One of 'periodic', 'incremental', or 'full'. Required except for --version.")
 	cfgPath            = flag.String("config", "", "Path to the configuration file. Required except for --version.")
 	amqpURI            string
 	elasticsearchBase  string
 	elasticsearchIndex string
 	dbURI              string
-	gitref             string
-	appver             string
-	builtby            string
 	cfg                *config.Config
 )
 
 func init() {
 	flag.Parse()
 	logcabin.Init("templeton", "templeton")
-}
-
-// AppVersion prints version information to stdout
-func AppVersion() {
-	if appver != "" {
-		fmt.Printf("App-Version: %s\n", appver)
-	}
-	if gitref != "" {
-		fmt.Printf("Git-Ref: %s\n", gitref)
-	}
-
-	if builtby != "" {
-		fmt.Printf("Built-By: %s\n", builtby)
-	}
 }
 
 func checkMode() {
@@ -163,8 +147,8 @@ func doIncrementalMode(es *elasticsearch.Elasticer, d *database.Databaser, clien
 }
 
 func main() {
-	if *version {
-		AppVersion()
+	if *showVersion {
+		version.AppVersion()
 		os.Exit(0)
 	}
 

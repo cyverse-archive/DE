@@ -8,7 +8,9 @@ import (
 	"fmt"
 	"logcabin"
 	"net/http"
+	"os"
 	"strings"
+	"version"
 
 	errors "github.com/go-swagger/go-swagger/errors"
 	httpkit "github.com/go-swagger/go-swagger/httpkit"
@@ -35,7 +37,8 @@ import (
 
 // Command line options that aren't managed by go-swagger.
 var options struct {
-	CfgPath string `long:"config" default:"/etc/iplant/de/permissions.yaml" description:"The path to the config file"`
+	CfgPath     string `long:"config" default:"/etc/iplant/de/permissions.yaml" description:"The path to the config file"`
+	ShowVersion bool   `short:"v" long:"version" description:"Print the app version and exit"`
 }
 
 // Register the command-line options.
@@ -60,6 +63,11 @@ var grouperClient *grouper.GrouperClient
 
 // Initialize the service.
 func initService() error {
+	if options.ShowVersion {
+		version.AppVersion()
+		os.Exit(0)
+	}
+
 	var (
 		err error
 		cfg *config.Config
