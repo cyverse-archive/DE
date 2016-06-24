@@ -72,6 +72,10 @@ public interface MetadataView extends IsWidget {
         String panelWidth();
 
         String panelHeight();
+
+        ImageResource editIcon();
+
+        String edit();
     }
 
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter {
