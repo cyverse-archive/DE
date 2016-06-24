@@ -3,7 +3,9 @@
         [potemkin :only [import-vars]])
   (:require compojure.api.sweet
             [ring.swagger.json-schema :as json-schema]
-            [schema.core :as s]))
+            [schema.core :as s]
+            [schema.spec.core :as spec :include-macros true]
+            [schema.spec.variant :as variant]))
 
 (import-vars
   [compojure.api.sweet
@@ -94,3 +96,19 @@
 (s/defschema ErrorResponse
   {:error_code              (describe NonBlankString "The code identifying the type of error")
    (s/optional-key :reason) (describe NonBlankString "A brief description of the reason for the error")})
+
+(defrecord DocOnly [schema-real schema-doc]
+  s/Schema
+  (spec [this]
+    (variant/variant-spec
+     spec/+no-precondition+
+     [{:schema schema-real}]))
+  (explain [this] (list 'doc-only (s/explain schema-real) (s/explain schema-doc))))
+
+(defn doc-only [schema-to-use schema-to-doc]
+  (DocOnly. schema-to-use schema-to-doc))
+
+(extend-protocol json-schema/JsonSchema
+  DocOnly
+  (convert [e _]
+    (json-schema/->swagger (:schema-doc e))))
