@@ -69,3 +69,9 @@
   [ip-address login-time]
   (raw/record-logout ip-address login-time)
   nil)
+
+(defn get-auth-redirect-uris
+  []
+  (-> (raw/get-oauth-redirect-uris)
+      :body
+      service/decode-json))
