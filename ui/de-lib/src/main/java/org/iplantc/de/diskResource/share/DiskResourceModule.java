@@ -92,5 +92,6 @@ public interface DiskResourceModule {
         String USER_METADATA_COLLAPSE = ".collapseBtn";
         String METADATA_TEMPLATE = ".metadataTemplate";
         String METADATA_TEMPLATE_COLLAPSE = ".collapseBtn";
+        String EDIT_METADATA = ".editMetadata";
     }
 }
