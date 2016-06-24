@@ -376,7 +376,7 @@
       msg: ":heavy_check_mark: Done deploying infosquito"
 
 - name: Redeploy job-status-to-apps-adapter
-  hosts: jexevents
+  hosts: job-status-to-apps-adapter:&systems
   sudo: true
   gather_facts: false
   tags:
@@ -393,7 +393,7 @@
       msg: ":heavy_check_mark: Done deploying job-status-to-apps-adapter"
 
 - name: Redeploy job-status-recorder
-  hosts: jexevents
+  hosts: job-status-recorder:&systems
   sudo: true
   gather_facts: false
   tags:
