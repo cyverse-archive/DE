@@ -1,4 +1,5 @@
 anon-files
+app-registration
 clockwork
 data-info
 de
@@ -13,6 +14,7 @@ apps
 metadata
 monkey
 notification-agent
+permissions
 porklock
 saved-searches
 templeton
