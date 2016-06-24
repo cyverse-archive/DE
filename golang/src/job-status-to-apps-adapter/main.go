@@ -25,29 +25,11 @@ import (
 	"net/http"
 	"os"
 	"time"
+	"version"
 
 	_ "github.com/lib/pq"
 	"github.com/olebedev/config"
 )
-
-var (
-	gitref  string
-	appver  string
-	builtby string
-)
-
-// AppVersion prints version information to stdout
-func AppVersion() {
-	if appver != "" {
-		fmt.Printf("App-Version: %s\n", appver)
-	}
-	if gitref != "" {
-		fmt.Printf("Git-Ref: %s\n", gitref)
-	}
-	if builtby != "" {
-		fmt.Printf("Built-By: %s\n", builtby)
-	}
-}
 
 // JobStatusUpdate contains the data POSTed to the apps service.
 type JobStatusUpdate struct {
@@ -320,22 +302,22 @@ func ScanAndPropagate(d *sql.DB, maxRetries int64, appsURI string) error {
 
 func main() {
 	var (
-		cfgPath    = flag.String("config", "", "Path to the config file. Required.")
-		version    = flag.Bool("version", false, "Print the version information")
-		dbURI      = flag.String("db", "", "The URI used to connect to the database")
-		maxRetries = flag.Int64("retries", 3, "The maximum number of propagation retries to make")
-		err        error
-		cfg        *config.Config
-		db         *sql.DB
-		appsURI    string
+		cfgPath     = flag.String("config", "", "Path to the config file. Required.")
+		showVersion = flag.Bool("version", false, "Print the version information")
+		dbURI       = flag.String("db", "", "The URI used to connect to the database")
+		maxRetries  = flag.Int64("retries", 3, "The maximum number of propagation retries to make")
+		err         error
+		cfg         *config.Config
+		db          *sql.DB
+		appsURI     string
 	)
 
 	flag.Parse()
 
 	logcabin.Init("job-status-to-apps-adapter", "job-status-to-apps-adapter")
 
-	if *version {
-		AppVersion()
+	if *showVersion {
+		version.AppVersion()
 		os.Exit(0)
 	}
 

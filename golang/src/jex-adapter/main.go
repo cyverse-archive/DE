@@ -19,29 +19,11 @@ import (
 	"model"
 	"net/http"
 	"os"
+	"version"
 
 	"github.com/gorilla/mux"
 	"github.com/olebedev/config"
 )
-
-var (
-	gitref  string
-	appver  string
-	builtby string
-)
-
-// AppVersion prints version information to stdout
-func AppVersion() {
-	if appver != "" {
-		fmt.Printf("App-Version: %s\n", appver)
-	}
-	if gitref != "" {
-		fmt.Printf("Git-Ref: %s\n", gitref)
-	}
-	if builtby != "" {
-		fmt.Printf("Built-By: %s\n", builtby)
-	}
-}
 
 // JEXAdapter contains the application state for jex-adapter.
 type JEXAdapter struct {
@@ -257,18 +239,18 @@ func (j *JEXAdapter) NewRouter() *mux.Router {
 
 func main() {
 	var (
-		version = flag.Bool("version", false, "Print version information")
-		cfgPath = flag.String("config", "", "Path to the configuration file")
-		addr    = flag.String("addr", ":60000", "The port to listen on for HTTP requests")
-		amqpURI string
+		showVersion = flag.Bool("version", false, "Print version information")
+		cfgPath     = flag.String("config", "", "Path to the configuration file")
+		addr        = flag.String("addr", ":60000", "The port to listen on for HTTP requests")
+		amqpURI     string
 	)
 
 	flag.Parse()
 
 	logcabin.Init("jex-adapter", "jex-adapter")
 
-	if *version {
-		AppVersion()
+	if *showVersion {
+		version.AppVersion()
 		os.Exit(0)
 	}
 

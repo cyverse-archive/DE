@@ -23,18 +23,16 @@ import (
 	"path"
 	"syscall"
 	"time"
+	"version"
 
 	"github.com/olebedev/config"
 	"github.com/streadway/amqp"
 )
 
 var (
-	gitref  string
-	appver  string
-	builtby string
-	job     *model.Job
-	dckr    *dockerops.Docker
-	client  *messaging.Client
+	job    *model.Job
+	dckr   *dockerops.Docker
+	client *messaging.Client
 )
 
 func signals() {
@@ -70,19 +68,6 @@ func signals() {
 func init() {
 	logcabin.Init("road-runner", "road-runner")
 	signals()
-}
-
-// AppVersion prints version information to stdout
-func AppVersion() {
-	if appver != "" {
-		fmt.Printf("App-Version: %s\n", appver)
-	}
-	if gitref != "" {
-		fmt.Printf("Git-Ref: %s\n", gitref)
-	}
-	if builtby != "" {
-		fmt.Printf("Built-By: %s\n", builtby)
-	}
 }
 
 func hostname() string {
@@ -262,19 +247,19 @@ func deleteJobFile(uuid, toDir string) {
 
 func main() {
 	var (
-		version   = flag.Bool("version", false, "Print the version information")
-		jobFile   = flag.String("job", "", "The path to the job description file")
-		cfgPath   = flag.String("config", "", "The path to the config file")
-		writeTo   = flag.String("write-to", "/opt/image-janitor", "The directory to copy job files to.")
-		dockerURI = flag.String("docker", "unix:///var/run/docker.sock", "The URI for connecting to docker.")
-		err       error
-		cfg       *config.Config
+		showVersion = flag.Bool("version", false, "Print the version information")
+		jobFile     = flag.String("job", "", "The path to the job description file")
+		cfgPath     = flag.String("config", "", "The path to the config file")
+		writeTo     = flag.String("write-to", "/opt/image-janitor", "The directory to copy job files to.")
+		dockerURI   = flag.String("docker", "unix:///var/run/docker.sock", "The URI for connecting to docker.")
+		err         error
+		cfg         *config.Config
 	)
 
 	flag.Parse()
 
-	if *version {
-		AppVersion()
+	if *showVersion {
+		version.AppVersion()
 		os.Exit(0)
 	}
 

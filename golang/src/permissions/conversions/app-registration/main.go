@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"logcabin"
 	"net/url"
+	"os"
+	"version"
 
 	_ "github.com/lib/pq"
 )
@@ -243,9 +245,16 @@ func main() {
 	config := flag.String("config", "", "The path to the configuration file.")
 	deDburi := flag.String("de-database-uri", "", "The URI to use when connecting to the DE database.")
 	deDbname := flag.String("de-database-name", "de", "The name of the DE database.")
+	showVersion := flag.Bool("version", false, "Display version information and exit.")
 
 	// Parse the command line arguments.
 	flag.Parse()
+
+	// Print the version information and exit if we're told to.
+	if *showVersion {
+		version.AppVersion()
+		os.Exit(0)
+	}
 
 	// Validate the command-line options.
 	if *config == "" {

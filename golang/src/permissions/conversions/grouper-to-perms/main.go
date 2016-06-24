@@ -7,10 +7,12 @@ import (
 	"fmt"
 	"github.com/go-swagger/go-swagger/httpkit/middleware"
 	"logcabin"
+	"os"
 	"permissions/models"
 	perms_impl "permissions/restapi/impl/permissions"
 	perms "permissions/restapi/operations/permissions"
 	"strings"
+	"version"
 
 	_ "github.com/lib/pq"
 )
@@ -84,9 +86,16 @@ func runConversion(handler requestHandler, grouperDb *sql.DB, permissionDefName 
 func main() {
 	config := flag.String("config", "", "The path to the configuration file.")
 	convertJobs := flag.Bool("jobs", true, "True if jobs should be included in the conversion.")
+	showVersion := flag.Bool("version", false, "Display the version information and exit.")
 
 	// Parse the command line arguments.
 	flag.Parse()
+
+	// Display the version information and exit if we're told to.
+	if *showVersion {
+		version.AppVersion()
+		os.Exit(0)
+	}
 
 	// Validate the command-line options.
 	if *config == "" {
