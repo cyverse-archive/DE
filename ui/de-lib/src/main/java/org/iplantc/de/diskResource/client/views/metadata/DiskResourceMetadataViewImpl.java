@@ -227,6 +227,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         super.onEnsureDebugId(baseID);
         this.baseId = baseID;
         addMetadataButton.ensureDebugId(baseID + MetadataIds.ADD_METADATA);
+        editMetadataButton.ensureDebugId(baseID + MetadataIds.EDIT_METADATA);
         deleteMetadataButton.ensureDebugId(baseID + MetadataIds.DELETE_METADATA);
         selectButton.ensureDebugId(baseID + MetadataIds.TEMPLATES);
 
