@@ -161,19 +161,19 @@ public class OntologyUtil {
         return key;
     }
 
-    private void setChildrenParentTag(String parentKey, OntologyHierarchy hierarchy) {
+    void setChildrenParentTag(String parentKey, OntologyHierarchy hierarchy) {
         if (!Strings.isNullOrEmpty(parentKey) && hierarchy != null && hierarchy.getSubclasses() != null) {
 
             for (OntologyHierarchy sub : hierarchy.getSubclasses()) {
-                final AutoBean<OntologyHierarchy> subAutoBean = AutoBeanUtils.getAutoBean(sub);
+                final AutoBean<OntologyHierarchy> subAutoBean = getHierarchyAutoBean(sub);
                 subAutoBean.setTag(HIERARCHY_PARENT_MODEL_KEY, parentKey);
             }
         }
     }
 
-    private String getHierarchyPathTag(OntologyHierarchy hierarchy){
+    String getHierarchyPathTag(OntologyHierarchy hierarchy){
         if (hierarchy != null){
-            final AutoBean<OntologyHierarchy> hierarchyAutoBean = AutoBeanUtils.getAutoBean(hierarchy);
+            final AutoBean<OntologyHierarchy> hierarchyAutoBean = getHierarchyAutoBean(hierarchy);
             String parentTag = hierarchyAutoBean.getTag(HIERARCHY_PARENT_MODEL_KEY);
             String modelTag = hierarchyAutoBean.getTag(HIERARCHY_MODEL_KEY);
             if (parentTag == null){
@@ -189,6 +189,10 @@ public class OntologyUtil {
             return modelTag;
         }
         return "";
+    }
+
+    AutoBean<OntologyHierarchy> getHierarchyAutoBean(OntologyHierarchy hierarchy) {
+        return AutoBeanUtils.getAutoBean(hierarchy);
     }
 
 }

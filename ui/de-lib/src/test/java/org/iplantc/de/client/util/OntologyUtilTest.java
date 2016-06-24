@@ -34,6 +34,9 @@ public class OntologyUtilTest {
 
     private OntologyUtil uut;
 
+    private static final String HIERARCHY_PARENT_MODEL_KEY = "parent_key";
+    private static final String HIERARCHY_MODEL_KEY = "model_key";
+
     @Mock AvuAutoBeanFactory avuAutoBeanFactoryMock;
     @Mock OntologyAutoBeanFactory ontologyAutoBeanFactoryMock;
     @Mock List<OntologyHierarchy> ontologyHierarchyListMock;
@@ -140,4 +143,84 @@ public class OntologyUtilTest {
         verify(avuMock).setAvus(anyList());
 
     }
+
+    @Test
+    public void testGetHierarchyPathTag_nullHierarchy() {
+        uut.getHierarchyPathTag(null);
+        verifyZeroInteractions(hierarchyAutoBeanMock);
+    }
+
+    @Test
+    public void testGetHierarchyPathTag_noTagsSet() {
+        when(hierarchyAutoBeanMock.getTag(HIERARCHY_PARENT_MODEL_KEY)).thenReturn(null);
+        when(hierarchyAutoBeanMock.getTag(HIERARCHY_MODEL_KEY)).thenReturn(null);
+
+        when(hierarchyMock.getLabel()).thenReturn("Label");
+
+        OntologyUtil spy = spy(OntologyUtil.getInstance());
+        when(spy.getHierarchyAutoBean(hierarchyMock)).thenReturn(hierarchyAutoBeanMock);
+
+        spy.getHierarchyPathTag(hierarchyMock);
+        verify(hierarchyAutoBeanMock).getTag(eq(HIERARCHY_PARENT_MODEL_KEY));
+        verify(hierarchyAutoBeanMock).getTag(eq(HIERARCHY_MODEL_KEY));
+
+        verify(hierarchyAutoBeanMock).setTag(eq(HIERARCHY_PARENT_MODEL_KEY), eq("Label"));
+        verify(hierarchyAutoBeanMock).setTag(eq(HIERARCHY_MODEL_KEY), eq("Label"));
+        verifyNoMoreInteractions(hierarchyAutoBeanMock);
+    }
+
+    @Test
+    public void testGetHierarchyPathTag_parentTagSet() {
+        when(hierarchyAutoBeanMock.getTag(HIERARCHY_PARENT_MODEL_KEY)).thenReturn("Parent");
+        when(hierarchyAutoBeanMock.getTag(HIERARCHY_MODEL_KEY)).thenReturn(null);
+
+        when(hierarchyMock.getLabel()).thenReturn("Label");
+
+        OntologyUtil spy = spy(OntologyUtil.getInstance());
+        when(spy.getHierarchyAutoBean(hierarchyMock)).thenReturn(hierarchyAutoBeanMock);
+
+        spy.getHierarchyPathTag(hierarchyMock);
+        verify(hierarchyAutoBeanMock).getTag(eq(HIERARCHY_PARENT_MODEL_KEY));
+        verify(hierarchyAutoBeanMock).getTag(eq(HIERARCHY_MODEL_KEY));
+
+        verify(hierarchyAutoBeanMock).setTag(eq(HIERARCHY_MODEL_KEY), eq("Parent/Label"));
+        verifyNoMoreInteractions(hierarchyAutoBeanMock);
+    }
+
+    @Test
+    public void testGetHierarchyPathTag_childTagSet() {
+        when(hierarchyAutoBeanMock.getTag(HIERARCHY_PARENT_MODEL_KEY)).thenReturn(null);
+        when(hierarchyAutoBeanMock.getTag(HIERARCHY_MODEL_KEY)).thenReturn("Child");
+
+        when(hierarchyMock.getLabel()).thenReturn("Label");
+
+        OntologyUtil spy = spy(OntologyUtil.getInstance());
+        when(spy.getHierarchyAutoBean(hierarchyMock)).thenReturn(hierarchyAutoBeanMock);
+
+        spy.getHierarchyPathTag(hierarchyMock);
+        verify(hierarchyAutoBeanMock).getTag(eq(HIERARCHY_PARENT_MODEL_KEY));
+        verify(hierarchyAutoBeanMock).getTag(eq(HIERARCHY_MODEL_KEY));
+
+        verify(hierarchyAutoBeanMock).setTag(eq(HIERARCHY_PARENT_MODEL_KEY), eq("Label"));
+        verify(hierarchyAutoBeanMock).setTag(eq(HIERARCHY_MODEL_KEY), eq("Label"));
+        verifyNoMoreInteractions(hierarchyAutoBeanMock);
+    }
+
+    @Test
+    public void testGetHierarchyPathTag_bothTagsSet() {
+        when(hierarchyAutoBeanMock.getTag(HIERARCHY_PARENT_MODEL_KEY)).thenReturn("Parent");
+        when(hierarchyAutoBeanMock.getTag(HIERARCHY_MODEL_KEY)).thenReturn("Child");
+
+        when(hierarchyMock.getLabel()).thenReturn("Label");
+
+        OntologyUtil spy = spy(OntologyUtil.getInstance());
+        when(spy.getHierarchyAutoBean(hierarchyMock)).thenReturn(hierarchyAutoBeanMock);
+
+        spy.getHierarchyPathTag(hierarchyMock);
+        verify(hierarchyAutoBeanMock).getTag(eq(HIERARCHY_PARENT_MODEL_KEY));
+        verify(hierarchyAutoBeanMock).getTag(eq(HIERARCHY_MODEL_KEY));
+
+        verifyNoMoreInteractions(hierarchyAutoBeanMock);
+    }
+
 }

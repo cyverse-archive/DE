@@ -1,6 +1,7 @@
 package org.iplantc.de.apps.client.presenter.hierarchies;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.eq;
@@ -216,7 +217,7 @@ public class OntologyHierarchiesPresenterImplTest {
         /** CALL METHOD UNDER TEST **/
         spy.createViewTabs(hierarchyListMock);
         verify(viewMock).addOntologyHierarchySelectionChangedEventHandler(spy);
-        verify(tabPanelMock).add(eq(treeMock), isA(TabItemConfig.class));
+        verify(tabPanelMock).insert(eq(treeMock), anyInt(), isA(TabItemConfig.class));
 
     }
 
