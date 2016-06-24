@@ -286,40 +286,37 @@ public class AnalysesPresenterImpl implements
     @Override
     public void loadAnalyses(AnalysisFilter filter) {
         FilterPagingLoadConfig config = loader.getLastLoadConfig();
+        config.getFilters().clear();
+
         FilterConfigBean idParentFilter = new FilterConfigBean();
         FilterConfigBean filterCb = new FilterConfigBean();
-        config.getFilters().clear();
+
+        idParentFilter.setField(AnalysisSearchField.PARENT_ID);
+        filterCb.setField("ownership");
+
         if (filter != null) {
-            idParentFilter.setField(AnalysisSearchField.PARENT_ID);
             idParentFilter.setValue("");
             switch (filter) {
                 case ALL:
-                    filterCb.setField("ownership");
                     filterCb.setValue("all");
                     break;
                 case SHARED_WITH_ME:
-                    filterCb.setField("ownership");
                     filterCb.setValue("theirs");
                     break;
-
-                case MY_ANALYSES:
-                    filterCb.setField("ownership");
+               case MY_ANALYSES:
                     filterCb.setValue("mine");
                     break;
             }
-            config.getFilters().add(idParentFilter);
-            config.getFilters().add(filterCb);
-            config.setLimit(200);
-            config.setOffset(0);
-            loader.load(config);
         } else {
-            idParentFilter.setField(AnalysisSearchField.PARENT_ID);
             idParentFilter.setValue(view.getParentAnalysisId());
-            config.getFilters().add(idParentFilter);
-            config.setLimit(200);
-            config.setOffset(0);
-            loader.load(config);
         }
+
+        config.getFilters().add(idParentFilter);
+        config.getFilters().add(filterCb);
+        config.setLimit(200);
+        config.setOffset(0);
+        loader.load(config);
+
     }
 
     @Override
