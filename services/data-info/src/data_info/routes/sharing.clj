@@ -3,15 +3,14 @@
         [data-info.routes.domain.common]
         [data-info.routes.domain.sharing])
   (:require [data-info.services.sharing :as sharing]
-            [data-info.util.service :as svc]
-            [data-info.util.schema :as s]))
+            [data-info.util.service :as svc]))
 
 (defroutes* sharing-routes
   (POST* "/anonymizer" [:as {uri :uri}]
     :tags ["bulk"]
     :query [params StandardUserQueryParams]
     :body [body (describe Paths "The paths to make readable by the anonymous user.")]
-    :return (s/doc-only AnonShareInfo AnonShareResponse)
+    :return (doc-only AnonShareInfo AnonShareResponse)
     :summary "Make Data Items Anonymously Readable"
     :description (str
 "Given a list of files in the body, makes the files readable by the anonymous user."

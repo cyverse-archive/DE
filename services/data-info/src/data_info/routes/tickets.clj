@@ -3,8 +3,7 @@
         [data-info.routes.domain.common]
         [data-info.routes.domain.tickets])
   (:require [data-info.services.tickets :as tickets]
-            [data-info.util.service :as svc]
-            [data-info.util.schema :as s]))
+            [data-info.util.service :as svc]))
 
 
 (defroutes* ticket-routes
@@ -26,7 +25,7 @@
     :tags ["bulk"]
     :query [params StandardUserQueryParams]
     :body [body Paths]
-    :return (s/doc-only ListTicketsResponse ListTicketsDocumentation)
+    :return (doc-only ListTicketsResponse ListTicketsDocumentation)
     :summary "List tickets"
     :description (str
 "This endpoint lists tickets for a set of provided paths."
