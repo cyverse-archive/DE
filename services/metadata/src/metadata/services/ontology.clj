@@ -71,6 +71,20 @@
     (ont-db/add-ontology-xml user version (:iri ontology-id) ontology-xml)
     (get-ontology-details version)))
 
+(defn delete-ontology
+  "Marks an Ontology as deleted in the database.
+   Throws an exception if the ontology-version is not found."
+  [user ontology-version]
+  (transaction
+    (let [ontology (ont-db/get-ontology-details ontology-version)]
+      (when-not ontology
+        (throw+ {:type    :clojure-commons.exception/not-found
+                 :version ontology-version
+                 :error   "An ontology with this version was not found."}))
+      (log/info user "deleting ontology" ontology-version)
+      (ont-db/mark-ontology-deleted ontology-version)))
+  nil)
+
 (defn get-hierarchy
   "Gets an Ontology Hierarchy rooted at the given root-iri."
   [ontology-version root-iri]
@@ -109,6 +123,17 @@
      (when-not (empty? new-hierarchies)
        (ont-db/add-hierarchies ontology-version new-hierarchies))))
   (get-hierarchy ontology-version root-iri))
+
+(defn delete-hierarchy
+  "Deletes all associated ontology_classes (and ontology_hierarchies by cascade) saved under the given
+   `root-iri` for the given `ontology-version`."
+  [user ontology-version root-iri]
+  (transaction
+    (let [hierarchy  (format-hierarchy ontology-version root-iri)
+          class-iris (map :iri (util/hierarchy->class-set hierarchy))]
+      (log/info user "deleting hierarchy" ontology-version root-iri)
+      (ont-db/delete-classes ontology-version class-iris)))
+  (list-hierarchies ontology-version))
 
 (defn filter-hierarchy
   "Filters an Ontology Hierarchy, rooted at the given root-iri, returning only the hierarchy's
