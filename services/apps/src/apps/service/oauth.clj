@@ -17,12 +17,13 @@
     :token-callback token-callback))
 
 (def ^:private server-info-fn-for
-  {:agave config/agave-oauth-settings})
+  (memoize #(->> {:agave (when (config/agave-enabled) config/agave-oauth-settings)}
+                 (remove-vals nil?))))
 
 (defn- get-server-info
   "Retrieves the server info for the given API name."
   [api-name]
-  (if-let [server-info-fn (server-info-fn-for (keyword api-name))]
+  (if-let [server-info-fn ((server-info-fn-for) (keyword api-name))]
     (server-info-fn)
     (throw+ {:type  :clojure-commons.exception/bad-request-field
              :error (str "unknown API name: " api-name)})))
@@ -79,4 +80,4 @@
   "Retrieves the redirect URIs that can be used for a user to authenticate to a remote API."
   [{:keys [username]}]
   (let [build-auth-uri (fn [[_ server-info-fn]] (authorization-uri (server-info-fn) username ""))]
-    (remove-vals nil? (into {} (map (juxt key build-auth-uri) server-info-fn-for)))))
+    (remove-vals nil? (into {} (map (juxt key build-auth-uri) (server-info-fn-for))))))
