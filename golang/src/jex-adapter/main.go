@@ -23,6 +23,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/olebedev/config"
+	"github.com/streadway/amqp"
 )
 
 // JEXAdapter contains the application state for jex-adapter.
@@ -35,6 +36,12 @@ type JEXAdapter struct {
 func New(cfg *config.Config) *JEXAdapter {
 	return &JEXAdapter{
 		cfg: cfg,
+	}
+}
+
+func amqpError(err error) {
+	if err.(*amqp.Error).Code != 0 {
+		logcabin.Error.Fatal(err)
 	}
 }
 
@@ -68,6 +75,7 @@ func (j *JEXAdapter) stop(writer http.ResponseWriter, request *http.Request) {
 			fmt.Sprintf("Error sending stop request %s", err.Error()),
 			http.StatusInternalServerError,
 		)
+		amqpError(err)
 		return
 	}
 	logcabin.Info.Println("Done sending stop request")
@@ -107,6 +115,7 @@ func (j *JEXAdapter) launch(writer http.ResponseWriter, request *http.Request) {
 			fmt.Sprintf("Error creating time limit delta request queue: %s", err.Error()),
 			http.StatusInternalServerError,
 		)
+		amqpError(err)
 	}
 	defer timeLimitDeltaChannel.Close()
 
@@ -125,6 +134,7 @@ func (j *JEXAdapter) launch(writer http.ResponseWriter, request *http.Request) {
 			fmt.Sprintf("Error creating time limit request queue: %s", err.Error()),
 			http.StatusInternalServerError,
 		)
+		amqpError(err)
 	}
 	defer timeLimitRequestChannel.Close()
 
@@ -143,6 +153,7 @@ func (j *JEXAdapter) launch(writer http.ResponseWriter, request *http.Request) {
 			fmt.Sprintf("Error creating time limit response queue: %s", err.Error()),
 			http.StatusInternalServerError,
 		)
+		amqpError(err)
 	}
 	defer timeLimitResponseChannel.Close()
 
@@ -161,6 +172,7 @@ func (j *JEXAdapter) launch(writer http.ResponseWriter, request *http.Request) {
 			fmt.Sprintf("Error creating stop request queue: %s", err.Error()),
 			http.StatusInternalServerError,
 		)
+		amqpError(err)
 	}
 	defer stopRequestChannel.Close()
 
@@ -172,6 +184,7 @@ func (j *JEXAdapter) launch(writer http.ResponseWriter, request *http.Request) {
 			fmt.Sprintf("Error creating launch request: %s", err.Error()),
 			http.StatusInternalServerError,
 		)
+		amqpError(err)
 		return
 	}
 
@@ -194,6 +207,7 @@ func (j *JEXAdapter) launch(writer http.ResponseWriter, request *http.Request) {
 			fmt.Sprintf("Error publishing launch request: %s", err.Error()),
 			http.StatusInternalServerError,
 		)
+		amqpError(err)
 		return
 	}
 }
