@@ -232,8 +232,7 @@ func (j *JEXAdapter) preview(writer http.ResponseWriter, request *http.Request) 
 	bodyBytes, err := ioutil.ReadAll(request.Body)
 	if err != nil {
 		logcabin.Error.Print(err)
-		writer.WriteHeader(http.StatusBadRequest)
-		writer.Write([]byte("Request had no body"))
+		http.Error(writer, "Request had no body", http.StatusBadRequest)
 		return
 	}
 
@@ -241,8 +240,11 @@ func (j *JEXAdapter) preview(writer http.ResponseWriter, request *http.Request) 
 	err = json.Unmarshal(bodyBytes, previewer)
 	if err != nil {
 		logcabin.Error.Print(err)
-		writer.WriteHeader(http.StatusBadRequest)
-		writer.Write([]byte(fmt.Sprintf("Error parsing preview JSON: %s", err.Error())))
+		http.Error(
+			writer,
+			fmt.Sprintf("Error parsing preview JSON: %s", err.Error()),
+			http.StatusBadRequest,
+		)
 		return
 	}
 
@@ -251,16 +253,22 @@ func (j *JEXAdapter) preview(writer http.ResponseWriter, request *http.Request) 
 	outgoingJSON, err := json.Marshal(paramMap)
 	if err != nil {
 		logcabin.Error.Print(err)
-		writer.WriteHeader(http.StatusInternalServerError)
-		writer.Write([]byte(fmt.Sprintf("Error creating response JSON: %s", err.Error())))
+		http.Error(
+			writer,
+			fmt.Sprintf("Error creating response JSON: %s", err.Error()),
+			http.StatusInternalServerError,
+		)
 		return
 	}
 
 	_, err = writer.Write(outgoingJSON)
 	if err != nil {
 		logcabin.Error.Print(err)
-		writer.WriteHeader(http.StatusInternalServerError)
-		writer.Write([]byte(fmt.Sprintf("Error writing response: %s", err.Error())))
+		http.Error(
+			writer,
+			fmt.Sprintf("Error writing response: %s", err.Error()),
+			http.StatusInternalServerError,
+		)
 		return
 	}
 }
