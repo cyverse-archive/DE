@@ -192,40 +192,39 @@
             <button:TextButton ui:field="metadataMenu" text="{appearance.metadataMenuItem}">
                 <button:menu>
                     <menu:Menu>
-                            <menu:MenuItem ui:field="bulkmetadataMi"
-                                           text="{appearance.applyBulkMetadata}"
-                                           icon="{appearance.metadataIcon}" enabled="false">
-                                <menu:submenu>
-                                    <menu:Menu>
-                                        <menu:MenuItem ui:field="selectmetadataMi"
-                                                       text="{appearance.selectMetadata}"
-                                                       icon="{appearance.metadataIcon}"
-                                        />
-                                    </menu:Menu>
-                                </menu:submenu>
-                            </menu:MenuItem>
 
-                            <menu:MenuItem ui:field="editmetadataMi"
-                                           text="{appearance.editViewMetadataMenuItem}"
-                                           icon="{appearance.metadataIcon}"
-                                           enabled="false"/>
+                        <menu:MenuItem ui:field="editmetadataMi"
+                                       text="{appearance.editViewMetadataMenuItem}"
+                                       icon="{appearance.metadataIcon}"
+                                       enabled="false"/>
 
-                            <menu:MenuItem ui:field="copymetadataMi"
-                                           text="{appearance.copyMetadataMenuItem}"
-                                           icon="{appearance.metadataIcon}"
-                                           enabled="false"/>
+                        <menu:MenuItem ui:field="copymetadataMi"
+                                       text="{appearance.copyMetadataMenuItem}"
+                                       icon="{appearance.metadataIcon}"
+                                       enabled="false"/>
 
-                            <menu:MenuItem ui:field="savemetadatami"
-                                           text="{appearance.saveMetadataMenuItem}"
-                                           icon="{appearance.metadataIcon}"
-                                           enabled="false"/>
+                        <menu:MenuItem ui:field="savemetadatami"
+                                       text="{appearance.saveMetadataMenuItem}"
+                                       icon="{appearance.metadataIcon}"
+                                       enabled="false"/>
+                        <menu:MenuItem ui:field="bulkmetadataMi"
+                                       text="{appearance.applyBulkMetadata}"
+                                       icon="{appearance.metadataIcon}" enabled="false">
+                            <menu:submenu>
+                                <menu:Menu>
+                                    <menu:MenuItem ui:field="selectmetadataMi"
+                                                   text="{appearance.selectMetadata}"
+                                                   icon="{appearance.metadataIcon}"
+                                    />
+                                </menu:Menu>
+                            </menu:submenu>
+                        </menu:MenuItem>
+                        <menu:MenuItem ui:field="doiMi"
+                                       text="{appearance.requestDOI}"
+                                       icon="{appearance.metadataIcon}"
+                                       enabled="false"/>
 
-                            <menu:MenuItem ui:field="doiMi"
-                                           text="{appearance.requestDOI}"
-                                           icon="{appearance.metadataIcon}"
-                                           enabled="false"/>
-
-                        </menu:Menu>
+                    </menu:Menu>
                 </button:menu>
             </button:TextButton>
         </toolbar:child>
