@@ -286,33 +286,37 @@ public class AnalysesPresenterImpl implements
     @Override
     public void loadAnalyses(AnalysisFilter filter) {
         FilterPagingLoadConfig config = loader.getLastLoadConfig();
+        config.getFilters().clear();
 
         FilterConfigBean idParentFilter = new FilterConfigBean();
-        idParentFilter.setField(AnalysisSearchField.PARENT_ID);
-        idParentFilter.setValue("");
-
         FilterConfigBean filterCb = new FilterConfigBean();
-        config.getFilters().clear();
-        switch (filter) {
-            case ALL:
-                filterCb.setField("ownership");
-                filterCb.setValue("all");
-                break;
-            case SHARED_WITH_ME:
-                filterCb.setField("ownership");
-                filterCb.setValue("theirs");
-                break;
 
-            case MY_ANALYSES:
-                filterCb.setField("ownership");
-                filterCb.setValue("mine");
-                break;
+        idParentFilter.setField(AnalysisSearchField.PARENT_ID);
+        filterCb.setField("ownership");
+
+        if (filter != null) {
+            idParentFilter.setValue("");
+            switch (filter) {
+                case ALL:
+                    filterCb.setValue("all");
+                    break;
+                case SHARED_WITH_ME:
+                    filterCb.setValue("theirs");
+                    break;
+               case MY_ANALYSES:
+                    filterCb.setValue("mine");
+                    break;
+            }
+        } else {
+            idParentFilter.setValue(view.getParentAnalysisId());
         }
+
         config.getFilters().add(idParentFilter);
         config.getFilters().add(filterCb);
         config.setLimit(200);
         config.setOffset(0);
         loader.load(config);
+
     }
 
     @Override
@@ -352,7 +356,7 @@ public class AnalysesPresenterImpl implements
     @Override
     public void setCurrentFilter(AnalysisFilter filter) {
         if(filter == null) {
-            currentFilter =filter;
+            currentFilter = filter;
             return;
         } else if(!(filter.equals(this.currentFilter))) {
             currentFilter = filter;

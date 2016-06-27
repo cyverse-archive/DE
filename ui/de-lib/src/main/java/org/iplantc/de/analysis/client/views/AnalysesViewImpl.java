@@ -49,6 +49,8 @@ public class AnalysesViewImpl extends Composite implements AnalysesView,
                                                            AnalysisCommentSelectedEvent.AnalysisCommentSelectedEventHandler,
                                                            SelectionChangedHandler<Analysis> {
 
+    private String parentAnalysisId;
+
     @UiTemplate("AnalysesViewImpl.ui.xml")
     interface MyUiBinder extends UiBinder<BorderLayoutContainer, AnalysesViewImpl> {
     }
@@ -121,6 +123,7 @@ public class AnalysesViewImpl extends Composite implements AnalysesView,
 
     @Override
     public void filterByParentAnalysisId(String id) {
+        this.parentAnalysisId = id;
         toolBar.filterByParentAnalysisId(id);
     }
 
@@ -167,6 +170,12 @@ public class AnalysesViewImpl extends Composite implements AnalysesView,
     public void setFilterInView(AnalysisFilter filter) {
         toolBar.setFilterInView(filter);
     }
+
+    @Override
+    public String getParentAnalysisId() {
+        return parentAnalysisId;
+    }
+
 
     @Override
     protected void onEnsureDebugId(String baseID) {

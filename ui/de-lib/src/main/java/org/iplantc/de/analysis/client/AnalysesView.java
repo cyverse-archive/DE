@@ -201,5 +201,5 @@ public interface AnalysesView extends IsWidget,
 
     void setFilterInView(AnalysisFilter filter);
 
-
+    String getParentAnalysisId();
 }
