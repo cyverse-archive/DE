@@ -27,4 +27,4 @@ docker run --rm \
 	-v $(pwd):/build \
 	-w /build \
 	$DOCKER_USER/buildenv:latest \
-	gb build -f -F --ldflags "-X main.appver=$VERSION -X main.gitref=$GIT_COMMIT -X main.builtby=$BUILD_USER"
+	gb build -f -F --ldflags "-X version.appver=$VERSION -X version.gitref=$GIT_COMMIT -X version.builtby=$BUILD_USER"

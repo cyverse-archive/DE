@@ -45,15 +45,10 @@ import (
 	"path/filepath"
 	"text/template"
 	"time"
+	"version"
 
 	"github.com/olebedev/config"
 	"github.com/streadway/amqp"
-)
-
-var (
-	gitref  string
-	appver  string
-	builtby string
 )
 
 // CondorLauncher contains the condor-launcher application state.
@@ -390,31 +385,18 @@ func (cl *CondorLauncher) startHeldTicker(client *messaging.Client) (*time.Ticke
 	return t, nil
 }
 
-// AppVersion prints version information to stdout
-func AppVersion() {
-	if appver != "" {
-		fmt.Printf("App-Version: %s\n", appver)
-	}
-	if gitref != "" {
-		fmt.Printf("Git-Ref: %s\n", gitref)
-	}
-	if builtby != "" {
-		fmt.Printf("Built-By: %s\n", builtby)
-	}
-}
-
 func main() {
 	var (
-		cfgPath = flag.String("config", "", "Path to the config file. Required.")
-		version = flag.Bool("version", false, "Print the version information")
+		cfgPath     = flag.String("config", "", "Path to the config file. Required.")
+		showVersion = flag.Bool("version", false, "Print the version information")
 	)
 
 	flag.Parse()
 
 	logcabin.Init("condor-launcher", "condor-launcher")
 
-	if *version {
-		AppVersion()
+	if *showVersion {
+		version.AppVersion()
 		os.Exit(0)
 	}
 

@@ -13,30 +13,12 @@ import (
 	"os"
 	"queries"
 	"strings"
+	"version"
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"github.com/olebedev/config"
 )
-
-var (
-	gitref  string
-	appver  string
-	builtby string
-)
-
-// AppVersion prints the version information to stdout
-func AppVersion() {
-	if appver != "" {
-		fmt.Printf("App-Version: %s\n", appver)
-	}
-	if gitref != "" {
-		fmt.Printf("Git-Ref: %s\n", gitref)
-	}
-	if builtby != "" {
-		fmt.Printf("Built-By: %s\n", builtby)
-	}
-}
 
 func badRequest(writer http.ResponseWriter, msg string) {
 	writer.WriteHeader(http.StatusBadRequest)
@@ -377,17 +359,17 @@ func fixAddr(addr string) string {
 
 func main() {
 	var (
-		version = flag.Bool("version", false, "Print the version information")
-		cfgPath = flag.String("config", "/etc/iplant/de/jobservices.yml", "The path to the config file")
-		port    = flag.String("port", "60000", "The port number to listen on")
-		err     error
-		cfg     *config.Config
+		showVersion = flag.Bool("version", false, "Print the version information")
+		cfgPath     = flag.String("config", "/etc/iplant/de/jobservices.yml", "The path to the config file")
+		port        = flag.String("port", "60000", "The port number to listen on")
+		err         error
+		cfg         *config.Config
 	)
 
 	flag.Parse()
 
-	if *version {
-		AppVersion()
+	if *showVersion {
+		version.AppVersion()
 		os.Exit(0)
 	}
 

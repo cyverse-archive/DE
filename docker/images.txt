@@ -1,4 +1,5 @@
 anon-files
+app-registration
 clockwork
 condor-log-monitor
 curl-wrapper

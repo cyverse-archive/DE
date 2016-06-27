@@ -12,27 +12,12 @@ import (
 	"strconv"
 	"sync"
 	"time"
+	"version"
 )
 
 var (
-	gitref       string
-	appver       string
-	builtby      string
 	condorStatus = "condor_status"
 )
-
-// AppVersion prints version information to stdout
-func AppVersion() {
-	if appver != "" {
-		fmt.Printf("App-Version: %s\n", appver)
-	}
-	if gitref != "" {
-		fmt.Printf("Git-Ref: %s\n", gitref)
-	}
-	if builtby != "" {
-		fmt.Printf("Built-By: %s\n", builtby)
-	}
-}
 
 type slotStorer struct {
 	numSlots  int64
@@ -130,19 +115,19 @@ func (s *slotStorer) Respond(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	var (
-		interval = flag.String("interval", "5s", "The length of time between cache refreshes. Must be in Go's duration string format.")
-		port     = flag.String("port", ":60000", "The port to listen on.")
-		version  = flag.Bool("version", false, "Print the version information")
-		err      error
-		duration time.Duration
-		t        *time.Ticker
-		s        *slotStorer
+		interval    = flag.String("interval", "5s", "The length of time between cache refreshes. Must be in Go's duration string format.")
+		port        = flag.String("port", ":60000", "The port to listen on.")
+		showVersion = flag.Bool("version", false, "Print the version information")
+		err         error
+		duration    time.Duration
+		t           *time.Ticker
+		s           *slotStorer
 	)
 
 	flag.Parse()
 
-	if *version {
-		AppVersion()
+	if *showVersion {
+		version.AppVersion()
 		os.Exit(0)
 	}
 

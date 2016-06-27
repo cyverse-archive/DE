@@ -10,32 +10,13 @@ package main
 import (
 	"configurate"
 	"flag"
-	"fmt"
 	"log"
 	"logcabin"
 	"messaging"
 	"model"
 	"os"
+	"version"
 )
-
-var (
-	gitref  string
-	appver  string
-	builtby string
-)
-
-// AppVersion prints version information to stdout
-func AppVersion() {
-	if appver != "" {
-		fmt.Printf("App-Version: %s\n", appver)
-	}
-	if gitref != "" {
-		fmt.Printf("Git-Ref: %s\n", gitref)
-	}
-	if builtby != "" {
-		fmt.Printf("Built-By: %s\n", builtby)
-	}
-}
 
 func doKillJob(client *messaging.Client, uuid string) error {
 	var err error
@@ -63,17 +44,17 @@ func doStatusMessage(client *messaging.Client, uuid string) error {
 
 func main() {
 	var (
-		killJob   = flag.Bool("kill", false, "Send out a stop request. Conflicts with --send-status.")
-		statusMsg = flag.Bool("send-status", false, "Send out a job status. Conflicts with --kill.")
-		version   = flag.Bool("version", false, "Print the version information.")
-		config    = flag.String("config", "", "Path to the jobservices config. Required.")
-		uuid      = flag.String("uuid", "", "The job UUID to operate against.")
+		killJob     = flag.Bool("kill", false, "Send out a stop request. Conflicts with --send-status.")
+		statusMsg   = flag.Bool("send-status", false, "Send out a job status. Conflicts with --kill.")
+		showVersion = flag.Bool("version", false, "Print the version information.")
+		config      = flag.String("config", "", "Path to the jobservices config. Required.")
+		uuid        = flag.String("uuid", "", "The job UUID to operate against.")
 	)
 
 	flag.Parse()
 
-	if *version {
-		AppVersion()
+	if *showVersion {
+		version.AppVersion()
 		os.Exit(0)
 	}
 

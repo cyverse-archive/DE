@@ -7,7 +7,7 @@
 (def OntologyClassIRIParam (describe String "A unique Class IRI"))
 
 (s/defschema OntologyDetails
-  {:iri        (describe String "The unique IRI for this Ontology")
+  {:iri        (describe (s/maybe String) "The unique IRI for this Ontology")
    :version    OntologyVersionParam
    :created_by (describe NonBlankString "The user who uploaded this Ontology")
    :created_on (describe Date "The date this Ontology was uploaded")})

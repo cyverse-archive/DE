@@ -14,6 +14,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	"version"
 
 	"golang.org/x/net/context"
 
@@ -21,24 +22,8 @@ import (
 )
 
 var (
-	gitref        string
-	appver        string
-	builtby       string
 	filenameRegex = regexp.MustCompile(`(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.json$`)
 )
-
-// AppVersion prints version information to stdout
-func AppVersion() {
-	if appver != "" {
-		fmt.Printf("App-Version: %s\n", appver)
-	}
-	if gitref != "" {
-		fmt.Printf("Git-Ref: %s\n", gitref)
-	}
-	if builtby != "" {
-		fmt.Printf("Built-By: %s\n", builtby)
-	}
-}
 
 // ImageJanitor contains application state for image-janitor
 type ImageJanitor struct {
@@ -253,7 +238,7 @@ func (i *ImageJanitor) readExcludes(readFrom string) (map[string]bool, error) {
 
 func main() {
 	var (
-		version       = flag.Bool("version", false, "Print version information.")
+		showVersion   = flag.Bool("version", false, "Print version information.")
 		interval      = flag.String("interval", "1m", "Time between clean up attempts.")
 		cfgPath       = flag.String("config", "/etc/jobservices.yml", "Path to the config.")
 		readFrom      = flag.String("read-from", "/opt/image-janitor", "The directory that job files are read from.")
@@ -267,8 +252,8 @@ func main() {
 
 	logcabin.Init("image-janitor", "image-janitor")
 
-	if *version {
-		AppVersion()
+	if *showVersion {
+		version.AppVersion()
 		os.Exit(0)
 	}
 

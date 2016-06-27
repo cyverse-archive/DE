@@ -212,4 +212,14 @@ public class MetadataViewDefaultAppearance implements MetadataView.Appearance {
     public String panelHeight() {
         return "475";
     }
+
+    @Override
+    public ImageResource editIcon() {
+        return iplantResources.edit();
+    }
+
+    @Override
+    public String edit() {
+        return iplantDisplayStrings.edit();
+    }
 }

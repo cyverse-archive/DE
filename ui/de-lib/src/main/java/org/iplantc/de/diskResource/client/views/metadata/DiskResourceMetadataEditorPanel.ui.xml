@@ -65,6 +65,12 @@
                                                    icon="{appearance.deleteIcon}"
                                                     enabled="false"/>
                             </toolbar:child>
+                            <toolbar:child>
+                                <button:TextButton ui:field="editMetadataButton"
+                                                   text="{appearance.edit}"
+                                                   icon="{appearance.editIcon}"
+                                                   enabled="false"/>
+                            </toolbar:child>
                             <toolbar:FillToolItem/>
                             <toolbar:child>
                                 <button:TextButton ui:field="selectButton"

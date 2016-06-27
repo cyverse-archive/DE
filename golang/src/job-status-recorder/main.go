@@ -11,36 +11,17 @@ import (
 	"database/sql"
 	"encoding/json"
 	"flag"
-	"fmt"
 	"logcabin"
 	"messaging"
 	"net"
 	"os"
 	"strconv"
+	"version"
 
 	_ "github.com/lib/pq"
 	"github.com/olebedev/config"
 	"github.com/streadway/amqp"
 )
-
-var (
-	gitref  string
-	appver  string
-	builtby string
-)
-
-// AppVersion prints version information to stdout
-func AppVersion() {
-	if appver != "" {
-		fmt.Printf("App-Version: %s\n", appver)
-	}
-	if gitref != "" {
-		fmt.Printf("Git-Ref: %s\n", gitref)
-	}
-	if builtby != "" {
-		fmt.Printf("Built-By: %s\n", builtby)
-	}
-}
 
 // JobStatusRecorder contains the application state for job-status-recorder
 type JobStatusRecorder struct {
@@ -161,21 +142,21 @@ func (r *JobStatusRecorder) msg(delivery amqp.Delivery) {
 
 func main() {
 	var (
-		err     error
-		app     *JobStatusRecorder
-		cfg     *config.Config
-		version = flag.Bool("version", false, "Print the version information")
-		cfgPath = flag.String("config", "", "The path to the config file")
-		dbURI   = flag.String("db", "", "The URI used to connect to the database")
-		amqpURI = flag.String("amqp", "", "The URI used to connect to the amqp broker")
+		err         error
+		app         *JobStatusRecorder
+		cfg         *config.Config
+		showVersion = flag.Bool("version", false, "Print the version information")
+		cfgPath     = flag.String("config", "", "The path to the config file")
+		dbURI       = flag.String("db", "", "The URI used to connect to the database")
+		amqpURI     = flag.String("amqp", "", "The URI used to connect to the amqp broker")
 	)
 
 	flag.Parse()
 
 	logcabin.Init("job-status-recorder", "job-status-recorder")
 
-	if *version {
-		AppVersion()
+	if *showVersion {
+		version.AppVersion()
 		os.Exit(0)
 	}
 
