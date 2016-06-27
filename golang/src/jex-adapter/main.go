@@ -54,8 +54,7 @@ func (j *JEXAdapter) stop(writer http.ResponseWriter, request *http.Request) {
 
 	logcabin.Info.Println("Getting invocation ID out of the Vars")
 	if invID, ok = v["invocation_id"]; !ok {
-		writer.WriteHeader(http.StatusBadRequest)
-		writer.Write([]byte("Missing job id in URL"))
+		http.Error(writer, "Missing job id in URL", http.StatusBadRequest)
 		logcabin.Error.Print("Missing job id in URL")
 		return
 	}
@@ -64,9 +63,11 @@ func (j *JEXAdapter) stop(writer http.ResponseWriter, request *http.Request) {
 	logcabin.Info.Println("Sending stop request")
 	err = j.client.SendStopRequest(invID, "root", "because I said to")
 	if err != nil {
-		logcabin.Error.Print(err)
-		writer.WriteHeader(http.StatusInternalServerError)
-		writer.Write([]byte(fmt.Sprintf("Error sending stop request: %s", err.Error())))
+		http.Error(
+			writer,
+			fmt.Sprintf("Error sending stop request %s", err.Error()),
+			http.StatusInternalServerError,
+		)
 		return
 	}
 	logcabin.Info.Println("Done sending stop request")
@@ -76,16 +77,18 @@ func (j *JEXAdapter) launch(writer http.ResponseWriter, request *http.Request) {
 	bodyBytes, err := ioutil.ReadAll(request.Body)
 	if err != nil {
 		logcabin.Error.Print(err)
-		writer.WriteHeader(http.StatusBadRequest)
-		writer.Write([]byte("Request had no body"))
+		http.Error(writer, "Request had no body", http.StatusBadRequest)
 		return
 	}
 
 	job, err := model.NewFromData(j.cfg, bodyBytes)
 	if err != nil {
 		logcabin.Error.Print(err)
-		writer.WriteHeader(http.StatusBadRequest)
-		writer.Write([]byte(fmt.Sprintf("Failed to create job from json: %s", err.Error())))
+		http.Error(
+			writer,
+			fmt.Sprintf("Failed to create job from json: %s", err.Error()),
+			http.StatusBadRequest,
+		)
 		return
 	}
 
@@ -99,8 +102,11 @@ func (j *JEXAdapter) launch(writer http.ResponseWriter, request *http.Request) {
 	)
 	if err != nil {
 		logcabin.Error.Print(err)
-		writer.WriteHeader(http.StatusInternalServerError)
-		writer.Write([]byte(fmt.Sprintf("Error creating time limit delta request queue: %s", err.Error())))
+		http.Error(
+			writer,
+			fmt.Sprintf("Error creating time limit delta request queue: %s", err.Error()),
+			http.StatusInternalServerError,
+		)
 	}
 	defer timeLimitDeltaChannel.Close()
 
@@ -114,8 +120,11 @@ func (j *JEXAdapter) launch(writer http.ResponseWriter, request *http.Request) {
 	)
 	if err != nil {
 		logcabin.Error.Print(err)
-		writer.WriteHeader(http.StatusInternalServerError)
-		writer.Write([]byte(fmt.Sprintf("Error creating time limit request queue: %s", err.Error())))
+		http.Error(
+			writer,
+			fmt.Sprintf("Error creating time limit request queue: %s", err.Error()),
+			http.StatusInternalServerError,
+		)
 	}
 	defer timeLimitRequestChannel.Close()
 
@@ -129,8 +138,11 @@ func (j *JEXAdapter) launch(writer http.ResponseWriter, request *http.Request) {
 	)
 	if err != nil {
 		logcabin.Error.Print(err)
-		writer.WriteHeader(http.StatusInternalServerError)
-		writer.Write([]byte(fmt.Sprintf("Error creating time limit response queue: %s", err.Error())))
+		http.Error(
+			writer,
+			fmt.Sprintf("Error creating time limit response queue: %s", err.Error()),
+			http.StatusInternalServerError,
+		)
 	}
 	defer timeLimitResponseChannel.Close()
 
@@ -144,32 +156,44 @@ func (j *JEXAdapter) launch(writer http.ResponseWriter, request *http.Request) {
 	)
 	if err != nil {
 		logcabin.Error.Print(err)
-		writer.WriteHeader(http.StatusInternalServerError)
-		writer.Write([]byte(fmt.Sprintf("Error creating stop request queue: %s", err.Error())))
+		http.Error(
+			writer,
+			fmt.Sprintf("Error creating stop request queue: %s", err.Error()),
+			http.StatusInternalServerError,
+		)
 	}
 	defer stopRequestChannel.Close()
 
 	launchRequest := messaging.NewLaunchRequest(job)
 	if err != nil {
 		logcabin.Error.Print(err)
-		writer.WriteHeader(http.StatusInternalServerError)
-		writer.Write([]byte(fmt.Sprintf("Error creating launch request: %s", err.Error())))
+		http.Error(
+			writer,
+			fmt.Sprintf("Error creating launch request: %s", err.Error()),
+			http.StatusInternalServerError,
+		)
 		return
 	}
 
 	launchJSON, err := json.Marshal(launchRequest)
 	if err != nil {
 		logcabin.Error.Print(err)
-		writer.WriteHeader(http.StatusInternalServerError)
-		writer.Write([]byte(fmt.Sprintf("Error creating launch request JSON: %s", err.Error())))
+		http.Error(
+			writer,
+			fmt.Sprintf("Error creating launch request JSON: %s", err.Error()),
+			http.StatusInternalServerError,
+		)
 		return
 	}
 
 	err = j.client.Publish(messaging.LaunchesKey, launchJSON)
 	if err != nil {
 		logcabin.Error.Print(err)
-		writer.WriteHeader(http.StatusInternalServerError)
-		writer.Write([]byte(fmt.Sprintf("Error publishing launch request: %s", err.Error())))
+		http.Error(
+			writer,
+			fmt.Sprintf("Error publishing launch request: %s", err.Error()),
+			http.StatusInternalServerError,
+		)
 		return
 	}
 }
