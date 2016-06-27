@@ -14,10 +14,7 @@
      (service/success-response (apps/get-oauth-access-token api-name params)))
 
    (GET "/oauth/token-info/:api-name" [api-name]
-     (service/success-response (apps/get-oauth-token-info api-name)))
-
-   (GET "/oauth/redirect-uris" []
-     (service/success-response (apps/get-oauth-redirect-uris)))))
+     (service/success-response (apps/get-oauth-token-info api-name)))))
 
 (defn oauth-admin-routes
   "These routes are general OAuth information routes designed for administrators. They're primarily intended
