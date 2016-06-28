@@ -25,6 +25,8 @@ import (
 	"time"
 	"version"
 
+	"golang.org/x/net/context"
+
 	"github.com/olebedev/config"
 	"github.com/streadway/amqp"
 )
@@ -312,7 +314,7 @@ func main() {
 
 	client.SetupPublishing(messaging.JobsExchange)
 
-	dckr, err = dockerops.NewDocker(cfg, *dockerURI)
+	dckr, err = dockerops.NewDocker(context.Background(), cfg, *dockerURI)
 	if err != nil {
 		fail(client, job, "Failed to connect to local docker socket")
 		logcabin.Error.Fatal(err)

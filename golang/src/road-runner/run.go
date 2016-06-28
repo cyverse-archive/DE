@@ -65,7 +65,7 @@ func (r *JobRunner) createDataContainers() error {
 	var err error
 	for _, dc := range r.job.DataContainers() {
 		running(r.client, r.job, fmt.Sprintf("Creating data container %s-%s", dc.NamePrefix, job.InvocationID))
-		_, _, err = r.dckr.CreateDataContainer(&dc, r.job.InvocationID)
+		_, err = r.dckr.CreateDataContainer(&dc, r.job.InvocationID)
 		if err != nil {
 			r.status = messaging.StatusDockerPullFailed
 			running(r.client, r.job, fmt.Sprintf("Error creating data container %s-%s", dc.NamePrefix, job.InvocationID))
