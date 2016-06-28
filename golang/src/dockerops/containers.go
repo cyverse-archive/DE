@@ -102,7 +102,7 @@ func (d *Docker) IsRunning(name string) (bool, error) {
 // "key=value" applied to it.
 func (d *Docker) ContainersWithLabel(key, value string, all bool) ([]string, error) {
 	f := filters.NewArgs()
-	f.Add(key, value)
+	f.Add("label", fmt.Sprintf("%s=%s", key, value))
 	opts := types.ContainerListOptions{
 		All:    all,
 		Filter: f,
