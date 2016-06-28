@@ -9,8 +9,11 @@ import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
+import org.iplantc.de.commons.client.util.WindowUtil;
 import org.iplantc.de.diskResource.client.MetadataView;
+import org.iplantc.de.diskResource.client.events.TemplateDownloadClickedEvent;
 import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceMetadataUpdateCallback;
+import org.iplantc.de.diskResource.client.views.metadata.dialogs.DownloadTemplateCell;
 import org.iplantc.de.diskResource.client.views.metadata.dialogs.MetadataTemplateViewDialog;
 import org.iplantc.de.diskResource.client.views.metadata.dialogs.SelectMetadataTemplateDialog;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -35,7 +38,8 @@ import java.util.List;
 /**
  * @author jstroot sriram
  */
-public class MetadataPresenterImpl implements MetadataView.Presenter {
+public class MetadataPresenterImpl implements MetadataView.Presenter,
+                                              TemplateDownloadClickedEvent.TemplateDownloadClickedEventHandler {
 
     private class TemplateViewCancelSelectHandler implements SelectEvent.SelectHandler {
 
@@ -162,9 +166,13 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
     }
 
     @Override
+    public void onDownloadClick(TemplateDownloadClickedEvent event) {
+
+    }
+    @Override
     public void onSelectTemplate() {
         final SelectMetadataTemplateDialog view =
-                new SelectMetadataTemplateDialog(templates, appearance);
+                new SelectMetadataTemplateDialog(this,templates, appearance);
         view.addHideHandler(new HideEvent.HideHandler() {
             @Override
             public void onHide(HideEvent event) {
@@ -209,6 +217,13 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
              return view.isDirty();
          }
 
+    }
+
+    @Override
+    public void downloadTemplate(String templateid) {
+        final String encodedSimpleDownloadURL =
+                drService.downloadTemplate(templateid);
+       WindowUtil.open(encodedSimpleDownloadURL, "width=100,height=100");
     }
 
     public static Avu newMetadata(String attr, String value, String unit) {

@@ -44,6 +44,10 @@
         <when-type-is class="org.iplantc.de.apps.client.views.grid.cells.AppInfoCell.AppInfoCellAppearance"/>
     </replace-with>
 
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.metadata.DownloadTemplateCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.metadata.dialogs.DownloadTemplateCell.DownloadTemplateCellAppearance" />
+    </replace-with>
+
     <replace-with class="org.iplantc.de.theme.base.client.apps.cells.AppIntegratorCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.apps.client.views.grid.cells.AppIntegratorCell.AppIntegratorCellAppearance"/>
     </replace-with>

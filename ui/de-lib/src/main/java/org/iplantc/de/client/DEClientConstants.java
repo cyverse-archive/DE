@@ -67,4 +67,11 @@ public interface DEClientConstants extends Constants {
      * @return the requested URL.
      */
     String ontologyUploadServlet();
+
+    /**
+     * The Servket path for downloading metadata template
+     *
+     * @return
+     */
+    String mdTemplateDownloadServlet();
 }
