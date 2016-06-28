@@ -14,6 +14,12 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/Sirupsen/logrus",
+			"repository": "https://github.com/Sirupsen/logrus",
+			"revision": "f3cfb454f4c209e6668c95216c4744b8fddb2356",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/asaskevich/govalidator",
 			"repository": "https://github.com/asaskevich/govalidator",
 			"revision": "50f582311784a55b42018d88643ccfceadf7ab61",
@@ -36,6 +42,60 @@
 			"importpath": "github.com/dgrijalva/jwt-go",
 			"repository": "https://github.com/dgrijalva/jwt-go",
 			"revision": "f62f64ea222e5e6d6d86421b5507b0862a3ebf7f",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/docker/distribution/digest",
+			"repository": "https://github.com/docker/distribution",
+			"revision": "edd7cb5249d0a45262b20bb58b838ecf4fb368bd",
+			"branch": "master",
+			"path": "/digest"
+		},
+		{
+			"importpath": "github.com/docker/distribution/reference",
+			"repository": "https://github.com/docker/distribution",
+			"revision": "edd7cb5249d0a45262b20bb58b838ecf4fb368bd",
+			"branch": "master",
+			"path": "/reference"
+		},
+		{
+			"importpath": "github.com/docker/docker/pkg/stdcopy",
+			"repository": "https://github.com/docker/docker",
+			"revision": "1bbac428de015a24a0724a9d0990d500c445dcad",
+			"branch": "master",
+			"path": "/pkg/stdcopy"
+		},
+		{
+			"importpath": "github.com/docker/engine-api",
+			"repository": "https://github.com/docker/engine-api",
+			"revision": "f90ecdb1e989f834dabbd91807e891094aa069fe",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/docker/go-connections/nat",
+			"repository": "https://github.com/docker/go-connections",
+			"revision": "990a1a1a70b0da4c4cb70e117971a4f0babfbf1a",
+			"branch": "master",
+			"path": "/nat"
+		},
+		{
+			"importpath": "github.com/docker/go-connections/sockets",
+			"repository": "https://github.com/docker/go-connections",
+			"revision": "990a1a1a70b0da4c4cb70e117971a4f0babfbf1a",
+			"branch": "master",
+			"path": "/sockets"
+		},
+		{
+			"importpath": "github.com/docker/go-connections/tlsconfig",
+			"repository": "https://github.com/docker/go-connections",
+			"revision": "990a1a1a70b0da4c4cb70e117971a4f0babfbf1a",
+			"branch": "master",
+			"path": "/tlsconfig"
+		},
+		{
+			"importpath": "github.com/docker/go-units",
+			"repository": "https://github.com/docker/go-units",
+			"revision": "f2d77a61e3c169b43402a0a1e84f06daf29b8190",
 			"branch": "master"
 		},
 		{
@@ -98,6 +158,13 @@
 			"repository": "https://github.com/olebedev/config",
 			"revision": "ed583f7fafbccbd73013b0379ab29943ab0da34b",
 			"branch": "master"
+		},
+		{
+			"importpath": "github.com/opencontainers/runc/libcontainer/user",
+			"repository": "https://github.com/opencontainers/runc",
+			"revision": "5dc3f3576efb5262bf582217e93f86c93944374d",
+			"branch": "master",
+			"path": "/libcontainer/user"
 		},
 		{
 			"importpath": "github.com/opennota/urlesc",
@@ -164,6 +231,13 @@
 			"revision": "e45385e9b226f570b1f086bf287b25d3d4117776",
 			"branch": "master",
 			"path": "/netutil"
+		},
+		{
+			"importpath": "golang.org/x/net/proxy",
+			"repository": "https://go.googlesource.com/net",
+			"revision": "3f122ce3dbbe488b7e6a8bdb26f41edec852a40b",
+			"branch": "master",
+			"path": "/proxy"
 		},
 		{
 			"importpath": "golang.org/x/tools/go/ast/astutil",
