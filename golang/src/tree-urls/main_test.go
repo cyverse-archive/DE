@@ -50,7 +50,7 @@ func (m *MockDB) updateTreeURLs(sha1, treeURLs string) error {
 
 func TestBadRequest(t *testing.T) {
 	var (
-		expectedMsg    = "test message"
+		expectedMsg    = "test message\n"
 		expectedStatus = http.StatusBadRequest
 	)
 
@@ -70,7 +70,7 @@ func TestBadRequest(t *testing.T) {
 
 func TestErrored(t *testing.T) {
 	var (
-		expectedMsg    = "test message"
+		expectedMsg    = "test message\n"
 		expectedStatus = http.StatusInternalServerError
 	)
 
@@ -90,7 +90,7 @@ func TestErrored(t *testing.T) {
 
 func TestNotFound(t *testing.T) {
 	var (
-		expectedMsg    = "test message"
+		expectedMsg    = "test message\n"
 		expectedStatus = http.StatusNotFound
 	)
 
