@@ -9,6 +9,7 @@
             [apps.persistence.app-metadata :as persistence]
             [apps.persistence.categories :as db-categories]
             [apps.service.apps.de.validation :as av]
+            [clojure-commons.exception-util :as ex-util]
             [metadata-client.core :as metadata-client]))
 
 (def ^:private max-app-category-name-len 255)
@@ -170,3 +171,10 @@
   [{:keys [username]} ontology-version]
   (let [version-details (db-categories/add-hierarchy-version username ontology-version)]
     (assoc version-details :applied_by username)))
+
+(defn delete-ontology
+  [{:keys [username]} ontology-version]
+  (let [active-version (db-categories/get-active-hierarchy-version)]
+    (when (= ontology-version active-version)
+      (ex-util/illegal-argument "The active app hierarchy version cannot be marked as deleted.")))
+  (metadata-client/delete-ontology username ontology-version))

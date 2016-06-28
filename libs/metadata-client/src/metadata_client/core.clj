@@ -35,7 +35,13 @@
    :as               as
    :follow-redirects false})
 
+(def ^:private delete-options get-options)
 (def ^:private put-options post-options)
+
+(defn delete-ontology
+  [username ontology-version]
+  (http/delete (metadata-url-encoded "admin" "ontologies" ontology-version)
+               (delete-options {:user username})))
 
 (defn list-ontologies
   [username]

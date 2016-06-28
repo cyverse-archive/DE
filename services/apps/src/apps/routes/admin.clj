@@ -181,6 +181,19 @@
   "GET /ontologies"))
         (ok (admin/list-ontologies current-user)))
 
+  (DELETE* "/:ontology-version" []
+           :path-params [ontology-version :- OntologyVersionParam]
+           :query [params SecuredQueryParams]
+           :middlewares [wrap-metadata-base-url]
+           :summary "Delete an Ontology"
+           :description (str
+"Marks an Ontology as deleted in the metadata service.
+ Returns `ERR_ILLEGAL_ARGUMENT` when attempting to delete the active `ontology-version`."
+(get-endpoint-delegate-block
+  "metadata"
+  "DELETE /admin/ontologies/{ontology-version}"))
+           (admin/delete-ontology current-user ontology-version))
+
   (POST* "/:ontology-version" []
          :path-params [ontology-version :- OntologyVersionParam]
          :query [params SecuredQueryParams]
