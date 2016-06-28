@@ -273,11 +273,7 @@ func (d *Docker) Pull(name, tag string) error {
 	}
 
 	_, err = io.Copy(os.Stdout, body)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 func pathExists(p string) (bool, error) {
@@ -439,10 +435,7 @@ func (d *Docker) Attach(containerID string, outputWriter, errorWriter io.Writer)
 }
 
 func (d *Docker) runContainer(containerID string, stdout, stderr io.Writer) (int, error) {
-	var (
-		err      error
-		exitCode int
-	)
+	var err error
 
 	if err = d.Attach(containerID, stdout, stderr); err != nil {
 		return -1, err
@@ -454,11 +447,7 @@ func (d *Docker) runContainer(containerID string, stdout, stderr io.Writer) (int
 	}
 
 	//wait for container to exit
-	if exitCode, err = d.Client.ContainerWait(d.ctx, containerID); err != nil {
-		return exitCode, err
-	}
-
-	return exitCode, err
+	return d.Client.ContainerWait(d.ctx, containerID)
 }
 
 // RunStep will run the steps in a job. If a step fails, the function will
