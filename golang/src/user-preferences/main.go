@@ -169,14 +169,12 @@ func (u *UserPreferencesApp) Greeting(writer http.ResponseWriter, r *http.Reques
 }
 
 func badRequest(writer http.ResponseWriter, msg string) {
-	writer.WriteHeader(http.StatusBadRequest)
-	writer.Write([]byte(msg))
+	http.Error(writer, msg, http.StatusBadRequest)
 	logcabin.Error.Print(msg)
 }
 
 func errored(writer http.ResponseWriter, msg string) {
-	writer.WriteHeader(http.StatusInternalServerError)
-	writer.Write([]byte(msg))
+	http.Error(writer, msg, http.StatusInternalServerError)
 	logcabin.Error.Print(msg)
 }
 
