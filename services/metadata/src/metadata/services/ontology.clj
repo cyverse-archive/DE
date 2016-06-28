@@ -6,6 +6,7 @@
             [clj-time.core :as time]
             [clj-time.format :as time-format]
             [clojure.tools.logging :as log]
+            [clojure-commons.exception-util :as ex-util]
             [metadata.persistence.avu :as avu-db]
             [metadata.persistence.ontologies :as ont-db]
             [metadata.util.ontology :as util]
@@ -78,9 +79,8 @@
   (transaction
     (let [ontology (ont-db/get-ontology-details ontology-version)]
       (when-not ontology
-        (throw+ {:type    :clojure-commons.exception/not-found
-                 :version ontology-version
-                 :error   "An ontology with this version was not found."}))
+        (ex-util/not-found "An ontology with this version was not found."
+                           :version ontology-version))
       (log/info user "deleting ontology" ontology-version)
       (ont-db/mark-ontology-deleted ontology-version)))
   nil)
