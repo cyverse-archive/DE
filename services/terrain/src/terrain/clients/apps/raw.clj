@@ -582,6 +582,27 @@
                :as               :stream
                :follow-redirects false}))
 
+(defn get-oauth-token-info
+  [api-name]
+  (client/get (apps-url "oauth" "token-info" api-name)
+              {:query-params     (secured-params)
+               :as               :stream
+               :follow-redirects false}))
+
+(defn get-oauth-redirect-uris
+  []
+  (client/get (apps-url "oauth" "redirect-uris")
+              {:query-params     (secured-params)
+               :as               :stream
+               :follow-redirects false}))
+
+(defn get-admin-oauth-token-info
+  [api-name params]
+  (client/get (apps-url "admin" "oauth" "token-info" api-name)
+              {:query-params     (secured-params params [:proxy-user])
+               :as               :stream
+               :follow-redirects false}))
+
 (defn admin-list-tool-requests
   [params]
   (client/get (apps-url "admin" "tool-requests")

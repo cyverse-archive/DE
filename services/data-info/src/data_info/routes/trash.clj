@@ -3,8 +3,7 @@
         [data-info.routes.domain.common]
         [data-info.routes.domain.trash])
   (:require [data-info.services.trash :as trash]
-            [data-info.util.service :as svc]
-            [data-info.util.schema :as s]))
+            [data-info.util.service :as svc]))
 
 (defroutes* trash
     (DELETE* "/trash" [:as {uri :uri}]
@@ -20,7 +19,7 @@
       :tags ["bulk"]
       :query [params StandardUserQueryParams]
       :body [body (describe Paths "The paths to move to the trash")]
-      :return (s/doc-only TrashPaths TrashPathsDoc)
+      :return (doc-only TrashPaths TrashPathsDoc)
       :summary "Delete Data Items"
       :description (str
   "Delete the data items with the listed paths."
@@ -32,7 +31,7 @@
       :tags ["bulk"]
       :query [params StandardUserQueryParams]
       :body [body (describe OptionalPaths "The paths to restore, or an empty or missing list to restore the whole trash")]
-      :return (s/doc-only Restoration RestorationPaths)
+      :return (doc-only Restoration RestorationPaths)
       :summary "Restore Data Items"
       :description (str
   "Restore the data items with the listed paths from the trash to their original locations, or the user home directory if their original location information is not available."

@@ -39,10 +39,10 @@
 (defn load-user-as-user
   "Loads information for the user with the given username, as another username."
   [username act-as-username]
-  (let [short-username (string/replace username #"@.*" "")
+  (let [short-username        (string/replace username #"@.*" "")
         short-act-as-username (string/replace act-as-username #"@.*" "")
-        user-info      (ipg/lookup-subject short-act-as-username short-username)]
-    {:username      username
+        user-info             (ipg/lookup-subject short-act-as-username short-username)]
+    {:username      (str short-username "@" (uid-domain))
      :password      nil
      :email         (:email user-info)
      :shortUsername short-username

@@ -176,6 +176,7 @@
     (admin-reference-genomes-routes)
     (admin-tool-routes)
     (admin-permanent-id-request-routes)
+    (oauth-admin-routes)
     (route/not-found (unrecognized-path-response))))
 
 (defn unsecured-routes

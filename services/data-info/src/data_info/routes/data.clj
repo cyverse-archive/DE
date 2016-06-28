@@ -16,8 +16,7 @@
             [data-info.util.config :as cfg]
             [tree-urls-client.middleware :refer [wrap-tree-urls-base]]
             [clojure-commons.error-codes :as ce]
-            [data-info.util.service :as svc]
-            [data-info.util.schema :as s]))
+            [data-info.util.service :as svc]))
 
 (defn tree-urls-middleware [handler] (wrap-tree-urls-base handler cfg/tree-urls-base-url))
 
@@ -125,7 +124,7 @@ with characters in a runtime-configurable parameter. Currently, this parameter l
 
       (GET* "/chunks-tabular" [:as {uri :uri}]
         :query [params TabularChunkParams]
-        :return (s/doc-only TabularChunkReturn TabularChunkDoc)
+        :return (doc-only TabularChunkReturn TabularChunkDoc)
         :summary "Get Tabular File Chunk"
         :description (str
   "Gets the specified page of the tabular file, with a page size roughly corresponding to the provided size. The size is not precisely guaranteed, because partial lines cannot be correctly parsed."

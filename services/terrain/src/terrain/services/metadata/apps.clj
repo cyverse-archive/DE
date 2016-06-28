@@ -63,7 +63,8 @@
        :userHomePath  (di/user-home-folder user)
        :userTrashPath (di/user-trash-folder user)
        :baseTrashPath (di/base-trash-folder)
-       :preferences   preferences})))
+       :preferences   preferences
+       :auth-redirect (dm/get-auth-redirect-uris)})))
 
 (defn logout
   "This service records the fact that the user logged out."

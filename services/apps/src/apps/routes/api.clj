@@ -36,7 +36,7 @@
             :description "Documentation for the Discovery Environment Apps REST API"
             :version "2.0.0"}
      :tags [{:name "service-info", :description "Service Status Information"}
-            {:name "callbacks", :description "General callback functions"}
+            {:name "callbacks", :description "General callback endpoints"}
             {:name "app-categories", :description "App Category endpoints."}
             {:name "app-hierarchies", :description "App Hierarchy endpoints."}
             {:name "app-element-types", :description "App Element endpoints."}
@@ -50,7 +50,7 @@
             {:name "users", :description "User endpoints."}
             {:name "tool-requests", :description "Tool Request endpoints."}
             {:name "reference-genomes", :description "Reference Genome endpoints."}
-            {:name "oauth-routes", :description "OAuth callback routes."}
+            {:name "oauth", :description "OAuth callback and information endpoints."}
             {:name "collaborator-routes", :description "Collaborator Information Routes"}
             {:name "admin-apps", :description "Admin App endpoints."}
             {:name "admin-app-metadata", :description "Admin App Metadata endpoints."}
@@ -60,7 +60,8 @@
             {:name "admin-data-containers", :description "Admin Docker Data Container endpoints."}
             {:name "admin-tools", :description "Admin Tool endpoints."}
             {:name "admin-reference-genomes", :description "Admin Reference Genome endpoints."}
-            {:name "admin-tool-requests", :description "Admin Tool Request endpoints."}]})
+            {:name "admin-tool-requests", :description "Admin Tool Request endpoints."}
+            {:name "admin-oauth", :description "Admin OAuth endpoints."}]})
   (middlewares
     [clean-context
      wrap-keyword-params
@@ -119,7 +120,7 @@
       :tags ["reference-genomes"]
       reference-genome-routes/reference-genomes)
     (context* "/oauth" []
-      :tags ["oauth-routes"]
+      :tags ["oauth"]
       oauth-routes/oauth)
     (context* "/collaborators" []
       :tags ["collaborator-routes"]
@@ -151,4 +152,7 @@
     (context* "/admin/tool-requests" []
       :tags ["admin-tool-requests"]
       admin-routes/admin-tool-requests)
+    (context* "/admin/oauth" []
+      :tags ["admin-oauth"]
+      oauth-routes/admin-oauth)
     (route/not-found (service/unrecognized-path-response))))
