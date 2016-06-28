@@ -67,7 +67,7 @@ func (m *MockDB) updateSavedSearches(username, savedSearches string) error {
 
 func TestBadRequest(t *testing.T) {
 	var (
-		expectedMsg    = "test message"
+		expectedMsg    = "test message\n"
 		expectedStatus = http.StatusBadRequest
 	)
 
@@ -81,13 +81,13 @@ func TestBadRequest(t *testing.T) {
 	}
 
 	if actualMsg != expectedMsg {
-		t.Errorf("Expected message was '%s', but should have been '%s'", actualMsg, expectedMsg)
+		t.Errorf("Message was '%s', but should have been '%s'", actualMsg, expectedMsg)
 	}
 }
 
 func TestErrored(t *testing.T) {
 	var (
-		expectedMsg    = "test message"
+		expectedMsg    = "test message\n"
 		expectedStatus = http.StatusInternalServerError
 	)
 
@@ -101,13 +101,13 @@ func TestErrored(t *testing.T) {
 	}
 
 	if actualMsg != expectedMsg {
-		t.Errorf("Expected message was '%s', but should have been '%s'", actualMsg, expectedMsg)
+		t.Errorf("Message was '%s', but should have been '%s'", actualMsg, expectedMsg)
 	}
 }
 
 func TestNotFound(t *testing.T) {
 	var (
-		expectedMsg    = "test message"
+		expectedMsg    = "test message\n"
 		expectedStatus = http.StatusNotFound
 	)
 
@@ -121,11 +121,10 @@ func TestNotFound(t *testing.T) {
 	}
 
 	if actualMsg != expectedMsg {
-		t.Errorf("Expected message was '%s', but should have been '%s'", actualMsg, expectedMsg)
+		t.Errorf("Message was '%s', but should have been '%s'", actualMsg, expectedMsg)
 	}
 }
 
-//////////////
 func TestNew(t *testing.T) {
 	mock := NewMockDB()
 	n := New(mock)
