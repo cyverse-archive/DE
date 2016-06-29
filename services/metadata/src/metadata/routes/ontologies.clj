@@ -62,6 +62,23 @@
            :description "Saves an Ontology XML document in the database."
            (ok (service/save-ontology-xml user ontology-xml)))
 
+    (DELETE* "/:ontology-version" []
+             :path-params [ontology-version :- OntologyVersionParam]
+             :query [{:keys [user]} StandardUserQueryParams]
+             :summary "Delete an Ontology"
+             :description "Marks an Ontology as deleted in the database."
+             (ok (service/delete-ontology user ontology-version)))
+
+    (DELETE* "/:ontology-version/:root-iri" []
+             :path-params [ontology-version :- OntologyVersionParam
+                           root-iri :- OntologyClassIRIParam]
+             :query [{:keys [user]} StandardUserQueryParams]
+             :summary "Delete an Ontology Hierarchy"
+             :description
+             "Removes an Ontology Hierarchy and all associated Ontology Classes saved under the given
+              `root-iri` for the given `ontology-version`."
+             (ok (service/delete-hierarchy user ontology-version root-iri)))
+
     (PUT* "/:ontology-version/:root-iri" []
           :path-params [ontology-version :- OntologyVersionParam
                         root-iri :- OntologyClassIRIParam]

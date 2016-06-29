@@ -9,6 +9,7 @@
             [apps.persistence.app-metadata :as persistence]
             [apps.persistence.categories :as db-categories]
             [apps.service.apps.de.validation :as av]
+            [clojure-commons.exception-util :as ex-util]
             [metadata-client.core :as metadata-client]))
 
 (def ^:private max-app-category-name-len 255)
@@ -27,43 +28,38 @@
   "Validates the length of an App Category name."
   [name]
   (when (> (count name) max-app-category-name-len)
-    (throw+ {:type  :clojure-commons.exception/illegal-argument
-             :error "App Category name too long."
-             :name  name})))
+    (ex-util/illegal-argument "App Category name too long."
+                              :name  name)))
 
 (defn- validate-subcategory-name
   "Validates that the given subcategory name is available under the given App Category parent ID."
   [parent-id name]
   (when (app-groups/category-contains-subcategory? parent-id name)
-    (throw+ {:type      :clojure-commons.exception/illegal-argument
-             :error     "Parent App Category already contains a subcategory with that name"
-             :parent_id parent-id
-             :name      name})))
+    (ex-util/illegal-argument "Parent App Category already contains a subcategory with that name"
+                              :parent_id parent-id
+                              :name      name)))
 
 (defn- validate-category-empty
   "Validates that the given App Category contains no Apps directly under it."
   [parent-id]
   (when (app-groups/category-contains-apps? parent-id)
-    (throw+ {:type      :clojure-commons.exception/illegal-argument
-             :error     "Parent App Category already contains Apps"
-             :parent_id parent-id})))
+    (ex-util/illegal-argument "Parent App Category already contains Apps"
+                              :parent_id parent-id)))
 
 (defn- validate-category-hierarchy-empty
   "Validates that the given App Category and its subcategories contain no Apps."
   [category-id requestor]
   (when (app-groups/category-hierarchy-contains-apps? category-id)
-    (throw+ {:type         :clojure-commons.exception/illegal-argument
-             :error        "App Category, or one of its subcategories, still contain Apps"
-             :category_id  category-id
-             :requested_by requestor})))
+    (ex-util/illegal-argument "App Category, or one of its subcategories, still contain Apps"
+                              :category_id  category-id
+                              :requested_by requestor)))
 
 (defn- validate-category-not-ancestor-of-parent
   [category-id parent-id]
   (when (app-groups/category-ancestor-of-subcategory? category-id parent-id)
-    (throw+ {:type        :clojure-commons.exception/illegal-argument
-             :error       "App Category is an ancestor of the destination Category"
-             :category_id category-id
-             :parent_id   parent-id})))
+    (ex-util/illegal-argument "App Category is an ancestor of the destination Category"
+                              :category_id category-id
+                              :parent_id   parent-id)))
 
 (defn delete-app
   "This service marks an existing app as deleted in the database."
@@ -170,3 +166,10 @@
   [{:keys [username]} ontology-version]
   (let [version-details (db-categories/add-hierarchy-version username ontology-version)]
     (assoc version-details :applied_by username)))
+
+(defn delete-ontology
+  [{:keys [username]} ontology-version]
+  (let [active-version (db-categories/get-active-hierarchy-version)]
+    (when (= ontology-version active-version)
+      (ex-util/illegal-argument "The active app hierarchy version cannot be marked as deleted.")))
+  (metadata-client/delete-ontology username ontology-version))

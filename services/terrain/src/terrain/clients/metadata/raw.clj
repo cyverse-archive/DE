@@ -197,6 +197,10 @@
                                   :content   istream}]
               :follow-redirects false}))
 
+(defn delete-app-category-hierarchy
+  [ontology-version root-iri]
+  (http/delete (metadata-url-encoded "admin" "ontologies" ontology-version root-iri) (delete-options)))
+
 (defn save-ontology-hierarchy
   [ontology-version root-iri]
   (http/put (metadata-url-encoded "admin" "ontologies" ontology-version root-iri) (get-options)))

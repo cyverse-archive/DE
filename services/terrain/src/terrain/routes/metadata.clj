@@ -72,11 +72,17 @@
    (POST "/ontologies" [:as request]
      (service/success-response (metadata/upload-ontology request)))
 
+   (DELETE "/ontologies/:ontology-version" [ontology-version]
+     (service/success-response (apps/delete-ontology ontology-version)))
+
    (GET "/ontologies/:ontology-version" [ontology-version]
      (service/success-response (metadata-client/get-ontology-hierarchies ontology-version)))
 
    (POST "/ontologies/:ontology-version" [ontology-version]
      (service/success-response (apps/set-ontology-version ontology-version)))
+
+   (DELETE "/ontologies/:ontology-version/:root-iri" [ontology-version root-iri]
+     (service/success-response (metadata-client/delete-app-category-hierarchy ontology-version root-iri)))
 
    (GET "/ontologies/:ontology-version/:root-iri" [ontology-version root-iri :as {params :params}]
      (service/success-response (apps/get-app-category-hierarchy ontology-version root-iri params)))

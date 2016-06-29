@@ -1,5 +1,6 @@
 (ns metadata.persistence.ontologies
-  (:use [korma.core :exclude [update]]))
+  (:use [korma.core :exclude [update]])
+  (:require [korma.core :as sql]))
 
 (defn add-ontology-xml
   [user version iri ontology-xml]
@@ -24,13 +25,20 @@
                          :created_on)
                  (where {:version ontology-version}))))
 
+(defn mark-ontology-deleted
+  [ontology-version]
+  (sql/update :ontologies
+              (set-fields {:deleted true})
+              (where {:version ontology-version})))
+
 (defn list-ontologies
   []
   (select :ontologies
           (fields :version
                   :iri
                   :created_by
-                  :created_on)))
+                  :created_on)
+          (where {:deleted false})))
 
 (defn add-classes
   [ontology-version classes]
@@ -45,6 +53,12 @@
                   :label
                   :description)
           (where {:ontology_version ontology-version})))
+
+(defn delete-classes
+  [ontology-version class-iris]
+  (delete :ontology_classes
+          (where {:ontology_version ontology-version
+                  :iri              [in class-iris]})))
 
 (defn add-hierarchies
   [ontology-version class-subclass-pairs]

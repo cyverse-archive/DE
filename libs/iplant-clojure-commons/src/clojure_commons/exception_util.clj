@@ -22,6 +22,11 @@
   [reason & {:as ex-info}]
   (throw+ (assoc ex-info :type ::cx/bad-request :error reason)))
 
+(defn illegal-argument
+  "Throws an error indicating that that a bad request argument was received."
+  [reason & {:as ex-info}]
+  (throw+ (assoc ex-info :type ::cx/illegal-argument :error reason)))
+
 (defn not-found
   "Throws an error indicating that a resource could not be found."
   [reason & {:as ex-info}]
