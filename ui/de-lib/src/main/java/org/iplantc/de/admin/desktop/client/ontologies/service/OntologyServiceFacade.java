@@ -81,4 +81,15 @@ public interface OntologyServiceFacade {
      * @param callback
      */
     void getAppAVUs(App app, AsyncCallback<List<Avu>> callback);
+
+    /**
+     * Soft deletes an ontology version so that it doesn't show up in the dropdown
+     * If the user tries to delete the active ontology, an error is returned
+     */
+    void deleteOntology(String version, AsyncCallback<List<Ontology>> callback);
+
+    /**
+     * Deletes a saved ontology root hierarchy
+     */
+    void deleteRootHierarchy(String version, String root, AsyncCallback<List<OntologyHierarchy>> callback);
 }
