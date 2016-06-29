@@ -14,7 +14,9 @@ title: DE API Documentation
     * [Deleting a Category by ID](#deleting-a-category-by-id)
     * [Updating an App Category](#updating-an-app-category)
     * [Save an Ontology XML Document](#save-an-ontology-xml-document)
+    * [Logically Deleting an Ontology](#logically-deleting-an-ontology)
     * [Set Active Ontology Version](#set-active-ontology-version)
+    * [Deleting an Ontology Hierarchy](#deleting-an-ontology-hierarchy)
     * [Save an Ontology Hierarchy](#save-an-ontology-hierarchy)
     * [Listing Ontologies and Ontology Hierarchies](#listing-ontologies-and-ontology-hierarchies)
         * [Apps passthroughs](#apps-passthroughs)
@@ -142,6 +144,15 @@ Delegates to metadata: POST /admin/ontologies
 This endpoint is a passthrough to the metadata endpoint using the same path.
 Please see the metadata service documentation for more information.
 
+## Logically Deleting an Ontology
+
+Secured Endpoint: DELETE /admin/ontologies/{ontology-version}
+
+Delegates to apps: DELETE /admin/ontologies/{ontology-version}
+
+This endpoint is a passthrough to the apps endpoint using the same path.
+Please see the metadata service documentation for more information.
+
 ## Set Active Ontology Version
 
 Secured Endpoint: POST /admin/ontologies/{ontology-version}
@@ -149,6 +160,15 @@ Secured Endpoint: POST /admin/ontologies/{ontology-version}
 Delegates to apps: POST /admin/ontologies/{ontology-version}
 
 This endpoint is a passthrough to the apps endpoint using the same path.
+Please see the metadata service documentation for more information.
+
+## Deleting an Ontology Hierarchy
+
+Secured Endpoint: DELETE /admin/ontologies/{ontology-version}/{root-iri}
+
+Delegates to metadata: DELETE /admin/ontologies/{ontology-version}/{root-iri}
+
+This endpoint is a passthrough to the metadata endpoint using the same path.
 Please see the metadata service documentation for more information.
 
 ## Save an Ontology Hierarchy
