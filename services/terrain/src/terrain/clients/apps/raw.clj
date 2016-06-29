@@ -38,6 +38,13 @@
                :as               :stream
                :follow-redirects false}))
 
+(defn delete-ontology
+  [ontology-version]
+  (client/delete (apps-url-encoded "admin" "ontologies" ontology-version)
+                 {:query-params     (secured-params)
+                  :as               :stream
+                  :follow-redirects false}))
+
 (defn set-ontology-version
   [ontology-version]
   (client/post (apps-url-encoded "admin" "ontologies" ontology-version)
