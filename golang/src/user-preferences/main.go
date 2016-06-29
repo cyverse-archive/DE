@@ -67,28 +67,43 @@ func convert(record *UserPreferencesRecord, wrap bool) (map[string]interface{}, 
 	return values, nil
 }
 
-// UserPreferencesApp is an implementation of the App interface created to manage
-// user preferences.
-type UserPreferencesApp struct {
+// DB defines the interface for interacting with the user-prefs db.
+type DB interface {
+	isUser(username string) (bool, error)
+	hasPreferences(username string) (bool, error)
+	getPreferences(username string) ([]UserPreferencesRecord, error)
+	insertPreferences(username, prefs string) error
+	updatePreferences(username, prefs string) error
+	deletePreferences(username string) error
+}
+
+// PrefsDB implements the DB interface for interacting with the user-preferences
+// database.
+type PrefsDB struct {
 	db *sql.DB
 }
 
-// New returns a new *UserPreferencesApp
-func New(db *sql.DB) *UserPreferencesApp {
-	return &UserPreferencesApp{
+// NewPrefsDB returns a newly created *PrefsDB.
+func NewPrefsDB(db *sql.DB) *PrefsDB {
+	return &PrefsDB{
 		db: db,
 	}
 }
 
+// isUser returns whether the user exists in the database or not.
+func (p *PrefsDB) isUser(username string) (bool, error) {
+	return queries.IsUser(p.db, username)
+}
+
 // hasPreferences returns whether or not the given user has preferences already.
-func (u *UserPreferencesApp) hasPreferences(username string) (bool, error) {
+func (p *PrefsDB) hasPreferences(username string) (bool, error) {
 	query := `SELECT COUNT(p.*)
               FROM user_preferences p,
                    users u
              WHERE p.user_id = u.id
                AND u.username = $1`
 	var count int64
-	if err := u.db.QueryRow(query, username).Scan(&count); err != nil {
+	if err := p.db.QueryRow(query, username).Scan(&count); err != nil {
 		return false, err
 	}
 	return count > 0, nil
@@ -96,7 +111,7 @@ func (u *UserPreferencesApp) hasPreferences(username string) (bool, error) {
 
 // getPreferences returns a []UserPreferencesRecord of all of the preferences associated
 // with the provided username.
-func (u *UserPreferencesApp) getPreferences(username string) ([]UserPreferencesRecord, error) {
+func (p *PrefsDB) getPreferences(username string) ([]UserPreferencesRecord, error) {
 	query := `SELECT p.id AS id,
                    p.user_id AS user_id,
                    p.preferences AS preferences
@@ -105,7 +120,7 @@ func (u *UserPreferencesApp) getPreferences(username string) ([]UserPreferencesR
              WHERE p.user_id = u.id
                AND u.username = $1`
 
-	rows, err := u.db.Query(query, username)
+	rows, err := p.db.Query(query, username)
 	if err != nil {
 		return nil, err
 	}
@@ -128,44 +143,39 @@ func (u *UserPreferencesApp) getPreferences(username string) ([]UserPreferencesR
 }
 
 // insertPreferences adds a new preferences to the database for the user.
-func (u *UserPreferencesApp) insertPreferences(username, prefs string) error {
+func (p *PrefsDB) insertPreferences(username, prefs string) error {
 	query := `INSERT INTO user_preferences (user_id, preferences)
                  VALUES ($1, $2)`
-	userID, err := queries.UserID(u.db, username)
+	userID, err := queries.UserID(p.db, username)
 	if err != nil {
 		return err
 	}
-	_, err = u.db.Exec(query, userID, prefs)
+	_, err = p.db.Exec(query, userID, prefs)
 	return err
 }
 
 // updatePreferences updates the preferences in the database for the user.
-func (u *UserPreferencesApp) updatePreferences(username, prefs string) error {
+func (p *PrefsDB) updatePreferences(username, prefs string) error {
 	query := `UPDATE ONLY user_preferences
                     SET preferences = $2
                   WHERE user_id = $1`
-	userID, err := queries.UserID(u.db, username)
+	userID, err := queries.UserID(p.db, username)
 	if err != nil {
 		return err
 	}
-	_, err = u.db.Exec(query, userID, prefs)
+	_, err = p.db.Exec(query, userID, prefs)
 	return err
 }
 
 // deletePreferences deletes the user's preferences from the database.
-func (u *UserPreferencesApp) deletePreferences(username string) error {
+func (p *PrefsDB) deletePreferences(username string) error {
 	query := `DELETE FROM ONLY user_preferences WHERE user_id = $1`
-	userID, err := queries.UserID(u.db, username)
+	userID, err := queries.UserID(p.db, username)
 	if err != nil {
 		return err
 	}
-	_, err = u.db.Exec(query, userID)
+	_, err = p.db.Exec(query, userID)
 	return err
-}
-
-// Greeting prints out a greeting to the writer.
-func (u *UserPreferencesApp) Greeting(writer http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(writer, "Hello from user-preferences.")
 }
 
 func badRequest(writer http.ResponseWriter, msg string) {
@@ -178,10 +188,55 @@ func errored(writer http.ResponseWriter, msg string) {
 	logcabin.Error.Print(msg)
 }
 
+func handleNonUser(writer http.ResponseWriter, username string) {
+	var (
+		retval []byte
+		err    error
+	)
+
+	retval, err = json.Marshal(map[string]string{
+		"user": username,
+	})
+	if err != nil {
+		errored(writer, fmt.Sprintf("Error generating json for non-user %s", err))
+		return
+	}
+
+	badRequest(writer, string(retval))
+
+	return
+}
+
+// UserPreferencesApp is an implementation of the App interface created to manage
+// user preferences.
+type UserPreferencesApp struct {
+	prefs  DB
+	router *mux.Router
+}
+
+// New returns a new *UserPreferencesApp
+func New(db DB) *UserPreferencesApp {
+	p := &UserPreferencesApp{
+		prefs:  db,
+		router: mux.NewRouter(),
+	}
+	p.router.HandleFunc("/", p.Greeting).Methods("GET")
+	p.router.HandleFunc("/{username}", p.GetRequest).Methods("GET")
+	p.router.HandleFunc("/{username}", p.PutRequest).Methods("PUT")
+	p.router.HandleFunc("/{username}", p.PostRequest).Methods("POST")
+	p.router.HandleFunc("/{username}", p.DeleteRequest).Methods("DELETE")
+	return p
+}
+
+// Greeting prints out a greeting to the writer.
+func (u *UserPreferencesApp) Greeting(writer http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(writer, "Hello from user-preferences.")
+}
+
 func (u *UserPreferencesApp) getUserPreferencesForRequest(username string, wrap bool) ([]byte, error) {
 	var retval UserPreferencesRecord
 
-	prefs, err := u.getPreferences(username)
+	prefs, err := u.prefs.getPreferences(username)
 	if err != nil {
 		return nil, fmt.Errorf("Error getting preferences for username %s: %s", username, err)
 	}
@@ -208,25 +263,6 @@ func (u *UserPreferencesApp) getUserPreferencesForRequest(username string, wrap 
 	return jsoned, nil
 }
 
-func handleNonUser(writer http.ResponseWriter, username string) {
-	var (
-		retval []byte
-		err    error
-	)
-
-	retval, err = json.Marshal(map[string]string{
-		"user": username,
-	})
-	if err != nil {
-		errored(writer, fmt.Sprintf("Error generating json for non-user %s", err))
-		return
-	}
-
-	badRequest(writer, string(retval))
-
-	return
-}
-
 // GetRequest handles writing out a user's preferences as a response.
 func (u *UserPreferencesApp) GetRequest(writer http.ResponseWriter, r *http.Request) {
 	var (
@@ -243,7 +279,7 @@ func (u *UserPreferencesApp) GetRequest(writer http.ResponseWriter, r *http.Requ
 	}
 
 	logcabin.Info.Printf("Getting user preferences for %s", username)
-	if userExists, err = queries.IsUser(u.db, username); err != nil {
+	if userExists, err = u.prefs.isUser(username); err != nil {
 		badRequest(writer, fmt.Sprintf("Error checking for username %s: %s", username, err))
 		return
 	}
@@ -282,7 +318,7 @@ func (u *UserPreferencesApp) PostRequest(writer http.ResponseWriter, r *http.Req
 		return
 	}
 
-	if userExists, err = queries.IsUser(u.db, username); err != nil {
+	if userExists, err = u.prefs.isUser(username); err != nil {
 		badRequest(writer, fmt.Sprintf("Error checking for username %s: %s", username, err))
 		return
 	}
@@ -292,7 +328,7 @@ func (u *UserPreferencesApp) PostRequest(writer http.ResponseWriter, r *http.Req
 		return
 	}
 
-	if hasPrefs, err = u.hasPreferences(username); err != nil {
+	if hasPrefs, err = u.prefs.hasPreferences(username); err != nil {
 		errored(writer, fmt.Sprintf("Error checking preferences for user %s: %s", username, err))
 		return
 	}
@@ -311,12 +347,12 @@ func (u *UserPreferencesApp) PostRequest(writer http.ResponseWriter, r *http.Req
 
 	bodyString := string(bodyBuffer)
 	if !hasPrefs {
-		if err = u.insertPreferences(username, bodyString); err != nil {
+		if err = u.prefs.insertPreferences(username, bodyString); err != nil {
 			errored(writer, fmt.Sprintf("Error inserting preferences for user %s: %s", username, err))
 			return
 		}
 	} else {
-		if err = u.updatePreferences(username, bodyString); err != nil {
+		if err = u.prefs.updatePreferences(username, bodyString); err != nil {
 			errored(writer, fmt.Sprintf("Error updating preferences for user %s: %s", username, err))
 			return
 		}
@@ -347,7 +383,7 @@ func (u *UserPreferencesApp) DeleteRequest(writer http.ResponseWriter, r *http.R
 		return
 	}
 
-	if userExists, err = queries.IsUser(u.db, username); err != nil {
+	if userExists, err = u.prefs.isUser(username); err != nil {
 		badRequest(writer, fmt.Sprintf("Error checking for username %s: %s", username, err))
 		return
 	}
@@ -357,7 +393,7 @@ func (u *UserPreferencesApp) DeleteRequest(writer http.ResponseWriter, r *http.R
 		return
 	}
 
-	if hasPrefs, err = u.hasPreferences(username); err != nil {
+	if hasPrefs, err = u.prefs.hasPreferences(username); err != nil {
 		errored(writer, fmt.Sprintf("Error checking preferences for user %s: %s", username, err))
 		return
 	}
@@ -366,19 +402,9 @@ func (u *UserPreferencesApp) DeleteRequest(writer http.ResponseWriter, r *http.R
 		return
 	}
 
-	if err = u.deletePreferences(username); err != nil {
+	if err = u.prefs.deletePreferences(username); err != nil {
 		errored(writer, fmt.Sprintf("Error deleting preferences for user %s: %s", username, err))
 	}
-}
-
-func newRouter(a App) *mux.Router {
-	router := mux.NewRouter()
-	router.HandleFunc("/", a.Greeting).Methods("GET")
-	router.HandleFunc("/{username}", a.GetRequest).Methods("GET")
-	router.HandleFunc("/{username}", a.PutRequest).Methods("PUT")
-	router.HandleFunc("/{username}", a.PostRequest).Methods("POST")
-	router.HandleFunc("/{username}", a.DeleteRequest).Methods("DELETE")
-	return router
 }
 
 func fixAddr(addr string) string {
@@ -436,6 +462,7 @@ func main() {
 	logcabin.Info.Println("Successfully pinged the database")
 
 	logcabin.Info.Printf("Listening on port %s", *port)
-	app := New(db)
-	logcabin.Error.Fatal(http.ListenAndServe(fixAddr(*port), newRouter(app)))
+	prefsDB := NewPrefsDB(db)
+	app := New(prefsDB)
+	logcabin.Error.Fatal(http.ListenAndServe(fixAddr(*port), app.router))
 }
