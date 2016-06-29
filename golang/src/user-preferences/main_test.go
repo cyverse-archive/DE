@@ -167,7 +167,7 @@ func TestBadRequest(t *testing.T) {
 	actualStatus := recorder.Code
 
 	if actualStatus != expectedStatus {
-		t.Errorf("Status code was %d but should have been %s", actualStatus, expectedStatus)
+		t.Errorf("Status code was %d but should have been %d", actualStatus, expectedStatus)
 	}
 
 	if actualMsg != expectedMsg {
@@ -187,7 +187,7 @@ func TestErrored(t *testing.T) {
 	actualStatus := recorder.Code
 
 	if actualStatus != expectedStatus {
-		t.Errorf("Status code was %d but should have been %s", actualStatus, expectedStatus)
+		t.Errorf("Status code was %d but should have been %d", actualStatus, expectedStatus)
 	}
 
 	if actualMsg != expectedMsg {
@@ -207,7 +207,7 @@ func TestHandleNonUser(t *testing.T) {
 	actualStatus := recorder.Code
 
 	if actualStatus != expectedStatus {
-		t.Errorf("Status code was %d but should have been %s", actualStatus, expectedStatus)
+		t.Errorf("Status code was %d but should have been %d", actualStatus, expectedStatus)
 	}
 
 	if actualMsg != expectedMsg {
@@ -302,7 +302,7 @@ func TestGetRequest(t *testing.T) {
 	res.Body.Close()
 
 	if !bytes.Equal(actualBody, expected) {
-		t.Error("Message was '%s' but should have been '%s'", actualBody, expected)
+		t.Errorf("Message was '%s' but should have been '%s'", actualBody, expected)
 	}
 
 	expectedStatus := http.StatusOK
