@@ -67,28 +67,42 @@ func convert(record *UserSessionRecord, wrap bool) (map[string]interface{}, erro
 	return values, nil
 }
 
-// UserSessionsApp is an implementation of the App interface created to manage
-// user sessions.
-type UserSessionsApp struct {
+// DB is the interface for interacting with the sessions database.
+type DB interface {
+	isUser(username string) (bool, error)
+	hasSessions(username string) (bool, error)
+	getSessions(username string) ([]UserSessionRecord, error)
+	insertSession(username, session string) error
+	updateSession(username, session string) error
+	deleteSession(username string) error
+}
+
+// SessionsDB handles interacting with the sessions database.
+type SessionsDB struct {
 	db *sql.DB
 }
 
-// New returns a new *UserSessionsApp
-func New(db *sql.DB) *UserSessionsApp {
-	return &UserSessionsApp{
+// NewSessionsDB returns a newly created *SessionsDB
+func NewSessionsDB(db *sql.DB) *SessionsDB {
+	return &SessionsDB{
 		db: db,
 	}
 }
 
+// isUser returnes whether or not the user is present in the sessions database.
+func (s *SessionsDB) isUser(username string) (bool, error) {
+	return queries.IsUser(s.db, username)
+}
+
 // hasSessions returns whether or not the given user has a session already.
-func (u *UserSessionsApp) hasSessions(username string) (bool, error) {
+func (s *SessionsDB) hasSessions(username string) (bool, error) {
 	query := `SELECT COUNT(s.*)
               FROM user_sessions s,
                    users u
              WHERE s.user_id = u.id
                AND u.username = $1`
 	var count int64
-	if err := u.db.QueryRow(query, username).Scan(&count); err != nil {
+	if err := s.db.QueryRow(query, username).Scan(&count); err != nil {
 		return false, err
 	}
 	return count > 0, nil
@@ -96,7 +110,7 @@ func (u *UserSessionsApp) hasSessions(username string) (bool, error) {
 
 // getSessions returns a []UserSessionRecord of all of the sessions associated
 // with the provided username.
-func (u *UserSessionsApp) getSessions(username string) ([]UserSessionRecord, error) {
+func (s *SessionsDB) getSessions(username string) ([]UserSessionRecord, error) {
 	query := `SELECT s.id AS id,
                    s.user_id AS user_id,
                    s.session AS session
@@ -105,7 +119,7 @@ func (u *UserSessionsApp) getSessions(username string) ([]UserSessionRecord, err
              WHERE s.user_id = u.id
                AND u.username = $1`
 
-	rows, err := u.db.Query(query, username)
+	rows, err := s.db.Query(query, username)
 	if err != nil {
 		return nil, err
 	}
@@ -128,44 +142,39 @@ func (u *UserSessionsApp) getSessions(username string) ([]UserSessionRecord, err
 }
 
 // insertSession adds a new session to the database for the user.
-func (u *UserSessionsApp) insertSession(username, session string) error {
+func (s *SessionsDB) insertSession(username, session string) error {
 	query := `INSERT INTO user_sessions (user_id, session)
                  VALUES ($1, $2)`
-	userID, err := queries.UserID(u.db, username)
+	userID, err := queries.UserID(s.db, username)
 	if err != nil {
 		return err
 	}
-	_, err = u.db.Exec(query, userID, session)
+	_, err = s.db.Exec(query, userID, session)
 	return err
 }
 
 // updateSession updates the session in the database for the user.
-func (u *UserSessionsApp) updateSession(username, session string) error {
+func (s *SessionsDB) updateSession(username, session string) error {
 	query := `UPDATE ONLY user_sessions
                     SET session = $2
                   WHERE user_id = $1`
-	userID, err := queries.UserID(u.db, username)
+	userID, err := queries.UserID(s.db, username)
 	if err != nil {
 		return err
 	}
-	_, err = u.db.Exec(query, userID, session)
+	_, err = s.db.Exec(query, userID, session)
 	return err
 }
 
 // deleteSession deletes the user's session from the database.
-func (u *UserSessionsApp) deleteSession(username string) error {
+func (s *SessionsDB) deleteSession(username string) error {
 	query := `DELETE FROM ONLY user_sessions WHERE user_id = $1`
-	userID, err := queries.UserID(u.db, username)
+	userID, err := queries.UserID(s.db, username)
 	if err != nil {
 		return err
 	}
-	_, err = u.db.Exec(query, userID)
+	_, err = s.db.Exec(query, userID)
 	return err
-}
-
-// Greeting prints out a greeting to the writer.
-func (u *UserSessionsApp) Greeting(writer http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(writer, "Hello from user-sessions.")
 }
 
 func badRequest(writer http.ResponseWriter, msg string) {
@@ -178,8 +187,34 @@ func errored(writer http.ResponseWriter, msg string) {
 	logcabin.Error.Print(msg)
 }
 
+// UserSessionsApp is an implementation of the App interface created to manage
+// user sessions.
+type UserSessionsApp struct {
+	sessions DB
+	router   *mux.Router
+}
+
+// New returns a new *UserSessionsApp
+func New(db DB) *UserSessionsApp {
+	app := &UserSessionsApp{
+		sessions: db,
+		router:   mux.NewRouter(),
+	}
+	app.router.HandleFunc("/", app.Greeting).Methods("GET")
+	app.router.HandleFunc("/{username}", app.GetRequest).Methods("GET")
+	app.router.HandleFunc("/{username}", app.PutRequest).Methods("PUT")
+	app.router.HandleFunc("/{username}", app.PostRequest).Methods("POST")
+	app.router.HandleFunc("/{username}", app.DeleteRequest).Methods("DELETE")
+	return app
+}
+
+// Greeting prints out a greeting to the writer.
+func (u *UserSessionsApp) Greeting(writer http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(writer, "Hello from user-sessions.")
+}
+
 func (u *UserSessionsApp) getUserSessionForRequest(username string, wrap bool) ([]byte, error) {
-	sessions, err := u.getSessions(username)
+	sessions, err := u.sessions.getSessions(username)
 	if err != nil {
 		return nil, fmt.Errorf("Error getting sessions for username %s: %s", username, err)
 	}
@@ -223,7 +258,7 @@ func (u *UserSessionsApp) GetRequest(writer http.ResponseWriter, r *http.Request
 	}
 
 	logcabin.Info.Printf("Getting user session for %s", username)
-	if userExists, err = queries.IsUser(u.db, username); err != nil {
+	if userExists, err = u.sessions.isUser(username); err != nil {
 		badRequest(writer, fmt.Sprintf("Error checking for username %s: %s", username, err))
 		return
 	}
@@ -262,7 +297,7 @@ func (u *UserSessionsApp) PostRequest(writer http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	if userExists, err = queries.IsUser(u.db, username); err != nil {
+	if userExists, err = u.sessions.isUser(username); err != nil {
 		badRequest(writer, fmt.Sprintf("Error checking for username %s: %s", username, err))
 		return
 	}
@@ -272,7 +307,7 @@ func (u *UserSessionsApp) PostRequest(writer http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	if hasSession, err = u.hasSessions(username); err != nil {
+	if hasSession, err = u.sessions.hasSessions(username); err != nil {
 		errored(writer, fmt.Sprintf("Error checking session for user %s: %s", username, err))
 		return
 	}
@@ -291,12 +326,12 @@ func (u *UserSessionsApp) PostRequest(writer http.ResponseWriter, r *http.Reques
 
 	bodyString := string(bodyBuffer)
 	if !hasSession {
-		if err = u.insertSession(username, bodyString); err != nil {
+		if err = u.sessions.insertSession(username, bodyString); err != nil {
 			errored(writer, fmt.Sprintf("Error inserting session for user %s: %s", username, err))
 			return
 		}
 	} else {
-		if err = u.updateSession(username, bodyString); err != nil {
+		if err = u.sessions.updateSession(username, bodyString); err != nil {
 			errored(writer, fmt.Sprintf("Error updating session for user %s: %s", username, err))
 			return
 		}
@@ -327,7 +362,7 @@ func (u *UserSessionsApp) DeleteRequest(writer http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	if userExists, err = queries.IsUser(u.db, username); err != nil {
+	if userExists, err = u.sessions.isUser(username); err != nil {
 		badRequest(writer, fmt.Sprintf("Error checking for username %s: %s", username, err))
 		return
 	}
@@ -337,7 +372,7 @@ func (u *UserSessionsApp) DeleteRequest(writer http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	if hasSession, err = u.hasSessions(username); err != nil {
+	if hasSession, err = u.sessions.hasSessions(username); err != nil {
 		errored(writer, fmt.Sprintf("Error checking session for user %s: %s", username, err))
 		return
 	}
@@ -346,19 +381,9 @@ func (u *UserSessionsApp) DeleteRequest(writer http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	if err = u.deleteSession(username); err != nil {
+	if err = u.sessions.deleteSession(username); err != nil {
 		errored(writer, fmt.Sprintf("Error deleting session for user %s: %s", username, err))
 	}
-}
-
-func newRouter(a App) *mux.Router {
-	router := mux.NewRouter()
-	router.HandleFunc("/", a.Greeting).Methods("GET")
-	router.HandleFunc("/{username}", a.GetRequest).Methods("GET")
-	router.HandleFunc("/{username}", a.PutRequest).Methods("PUT")
-	router.HandleFunc("/{username}", a.PostRequest).Methods("POST")
-	router.HandleFunc("/{username}", a.DeleteRequest).Methods("DELETE")
-	return router
 }
 
 func fixAddr(addr string) string {
@@ -416,6 +441,7 @@ func main() {
 	logcabin.Info.Println("Successfully pinged the database")
 
 	logcabin.Info.Printf("Listening on port %s", *port)
-	app := New(db)
-	logcabin.Error.Fatal(http.ListenAndServe(fixAddr(*port), newRouter(app)))
+	sessionsDB := NewSessionsDB(db)
+	app := New(sessionsDB)
+	logcabin.Error.Fatal(http.ListenAndServe(fixAddr(*port), app.router))
 }
