@@ -3,7 +3,6 @@
         [clojure-commons.query-params :only [wrap-query-params]]
         [compojure.core :only [wrap-routes]]
         [common-swagger-api.schema]
-        [iplant_groups.routes.domain.group]
         [ring.middleware.keyword-params :only [wrap-keyword-params]])
   (:require [compojure.route :as route]
             [cheshire.core :as json]

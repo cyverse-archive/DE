@@ -1,6 +1,6 @@
 (ns iplant_groups.routes.status
   (:use [common-swagger-api.schema]
-        [iplant_groups.routes.domain.status]
+        [iplant_groups.routes.schemas.status]
         [ring.util.http-response :only [ok]])
   (:require [clojure-commons.service :as commons-service]
             [iplant_groups.clients.grouper :as grouper]

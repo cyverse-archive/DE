@@ -1,6 +1,6 @@
-(ns iplant_groups.routes.domain.folder
+(ns iplant_groups.routes.schemas.folder
   (:use [common-swagger-api.schema :only [describe ->optional-param]])
-  (:require [iplant_groups.routes.domain.params :as params]
+  (:require [iplant_groups.routes.schemas.params :as params]
             [schema.core :as s]))
 
 (s/defschema BaseFolder

@@ -1,8 +1,8 @@
 (ns iplant_groups.routes.folders
   (:use [common-swagger-api.schema]
-        [iplant_groups.routes.domain.folder]
-        [iplant_groups.routes.domain.privileges]
-        [iplant_groups.routes.domain.params]
+        [iplant_groups.routes.schemas.folder]
+        [iplant_groups.routes.schemas.privileges]
+        [iplant_groups.routes.schemas.params]
         [ring.util.http-response :only [ok]])
   (:require [iplant_groups.service.folders :as folders]))
 

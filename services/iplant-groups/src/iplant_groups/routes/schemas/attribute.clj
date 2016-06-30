@@ -1,4 +1,4 @@
-(ns iplant_groups.routes.domain.attribute
+(ns iplant_groups.routes.schemas.attribute
   (:use [common-swagger-api.schema :only [describe ->optional-param]])
   (:require [schema.core :as s]))
 
