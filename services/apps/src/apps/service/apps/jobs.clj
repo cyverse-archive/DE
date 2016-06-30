@@ -43,11 +43,13 @@
 
 (defn- send-job-status-update
   [apps-client {job-id :id prev-status :status app-id :app-id}]
-  (let [{curr-status :status :as job} (jp/get-job-by-id job-id)]
+  (let [{curr-status :status :as job} (jp/get-job-by-id job-id)
+        app-tables                    (.loadAppTables apps-client [app-id])
+        rep-steps                     (jp/list-representative-job-steps [job-id])]
     (when-not (= prev-status curr-status)
       (cn/send-job-status-update
        (.getUser apps-client)
-       (listings/format-job apps-client (.loadAppTables apps-client [app-id]) job)))))
+       (listings/format-job apps-client app-tables rep-steps job)))))
 
 (defn- determine-batch-status
   [{:keys [id]}]

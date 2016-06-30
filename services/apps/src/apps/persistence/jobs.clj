@@ -501,20 +501,22 @@
           (order :step_number)))
 
 (defn- child-job-subselect
-  [job-id]
+  [job-ids]
   (subselect :jobs
              (fields :id)
-             (where {:parent_id job-id})
+             (where {:parent_id [in job-ids]})
              (limit 1)))
 
 (defn list-representative-job-steps
   "Lists all of the job steps in a standalone job or all of the steps of one of the jobs in an HT batch. The purpose
    of this function is to ensure that steps of every job type that are used in a job are listed. The analysis listing
    code uses this function to determine whether or not a job can be shared."
-  [job-id]
+  [job-ids]
   (select (job-step-base-query)
-          (where (or {:job_id job-id}
-                     {:job_id [in (child-job-subselect job-id)]}))))
+          (join :inner [:jobs :j] {:s.job_id :j.id})
+          (fields [:j.parent_id :parent-id])
+          (where (or {:job_id [in job-ids]}
+                     {:job_id [in (child-job-subselect job-ids)]}))))
 
 (defn list-jobs-to-delete
   [ids]
