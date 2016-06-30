@@ -8,8 +8,8 @@
             [clojure-commons.exception-util :as cxu]))
 
 (defn supports-job-sharing?
-  [apps-client job-id]
-  (every? #(.supportsJobSharing apps-client %) (jp/list-representative-job-steps job-id)))
+  [apps-client job-steps]
+  (every? #(.supportsJobSharing apps-client %) job-steps))
 
 (defn- validate-job-sharing-support
   [apps-client job-ids]
