@@ -48,7 +48,7 @@
                   :total (count children)))))
 
 (defn format-job
-  [apps-client app-tables {:keys [parent-id id] :as job}]
+  [apps-client app-tables rep-steps {:keys [parent-id id] :as job}]
   (remove-nil-vals
    {:app_description (:app-description job)
     :app_id          (:app-id job)
@@ -68,7 +68,7 @@
     :parent_id       parent-id
     :batch           (:is-batch job)
     :batch_status    (when (:is-batch job) (format-batch-status id))
-    :can_share       (and (nil? parent-id) (job-permissions/supports-job-sharing? apps-client id))}))
+    :can_share       (and (nil? parent-id) (job-permissions/supports-job-sharing? apps-client (rep-steps id)))}))
 
 (defn- list-jobs*
   [{:keys [username]} search-params types analysis-ids]
@@ -85,8 +85,9 @@
         search-params    (util/default-search-params params :startdate default-sort-dir)
         types            (.getJobTypes apps-client)
         jobs             (list-jobs* user search-params types analysis-ids)
+        rep-steps        (group-by (some-fn :parent-id :job-id) (jp/list-representative-job-steps (mapv :id jobs)))
         app-tables       (.loadAppTables apps-client (map :app-id jobs))]
-    {:analyses  (map (partial format-job apps-client app-tables) jobs)
+    {:analyses  (mapv (partial format-job apps-client app-tables rep-steps) jobs)
      :timestamp (str (System/currentTimeMillis))
      :total     (count-jobs user params types analysis-ids)}))
 
