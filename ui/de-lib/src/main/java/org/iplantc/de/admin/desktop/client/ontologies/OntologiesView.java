@@ -172,6 +172,8 @@ public interface OntologiesView extends IsWidget,
         String deleteHierarchy();
 
         String hierarchyDeleted(String hierarchy);
+
+        String confirmDeleteOntology(String version);
     }
 
     interface Presenter {

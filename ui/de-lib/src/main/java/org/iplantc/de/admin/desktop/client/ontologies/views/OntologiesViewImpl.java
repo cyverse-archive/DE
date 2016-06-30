@@ -47,9 +47,12 @@ import com.sencha.gxt.dnd.core.client.DragSource;
 import com.sencha.gxt.dnd.core.client.DropTarget;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.ContentPanel;
+import com.sencha.gxt.widget.core.client.Dialog;
+import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.CardLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.CenterLayoutContainer;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.form.SimpleComboBox;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
@@ -318,7 +321,17 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
     @UiHandler("deleteButton")
     void deleteButtonClicked(SelectEvent event) {
-        fireEvent(new DeleteOntologyButtonClickedEvent(selectedOntology.getVersion()));
+        Ontology currentOntology = ontologyDropDown.getCurrentValue();
+        ConfirmMessageBox msgBox = new ConfirmMessageBox(appearance.deleteOntology(), appearance.confirmDeleteOntology(currentOntology.getVersion()));
+        msgBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
+            @Override
+            public void onDialogHide(DialogHideEvent event) {
+                if (event.getHideButton() == Dialog.PredefinedButton.YES) {
+                    fireEvent(new DeleteOntologyButtonClickedEvent(selectedOntology.getVersion()));
+                }
+            }
+        });
+        msgBox.show();
     }
 
     @UiHandler("saveHierarchy")

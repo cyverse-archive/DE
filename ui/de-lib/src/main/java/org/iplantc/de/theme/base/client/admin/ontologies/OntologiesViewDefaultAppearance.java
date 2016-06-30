@@ -340,4 +340,9 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     public String hierarchyDeleted(String hierarchy) {
         return displayStrings.hierarchyDeleted(hierarchy);
     }
+
+    @Override
+    public String confirmDeleteOntology(String version) {
+        return displayStrings.confirmDeleteOntology(version);
+    }
 }

@@ -42,7 +42,6 @@ import com.google.inject.Inject;
 
 import com.sencha.gxt.core.shared.FastMap;
 import com.sencha.gxt.data.shared.TreeStore;
-import com.sencha.gxt.widget.core.client.box.MessageBox;
 
 import java.util.Collections;
 import java.util.List;
@@ -321,9 +320,14 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
         view.showTreePanel();
         view.maskHierarchyTree();
-        serviceFacade.getOntologyHierarchies(event.getSelectedOntology().getVersion(),
-                                             new HierarchiesCallback());
 
+        getOntologyHierarchies(event.getSelectedOntology().getVersion());
+
+    }
+
+    void getOntologyHierarchies(String version) {
+        serviceFacade.getOntologyHierarchies(version,
+                                             new HierarchiesCallback());
     }
 
     void addHierarchies(OntologyHierarchy parent, List<OntologyHierarchy> children) {
@@ -458,12 +462,21 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     @Override
     public void onDeleteOntologyButtonClicked(DeleteOntologyButtonClickedEvent event) {
-        MessageBox msgBox = new MessageBox("test");
-        msgBox.show();
+        serviceFacade.deleteOntology(event.getOntologyVersion(), new AsyncCallback<List<Ontology>>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+            }
+
+            @Override
+            public void onSuccess(List<Ontology> result) {
+                getOntologies(false);
+            }
+        });
     }
 
     @Override
-    public void onDeleteHierarchy(DeleteHierarchyEvent event) {
+    public void onDeleteHierarchy(final DeleteHierarchyEvent event) {
         List<OntologyHierarchy> deletedHierarchies = event.getDeletedHierarchies();
         for (final OntologyHierarchy hierarchy : deletedHierarchies) {
             serviceFacade.deleteRootHierarchy(event.getEditedOntology().getVersion(),

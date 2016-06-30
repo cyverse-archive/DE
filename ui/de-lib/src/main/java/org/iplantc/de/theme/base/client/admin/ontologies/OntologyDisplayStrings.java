@@ -66,4 +66,6 @@ public interface OntologyDisplayStrings extends Messages{
     String deleteHierarchy();
 
     String hierarchyDeleted(String hierarchy);
+
+    String confirmDeleteOntology(String version);
 }
