@@ -5,6 +5,7 @@ import org.iplantc.de.admin.apps.client.AdminCategoriesView;
 import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
 import org.iplantc.de.admin.desktop.client.ontologies.events.CategorizeButtonClickedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.CategorizeHierarchiesToAppEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.DeleteHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.DeleteOntologyButtonClickedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
@@ -57,7 +58,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                                                 PublishOntologyClickEvent.PublishOntologyClickEventHandler,
                                                 HierarchySelectedEvent.HierarchySelectedEventHandler,
                                                 CategorizeButtonClickedEvent.CategorizeButtonClickedEventHandler,
-                                                DeleteOntologyButtonClickedEvent.DeleteOntologyButtonClickedEventHandler {
+                                                DeleteOntologyButtonClickedEvent.DeleteOntologyButtonClickedEventHandler,
+                                                DeleteHierarchyEvent.DeleteHierarchyEventHandler {
 
     private class CategorizeCallback implements AsyncCallback<List<Avu>> {
         private final App selectedApp;
@@ -197,6 +199,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         view.addPublishOntologyClickEventHandler(this);
         view.addCategorizeButtonClickedEventHandler(this);
         view.addDeleteOntologyButtonClickedEventHandler(this);
+        view.addDeleteHierarchyEventHandler(this);
     }
 
 
@@ -457,5 +460,26 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     public void onDeleteOntologyButtonClicked(DeleteOntologyButtonClickedEvent event) {
         MessageBox msgBox = new MessageBox("test");
         msgBox.show();
+    }
+
+    @Override
+    public void onDeleteHierarchy(DeleteHierarchyEvent event) {
+        List<OntologyHierarchy> deletedHierarchies = event.getDeletedHierarchies();
+        for (final OntologyHierarchy hierarchy : deletedHierarchies) {
+            serviceFacade.deleteRootHierarchy(event.getEditedOntology().getVersion(),
+                                              hierarchy.getIri(),
+                                              new AsyncCallback<List<OntologyHierarchy>>() {
+                                                  @Override
+                                                  public void onFailure(Throwable caught) {
+                                                        ErrorHandler.post(caught);
+                                                  }
+
+                                                  @Override
+                                                  public void onSuccess(List<OntologyHierarchy> result) {
+                                                      announcer.schedule(new SuccessAnnouncementConfig(appearance.hierarchyDeleted(hierarchy.getIri())));
+                                                      getOntologyHierarchies(event.getEditedOntology().getVersion());
+                                                  }
+                                              });
+        }
     }
 }

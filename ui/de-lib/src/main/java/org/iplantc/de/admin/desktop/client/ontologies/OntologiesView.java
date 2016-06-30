@@ -1,6 +1,7 @@
 package org.iplantc.de.admin.desktop.client.ontologies;
 
 import org.iplantc.de.admin.desktop.client.ontologies.events.CategorizeButtonClickedEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.DeleteHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.DeleteOntologyButtonClickedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
@@ -32,7 +33,8 @@ public interface OntologiesView extends IsWidget,
                                         PublishOntologyClickEvent.HasPublishOntologyClickEventHandlers,
                                         CategorizeButtonClickedEvent.HasCategorizeButtonClickedEventHandlers,
                                         AppSelectionChangedEvent.AppSelectionChangedEventHandler,
-                                        DeleteOntologyButtonClickedEvent.HasDeleteOntologyButtonClickedEventHandlers {
+                                        DeleteOntologyButtonClickedEvent.HasDeleteOntologyButtonClickedEventHandlers,
+                                        DeleteHierarchyEvent.HasDeleteHierarchyEventHandlers {
 
     void showOntologyVersions(List<Ontology> result);
 
@@ -166,6 +168,10 @@ public interface OntologiesView extends IsWidget,
         String emptyDEOntologyLabel();
 
         String deleteOntology();
+
+        String deleteHierarchy();
+
+        String hierarchyDeleted(String hierarchy);
     }
 
     interface Presenter {

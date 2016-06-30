@@ -3,12 +3,15 @@ package org.iplantc.de.admin.desktop.client.ontologies.views;
 import org.iplantc.de.admin.apps.client.AdminAppsGridView;
 import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
 import org.iplantc.de.admin.desktop.client.ontologies.events.CategorizeButtonClickedEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.DeleteHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.DeleteOntologyButtonClickedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshOntologiesEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.gin.factory.DeleteHierarchiesFactory;
+import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.DeleteHierarchiesDialog;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.PublishOntologyDialog;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.SaveHierarchiesDialog;
 import org.iplantc.de.apps.client.AppCategoriesView;
@@ -77,8 +80,8 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @UiField TextButton addButton;
     @UiField TextButton deleteButton;
     @UiField SimpleComboBox<Ontology> ontologyDropDown;
-    @UiField TextButton refreshOntologies;
     @UiField TextButton saveHierarchy;
+    @UiField TextButton deleteHierarchy;
     @UiField TextButton categorize;
     @UiField(provided = true) OntologiesViewAppearance appearance;
     @UiField Tree<OntologyHierarchy, String> tree;
@@ -97,9 +100,11 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     private App targetApp;
     private OntologyHierarchyToAppDND hierarchyToAppDND;
     private AppToOntologyHierarchyDND appToHierarchyDND;
+    private DeleteHierarchiesFactory deleteHierarchiesFactory;
 
     @Inject
     public OntologiesViewImpl(OntologiesViewAppearance appearance,
+                              DeleteHierarchiesFactory deleteHierarchiesFactory,
                               @Assisted TreeStore<OntologyHierarchy> treeStore,
                               @Assisted AppCategoriesView categoriesView,
                               @Assisted("oldGridView") AdminAppsGridView oldGridView,
@@ -113,6 +118,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         this.newGridView = newGridView;
         this.hierarchyToAppDND = hierarchyToAppDND;
         this.appToHierarchyDND = appToHierarchyDND;
+        this.deleteHierarchiesFactory = deleteHierarchiesFactory;
 
         initWidget(uiBinder.createAndBindUi(this));
 
@@ -157,6 +163,11 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     public HandlerRegistration addDeleteOntologyButtonClickedEventHandler(
             DeleteOntologyButtonClickedEvent.DeleteOntologyButtonClickedEventHandler handler) {
         return addHandler(handler, DeleteOntologyButtonClickedEvent.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addDeleteHierarchyEventHandler(DeleteHierarchyEvent.DeleteHierarchyEventHandler handler) {
+        return addHandler(handler, DeleteHierarchyEvent.TYPE);
     }
 
     @Override
@@ -291,12 +302,6 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         categorize.setEnabled(selectedOntology != null && targetApp != null);
     }
 
-    @UiHandler("refreshOntologies")
-    void refreshOntologiesClicked(SelectEvent event) {
-        newGridView.clearAndAdd(null);
-        fireEvent(new RefreshOntologiesEvent());
-    }
-
     @UiHandler("publishButton")
     void publishButtonClicked(SelectEvent event) {
         Ontology editedOntology = ontologyDropDown.getCurrentValue();
@@ -319,6 +324,13 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @UiHandler("saveHierarchy")
     void saveHierarchyClicked(SelectEvent event) {
         new SaveHierarchiesDialog(appearance, ontologyDropDown.getCurrentValue(), this);
+    }
+
+    @UiHandler("deleteHierarchy")
+    void deleteHierarchyClicked(SelectEvent event) {
+        if (tree != null && treeStore.getRootCount() != 0) {
+            DeleteHierarchiesDialog dialog = deleteHierarchiesFactory.create(ontologyDropDown.getCurrentValue(), treeStore.getRootItems(), this);
+        }
     }
 
     @UiHandler("categorize")
