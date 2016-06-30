@@ -1,4 +1,4 @@
-(ns metadata.routes.domain.template
+(ns metadata.routes.schemas.template
   (:use [common-swagger-api.schema :only [describe StandardUserQueryParams]])
   (:require [schema.core :as s]
             [metadata.persistence.templates :as tp])

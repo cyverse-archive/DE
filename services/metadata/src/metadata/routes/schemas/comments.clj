@@ -1,6 +1,6 @@
-(ns metadata.routes.domain.comments
+(ns metadata.routes.schemas.comments
   (:use [common-swagger-api.schema :only [describe NonBlankString StandardUserQueryParams]]
-        [metadata.routes.domain.common])
+        [metadata.routes.schemas.common])
   (:require [schema.core :as s])
   (:import [java.util UUID]))
 

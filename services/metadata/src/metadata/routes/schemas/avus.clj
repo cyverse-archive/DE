@@ -1,9 +1,9 @@
-(ns metadata.routes.domain.avus
+(ns metadata.routes.schemas.avus
   (:use [common-swagger-api.schema :only [->optional-param
                                           describe
                                           NonBlankString
                                           StandardUserQueryParams]]
-        [metadata.routes.domain.common])
+        [metadata.routes.schemas.common])
   (:require [schema.core :as s])
   (:import [java.util UUID]))
 

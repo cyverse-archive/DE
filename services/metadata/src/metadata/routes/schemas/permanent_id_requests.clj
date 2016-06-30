@@ -1,11 +1,11 @@
-(ns metadata.routes.domain.permanent-id-requests
+(ns metadata.routes.schemas.permanent-id-requests
   (:use [common-swagger-api.schema :only [describe
                                           PagingParams
                                           SortFieldDocs
                                           SortFieldOptionalKey
                                           StandardUserQueryParams]]
         [clojure-commons.error-codes]
-        [metadata.routes.domain.common])
+        [metadata.routes.schemas.common])
   (:require [metadata.persistence.permanent-id-requests :as db]
             [schema.core :as s])
   (:import [java.util UUID]))

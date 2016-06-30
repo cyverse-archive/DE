@@ -1,4 +1,4 @@
-(ns metadata.routes.domain.common
+(ns metadata.routes.schemas.common
   (:use [common-swagger-api.schema :only [describe StandardUserQueryParams]])
   (:require [schema.core :as s])
   (:import [java.util UUID]))

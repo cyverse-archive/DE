@@ -1,7 +1,7 @@
 (ns metadata.routes.avus
   (:use [common-swagger-api.schema]
-        [metadata.routes.domain.common]
-        [metadata.routes.domain.avus]
+        [metadata.routes.schemas.common]
+        [metadata.routes.schemas.avus]
         [ring.util.http-response :only [ok]])
   (:require [metadata.services.avus :as avus]))
 

@@ -1,7 +1,7 @@
-(ns metadata.routes.domain.ontologies
+(ns metadata.routes.schemas.ontologies
   (:use [common-swagger-api.schema]
         [common-swagger-api.schema.ontologies]
-        [metadata.routes.domain.common])
+        [metadata.routes.schemas.common])
   (:require [schema.core :as s]))
 
 (s/defschema OntologyHierarchyFilterParams

@@ -1,6 +1,6 @@
-(ns metadata.routes.domain.favorites
+(ns metadata.routes.schemas.favorites
   (:use [common-swagger-api.schema :only [describe StandardUserQueryParams]]
-        [metadata.routes.domain.common])
+        [metadata.routes.schemas.common])
   (:require [schema.core :as s]))
 
 (s/defschema FavoritesDataListingParams
