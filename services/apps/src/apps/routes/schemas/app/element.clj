@@ -1,4 +1,4 @@
-(ns apps.routes.domain.app.element
+(ns apps.routes.schemas.app.element
   (:use [common-swagger-api.schema :only [describe]]
         [schema.core :only [defschema optional-key]])
   (:import [java.util UUID]))

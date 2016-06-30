@@ -1,4 +1,4 @@
-(ns apps.routes.domain.user
+(ns apps.routes.schemas.user
   (:use [common-swagger-api.schema :only [describe]]
         [apps.routes.params :only [SecuredQueryParams]]
         [schema.core :only [defschema]])

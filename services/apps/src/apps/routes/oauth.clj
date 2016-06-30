@@ -1,7 +1,7 @@
 (ns apps.routes.oauth
   (:use [common-swagger-api.schema]
-        [apps.routes.domain.oauth]
         [apps.routes.params]
+        [apps.routes.schemas.oauth]
         [apps.user :only [current-user load-user]]
         [ring.util.http-response :only [ok]])
   (:require [apps.service.oauth :as oauth]))

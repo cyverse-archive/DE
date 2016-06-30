@@ -1,8 +1,8 @@
-(ns apps.routes.domain.tool
+(ns apps.routes.schemas.tool
   (:use [common-swagger-api.schema :only [->optional-param describe]]
         [apps.routes.params]
         [schema.core :only [defschema enum optional-key]])
-  (:require [apps.schema.containers :as containers])
+  (:require [apps.routes.schemas.containers :as containers])
   (:import [java.util UUID]))
 
 (def ToolRequestIdParam (describe UUID "The Tool Requests's UUID"))

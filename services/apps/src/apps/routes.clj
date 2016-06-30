@@ -1,4 +1,4 @@
-(ns apps.routes.api
+(ns apps.routes
   (:use [service-logging.middleware :only [wrap-logging clean-context]]
         [compojure.core :only [wrap-routes]]
         [clojure-commons.query-params :only [wrap-query-params]]

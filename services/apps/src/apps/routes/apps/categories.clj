@@ -2,10 +2,10 @@
   (:use [common-swagger-api.routes]
         [common-swagger-api.schema]
         [common-swagger-api.schema.ontologies]
-        [apps.routes.domain.app :only [AppListing]]
-        [apps.routes.domain.app.category]
         [apps.routes.middleware :only [wrap-metadata-base-url]]
         [apps.routes.params]
+        [apps.routes.schemas.app :only [AppListing]]
+        [apps.routes.schemas.app.category]
         [apps.user :only [current-user]]
         [apps.util.coercions :only [coerce!]]
         [ring.util.http-response :only [ok]])

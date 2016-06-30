@@ -1,7 +1,7 @@
-(ns apps.routes.domain.analysis
+(ns apps.routes.schemas.analysis
   (:use [common-swagger-api.schema :only [describe]]
         [schema.core :only [defschema optional-key Any Bool Keyword]]
-        [apps.schema.containers :only [ToolContainer]])
+        [apps.routes.schemas.containers :only [ToolContainer]])
   (:import [java.util UUID]))
 
 (defschema ParameterValue

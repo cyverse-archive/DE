@@ -1,4 +1,4 @@
-(ns apps.routes.domain.analysis.listing
+(ns apps.routes.schemas.analysis.listing
   (:use [common-swagger-api.schema :only [describe]]
         [apps.routes.params :only [ResultsTotalParam]]
         [schema.core :only [defschema optional-key Any Int Bool]])

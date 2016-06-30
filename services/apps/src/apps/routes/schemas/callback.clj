@@ -1,4 +1,4 @@
-(ns apps.routes.domain.callback
+(ns apps.routes.schemas.callback
   (:use [common-swagger-api.schema :only [describe]]
         [schema.core :only [defschema optional-key]]))
 

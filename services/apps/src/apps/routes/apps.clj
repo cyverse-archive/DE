@@ -1,13 +1,13 @@
 (ns apps.routes.apps
   (:use [common-swagger-api.schema]
-        [apps.routes.domain.app]
-        [apps.routes.domain.app.rating]
-        [apps.routes.domain.tool :only [NewToolListing]]
         [apps.routes.params]
+        [apps.routes.schemas.app]
+        [apps.routes.schemas.app.rating]
+        [apps.routes.schemas.tool :only [NewToolListing]]
         [apps.user :only [current-user]]
         [apps.util.coercions :only [coerce!]]
         [ring.util.http-response :only [ok]])
-  (:require [apps.routes.domain.permission :as perms]
+  (:require [apps.routes.schemas.permission :as perms]
             [apps.service.apps :as apps]))
 
 (defroutes* apps

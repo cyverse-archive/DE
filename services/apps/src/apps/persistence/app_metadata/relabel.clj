@@ -4,7 +4,7 @@
         [kameleon.queries :only [get-tasks-for-app]]
         [korma.core :exclude [update]]
         [medley.core :only [remove-vals]]
-        [apps.routes.domain.app :only [AppParameterListGroup]]
+        [apps.routes.schemas.app :only [AppParameterListGroup]]
         [apps.util.conversions :only [long->timestamp
                                             remove-nil-vals]]
         [apps.util.assertions]

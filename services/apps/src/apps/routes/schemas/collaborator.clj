@@ -1,4 +1,4 @@
-(ns apps.routes.domain.collaborator
+(ns apps.routes.schemas.collaborator
   (:use [common-swagger-api.schema :only [describe]]
         [schema.core :only [defschema optional-key]]))
 

@@ -1,4 +1,4 @@
-(ns apps.routes.domain.reference-genome
+(ns apps.routes.schemas.reference-genome
   (:use [common-swagger-api.schema :only [->optional-param describe]]
         [apps.routes.params]
         [schema.core :only [defschema optional-key]])

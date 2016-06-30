@@ -1,4 +1,4 @@
-(ns apps.routes.domain.app.rating
+(ns apps.routes.schemas.app.rating
   (:use [common-swagger-api.schema :only [describe]]
         [schema.core :only [defschema optional-key]]))
 

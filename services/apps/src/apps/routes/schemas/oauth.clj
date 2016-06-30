@@ -1,4 +1,4 @@
-(ns apps.routes.domain.oauth
+(ns apps.routes.schemas.oauth
   (:use [common-swagger-api.schema :only [describe]])
   (:require [schema.core :as s]))
 

@@ -63,10 +63,10 @@
 
 (defn run-jetty
   []
-  (require 'apps.routes.api
+  (require 'apps.routes
            'ring.adapter.jetty)
   (log/warn "Started listening on" (config/listen-port))
-  ((eval 'ring.adapter.jetty/run-jetty) (eval 'apps.routes.api/app) {:port (config/listen-port)}))
+  ((eval 'ring.adapter.jetty/run-jetty) (eval 'apps.routes/app) {:port (config/listen-port)}))
 
 (defn -main
   [& args]

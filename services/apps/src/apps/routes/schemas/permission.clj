@@ -1,4 +1,4 @@
-(ns apps.routes.domain.permission
+(ns apps.routes.schemas.permission
   (:use [common-swagger-api.schema :only [describe ErrorResponse NonBlankString]]
         [schema.core :only [defschema optional-key enum]])
   (:import [java.util UUID]))

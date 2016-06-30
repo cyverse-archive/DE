@@ -1,15 +1,15 @@
 (ns apps.routes.analyses
   (:use [common-swagger-api.schema]
-        [apps.routes.domain.analysis]
-        [apps.routes.domain.analysis.listing]
-        [apps.routes.domain.app]
         [apps.routes.params]
+        [apps.routes.schemas.analysis]
+        [apps.routes.schemas.analysis.listing]
+        [apps.routes.schemas.app]
         [apps.user :only [current-user]]
         [apps.util.coercions :only [coerce!]]
         [ring.util.http-response :only [ok]])
   (:require [apps.json :as json]
+            [apps.routes.schemas.permission :as perms]
             [apps.service.apps :as apps]
-            [apps.routes.domain.permission :as perms]
             [apps.util.coercions :as coercions]))
 
 (defroutes* analyses

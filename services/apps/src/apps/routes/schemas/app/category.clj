@@ -1,4 +1,4 @@
-(ns apps.routes.domain.app.category
+(ns apps.routes.schemas.app.category
   (:use [common-swagger-api.schema :only [->optional-param
                                           ->required-key
                                           describe
@@ -7,8 +7,8 @@
                                           SortFieldDocs
                                           SortFieldOptionalKey]]
         [common-swagger-api.schema.ontologies]
-        [apps.routes.domain.app]
         [apps.routes.params]
+        [apps.routes.schemas.app]
         [schema.core :only [defschema optional-key recursive enum]])
   (:require [clojure.set :as sets])
   (:import [java.util Date UUID]))

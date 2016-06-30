@@ -1,4 +1,4 @@
-(ns apps.schema.containers
+(ns apps.routes.schemas.containers
   (:use [common-swagger-api.schema :only [->optional-param describe]]
         [apps.routes.params :only [ToolIdParam SecuredQueryParams]])
   (:require [schema.core :as s]))

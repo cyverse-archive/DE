@@ -1,8 +1,8 @@
-(ns apps.routes.domain.app
+(ns apps.routes.schemas.app
   (:use [common-swagger-api.schema :only [->optional-param describe]]
         [apps.routes.params]
-        [apps.routes.domain.app.rating]
-        [apps.routes.domain.tool :only [Tool]]
+        [apps.routes.schemas.app.rating]
+        [apps.routes.schemas.tool :only [Tool]]
         [schema.core :only [Any defschema optional-key recursive]])
   (:import [java.util UUID Date]))
 

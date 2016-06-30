@@ -1,9 +1,9 @@
 (ns apps.routes.apps.elements
   (:use [common-swagger-api.schema]
         [apps.metadata.element-listings :only [list-elements]]
-        [apps.routes.domain.app.element]
-        [apps.routes.domain.tool :only [ToolListing]]
         [apps.routes.params]
+        [apps.routes.schemas.app.element]
+        [apps.routes.schemas.tool :only [ToolListing]]
         [ring.util.http-response :only [ok]])
   (:require [apps.util.service :as service]
             [compojure.route :as route]))

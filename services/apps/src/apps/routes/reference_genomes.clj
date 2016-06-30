@@ -1,8 +1,8 @@
 (ns apps.routes.reference-genomes
   (:use [common-swagger-api.schema]
         [apps.metadata.reference-genomes :only [get-reference-genome list-reference-genomes]]
-        [apps.routes.domain.reference-genome]
         [apps.routes.params]
+        [apps.routes.schemas.reference-genome]
         [ring.util.http-response :only [ok]]))
 
 (defroutes* reference-genomes
