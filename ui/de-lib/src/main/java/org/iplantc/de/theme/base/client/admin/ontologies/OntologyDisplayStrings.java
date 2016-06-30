@@ -60,4 +60,6 @@ public interface OntologyDisplayStrings extends Messages{
     String appClassified(String name, String label);
 
     String emptyDEOntologyLabel();
+
+    String deleteOntology();
 }

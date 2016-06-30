@@ -3,11 +3,12 @@ package org.iplantc.de.admin.desktop.client.ontologies.views;
 import org.iplantc.de.admin.apps.client.AdminAppsGridView;
 import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
 import org.iplantc.de.admin.desktop.client.ontologies.events.CategorizeButtonClickedEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.DeleteOntologyButtonClickedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshOntologiesEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
-import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshOntologiesEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.PublishOntologyDialog;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.SaveHierarchiesDialog;
 import org.iplantc.de.apps.client.AppCategoriesView;
@@ -74,6 +75,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     private static OntologiesViewImplUiBinder uiBinder = GWT.create(OntologiesViewImplUiBinder.class);
 
     @UiField TextButton addButton;
+    @UiField TextButton deleteButton;
     @UiField SimpleComboBox<Ontology> ontologyDropDown;
     @UiField TextButton refreshOntologies;
     @UiField TextButton saveHierarchy;
@@ -149,6 +151,12 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @Override
     public HandlerRegistration addCategorizeButtonClickedEventHandler(CategorizeButtonClickedEvent.CategorizeButtonClickedEventHandler handler) {
         return addHandler(handler, CategorizeButtonClickedEvent.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addDeleteOntologyButtonClickedEventHandler(
+            DeleteOntologyButtonClickedEvent.DeleteOntologyButtonClickedEventHandler handler) {
+        return addHandler(handler, DeleteOntologyButtonClickedEvent.TYPE);
     }
 
     @Override
@@ -279,6 +287,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     void updateButtonStatus() {
         publishButton.setEnabled(selectedOntology != null && selectedOntology != activeOntology);
         saveHierarchy.setEnabled(selectedOntology != null);
+        deleteButton.setEnabled(selectedOntology != null && selectedOntology != activeOntology);
         categorize.setEnabled(selectedOntology != null && targetApp != null);
     }
 
@@ -300,6 +309,11 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @UiHandler("addButton")
     void addButtonClicked(SelectEvent event) {
         new EdamUploadDialog(UriUtils.fromTrustedString(clientConstants.ontologyUploadServlet()), this).show();
+    }
+
+    @UiHandler("deleteButton")
+    void deleteButtonClicked(SelectEvent event) {
+        fireEvent(new DeleteOntologyButtonClickedEvent(selectedOntology.getVersion()));
     }
 
     @UiHandler("saveHierarchy")

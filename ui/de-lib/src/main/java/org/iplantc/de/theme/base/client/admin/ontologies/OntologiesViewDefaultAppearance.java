@@ -325,4 +325,9 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     public String emptyDEOntologyLabel() {
         return displayStrings.emptyDEOntologyLabel();
     }
+
+    @Override
+    public String deleteOntology() {
+        return displayStrings.deleteOntology();
+    }
 }

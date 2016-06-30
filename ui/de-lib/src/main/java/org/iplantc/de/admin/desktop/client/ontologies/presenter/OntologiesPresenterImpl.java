@@ -5,6 +5,7 @@ import org.iplantc.de.admin.apps.client.AdminCategoriesView;
 import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
 import org.iplantc.de.admin.desktop.client.ontologies.events.CategorizeButtonClickedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.CategorizeHierarchiesToAppEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.DeleteOntologyButtonClickedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshOntologiesEvent;
@@ -16,7 +17,6 @@ import org.iplantc.de.admin.desktop.client.ontologies.views.AppCategorizeView;
 import org.iplantc.de.admin.desktop.client.ontologies.views.AppToOntologyHierarchyDND;
 import org.iplantc.de.admin.desktop.client.ontologies.views.OntologyHierarchyToAppDND;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.CategorizeDialog;
-import org.iplantc.de.shared.DEProperties;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.avu.Avu;
@@ -31,6 +31,7 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
+import org.iplantc.de.shared.DEProperties;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.dom.client.Element;
@@ -40,6 +41,7 @@ import com.google.inject.Inject;
 
 import com.sencha.gxt.core.shared.FastMap;
 import com.sencha.gxt.data.shared.TreeStore;
+import com.sencha.gxt.widget.core.client.box.MessageBox;
 
 import java.util.Collections;
 import java.util.List;
@@ -54,7 +56,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                                                 SaveOntologyHierarchyEvent.SaveOntologyHierarchyEventHandler,
                                                 PublishOntologyClickEvent.PublishOntologyClickEventHandler,
                                                 HierarchySelectedEvent.HierarchySelectedEventHandler,
-                                                CategorizeButtonClickedEvent.CategorizeButtonClickedEventHandler {
+                                                CategorizeButtonClickedEvent.CategorizeButtonClickedEventHandler,
+                                                DeleteOntologyButtonClickedEvent.DeleteOntologyButtonClickedEventHandler {
 
     private class CategorizeCallback implements AsyncCallback<List<Avu>> {
         private final App selectedApp;
@@ -193,6 +196,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         view.addSaveOntologyHierarchyEventHandler(this);
         view.addPublishOntologyClickEventHandler(this);
         view.addCategorizeButtonClickedEventHandler(this);
+        view.addDeleteOntologyButtonClickedEventHandler(this);
     }
 
 
@@ -449,4 +453,9 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         return view.getSelectedHierarchy();
     }
 
+    @Override
+    public void onDeleteOntologyButtonClicked(DeleteOntologyButtonClickedEvent event) {
+        MessageBox msgBox = new MessageBox("test");
+        msgBox.show();
+    }
 }
