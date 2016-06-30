@@ -1,8 +1,8 @@
-(ns data-info.routes.domain.tickets
+(ns data-info.routes.schemas.tickets
   (:use [common-swagger-api.schema :only [describe
                                           NonBlankString
                                           StandardUserQueryParams]]
-        [data-info.routes.domain.common])
+        [data-info.routes.schemas.common])
   (:require [schema.core :as s])
   (:import [java.util UUID]))
 

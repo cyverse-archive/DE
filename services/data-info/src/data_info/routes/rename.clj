@@ -1,7 +1,7 @@
 (ns data-info.routes.rename
   (:use [common-swagger-api.schema]
-        [data-info.routes.domain.common]
-        [data-info.routes.domain.rename])
+        [data-info.routes.schemas.common]
+        [data-info.routes.schemas.rename])
   (:require [data-info.services.rename :as rename]
             [data-info.util.service :as svc]))
 

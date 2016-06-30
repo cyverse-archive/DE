@@ -1,4 +1,4 @@
-(ns data-info.routes.domain.exists
+(ns data-info.routes.schemas.exists
   (:use [common-swagger-api.schema :only [describe]])
   (:require [schema.core :as s]))
 

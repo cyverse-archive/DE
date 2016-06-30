@@ -1,7 +1,7 @@
 (ns data-info.routes.trash
   (:use [common-swagger-api.schema]
-        [data-info.routes.domain.common]
-        [data-info.routes.domain.trash])
+        [data-info.routes.schemas.common]
+        [data-info.routes.schemas.trash])
   (:require [data-info.services.trash :as trash]
             [data-info.util.service :as svc]))
 

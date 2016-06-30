@@ -1,4 +1,4 @@
-(ns data-info.routes.domain.common
+(ns data-info.routes.schemas.common
   (:use [common-swagger-api.schema :only [describe NonBlankString ->optional-param]])
   (:require [heuristomancer.core :as hm]
             [schema.core :as s])

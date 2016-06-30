@@ -1,11 +1,11 @@
-(ns data-info.routes.domain.data
+(ns data-info.routes.schemas.data
   (:use [common-swagger-api.schema :only [describe
                                           NonBlankString
                                           PagingParams
                                           SortFieldDocs
                                           SortFieldOptionalKey
                                           StandardUserQueryParams]]
-        [data-info.routes.domain.common]
+        [data-info.routes.schemas.common]
         [heuristomancer.core :as info])
   (:require [schema.core :as s]))
 

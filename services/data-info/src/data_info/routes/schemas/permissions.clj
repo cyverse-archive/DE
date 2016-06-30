@@ -1,6 +1,6 @@
-(ns data-info.routes.domain.permissions
+(ns data-info.routes.schemas.permissions
   (:use [common-swagger-api.schema :only [describe]]
-        [data-info.routes.domain.common :only [PermissionEnum]])
+        [data-info.routes.schemas.common :only [PermissionEnum]])
   (:require [schema.core :as s]))
 
 (s/defschema UserPermission

@@ -1,6 +1,6 @@
 (ns data-info.routes.status
   (:use [common-swagger-api.schema]
-        [data-info.routes.domain.status])
+        [data-info.routes.schemas.status])
   (:require [clojure-commons.service :as commons-svc]
             [data-info.services.status :as status]
             [data-info.util.config :as config]

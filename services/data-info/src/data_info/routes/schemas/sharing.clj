@@ -1,4 +1,4 @@
-(ns data-info.routes.domain.sharing
+(ns data-info.routes.schemas.sharing
   (:use [common-swagger-api.schema :only [describe
                                           NonBlankString]])
   (:require [schema.core :as s]))

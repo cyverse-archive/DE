@@ -1,7 +1,7 @@
 (ns data-info.routes.permissions
   (:use [common-swagger-api.schema]
-        [data-info.routes.domain.common]
-        [data-info.routes.domain.permissions])
+        [data-info.routes.schemas.common]
+        [data-info.routes.schemas.permissions])
   (:require [data-info.services.users :as users]
             [data-info.services.permissions :as perms]
             [data-info.util.service :as svc]))

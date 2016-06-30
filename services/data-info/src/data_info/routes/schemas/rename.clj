@@ -1,4 +1,4 @@
-(ns data-info.routes.domain.rename
+(ns data-info.routes.schemas.rename
   (:use [common-swagger-api.schema :only [describe
                                           NonBlankString]])
   (:require [schema.core :as s]))

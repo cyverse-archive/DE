@@ -1,9 +1,9 @@
 (ns data-info.routes.avus
   (:use [common-swagger-api.routes]
         [common-swagger-api.schema]
-        [data-info.routes.domain.common]
-        [data-info.routes.domain.avus]
-        [data-info.routes.middleware :only [wrap-metadata-base-url]])
+        [data-info.routes.middleware :only [wrap-metadata-base-url]]
+        [data-info.routes.schemas.common]
+        [data-info.routes.schemas.avus])
   (:require [data-info.services.metadata :as meta]
             [data-info.util.service :as svc]))
 

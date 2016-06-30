@@ -1,6 +1,6 @@
-(ns data-info.routes.domain.status
+(ns data-info.routes.schemas.status
   (:use [common-swagger-api.schema :only [describe NonBlankString StatusResponse]]
-        [data-info.routes.domain.common])
+        [data-info.routes.schemas.common])
   (:require [schema.core :as s]))
 
 (s/defschema DataInfoStatusResponse

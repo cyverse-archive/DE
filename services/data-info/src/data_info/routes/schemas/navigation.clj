@@ -1,6 +1,6 @@
-(ns data-info.routes.domain.navigation
+(ns data-info.routes.schemas.navigation
   (:use [common-swagger-api.schema :only [describe]]
-        [data-info.routes.domain.stats])
+        [data-info.routes.schemas.stats])
   (:require [schema.core :as s]))
 
 (s/defschema RootListing

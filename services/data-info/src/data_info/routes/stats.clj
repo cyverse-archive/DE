@@ -1,7 +1,7 @@
 (ns data-info.routes.stats
   (:use [common-swagger-api.schema]
-        [data-info.routes.domain.common]
-        [data-info.routes.domain.stats])
+        [data-info.routes.schemas.common]
+        [data-info.routes.schemas.stats])
   (:require [data-info.services.stat :as stat]
             [data-info.util.service :as svc]))
 

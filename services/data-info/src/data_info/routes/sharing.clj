@@ -1,7 +1,7 @@
 (ns data-info.routes.sharing
   (:use [common-swagger-api.schema]
-        [data-info.routes.domain.common]
-        [data-info.routes.domain.sharing])
+        [data-info.routes.schemas.common]
+        [data-info.routes.schemas.sharing])
   (:require [data-info.services.sharing :as sharing]
             [data-info.util.service :as svc]))
 
