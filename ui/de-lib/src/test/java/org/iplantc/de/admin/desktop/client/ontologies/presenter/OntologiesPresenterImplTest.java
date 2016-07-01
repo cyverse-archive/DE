@@ -5,6 +5,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -15,6 +16,8 @@ import org.iplantc.de.admin.apps.client.AdminAppsGridView;
 import org.iplantc.de.admin.apps.client.AdminCategoriesView;
 import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
 import org.iplantc.de.admin.desktop.client.ontologies.events.CategorizeHierarchiesToAppEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.DeleteHierarchyEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.DeleteOntologyButtonClickedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
@@ -95,6 +98,7 @@ public class OntologiesPresenterImplTest {
     @Mock Ontology activeOntologyMock;
     @Mock Ontology ontologyMock;
     @Mock Iterator<Ontology> ontologyIteratorMock;
+    @Mock Iterator<OntologyHierarchy> hierarchyIteratorMock;
 
 
     @Captor ArgumentCaptor<AsyncCallback<List<Ontology>>> asyncCallbackOntologyListCaptor;
@@ -103,6 +107,7 @@ public class OntologiesPresenterImplTest {
     @Captor ArgumentCaptor<AsyncCallback<OntologyVersionDetail>> asyncOntologyDetailCaptor;
     @Captor ArgumentCaptor<AsyncCallback<List<App>>> asyncAppListCaptor;
     @Captor ArgumentCaptor<AsyncCallback<List<Avu>>> asyncAvuListCaptor;
+    @Captor ArgumentCaptor<AsyncCallback<Void>> asyncVoidCaptor;
 
     private OntologiesPresenterImpl uut;
 
@@ -115,6 +120,8 @@ public class OntologiesPresenterImplTest {
         when(appearanceMock.appClassified(anyString(), anyString())).thenReturn("success");
         when(appearanceMock.appClassified(anyString(), Matchers.<List<Avu>>any())).thenReturn("success");
         when(appearanceMock.appAvusCleared(Matchers.<App> any())).thenReturn("success");
+        when(appearanceMock.ontologyDeleted(anyString())).thenReturn("success");
+        when(appearanceMock.hierarchyDeleted(anyString())).thenReturn("success");
         when(oldGridViewMock.getGrid()).thenReturn(oldGridMock);
         when(oldGridPresenterMock.getView()).thenReturn(oldGridViewMock);
         when(newGridPresenterMock.getView()).thenReturn(newGridViewMock);
@@ -135,6 +142,10 @@ public class OntologiesPresenterImplTest {
         when(ontologyIteratorMock.next()).thenReturn(ontologyMock).thenReturn(activeOntologyMock);
         when(ontologyMock.isActive()).thenReturn(false);
         when(activeOntologyMock.isActive()).thenReturn(true);
+        when(ontologyHierarchyListMock.size()).thenReturn(2);
+        when(ontologyHierarchyListMock.iterator()).thenReturn(hierarchyIteratorMock);
+        when(hierarchyIteratorMock.hasNext()).thenReturn(true, true, false);
+        when(hierarchyIteratorMock.next()).thenReturn(hierarchyMock).thenReturn(hierarchyMock);
         when(factoryMock.create(Matchers.<TreeStore<OntologyHierarchy>>any(),
                                 isA(AppCategoriesView.class),
                                 isA(AdminAppsGridView.class),
@@ -172,6 +183,8 @@ public class OntologiesPresenterImplTest {
         verify(viewMock).addSaveOntologyHierarchyEventHandler(eq(uut));
         verify(viewMock).addPublishOntologyClickEventHandler(eq(uut));
         verify(viewMock).addCategorizeButtonClickedEventHandler(eq(uut));
+        verify(viewMock).addDeleteHierarchyEventHandler(eq(uut));
+        verify(viewMock).addDeleteOntologyButtonClickedEventHandler(eq(uut));
     }
 
     @Test
@@ -463,5 +476,42 @@ public class OntologiesPresenterImplTest {
 
         verify(newGridViewMock).clearAndAdd(appListMock);
         verify(newGridViewMock).unmask();
+    }
+
+    @Test
+    public void testOnDeleteOntologyButtonClicked() {
+        DeleteOntologyButtonClickedEvent eventMock = mock(DeleteOntologyButtonClickedEvent.class);
+        when(eventMock.getOntologyVersion()).thenReturn("version");
+
+        OntologiesPresenterImpl spy = spy(uut);
+
+        /** CALL METHOD UNDER TEST **/
+        spy.onDeleteOntologyButtonClicked(eventMock);
+
+        verify(serviceFacadeMock).deleteOntology(anyString(), asyncVoidCaptor.capture());
+
+        asyncVoidCaptor.getValue().onSuccess(null);
+
+        verify(announcerMock).schedule(any(SuccessAnnouncementConfig.class));
+        verify(spy).getOntologies(eq(false));
+    }
+
+    @Test
+    public void testOnDeleteHierarchy() {
+        DeleteHierarchyEvent eventMock = mock(DeleteHierarchyEvent.class);
+        when(eventMock.getDeletedHierarchies()).thenReturn(ontologyHierarchyListMock);
+        when(eventMock.getEditedOntology()).thenReturn(ontologyMock);
+        when(ontologyMock.getIri()).thenReturn("iri");
+
+        OntologiesPresenterImpl spy = spy(uut);
+
+        /** CALL METHOD UNDER TEST **/
+        spy.onDeleteHierarchy(eventMock);
+        verify(serviceFacadeMock, times(2)).deleteRootHierarchy(anyString(), anyString(), asyncOntologyHierarchyListCaptor.capture());
+
+        asyncOntologyHierarchyListCaptor.getValue().onSuccess(ontologyHierarchyListMock);
+        verify(announcerMock).schedule(any(SuccessAnnouncementConfig.class));
+        verify(spy).getOntologyHierarchies(anyString());
+
     }
 }
