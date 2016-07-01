@@ -1,7 +1,7 @@
 (ns data-info.routes.tickets
   (:use [common-swagger-api.schema]
-        [data-info.routes.domain.common]
-        [data-info.routes.domain.tickets])
+        [data-info.routes.schemas.common]
+        [data-info.routes.schemas.tickets])
   (:require [data-info.services.tickets :as tickets]
             [data-info.util.service :as svc]))
 

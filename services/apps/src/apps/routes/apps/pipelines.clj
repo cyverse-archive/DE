@@ -1,7 +1,7 @@
 (ns apps.routes.apps.pipelines
   (:use [common-swagger-api.schema]
-        [apps.routes.domain.pipeline]
         [apps.routes.params]
+        [apps.routes.schemas.pipeline]
         [apps.util.coercions :only [coerce!]]
         [ring.util.http-response :only [ok]]
         [apps.user :only [current-user]])

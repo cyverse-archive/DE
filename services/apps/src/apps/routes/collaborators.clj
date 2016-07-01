@@ -1,7 +1,7 @@
 (ns apps.routes.collaborators
   (:use [common-swagger-api.schema]
-        [apps.routes.domain.collaborator]
         [apps.routes.params]
+        [apps.routes.schemas.collaborator]
         [apps.user :only [current-user]]
         [ring.util.http-response :only [ok]])
   (:require [apps.service.collaborators :as collaborators]))

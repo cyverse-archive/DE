@@ -1,7 +1,7 @@
 (ns metadata.routes.permanent-id-requests
   (:use [common-swagger-api.schema]
-        [metadata.routes.domain.common]
-        [metadata.routes.domain.permanent-id-requests]
+        [metadata.routes.schemas.common]
+        [metadata.routes.schemas.permanent-id-requests]
         [metadata.services.permanent-id-requests]
         [ring.util.http-response :only [ok]]))
 

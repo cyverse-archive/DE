@@ -1,7 +1,7 @@
 (ns metadata.routes.templates
   (:use [common-swagger-api.schema]
-        [metadata.routes.domain.common]
-        [metadata.routes.domain.template]
+        [metadata.routes.schemas.common]
+        [metadata.routes.schemas.template]
         [ring.util.http-response :only [ok]])
   (:require [metadata.services.templates :as templates]))
 

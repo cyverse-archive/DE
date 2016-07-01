@@ -1,10 +1,10 @@
 (ns data-info.routes.data
   (:use [common-swagger-api.routes]
         [common-swagger-api.schema]
-        [data-info.routes.domain.common]
-        [data-info.routes.domain.data]
-        [data-info.routes.domain.stats]
-        [data-info.routes.middleware :only [wrap-metadata-base-url]])
+        [data-info.routes.middleware :only [wrap-metadata-base-url]]
+        [data-info.routes.schemas.common]
+        [data-info.routes.schemas.data]
+        [data-info.routes.schemas.stats])
   (:require [data-info.services.create :as create]
             [data-info.services.metadata :as meta]
             [data-info.services.manifest :as manifest]

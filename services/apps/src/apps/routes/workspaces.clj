@@ -1,7 +1,7 @@
 (ns apps.routes.workspaces
   (:use [common-swagger-api.schema]
-        [apps.routes.domain.workspace]
         [apps.routes.params]
+        [apps.routes.schemas.workspace]
         [apps.user :only [current-user]]
         [ring.util.http-response :only [ok]])
   (:require [apps.service.workspace :as workspace]))

@@ -1,8 +1,8 @@
 (ns data-info.routes.navigation
   (:use [common-swagger-api.schema]
-        [data-info.routes.domain.common]
-        [data-info.routes.domain.navigation]
-        [data-info.routes.domain.stats])
+        [data-info.routes.schemas.common]
+        [data-info.routes.schemas.navigation]
+        [data-info.routes.schemas.stats])
   (:require [data-info.services.directory :as dir]
             [data-info.services.root :as root]
             [data-info.services.home :as home]

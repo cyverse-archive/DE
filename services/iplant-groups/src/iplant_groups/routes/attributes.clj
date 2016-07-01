@@ -1,7 +1,7 @@
 (ns iplant_groups.routes.attributes
   (:use [common-swagger-api.schema]
-        [iplant_groups.routes.domain.params]
-        [iplant_groups.routes.domain.attribute]
+        [iplant_groups.routes.schemas.params]
+        [iplant_groups.routes.schemas.attribute]
         [ring.util.http-response :only [ok]])
   (:require [iplant_groups.service.attributes :as attributes]))
 

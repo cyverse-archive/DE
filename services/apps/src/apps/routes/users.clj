@@ -1,7 +1,7 @@
 (ns apps.routes.users
   (:use [common-swagger-api.schema]
-        [apps.routes.domain.user]
         [apps.routes.params]
+        [apps.routes.schemas.user]
         [apps.user :only [current-user]]
         [ring.util.http-response :only [ok]])
   (:require [apps.service.users :as users]))

@@ -1,8 +1,8 @@
 (ns metadata.routes.ontologies
   (:use [common-swagger-api.schema]
         [common-swagger-api.schema.ontologies]
-        [metadata.routes.domain.common]
-        [metadata.routes.domain.ontologies]
+        [metadata.routes.schemas.common]
+        [metadata.routes.schemas.ontologies]
         [ring.util.http-response :only [ok]])
   (:require [metadata.services.ontology :as service]))
 

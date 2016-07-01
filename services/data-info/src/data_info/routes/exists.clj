@@ -1,7 +1,7 @@
 (ns data-info.routes.exists
   (:use [common-swagger-api.schema]
-        [data-info.routes.domain.common]
-        [data-info.routes.domain.exists])
+        [data-info.routes.schemas.common]
+        [data-info.routes.schemas.exists])
   (:require [data-info.services.exists :as exists]
             [data-info.util.service :as svc]))
 

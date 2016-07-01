@@ -7,12 +7,12 @@
                                                 replace-reference-genomes
                                                 update-reference-genome]]
         [apps.metadata.tool-requests]
-        [apps.routes.domain.app]
-        [apps.routes.domain.app.category]
-        [apps.routes.domain.reference-genome]
-        [apps.routes.domain.tool]
         [apps.routes.middleware :only [wrap-metadata-base-url]]
         [apps.routes.params]
+        [apps.routes.schemas.app]
+        [apps.routes.schemas.app.category]
+        [apps.routes.schemas.reference-genome]
+        [apps.routes.schemas.tool]
         [apps.user :only [current-user]]
         [apps.util.coercions :only [coerce!]]
         [ring.util.http-response :only [ok]])

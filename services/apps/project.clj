@@ -46,7 +46,7 @@
   ;; https://github.com/metosin/compojure-api/issues/102
   :aot [#"apps.(?!routes).*"]
   :main apps.core
-  :ring {:handler apps.routes.api/app
+  :ring {:handler apps.routes/app
          :init apps.core/load-config-from-file
          :port 31323}
   :uberjar-exclusions [#"(?i)META-INF/[^/]*[.](SF|DSA|RSA)"]
