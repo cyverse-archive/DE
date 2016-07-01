@@ -12,6 +12,7 @@ Request and response bodies are in JSON format unless otherwise noted.
 * [Miscellaneous Endpoints](misc.html)
 * [App Metadata Endpoints](app-metadata.html)
 * [App Execution Endpoints](app-execution.html)
+* [Categorizing Apps with Ontology Hierarchies](app-ontologies.html)
 * [Phylogenetic Tree Rendering Endpoints](tree-viewing.html)
 * [Notification Endpoints](notifications.html)
 * [Collaborator List Management Endpoints](collaborators.html)
