@@ -57,9 +57,9 @@ public class DeleteHierarchiesViewImpl extends Composite implements DeleteHierar
         ColumnConfig<OntologyHierarchy, OntologyHierarchy> colCheckBox = checkBoxSelectionModel.getColumn();
 
         ColumnConfig<OntologyHierarchy, String> iri =
-                new ColumnConfig<>(properties.iri(), 200, "Root");
+                new ColumnConfig<>(properties.iri(), appearance.rootColumnWidth(), appearance.rootColumnLabel());
 
-        ColumnConfig<OntologyHierarchy, String> label = new ColumnConfig<>(properties.label(), 100, "Name");
+        ColumnConfig<OntologyHierarchy, String> label = new ColumnConfig<>(properties.label(), appearance.hierarchyColumnWidth(), appearance.hierarchyColumnLabel());
         List<ColumnConfig<OntologyHierarchy, ?>> columns = Lists.newArrayList();
         columns.add(colCheckBox);
         columns.add(label);

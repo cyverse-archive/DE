@@ -22,6 +22,7 @@ import org.iplantc.de.client.models.ontologies.OntologyVersionDetail;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.services.converters.AvuListCallbackConverter;
+import org.iplantc.de.client.services.converters.StringToVoidCallbackConverter;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -150,11 +151,11 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
     }
 
     @Override
-    public void deleteOntology(String version, AsyncCallback<List<Ontology>> callback) {
+    public void deleteOntology(String version, AsyncCallback<Void> callback) {
         String address = ONTOLOGY_ADMIN + "/" + URL.encodeQueryString(version);
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(DELETE, address);
-        deService.getServiceData(wrapper, new OntologyListCallbackConverter(callback, factory));
+        deService.getServiceData(wrapper, new StringToVoidCallbackConverter(callback));
     }
 
     @Override

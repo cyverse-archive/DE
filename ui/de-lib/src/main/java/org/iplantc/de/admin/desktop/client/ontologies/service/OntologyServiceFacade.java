@@ -86,7 +86,7 @@ public interface OntologyServiceFacade {
      * Soft deletes an ontology version so that it doesn't show up in the dropdown
      * If the user tries to delete the active ontology, an error is returned
      */
-    void deleteOntology(String version, AsyncCallback<List<Ontology>> callback);
+    void deleteOntology(String version, AsyncCallback<Void> callback);
 
     /**
      * Deletes a saved ontology root hierarchy

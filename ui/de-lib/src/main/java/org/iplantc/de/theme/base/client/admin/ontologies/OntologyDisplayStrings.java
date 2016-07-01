@@ -68,4 +68,10 @@ public interface OntologyDisplayStrings extends Messages{
     String hierarchyDeleted(String hierarchy);
 
     String confirmDeleteOntology(String version);
+
+    String ontologyDeleted(String ontologyVersion);
+
+    String rootColumnLabel();
+
+    String hierarchyColumnLabel();
 }

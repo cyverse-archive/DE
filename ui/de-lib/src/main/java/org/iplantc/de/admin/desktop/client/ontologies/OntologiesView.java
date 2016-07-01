@@ -62,6 +62,8 @@ public interface OntologiesView extends IsWidget,
 
     void reSortHierarchies();
 
+    void updateButtonStatus();
+
     interface OntologiesViewAppearance {
         String addOntology();
 
@@ -174,6 +176,16 @@ public interface OntologiesView extends IsWidget,
         String hierarchyDeleted(String hierarchy);
 
         String confirmDeleteOntology(String version);
+
+        String ontologyDeleted(String ontologyVersion);
+
+        int rootColumnWidth();
+
+        String rootColumnLabel();
+
+        int hierarchyColumnWidth();
+
+        String hierarchyColumnLabel();
     }
 
     interface Presenter {

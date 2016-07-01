@@ -130,14 +130,15 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
         @Override
         public void onSuccess(List<OntologyHierarchy> result) {
+            view.clearStore();
             if (result.size() == 0) {
                 view.showEmptyTreePanel();
             } else {
                 view.maskHierarchyTree();
-                view.clearStore();
                 addHierarchies(null, result);
             }
             view.unMaskHierarchyTree();
+            view.updateButtonStatus();
         }
     }
 
@@ -400,6 +401,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
             @Override
             public void onSuccess(OntologyVersionDetail result) {
                 announcer.schedule(new SuccessAnnouncementConfig(appearance.setActiveOntologySuccess()));
+                getOntologies(true);
             }
         });
     }
@@ -461,15 +463,16 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     }
 
     @Override
-    public void onDeleteOntologyButtonClicked(DeleteOntologyButtonClickedEvent event) {
-        serviceFacade.deleteOntology(event.getOntologyVersion(), new AsyncCallback<List<Ontology>>() {
+    public void onDeleteOntologyButtonClicked(final DeleteOntologyButtonClickedEvent event) {
+        serviceFacade.deleteOntology(event.getOntologyVersion(), new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
             }
 
             @Override
-            public void onSuccess(List<Ontology> result) {
+            public void onSuccess(Void result) {
+                announcer.schedule(new SuccessAnnouncementConfig(appearance.ontologyDeleted(event.getOntologyVersion())));
                 getOntologies(false);
             }
         });
@@ -489,7 +492,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
                                                   @Override
                                                   public void onSuccess(List<OntologyHierarchy> result) {
-                                                      announcer.schedule(new SuccessAnnouncementConfig(appearance.hierarchyDeleted(hierarchy.getIri())));
+                                                      announcer.schedule(new SuccessAnnouncementConfig(appearance.hierarchyDeleted(hierarchy.getLabel())));
                                                       getOntologyHierarchies(event.getEditedOntology().getVersion());
                                                   }
                                               });

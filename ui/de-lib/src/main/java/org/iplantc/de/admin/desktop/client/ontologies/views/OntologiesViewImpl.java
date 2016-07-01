@@ -258,7 +258,9 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     public void selectActiveOntology(Ontology ontology) {
         if (ontology != null) {
             ontologyDropDown.setValue(ontology);
+            selectedOntology = ontology;
             fireEvent(new SelectOntologyVersionEvent(ontology));
+            updateButtonStatus();
         }
     }
 
@@ -298,10 +300,11 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         return ontologySimpleComboBox;
     }
 
-    void updateButtonStatus() {
+    public void updateButtonStatus() {
         publishButton.setEnabled(selectedOntology != null && selectedOntology != activeOntology);
         saveHierarchy.setEnabled(selectedOntology != null);
         deleteButton.setEnabled(selectedOntology != null && selectedOntology != activeOntology);
+        deleteHierarchy.setEnabled(selectedOntology != null && treeStore.getRootItems().size() > 0);
         categorize.setEnabled(selectedOntology != null && targetApp != null);
     }
 
