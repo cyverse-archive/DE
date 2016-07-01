@@ -135,80 +135,6 @@ Delegates to apps: PATCH /admin/apps/categories/{category-id}
 This endpoint is a passthrough to the apps endpoint using the same path.
 Please see the apps service documentation for more information.
 
-## Save an Ontology XML Document
-
-Secured Endpoint: POST /admin/ontologies
-
-Delegates to metadata: POST /admin/ontologies
-
-This endpoint is a passthrough to the metadata endpoint using the same path.
-Please see the metadata service documentation for more information.
-
-## Logically Deleting an Ontology
-
-Secured Endpoint: DELETE /admin/ontologies/{ontology-version}
-
-Delegates to apps: DELETE /admin/ontologies/{ontology-version}
-
-This endpoint is a passthrough to the apps endpoint using the same path.
-Please see the metadata service documentation for more information.
-
-## Set Active Ontology Version
-
-Secured Endpoint: POST /admin/ontologies/{ontology-version}
-
-Delegates to apps: POST /admin/ontologies/{ontology-version}
-
-This endpoint is a passthrough to the apps endpoint using the same path.
-Please see the metadata service documentation for more information.
-
-## Deleting an Ontology Hierarchy
-
-Secured Endpoint: DELETE /admin/ontologies/{ontology-version}/{root-iri}
-
-Delegates to metadata: DELETE /admin/ontologies/{ontology-version}/{root-iri}
-
-This endpoint is a passthrough to the metadata endpoint using the same path.
-Please see the metadata service documentation for more information.
-
-## Save an Ontology Hierarchy
-
-Secured Endpoint: PUT /admin/ontologies/{ontology-version}/{root-iri}
-
-Delegates to metadata: PUT /admin/ontologies/{ontology-version}/{root-iri}
-
-This endpoint is a passthrough to the metadata endpoint using the same path.
-Please see the metadata service documentation for more information.
-
-## Listing Ontologies and Ontology Hierarchies
-
-### Apps passthroughs
-
-Secured Endpoint: GET /admin/ontologies
-
-Delegates to apps: GET /admin/ontologies
-
-Secured Endpoint: GET /admin/ontologies/{ontology-version}/{root-iri}
-
-Delegates to apps: GET /admin/ontologies/{ontology-version}/{root-iri}
-
-Secured Endpoint: GET /apps/hierarchies
-
-Delegates to apps: GET /apps/hierarchies
-
-Secured Endpoint: GET /apps/hierarchies/{root-iri}
-
-Delegates to apps: GET /apps/hierarchies/{root-iri}
-
-### Metadata passthroughs
-
-Secured Endpoint: GET /admin/ontologies/{ontology-version}
-
-Delegates to metadata: GET /admin/ontologies/{ontology-version}
-
-These endpoints are passthroughs to the apps and metadata endpoints using the same paths.
-Please see the corresponding service documentation for more information.
-
 ## Managing App AVU Metadata
 
 Secured Endpoint: GET /admin/apps/{app-id}/metadata
@@ -468,19 +394,7 @@ Secured Endpoint: GET /apps/categories/{group-id}
 
 Delegates to apps: GET /apps/categories/{group-id}
 
-Secured Endpoint: GET /admin/ontologies/{ontology-version}/{root-iri}/unclassified
-
-Delegates to apps: GET /admin/ontologies/{ontology-version}/{root-iri}/unclassified
-
-Secured Endpoint: GET /apps/hierarchies/{class-iri}/apps
-
-Delegates to apps: GET /apps/hierarchies/{class-iri}/apps
-
-Secured Endpoint: GET /apps/hierarchies/{root-iri}/unclassified
-
-Delegates to apps: GET /apps/hierarchies/{root-iri}/unclassified
-
-These endpoints are passthroughs to the apps endpoints using the same paths.
+This endpoint is a passthrough to the apps endpoint using the same path.
 Please see the apps service documentation for more information.
 
 ## Listing Tools in an App
