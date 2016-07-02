@@ -50,6 +50,7 @@ public class DeLandingPage implements LandingPage, InitializingBean {
     private String deMaintenanceFile;
     private String loginUrl;
     private ServiceProperties casService;
+    private IpRanges localIpRanges;
 
     public void setDeMaintenanceFile(String deMaintenanceFile) {
         this.deMaintenanceFile = deMaintenanceFile;
@@ -65,11 +66,16 @@ public class DeLandingPage implements LandingPage, InitializingBean {
         this.casService = casService;
     }
 
+    public void setLocalIpRanges(String s) {
+        this.localIpRanges = new IpRanges(s);
+    }
+
     public void afterPropertiesSet() throws Exception {
         Assert.hasLength(deMaintenanceFile, "the path to the DE maintenance file must be specified");
         Assert.hasLength(loginUrl, "the CAS login URL must be specified");
         Assert.notNull(casService, "the CAS service properties must be specified");
         Assert.hasLength(casService.getService(), "the CAS service name must be specified");
+        Assert.notNull(localIpRanges);
     }
 
     public void display(HttpServletRequest req, HttpServletResponse res) throws IOException {
@@ -86,11 +92,21 @@ public class DeLandingPage implements LandingPage, InitializingBean {
         return new DiscoveryEnvironmentMaintenance(deMaintenanceFile);
     }
 
+    private boolean localRequest(HttpServletRequest req) {
+        String forwardedFor = req.getHeader("X-Forwarded-For");
+        if (forwardedFor != null && forwardedFor.length() != 0) {
+            return localIpRanges.matches(forwardedFor.split("\\s*,\\s*")[0]);
+        } else {
+            return localIpRanges.matches(req.getRemoteAddr());
+        }
+    }
+
     private String buildLoginDiv(HttpServletRequest req) throws IOException {
         DiscoveryEnvironmentMaintenance deMaintenance = getDeMaintenance();
-        if (deMaintenance.hasMaintenanceTimes()) {
+        boolean isLocalRequest = localRequest(req);
+        if (deMaintenance.hasMaintenanceTimes() && !isLocalRequest) {
             return buildBoundedMaintenanceDiv(deMaintenance);
-        } else if (deMaintenance.isUnderMaintenance()) {
+        } else if (deMaintenance.isUnderMaintenance() && !isLocalRequest) {
             return buildUnboundedMaintenanceDiv();
         } else {
             return buildLoginButtonDiv(req);
