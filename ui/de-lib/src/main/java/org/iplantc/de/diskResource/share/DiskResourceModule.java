@@ -70,6 +70,7 @@ public interface DiskResourceModule {
         String MENU_ITEM_METADATA_COPY = ".mcopy";
         String MENU_ITEM_METADATA_SAVE = ".msave";
         String MENU_ITEM_METADATA_EDIT = ".medit";
+        String MENU_ITEM_DOWNLOAD_TEMPLATE =".downloadTemplate";
 
         String MENU_ITEM_NCBI_SRA = ".ncbisra";
 

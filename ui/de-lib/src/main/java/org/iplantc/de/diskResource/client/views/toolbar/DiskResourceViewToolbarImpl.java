@@ -750,6 +750,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         bulkmetadataMi.ensureDebugId(baseID + Ids.METADATA_MENU + Ids.MENU_ITEM_BULK_METADATA);
         selectmetadataMi.ensureDebugId(
                 baseID + Ids.METADATA_MENU + Ids.MENU_ITEM_BULK_METADATA + Ids.MENU_ITEM_SELECTFILE);
+        downloadtemplateMi.ensureDebugId(baseID + Ids.METADATA_MENU + Ids.MENU_ITEM_DOWNLOAD_TEMPLATE);
 
         // Download menu
         simpleDownloadMi.ensureDebugId(baseID + Ids.DOWNLOAD_MENU + Ids.MENU_ITEM_SIMPLE_DOWNLOAD);
