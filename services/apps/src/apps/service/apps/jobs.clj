@@ -45,7 +45,8 @@
   [apps-client {job-id :id prev-status :status app-id :app-id}]
   (let [{curr-status :status :as job} (jp/get-job-by-id job-id)
         app-tables                    (.loadAppTables apps-client [app-id])
-        rep-steps                     (jp/list-representative-job-steps [job-id])]
+        rep-steps                     (jp/list-representative-job-steps [job-id])
+        rep-steps                     (group-by (some-fn :parent-id :job-id) rep-steps)]
     (when-not (= prev-status curr-status)
       (cn/send-job-status-update
        (.getUser apps-client)
