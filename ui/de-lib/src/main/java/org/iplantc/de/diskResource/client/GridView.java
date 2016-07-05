@@ -9,8 +9,10 @@ import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent.H
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent.FolderSelectionEventHandler;
 import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent.RequestDiskResourceFavoriteEventHandler;
+import org.iplantc.de.diskResource.client.events.TemplateDownloadEvent;
 import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler;
 import org.iplantc.de.diskResource.client.events.selection.CopyMetadataSelected.CopyMetadataSelectedEventHandler;
+import org.iplantc.de.diskResource.client.events.selection.DownloadTemplateSelectedEvent;
 import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected.EditInfoTypeSelectedEventHandler;
 import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelected.ManageCommentsSelectedEventHandler;
 import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelected.ManageMetadataSelectedEventHandler;
@@ -106,7 +108,8 @@ public interface GridView extends IsWidget,
                                 ManageSharingSelectedEventHandler,
                                 ManageMetadataSelectedEventHandler,
                                 CopyMetadataSelectedEventHandler,
-                       SaveMetadataSelectedEventHandler,
+                                SaveMetadataSelectedEventHandler,
+                                DownloadTemplateSelectedEvent.DownloadTemplateSelectedEventHandler,
                                 ShareByDataLinkSelectedEventHandler,
                                 RequestDiskResourceFavoriteEventHandler,
                                 ManageCommentsSelectedEventHandler,
@@ -114,8 +117,9 @@ public interface GridView extends IsWidget,
                                 SubmitDiskResourceQueryEventHandler,
                                 HasStoreUpdateHandlers<DiskResource>,
                                 EditInfoTypeSelectedEventHandler,
-                       ResetInfoTypeSelectedHandler,
-                       Md5ValueClickedHandler {
+                                ResetInfoTypeSelectedHandler,
+                                Md5ValueClickedHandler,
+                                TemplateDownloadEvent.TemplateDownloadEventHandler  {
 
         interface Appearance {
 

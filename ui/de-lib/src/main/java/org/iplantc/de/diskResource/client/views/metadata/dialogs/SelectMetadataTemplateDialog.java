@@ -1,15 +1,11 @@
 package org.iplantc.de.diskResource.client.views.metadata.dialogs;
 
-import org.iplantc.de.apps.client.views.grid.cells.AppInfoCell;
-import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.MetadataView;
 import org.iplantc.de.diskResource.client.MetadataView.Presenter.Appearance;
 
-import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
@@ -35,9 +31,6 @@ import java.util.List;
  */
 public class SelectMetadataTemplateDialog extends IPlantDialog implements IsWidget {
 
-
-    private final MetadataView.Presenter presenter;
-
     @UiTemplate("SelectMetadataTemplateDialog.ui.xml")
     interface SelectMetadataTemplateViewUiBinder extends UiBinder<Widget, SelectMetadataTemplateDialog> {
     }
@@ -59,10 +52,9 @@ public class SelectMetadataTemplateDialog extends IPlantDialog implements IsWidg
 
     private MetadataView.Presenter.Appearance appearance;
 
-    public SelectMetadataTemplateDialog(MetadataView.Presenter presenter ,List<MetadataTemplateInfo> templates, Appearance appearance) {
+    public SelectMetadataTemplateDialog(List<MetadataTemplateInfo> templates, Appearance appearance, boolean showDownloadCell) {
         super();
         getOkButton().disable();
-        this.presenter = presenter;
         listStore = new ListStore<>(new ModelKeyProvider<MetadataTemplateInfo>() {
             @Override
             public String getKey(MetadataTemplateInfo item) {
@@ -70,7 +62,7 @@ public class SelectMetadataTemplateDialog extends IPlantDialog implements IsWidg
             }
         });
         this.appearance = appearance;
-        cm = buildColumnModel();
+        cm = buildColumnModel(showDownloadCell);
         uiBinder.createAndBindUi(this);
         this.setWidget(asWidget());
         grid.getSelectionModel().setSelectionMode(Style.SelectionMode.SINGLE);
@@ -95,7 +87,7 @@ public class SelectMetadataTemplateDialog extends IPlantDialog implements IsWidg
     }
 
 
-    ColumnModel<MetadataTemplateInfo> buildColumnModel() {
+    ColumnModel<MetadataTemplateInfo> buildColumnModel(boolean showDownloadCell) {
         ColumnConfig<MetadataTemplateInfo, String> name =
                 new ColumnConfig<MetadataTemplateInfo, String>(new ValueProvider<MetadataTemplateInfo, String>() {
                     @Override
@@ -114,18 +106,22 @@ public class SelectMetadataTemplateDialog extends IPlantDialog implements IsWidg
                     }
                 }, 150, appearance.templates());
 
-        ColumnConfig<MetadataTemplateInfo, MetadataTemplateInfo> download =
-                new ColumnConfig<MetadataTemplateInfo, MetadataTemplateInfo>(new IdentityValueProvider<MetadataTemplateInfo>(),
-                                                                             30,
-                                                                             "");
-        download.setMenuDisabled(true);
-        download.setSortable(false);
-        DownloadTemplateCell cell = new DownloadTemplateCell(presenter);
-        download.setCell(cell);
-
-        return new ColumnModel<MetadataTemplateInfo>(Arrays.<ColumnConfig<MetadataTemplateInfo, ?>>asList(
-                name,
-                download));
+        if (showDownloadCell) {
+            ColumnConfig<MetadataTemplateInfo, MetadataTemplateInfo> download =
+                    new ColumnConfig<MetadataTemplateInfo, MetadataTemplateInfo>(new IdentityValueProvider<MetadataTemplateInfo>(),
+                                                                                 30,
+                                                                                 "");
+            download.setMenuDisabled(true);
+            download.setSortable(false);
+            DownloadTemplateCell cell = new DownloadTemplateCell();
+            download.setCell(cell);
+           return new ColumnModel<MetadataTemplateInfo>(Arrays.<ColumnConfig<MetadataTemplateInfo, ?>>asList(
+                    name,
+                    download));
+        } else {
+            return new ColumnModel<MetadataTemplateInfo>(Arrays.<ColumnConfig<MetadataTemplateInfo, ?>>asList(
+                    name));
+        }
     }
 
 

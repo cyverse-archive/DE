@@ -7,6 +7,7 @@ import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEve
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent.FolderSelectionEventHandler;
 import org.iplantc.de.diskResource.client.events.selection.CopyMetadataSelected.HasCopyMetadataSelectedEventHandlers;
 import org.iplantc.de.diskResource.client.events.selection.DeleteDiskResourcesSelected.HasDeleteDiskResourcesSelectedEventHandlers;
+import org.iplantc.de.diskResource.client.events.selection.DownloadTemplateSelectedEvent;
 import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected.HasEditInfoTypeSelectedEventHandlers;
 import org.iplantc.de.diskResource.client.events.selection.EmptyTrashSelected.HasEmptyTrashSelectedHandlers;
 import org.iplantc.de.diskResource.client.events.selection.ImportFromUrlSelected.HasImportFromUrlSelectedHandlers;
@@ -58,6 +59,7 @@ public interface ToolbarView extends IsWidget,
                                      HasSimpleUploadSelectedHandlers,
                                      HasSimpleDownloadSelectedHandlers,
                                      HasImportFromUrlSelectedHandlers,
+                                     DownloadTemplateSelectedEvent.HasDownloadTemplateSelectedEventHandlers,
                                      FolderSelectionEventHandler,
                                      DiskResourceSelectionChangedEventHandler {
     interface Appearance {
@@ -231,6 +233,8 @@ public interface ToolbarView extends IsWidget,
         String doiLinkMsg();
 
         String needDOI();
+
+        String downloadTemplateMenuItem();
     }
 
     interface Presenter {

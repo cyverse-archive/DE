@@ -1763,7 +1763,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Metadata Menu
         uut.metadataMenu = mockMetadatMenu;
         uut.copymetadataMi = mockCopymetadataMi;
-        uut.savemetadatami = mockSavemetadatami;
+        uut.savemetadataMi = mockSavemetadatami;
         uut.bulkmetadataMi = mockBulkmetadataMi;
         uut.doiMi = mockDoiMi;
         uut.editmetadataMi = mockEditmetadataMi;

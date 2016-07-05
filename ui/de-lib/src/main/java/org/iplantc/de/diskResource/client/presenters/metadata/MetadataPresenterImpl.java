@@ -1,5 +1,6 @@
 package org.iplantc.de.diskResource.client.presenters.metadata;
 
+import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
@@ -11,15 +12,14 @@ import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.util.WindowUtil;
 import org.iplantc.de.diskResource.client.MetadataView;
-import org.iplantc.de.diskResource.client.events.TemplateDownloadClickedEvent;
+import org.iplantc.de.diskResource.client.events.TemplateDownloadEvent;
+import org.iplantc.de.diskResource.client.events.selection.DownloadTemplateSelectedEvent;
 import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceMetadataUpdateCallback;
-import org.iplantc.de.diskResource.client.views.metadata.dialogs.DownloadTemplateCell;
 import org.iplantc.de.diskResource.client.views.metadata.dialogs.MetadataTemplateViewDialog;
 import org.iplantc.de.diskResource.client.views.metadata.dialogs.SelectMetadataTemplateDialog;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.web.bindery.autobean.shared.AutoBean;
@@ -38,8 +38,7 @@ import java.util.List;
 /**
  * @author jstroot sriram
  */
-public class MetadataPresenterImpl implements MetadataView.Presenter,
-                                              TemplateDownloadClickedEvent.TemplateDownloadClickedEventHandler {
+public class MetadataPresenterImpl implements MetadataView.Presenter{
 
     private class TemplateViewCancelSelectHandler implements SelectEvent.SelectHandler {
 
@@ -166,13 +165,9 @@ public class MetadataPresenterImpl implements MetadataView.Presenter,
     }
 
     @Override
-    public void onDownloadClick(TemplateDownloadClickedEvent event) {
-
-    }
-    @Override
     public void onSelectTemplate() {
         final SelectMetadataTemplateDialog view =
-                new SelectMetadataTemplateDialog(this,templates, appearance);
+                new SelectMetadataTemplateDialog(templates, appearance, true);
         view.addHideHandler(new HideEvent.HideHandler() {
             @Override
             public void onHide(HideEvent event) {
@@ -186,8 +181,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter,
         view.setSize("400px", "400px");
         view.setHeadingText(appearance.selectTemplate());
         view.show();
-
-    }
+   }
 
     @Override
     public void onTemplateSelected(String templateId) {
@@ -246,6 +240,8 @@ public class MetadataPresenterImpl implements MetadataView.Presenter,
         }
         return null;
     }
+
+
 
 
     private class DiskResourceMetadataListAsyncCallback

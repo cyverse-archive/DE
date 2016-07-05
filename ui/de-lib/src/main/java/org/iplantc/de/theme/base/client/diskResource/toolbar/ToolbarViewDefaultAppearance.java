@@ -503,4 +503,9 @@ public class ToolbarViewDefaultAppearance implements ToolbarView.Appearance {
     public String needDOI() {
         return displayMessages.needDOI();
     }
+
+    @Override
+    public String downloadTemplateMenuItem() {
+        return displayMessages.downloadTemplateMenuItem();
+    }
 }

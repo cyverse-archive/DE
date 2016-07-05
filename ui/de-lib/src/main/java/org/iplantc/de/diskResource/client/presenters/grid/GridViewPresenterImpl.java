@@ -8,6 +8,7 @@ import org.iplantc.de.client.models.dataLink.DataLink;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.errorHandling.ServiceErrorCode;
@@ -22,9 +23,12 @@ import org.iplantc.de.commons.client.comments.view.dialogs.CommentsDialog;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
+import org.iplantc.de.commons.client.util.WindowUtil;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
+import org.iplantc.de.diskResource.client.GridView.Presenter;
+import org.iplantc.de.diskResource.client.MetadataView;
 import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent;
@@ -32,8 +36,10 @@ import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEve
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent;
 import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
+import org.iplantc.de.diskResource.client.events.TemplateDownloadEvent;
 import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.events.selection.CopyMetadataSelected;
+import org.iplantc.de.diskResource.client.events.selection.DownloadTemplateSelectedEvent;
 import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelected;
@@ -53,6 +59,7 @@ import org.iplantc.de.diskResource.client.views.dialogs.MetadataCopyDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
 import org.iplantc.de.diskResource.client.views.grid.DiskResourceColumnModel;
 import org.iplantc.de.diskResource.client.views.metadata.dialogs.ManageMetadataDialog;
+import org.iplantc.de.diskResource.client.views.metadata.dialogs.SelectMetadataTemplateDialog;
 import org.iplantc.de.diskResource.client.views.sharing.dialogs.DataSharingDialog;
 import org.iplantc.de.diskResource.client.views.sharing.dialogs.ShareResourceLinkDialog;
 import org.iplantc.de.shared.AsyncProviderWrapper;
@@ -64,6 +71,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -94,9 +102,10 @@ import java.util.List;
  * @author jstroot
  */
 public class GridViewPresenterImpl implements
-                                  GridView.Presenter,
+                                  Presenter,
                                   DiskResourcePathSelectedEvent.DiskResourcePathSelectedEventHandler,
-                                  DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
+                                  DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler
+                                  {
 
     private final class SaveMetadataCallback implements AsyncCallback<String> {
         private final SaveAsDialog save_dialog;
@@ -209,7 +218,7 @@ public class GridViewPresenterImpl implements
     @Inject
     GridViewPresenterImpl(final GridViewFactory gridViewFactory,
                           final FolderContentsRpcProxyFactory folderContentsProxyFactory,
-                          final GridView.Presenter.Appearance appearance,
+                          final Presenter.Appearance appearance,
                           @Assisted final NavigationView.Presenter navigationPresenter,
                           @Assisted final List<InfoType> infoTypeFilters,
                           @Assisted final TYPE entityType) {
@@ -218,6 +227,8 @@ public class GridViewPresenterImpl implements
         this.listStore = new ListStore<>(new DiskResourceModelKeyProvider());
         GridView.FolderContentsRpcProxy folderContentsRpcProxy = folderContentsProxyFactory.createWithEntityType(infoTypeFilters,
                                                                                                                  entityType);
+
+        EventBus.getInstance().addHandler(TemplateDownloadEvent.TYPE,this);
 
         this.view = gridViewFactory.create(this, listStore, folderContentsRpcProxy);
 
@@ -694,6 +705,42 @@ public class GridViewPresenterImpl implements
                 save_dialog.toFront();
             }
         });
+    }
+
+    @Override
+    public void onDownloadClick(TemplateDownloadEvent event) {
+        final String encodedSimpleDownloadURL =
+                diskResourceService.downloadTemplate(event.getSelectedTemplateId());
+        WindowUtil.open(encodedSimpleDownloadURL, "width=100,height=100");
+    }
+
+    @Override
+    public void onDownloadTemplateSelected(DownloadTemplateSelectedEvent event) {
+        final MetadataView.Presenter.Appearance appearance =
+                GWT.create(MetadataView.Presenter.Appearance.class);
+       diskResourceService.getMetadataTemplateListing(new AsyncCallback<List<MetadataTemplateInfo>>() {
+           @Override
+           public void onFailure(Throwable caught) {
+               ErrorHandler.post(appearance.templateinfoError(), caught);
+           }
+
+           @Override
+           public void onSuccess(List<MetadataTemplateInfo> result) {
+               final SelectMetadataTemplateDialog view = new SelectMetadataTemplateDialog(result, appearance, false);
+               view.getOkButton().addSelectHandler(new SelectHandler() {
+                   @Override
+                   public void onSelect(SelectEvent event) {
+                       final String encodedSimpleDownloadURL =
+                               diskResourceService.downloadTemplate(view.getSelectedTemplate().getId());
+                       WindowUtil.open(encodedSimpleDownloadURL, "width=100,height=100");
+                   }
+               });
+               view.setModal(false);
+               view.setSize("400px", "400px");
+               view.setHeadingText(appearance.selectTemplate());
+               view.show();
+           }
+       });
     }
 
 }

@@ -12,6 +12,7 @@ import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEve
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.events.selection.CopyMetadataSelected;
 import org.iplantc.de.diskResource.client.events.selection.DeleteDiskResourcesSelected;
+import org.iplantc.de.diskResource.client.events.selection.DownloadTemplateSelectedEvent;
 import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.selection.EmptyTrashSelected;
 import org.iplantc.de.diskResource.client.events.selection.ImportFromUrlSelected;
@@ -96,8 +97,8 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
     @UiField
     TextButton refreshButton;
     @UiField
-    MenuItem renameMi, moveMi, deleteMi, editFileMi, editCommentsMi, editInfoTypeMi, savemetadatami,
-            copymetadataMi, editmetadataMi, bulkmetadataMi, selectmetadataMi, doiMi;
+    MenuItem renameMi, moveMi, deleteMi, editFileMi, editCommentsMi, editInfoTypeMi, savemetadataMi,
+            copymetadataMi, editmetadataMi, bulkmetadataMi, selectmetadataMi, doiMi, downloadtemplateMi;
 
     @UiField
     TextButton metadataMenu;
@@ -244,6 +245,12 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         return addHandler(handler, SimpleUploadSelected.TYPE);
     }
 
+    @Override
+    public HandlerRegistration addDownloadTemplateSelectedEventHandler(DownloadTemplateSelectedEvent.DownloadTemplateSelectedEventHandler handler) {
+        return addHandler(handler, DownloadTemplateSelectedEvent.TYPE);
+    }
+
+
     // </editor-fold>
 
     // <editor-fold desc="Selection Handlers">
@@ -324,7 +331,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         editInfoTypeMi.setEnabled(editInfoTypeMiEnabled);
 
         copymetadataMi.setEnabled(metadataMiEnabled && isReadable);
-        savemetadatami.setEnabled(metadataMiEnabled && isReadable);
+        savemetadataMi.setEnabled(metadataMiEnabled && isReadable);
         bulkmetadataMi.setEnabled(
                 metadataMiEnabled && isFolderSelect && (isOwner || isWriteable));
         selectmetadataMi.setEnabled(
@@ -455,10 +462,15 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         fireEvent(new CopyMetadataSelected(selectedDiskResources.iterator().next()));
     }
 
-    @UiHandler("savemetadatami")
+    @UiHandler("savemetadataMi")
     void onSaveMetadataClicked(SelectionEvent<Item> event) {
         Preconditions.checkState(selectedDiskResources != null && selectedDiskResources.size() == 1);
         fireEvent(new SaveMetadataSelected(selectedDiskResources.iterator().next()));
+    }
+
+    @UiHandler("downloadtemplateMi")
+    void onDownloadTemplateClicked(SelectionEvent<Item> event) {
+       fireEvent(new DownloadTemplateSelectedEvent());
     }
 
     @UiHandler("emptyTrashMi")
@@ -732,7 +744,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         // Metadata menu
         metadataMenu.ensureDebugId(baseID + Ids.METADATA_MENU);
         copymetadataMi.ensureDebugId(baseID + Ids.METADATA_MENU + Ids.MENU_ITEM_METADATA_COPY);
-        savemetadatami.ensureDebugId(baseID + Ids.METADATA_MENU + Ids.MENU_ITEM_METADATA_SAVE);
+        savemetadataMi.ensureDebugId(baseID + Ids.METADATA_MENU + Ids.MENU_ITEM_METADATA_SAVE);
         editmetadataMi.ensureDebugId(baseID + Ids.METADATA_MENU + Ids.MENU_ITEM_METADATA_EDIT);
         doiMi.ensureDebugId(baseID + Ids.METADATA_MENU + Ids.MENU_ITEM_REQUEST_DOI);
         bulkmetadataMi.ensureDebugId(baseID + Ids.METADATA_MENU + Ids.MENU_ITEM_BULK_METADATA);
@@ -838,5 +850,4 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         bmd.show();
 
     }
-
 }
