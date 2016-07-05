@@ -168,13 +168,13 @@ func TestCreateIsContainerAndNukeByName(t *testing.T) {
 	expectedInt := job.Steps[0].Component.Container.MemoryLimit
 	actualInt := containerJSON.HostConfig.Memory
 	if actualInt != expectedInt {
-		t.Errorf("Config.Memory was %s instead of %s\n", actualInt, expectedInt)
+		t.Errorf("Config.Memory was %d instead of %d\n", actualInt, expectedInt)
 	}
 
 	expectedInt = job.Steps[0].Component.Container.CPUShares
 	actualInt = containerJSON.HostConfig.CPUShares
 	if actualInt != expectedInt {
-		t.Errorf("Config.CPUShares was %s instead of %s\n", actualInt, expectedInt)
+		t.Errorf("Config.CPUShares was %d instead of %d\n", actualInt, expectedInt)
 	}
 
 	expected := job.Steps[0].Component.Container.EntryPoint

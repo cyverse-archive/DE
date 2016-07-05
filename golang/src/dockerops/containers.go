@@ -338,6 +338,10 @@ func (d *Docker) CreateContainerFromStep(step *model.Step, invID string) (string
 		)
 	}
 
+	if config.Volumes == nil {
+		config.Volumes = make(map[string]struct{})
+	}
+
 	// We conflated volumes and binds. declare all of the volumes
 	// as volumes and only turn them into mounts if a source path
 	// is also set.
