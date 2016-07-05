@@ -94,8 +94,9 @@
 (defn list-job
   [apps-client job-id]
   (let [job-info   (jp/get-job-by-id job-id)
-        app-tables (.loadAppTables apps-client [(:app-id job-info)])]
-    (format-job apps-client app-tables (jp/list-representative-job-steps [job-id]) job-info)))
+        app-tables (.loadAppTables apps-client [(:app-id job-info)])
+        rep-steps  (group-by :job-id (jp/list-representative-job-steps [job-id]))]
+    (format-job apps-client app-tables rep-steps job-info)))
 
 (defn- format-job-step
   [step]
