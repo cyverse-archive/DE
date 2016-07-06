@@ -1,6 +1,5 @@
 package org.iplantc.de.admin.desktop.client.metadata.view;
 
-import org.iplantc.de.admin.desktop.client.metadata.view.TemplateListingView.Presenter;
 import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.apps.widgets.client.view.editors.widgets.CheckBoxAdapter;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
@@ -93,7 +92,6 @@ public class EditMetadataTemplateViewImpl extends Composite implements IsWidget,
     @UiField CheckBoxAdapter chkDeleted;
 
     private final MetadataTemplateAttributeProperties mta_props;
-    private Presenter presenter;
     private final DiskResourceAutoBeanFactory drFac;
     private GridEditing<MetadataTemplateAttribute> editing;
     private String templateId; // cache id when editing existing template
@@ -323,11 +321,6 @@ public class EditMetadataTemplateViewImpl extends Composite implements IsWidget,
     @UiHandler("delBtn")
     void delButtonClicked(SelectEvent event) {
         store.remove(grid.getSelectionModel().getSelectedItem());
-    }
-
-    @Override
-    public void setPresenter(Presenter p) {
-        this.presenter = p;
     }
 
     @Override

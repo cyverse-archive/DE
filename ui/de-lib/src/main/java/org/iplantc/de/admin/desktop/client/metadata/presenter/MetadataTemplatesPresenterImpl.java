@@ -1,5 +1,8 @@
 package org.iplantc.de.admin.desktop.client.metadata.presenter;
 
+import org.iplantc.de.admin.desktop.client.metadata.events.AddMetadataSelectedEvent;
+import org.iplantc.de.admin.desktop.client.metadata.events.DeleteMetadataSelectedEvent;
+import org.iplantc.de.admin.desktop.client.metadata.events.EditMetadataSelectedEvent;
 import org.iplantc.de.admin.desktop.client.metadata.service.MetadataTemplateAdminServiceFacade;
 import org.iplantc.de.admin.desktop.client.metadata.view.EditMetadataTemplateView;
 import org.iplantc.de.admin.desktop.client.metadata.view.TemplateListingView;
@@ -33,7 +36,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class MetadataTemplatesPresenterImpl implements TemplateListingView.Presenter {
+public class MetadataTemplatesPresenterImpl implements TemplateListingView.Presenter,
+                                                       EditMetadataSelectedEvent.EditMetadataSelectedEventHandler,
+                                                       AddMetadataSelectedEvent.AddMetadataSelectedEventHandler,
+                                                       DeleteMetadataSelectedEvent.DeleteMetadataSelectedEventHandler {
 
     private final TemplateListingView view;
     private final DiskResourceServiceFacade drSvcFac;
@@ -57,12 +63,15 @@ public class MetadataTemplatesPresenterImpl implements TemplateListingView.Prese
         this.mdSvcFac = mdSvcFac;
         this.drFac = drFac;
         this.appearance = appearance;
+
+        view.addAddMetadataSelectedEventHandler(this);
+        view.addDeleteMetadataSelectedEventHandler(this);
+        view.addEditMetadataSelectedEventHandler(this);
     }
 
     @Override
     public void go(HasOneWidget container) {
         container.setWidget(view.asWidget());
-        view.setPresenter(this);
         loadTemplates();
     }
 
@@ -86,7 +95,8 @@ public class MetadataTemplatesPresenterImpl implements TemplateListingView.Prese
     }
 
     @Override
-    public void deleteTemplate(final MetadataTemplateInfo template) {
+    public void onDeleteMetadataSelectedHandler(DeleteMetadataSelectedEvent event) {
+        final MetadataTemplateInfo template = event.getTemplateInfo();
         ConfirmMessageBox cmb = new ConfirmMessageBox("Confirm", appearance.deleteTemplateConfirm());
         cmb.addDialogHideHandler(new DialogHideHandler(){
 
@@ -125,7 +135,8 @@ public class MetadataTemplatesPresenterImpl implements TemplateListingView.Prese
     }
 
     @Override
-    public void editTemplate(MetadataTemplateInfo template) {
+    public void onEditMetadataSelected(EditMetadataSelectedEvent event) {
+        MetadataTemplateInfo template = event.getTemplateInfo();
         drSvcFac.getMetadataTemplate(template.getId(), new AsyncCallback<MetadataTemplate>() {
 
             @Override
@@ -212,7 +223,7 @@ public class MetadataTemplatesPresenterImpl implements TemplateListingView.Prese
     }
 
     @Override
-    public void addTemplate() {
+    public void onAddMetadataSelected(AddMetadataSelectedEvent event) {
         final IPlantDialog d = createEditDialog();
         d.addOkButtonSelectHandler(new SelectHandler() {
 
