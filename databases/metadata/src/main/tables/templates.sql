@@ -6,6 +6,7 @@ SET search_path = public, pg_catalog;
 CREATE TABLE templates (
     id uuid NOT NULL DEFAULT uuid_generate_v1(),
     name varchar(64) NOT NULL,
+    description text,
     deleted boolean DEFAULT FALSE NOT NULL,
     created_by varchar(512) NOT NULL,
     modified_by varchar(512) NOT NULL,
