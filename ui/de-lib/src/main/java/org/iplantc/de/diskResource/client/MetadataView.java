@@ -76,6 +76,8 @@ public interface MetadataView extends IsWidget {
         ImageResource editIcon();
 
         String edit();
+
+        String importMdTooltip();
     }
 
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter {
@@ -101,6 +103,10 @@ public interface MetadataView extends IsWidget {
             String incomplete();
 
             ImageResource info();
+
+            String importMdMsg();
+
+            String importMd();
         }
 
         Avu setAvuModelKey(Avu avu);

@@ -26,6 +26,7 @@ import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
+import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent.DialogHideHandler;
@@ -195,11 +196,25 @@ public class MetadataPresenterImpl implements MetadataView.Presenter{
     }
 
     @Override
-    public void onImport(List<Avu> selectedItems) {
-        view.mask();
-        view.addToUserMetadata(selectedItems);
-        view.removeImportedMetadataFromStore(selectedItems);
-        view.unmask();
+    public void onImport(final List<Avu> selectedItems) {
+        ConfirmMessageBox cmb = new ConfirmMessageBox(appearance.importMd(), appearance.importMdMsg());
+        cmb.addDialogHideHandler(new DialogHideHandler() {
+            @Override
+            public void onDialogHide(DialogHideEvent event) {
+                switch (event.getHideButton()) {
+                    case YES:
+                        view.mask();
+                        view.addToUserMetadata(selectedItems);
+                        view.removeImportedMetadataFromStore(selectedItems);
+                        view.unmask();
+                        break;
+                    case NO:
+                        break;
+                    default:
+                        //error, button added with no specific action ready
+                }
+            }});
+        cmb.show();
     }
 
     @Override
