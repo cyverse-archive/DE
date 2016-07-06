@@ -15,7 +15,7 @@
      (list-templates true))
   ([hide-deleted?]
      (select :templates
-             (fields :id :name :deleted :created_by :created_on :modified_by :modified_on)
+             (fields :id :name :description :deleted :created_by :created_on :modified_by :modified_on)
              (add-deleted-where-clause hide-deleted?)
              (order :name))))
 
@@ -74,6 +74,7 @@
   (first (select [:templates :template]
                  (fields :id
                          :name
+                         :description
                          :deleted
                          :created_by
                          :created_on
@@ -146,7 +147,7 @@
 
 (defn- prepare-template-insertion
   [user template]
-  (->> (assoc (select-keys template [:id :name])
+  (->> (assoc (select-keys template [:id :name :description])
          :created_by  user
          :modified_by user)
        (remove-nil-values)))
@@ -162,8 +163,8 @@
     template-id))
 
 (defn- prepare-template-update
-  [user template-id template]
-  (->> (assoc (select-keys template [:name :deleted])
+  [user template]
+  (->> (assoc (select-keys template [:name :deleted :description])
          :modified_by user
          :modified_on (sqlfn now))
        (remove-nil-values)))
@@ -221,7 +222,7 @@
   [user template-id {:keys [attributes] :as template}]
   (assert-found (get-metadata-template template-id) "metadata template" template-id)
   (sql/update :templates
-          (set-fields (prepare-template-update user template-id template))
+          (set-fields (prepare-template-update user template))
           (where {:id template-id}))
   (delete :template_attrs (where {:template_id template-id}))
   (dorun (map-indexed (partial update-template-attribute user template-id) attributes))
