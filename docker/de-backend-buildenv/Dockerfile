@@ -4,8 +4,8 @@ ARG git_commit
 LABEL org.iplantc.de.buildenv.git-ref="$git_commit"
 
 ENV GOOS=linux GOARCH=amd64 GOVERSION=1.6
-ENV MVNVERSION=3.3.3
-ENV MVNURL=http://apache.claz.org/maven/maven-3/$MVNVERSION/binaries/apache-maven-$MVNVERSION-bin.tar.gz
+#ENV MVNVERSION=3.3.3
+#ENV MVNURL=http://apache.claz.org/maven/maven-3/$MVNVERSION/binaries/apache-maven-$MVNVERSION-bin.tar.gz
 
 ##RUN rpm -Uvh http://ftp.linux.ncsu.edu/pub/epel/5/i386/epel-release-5-4.noarch.rpm
 RUN yum install -y \
@@ -29,10 +29,10 @@ RUN mkdir -p /opt/go && \
     curl -O https://storage.googleapis.com/golang/go$GOVERSION.$GOOS-$GOARCH.tar.gz && \
     tar xzf go$GOVERSION.$GOOS-$GOARCH.tar.gz -C /opt/go --strip-components=1 && \
     rm -rf go$GOVERSION.$GOOS-$GOARCH.tar.gz
-RUN mkdir -p /opt/maven && \
-    curl -O $MVNURL && \
-    tar xzf apache-maven-$MVNVERSION-bin.tar.gz -C /opt/maven --strip-components=1 && \
-    rm -rf apache-maven-$MVNVERSION-bin.tar.gz
+#RUN mkdir -p /opt/maven && \
+#    curl -O $MVNURL && \
+#    tar xzf apache-maven-$MVNVERSION-bin.tar.gz -C /opt/maven --strip-components=1 && \
+#    rm -rf apache-maven-$MVNVERSION-bin.tar.gz
 RUN mkdir -p /opt/nodejs && \
     curl -O http://nodejs.org/dist/v0.10.32/node-v0.10.32-linux-x64.tar.gz && \
     tar xzf node-v0.10.32-linux-x64.tar.gz -C /opt/nodejs --strip-components=1 && \
