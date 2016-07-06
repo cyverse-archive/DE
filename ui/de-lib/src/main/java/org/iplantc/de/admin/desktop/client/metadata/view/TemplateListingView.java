@@ -39,6 +39,8 @@ public interface TemplateListingView extends IsWidget, IsMaskable {
         String lastModBy();
 
         String nameColumn();
+
+        String descriptionColumn();
     }
 
     public interface Presenter {

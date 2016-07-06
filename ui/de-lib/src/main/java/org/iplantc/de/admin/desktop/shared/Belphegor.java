@@ -202,6 +202,7 @@ public interface Belphegor {
         String DELETE_MSG_BOX = "deleteMetadataMsgBox";
         String YES = ".yesBtn";
         String NO = ".noBtn";
+        String TEMPLATE_DESCRIPTION = ".description";
     }
 
     interface PermIds {

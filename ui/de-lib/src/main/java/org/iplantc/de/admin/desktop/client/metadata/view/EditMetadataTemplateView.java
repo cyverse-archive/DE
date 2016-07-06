@@ -25,6 +25,7 @@ public interface EditMetadataTemplateView extends IsWidget, IsMaskable {
 
         String enumError();
 
+        int tempNameMaxLength();
     }
 
     void setPresenter(Presenter p);

@@ -139,7 +139,7 @@ public class MetadataTemplatesPresenterImpl implements TemplateListingView.Prese
                         if (editView.validate()) {
                             MetadataTemplate template = editView.getTemplate();
                             Splittable sp = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(template));
-                            LOG.log(Level.SEVERE, sp.getPayload());
+                            LOG.log(Level.INFO, sp.getPayload());
                             doAddOrUpdate(id, template.getId(), sp.getPayload());
                         } else {
                             IplantAnnouncer.getInstance()

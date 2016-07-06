@@ -14,6 +14,8 @@ public interface MetadataTemplateProperties extends PropertyAccess<MetadataTempl
 
     ValueProvider<MetadataTemplateInfo, String> name();
 
+    ValueProvider<MetadataTemplateInfo, String> description();
+
     ValueProvider<MetadataTemplateInfo, Date> createdDate();
 
     ValueProvider<MetadataTemplateInfo, String> createdBy();

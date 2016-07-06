@@ -97,4 +97,9 @@ public class DefaultTemplateListingAppearance implements TemplateListingAppearan
         return displayStrings.nameColumn();
     }
 
+    @Override
+    public String descriptionColumn() {
+        return displayStrings.descriptionColumn();
+    }
+
 }

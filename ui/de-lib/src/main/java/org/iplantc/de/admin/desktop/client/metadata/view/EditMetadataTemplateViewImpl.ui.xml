@@ -44,6 +44,14 @@
 			</form:FieldLabel>
 		</container:child>
 		<container:child layoutData="{toolBarLayoutData}">
+			<form:FieldLabel text="Description">
+				<form:widget>
+					<form:TextField ui:field="tempDescription" allowBlank="true"
+									emptyText="Enter Template description..." />
+				</form:widget>
+			</form:FieldLabel>
+		</container:child>
+		<container:child layoutData="{toolBarLayoutData}">
           <form:FieldLabel text="Options">
             <form:widget>
               <g:HorizontalPanel>
