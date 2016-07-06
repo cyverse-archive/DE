@@ -1,5 +1,7 @@
 package org.iplantc.de.server;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +21,9 @@ public class IpRanges {
     public IpRanges(String s) {
         List<IpRange> ranges = new ArrayList<IpRange>();
         for (String r : s.split("\\s*,\\s*")) {
-            ranges.add(new IpRange(r));
+            if (!StringUtils.isBlank(r)) {
+                ranges.add(new IpRange(r));
+            }
         }
         this.ranges = ranges;
     }
