@@ -107,6 +107,7 @@ de:
   rpc_name: discoveryenvironment
   notification_poll: 15
   maintenance_file: de-maintenance
+  local_ip_ranges:
   http_server:
     service_name: de-ui-nginx.service
     service_name_short: de-ui-nginx
@@ -743,4 +744,3 @@ systemd:
     - "{{tree_urls}}"
     - "{{user_preferences}}"
     - "{{user_sessions}}"
-    

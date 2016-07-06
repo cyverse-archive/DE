@@ -51,6 +51,7 @@ public class AdminWebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${org.iplantc.discoveryenvironment.cas.logout-url}") private String logoutUrl;
     @Value("${org.iplantc.discoveryenvironment.cas.server-name}/belphegor") private String serverName;
     @Value("${org.iplantc.discoveryenvironment.cas.validation}") private String validation;
+    @Value("${org.iplantc.discoveryenvironment.local-ip-ranges}") private String localIpRanges;
 
     @Bean
     public AuthenticationUserDetailsService<CasAssertionAuthenticationToken> adminAuthenticationUserDetailsService() {
@@ -91,6 +92,7 @@ public class AdminWebSecurityConfig extends WebSecurityConfigurerAdapter {
         landingPage.setCasService(adminServiceProperties());
         landingPage.setDeMaintenanceFile(deMaintenanceFile);
         landingPage.setLoginUrl(casLoginUrl);
+        landingPage.setLocalIpRanges(localIpRanges);
         return landingPage;
     }
 
