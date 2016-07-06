@@ -86,12 +86,18 @@ public class TemplatesListingViewImpl extends Composite implements IsWidget, Tem
 
     @UiHandler("editBtn")
     void editButtonClicked(SelectEvent event) {
-        presenter.editTemplate(grid.getSelectionModel().getSelectedItem());
+        MetadataTemplateInfo selectedItem = grid.getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+            presenter.editTemplate(grid.getSelectionModel().getSelectedItem());
+        }
     }
 
     @UiHandler("delBtn")
     void delButtonClicked(SelectEvent event) {
-        presenter.deleteTemplate(grid.getSelectionModel().getSelectedItem());
+        MetadataTemplateInfo selectedItem = grid.getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+            presenter.deleteTemplate(grid.getSelectionModel().getSelectedItem());
+        }
     }
 
     @UiFactory
