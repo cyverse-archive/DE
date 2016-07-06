@@ -9,13 +9,29 @@
 (def ValidValueTypeEnum (describe (apply s/enum (tp/get-value-type-names)) "The attribute's data type"))
 
 (s/defschema MetadataTemplateListEntry
-  {:created_by  (describe String "The username of the user who created the template")
-   :created_on  (describe Date "The date and time of template creation")
-   :deleted     (describe Boolean "True if the template has been marked as deleted")
-   :id          (describe UUID "The metadata template ID")
-   :modified_by (describe String "The username of the user who most recently modified the template")
-   :modified_on (describe Date "The date and time of the most recent template modification")
-   :name        (describe String "The metadata template name")})
+  {:created_by
+   (describe String "The username of the user who created the template")
+
+   :created_on
+   (describe Date "The date and time of template creation")
+
+   :deleted
+   (describe Boolean "True if the template has been marked as deleted")
+
+   (s/optional-key :description)
+   (describe String "A brief description of the metadata template")
+
+   :id
+   (describe UUID "The metadata template ID")
+
+   :modified_by
+   (describe String "The username of the user who most recently modified the template")
+
+   :modified_on
+   (describe Date "The date and time of the most recent template modification")
+
+   :name
+   (describe String "The metadata template name")})
 
 (s/defschema MetadataTemplateList
   {:metadata_templates (describe [MetadataTemplateListEntry] "The list of metadata templates")})
@@ -100,8 +116,11 @@
    (s/optional-key :deleted)
    (describe Boolean "True if the template is being marked as deleted.")
 
+   (s/optional-key :description)
+   (describe String "A brief description of the metadata template")
+
    (s/optional-key :id)
-   (describe UUID "The attribute ID")
+   (describe UUID "The metadata template ID")
 
    :name
    (describe String "The metadata template name")})
