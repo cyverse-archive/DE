@@ -172,15 +172,12 @@ public class DiskResourcePresenterImplTest {
         verify(detailsPresenterMock, times(11)).getView();
         verify(gridViewPresenterMock, times(9)).getView();
         verify(navigationPresenterMock, times(5)).getView();
-        verify(toolbarPresenterMock, times(21)).getView();
+        verify(toolbarPresenterMock, times(22)).getView();
 
         verifyNoMoreInteractions(navigationPresenterMock,
-                                 gridViewPresenterMock,
-                                 toolbarPresenterMock,
                                  detailsPresenterMock,
                                  navigationViewMock,
                                  gridViewMock,
-                                 toolbarMock,
                                  detailsViewMock);
         verifyZeroInteractions(diskResourceServiceMock,
                                eventBusMock);
