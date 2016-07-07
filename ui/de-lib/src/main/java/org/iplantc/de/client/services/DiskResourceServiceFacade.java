@@ -355,4 +355,11 @@ public interface DiskResourceServiceFacade {
      * @param callback
      */
     void requestIdentifier(String uuid, String path, AsyncCallback<String> callback);
+
+    /**
+     *
+     * @param templateid
+     * @return url to download template
+     */
+    String downloadTemplate(String templateid);
 }

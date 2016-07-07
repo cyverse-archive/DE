@@ -203,10 +203,14 @@
                                        icon="{appearance.metadataIcon}"
                                        enabled="false"/>
 
-                        <menu:MenuItem ui:field="savemetadatami"
+                        <menu:MenuItem ui:field="savemetadataMi"
                                        text="{appearance.saveMetadataMenuItem}"
                                        icon="{appearance.metadataIcon}"
                                        enabled="false"/>
+                        <menu:MenuItem ui:field="downloadtemplateMi"
+                                       text="{appearance.downloadTemplateMenuItem}"
+                                       icon="{appearance.metadataIcon}"
+                                       enabled="true"/>
                         <menu:MenuItem ui:field="bulkmetadataMi"
                                        text="{appearance.applyBulkMetadata}"
                                        icon="{appearance.metadataIcon}" enabled="false">

@@ -114,6 +114,8 @@ public interface MetadataView extends IsWidget {
         void onImport(List<Avu> selectedItems);
 
         boolean isDirty();
+
+        void downloadTemplate(String templateid);
     }
 
 

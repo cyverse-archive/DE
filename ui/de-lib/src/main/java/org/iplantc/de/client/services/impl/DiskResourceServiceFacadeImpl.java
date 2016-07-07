@@ -10,7 +10,6 @@ import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.diskResources.DiskResourcesMovedEvent;
 import org.iplantc.de.client.events.diskResources.FolderRefreshedEvent;
-import org.iplantc.de.shared.DEProperties;
 import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.dataLink.DataLink;
@@ -32,6 +31,7 @@ import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.shared.DEProperties;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -1030,5 +1030,13 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address.toString(), body.getPayload());
         callService(wrapper, callback);
 
+    }
+
+    @Override
+    public String downloadTemplate(String templateid) {
+        String address = Format.substitute("{0}?template_id={1}",
+                                           constants.mdTemplateDownloadServlet(),
+                                           URL.encodeQueryString(templateid));
+        return address;
     }
 }

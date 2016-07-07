@@ -1,5 +1,6 @@
 package org.iplantc.de.diskResource.client.presenters.metadata;
 
+import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
@@ -9,14 +10,16 @@ import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
+import org.iplantc.de.commons.client.util.WindowUtil;
 import org.iplantc.de.diskResource.client.MetadataView;
+import org.iplantc.de.diskResource.client.events.TemplateDownloadEvent;
+import org.iplantc.de.diskResource.client.events.selection.DownloadTemplateSelectedEvent;
 import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceMetadataUpdateCallback;
 import org.iplantc.de.diskResource.client.views.metadata.dialogs.MetadataTemplateViewDialog;
 import org.iplantc.de.diskResource.client.views.metadata.dialogs.SelectMetadataTemplateDialog;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.web.bindery.autobean.shared.AutoBean;
@@ -35,7 +38,7 @@ import java.util.List;
 /**
  * @author jstroot sriram
  */
-public class MetadataPresenterImpl implements MetadataView.Presenter {
+public class MetadataPresenterImpl implements MetadataView.Presenter{
 
     private class TemplateViewCancelSelectHandler implements SelectEvent.SelectHandler {
 
@@ -164,7 +167,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
     @Override
     public void onSelectTemplate() {
         final SelectMetadataTemplateDialog view =
-                new SelectMetadataTemplateDialog(templates, appearance);
+                new SelectMetadataTemplateDialog(templates, appearance, true);
         view.addHideHandler(new HideEvent.HideHandler() {
             @Override
             public void onHide(HideEvent event) {
@@ -178,8 +181,7 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
         view.setSize("400px", "400px");
         view.setHeadingText(appearance.selectTemplate());
         view.show();
-
-    }
+   }
 
     @Override
     public void onTemplateSelected(String templateId) {
@@ -211,6 +213,13 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
 
     }
 
+    @Override
+    public void downloadTemplate(String templateid) {
+        final String encodedSimpleDownloadURL =
+                drService.downloadTemplate(templateid);
+       WindowUtil.open(encodedSimpleDownloadURL, "width=100,height=100");
+    }
+
     public static Avu newMetadata(String attr, String value, String unit) {
         // FIXME Move to presenter. Autobean factory doesn't belong in view.
         Avu avu = autoBeanFactory.avu().as();
@@ -231,6 +240,8 @@ public class MetadataPresenterImpl implements MetadataView.Presenter {
         }
         return null;
     }
+
+
 
 
     private class DiskResourceMetadataListAsyncCallback

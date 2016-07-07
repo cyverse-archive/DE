@@ -12,6 +12,7 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.core.client.Style;
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.ListStore;
@@ -29,7 +30,6 @@ import java.util.List;
  * Created by sriram on 5/4/16.
  */
 public class SelectMetadataTemplateDialog extends IPlantDialog implements IsWidget {
-
 
     @UiTemplate("SelectMetadataTemplateDialog.ui.xml")
     interface SelectMetadataTemplateViewUiBinder extends UiBinder<Widget, SelectMetadataTemplateDialog> {
@@ -49,10 +49,10 @@ public class SelectMetadataTemplateDialog extends IPlantDialog implements IsWidg
 
     @UiField(provided = true)
     ColumnModel<MetadataTemplateInfo> cm;
-    
+
     private MetadataView.Presenter.Appearance appearance;
 
-    public SelectMetadataTemplateDialog(List<MetadataTemplateInfo> templates, Appearance appearance) {
+    public SelectMetadataTemplateDialog(List<MetadataTemplateInfo> templates, Appearance appearance, boolean showDownloadCell) {
         super();
         getOkButton().disable();
         listStore = new ListStore<>(new ModelKeyProvider<MetadataTemplateInfo>() {
@@ -62,7 +62,7 @@ public class SelectMetadataTemplateDialog extends IPlantDialog implements IsWidg
             }
         });
         this.appearance = appearance;
-        cm = buildColumnModel();
+        cm = buildColumnModel(showDownloadCell);
         uiBinder.createAndBindUi(this);
         this.setWidget(asWidget());
         grid.getSelectionModel().setSelectionMode(Style.SelectionMode.SINGLE);
@@ -87,7 +87,7 @@ public class SelectMetadataTemplateDialog extends IPlantDialog implements IsWidg
     }
 
 
-    ColumnModel<MetadataTemplateInfo> buildColumnModel() {
+    ColumnModel<MetadataTemplateInfo> buildColumnModel(boolean showDownloadCell) {
         ColumnConfig<MetadataTemplateInfo, String> name =
                 new ColumnConfig<MetadataTemplateInfo, String>(new ValueProvider<MetadataTemplateInfo, String>() {
                     @Override
@@ -106,13 +106,28 @@ public class SelectMetadataTemplateDialog extends IPlantDialog implements IsWidg
                     }
                 }, 150, appearance.templates());
 
-        return new ColumnModel<MetadataTemplateInfo>(Arrays.<ColumnConfig<MetadataTemplateInfo, ?>>asList(
-                name));
+        if (showDownloadCell) {
+            ColumnConfig<MetadataTemplateInfo, MetadataTemplateInfo> download =
+                    new ColumnConfig<MetadataTemplateInfo, MetadataTemplateInfo>(new IdentityValueProvider<MetadataTemplateInfo>(),
+                                                                                 30,
+                                                                                 "");
+            download.setMenuDisabled(true);
+            download.setSortable(false);
+            DownloadTemplateCell cell = new DownloadTemplateCell();
+            download.setCell(cell);
+           return new ColumnModel<MetadataTemplateInfo>(Arrays.<ColumnConfig<MetadataTemplateInfo, ?>>asList(
+                    name,
+                    download));
+        } else {
+            return new ColumnModel<MetadataTemplateInfo>(Arrays.<ColumnConfig<MetadataTemplateInfo, ?>>asList(
+                    name));
+        }
     }
 
 
     public MetadataTemplateInfo getSelectedTemplate() {
         return grid.getSelectionModel().getSelectedItem();
     }
+
 
 }

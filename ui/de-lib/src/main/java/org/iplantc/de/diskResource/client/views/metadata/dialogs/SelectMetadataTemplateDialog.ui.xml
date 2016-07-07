@@ -24,9 +24,7 @@
               type="com.sencha.gxt.data.shared.ListStore"/>
     <ui:with field="cm"
              type="com.sencha.gxt.widget.core.client.grid.ColumnModel"/>
-
-
-       <container:VerticalLayoutContainer ui:field="container">
+   <container:VerticalLayoutContainer ui:field="container">
              <container:child layoutData="{gridLayoutData}">
                <grid:Grid ui:field="grid"
                                cm="{cm}"
