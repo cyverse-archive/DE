@@ -13,6 +13,3 @@
 ;; Permission definitions used by the DE.
 (def app-permission-def-name      "app-permission-def")
 (def analysis-permission-def-name "analysis-permission-def")
-
-;; Common permission resources.
-(def public-apps-resource-name "public-apps")

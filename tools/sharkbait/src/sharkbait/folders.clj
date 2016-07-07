@@ -16,6 +16,12 @@
   (or (StemFinder/findByName session name false)
       (Stem/saveStem session nil nil name nil nil SaveMode/INSERT true)))
 
+(defn remove-folder
+  "Removes a folder from Grouper if it exists."
+  [session name]
+  (when-let [stem (StemFinder/findByName session name false)]
+    (.delete stem)))
+
 (defn grant-privs
   "Grants privileges to a folder. The third parameter, privs, should be a set of keywords indicating which privileges
    to add. The set of valid keywords is stored in the variable, valid-privs."
@@ -27,3 +33,8 @@
                  (contains? privs :attr-read)
                  (contains? privs :attr-update)
                  (boolean revoke-unselected?))))
+
+(defn process-folders
+  "Performs the same action on a set of folders looked up by keyword."
+  [session folder-names f ks]
+  (dorun (map (comp (partial f session) folder-names) ks)))

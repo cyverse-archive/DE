@@ -33,36 +33,6 @@
      :user        user
      :password    (apply str password)}))
 
-(defn- list-de-apps-query
-  "Formats an SQL query to list all apps in the DE database."
-  []
-  (-> (select :a.id :a.is_public [:%array_agg.u.username :users])
-      (from [:app_listing :a])
-      (join [:app_category_app :aca] [:= :a.id :aca.app_id]
-            [:app_categories :c]     [:= :aca.app_category_id :c.id]
-            [:workspace :w]          [:= :c.workspace_id :w.id]
-            [:users :u]              [:= :w.user_id :u.id])
-      (group :a.id :a.is_public)
-      sql/format))
-
-(defn list-de-apps
-  "Lists all of the apps in the DE."
-  [db-spec]
-  (jdbc/query db-spec (list-de-apps-query)))
-
-(defn- list-de-analyses-query
-  "Formats an SQL query to list all of the analyses in the DE database."
-  []
-  (-> (select :j.id :u.username)
-      (from [:jobs :j])
-      (join [:users :u] [:= :j.user_id :u.id])
-      sql/format))
-
-(defn list-de-analyses
-  "Lists all of the analyses in the DE."
-  [db-spec]
-  (jdbc/query db-spec (list-de-analyses-query)))
-
 (defn- list-de-users-query
   "Formats an SQL query to list all users in the DE database."
   []
