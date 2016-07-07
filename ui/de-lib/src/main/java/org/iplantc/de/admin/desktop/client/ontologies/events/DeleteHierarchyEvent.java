@@ -7,8 +7,6 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 
-import java.util.List;
-
 /**
  * @author aramsey
  */
@@ -24,11 +22,11 @@ public class DeleteHierarchyEvent extends GwtEvent<DeleteHierarchyEvent.DeleteHi
     public static Type<DeleteHierarchyEventHandler> TYPE = new Type<DeleteHierarchyEventHandler>();
 
     private Ontology editedOntology;
-    private List<OntologyHierarchy> deletedHierarchies;
+    private OntologyHierarchy deletedHierarchy;
 
-    public DeleteHierarchyEvent(Ontology editedOntology, List<OntologyHierarchy> deletedHierarchies) {
+    public DeleteHierarchyEvent(Ontology editedOntology, OntologyHierarchy deletedHierarchy) {
         this.editedOntology = editedOntology;
-        this.deletedHierarchies = deletedHierarchies;
+        this.deletedHierarchy = deletedHierarchy;
     }
 
     public Type<DeleteHierarchyEventHandler> getAssociatedType() {
@@ -43,7 +41,7 @@ public class DeleteHierarchyEvent extends GwtEvent<DeleteHierarchyEvent.DeleteHi
         return editedOntology;
     }
 
-    public List<OntologyHierarchy> getDeletedHierarchies() {
-        return deletedHierarchies;
+    public OntologyHierarchy getDeletedHierarchy() {
+        return deletedHierarchy;
     }
 }

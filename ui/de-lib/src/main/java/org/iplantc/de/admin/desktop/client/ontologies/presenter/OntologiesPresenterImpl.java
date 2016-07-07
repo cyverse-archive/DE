@@ -480,22 +480,22 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     @Override
     public void onDeleteHierarchy(final DeleteHierarchyEvent event) {
-        List<OntologyHierarchy> deletedHierarchies = event.getDeletedHierarchies();
-        for (final OntologyHierarchy hierarchy : deletedHierarchies) {
-            serviceFacade.deleteRootHierarchy(event.getEditedOntology().getVersion(),
-                                              hierarchy.getIri(),
-                                              new AsyncCallback<List<OntologyHierarchy>>() {
-                                                  @Override
-                                                  public void onFailure(Throwable caught) {
-                                                        ErrorHandler.post(caught);
-                                                  }
+        final OntologyHierarchy deletedHierarchy = event.getDeletedHierarchy();
+        serviceFacade.deleteRootHierarchy(event.getEditedOntology().getVersion(),
+                                          deletedHierarchy.getIri(),
+                                          new AsyncCallback<List<OntologyHierarchy>>() {
+                                              @Override
+                                              public void onFailure(Throwable caught) {
+                                                  ErrorHandler.post(caught);
+                                              }
 
-                                                  @Override
-                                                  public void onSuccess(List<OntologyHierarchy> result) {
-                                                      announcer.schedule(new SuccessAnnouncementConfig(appearance.hierarchyDeleted(hierarchy.getLabel())));
-                                                      getOntologyHierarchies(event.getEditedOntology().getVersion());
-                                                  }
-                                              });
-        }
+                                              @Override
+                                              public void onSuccess(List<OntologyHierarchy> result) {
+                                                  announcer.schedule(new SuccessAnnouncementConfig(
+                                                          appearance.hierarchyDeleted(deletedHierarchy.getLabel())));
+                                                  getOntologyHierarchies(event.getEditedOntology()
+                                                                              .getVersion());
+                                              }
+                                          });
     }
 }

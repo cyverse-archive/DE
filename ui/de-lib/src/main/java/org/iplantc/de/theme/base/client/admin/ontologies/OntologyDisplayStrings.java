@@ -74,4 +74,6 @@ public interface OntologyDisplayStrings extends Messages{
     String rootColumnLabel();
 
     String hierarchyColumnLabel();
+
+    String confirmDeleteHierarchy(String selectedItem);
 }

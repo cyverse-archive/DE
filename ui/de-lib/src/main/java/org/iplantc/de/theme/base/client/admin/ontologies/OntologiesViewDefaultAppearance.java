@@ -370,4 +370,9 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     public String hierarchyColumnLabel() {
         return displayStrings.hierarchyColumnLabel();
     }
+
+    @Override
+    public String confirmDeleteHierarchy(String selectedItem) {
+        return displayStrings.confirmDeleteHierarchy(selectedItem);
+    }
 }

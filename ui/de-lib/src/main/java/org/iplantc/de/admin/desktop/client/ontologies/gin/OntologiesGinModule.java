@@ -1,7 +1,6 @@
 package org.iplantc.de.admin.desktop.client.ontologies.gin;
 
 import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
-import org.iplantc.de.admin.desktop.client.ontologies.gin.factory.DeleteHierarchiesFactory;
 import org.iplantc.de.admin.desktop.client.ontologies.gin.factory.OntologiesViewFactory;
 import org.iplantc.de.admin.desktop.client.ontologies.model.OntologyHierarchyTreeStoreProvider;
 import org.iplantc.de.admin.desktop.client.ontologies.presenter.OntologiesPresenterImpl;
@@ -10,8 +9,6 @@ import org.iplantc.de.admin.desktop.client.ontologies.service.impl.OntologyServi
 import org.iplantc.de.admin.desktop.client.ontologies.views.AppCategorizeView;
 import org.iplantc.de.admin.desktop.client.ontologies.views.AppCategorizeViewImpl;
 import org.iplantc.de.admin.desktop.client.ontologies.views.OntologiesViewImpl;
-import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.DeleteHierarchiesView;
-import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.DeleteHierarchiesViewImpl;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -30,11 +27,8 @@ public class OntologiesGinModule extends AbstractGinModule {
                 .toProvider(OntologyHierarchyTreeStoreProvider.class);
         install(new GinFactoryModuleBuilder().implement(OntologiesView.class, OntologiesViewImpl.class).build(
                 OntologiesViewFactory.class));
-        install(new GinFactoryModuleBuilder().build(
-                DeleteHierarchiesFactory.class));
         bind(OntologiesView.Presenter.class).to(OntologiesPresenterImpl.class);
         bind(OntologyServiceFacade.class).to(OntologyServiceFacadeImpl.class);
         bind(AppCategorizeView.class).to(AppCategorizeViewImpl.class);
-        bind(DeleteHierarchiesView.class).to(DeleteHierarchiesViewImpl.class);
     }
 }

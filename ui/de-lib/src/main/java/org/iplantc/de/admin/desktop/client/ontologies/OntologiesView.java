@@ -186,6 +186,8 @@ public interface OntologiesView extends IsWidget,
         int hierarchyColumnWidth();
 
         String hierarchyColumnLabel();
+
+        String confirmDeleteHierarchy(String selectedItem);
     }
 
     interface Presenter {

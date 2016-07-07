@@ -499,7 +499,7 @@ public class OntologiesPresenterImplTest {
     @Test
     public void testOnDeleteHierarchy() {
         DeleteHierarchyEvent eventMock = mock(DeleteHierarchyEvent.class);
-        when(eventMock.getDeletedHierarchies()).thenReturn(ontologyHierarchyListMock);
+        when(eventMock.getDeletedHierarchy()).thenReturn(hierarchyMock);
         when(eventMock.getEditedOntology()).thenReturn(ontologyMock);
         when(ontologyMock.getIri()).thenReturn("iri");
 
@@ -507,7 +507,7 @@ public class OntologiesPresenterImplTest {
 
         /** CALL METHOD UNDER TEST **/
         spy.onDeleteHierarchy(eventMock);
-        verify(serviceFacadeMock, times(2)).deleteRootHierarchy(anyString(), anyString(), asyncOntologyHierarchyListCaptor.capture());
+        verify(serviceFacadeMock).deleteRootHierarchy(anyString(), anyString(), asyncOntologyHierarchyListCaptor.capture());
 
         asyncOntologyHierarchyListCaptor.getValue().onSuccess(ontologyHierarchyListMock);
         verify(announcerMock).schedule(any(SuccessAnnouncementConfig.class));
