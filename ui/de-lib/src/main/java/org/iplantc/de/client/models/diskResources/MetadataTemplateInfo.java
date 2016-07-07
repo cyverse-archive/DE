@@ -40,4 +40,11 @@ public interface MetadataTemplateInfo  extends HasId, HasName {
 
     @PropertyName("deleted")
     void setDeleted(Boolean delete);
+
+    @PropertyName("description")
+    String getDescription();
+
+    @PropertyName("description")
+    void setDescription(String desc);
+
 }
