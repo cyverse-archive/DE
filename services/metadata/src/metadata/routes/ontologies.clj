@@ -73,10 +73,14 @@
              :path-params [ontology-version :- OntologyVersionParam
                            root-iri :- OntologyClassIRIParam]
              :query [{:keys [user]} StandardUserQueryParams]
+             :return OntologyHierarchyList
              :summary "Delete an Ontology Hierarchy"
              :description
-             "Removes an Ontology Hierarchy and all associated Ontology Classes saved under the given
-              `root-iri` for the given `ontology-version`."
+             "Removes the Ontology Class for the given `root-iri` and `ontology-version`, and all
+              sub-classes saved under its hierarchy. The `root-iri` may be a root saved by the `PUT`
+              endpoint, or any class IRI anywhere in its hierarchy.
+              Deleted classes and sub-hierarchies can easily be re-added by re-saving the
+              hierarchy's root with the `PUT` endpoint again."
              (ok (service/delete-hierarchy user ontology-version root-iri)))
 
     (PUT* "/:ontology-version/:root-iri" []
@@ -87,5 +91,8 @@
           :summary "Save an Ontology Hierarchy"
           :description
           "Save an Ontology Hierarchy, parsed from the Ontology XML stored with the given
-           `ontology-version`, rooted at the given `root-iri`."
+           `ontology-version`, rooted at the given `root-iri`.
+           Only classes and hierarchies that are not already saved under the given `ontology-version` are
+           added. Any `root-iri` saved with this endpoint (that does not already exist) will be listed as
+           a distinct hierarchy root for the given `ontology-version`."
           (ok (service/save-hierarchy user ontology-version root-iri)))))
