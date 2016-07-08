@@ -132,7 +132,8 @@
     (let [hierarchy  (format-hierarchy ontology-version root-iri)
           class-iris (map :iri (util/hierarchy->class-set hierarchy))]
       (log/info user "deleting hierarchy" ontology-version root-iri)
-      (ont-db/delete-classes ontology-version class-iris)))
+      (when-not (empty? class-iris)
+        (ont-db/delete-classes ontology-version class-iris))))
   (list-hierarchies ontology-version))
 
 (defn filter-hierarchy

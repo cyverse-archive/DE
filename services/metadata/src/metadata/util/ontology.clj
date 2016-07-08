@@ -73,9 +73,11 @@
   ([hierarchy]
    (hierarchy->class-set #{} hierarchy))
   ([class-set hierarchy]
-  (apply sets/union class-set
-         #{(select-keys hierarchy [:iri :label :description])}
-         (map (partial hierarchy->class-set class-set) (:subclasses hierarchy)))))
+   (if-not hierarchy
+     class-set
+     (apply sets/union class-set
+            #{(select-keys hierarchy [:iri :label :description])}
+            (map (partial hierarchy->class-set class-set) (:subclasses hierarchy))))))
 
 (defn filter-hierarchy
   "Filters the given hierarchy, returning only leaf-classes that have an IRI found in the given iri-set."

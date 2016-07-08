@@ -21,7 +21,8 @@
                                               {:iri 3}
                                               {:iri 4}
                                               {:iri 5}
-                                              {:iri 6}}))))
+                                              {:iri 6}}))
+    (is (= (hierarchy->class-set nil) #{}))))
 
 (deftest hierarchy->class-subclass-pairs-test
   (testing "Test hierarchy->class-subclass-pairs."
