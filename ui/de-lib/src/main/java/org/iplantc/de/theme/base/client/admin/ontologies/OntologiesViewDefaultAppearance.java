@@ -325,4 +325,54 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     public String emptyDEOntologyLabel() {
         return displayStrings.emptyDEOntologyLabel();
     }
+
+    @Override
+    public String deleteOntology() {
+        return displayStrings.deleteOntology();
+    }
+
+    @Override
+    public String deleteHierarchy() {
+        return displayStrings.deleteHierarchy();
+    }
+
+    @Override
+    public String hierarchyDeleted(String hierarchy) {
+        return displayStrings.hierarchyDeleted(hierarchy);
+    }
+
+    @Override
+    public String confirmDeleteOntology(String version) {
+        return displayStrings.confirmDeleteOntology(version);
+    }
+
+    @Override
+    public String ontologyDeleted(String ontologyVersion) {
+        return displayStrings.ontologyDeleted(ontologyVersion);
+    }
+
+    @Override
+    public int rootColumnWidth() {
+        return 200;
+    }
+
+    @Override
+    public String rootColumnLabel() {
+        return displayStrings.rootColumnLabel();
+    }
+
+    @Override
+    public int hierarchyColumnWidth() {
+        return 100;
+    }
+
+    @Override
+    public String hierarchyColumnLabel() {
+        return displayStrings.hierarchyColumnLabel();
+    }
+
+    @Override
+    public String confirmDeleteHierarchy(String selectedItem) {
+        return displayStrings.confirmDeleteHierarchy(selectedItem);
+    }
 }

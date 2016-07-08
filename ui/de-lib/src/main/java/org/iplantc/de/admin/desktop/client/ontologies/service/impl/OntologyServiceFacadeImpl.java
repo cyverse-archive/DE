@@ -1,5 +1,6 @@
 package org.iplantc.de.admin.desktop.client.ontologies.service.impl;
 
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.DELETE;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PUT;
@@ -21,6 +22,7 @@ import org.iplantc.de.client.models.ontologies.OntologyVersionDetail;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.services.converters.AvuListCallbackConverter;
+import org.iplantc.de.client.services.converters.StringToVoidCallbackConverter;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -146,5 +148,24 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
                 return apps;
             }
         });
+    }
+
+    @Override
+    public void deleteOntology(String version, AsyncCallback<Void> callback) {
+        String address = ONTOLOGY_ADMIN + "/" + URL.encodeQueryString(version);
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(DELETE, address);
+        deService.getServiceData(wrapper, new StringToVoidCallbackConverter(callback));
+    }
+
+    @Override
+    public void deleteRootHierarchy(String version,
+                                    String root,
+                                    AsyncCallback<List<OntologyHierarchy>> callback) {
+        String address = ONTOLOGY_ADMIN + "/" + URL.encodeQueryString(version) + "/" + URL.encodeQueryString(root);
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(DELETE, address);
+        deService.getServiceData(wrapper, new OntologyHierarchyListCallbackConverter(callback, factory));
+
     }
 }

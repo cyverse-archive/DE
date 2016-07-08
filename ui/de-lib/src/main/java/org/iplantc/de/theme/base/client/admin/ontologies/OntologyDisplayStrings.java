@@ -60,4 +60,20 @@ public interface OntologyDisplayStrings extends Messages{
     String appClassified(String name, String label);
 
     String emptyDEOntologyLabel();
+
+    String deleteOntology();
+
+    String deleteHierarchy();
+
+    String hierarchyDeleted(String hierarchy);
+
+    String confirmDeleteOntology(String version);
+
+    String ontologyDeleted(String ontologyVersion);
+
+    String rootColumnLabel();
+
+    String hierarchyColumnLabel();
+
+    String confirmDeleteHierarchy(String selectedItem);
 }

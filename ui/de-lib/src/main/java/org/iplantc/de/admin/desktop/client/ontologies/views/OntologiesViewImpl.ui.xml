@@ -45,19 +45,24 @@
                     <form:SimpleComboBox ui:field="ontologyDropDown"/>
                 </toolbar:child>
                 <toolbar:child>
-                    <button:TextButton ui:field="refreshOntologies"
-                                       text="{appearance.ontologyList}"
-                                       icon="{appearance.refreshIcon}"/>
-                </toolbar:child>
-                <toolbar:child>
                     <button:TextButton ui:field="addButton"
                                        text="{appearance.addOntology}"
                                        icon="{appearance.addIcon}"/>
                 </toolbar:child>
                 <toolbar:child>
+                    <button:TextButton ui:field="deleteButton"
+                                       text="{appearance.deleteOntology}"
+                                       icon="{appearance.deleteIcon}"/>
+                </toolbar:child>
+                <toolbar:child>
                     <button:TextButton ui:field="saveHierarchy"
                                        text="{appearance.saveHierarchy}"
                                        icon="{appearance.saveIcon}"/>
+                </toolbar:child>
+                <toolbar:child>
+                    <button:TextButton ui:field="deleteHierarchy"
+                                       text="{appearance.deleteHierarchy}"
+                                       icon="{appearance.deleteIcon}"/>
                 </toolbar:child>
                 <toolbar:child>
                     <button:TextButton ui:field="categorize"

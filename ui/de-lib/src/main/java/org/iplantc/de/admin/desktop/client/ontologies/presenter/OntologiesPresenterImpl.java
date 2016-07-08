@@ -5,6 +5,8 @@ import org.iplantc.de.admin.apps.client.AdminCategoriesView;
 import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
 import org.iplantc.de.admin.desktop.client.ontologies.events.CategorizeButtonClickedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.CategorizeHierarchiesToAppEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.DeleteHierarchyEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.DeleteOntologyButtonClickedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshOntologiesEvent;
@@ -16,7 +18,6 @@ import org.iplantc.de.admin.desktop.client.ontologies.views.AppCategorizeView;
 import org.iplantc.de.admin.desktop.client.ontologies.views.AppToOntologyHierarchyDND;
 import org.iplantc.de.admin.desktop.client.ontologies.views.OntologyHierarchyToAppDND;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.CategorizeDialog;
-import org.iplantc.de.shared.DEProperties;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.avu.Avu;
@@ -31,6 +32,7 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
+import org.iplantc.de.shared.DEProperties;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.dom.client.Element;
@@ -54,7 +56,9 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                                                 SaveOntologyHierarchyEvent.SaveOntologyHierarchyEventHandler,
                                                 PublishOntologyClickEvent.PublishOntologyClickEventHandler,
                                                 HierarchySelectedEvent.HierarchySelectedEventHandler,
-                                                CategorizeButtonClickedEvent.CategorizeButtonClickedEventHandler {
+                                                CategorizeButtonClickedEvent.CategorizeButtonClickedEventHandler,
+                                                DeleteOntologyButtonClickedEvent.DeleteOntologyButtonClickedEventHandler,
+                                                DeleteHierarchyEvent.DeleteHierarchyEventHandler {
 
     private class CategorizeCallback implements AsyncCallback<List<Avu>> {
         private final App selectedApp;
@@ -126,14 +130,15 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
         @Override
         public void onSuccess(List<OntologyHierarchy> result) {
+            view.clearStore();
             if (result.size() == 0) {
                 view.showEmptyTreePanel();
             } else {
                 view.maskHierarchyTree();
-                view.clearStore();
                 addHierarchies(null, result);
             }
             view.unMaskHierarchyTree();
+            view.updateButtonStatus();
         }
     }
 
@@ -193,6 +198,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         view.addSaveOntologyHierarchyEventHandler(this);
         view.addPublishOntologyClickEventHandler(this);
         view.addCategorizeButtonClickedEventHandler(this);
+        view.addDeleteOntologyButtonClickedEventHandler(this);
+        view.addDeleteHierarchyEventHandler(this);
     }
 
 
@@ -314,9 +321,14 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
         view.showTreePanel();
         view.maskHierarchyTree();
-        serviceFacade.getOntologyHierarchies(event.getSelectedOntology().getVersion(),
-                                             new HierarchiesCallback());
 
+        getOntologyHierarchies(event.getSelectedOntology().getVersion());
+
+    }
+
+    void getOntologyHierarchies(String version) {
+        serviceFacade.getOntologyHierarchies(version,
+                                             new HierarchiesCallback());
     }
 
     void addHierarchies(OntologyHierarchy parent, List<OntologyHierarchy> children) {
@@ -389,6 +401,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
             @Override
             public void onSuccess(OntologyVersionDetail result) {
                 announcer.schedule(new SuccessAnnouncementConfig(appearance.setActiveOntologySuccess()));
+                getOntologies(true);
             }
         });
     }
@@ -449,4 +462,40 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         return view.getSelectedHierarchy();
     }
 
+    @Override
+    public void onDeleteOntologyButtonClicked(final DeleteOntologyButtonClickedEvent event) {
+        serviceFacade.deleteOntology(event.getOntologyVersion(), new AsyncCallback<Void>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+            }
+
+            @Override
+            public void onSuccess(Void result) {
+                announcer.schedule(new SuccessAnnouncementConfig(appearance.ontologyDeleted(event.getOntologyVersion())));
+                getOntologies(false);
+            }
+        });
+    }
+
+    @Override
+    public void onDeleteHierarchy(final DeleteHierarchyEvent event) {
+        final OntologyHierarchy deletedHierarchy = event.getDeletedHierarchy();
+        serviceFacade.deleteRootHierarchy(event.getEditedOntology().getVersion(),
+                                          deletedHierarchy.getIri(),
+                                          new AsyncCallback<List<OntologyHierarchy>>() {
+                                              @Override
+                                              public void onFailure(Throwable caught) {
+                                                  ErrorHandler.post(caught);
+                                              }
+
+                                              @Override
+                                              public void onSuccess(List<OntologyHierarchy> result) {
+                                                  announcer.schedule(new SuccessAnnouncementConfig(
+                                                          appearance.hierarchyDeleted(deletedHierarchy.getLabel())));
+                                                  getOntologyHierarchies(event.getEditedOntology()
+                                                                              .getVersion());
+                                              }
+                                          });
+    }
 }
