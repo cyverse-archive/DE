@@ -140,4 +140,6 @@ public interface App extends HasId,
     void setPermission(PermissionValue value);
 
     PermissionValue getPermission();
+
+    Boolean isBeta();
 }

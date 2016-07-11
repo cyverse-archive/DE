@@ -131,4 +131,6 @@ public interface AppsMessages extends Messages {
     String hpcTab();
 
     String viewCategoriesHeader();
+
+    String betaToolTip();
 }

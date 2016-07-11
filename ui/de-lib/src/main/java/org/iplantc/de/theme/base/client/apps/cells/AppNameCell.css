@@ -28,3 +28,12 @@
     padding-top: 2px;
     padding-bottom: 2px;
 }
+
+.appBeta {
+    cursor: pointer;
+    color: blue;
+}
+
+.appBeta:hover {
+    text-decoration: underline;
+}
