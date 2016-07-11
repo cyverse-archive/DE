@@ -29,7 +29,7 @@ public interface App extends HasId,
     String IS_PUBLIC_KEY = "is_public";
     String PIPELINE_ELIGIBILITY_KEY = "pipeline_eligibility";
     String STEP_COUNT_KEY = "step_count";
-    String SUGGESTED_GROUPS_KEY = "suggested_groups";
+    String SUGGESTED_GROUPS_KEY = "suggested_categories";
     String TOOLS_KEY = "tools";
     String WIKI_URL_KEY = "wiki_url";
     String REFERENCES_KEY = "references";
