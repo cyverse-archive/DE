@@ -60,7 +60,7 @@ public interface AppServiceFacade {
      *
      * @param callback
      */
-    void getAppCategories(AsyncCallback<List<AppCategory>> callback);
+    void getAppCategories(boolean privateOnly, AsyncCallback<List<AppCategory>> callback);
 
     /**
      * Searches for all active Apps with a name or description that contains the given search term.

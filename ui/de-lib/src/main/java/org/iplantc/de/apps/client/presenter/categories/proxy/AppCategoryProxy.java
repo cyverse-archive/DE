@@ -25,7 +25,7 @@ public class AppCategoryProxy extends RpcProxy<AppCategory, List<AppCategory>> {
 
     @Override
     public void load(AppCategory loadConfig, final AsyncCallback<List<AppCategory>> callback) {
-        serviceFacade.getAppCategories(callback);
+        serviceFacade.getAppCategories(false, callback);
     }
 
 }

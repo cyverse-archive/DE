@@ -152,7 +152,7 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
 
         workspaceView.getTree().mask(appearance.getAppCategoriesLoadingMask());
         hpcView.getTree().mask(appearance.getAppCategoriesLoadingMask());
-        appService.getAppCategories(new AsyncCallback<List<AppCategory>>() {
+        appService.getAppCategories(true, new AsyncCallback<List<AppCategory>>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
@@ -202,11 +202,10 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
         workspaceCategories.clear();
         hpcCategories.clear();
         for (AppCategory category : result) {
-            if (!category.isPublic()) {
-                workspaceCategories.addAll(category.getCategories());
-            }
             if (category.getId().equals(HPC_ID)) {
                 hpcCategories.add(category);
+            } else {
+                workspaceCategories.addAll(category.getCategories());
             }
         }
     }

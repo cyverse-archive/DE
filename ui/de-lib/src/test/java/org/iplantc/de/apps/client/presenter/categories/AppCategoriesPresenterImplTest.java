@@ -1,5 +1,6 @@
 package org.iplantc.de.apps.client.presenter.categories;
 
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.eq;
@@ -130,7 +131,7 @@ public class AppCategoriesPresenterImplTest {
         uut.go(null, tabPanelMock);
 
         verify(treeMock, times(2)).mask(anyString());
-        verify(appServiceMock).getAppCategories(appCategoriesCaptor.capture());
+        verify(appServiceMock).getAppCategories(anyBoolean(), appCategoriesCaptor.capture());
 
         // Call failure with arbitrary exception
         appCategoriesCaptor.getValue().onFailure(null);
