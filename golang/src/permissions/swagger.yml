@@ -249,7 +249,7 @@ info:
   description: >-
     Manages Permissions for the CyVerse Discovery Environment and related applications.
   title: "Permissions Service"
-  version: "5.2.7.0"
+  version: "5.2.8.0"
 paths:
   /:
     get:
