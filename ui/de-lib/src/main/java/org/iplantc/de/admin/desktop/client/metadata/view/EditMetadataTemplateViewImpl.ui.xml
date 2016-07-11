@@ -46,8 +46,9 @@
 		<container:child layoutData="{toolBarLayoutData}">
 			<form:FieldLabel text="Description">
 				<form:widget>
-					<form:TextField ui:field="tempDescription" allowBlank="true"
-									emptyText="Enter Template description..." />
+					<form:TextArea ui:field="tempDescription" allowBlank="true"
+									emptyText="Enter Template description..."
+									height="50"/>
 				</form:widget>
 			</form:FieldLabel>
 		</container:child>

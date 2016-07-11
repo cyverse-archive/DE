@@ -78,7 +78,7 @@ public class EditMetadataTemplateViewImpl extends Composite implements IsWidget,
 
     @UiField
     TextField tempName;
-    @UiField TextField tempDescription;
+    @UiField TextArea tempDescription;
     @UiField
     TextButton addBtn, delBtn;
     @UiField
