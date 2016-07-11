@@ -88,15 +88,15 @@ public class SelectMetadataTemplateDialog extends IPlantDialog implements IsWidg
 
 
     ColumnModel<MetadataTemplateInfo> buildColumnModel(boolean showDownloadCell) {
-        ColumnConfig<MetadataTemplateInfo, String> name =
-                new ColumnConfig<MetadataTemplateInfo, String>(new ValueProvider<MetadataTemplateInfo, String>() {
+        ColumnConfig<MetadataTemplateInfo, MetadataTemplateInfo> name =
+                new ColumnConfig<MetadataTemplateInfo, MetadataTemplateInfo>(new ValueProvider<MetadataTemplateInfo, MetadataTemplateInfo>() {
                     @Override
-                    public String getValue(MetadataTemplateInfo object) {
-                        return object.getName();
+                    public MetadataTemplateInfo getValue(MetadataTemplateInfo object) {
+                        return object;
                     }
 
                     @Override
-                    public void setValue(MetadataTemplateInfo object, String value) {
+                    public void setValue(MetadataTemplateInfo object, MetadataTemplateInfo value) {
                         // left unimplemented
                     }
 
@@ -105,6 +105,9 @@ public class SelectMetadataTemplateDialog extends IPlantDialog implements IsWidg
                         return null;
                     }
                 }, 150, appearance.templates());
+
+        TemplateNameCell nameCell = new TemplateNameCell();
+        name.setCell(nameCell);
 
         if (showDownloadCell) {
             ColumnConfig<MetadataTemplateInfo, MetadataTemplateInfo> download =
