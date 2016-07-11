@@ -7,7 +7,7 @@
       (string/trim (:out (sh "git" "rev-parse" "HEAD")))
       ""))
 
-(defproject org.iplantc/data-info "5.2.7.0"
+(defproject org.iplantc/data-info "5.2.8.0"
   :description "provides the data information HTTP API"
   :manifest {"Git-Ref" ~(git-ref)}
   :uberjar-name "data-info-standalone.jar"
@@ -28,21 +28,21 @@
                  [net.sf.opencsv/opencsv "2.3"]
                  [de.ubercode.clostache/clostache "1.4.0" :exclusions [org.clojure/core.incubator]]
                  [slingshot "0.12.2"]
-                 [org.iplantc/clj-icat-direct "5.2.7.0"
+                 [org.iplantc/clj-icat-direct "5.2.8.0"
                    :exclusions [[org.slf4j/slf4j-log4j12]
                                 [log4j]]]
-                 [org.iplantc/clj-jargon "5.2.7.0"
+                 [org.iplantc/clj-jargon "5.2.8.0"
                    :exclusions [[org.slf4j/slf4j-log4j12]
                                 [log4j]]]
-                 [org.iplantc/clojure-commons "5.2.7.0"]
-                 [org.iplantc/common-cli "5.2.7.0"]
-                 [org.iplantc/common-cfg "5.2.7.0"]
-                 [org.iplantc/common-swagger-api "5.2.7.0"]
-                 [org.iplantc/heuristomancer "5.2.7.0"]
-                 [org.iplantc/kameleon "5.2.7.0"]
-                 [org.iplantc/metadata-client "5.2.7.0"]
-                 [org.iplantc/service-logging "5.2.7.0"]
-                 [org.iplantc/tree-urls-client "5.2.7.0"]]
+                 [org.iplantc/clojure-commons "5.2.8.0"]
+                 [org.iplantc/common-cli "5.2.8.0"]
+                 [org.iplantc/common-cfg "5.2.8.0"]
+                 [org.iplantc/common-swagger-api "5.2.8.0"]
+                 [org.iplantc/heuristomancer "5.2.8.0"]
+                 [org.iplantc/kameleon "5.2.8.0"]
+                 [org.iplantc/metadata-client "5.2.8.0"]
+                 [org.iplantc/service-logging "5.2.8.0"]
+                 [org.iplantc/tree-urls-client "5.2.8.0"]]
   :plugins [[lein-ring "0.9.6"]
             [swank-clojure "1.4.2"]
             [test2junit "1.1.3"]]

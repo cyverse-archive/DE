@@ -1,4 +1,4 @@
-(defproject org.iplantc/service-logging "5.2.7.0"
+(defproject org.iplantc/service-logging "5.2.8.0"
   :description "Common Logging Utilities for Clojure Projects"
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"

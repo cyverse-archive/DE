@@ -54,7 +54,7 @@ for project in $(find . -name project.clj -exec dirname '{}' \;); do
   popd 2>&1 > /dev/null
 done
 
-for project in $(find . -name version -exec dirname '{}' \;); do
+for project in $(find . -name version -type f -exec dirname '{}' \;); do
   pushd $project 2>&1 > /dev/null
 
   proj=$(basename $project)

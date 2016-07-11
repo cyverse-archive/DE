@@ -7,7 +7,7 @@
       (string/trim (:out (sh "git" "rev-parse" "HEAD")))
       ""))
 
-(defproject org.iplantc/metadata "5.2.7.0"
+(defproject org.iplantc/metadata "5.2.8.0"
   :description "The REST API for the Discovery Environment Metadata services."
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD Standard License"
@@ -21,12 +21,12 @@
                  [cheshire "5.5.0"]
                  [org.clojure/data.csv "0.1.3"]
                  [com.novemberain/langohr "3.5.1"]
-                 [org.iplantc/clojure-commons "5.2.7.0"]
-                 [org.iplantc/common-cfg "5.2.7.0"]
-                 [org.iplantc/common-cli "5.2.7.0"]
-                 [org.iplantc/common-swagger-api "5.2.7.0"]
-                 [org.iplantc/kameleon "5.2.7.0"]
-                 [org.iplantc/service-logging "5.2.7.0"]
+                 [org.iplantc/clojure-commons "5.2.8.0"]
+                 [org.iplantc/common-cfg "5.2.8.0"]
+                 [org.iplantc/common-cli "5.2.8.0"]
+                 [org.iplantc/common-swagger-api "5.2.8.0"]
+                 [org.iplantc/kameleon "5.2.8.0"]
+                 [org.iplantc/service-logging "5.2.8.0"]
                  [slingshot "0.12.2"]]
   :main metadata.core
   :ring {:handler metadata.core/dev-handler

@@ -1,4 +1,4 @@
-(defproject org.iplantc/debug-utils "5.2.7.0"
+(defproject org.iplantc/debug-utils "5.2.8.0"
   :description "Common Debugging Utilities for Clojure Projects"
   :url "https://github.com/cyverse/DE"
   :license {:name "BSD"

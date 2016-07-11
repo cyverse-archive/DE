@@ -1,4 +1,4 @@
-(defproject org.iplantc/permissions-client "5.2.7.0"
+(defproject org.iplantc/permissions-client "5.2.8.0"
   :description "A Clojure client library for the CyVerse permissions service."
   :url "https://github.com/cyverse/DE"
   :license {:name "BSD"
