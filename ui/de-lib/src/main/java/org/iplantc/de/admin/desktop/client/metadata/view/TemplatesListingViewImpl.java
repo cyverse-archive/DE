@@ -136,9 +136,6 @@ public class TemplatesListingViewImpl extends Composite implements IsWidget, Tem
         ColumnConfig<MetadataTemplateInfo, String> nameCol = new ColumnConfig<>(props.name(),
                                                                                 150,
                                                                                 appearance.nameColumn());
-        ColumnConfig<MetadataTemplateInfo, String> descriptionCol = new ColumnConfig<MetadataTemplateInfo, String>(props.description(),
-                                                                                                                   200,
-                                                                                                                   appearance.descriptionColumn());
         ColumnConfig<MetadataTemplateInfo, Date> createdOnCol = new ColumnConfig<>(props.createdDate(),
                                                                                    192,
                                                                                    appearance.createdOn());
@@ -150,7 +147,6 @@ public class TemplatesListingViewImpl extends Composite implements IsWidget, Tem
                                                                                     appearance.deleted());
         List<ColumnConfig<MetadataTemplateInfo, ?>> columns = new ArrayList<ColumnConfig<MetadataTemplateInfo, ?>>();
         columns.add(nameCol);
-        columns.add(descriptionCol);
         columns.add(createdOnCol);
         columns.add(createdByCol);
         columns.add(deletedCol);
