@@ -35,10 +35,10 @@ public class FileDownloadController extends DownloadController{
             throws IOException, URISyntaxException {
 
         // Prepare to process the request.
-        final URI logRequestUri = buildUri(url, path);
+        final URI logRequestUri = buildUri(url, path,attachment);
 
         // Create the request.
-        final URI uri = buildUri(url, path);
+        final URI uri = buildUri(url, path, attachment);
         final HttpGet get = new HttpGet(uri);
         processRequest(request, response, logRequestUri, get);
 
@@ -53,11 +53,11 @@ public class FileDownloadController extends DownloadController{
      * @throws URISyntaxException if the base URI {@code fileIoBaseUrl} or
      *         {@code dataMgmtServiceBaseUrl} is malformed.
      */
-    private URI buildUri(final String url, final String path) throws URISyntaxException {
+    private URI buildUri(final String url, final String path, final String attachment) throws URISyntaxException {
 
         final String baseUrl = StringUtils.isEmpty(url) ?
                                fileIoBaseUrl :
-                               dataMgmtServiceBaseUrl + url + "?attachment=0";
+                               dataMgmtServiceBaseUrl + url + "?attachment=" + attachment;
         final URIBuilder uriBuilder = new URIBuilder(baseUrl).setParameter("path", path);
 
         return uriBuilder.build();
