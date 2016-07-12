@@ -1,6 +1,5 @@
 package org.iplantc.de.admin.desktop.client.metadata.view;
 
-import org.iplantc.de.admin.desktop.client.metadata.view.TemplateListingView.Presenter;
 import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.apps.widgets.client.view.editors.widgets.CheckBoxAdapter;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
@@ -10,10 +9,12 @@ import org.iplantc.de.client.models.diskResources.TemplateAttributeSelectionItem
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
+import org.iplantc.de.commons.client.widgets.PreventEntryAfterLimitHandler;
 
 import com.google.common.base.Strings;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.safecss.shared.SafeStyles;
 import com.google.gwt.safecss.shared.SafeStylesUtils;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -23,6 +24,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -76,6 +78,7 @@ public class EditMetadataTemplateViewImpl extends Composite implements IsWidget,
 
     @UiField
     TextField tempName;
+    @UiField TextArea tempDescription;
     @UiField
     TextButton addBtn, delBtn;
     @UiField
@@ -89,7 +92,6 @@ public class EditMetadataTemplateViewImpl extends Composite implements IsWidget,
     @UiField CheckBoxAdapter chkDeleted;
 
     private final MetadataTemplateAttributeProperties mta_props;
-    private Presenter presenter;
     private final DiskResourceAutoBeanFactory drFac;
     private GridEditing<MetadataTemplateAttribute> editing;
     private String templateId; // cache id when editing existing template
@@ -122,7 +124,16 @@ public class EditMetadataTemplateViewImpl extends Composite implements IsWidget,
         tar.setFeedback(Feedback.INSERT);
         tar.setOperation(Operation.MOVE);
 
+        addTempNameMaxCharLimit();
+
         ensureDebugId(Belphegor.MetadataIds.EDIT_DIALOG + Belphegor.MetadataIds.VIEW);
+    }
+
+    private void addTempNameMaxCharLimit() {
+        TakesValue<String> takesValue = (TakesValue<String>)tempName;
+        PreventEntryAfterLimitHandler
+                newHandler = new PreventEntryAfterLimitHandler(takesValue, appearance.tempNameMaxLength());
+        tempName.asWidget().addDomHandler(newHandler, KeyDownEvent.getType());
     }
 
     @Override
@@ -130,6 +141,7 @@ public class EditMetadataTemplateViewImpl extends Composite implements IsWidget,
         super.onEnsureDebugId(baseID);
 
         tempName.setId(baseID + Belphegor.MetadataIds.TEMPLATE_NAME);
+        tempDescription.ensureDebugId(baseID + Belphegor.MetadataIds.TEMPLATE_DESCRIPTION);
         addBtn.ensureDebugId(baseID + Belphegor.MetadataIds.ADD);
         delBtn.ensureDebugId(baseID + Belphegor.MetadataIds.DELETE);
         grid.ensureDebugId(baseID + Belphegor.MetadataIds.GRID);
@@ -312,17 +324,13 @@ public class EditMetadataTemplateViewImpl extends Composite implements IsWidget,
     }
 
     @Override
-    public void setPresenter(Presenter p) {
-        this.presenter = p;
-    }
-
-    @Override
     public MetadataTemplate getTemplate() {
         MetadataTemplate mt = drFac.metadataTemplate().as();
         if (!Strings.isNullOrEmpty(templateId)) {
             mt.setId(templateId);
         }
         mt.setName(tempName.getValue());
+        mt.setDescription(tempDescription.getValue());
         mt.setAttributes(store.getAll());
         mt.setDeleted(chkDeleted.getValue());
         return mt;
@@ -355,6 +363,7 @@ public class EditMetadataTemplateViewImpl extends Composite implements IsWidget,
     @Override
     public void edit(MetadataTemplate result) {
         tempName.setValue(result.getName());
+        tempDescription.setValue(result.getDescription());
         templateId = result.getId();
         store.addAll(result.getAttributes());
         chkDeleted.setValue(result.isDeleted());
@@ -363,6 +372,7 @@ public class EditMetadataTemplateViewImpl extends Composite implements IsWidget,
     @Override
     public void reset() {
         tempName.clear();
+        tempDescription.clear();
         store.clear();
         templateId = null;
     }

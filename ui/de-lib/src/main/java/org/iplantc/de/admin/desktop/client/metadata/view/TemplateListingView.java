@@ -1,5 +1,8 @@
 package org.iplantc.de.admin.desktop.client.metadata.view;
 
+import org.iplantc.de.admin.desktop.client.metadata.events.AddMetadataSelectedEvent;
+import org.iplantc.de.admin.desktop.client.metadata.events.DeleteMetadataSelectedEvent;
+import org.iplantc.de.admin.desktop.client.metadata.events.EditMetadataSelectedEvent;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 
@@ -9,7 +12,10 @@ import com.google.gwt.user.client.ui.IsWidget;
 
 import java.util.List;
 
-public interface TemplateListingView extends IsWidget, IsMaskable {
+public interface TemplateListingView extends IsWidget, IsMaskable,
+                                             EditMetadataSelectedEvent.HasEditMetadataSelectedEventHandlers,
+                                             AddMetadataSelectedEvent.HasAddMetadataSelectedEventHandlers,
+                                             DeleteMetadataSelectedEvent.HasDeleteMetadataSelectedEventHandlers {
 
     public interface TemplateListingAppearance {
         String add();
@@ -39,6 +45,8 @@ public interface TemplateListingView extends IsWidget, IsMaskable {
         String lastModBy();
 
         String nameColumn();
+
+        String descriptionColumn();
     }
 
     public interface Presenter {
@@ -68,18 +76,10 @@ public interface TemplateListingView extends IsWidget, IsMaskable {
 
         void go(HasOneWidget container);
 
-        void deleteTemplate(MetadataTemplateInfo template);
-
-        void editTemplate(MetadataTemplateInfo template);
-
-        void addTemplate();
-
         void setViewDebugId(String baseId);
     }
 
     void loadTemplates(List<MetadataTemplateInfo> result);
-
-    void setPresenter(Presenter p);
 
     void remove(MetadataTemplateInfo template);
 

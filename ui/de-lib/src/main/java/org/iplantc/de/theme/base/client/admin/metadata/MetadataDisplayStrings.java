@@ -42,4 +42,5 @@ public interface MetadataDisplayStrings extends Messages {
 
     public String enumError();
 
+    String descriptionColumn();
 }

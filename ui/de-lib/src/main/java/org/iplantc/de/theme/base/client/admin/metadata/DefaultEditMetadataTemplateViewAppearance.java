@@ -3,7 +3,6 @@ package org.iplantc.de.theme.base.client.admin.metadata;
 import org.iplantc.de.admin.desktop.client.metadata.view.EditMetadataTemplateView.EditMetadataTemplateViewAppearance;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.theme.base.client.admin.BelphegorDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
@@ -61,6 +60,11 @@ public class DefaultEditMetadataTemplateViewAppearance implements EditMetadataTe
     @Override
     public String enumError() {
         return displayStrings.enumError();
+    }
+
+    @Override
+    public int tempNameMaxLength() {
+        return 20;
     }
 
 }

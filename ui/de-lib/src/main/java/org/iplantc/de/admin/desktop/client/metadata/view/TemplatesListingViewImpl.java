@@ -1,9 +1,13 @@
 package org.iplantc.de.admin.desktop.client.metadata.view;
 
+import org.iplantc.de.admin.desktop.client.metadata.events.AddMetadataSelectedEvent;
+import org.iplantc.de.admin.desktop.client.metadata.events.DeleteMetadataSelectedEvent;
+import org.iplantc.de.admin.desktop.client.metadata.events.EditMetadataSelectedEvent;
 import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -47,7 +51,6 @@ public class TemplatesListingViewImpl extends Composite implements IsWidget, Tem
     TemplateListingView.TemplateListingAppearance appearance;
 
     private final MetadataTemplateProperties props;
-    private Presenter presenter;
 
     @Inject
     public TemplatesListingViewImpl(final MetadataTemplateProperties props,
@@ -79,19 +82,40 @@ public class TemplatesListingViewImpl extends Composite implements IsWidget, Tem
 
     }
 
+    @Override
+    public HandlerRegistration addEditMetadataSelectedEventHandler(EditMetadataSelectedEvent.EditMetadataSelectedEventHandler handler) {
+        return addHandler(handler, EditMetadataSelectedEvent.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addAddMetadataSelectedEventHandler(AddMetadataSelectedEvent.AddMetadataSelectedEventHandler handler) {
+        return addHandler(handler, AddMetadataSelectedEvent.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addDeleteMetadataSelectedEventHandler(DeleteMetadataSelectedEvent.DeleteMetadataSelectedEventHandler handler) {
+        return addHandler(handler, DeleteMetadataSelectedEvent.TYPE);
+    }
+
     @UiHandler("addBtn")
     void addButtonClicked(SelectEvent event) {
-        presenter.addTemplate();
+        fireEvent(new AddMetadataSelectedEvent());
     }
 
     @UiHandler("editBtn")
     void editButtonClicked(SelectEvent event) {
-        presenter.editTemplate(grid.getSelectionModel().getSelectedItem());
+        MetadataTemplateInfo selectedItem = grid.getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+            fireEvent(new EditMetadataSelectedEvent(selectedItem));
+        }
     }
 
     @UiHandler("delBtn")
     void delButtonClicked(SelectEvent event) {
-        presenter.deleteTemplate(grid.getSelectionModel().getSelectedItem());
+        MetadataTemplateInfo selectedItem = grid.getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+            fireEvent(new DeleteMetadataSelectedEvent(selectedItem));
+        }
     }
 
     @UiFactory
@@ -110,7 +134,7 @@ public class TemplatesListingViewImpl extends Composite implements IsWidget, Tem
     @UiFactory
     ColumnModel<MetadataTemplateInfo> createColumnModel() {
         ColumnConfig<MetadataTemplateInfo, String> nameCol = new ColumnConfig<>(props.name(),
-                                                                                300,
+                                                                                150,
                                                                                 appearance.nameColumn());
         ColumnConfig<MetadataTemplateInfo, Date> createdOnCol = new ColumnConfig<>(props.createdDate(),
                                                                                    192,
@@ -134,11 +158,6 @@ public class TemplatesListingViewImpl extends Composite implements IsWidget, Tem
     public void loadTemplates(List<MetadataTemplateInfo> result) {
         store.clear();
         store.addAll(result);
-    }
-
-    @Override
-    public void setPresenter(Presenter p) {
-        this.presenter = p;
     }
 
     @Override
