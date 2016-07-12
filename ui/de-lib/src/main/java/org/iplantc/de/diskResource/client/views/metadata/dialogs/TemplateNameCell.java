@@ -50,11 +50,11 @@ public class TemplateNameCell extends AbstractCell<MetadataTemplateInfo> {
                                MetadataTemplateInfo value,
                                NativeEvent event,
                                ValueUpdater<MetadataTemplateInfo> valueUpdater) {
-        if (value == null) {
+        Element eventTarget = Element.as(event.getEventTarget());
+        if ((value == null) || !parent.isOrHasChild(eventTarget)) {
             return;
         }
 
-        Element eventTarget = Element.as(event.getEventTarget());
         if(eventTarget.getClassName().contains("info")){
             switch (Event.as(event).getTypeInt()) {
                 case Event.ONCLICK:
