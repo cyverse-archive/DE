@@ -99,6 +99,8 @@ public interface MetadataView extends IsWidget {
             String error();
 
             String incomplete();
+
+            ImageResource info();
         }
 
         Avu setAvuModelKey(Avu avu);
