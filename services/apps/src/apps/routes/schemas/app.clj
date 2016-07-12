@@ -427,8 +427,8 @@
     (assoc OptionalGroupsKey (describe [AppGroupRequest] GroupListDocs)
            (optional-key :is_public) AppPublicParam)))
 
-(defschema AppCategoryIdListing
-  {:categories (describe [UUID] "A listing of App Category IDs")})
+(defschema AppCategoryMetadata
+  {:avus (describe [Any] "A listing of App Category metadata")})
 
 (defschema PublishAppRequest
   (-> AppBase
@@ -437,7 +437,7 @@
     (->optional-param :description)
     (assoc :documentation AppDocParam
            :references AppReferencesParam)
-    (merge AppCategoryIdListing)))
+    (merge AppCategoryMetadata)))
 
 (defschema AdminAppPatchRequest
   (-> AppBase

@@ -20,7 +20,8 @@
             [apps.service.apps.de.docs :as app-docs]
             [apps.service.apps.de.permissions :as perms]
             [apps.translations.app-metadata :as atx]
-            [apps.util.config :as config]))
+            [apps.util.config :as config]
+            [metadata-client.core :as metadata-client]))
 
 (defn- validate-app-existence
   "Verifies that apps exist."
@@ -137,16 +138,21 @@
   (remove-app-from-category app-id fav-category-id))
   nil)
 
+(defn- publish-app-categories
+  [username app-id avus]
+  (let [body (cheshire/encode {:avus avus})]
+    (metadata-client/update-avus username "app" app-id body)))
+
 (defn- publish-app
-  [user {app-id :id :keys [references categories] :as app}]
+  [{:keys [shortUsername] :as user} {app-id :id :keys [references avus] :as app}]
   (transaction
     (amp/update-app app true)
     (app-docs/add-app-docs user app-id app)
     (amp/set-app-references app-id references)
-    (amp/set-app-suggested-categories app-id categories)
     (decategorize-app app-id)
     (add-app-to-category app-id (workspace-beta-app-category-id))
-    (perms-client/make-app-public (:shortUsername user) app-id))
+    (publish-app-categories shortUsername app-id avus)
+    (perms-client/make-app-public shortUsername app-id))
   nil)
 
 (defn make-app-public
