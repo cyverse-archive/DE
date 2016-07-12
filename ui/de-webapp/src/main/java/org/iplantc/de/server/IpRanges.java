@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Represents a set of IP address ranges.
@@ -41,5 +42,20 @@ public class IpRanges {
             }
         }
         return false;
+    }
+
+    /**
+     * Determines whether or not a servlet request matches one of the ranges in the set.
+     *
+     * @param req the request.
+     * @return true if the request matches one of the ranges.
+     */
+    public boolean matches(HttpServletRequest req) {
+        String forwardedFor = req.getHeader("X-Forwarded-For");
+        if (forwardedFor != null && forwardedFor.length() != 0) {
+            return matches(forwardedFor.split("\\s*,\\s*")[0]);
+        } else {
+            return matches(req.getRemoteAddr());
+        }
     }
 }

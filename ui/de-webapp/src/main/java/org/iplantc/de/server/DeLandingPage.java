@@ -92,18 +92,9 @@ public class DeLandingPage implements LandingPage, InitializingBean {
         return new DiscoveryEnvironmentMaintenance(deMaintenanceFile);
     }
 
-    private boolean localRequest(HttpServletRequest req) {
-        String forwardedFor = req.getHeader("X-Forwarded-For");
-        if (forwardedFor != null && forwardedFor.length() != 0) {
-            return localIpRanges.matches(forwardedFor.split("\\s*,\\s*")[0]);
-        } else {
-            return localIpRanges.matches(req.getRemoteAddr());
-        }
-    }
-
     private String buildLoginDiv(HttpServletRequest req) throws IOException {
         DiscoveryEnvironmentMaintenance deMaintenance = getDeMaintenance();
-        boolean isLocalRequest = localRequest(req);
+        boolean isLocalRequest = localIpRanges.matches(req);
         if (deMaintenance.hasMaintenanceTimes() && !isLocalRequest) {
             return buildBoundedMaintenanceDiv(deMaintenance);
         } else if (deMaintenance.isUnderMaintenance() && !isLocalRequest) {

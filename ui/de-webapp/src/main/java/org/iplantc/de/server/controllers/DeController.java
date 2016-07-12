@@ -1,6 +1,8 @@
 package org.iplantc.de.server.controllers;
 
+import org.iplantc.de.client.DiscoveryEnvironment;
 import org.iplantc.de.server.DiscoveryEnvironmentMaintenance;
+import org.iplantc.de.server.IpRanges;
 
 import com.google.common.base.Strings;
 
@@ -27,6 +29,7 @@ public class DeController {
 
     @Value("${org.iplantc.discoveryenvironment.maintenance-file}") private String maintenanceFile;
     @Value("${org.iplantc.discoveryenvironment.environment.prod-deployment}") private String isProduction;
+    @Value("${org.iplantc.discoveryenvironment.local-ip-ranges}") private String localIpRanges;
 
     @RequestMapping("/")
     public String redirectToDe(final HttpServletRequest request) throws MalformedURLException {
@@ -46,12 +49,20 @@ public class DeController {
         return "redirect:de/";
     }
 
+    private DiscoveryEnvironmentMaintenance getDeMaintenance() {
+        return new DiscoveryEnvironmentMaintenance(maintenanceFile);
+    }
+
+    private boolean isUnderMaintenance(HttpServletRequest req) {
+        return !new IpRanges(localIpRanges).matches(req) && getDeMaintenance().isUnderMaintenance();
+    }
+
     @RequestMapping("/de/")
     public String showDe(final HttpSession session,
-                         final Model model) {
-        DiscoveryEnvironmentMaintenance maintenance = new DiscoveryEnvironmentMaintenance(System.getProperty("user.dir")
-                + "/" + maintenanceFile);
-        if(maintenance.isUnderMaintenance()){
+                         final Model model,
+                         final HttpServletRequest request) {
+
+        if(isUnderMaintenance(request)){
             session.invalidate();
             LOG.info("Invalidating session");
             return "redirect:/de/logout";
