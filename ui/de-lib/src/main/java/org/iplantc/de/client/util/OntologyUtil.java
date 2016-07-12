@@ -128,7 +128,7 @@ public class OntologyUtil {
     public List<String> getPathList(OntologyHierarchy hierarchy) {
         List<String> pathList = Lists.newArrayList();
         if (hierarchy != null) {
-            String tag = getHierarchyPathTag(hierarchy);
+            String tag = getOrCreateHierarchyPathTag(hierarchy);
             pathList = Arrays.asList(tag.split("/"));
         }
         return pathList;
@@ -155,13 +155,21 @@ public class OntologyUtil {
      * @param hierarchy
      * @return
      */
-    public String treeStoreModelKeyProvider(OntologyHierarchy hierarchy) {
-        String key = getHierarchyPathTag(hierarchy);
-        setChildrenParentTag(key, hierarchy);
-        return key;
+    public String getOrCreateHierarchyPathTag(OntologyHierarchy hierarchy) {
+        if (hierarchy != null){
+            final AutoBean<OntologyHierarchy> hierarchyAutoBean = getHierarchyAutoBean(hierarchy);
+            String parentTag = hierarchyAutoBean.getTag(HIERARCHY_PARENT_MODEL_KEY);
+            String modelTag = hierarchyAutoBean.getTag(HIERARCHY_MODEL_KEY);
+            if (parentTag == null || modelTag == null) {
+                modelTag = createHierarchyPathTag(hierarchy, hierarchyAutoBean, parentTag, modelTag);
+                setParentTagOnChildren(modelTag, hierarchy);
+            }
+            return modelTag;
+        }
+        return "";
     }
 
-    void setChildrenParentTag(String parentKey, OntologyHierarchy hierarchy) {
+    void setParentTagOnChildren(String parentKey, OntologyHierarchy hierarchy) {
         if (!Strings.isNullOrEmpty(parentKey) && hierarchy != null && hierarchy.getSubclasses() != null) {
 
             for (OntologyHierarchy sub : hierarchy.getSubclasses()) {
@@ -171,24 +179,21 @@ public class OntologyUtil {
         }
     }
 
-    String getHierarchyPathTag(OntologyHierarchy hierarchy){
-        if (hierarchy != null){
-            final AutoBean<OntologyHierarchy> hierarchyAutoBean = getHierarchyAutoBean(hierarchy);
-            String parentTag = hierarchyAutoBean.getTag(HIERARCHY_PARENT_MODEL_KEY);
-            String modelTag = hierarchyAutoBean.getTag(HIERARCHY_MODEL_KEY);
-            if (parentTag == null){
-                parentTag = hierarchy.getLabel();
-                modelTag = parentTag;
-                hierarchyAutoBean.setTag(HIERARCHY_PARENT_MODEL_KEY, parentTag);
-                hierarchyAutoBean.setTag(HIERARCHY_MODEL_KEY, parentTag);
-            }
-            if (modelTag == null) {
-                modelTag = parentTag + "/" + hierarchy.getLabel();
-                hierarchyAutoBean.setTag(HIERARCHY_MODEL_KEY, modelTag);
-            }
-            return modelTag;
+    String createHierarchyPathTag(OntologyHierarchy hierarchy,
+                                          AutoBean<OntologyHierarchy> hierarchyAutoBean,
+                                          String parentTag,
+                                          String modelTag) {
+        if (parentTag == null){
+            parentTag = hierarchy.getLabel();
+            modelTag = parentTag;
+            hierarchyAutoBean.setTag(HIERARCHY_PARENT_MODEL_KEY, parentTag);
+            hierarchyAutoBean.setTag(HIERARCHY_MODEL_KEY, parentTag);
         }
-        return "";
+        if (modelTag == null) {
+            modelTag = parentTag + "/" + hierarchy.getLabel();
+            hierarchyAutoBean.setTag(HIERARCHY_MODEL_KEY, modelTag);
+        }
+        return modelTag;
     }
 
     AutoBean<OntologyHierarchy> getHierarchyAutoBean(OntologyHierarchy hierarchy) {

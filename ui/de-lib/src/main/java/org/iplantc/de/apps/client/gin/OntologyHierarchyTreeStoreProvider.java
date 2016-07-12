@@ -20,7 +20,7 @@ public class OntologyHierarchyTreeStoreProvider implements Provider<TreeStore<On
         return new TreeStore<>(new ModelKeyProvider<OntologyHierarchy>() {
             @Override
             public String getKey(OntologyHierarchy item) {
-                return ontologyUtil.treeStoreModelKeyProvider(item);
+                return ontologyUtil.getOrCreateHierarchyPathTag(item);
             }
         });
     }

@@ -18,6 +18,7 @@ import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import com.google.web.bindery.autobean.shared.AutoBean;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +34,7 @@ import java.util.List;
 public class OntologyUtilTest {
 
     private OntologyUtil uut;
+    private OntologyUtil spy;
 
     private static final String HIERARCHY_PARENT_MODEL_KEY = "parent_key";
     private static final String HIERARCHY_MODEL_KEY = "model_key";
@@ -72,6 +74,13 @@ public class OntologyUtilTest {
 
         uut.factory = ontologyAutoBeanFactoryMock;
         uut.avuFactory = avuAutoBeanFactoryMock;
+
+        spy = spy(uut);
+    }
+
+    @After
+    public void resetSpy() {
+        reset(spy);
     }
 
     @Test
@@ -146,7 +155,7 @@ public class OntologyUtilTest {
 
     @Test
     public void testGetHierarchyPathTag_nullHierarchy() {
-        uut.getHierarchyPathTag(null);
+        uut.getOrCreateHierarchyPathTag(null);
         verifyZeroInteractions(hierarchyAutoBeanMock);
     }
 
@@ -157,14 +166,13 @@ public class OntologyUtilTest {
 
         when(hierarchyMock.getLabel()).thenReturn("Label");
 
-        OntologyUtil spy = spy(OntologyUtil.getInstance());
         when(spy.getHierarchyAutoBean(hierarchyMock)).thenReturn(hierarchyAutoBeanMock);
 
-        spy.getHierarchyPathTag(hierarchyMock);
+        spy.getOrCreateHierarchyPathTag(hierarchyMock);
         verify(hierarchyAutoBeanMock).getTag(eq(HIERARCHY_PARENT_MODEL_KEY));
         verify(hierarchyAutoBeanMock).getTag(eq(HIERARCHY_MODEL_KEY));
 
-        verify(hierarchyAutoBeanMock).setTag(eq(HIERARCHY_PARENT_MODEL_KEY), eq("Label"));
+        verify(hierarchyAutoBeanMock, times(3)).setTag(eq(HIERARCHY_PARENT_MODEL_KEY), eq("Label"));
         verify(hierarchyAutoBeanMock).setTag(eq(HIERARCHY_MODEL_KEY), eq("Label"));
         verifyNoMoreInteractions(hierarchyAutoBeanMock);
     }
@@ -176,15 +184,13 @@ public class OntologyUtilTest {
 
         when(hierarchyMock.getLabel()).thenReturn("Label");
 
-        OntologyUtil spy = spy(OntologyUtil.getInstance());
         when(spy.getHierarchyAutoBean(hierarchyMock)).thenReturn(hierarchyAutoBeanMock);
 
-        spy.getHierarchyPathTag(hierarchyMock);
+        spy.getOrCreateHierarchyPathTag(hierarchyMock);
         verify(hierarchyAutoBeanMock).getTag(eq(HIERARCHY_PARENT_MODEL_KEY));
         verify(hierarchyAutoBeanMock).getTag(eq(HIERARCHY_MODEL_KEY));
 
         verify(hierarchyAutoBeanMock).setTag(eq(HIERARCHY_MODEL_KEY), eq("Parent/Label"));
-        verifyNoMoreInteractions(hierarchyAutoBeanMock);
     }
 
     @Test
@@ -194,14 +200,13 @@ public class OntologyUtilTest {
 
         when(hierarchyMock.getLabel()).thenReturn("Label");
 
-        OntologyUtil spy = spy(OntologyUtil.getInstance());
         when(spy.getHierarchyAutoBean(hierarchyMock)).thenReturn(hierarchyAutoBeanMock);
 
-        spy.getHierarchyPathTag(hierarchyMock);
+        spy.getOrCreateHierarchyPathTag(hierarchyMock);
         verify(hierarchyAutoBeanMock).getTag(eq(HIERARCHY_PARENT_MODEL_KEY));
         verify(hierarchyAutoBeanMock).getTag(eq(HIERARCHY_MODEL_KEY));
 
-        verify(hierarchyAutoBeanMock).setTag(eq(HIERARCHY_PARENT_MODEL_KEY), eq("Label"));
+        verify(hierarchyAutoBeanMock, times(3)).setTag(eq(HIERARCHY_PARENT_MODEL_KEY), eq("Label"));
         verify(hierarchyAutoBeanMock).setTag(eq(HIERARCHY_MODEL_KEY), eq("Label"));
         verifyNoMoreInteractions(hierarchyAutoBeanMock);
     }
@@ -213,10 +218,9 @@ public class OntologyUtilTest {
 
         when(hierarchyMock.getLabel()).thenReturn("Label");
 
-        OntologyUtil spy = spy(OntologyUtil.getInstance());
         when(spy.getHierarchyAutoBean(hierarchyMock)).thenReturn(hierarchyAutoBeanMock);
 
-        spy.getHierarchyPathTag(hierarchyMock);
+        spy.getOrCreateHierarchyPathTag(hierarchyMock);
         verify(hierarchyAutoBeanMock).getTag(eq(HIERARCHY_PARENT_MODEL_KEY));
         verify(hierarchyAutoBeanMock).getTag(eq(HIERARCHY_MODEL_KEY));
 

@@ -233,7 +233,7 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
                                                      ontologyUtil.addUnclassifiedChild(result);
                                                      //Set the key for the current root (which won't appear in the tree, but will be the name of the tab)
                                                      // which will allow the children to know the full path from its parent to node
-                                                     ontologyUtil.treeStoreModelKeyProvider(result);
+                                                     ontologyUtil.getOrCreateHierarchyPathTag(result);
                                                      addHierarchies(tree.getStore(), null, result.getSubclasses());
                                                      tree.unmask();
                                                  }
