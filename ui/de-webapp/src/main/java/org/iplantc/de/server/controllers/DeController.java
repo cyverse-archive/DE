@@ -53,18 +53,8 @@ public class DeController {
         return new DiscoveryEnvironmentMaintenance(maintenanceFile);
     }
 
-    private boolean isLocalRequest(HttpServletRequest req) {
-        IpRanges ipRanges = new IpRanges(localIpRanges);
-        String forwardedFor = req.getHeader("X-Forwarded-For");
-        if (forwardedFor != null && forwardedFor.length() != 0) {
-            return ipRanges.matches(forwardedFor.split("\\s*,\\s*")[0]);
-        } else {
-            return ipRanges.matches(req.getRemoteAddr());
-        }
-    }
-
     private boolean isUnderMaintenance(HttpServletRequest req) {
-        return !isLocalRequest(req) && getDeMaintenance().isUnderMaintenance();
+        return !new IpRanges(localIpRanges).matches(req) && getDeMaintenance().isUnderMaintenance();
     }
 
     @RequestMapping("/de/")
