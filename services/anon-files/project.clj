@@ -15,7 +15,7 @@
   :uberjar-name "anon-files-standalone.jar"
   :main ^:skip-aot anon-files.core
   :profiles {:uberjar {:aot :all}}
-  :dependencies [[org.clojure/clojure "1.6.0"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.iplantc/clj-jargon "5.2.8.0"
                   :exclusions [[org.slf4j/slf4j-log4j12]
                                [log4j]]]

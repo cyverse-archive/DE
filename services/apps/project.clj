@@ -14,8 +14,8 @@
             :url "http://iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :manifest {"Git-Ref" ~(git-ref)}
   :uberjar-name "apps-standalone.jar"
-  :dependencies [[org.clojure/clojure "1.7.0"]
-                 [clj-http "2.0.0"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
+                 [clj-http "2.2.0"]
                  [com.cemerick/url "0.1.1"]
                  [com.google.guava/guava "18.0"]
                  [de.ubercode.clostache/clostache "1.4.0"]

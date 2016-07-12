@@ -18,7 +18,7 @@
                  [honeysql "0.6.2"]
                  [korma "0.4.2"]
                  [net.sf.ehcache/ehcache "2.10.1"]
-                 [org.clojure/clojure "1.7.0"]
+                 [org.clojure/clojure "1.8.0"]
                  [org.clojure/tools.logging "0.3.1"]
                  [org.hibernate/hibernate-core "3.6.10.Final"]
                  [org.hibernate/hibernate-ehcache "3.6.10.Final"]

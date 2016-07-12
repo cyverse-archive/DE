@@ -11,7 +11,7 @@
   :description "provides the data information HTTP API"
   :manifest {"Git-Ref" ~(git-ref)}
   :uberjar-name "data-info-standalone.jar"
-  :dependencies [[org.clojure/clojure "1.7.0"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/data.codec "0.1.0"]
                  [org.clojure/tools.nrepl "0.2.10"]
                  [cheshire "5.5.0"

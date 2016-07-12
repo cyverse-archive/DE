@@ -2,7 +2,7 @@
   :description "DE services code for managing configurations."
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"}
-  :dependencies [[org.clojure/clojure "1.5.1"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/tools.logging "0.3.1"]
                  [com.fasterxml.jackson.core/jackson-core "2.5.1"]
                  [com.fasterxml.jackson.core/jackson-databind "2.5.1"]

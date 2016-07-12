@@ -3,7 +3,7 @@
   :url "https://github.com/iPlantCollaborativeOpenSource/DE"
   :license {:name "BSD"
             :url "http://iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
-  :dependencies [[org.clojure/clojure "1.7.0"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/tools.logging "0.3.1"]
                  [clj-time "0.11.0"]
                  [com.mchange/c3p0 "0.9.5.1"]

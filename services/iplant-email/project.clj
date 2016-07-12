@@ -14,7 +14,7 @@
             :url "http://iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :manifest {"Git-Ref" ~(git-ref)}
   :uberjar-name "iplant-email-standalone.jar"
-  :dependencies [[org.clojure/clojure "1.5.1"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.iplantc/clojure-commons "5.2.8.0"]
                  [org.iplantc/service-logging "5.2.8.0"]
                  [cheshire "5.5.0"

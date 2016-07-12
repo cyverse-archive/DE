@@ -18,7 +18,7 @@
             :url "http://iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :manifest {"Git-Ref" ~(git-ref)}
   :uberjar-name "facepalm-standalone.jar"
-  :dependencies [[org.clojure/clojure "1.7.0"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/tools.cli "0.3.1"]
                  [org.clojure/tools.logging "0.3.0"]
                  [cheshire "5.5.0"]
@@ -33,7 +33,7 @@
                  [org.iplantc/kameleon "5.2.8.0"]
                  [postgresql "9.1-901-1.jdbc4"]
                  [slingshot "0.10.3"]
-                 [clj-http "2.0.0"]]
+                 [clj-http "2.2.0"]]
   :plugins [[lein-marginalia "0.7.1"]]
   :aot :all
   :main facepalm.core)

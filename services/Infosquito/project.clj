@@ -16,7 +16,7 @@
   :uberjar-name "infosquito-standalone.jar"
   :aot [infosquito.core]
   :main infosquito.core
-  :dependencies [[org.clojure/clojure "1.6.0"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [postgresql "9.1-901-1.jdbc4"]
                  [org.clojure/java.jdbc "0.3.5"]
                  [cheshire "5.5.0"
@@ -25,7 +25,7 @@
                                [com.fasterxml.jackson.core/jackson-annotations]
                                [com.fasterxml.jackson.core/jackson-databind]
                                [com.fasterxml.jackson.core/jackson-core]]]
-                 [clojurewerkz/elastisch "2.0.0"]
+                 [clojurewerkz/elastisch "2.2.1"]
                  [com.novemberain/langohr "3.5.1"]
                  [slingshot "0.10.3"]
                  [me.raynes/fs "1.4.6"]
