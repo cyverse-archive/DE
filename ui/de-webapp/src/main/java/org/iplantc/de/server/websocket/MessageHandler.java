@@ -41,9 +41,9 @@ public abstract class MessageHandler extends WebSocketHandlerAdapter {
     @Override
     public void onOpen(WebSocket webSocket) throws IOException {
         notificationReceiver = new ReceiveNotificationsDirect();
-        logger.info("Web socket connection opened!");
+        logger.debug("Web socket connection opened!");
         String username = getUserName(webSocket);
-        logger.info("user name:" + username);
+        logger.debug("user name:" + username);
 
         final Channel msgChannel = notificationReceiver.createChannel();
         String queue = bindQueue(username, msgChannel);
@@ -68,7 +68,7 @@ public abstract class MessageHandler extends WebSocketHandlerAdapter {
 
     @Override
     public void onClose(WebSocket webSocket) {
-        logger.info("connection closed!");
+        logger.debug("connection closed!");
     }
 
     @Override
@@ -88,7 +88,7 @@ public abstract class MessageHandler extends WebSocketHandlerAdapter {
             public void handleDelivery(String consumerTag, Envelope envelope,
                                        AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String message = new String(body, "UTF-8");
-                logger.info("New message to consume: " + message);
+                logger.debug("New message to consume: " + message);
                 webSocket.write(message);
             }
         };

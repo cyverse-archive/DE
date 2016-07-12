@@ -46,7 +46,7 @@ public class ReceiveNotificationsDirect {
     public Channel createChannel() {
         try {
             Channel channel = connection.createChannel();
-            LOG.info("Amqp channel created!");
+            LOG.debug("Amqp channel created!");
             return channel;
         } catch (IOException ioe) {
             LOG.error("IO Exception when creating channel", ioe);
@@ -72,7 +72,7 @@ public class ReceiveNotificationsDirect {
                                  props.getProperty(
                                          "org.iplantc.discoveryenvironment.notification.amqp.exchange.name"),
                                  routing_key);
-            LOG.info("Binding complete");
+            LOG.debug("Binding complete");
             return queueName;
         } catch (IOException e) {
             LOG.error("IO Exception when binding queue",e);
@@ -95,7 +95,7 @@ public class ReceiveNotificationsDirect {
     public void consumeMessage(Channel msgChannel, Consumer consumer, String queueName) {
         try {
             msgChannel.basicConsume(queueName, true, consumer);
-            LOG.info("comsumer reqistered ");
+            LOG.debug("comsumer reqistered ");
         } catch (IOException e) {
             LOG.error("IO Exception when consuming message",e);
         } catch (Exception e) {
