@@ -489,6 +489,7 @@ apps:
   path_list_max_paths: 16
   path_list_max_size: 1048576
   beta_category: 5401bd14-6c14-4470-aedd-57b47ea1b979
+  hpc_category: 00000000-0000-0000-0000-000000000001
   user_root: Workspace
   user_subs: "[\"Apps under development\",\"Favorite Apps\"]"
   trash_category: Trash

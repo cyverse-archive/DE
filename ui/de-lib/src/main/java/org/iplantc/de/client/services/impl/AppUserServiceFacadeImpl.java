@@ -98,8 +98,11 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void getAppCategories(AsyncCallback<List<AppCategory>> callback) {
+    public void getAppCategories(boolean privateOnly, AsyncCallback<List<AppCategory>> callback) {
         String address = CATEGORIES;
+        if (privateOnly) {
+            address += "?public=false";
+        }
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deServiceFacade.getServiceData(wrapper, new AppCategoryListCallbackConverter(callback));
     }

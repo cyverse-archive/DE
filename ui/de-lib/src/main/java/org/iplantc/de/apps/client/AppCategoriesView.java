@@ -13,9 +13,7 @@ import org.iplantc.de.client.models.apps.AppCategory;
 
 import com.google.gwt.user.client.ui.IsWidget;
 
-import com.sencha.gxt.data.shared.event.StoreAddEvent;
-import com.sencha.gxt.data.shared.event.StoreClearEvent;
-import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
+import com.sencha.gxt.widget.core.client.TabPanel;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.TreeStyle;
 
@@ -43,6 +41,10 @@ public interface AppCategoriesView extends IsWidget,
         void setTreeIcons(TreeStyle style);
 
         String copyAppSuccessMessage(String appName);
+
+        String workspaceTab();
+
+        String hpcTab();
     }
 
     /**
@@ -60,20 +62,18 @@ public interface AppCategoriesView extends IsWidget,
      * {@link AppFavoritedEvent}s are handled here for the sake of updating {@code AppCategory}
      * counts.
      */
-    interface Presenter extends AppInfoSelectedEvent.AppInfoSelectedEventHandler,
-                                AppSearchResultLoadEvent.AppSearchResultLoadEventHandler,
-                                StoreAddEvent.StoreAddHandler<App>,
-                                StoreRemoveEvent.StoreRemoveHandler<App>,
+    interface Presenter extends AppSearchResultLoadEvent.AppSearchResultLoadEventHandler,
                                 CopyAppSelected.CopyAppSelectedHandler,
                                 CopyWorkflowSelected.CopyWorkflowSelectedHandler,
-                                AppFavoritedEvent.AppFavoritedEventHandler,
-                                StoreClearEvent.StoreClearHandler<App> {
+                                AppCategorySelectionChangedEvent.HasAppCategorySelectionChangedEventHandlers {
 
         AppCategory getSelectedAppCategory();
 
-        AppCategoriesView getView();
+        AppCategoriesView getWorkspaceView();
 
-        void go(HasId selectedAppCategory);
+        void go(HasId selectedAppCategory, TabPanel tabPanel);
+
+        void setViewDebugId(String baseID);
     }
 
     interface AppCategoryHierarchyProvider {

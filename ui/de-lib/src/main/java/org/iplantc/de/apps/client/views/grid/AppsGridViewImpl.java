@@ -12,6 +12,7 @@ import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
 import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
+import org.iplantc.de.apps.client.events.selection.OntologyHierarchySelectionChangedEvent;
 import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.apps.App;
 
@@ -119,6 +120,16 @@ public class AppsGridViewImpl extends ContentPanel implements AppsGridView,
         setHeadingText(Joiner.on(" >> ").join(event.getGroupHierarchy()));
 
         if (!event.getAppCategorySelection().isEmpty()) {
+            // Reset Search
+            acm.setSearchRegexPattern("");
+        }
+    }
+
+    @Override
+    public void onOntologyHierarchySelectionChanged(OntologyHierarchySelectionChangedEvent event) {
+        setHeadingText(Joiner.on(" >> ").join(event.getPath()));
+
+        if (event.getSelectedHierarchy() != null) {
             // Reset Search
             acm.setSearchRegexPattern("");
         }
