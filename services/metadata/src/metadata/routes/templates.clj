@@ -5,13 +5,17 @@
         [ring.util.http-response :only [ok]])
   (:require [metadata.services.templates :as templates]))
 
-(defn- csv-download-resp
-  [attachment filename body]
+(defn- filetype-download-resp
+  [filetype attachment filename body]
   (let [attachment? (or (nil? attachment) attachment)
         disposition (str (if attachment? "attachment; " "") "filename=\"" filename "\"")]
     (assoc (ok body)
-           :headers {"Content-Type" "text/csv; charset=utf-8"
+           :headers {"Content-Type" filetype
                      "Content-Disposition" disposition})))
+
+(defn- csv-download-resp
+  [attachment filename body]
+  (filetype-download-resp "text/csv; charset=utf-8" attachment filename body))
 
 (defroutes* templates
   (context* "/templates" []
@@ -57,7 +61,14 @@
         :description "This endpoint returns a CSV file guide for a specific template.
                      It's intended to be downloaded and used as a reference while
                      filling out a file from the blank-csv endpoint for the same template."
-        (csv-download-resp attachment "guide.csv" (templates/view-template-guide template-id))))))
+        (csv-download-resp attachment "guide.csv" (templates/view-template-guide template-id)))
+
+      (GET* "/zip-csv" []
+        :query [{:keys [attachment]} CSVDownloadQueryParams]
+        :summary "Get a ZIP file containing both the guide and blank CSV for a template."
+        :description "This endpoint returns a zip file containing both the
+                     blank CSV and the guide CSV for the same template."
+        (filetype-download-resp "application/zip" attachment "template.zip" (templates/view-template-zip template-id))))))
 
 (defroutes* admin-templates
   (context* "/admin/templates" []

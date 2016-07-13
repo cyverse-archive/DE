@@ -162,6 +162,10 @@
   [template-id]
   (http/get (metadata-url "templates" template-id "guide-csv") (get-options)))
 
+(defn get-template-zip
+  [template-id]
+  (http/get (metadata-url "templates" template-id "zip-csv") (get-options)))
+
 (defn get-attribute
   [attr-id]
   (http/get (metadata-url "templates" "attr" attr-id) (get-options)))

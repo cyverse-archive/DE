@@ -113,6 +113,9 @@
     (GET "/filesystem/metadata/template/:template-id/guide-csv" [template-id :as req]
       (controller req meta-raw/get-template-guide template-id))
 
+    (GET "/filesystem/metadata/template/:template-id/zip-csv" [template-id :as req]
+      (controller req meta-raw/get-template-zip template-id))
+
     (GET "/filesystem/metadata/template/attr/:attr-id" [attr-id :as req]
       (controller req mt/do-metadata-attribute-view attr-id))
 

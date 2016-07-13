@@ -18,6 +18,7 @@
                  [net.sourceforge.owlapi/owlapi-apibinding "3.4.10"]
                  [net.sourceforge.owlapi/owlapi-reasoner "3.3"]
                  [metosin/compojure-api "0.24.5"]
+                 [me.raynes/fs "1.4.6"]
                  [cheshire "5.5.0"]
                  [org.clojure/data.csv "0.1.3"]
                  [com.novemberain/langohr "3.5.1"]
@@ -27,6 +28,7 @@
                  [org.iplantc/common-swagger-api "5.2.8.0"]
                  [org.iplantc/kameleon "5.2.8.0"]
                  [org.iplantc/service-logging "5.2.8.0"]
+                 [sanitize-filename "0.1.0"]
                  [slingshot "0.12.2"]]
   :main metadata.core
   :ring {:handler metadata.core/dev-handler
