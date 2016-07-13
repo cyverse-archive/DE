@@ -77,4 +77,14 @@ public class AppCategoriesViewDefaultAppearance implements AppCategoriesView.App
     public String copyAppSuccessMessage(String appName) {
         return appsMessages.copyAppSuccessMessage(appName);
     }
+
+    @Override
+    public String workspaceTab() {
+        return appsMessages.workspaceTab();
+    }
+
+    @Override
+    public String hpcTab() {
+        return appsMessages.hpcTab();
+    }
 }

@@ -40,6 +40,7 @@ public interface AppsModule {
         String DETAILS_VIEW = "appDetails";
         String APP_TOOLS = ".tools";
         String TOOL_COLLAPSE_BTN = ".collapse";
+        String HPC = ".hpc";
     }
 }
 

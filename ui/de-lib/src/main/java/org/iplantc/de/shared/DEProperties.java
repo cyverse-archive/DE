@@ -73,6 +73,11 @@ public class DEProperties {
     private static final String DEFAULT_BETA_CATEGORY_ID = WORKSPACE_PREFIX + "defaultBetaAppCategoryId";
 
     /**
+     * Properties key for the default HPC Category ID
+     */
+    private static final String DEFAULT_HPC_CATEGORY_ID = WORKSPACE_PREFIX + "defaultHpcAppCategoryId";
+
+    /**
      * Properties key of the default Beta Category ID.
      */
     private static final String DEFAULT_TRASH_CATEGORY_ID =
@@ -127,6 +132,8 @@ public class DEProperties {
      * ID of the default Beta Workspace Category
      */
     private String defaultBetaCategoryId;
+
+    private String defaultHpcCategoryId;
 
     private String defaultTrashCategoryId;
 
@@ -208,6 +215,7 @@ public class DEProperties {
         keys.add(DEFAULT_BETA_CATEGORY_ID);
         keys.add(DEFAULT_TRASH_CATEGORY_ID);
         keys.add(UNPROTECTED_MULE_SERVICE_BASE_URL);
+        keys.add(DEFAULT_HPC_CATEGORY_ID);
         return keys;
     }
 
@@ -225,6 +233,7 @@ public class DEProperties {
         privateWorkspace = properties.get(PRIVATE_WORKSPACE);
         privateWorkspaceItems = properties.get(PRIVATE_WORKSPACE_ITEMS);
         defaultBetaCategoryId = properties.get(DEFAULT_BETA_CATEGORY_ID);
+        defaultHpcCategoryId = properties.get(DEFAULT_HPC_CATEGORY_ID);
         defaultTrashCategoryId = properties.get(DEFAULT_TRASH_CATEGORY_ID);
         contextClickEnabled = getBoolean(properties, CONTEXT_CLICK_ENABLED, false);
         notificationPollInterval = getInt(properties, NOTIFICATION_POLL_INTERVAL, 60);
@@ -325,6 +334,10 @@ public class DEProperties {
     public String getDefaultBetaCategoryId() {
 
         return defaultBetaCategoryId;
+    }
+
+    public String getDefaultHpcCategoryId() {
+        return defaultHpcCategoryId;
     }
 
     /**
