@@ -291,7 +291,9 @@ func pathExists(p string) (bool, error) {
 // Returns the ID of the created container.
 func (d *Docker) CreateContainerFromStep(step *model.Step, invID string) (string, error) {
 	config := &container.Config{}
-	hostConfig := &container.HostConfig{}
+	hostConfig := &container.HostConfig{
+		Resources: container.Resources{},
+	}
 
 	if step.Component.Container.EntryPoint != "" {
 		config.Entrypoint = []string{step.Component.Container.EntryPoint}
@@ -300,11 +302,13 @@ func (d *Docker) CreateContainerFromStep(step *model.Step, invID string) (string
 	config.Cmd = step.Arguments()
 
 	if step.Component.Container.MemoryLimit > 0 {
-		hostConfig.Memory = step.Component.Container.MemoryLimit
+		hostConfig.Resources.Memory = step.Component.Container.MemoryLimit
+		logcabin.Info.Printf("Memory limit is %d\n", hostConfig.Resources.Memory)
 	}
 
 	if step.Component.Container.CPUShares > 0 {
-		hostConfig.CPUShares = step.Component.Container.CPUShares
+		hostConfig.Resources.CPUShares = step.Component.Container.CPUShares
+		logcabin.Info.Printf("CPUShares is %d\n", hostConfig.Resources.CPUShares)
 	}
 
 	if step.Component.Container.NetworkMode != "" {
