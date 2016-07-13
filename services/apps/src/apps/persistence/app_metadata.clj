@@ -121,16 +121,39 @@
   [app-id]
   (assert-not-nil [:app-id app-id] (app-listing/get-app-listing (uuidify app-id))))
 
+(defn- user-id-subselect [username]
+  (subselect :users
+             (fields :id)
+             (where {:username username})))
+
+(defn- lookup-integration-data [username integrator-email integrator-name]
+  (or (first (select integration_data (where {:user_id (user-id-subselect username)})))
+      (first (select integration_data (where {:integrator_email integrator-email})))
+      (insert integration_data (values {:integrator_email integrator-email
+                                        :integrator_name  integrator-name
+                                        :user_id          (user-id-subselect username)}))))
+
+(defn- update-integration-data [{:keys [id]} username integrator-email integrator-name]
+  (sql/update integration_data
+              (set-fields {:integrator_email integrator-email
+                           :integrator_name  integrator-name
+                           :user_id          (user-id-subselect username)})
+              (where {:id id}))
+  (first (select integration_data (where {:id id}))))
+
 (defn get-integration-data
   "Retrieves integrator info from the database, adding it first if not already there."
-  ([{:keys [email first-name last-name]}]
-     (get-integration-data email (str first-name " " last-name)))
+  ([{:keys [username email first-name last-name]}]
+   (get-integration-data username email (str first-name " " last-name)))
   ([integrator-email integrator-name]
-     (if-let [integration-data (first (select integration_data
-                                              (where {:integrator_email integrator-email})))]
-       integration-data
-       (insert integration_data (values {:integrator_email integrator-email
-                                         :integrator_name  integrator-name})))))
+   (get-integration-data nil integrator-email integrator-name))
+  ([username integrator-email integrator-name]
+   (let [integration-data (lookup-integration-data username integrator-email integrator-name)]
+     (if (or (not= (:integrator_email integration-data) integrator-email)
+             (not= (:integrator_name integration-data) integrator-name)
+             (nil? (:user_id integration-data)))
+       (update-integration-data integration-data username integrator-email integrator-name)
+       integration-data))))
 
 (defn get-tool-listing-base-query
   "Common select query for tool listings."
