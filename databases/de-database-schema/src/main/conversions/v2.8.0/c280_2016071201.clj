@@ -1,5 +1,5 @@
 (ns facepalm.c280-2016071201
-  (:use [kameleon.sql-reader :only [exec-sql-statement]])
+  (:use [kameleon.sql-reader :only [exec-sql-statement load-sql-file]])
   (:require [korma.core :as sql]))
 
 (def ^:private version
@@ -24,9 +24,16 @@
   (exec-sql-statement "UPDATE integration_data d SET user_id = (
     SELECT id FROM users u WHERE u.username = d.integrator_email)"))
 
+(defn- update-app-listing-view
+  "Updates the app_listing view."
+  []
+  (println "\t* updating the app_listing view.")
+  (load-sql-file "views/03_app_listing.sql"))
+
 (defn convert
   "Performs the conversion for this database version"
   []
   (println "Performing the conversion for" version)
   (add-user-id-column)
+  (update-app-listing-view)
   (populate-user-id-column))

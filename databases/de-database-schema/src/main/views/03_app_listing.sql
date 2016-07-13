@@ -4,7 +4,7 @@ SET search_path = public, pg_catalog;
 -- A view containing the top-level information needed for the app listing
 -- service.
 --
-CREATE VIEW app_listing AS
+CREATE OR REPLACE VIEW app_listing AS
     SELECT apps.id,
            apps."name",
            lower(apps."name") AS lower_case_name,
@@ -39,9 +39,12 @@ CREATE VIEW app_listing AS
            CASE WHEN COUNT(DISTINCT tt.name) = 0 THEN 'unknown'
                 WHEN COUNT(DISTINCT tt.name) > 1 THEN 'mixed'
                 ELSE MAX(tt.name)
-           END AS overall_job_type
+           END AS overall_job_type,
+           integration.user_id AS integrator_id,
+           u.username AS integrator_username
     FROM apps
          LEFT JOIN integration_data integration ON apps.integration_data_id = integration.id
+         LEFT JOIN users u ON integration.user_id = u.id
          LEFT JOIN app_steps steps ON apps.id = steps.app_id
          LEFT JOIN tasks t ON steps.task_id = t.id
          LEFT JOIN tools tool ON t.tool_id = tool.id
@@ -51,6 +54,8 @@ CREATE VIEW app_listing AS
              apps.description,
              integration.integrator_name,
              integration.integrator_email,
+             integration.user_id,
+             u.username,
              apps.integration_date,
              apps.edited_date,
              apps.wiki_url,
