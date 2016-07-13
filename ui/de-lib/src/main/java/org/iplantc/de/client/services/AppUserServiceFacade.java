@@ -4,11 +4,11 @@ import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppDoc;
 import org.iplantc.de.client.models.apps.AppFeedback;
+import org.iplantc.de.client.models.apps.PublishAppRequest;
 import org.iplantc.de.client.models.apps.integration.AppTemplate;
 import org.iplantc.de.client.models.apps.sharing.AppSharingRequestList;
 import org.iplantc.de.client.models.apps.sharing.AppUnSharingRequestList;
 
-import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import java.util.List;
@@ -66,7 +66,7 @@ public interface AppUserServiceFacade extends AppServiceFacade {
     /**
      * Adds an app to the given public categories.
      */
-    void publishToWorld(JSONObject json, String appId, AsyncCallback<Void> callback);
+    void publishToWorld(PublishAppRequest req, AsyncCallback<Void> callback);
 
     /**
      * Get app details

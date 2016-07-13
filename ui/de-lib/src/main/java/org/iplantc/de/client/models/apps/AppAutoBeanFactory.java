@@ -39,4 +39,6 @@ public interface AppAutoBeanFactory extends AutoBeanFactory {
 
     AutoBean<AppUnSharingRequestList> appUnSharingRequestList();
 
+    AutoBean<PublishAppRequest> publishAppRequest();
+
 }
