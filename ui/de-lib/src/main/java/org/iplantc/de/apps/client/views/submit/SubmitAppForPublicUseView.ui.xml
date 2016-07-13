@@ -84,8 +84,7 @@
             <cp:ContentPanel ui:field="catPanel"
                              headingHtml="{appearance.publicCategories}"
                              height="200">
-                <tree:Tree ui:field="tree"
-                           autoExpand="true"/>
+                <tree:Tree ui:field="tree"/>
             </cp:ContentPanel>
         </con:child>
         <con:child layoutData="{fileSelLabel}">
