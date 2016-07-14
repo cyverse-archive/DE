@@ -6,8 +6,7 @@
         [apps.validation]
         [slingshot.slingshot :only [throw+]])
   (:require [apps.persistence.app-metadata :as ap]
-            [apps.service.apps.de.validation :as av]
-            [apps.util.config :as cfg]))
+            [apps.service.apps.de.validation :as av]))
 
 (defn- categorize-app
   "Associates an app with an app category."
@@ -55,7 +54,7 @@
   "Validates the app name to ensure that there are no apps with the same name in any of the
   destination categories."
   [app-id category-ids path]
-  (av/validate-app-name (ap/get-app-name app-id) app-id (cfg/workspace-beta-app-category-id) category-ids path))
+  (av/validate-app-name (ap/get-app-name app-id) app-id category-ids path))
 
 (defn- validate-category
   "Validates each categorized app in the request."

@@ -116,10 +116,20 @@
   [props config-valid configs]
   "apps.workspace.favorites-app-category-index")
 
-(cc/defprop-uuid workspace-beta-app-category-id
-  "The UUID of the default Beta app category."
+(cc/defprop-str workspace-metadata-beta-attr-iri
+  "The attr of the Beta metadata AVU."
   [props config-valid configs]
-  "apps.workspace.beta-app-category-id")
+  "apps.workspace.metadata.beta.attr.iri")
+
+(cc/defprop-str workspace-metadata-beta-attr-label
+  "The label of the Beta metadata AVU attr."
+  [props config-valid configs]
+  "apps.workspace.metadata.beta.attr.label")
+
+(cc/defprop-str workspace-metadata-beta-value
+  "The value of the Beta metadata AVU."
+  [props config-valid configs]
+  "apps.workspace.metadata.beta.value")
 
 (cc/defprop-uuid workspace-public-id
   "The UUID of the default Beta app category."

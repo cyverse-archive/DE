@@ -9,7 +9,7 @@
         [kameleon.uuids :only [uuidify]]
         [apps.metadata.params :only [format-reference-genome-value]]
         [apps.service.apps.de.validation :only [verify-app-editable verify-app-permission validate-app-name]]
-        [apps.util.config :only [workspace-dev-app-category-index workspace-beta-app-category-id]]
+        [apps.util.config :only [workspace-dev-app-category-index]]
         [apps.util.conversions :only [remove-nil-vals convert-rule-argument]]
         [apps.validation :only [validate-parameter]]
         [apps.workspace :only [get-workspace]]
@@ -350,7 +350,7 @@
   [user {app-id :id app-name :name :keys [references groups] :as app}]
   (verify-app-editable user (persistence/get-app app-id))
   (transaction
-    (validate-app-name app-name app-id (workspace-beta-app-category-id))
+    (validate-app-name app-name app-id)
     (persistence/update-app app)
     (let [tool-id (->> app :tools first :id)
           app-task (->> (get-app-details app-id) :tasks first)
@@ -388,7 +388,7 @@
   [{:keys [username] :as user} {app-name :name :keys [references groups] :as app}]
   (transaction
     (let [cat-id  (get-user-subcategory username (workspace-dev-app-category-index))
-          _       (validate-app-name app-name nil (workspace-beta-app-category-id) [cat-id])
+          _       (validate-app-name app-name nil [cat-id])
           app-id  (:id (persistence/add-app app user))
           tool-id (->> app :tools first :id)
           task-id (-> (assoc app :id app-id :tool_id tool-id)
@@ -466,6 +466,6 @@
     (when-not (user-owns-app? user app)
       (verify-app-permission user app "write")))
   (transaction
-   (validate-app-name app-name app-id (workspace-beta-app-category-id))
+   (validate-app-name app-name app-id)
    (persistence/update-app-labels body))
   (get-app-ui user app-id))
