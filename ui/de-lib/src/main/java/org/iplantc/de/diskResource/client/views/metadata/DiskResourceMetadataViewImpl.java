@@ -160,6 +160,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         init();
         initWidget(uiBinder.createAndBindUi(this));
         alc.setActiveWidget(userMetadataPanel);
+        importButton.setToolTip(appearance.importMdTooltip());
         addMetadataButton.setEnabled(writable);
         deleteMetadataButton.disable();
         if (writable) {

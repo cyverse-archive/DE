@@ -57,4 +57,12 @@ public class MetadataPresenterDefaultAppearance implements MetadataView.Presente
 		return iplantResources.info();
 	}
 
+	public String importMdMsg() {
+		return displayStrings.importMdMsg();
+	}
+
+	@Override
+	public String importMd() {
+		return displayStrings.importMd();
+	}
 }

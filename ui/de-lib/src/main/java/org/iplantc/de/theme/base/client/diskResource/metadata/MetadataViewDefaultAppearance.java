@@ -222,4 +222,9 @@ public class MetadataViewDefaultAppearance implements MetadataView.Appearance {
     public String edit() {
         return iplantDisplayStrings.edit();
     }
+
+    @Override
+    public String importMdTooltip() {
+        return displayStrings.importMdTooltip();
+    }
 }

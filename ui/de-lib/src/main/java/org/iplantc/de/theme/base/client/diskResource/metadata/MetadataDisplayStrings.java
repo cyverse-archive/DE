@@ -44,4 +44,8 @@ public interface MetadataDisplayStrings extends Messages{
 	String error();
 
 	String incomplete();
+
+	String importMdMsg();
+
+	String importMdTooltip();
 }
