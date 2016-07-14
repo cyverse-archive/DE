@@ -357,6 +357,9 @@
      :is_public
      AppPublicParam
 
+     (optional-key :beta)
+     (describe Boolean "Whether the App has been marked as `beta` release status")
+
      :pipeline_eligibility
      (describe PipelineEligibility "Whether the App can be used in a Pipeline")
 
