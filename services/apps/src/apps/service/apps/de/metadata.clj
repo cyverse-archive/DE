@@ -7,8 +7,6 @@
                                     get-app-subcategory-id
                                     remove-app-from-category]]
         [apps.service.apps.de.validation :only [app-publishable? verify-app-permission]]
-        [apps.util.config :only [workspace-beta-app-category-id
-                                       workspace-favorites-app-category-index]]
         [apps.validation :only [get-valid-user-id]]
         [apps.workspace :only [get-workspace]]
         [korma.db :only [transaction]]
@@ -119,7 +117,7 @@
   [user]
   (get-app-subcategory-id
     (:root_category_id (get-workspace (:username user)))
-    (workspace-favorites-app-category-index)))
+    (config/workspace-favorites-app-category-index)))
 
 (defn add-app-favorite
   "Adds the given app to the current user's favorites list."
@@ -138,9 +136,19 @@
   (remove-app-from-category app-id fav-category-id))
   nil)
 
-(defn- publish-app-categories
+(defn- beta-avu
+  "Builds the Beta AVU map from config values"
+  []
+  {:attr  (config/workspace-metadata-beta-attr-iri)
+   :value (config/workspace-metadata-beta-value)
+   :unit  ""
+   :avus  [{:attr  "rdfs:label"
+            :value (config/workspace-metadata-beta-attr-label)
+            :unit  "attr"}]})
+
+(defn- publish-app-metadata
   [username app-id avus]
-  (let [body (cheshire/encode {:avus avus})]
+  (let [body (cheshire/encode {:avus (conj avus (beta-avu))})]
     (metadata-client/update-avus username "app" app-id body)))
 
 (defn- publish-app
@@ -150,8 +158,7 @@
     (app-docs/add-app-docs user app-id app)
     (amp/set-app-references app-id references)
     (decategorize-app app-id)
-    (add-app-to-category app-id (workspace-beta-app-category-id))
-    (publish-app-categories shortUsername app-id avus)
+    (publish-app-metadata shortUsername app-id avus)
     (perms-client/make-app-public shortUsername app-id))
   nil)
 

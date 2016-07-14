@@ -722,16 +722,15 @@
                   :a.id                      [not= app-id]})))
 
 (defn- app-category-id-subselect
-  [app-id beta-app-category-id]
+  [app-id]
   (subselect :app_category_app
              (fields :app_category_id)
-             (where {:app_id          app-id
-                     :app_category_id [not= beta-app-category-id]})))
+             (where {:app_id app-id})))
 
 (defn list-duplicate-apps
   "List apps with the same name that exist in the same category as the new app."
-  [app-name app-id beta-app-category-id category-ids]
+  [app-name app-id category-ids]
   (->> (if (seq category-ids)
-         (remove (partial = beta-app-category-id) category-ids)
-         (app-category-id-subselect app-id beta-app-category-id))
+         category-ids
+         (app-category-id-subselect app-id))
        (list-duplicate-apps* app-name app-id)))

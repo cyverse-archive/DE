@@ -2,7 +2,7 @@
   (:use [korma.db :only [transaction]]
         [apps.persistence.app-metadata.relabel :only [update-app-labels]]
         [apps.util.assertions :only [assert-not-nil]]
-        [apps.util.config :only [workspace-public-id workspace-beta-app-category-id]]
+        [apps.util.config :only [workspace-public-id]]
         [slingshot.slingshot :only [throw+]])
   (:require [clojure.tools.logging :as log]
             [kameleon.app-groups :as app-groups]
@@ -93,7 +93,7 @@
   (transaction
    (validate-app-existence app-id)
    (when-not (nil? app-name)
-     (av/validate-app-name app-name app-id (workspace-beta-app-category-id)))
+     (av/validate-app-name app-name app-id))
    (if (empty? (select-keys app [:name :description :wiki_url :references :groups]))
      (update-app-deleted-disabled app)
      (update-app-details app))))
