@@ -7,7 +7,7 @@
                  [clj-time "0.8.0"]
                  [com.novemberain/monger "1.5.0"]
                  [korma "0.3.2"]
-                 [org.clojure/clojure "1.6.0"]
+                 [org.clojure/clojure "1.8.0"]
                  [org.clojure/tools.cli "0.3.1"]
                  [org.clojure/tools.logging "0.3.1"]
                  [org.iplantc/kameleon "5.2.8.0"]]

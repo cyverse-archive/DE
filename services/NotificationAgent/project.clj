@@ -14,7 +14,7 @@
             :url "http://iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :manifest {"Git-Ref" ~(git-ref)}
   :uberjar-name "notificationagent-standalone.jar"
-  :dependencies [[org.clojure/clojure "1.7.0"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [cheshire "5.5.0"
                   :exclusions [[com.fasterxml.jackson.dataformat/jackson-dataformat-cbor]
                                [com.fasterxml.jackson.dataformat/jackson-dataformat-smile]
@@ -27,7 +27,7 @@
                  [org.iplantc/common-cli "5.2.8.0"]
                  [org.iplantc/service-logging "5.2.8.0"]
                  [me.raynes/fs "1.4.6"]
-                 [clj-http "2.1.0"]
+                 [clj-http "2.2.0"]
                  [clj-time "0.11.0"]
                  [slingshot "0.12.2"]
                  [clojurewerkz/quartzite "2.0.0"]

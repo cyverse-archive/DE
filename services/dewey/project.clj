@@ -16,7 +16,7 @@
   :manifest {"Git-Ref" ~(git-ref)}
   :uberjar-name "dewey-standalone.jar"
   :main ^:skip-aot dewey.core
-  :dependencies [[org.clojure/clojure "1.6.0"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/tools.cli "0.3.1"]
                  [cheshire "5.5.0"
                    :exclusions [[com.fasterxml.jackson.dataformat/jackson-dataformat-cbor]
@@ -24,7 +24,7 @@
                                 [com.fasterxml.jackson.core/jackson-annotations]
                                 [com.fasterxml.jackson.core/jackson-databind]
                                 [com.fasterxml.jackson.core/jackson-core]]]
-                 [clojurewerkz/elastisch "2.0.0"]
+                 [clojurewerkz/elastisch "2.2.1"]
                  [com.novemberain/langohr "3.5.1"]
                  [liberator "0.11.1"]
                  [compojure "1.1.8"]

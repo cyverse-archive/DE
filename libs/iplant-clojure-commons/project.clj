@@ -4,13 +4,13 @@
   :license {:name "BSD"
             :url "http://iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :plugins [[test2junit "1.1.3"]]
-  :dependencies [[org.clojure/clojure "1.7.0"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/tools.logging "0.3.1"]
                  [buddy/buddy-sign "0.7.0"]
                  [metosin/ring-http-response "0.6.5"]
                  [metosin/compojure-api "0.24.5"]
                  [cheshire "5.5.0"]
-                 [clj-http "2.0.0"]
+                 [clj-http "2.2.0"]
                  [clj-time "0.11.0"]
                  [com.cemerick/url "0.1.1"]
                  [commons-configuration "1.10"    ; provides org.apache.commons.configuration

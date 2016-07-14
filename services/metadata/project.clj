@@ -13,7 +13,7 @@
   :license {:name "BSD Standard License"
             :url "http://www.iplantcollaborative.org/sites/default/files/iPLANT-LICENSE.txt"}
   :manifest {"Git-Ref" ~(git-ref)}
-  :dependencies [[org.clojure/clojure "1.7.0"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [net.sourceforge.owlapi/owlapi-api "3.5.0"]
                  [net.sourceforge.owlapi/owlapi-apibinding "3.4.10"]
                  [net.sourceforge.owlapi/owlapi-reasoner "3.3"]

@@ -15,7 +15,7 @@
   :manifest {"Git-Ref" ~(git-ref)}
   :uberjar-name "template-mover-standalone.jar"
   :dependencies [[honeysql "0.6.0"]
-                 [org.clojure/clojure "1.6.0"]
+                 [org.clojure/clojure "1.8.0"]
                  [org.clojure/java.jdbc "0.3.7"]
                  [org.clojure/tools.cli "0.3.1"]
                  [org.clojure/tools.logging "0.3.1"]
