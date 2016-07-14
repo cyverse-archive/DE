@@ -38,7 +38,7 @@ public class MetadataTemplateDownloadController extends DownloadController{
 
     private final String METADATA_TEMPLATE = "metadata/template/";
 
-    private final String CSV ="/blank-csv";
+    private final String CSV ="/zip-csv";
 
     private final Logger logger = LoggerFactory.getLogger(MetadataTemplateDownloadController.class);
 
