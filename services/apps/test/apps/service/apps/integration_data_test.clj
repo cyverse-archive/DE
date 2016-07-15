@@ -4,9 +4,12 @@
   (:require [apps.persistence.app-metadata :as amp]
             [apps.service.apps :as apps]
             [apps.service.apps.test-fixtures :as atf]
+            [apps.service.integration-data :as ids]
             [apps.test-fixtures :as tf]
+            [clojure.string :as string]
             [clojure.tools.logging :as log]
-            [korma.core :as sql]))
+            [korma.core :as sql])
+  (:import [java.util.regex Pattern]))
 
 (use-fixtures :once tf/run-integration-tests tf/with-test-db tf/with-config atf/with-workspaces)
 (use-fixtures :each atf/with-public-apps atf/with-test-app atf/with-test-tool)
@@ -119,3 +122,84 @@
     (is (not (nil? idc)))
     (is (= id2 idc))
     (is (= id1 (get-integration-data u1)))))
+
+(defn- list-integration-data [params]
+  (ids/list-integration-data (get-user :testde1) params))
+
+;; We should be able to list integration data.
+(deftest test-integration-data-listing
+  (let [results (list-integration-data {})]
+    (is (not (nil? results)))
+    (is (not (nil? (:integration_data results))))
+    (is (not (nil? (:total results))))
+    (is (= (count (:integration_data results)) (:total results)))))
+
+;; We should be able to limit the number of results.
+(deftest test-integration-data-listing-limit
+  (let [results (list-integration-data {:limit 1})]
+    (is (not (nil? results)))
+    (is (not (nil? (:integration_data results))))
+    (is (not (nil? (:total results))))
+    (is (= (count (:integration_data results)) 1))
+    (is (not= (:total results) 1))))
+
+;; We should be able to offset the results.
+(deftest test-integration-data-listing-offset
+  (let [ids (:integration_data (list-integration-data {:limit 2}))
+        id1 (first (:integration_data (list-integration-data {:limit 1})))
+        id2 (first (:integration_data (list-integration-data {:limit 1 :offset 1})))]
+    (is (= id1 (first ids)))
+    (is (= id2 (second ids)))))
+
+;; We should be able to sort results by name.
+(deftest test-integration-data-sort-by-name
+  (let [asc  (:integration_data (list-integration-data {:sort-field :name :sort-dir "ASC"}))
+        desc (:integration_data (list-integration-data {:sort-field :name :sort-dir "DESC"}))]
+    (is (not= (first asc) (first desc)))
+    (is (= (:name (first asc)) (:name (last desc))))
+    (is (= (:name (last asc)) (:name (first desc))))))
+
+;; We should be able to sort results by email address.
+(deftest test-integration-data-sort-by-email
+  (let [asc  (:integration_data (list-integration-data {:sort-field :email :sort-dir "ASC"}))
+        desc (:integration_data (list-integration-data {:sort-field :email :sort-dir "DESC"}))]
+    (is (not= (first asc) (first desc)))
+    (is (= (:email (first asc)) (:email (last desc))))
+    (is (= (:email (last asc)) (:email (first desc))))))
+
+;; We should be able to sort results by username.
+(deftest test-integration-data-sort-by-username
+  (let [asc  (:integration_data (list-integration-data {:sort-field :username :sort-dir "ASC"}))
+        desc (:integration_data (list-integration-data {:sort-field :username :sort-dir "DESC"}))]
+    (is (not= (first asc) (first desc)))
+    (is (= (:username (first asc)) (:username (last desc))))
+    (is (= (:username (last asc)) (:username (first desc))))))
+
+(defn- handle-wildcard-character [c]
+  (condp = c
+    \* ".*"
+    \? ".?"
+    (Pattern/quote (str c))))
+
+(defn- search-string-to-regex [search-string]
+  (re-pattern (str "(?i)" (apply str (map handle-wildcard-character search-string)))))
+
+(defn- integration-data-entry-matches? [search-string entry]
+  (let [regex (search-string-to-regex search-string)]
+    (or (re-find regex (:email entry))
+        (re-find regex (:name entry)))))
+
+(defn- check-integration-data-search [search-string]
+  (let [unfiltered (set (:integration_data (list-integration-data {})))
+        filtered   (set (:integration_data (list-integration-data {:search search-string})))
+        matches?   (partial integration-data-entry-matches? search-string)]
+    (is (seq unfiltered))
+    (is (seq filtered))
+    (is (every? matches? filtered))
+    (is (= filtered (set (filter matches? unfiltered))))))
+
+;; We should be able to filter results by username and email address.
+(deftest test-integration-data-search
+  (check-integration-data-search "testde1")
+  (check-integration-data-search "test*9")
+  (check-integration-data-search "testde?0"))

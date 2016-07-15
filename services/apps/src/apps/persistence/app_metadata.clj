@@ -1,7 +1,9 @@
 (ns apps.persistence.app-metadata
   "Persistence layer for app metadata."
   (:use [kameleon.entities]
+        [kameleon.queries :only [add-query-sorting add-query-offset add-query-limit]]
         [kameleon.util :only [normalize-string]]
+        [kameleon.util.search :only [format-query-wildcards]]
         [kameleon.uuids :only [uuidify]]
         [korma.core :exclude [update]]
         [korma.db :only [transaction]]
@@ -163,6 +165,32 @@
              (nil? (:user_id integration-data)))
        (update-integration-data integration-data username integrator-email integrator-name)
        integration-data))))
+
+(defn- add-integration-data-search-clause [query search]
+  (if-not (nil? search)
+    (let [search (str "%" (format-query-wildcards search) "%")]
+      (where query
+             (or {(sqlfn lower :integrator_name) [like (sqlfn lower search)]}
+                 {(sqlfn lower :integrator_email) [like (sqlfn lower search)]})))
+    query))
+
+(defn list-integration-data [search limit offset sort-field sort-dir]
+  (-> (select* [:integration_data :d])
+      (join [:users :u] {:d.user_id :u.id})
+      (fields :d.id :d.integrator_name :d.integrator_email :u.username)
+      (add-integration-data-search-clause search)
+      (add-query-sorting sort-field sort-dir)
+      (add-query-offset offset)
+      (add-query-limit limit)
+      (select)))
+
+(defn count-integration-data [search]
+  (-> (select* :integration_data)
+      (aggregate (count :*) :count)
+      (add-integration-data-search-clause search)
+      (select)
+      first
+      :count))
 
 (defn get-tool-listing-base-query
   "Common select query for tool listings."

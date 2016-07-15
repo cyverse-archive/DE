@@ -17,6 +17,7 @@
             [apps.routes.apps.metadata :as metadata-routes]
             [apps.routes.callbacks :as callback-routes]
             [apps.routes.collaborators :as collaborator-routes]
+            [apps.routes.integration-data :as integration-data-routes]
             [apps.routes.oauth :as oauth-routes]
             [apps.routes.reference-genomes :as reference-genome-routes]
             [apps.routes.status :as status-routes]
@@ -61,7 +62,8 @@
             {:name "admin-tools", :description "Admin Tool endpoints."}
             {:name "admin-reference-genomes", :description "Admin Reference Genome endpoints."}
             {:name "admin-tool-requests", :description "Admin Tool Request endpoints."}
-            {:name "admin-oauth", :description "Admin OAuth endpoints."}]})
+            {:name "admin-oauth", :description "Admin OAuth endpoints."}
+            {:name "admin-integration-data", :description "Admin Integration Data Endpoints."}]})
   (middlewares
     [clean-context
      wrap-keyword-params
@@ -155,4 +157,7 @@
     (context* "/admin/oauth" []
       :tags ["admin-oauth"]
       oauth-routes/admin-oauth)
+    (context* "/admin/integration-data" []
+      :tags ["admin-integration-data"]
+      integration-data-routes/admin-integration-data)
     (route/not-found (service/unrecognized-path-response))))

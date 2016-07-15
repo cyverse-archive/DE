@@ -3,6 +3,8 @@
                                           describe
                                           NonBlankString
                                           PagingParams
+                                          SortFieldDocs
+                                          SortFieldOptionalKey
                                           StandardUserQueryParams]])
   (:require [schema.core :as s])
   (:import [java.util UUID]))
@@ -107,3 +109,14 @@
   (merge SecuredQueryParams
     {(s/optional-key :tool-type) (describe String "Filters results by tool type")
      (s/optional-key :tool-id)   (describe UUID "Filters results by tool identifier")}))
+
+(s/defschema IntegrationDataSortFields
+  (s/enum :email :name :username))
+
+(s/defschema IntegrationDataSearchParams
+  (assoc SecuredPagingParams
+         (s/optional-key :search)
+         (describe String "Searches for entries with matching names or email addresses.")
+
+         SortFieldOptionalKey
+         (describe IntegrationDataSortFields SortFieldDocs)))
