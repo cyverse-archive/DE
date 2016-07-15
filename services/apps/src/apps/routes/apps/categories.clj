@@ -26,6 +26,7 @@
   (GET* "/:category-id" []
         :path-params [category-id :- AppCategoryIdPathParam]
         :query [params AppListingPagingParams]
+        :middlewares [wrap-metadata-base-url]
         :return AppCategoryAppListing
         :summary "List Apps in a Category"
         :description "This service lists all of the apps within an app category or any of its

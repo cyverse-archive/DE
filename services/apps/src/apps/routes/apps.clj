@@ -14,6 +14,7 @@
 (defroutes* apps
   (GET* "/" []
         :query [params AppSearchParams]
+        :middlewares [wrap-metadata-base-url]
         :summary "Search Apps"
         :return AppListing
         :description "This service allows users to search for Apps based on a part of the App name or

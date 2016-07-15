@@ -245,14 +245,24 @@
 
 (defn- format-app-listing
   "Formats certain app fields into types more suitable for the client."
-  [perms app]
+  [perms beta-ids-set {:keys [id] :as app}]
   (-> (assoc app :can_run (app-can-run? app))
       (dissoc :tool_count :task_count :external_app_count :lower_case_name)
       (format-app-ratings)
       (format-app-pipeline-eligibility)
       (format-app-permissions perms)
       (assoc :can_favor true :can_rate true :app_type "DE")
+      (assoc :beta (contains? beta-ids-set id))
       (remove-nil-vals)))
+
+(defn- app-ids->beta-ids-set
+  "Filters the given list of app-ids into a set containing the ids of apps marked as `beta`"
+  [username app-ids]
+  (set (metadata-client/filter-by-attr-value username
+                                             (workspace-metadata-beta-attr-iri)
+                                             (workspace-metadata-beta-value)
+                                             ["app"]
+                                             app-ids)))
 
 (defn- apps-listing-with-metadata-filter
   [{:keys [username shortUsername]} params metadata-filter]
@@ -261,9 +271,10 @@
         perms           (perms-client/load-app-permissions shortUsername)
         app-ids         (set (keys perms))
         app-listing-ids (metadata-filter app-ids)
+        beta-ids-set    (app-ids->beta-ids-set shortUsername app-listing-ids)
         app-listing     (list-apps-by-id workspace faves-index app-listing-ids (fix-sort-params params))]
     {:app_count (count app-listing-ids)
-     :apps      (map (partial format-app-listing perms) app-listing)}))
+     :apps      (map (partial format-app-listing perms beta-ids-set) app-listing)}))
 
 (defn list-apps-with-metadata
   [{:keys [username] :as user} attr value params]
@@ -279,11 +290,12 @@
 
 (defn- list-apps-in-virtual-group
   "Formats a listing for a virtual group."
-  [user workspace group-id perms params]
+  [{:keys [shortUsername] :as user} workspace group-id perms params]
   (when-let [format-fns (virtual-group-fns group-id)]
     (-> ((:format-group format-fns) user workspace params)
-        (assoc :apps (->> ((:format-listing format-fns) user workspace params)
-                          (map (partial format-app-listing perms)))))))
+        (assoc :apps (let [app-listing  ((:format-listing format-fns) user workspace params)
+                           beta-ids-set (app-ids->beta-ids-set shortUsername (map :id app-listing))]
+                       (map (partial format-app-listing perms beta-ids-set) app-listing))))))
 
 (defn- count-apps-in-group
   "Counts the number of apps in an app group, including virtual app groups that may be included."
@@ -302,13 +314,14 @@
 
 (defn- list-apps-in-real-group
   "This service lists all of the apps in a real app group and all of its descendents."
-  [user workspace category-id perms params]
+  [{:keys [shortUsername] :as user} workspace category-id perms params]
   (let [app_group      (->> (get-app-category category-id)
                             (assert-not-nil ["category_id" category-id])
                             remove-nil-vals)
         total          (count-apps-in-group user workspace app_group params)
         apps_in_group  (get-apps-in-group user workspace app_group params)
-        apps_in_group  (map (partial format-app-listing perms) apps_in_group)]
+        beta-ids-set   (app-ids->beta-ids-set shortUsername (map :id apps_in_group))
+        apps_in_group  (map (partial format-app-listing perms beta-ids-set) apps_in_group)]
     (assoc app_group
       :app_count total
       :apps apps_in_group)))
@@ -332,10 +345,10 @@
 (defn search-apps
   "This service searches for apps in the user's workspace and all public app
    groups, based on a search term."
-  [user params]
+  [{:keys [username shortUsername]} params]
   (let [search_term (curl/url-decode (:search params))
-        workspace (get-workspace (:username user))
-        perms (perms-client/load-app-permissions (:shortUsername user))
+        workspace (get-workspace username)
+        perms (perms-client/load-app-permissions shortUsername)
         params (fix-sort-params (assoc params :app-ids (set (keys perms))))
         total (count-search-apps-for-user search_term (:id workspace) params)
         search_results (search-apps-for-user
@@ -343,7 +356,8 @@
                         workspace
                         (workspace-favorites-app-category-index)
                         params)
-        search_results (map (partial format-app-listing perms) search_results)]
+        beta-ids-set   (app-ids->beta-ids-set shortUsername (map :id search_results))
+        search_results (map (partial format-app-listing perms beta-ids-set) search_results)]
     {:app_count total
      :apps search_results}))
 
