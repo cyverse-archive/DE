@@ -385,3 +385,11 @@
 
    (PUT "/feedback" [:as {body :body}]
         (provide-user-feedback body))))
+
+(defn admin-integration-data-routes
+  []
+  (optional-routes
+   [config/app-routes-enabled]
+
+   (GET "/integration-data" [:as {:keys [params]}]
+        (service/success-response (apps/list-integration-data params)))))

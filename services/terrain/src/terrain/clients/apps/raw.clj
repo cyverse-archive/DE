@@ -747,3 +747,10 @@
                  {:query-params     (secured-params params)
                   :as               :stream
                   :follow-redirects false})))
+
+(defn list-integration-data
+  [params]
+  (client/get (apps-url "admin" "integration-data")
+              {:query-params     (secured-params params apps-search-params)
+               :as               :stream
+               :follow-redirects false}))
