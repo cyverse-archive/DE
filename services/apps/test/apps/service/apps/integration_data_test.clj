@@ -1,6 +1,7 @@
 (ns apps.service.apps.integration-data-test
   (:use [apps.service.apps.test-utils :only [users get-user]]
-        [clojure.test])
+        [clojure.test]
+        [medley.core :only [remove-vals]])
   (:require [apps.persistence.app-metadata :as amp]
             [apps.service.apps :as apps]
             [apps.service.apps.test-fixtures :as atf]
@@ -203,3 +204,18 @@
   (check-integration-data-search "testde1")
   (check-integration-data-search "test*9")
   (check-integration-data-search "testde?0"))
+
+(defn- add-integration-data [username email name]
+  (ids/add-integration-data (get-user :testde1) (remove-vals nil? {:username username :email email :name name})))
+
+(defn- delete-integration-data [{:keys [id]}]
+  (when id (sql/delete :integration_data (sql/where {:id id}))))
+
+;; We should be able to add a new integration data record.
+(deftest test-integration-data-insertion
+  (let [integration-data (add-integration-data "foo" "foo@example.org" "Foo Bar")]
+    (is (not (nil? (:id integration-data))))
+    (is (= "foo" (:username integration-data)))
+    (is (= "foo@example.org" (:email integration-data)))
+    (is (= "Foo Bar" (:name integration-data)))
+    (delete-integration-data integration-data)))

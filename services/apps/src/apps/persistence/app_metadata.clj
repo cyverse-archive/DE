@@ -1,7 +1,7 @@
 (ns apps.persistence.app-metadata
   "Persistence layer for app metadata."
   (:use [kameleon.entities]
-        [kameleon.queries :only [add-query-sorting add-query-offset add-query-limit]]
+        [kameleon.queries :only [get-user-id add-query-sorting add-query-offset add-query-limit]]
         [kameleon.util :only [normalize-string]]
         [kameleon.util.search :only [format-query-wildcards]]
         [kameleon.uuids :only [uuidify]]
@@ -128,12 +128,22 @@
              (fields :id)
              (where {:username username})))
 
+(defn get-integration-data-by-username [username]
+  (first (select integration_data (where {:user_id (user-id-subselect username)}))))
+
+(defn get-integration-data-by-email [integrator-email]
+  (first (select integration_data (where {:integrator_email integrator-email}))))
+
+(defn- add-integration-data [username integrator-email integrator-name]
+  (when username (get-user-id username))
+  (insert integration_data (values {:integrator_email integrator-email
+                                    :integrator_name  integrator-name
+                                    :user_id          (user-id-subselect username)})))
+
 (defn- lookup-integration-data [username integrator-email integrator-name]
-  (or (first (select integration_data (where {:user_id (user-id-subselect username)})))
-      (first (select integration_data (where {:integrator_email integrator-email})))
-      (insert integration_data (values {:integrator_email integrator-email
-                                        :integrator_name  integrator-name
-                                        :user_id          (user-id-subselect username)}))))
+  (or (get-integration-data-by-username username)
+      (get-integration-data-by-email integrator-email)
+      (add-integration-data username integrator-email integrator-name)))
 
 (defn- can-update-integration-data? [id integrator-email integrator-name]
   (zero? ((comp :count first)
@@ -174,6 +184,14 @@
                  {(sqlfn lower :integrator_email) [like (sqlfn lower search)]})))
     query))
 
+(defn get-integration-data-by-id [integration-data-id]
+  (-> (select* [:integration_data :d])
+      (join [:users :u] {:d.user_id :u.id})
+      (fields :d.id :d.integrator_name :d.integrator_email :u.username)
+      (where {:d.id integration-data-id})
+      select
+      first))
+
 (defn list-integration-data [search limit offset sort-field sort-dir]
   (-> (select* [:integration_data :d])
       (join [:users :u] {:d.user_id :u.id})
@@ -182,13 +200,13 @@
       (add-query-sorting sort-field sort-dir)
       (add-query-offset offset)
       (add-query-limit limit)
-      (select)))
+      select))
 
 (defn count-integration-data [search]
   (-> (select* :integration_data)
       (aggregate (count :*) :count)
       (add-integration-data-search-clause search)
-      (select)
+      select
       first
       :count))
 

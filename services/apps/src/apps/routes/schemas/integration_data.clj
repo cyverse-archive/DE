@@ -3,11 +3,8 @@
         [schema.core :only [defschema optional-key]])
   (:import [java.util UUID]))
 
-(defschema IntegrationData
-  {:id
-   (describe UUID "The integration data identifier.")
-
-   (optional-key :username)
+(defschema IntegrationDataRequest
+  {(optional-key :username)
    (describe NonBlankString "The username associated with the integration data entry.")
 
    :email
@@ -15,6 +12,10 @@
 
    :name
    (describe NonBlankString "The user's name.")})
+
+(defschema IntegrationData
+  (assoc IntegrationDataRequest
+         :id (describe UUID "The integration data identifier.")))
 
 (defschema IntegrationDataListing
   {:integration_data
