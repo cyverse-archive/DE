@@ -1,0 +1,16 @@
+galaxy_info:
+  author: Paul Sarando
+  description: Role to run the utility that adds "beta" metadata AVUS to apps in the DE's "Beta" apps category.
+  company: CyVerse
+  license: BSD
+
+  min_ansible_version: 1.2
+
+  platforms:
+  - name: EL
+    versions:
+    - 7
+
+  galaxy_tags: []
+
+dependencies: []

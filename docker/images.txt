@@ -1,5 +1,6 @@
 anon-files
 app-registration
+apps-beta-tagger
 clockwork
 condor-log-monitor
 curl-wrapper

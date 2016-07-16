@@ -1,0 +1,15 @@
+---
+- name: tag the apps in 'Beta' with 'beta' AVUs
+  hosts: apps:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - services
+    - apps
+    - metadata
+  roles:
+    - role: util-notify-chat
+      msg: "Adding app beta AVUs"
+    - role: de-TMP-RUN-ONCE-app-beta-tagger
+    - role: util-notify-chat
+      msg: "Done adding app beta AVUs"
