@@ -26,3 +26,6 @@
 - include: playbooks/de-stop-containers-cleanup.yaml
 - include: playbooks/de-rm-containers-cleanup.yaml
 - include: playbooks/de-rm-jex.yaml
+
+### TODO CORE-7936: Remove after 2.8 release
+- include: playbooks/de-TMP-RUN-ONCE-app-beta-tagger.yaml

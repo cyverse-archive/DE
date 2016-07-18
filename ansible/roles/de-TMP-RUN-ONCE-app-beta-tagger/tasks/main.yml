@@ -1,0 +1,31 @@
+---
+- debug:
+    msg: "This role should only be RUN ONCE against the metadata database. It will fail if run more than once."
+
+- name: update docker-py
+  pip: name="docker-py" state="latest"
+
+- name: pull the apps beta tagger docker image
+  docker_image: name="{{ app_beta_tagger_repo }}" tag="{{ docker_tag }}"
+
+- name: tag DE beta apps
+  shell: "docker run --rm
+    --name apps-beta-tagger
+    -v ~/.pgpass:/root/.pgpass:ro
+    {{ app_beta_tagger_repo }}:{{ docker_tag }}
+    --de-host={{ db_host }}
+    --de-port={{ db_port }}
+    --de-database={{ db_name }}
+    --de-user={{ db_user }}
+    --meta-host={{ metadata_db_host }}
+    --meta-port={{ metadata_db_port }}
+    --meta-database={{ metadata_db_name }}
+    --meta-user={{ metadata_db_user }}"
+  register: tagger_output
+
+- debug: var=tagger_output.stdout_lines
+- debug: var=tagger_output.warnings
+- debug: var=tagger_output.stderr
+
+- name: remove the apps beta tagger container
+  docker_container: name="apps-beta-tagger" state="absent"
