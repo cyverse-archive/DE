@@ -10,7 +10,7 @@
     <!-- Configuration Logging -->
     <logger name="clojure-commons.config" level="INFO"/>
     <!-- Request Logging -->
-    <logger name="AccessLogger" level="DEBUG" />
+    <logger name="AccessLogger" level="WARN" />
 
     <!-- Service Call Trace Message Logging -->
     <logger name="trace" level="TRACE" />

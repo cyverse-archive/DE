@@ -14,7 +14,7 @@
   <!-- Configuration Logging -->
   <logger name="clojure-commons.config" level="INFO"/>
   <!-- Request Logging -->
-  <logger name="AccessLogger" level="DEBUG" />
+  <logger name="AccessLogger" level="WARN" />
   <!-- Jargon Logging -->
   <logger name="org.irods.jargon" level="ERROR" />
   <!-- c3p0 logging -->
