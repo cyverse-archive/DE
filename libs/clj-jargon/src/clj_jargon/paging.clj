@@ -8,10 +8,6 @@
 (def SEEK-START (FileIOOperations$SeekWhenceType/SEEK_START))
 (def SEEK-END (FileIOOperations$SeekWhenceType/SEEK_END))
 
-(defn bytes->string
-  [buffer]
-  (apply str (map char buffer)))
-
 (defn ^IRODSRandomAccessFile random-access-file
   [{^IRODSFileFactory file-factory :fileFactory} ^String filepath]
   (.instanceIRODSRandomAccessFile file-factory filepath))
@@ -29,9 +25,9 @@
            array-size  (if (< file-size num-bytes) file-size num-bytes)
            buffer      (byte-array array-size)]
        (cond
-        (= file-size 0) ""
-        (= num-bytes 0) ""
-        (< num-bytes 0) ""
+        (zero? file-size) ""
+        (zero? num-bytes) ""
+        (neg? num-bytes) ""
         :else
         (let [_   (.seek access-file position SEEK-CURRENT)
               len (.read access-file buffer)
