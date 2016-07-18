@@ -10,7 +10,7 @@
   <!-- Configuration Logging -->
   <Logger name="clojure-commons.config" level="INFO" />
   <!-- Request Logging -->
-  <Logger name="AccessLogger" level="INFO" />
+  <Logger name="AccessLogger" level="DEBUG" />
   <!-- Jargon Logging -->
   <Logger name="org.irods.jargon" level="WARN" />
   <!-- Service Call Trace Message Logging -->
