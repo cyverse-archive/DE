@@ -10,7 +10,7 @@
                  [metosin/ring-http-response "0.6.5"]
                  [metosin/compojure-api "0.24.5"]
                  [cheshire "5.5.0"]
-                 [clj-http "2.2.0"]
+                 [clj-http "2.0.0"]
                  [clj-time "0.11.0"]
                  [com.cemerick/url "0.1.1"]
                  [commons-configuration "1.10"    ; provides org.apache.commons.configuration

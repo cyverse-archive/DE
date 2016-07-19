@@ -22,7 +22,7 @@
                                 [com.fasterxml.jackson.core/jackson-annotations]
                                 [com.fasterxml.jackson.core/jackson-databind]
                                 [com.fasterxml.jackson.core/jackson-core]]]
-                 [clj-http "2.2.0"]
+                 [clj-http "2.0.0"]
                  [clj-time "0.4.5"]
                  [clojurewerkz/quartzite "1.0.1"
                    :exclusions [c3p0]]

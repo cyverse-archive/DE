@@ -16,7 +16,7 @@
   :uberjar-name "iplant-groups-standalone.jar"
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [cheshire "5.5.0"]
-                 [clj-http "2.2.0"]
+                 [clj-http "2.0.0"]
                  [clj-time "0.10.0"]
                  [com.cemerick/url "0.1.1"]
                  [medley "0.7.0"]
