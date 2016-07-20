@@ -20,12 +20,21 @@ public class AdminAppNameCellDefaultAppearance extends AppNameCellDefaultAppeara
                        final App value,
                        final String searchPattern) {
         if(!value.isDisabled()){
-            super.render(sb,
-                         value,
-                         resources.css().appName(),
-                         searchPattern,
-                         displayStrings.editApp(),
-                         null);
+            if (value.isBeta()) {
+                super.render(sb,
+                             value,
+                             resources.css().appBeta(),
+                             searchPattern,
+                             displayStrings.editApp(),
+                             null);
+            } else {
+                super.render(sb,
+                             value,
+                             resources.css().appName(),
+                             searchPattern,
+                             displayStrings.editApp(),
+                             null);
+            }
         } else {
             super.render(sb,
                          value,
