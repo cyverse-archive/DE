@@ -29,6 +29,8 @@ public class AppNameCellDefaultAppearance implements AppNameCell.AppNameCellAppe
         String appDisabled();
 
         String appBeta();
+
+        String appBetaHyperlink();
     }
 
     public interface Resources extends ClientBundle {
@@ -94,7 +96,7 @@ public class AppNameCellDefaultAppearance implements AppNameCell.AppNameCellAppe
 
     @Override
     public String appBetaNameClass() {
-        return resources.css().appBeta();
+        return resources.css().appBetaHyperlink();
     }
 
     @Override
