@@ -392,4 +392,16 @@
    [config/app-routes-enabled]
 
    (GET "/integration-data" [:as {:keys [params]}]
-        (service/success-response (apps/list-integration-data params)))))
+        (service/success-response (apps/list-integration-data params)))
+
+   (POST "/integration-data" [:as {:keys [body]}]
+         (service/success-response (apps/add-integration-data body)))
+
+   (GET "/integration-data/:integration-data-id" [integration-data-id]
+        (service/success-response (apps/get-integration-data integration-data-id)))
+
+   (PUT "/integration-data/:integration-data-id" [integration-data-id :as {:keys [body]}]
+        (service/success-response (apps/update-integration-data integration-data-id body)))
+
+   (DELETE "/integration-data/:integration-data-id" [integration-data-id]
+           (service/success-response (apps/delete-integration-data integration-data-id)))))
