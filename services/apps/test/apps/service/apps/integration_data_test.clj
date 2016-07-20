@@ -1,6 +1,7 @@
 (ns apps.service.apps.integration-data-test
   (:use [apps.service.apps.test-utils :only [users get-user]]
         [clojure.test]
+        [kameleon.uuids :only [uuid]]
         [medley.core :only [remove-vals]])
   (:require [apps.persistence.app-metadata :as amp]
             [apps.service.apps :as apps]
@@ -10,7 +11,8 @@
             [clojure.string :as string]
             [clojure.tools.logging :as log]
             [korma.core :as sql])
-  (:import [java.util.regex Pattern]))
+  (:import [clojure.lang ExceptionInfo]
+           [java.util.regex Pattern]))
 
 (use-fixtures :once tf/run-integration-tests tf/with-test-db tf/with-config atf/with-workspaces)
 (use-fixtures :each atf/with-public-apps atf/with-test-app atf/with-test-tool)
@@ -191,13 +193,13 @@
         (re-find regex (:name entry)))))
 
 (defn- check-integration-data-search [search-string]
-  (let [unfiltered (set (:integration_data (list-integration-data {})))
-        filtered   (set (:integration_data (list-integration-data {:search search-string})))
-        matches?   (partial integration-data-entry-matches? search-string)]
-    (is (seq unfiltered))
-    (is (seq filtered))
-    (is (every? matches? filtered))
-    (is (= filtered (set (filter matches? unfiltered))))))
+  (testing (str "filtered search for " search-string)
+    (let [unfiltered (set (:integration_data (list-integration-data {})))
+          filtered   (set (:integration_data (list-integration-data {:search search-string})))
+          matches?   (partial integration-data-entry-matches? search-string)]
+      (is (seq unfiltered))
+      (is (every? matches? filtered))
+      (is (= filtered (set (filter matches? unfiltered)))))))
 
 ;; We should be able to filter results by username and email address.
 (deftest test-integration-data-search
@@ -219,3 +221,73 @@
     (is (= "foo@example.org" (:email integration-data)))
     (is (= "Foo Bar" (:name integration-data)))
     (delete-integration-data integration-data)))
+
+;; We should not be able to add multiple integration data records for the same username.
+(deftest test-integration-data-insertion-duplicate-username
+  (let [integration-data (add-integration-data "foo" "foo@example.org" "Foo Bar")]
+    (is (thrown-with-msg? ExceptionInfo #"already has an integration data record"
+                          (add-integration-data "foo" "bar@example.org" "Bar Baz")))
+    (delete-integration-data integration-data)))
+
+;; We should not be able to add multiple integraiton data records for the same email address.
+(deftest test-integration-data-insertion-duplicate-email
+  (let [integration-data (add-integration-data "foo" "foo@example.org" "Foo Bar")]
+    (is (thrown-with-msg? ExceptionInfo #"already has an integration data record"
+                          (add-integration-data "bar" "foo@example.org" "Bar Baz")))
+    (delete-integration-data integration-data)))
+
+(defn- update-integration-data [{:keys [id]} email name]
+  (ids/update-integration-data (get-user :testde1) id {:email email :name name}))
+
+;; We should be able to edit an existing integration data record.
+(deftest test-integration-data-udpate
+  (let [integration-data (add-integration-data "foo" "foo@example.org" "Foo Bar")
+        updated          (update-integration-data integration-data "bar@example.org" "Bar Baz")
+        fetched          (amp/get-integration-data-by-id (:id integration-data))]
+    (is (not (nil? updated)))
+    (is (= "bar@example.org" (:email updated)))
+    (is (= "Bar Baz" (:name updated)))
+    (is (not (nil? fetched)))
+    (is (= "bar@example.org" (:integrator_email fetched)))
+    (is (= "Bar Baz" (:integrator_name fetched)))
+    (delete-integration-data integration-data)))
+
+;; An attempt to edit a non-existent integration data record should fail.
+(deftest test-integration-data-update-non-existent
+  (is (thrown-with-msg? ExceptionInfo #"does not exist"
+                        (update-integration-data {:id (uuid)} "foo@example.org" "Foo Bar"))))
+
+;; We should be able to edit just the name of an integration data record.
+(deftest test-integration-data-update-name-only
+  (let [integration-data (add-integration-data "foo" "foo@example.org" "Foo Bar")
+        updated          (update-integration-data integration-data "foo@example.org" "Bar Baz")
+        fetched          (amp/get-integration-data-by-id (:id integration-data))]
+    (is (not (nil? updated)))
+    (is (= "foo@example.org" (:email updated)))
+    (is (= "Bar Baz" (:name updated)))
+    (is (not (nil? fetched)))
+    (is (= "foo@example.org" (:integrator_email fetched)))
+    (is (= "Bar Baz" (:integrator_name fetched)))
+    (delete-integration-data integration-data)))
+
+;; We should be able to edit just the email address of an integration data record.
+(deftest test-integration-data-update-email-only
+  (let [integration-data (add-integration-data "foo" "foo@example.org" "Foo Bar")
+        updated          (update-integration-data integration-data "bar@example.org" "Foo Bar")
+        fetched          (amp/get-integration-data-by-id (:id integration-data))]
+    (is (not (nil? updated)))
+    (is (= "bar@example.org" (:email updated)))
+    (is (= "Foo Bar" (:name updated)))
+    (is (not (nil? fetched)))
+    (is (= "bar@example.org" (:integrator_email fetched)))
+    (is (= "Foo Bar" (:integrator_name fetched)))
+    (delete-integration-data integration-data)))
+
+;; We should not be able to change the email address to one that already has an integration data record.
+(deftest test-integration-data-duplicate-email
+  (let [foo (add-integration-data "foo" "foo@example.org" "Foo Bar")
+        bar (add-integration-data "bar" "bar@example.org" "Bar baz")]
+    (is (thrown-with-msg? ExceptionInfo #"already has an integration data record"
+                          (update-integration-data foo (:email bar) (:name foo))))
+    (delete-integration-data foo)
+    (delete-integration-data bar)))

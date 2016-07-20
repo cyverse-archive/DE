@@ -18,7 +18,7 @@
         :name     name}
        (remove-vals nil?)))
 
-(defn list-integration-data [user {:keys [search limit offset sort-field sort-dir]}]
+(defn list-integration-data [_ {:keys [search limit offset sort-field sort-dir]}]
   (let [sort-field (sort-field-to-db-field sort-field)]
     (transaction
      {:integration_data
@@ -27,14 +27,38 @@
       :total
       (amp/count-integration-data search)})))
 
+(defn- duplicate-username [username]
+  (cxu/bad-request (str "user " username " already has an integration data record")))
+
+(defn- duplicate-email [email]
+  (cxu/bad-request (str "email address " email " already has an integration data record")))
+
+(defn- not-found [id]
+  (cxu/not-found (str "integration data record " id " does not exist")))
+
 (defn add-integration-data [_ {:keys [username name email]}]
   (let [qualified-username (when username (str username "@" (cfg/uid-domain)))]
     (cond
       (and username (amp/get-integration-data-by-username qualified-username))
-      (cxu/bad-request (str "user " username " already has an integration data record"))
+      (duplicate-username username)
 
       (amp/get-integration-data-by-email email)
-      (cxu/bad-request (str "email address " email " already has an integration data record")))
+      (duplicate-email email))
 
     (let [id (:id (amp/get-integration-data qualified-username email name))]
       (format-integration-data (amp/get-integration-data-by-id id)))))
+
+(defn update-integration-data [_ id {:keys [name email]}]
+  (let [integration-data (amp/get-integration-data-by-id id)]
+    (cond
+      (nil? integration-data)
+      (not-found id)
+
+      ;; The database already contains duplicates, so we're not going to complain unless the email
+      ;; address is being changed.
+      (and (not= (:integrator_email integration-data) email)
+           (amp/get-integration-data-by-email email))
+      (duplicate-email email)))
+
+  (amp/update-integration-data id name email)
+  (format-integration-data (amp/get-integration-data-by-id id)))

@@ -13,6 +13,7 @@
 (def AppIdJobViewPathParam (describe String "The App's ID"))
 (def AppCategoryIdPathParam (describe UUID "The App Category's UUID"))
 (def ToolIdParam (describe UUID "A UUID that is used to identify the Tool"))
+(def IntegrationDataIdPathParam (describe UUID "A UUID that is used to identify the integration data record."))
 
 (def ApiName (describe String "The name of the external API"))
 

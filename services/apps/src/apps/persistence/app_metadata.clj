@@ -153,7 +153,7 @@
                           :integrator_email integrator-email
                           :integrator_name  integrator-name})))))
 
-(defn- update-integration-data [{:keys [id]} username integrator-email integrator-name]
+(defn- auto-update-integration-data [{:keys [id]} username integrator-email integrator-name]
   (when (can-update-integration-data? id integrator-email integrator-name)
     (sql/update integration_data
                 (set-fields {:integrator_email integrator-email
@@ -173,8 +173,17 @@
      (if (or (not= (:integrator_email integration-data) integrator-email)
              (not= (:integrator_name integration-data) integrator-name)
              (nil? (:user_id integration-data)))
-       (update-integration-data integration-data username integrator-email integrator-name)
+       (auto-update-integration-data integration-data username integrator-email integrator-name)
        integration-data))))
+
+
+(defn update-integration-data
+  "Updates an integration data record."
+  [id name email]
+  (sql/update integration_data
+              (set-fields {:integrator_email email
+                           :integrator_name  name})
+              (where {:id id})))
 
 (defn- add-integration-data-search-clause [query search]
   (if-not (nil? search)
