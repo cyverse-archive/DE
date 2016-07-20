@@ -36,6 +36,12 @@
 (defn- not-found [id]
   (cxu/not-found (str "integration data record " id " does not exist")))
 
+(defn- integration-data-record-used [type id used-by-ids]
+  (cxu/bad-request (str "integration data record " id " is used by one or more " type ": " used-by-ids)))
+
+(def ^:private used-by-tools (partial integration-data-record-used "tools"))
+(def ^:private used-by-apps (partial integration-data-record-used "apps"))
+
 (defn add-integration-data [_ {:keys [username name email]}]
   (let [qualified-username (when username (str username "@" (cfg/uid-domain)))]
     (cond
@@ -68,3 +74,19 @@
 
   (amp/update-integration-data id name email)
   (format-integration-data (amp/get-integration-data-by-id id)))
+
+(defn delete-integration-data [_ id]
+  (let [integration-data (amp/get-integration-data-by-id id)
+        tool-ids         (amp/get-tool-ids-by-integration-data-id id)
+        app-ids          (amp/get-app-ids-by-integration-data-id id)]
+    (cond
+      (nil? integration-data)
+      (not-found id)
+
+      (seq tool-ids)
+      (used-by-tools id tool-ids)
+
+      (seq app-ids)
+      (used-by-apps id app-ids))
+
+    (amp/delete-integration-data id)))

@@ -39,4 +39,12 @@
     :body [body (describe schema/IntegrationDataUpdate "The updated integration data information.")]
     :return schema/IntegrationData
     :description "This service allows administrators to update integration data records in the DE apps database."
-    (ok (integration-data/update-integration-data current-user integration-data-id body))))
+    (ok (integration-data/update-integration-data current-user integration-data-id body)))
+
+  (DELETE* "/:integration-data-id" []
+    :path-params [integration-data-id :- IntegrationDataIdPathParam]
+    :query [params SecuredQueryParams]
+    :summary "Delete an Integration Data Record"
+    :description "This service allows administrators to delete individual integration data records."
+    (integration-data/delete-integration-data current-user integration-data-id)
+    (ok)))

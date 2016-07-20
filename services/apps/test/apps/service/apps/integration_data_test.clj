@@ -303,3 +303,28 @@
 (deftest test-integration-data-get-non-existent
   (is (thrown-with-msg? ExceptionInfo #"does not exist"
                         (ids/get-integration-data (get-user :testde1) (uuid)))))
+
+;; We should be able to delete an integration data record.
+(deftest test-integration-data-deletion
+  (let [integration-data (add-integration-data "foo" "foo@example.org" "Foo Bar")]
+    (ids/delete-integration-data (get-user :testde1) (:id integration-data))
+    (is (nil? (amp/get-integration-data-by-id (:id integration-data))))))
+
+;; We should not be able to delete an integration data record associated with an app.
+(deftest test-integration-data-deletion-app
+  (let [integration-data (get-integration-data-for-app (:id atf/test-app))]
+    (is (not (nil? integration-data)))
+    (is (thrown-with-msg? ExceptionInfo #"used by one or more apps"
+                          (ids/delete-integration-data (get-user :testde1) (:id integration-data))))))
+
+;; We should not be able to delete an integration data record associated with a tool.
+(deftest test-integration-data-deletion-tool
+  (let [integration-data (get-integration-data-for-tool atf/test-tool-id)]
+    (is (not (nil? integration-data)))
+    (is (thrown-with-msg? ExceptionInfo #"used by one or more tools"
+                          (ids/delete-integration-data (get-user :testde1) (:id integration-data))))))
+
+;; We should get an error message if we try to delete a non-existent integration data record.
+(deftest test-integration-data-deletion-non-existent
+  (is (thrown-with-msg? ExceptionInfo #"does not exist"
+                        (ids/delete-integration-data (get-user :testde1) (uuid)))))
