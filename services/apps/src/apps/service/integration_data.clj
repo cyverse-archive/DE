@@ -48,6 +48,12 @@
     (let [id (:id (amp/get-integration-data qualified-username email name))]
       (format-integration-data (amp/get-integration-data-by-id id)))))
 
+(defn get-integration-data [_ id]
+  (let [integration-data (amp/get-integration-data-by-id id)]
+    (if-not (nil? integration-data)
+      (format-integration-data integration-data)
+      (not-found id))))
+
 (defn update-integration-data [_ id {:keys [name email]}]
   (let [integration-data (amp/get-integration-data-by-id id)]
     (cond

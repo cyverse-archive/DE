@@ -24,6 +24,14 @@
     :description "This service allows administrators to add a new integration data record to the DE apps database."
     (ok (integration-data/add-integration-data current-user body)))
 
+  (GET* "/:integration-data-id" []
+    :path-params [integration-data-id :- IntegrationDataIdPathParam]
+    :query [params SecuredQueryParams]
+    :summary "Get an Integration Data Record"
+    :return schema/IntegrationData
+    :description "This service allows administrators to retrieve information about an integration data record."
+    (ok (integration-data/get-integration-data current-user integration-data-id)))
+
   (PUT* "/:integration-data-id" []
     :path-params [integration-data-id :- IntegrationDataIdPathParam]
     :query [params SecuredQueryParams]

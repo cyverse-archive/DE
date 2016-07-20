@@ -291,3 +291,15 @@
                           (update-integration-data foo (:email bar) (:name foo))))
     (delete-integration-data foo)
     (delete-integration-data bar)))
+
+;; We should be able to get information about an integration data record.
+(deftest test-integration-data-get
+  (let [foo     (add-integration-data "foo" "foo@example.org" "Foo Bar")
+        fetched (ids/get-integration-data (get-user :testde1) (:id foo))]
+    (is (= foo fetched))
+    (delete-integration-data foo)))
+
+;; We should get an error message if the integration data record doesn't exist.
+(deftest test-integration-data-get-non-existent
+  (is (thrown-with-msg? ExceptionInfo #"does not exist"
+                        (ids/get-integration-data (get-user :testde1) (uuid)))))
