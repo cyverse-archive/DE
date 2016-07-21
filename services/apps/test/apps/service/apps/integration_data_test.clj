@@ -328,3 +328,17 @@
 (deftest test-integration-data-deletion-non-existent
   (is (thrown-with-msg? ExceptionInfo #"does not exist"
                         (ids/delete-integration-data (get-user :testde1) (uuid)))))
+
+;; We should be able to get an integration data record for an app.
+(deftest test-app-integration-data-retrieval
+  (let [actual   (apps/get-app-integration-data (get-user :testde1) (:id atf/test-app))
+        expected (get-integration-data-for-app (:id atf/test-app))]
+    (is (= (:integrator_email expected) (:email actual)))
+    (is (= (:integrator_name expected) (:name actual)))))
+
+;; We should be able to get an integration data record for a tool.
+(deftest test-tool-integration-data-retrieval
+  (let [actual   (apps/get-tool-integration-data (get-user :testde1) atf/test-tool-id)
+        expected (get-integration-data-for-tool atf/test-tool-id)]
+    (is (= (:integrator_email expected) (:email actual)))
+    (is (= (:integrator_name expected) (:name actual)))))

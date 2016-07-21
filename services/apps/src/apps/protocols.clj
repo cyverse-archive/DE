@@ -59,6 +59,8 @@
   (adminDeleteCategory [_ category-id])
   (adminUpdateCategory [_ body])
   (getAppDocs [_ app-id])
+  (getAppIntegrationData [_ app-id])
+  (getToolIntegrationData [_ tool-id])
   (ownerEditAppDocs [_ app-id body])
   (ownerAddAppDocs [_ app-id body])
   (adminEditAppDocs [_ app-id body])

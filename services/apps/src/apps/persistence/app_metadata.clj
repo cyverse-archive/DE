@@ -176,7 +176,6 @@
        (auto-update-integration-data integration-data username integrator-email integrator-name)
        integration-data))))
 
-
 (defn update-integration-data
   "Updates an integration data record."
   [id name email]
@@ -193,11 +192,28 @@
                  {(sqlfn lower :integrator_email) [like (sqlfn lower search)]})))
     query))
 
-(defn get-integration-data-by-id [integration-data-id]
+(defn- integration-data-base-query []
   (-> (select* [:integration_data :d])
       (join [:users :u] {:d.user_id :u.id})
-      (fields :d.id :d.integrator_name :d.integrator_email :u.username)
+      (fields :d.id :d.integrator_name :d.integrator_email :u.username)))
+
+(defn get-integration-data-by-id [integration-data-id]
+  (-> (integration-data-base-query)
       (where {:d.id integration-data-id})
+      select
+      first))
+
+(defn get-integration-data-by-tool-id [tool-id]
+  (-> (integration-data-base-query)
+      (join [:tools :t] {:t.integration_data_id :d.id})
+      (where {:t.id tool-id})
+      select
+      first))
+
+(defn get-integration-data-by-app-id [app-id]
+  (-> (integration-data-base-query)
+      (join [:apps :a] {:a.integration_data_id :d.id})
+      (where {:a.id app-id})
       select
       first))
 
@@ -294,14 +310,6 @@
         [input-files output-files] ((juxt filter remove) :input_file data-files)]
     {:input_files  (map :filename input-files)
      :output_files (map :filename output-files)}))
-
-(defn- get-integration-data-by-tool-id
-  [tool-id]
-  (first
-   (select integration_data
-           (fields :integrator_name :integrator_email)
-           (join tools)
-           (where {:tools.id tool-id}))))
 
 (defn get-tool-implementation-details
   "Fetches a tool's implementation details."

@@ -90,3 +90,13 @@
       (used-by-apps id app-ids))
 
     (amp/delete-integration-data id)))
+
+(defn get-integration-data-for-app [_ app-id]
+  (if-let [integration-data (amp/get-integration-data-by-app-id app-id)]
+    (format-integration-data integration-data)
+    (cxu/not-found (str "no integration data found for app: " app-id))))
+
+(defn get-integration-data-for-tool [_ tool-id]
+  (if-let [integration-data (amp/get-integration-data-by-tool-id tool-id)]
+    (format-integration-data integration-data)
+    (cxu/not-found (str "no integration data found for tool: " tool-id))))

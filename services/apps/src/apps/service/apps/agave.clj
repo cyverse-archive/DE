@@ -20,6 +20,8 @@
 
 (def analysis-permission-rejection "Cannot list or modify the permissions of HPC analyses with this service")
 
+(def integration-data-rejection "Cannot list or modify integration data for HPC apps with this service.")
+
 (defn- reject-app-permission-request
   []
   (service/bad-request app-permission-rejection))
@@ -135,6 +137,14 @@
       {:app_id        app-id
        :documentation ""
        :references    []}))
+
+  (getAppIntegrationData [_ app-id]
+    (when-not (util/uuid? app-id)
+      (service/bad-request integration-data-rejection)))
+
+  (getToolIntegrationData [_ tool-id]
+    (when-not (util/uuid? tool-id)
+      (service/bad-request integration-data-rejection)))
 
   (ownerEditAppDocs [_ app-id _]
     (when-not (util/uuid? app-id)
