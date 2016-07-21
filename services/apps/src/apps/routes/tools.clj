@@ -499,4 +499,13 @@ included in it. Any existing settings not included in the request's `container` 
            :return nil
            :summary "Delete Tool Container Volumes From Information"
            :description "Deletes a container name that the tool container should import volumes from."
-           (ok (delete-tool-volumes-from tool-id volumes-from-id))))
+           (ok (delete-tool-volumes-from tool-id volumes-from-id)))
+
+  (PUT* "/:tool-id/integration-data/:integration-data-id" []
+        :path-params [tool-id :- ToolIdParam integration-data-id :- IntegrationDataIdPathParam]
+        :query [params SecuredQueryParams]
+        :return IntegrationData
+        :summary "Update the Integration Data Record for a Tool"
+        :description "This service allows administrators to change the integration data record
+        associated with a tool."
+        (ok (apps/update-tool-integration-data current-user tool-id integration-data-id))))

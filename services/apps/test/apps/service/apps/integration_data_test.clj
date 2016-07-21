@@ -336,9 +336,68 @@
     (is (= (:integrator_email expected) (:email actual)))
     (is (= (:integrator_name expected) (:name actual)))))
 
+;; Attempting to get the integration data for an unknown app should fail.
+(deftest test-app-integration-data-retrieval-not-found
+  (is (thrown-with-msg? ExceptionInfo #"no integration data found for app"
+                        (apps/get-app-integration-data (get-user :testde1) (uuid)))))
+
 ;; We should be able to get an integration data record for a tool.
 (deftest test-tool-integration-data-retrieval
   (let [actual   (apps/get-tool-integration-data (get-user :testde1) atf/test-tool-id)
         expected (get-integration-data-for-tool atf/test-tool-id)]
     (is (= (:integrator_email expected) (:email actual)))
     (is (= (:integrator_name expected) (:name actual)))))
+
+;; Attempting to get the integration data for an unknown tool should fail.
+(deftest test-tool-integration-data-retrieval-not-found
+  (is (thrown-with-msg? ExceptionInfo #"no integration data found for tool"
+                        (apps/get-tool-integration-data (get-user :testde1) (uuid)))))
+
+;; We should be able to change the integration data record associated with an app.
+(deftest test-app-integration-data-update
+  (let [user     (get-user :testde1)
+        app-id   (:id atf/test-app)
+        original (apps/get-app-integration-data user app-id)
+        new      (add-integration-data "foo" "foo@example.org" "Foo Bar")]
+    (is (not= original new))
+    (apps/update-app-integration-data user app-id (:id new))
+    (is (= new (apps/get-app-integration-data user app-id)))
+    (apps/update-app-integration-data user app-id (:id original))
+    (is (= original (apps/get-app-integration-data user app-id)))
+    (delete-integration-data new)))
+
+;; Attempting to set the integration data record for a non-existent app should fail.
+(deftest test-app-integration-data-update-missing-app
+  (let [new (add-integration-data "foo" "foo@example.org" "Foo Bar")]
+    (is (thrown-with-msg? ExceptionInfo #"could not be found"
+                          (apps/update-app-integration-data (get-user :testde1) (uuid) (:id new))))
+    (delete-integration-data new)))
+
+;; Attempting to assign a non-existent integration data record to an app should fail.
+(deftest test-app-integration-data-update-missing-integration-data
+  (is (thrown-with-msg? ExceptionInfo #"does not exist"
+                        (apps/update-app-integration-data (get-user :testde1) (:id atf/test-app) (uuid)))))
+
+;; We should be able to change the integration data record associated with a tool.
+(deftest test-tool-integration-data-update
+  (let [user     (get-user :testde1)
+        original (apps/get-tool-integration-data user atf/test-tool-id)
+        new      (add-integration-data "foo" "foo@example.org" "Foo Bar")]
+    (is (not= original new))
+    (apps/update-tool-integration-data user atf/test-tool-id (:id new))
+    (is (= new (apps/get-tool-integration-data user atf/test-tool-id)))
+    (apps/update-tool-integration-data user atf/test-tool-id (:id original))
+    (is (= original (apps/get-tool-integration-data user atf/test-tool-id)))
+    (delete-integration-data new)))
+
+;; Attempting to set the integration data record for a non-existent tool should fail.
+(deftest test-tool-integration-data-update-missing-tool
+  (let [new (add-integration-data "foo" "foo@example.org" "Foo Bar")]
+    (is (thrown-with-msg? ExceptionInfo #"could not be found"
+                          (apps/update-tool-integration-data (get-user :testde1) (uuid) (:id new))))
+    (delete-integration-data new)))
+
+;; Attempting to assign a non-existent integration data record to a tool should fail.
+(deftest test-tool-integration-data-missing-integration-data
+  (is (thrown-with-msg? ExceptionInfo #"does not exist"
+                        (apps/update-tool-integration-data (get-user :testde1) atf/test-tool-id (uuid)))))

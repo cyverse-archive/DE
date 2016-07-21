@@ -217,6 +217,18 @@
       select
       first))
 
+(defn update-app-integration-data [app-id integration-data-id]
+  (-> (update* :apps)
+      (set-fields {:integration_data_id integration-data-id})
+      (where {:id app-id})
+      (sql/update)))
+
+(defn update-tool-integration-data [tool-id integration-data-id]
+  (-> (update* :tools)
+      (set-fields {:integration_data_id integration-data-id})
+      (where {:id tool-id})
+      (sql/update)))
+
 (defn list-integration-data [search limit offset sort-field sort-dir]
   (-> (select* [:integration_data :d])
       (join [:users :u] {:d.user_id :u.id})
@@ -263,6 +275,18 @@
               :type
               :version
               :attribution)))
+
+(defn get-tool
+  "Loads information about a single tool."
+  [tool-id]
+  (assert-not-nil
+   [:tool-id tool-id]
+   (-> (select* [:tools :t])
+       (join [:tool_types :tt] {:t.tool_type_id :tt.id})
+       (fields :t.id :t.name :t.description :t.location [:tt.name :type] :t.version :t.attribution)
+       (where {:t.id tool-id})
+       select
+       first)))
 
 (defn get-app-tools
   "Loads information about the tools associated with an app."

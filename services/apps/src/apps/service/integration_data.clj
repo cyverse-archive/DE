@@ -100,3 +100,17 @@
   (if-let [integration-data (amp/get-integration-data-by-tool-id tool-id)]
     (format-integration-data integration-data)
     (cxu/not-found (str "no integration data found for tool: " tool-id))))
+
+(defn update-integration-data-for-app [_ app-id integration-data-id]
+  (amp/get-app app-id)
+  (if-let [integration-data (amp/get-integration-data-by-id integration-data-id)]
+    (do (amp/update-app-integration-data app-id integration-data-id)
+        (format-integration-data integration-data))
+    (not-found integration-data-id)))
+
+(defn update-integration-data-for-tool [_ tool-id integration-data-id]
+  (amp/get-tool tool-id)
+  (if-let [integration-data (amp/get-integration-data-by-id integration-data-id)]
+    (do (amp/update-tool-integration-data tool-id integration-data-id)
+        (format-integration-data integration-data))
+    (not-found integration-data-id)))

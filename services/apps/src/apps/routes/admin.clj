@@ -12,6 +12,7 @@
         [apps.routes.schemas.app]
         [apps.routes.schemas.app.category]
         [apps.routes.schemas.reference-genome]
+        [apps.routes.schemas.integration-data :only [IntegrationData]]
         [apps.routes.schemas.tool]
         [apps.user :only [current-user]]
         [apps.util.coercions :only [coerce!]]
@@ -118,7 +119,16 @@
          :summary "Add App Documentation"
          :description "This service is used by DE administrators to add documentation for a single App"
          (ok (coerce! AppDocumentation
-                  (apps/admin-add-app-docs current-user app-id body)))))
+                      (apps/admin-add-app-docs current-user app-id body))))
+
+  (PUT* "/:app-id/integration-data/:integration-data-id" []
+        :path-params [app-id :- AppIdPathParam integration-data-id :- IntegrationDataIdPathParam]
+        :query [params SecuredQueryParams]
+        :return IntegrationData
+        :summary "Update the Integration Data Record for an App"
+        :description "This service allows administrators to change the integration data record
+        associated with an app."
+        (ok (apps/update-app-integration-data current-user app-id integration-data-id))))
 
 (defroutes* admin-categories
   (GET* "/" []
