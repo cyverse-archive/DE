@@ -32,11 +32,11 @@ public class TemplateNameCellDefaultAppearance implements TemplateNameCell.Templ
     }
 
     interface Templates extends SafeHtmlTemplates {
-        @SafeHtmlTemplates.Template("<img class='{0}' title='{2}' src='{1}'>{2}</img>")
-        SafeHtml cell(String imgClassName, SafeUri img, String templateName);
+        @SafeHtmlTemplates.Template("<img name='{3}' class='{0}' title='{2}' src='{1}'>{2}</img>")
+        SafeHtml cell(String imgClassName, SafeUri img, String templateName, String name);
 
-        @SafeHtmlTemplates.Template("<img id='{3}' class='{0}' title='{2}' src='{1}'>{2}</img>")
-        SafeHtml debugCell(String imgClassName, SafeUri img, String templateName, String debugId);
+        @SafeHtmlTemplates.Template("<img name='{4}' id='{3}' class='{0}' title='{2}' src='{1}'>{2}</img>")
+        SafeHtml debugCell(String imgClassName, SafeUri img, String templateName, String debugId, String name);
     }
 
     private final Templates templates;
@@ -66,15 +66,15 @@ public class TemplateNameCellDefaultAppearance implements TemplateNameCell.Templ
         tooltip = "info";
         final SafeUri safeUri = iplantResources.info().getSafeUri();
         if(DebugInfo.isDebugIdEnabled()){
-            sb.append(templates.debugCell(imgClassName, safeUri, value.getName(), value.getId() + "-info"));
+            sb.append(templates.debugCell(imgClassName, safeUri, value.getName(), value.getId() + "-info",description()));
         } else {
-            sb.append(templates.cell(imgClassName, safeUri, value.getName()));
+            sb.append(templates.cell(imgClassName, safeUri, value.getName(), description()));
         }
 
     }
 
     @Override
-    public String Description() {
+    public String description() {
         return "Description";
     }
 

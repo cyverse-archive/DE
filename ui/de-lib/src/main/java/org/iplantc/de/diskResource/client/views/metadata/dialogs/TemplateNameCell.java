@@ -12,6 +12,7 @@ import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Node;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
@@ -28,7 +29,7 @@ public class TemplateNameCell extends AbstractCell<MetadataTemplateInfo> {
         void render(SafeHtmlBuilder sb,
                     MetadataTemplateInfo value);
 
-        String Description();
+        String description();
 
         String background();
     }
@@ -57,7 +58,9 @@ public class TemplateNameCell extends AbstractCell<MetadataTemplateInfo> {
             return;
         }
 
-        if(eventTarget.getClassName().contains("info")){
+
+        Element child = findAppNameElement(parent);
+        if (child != null && child.isOrHasChild(eventTarget)) {
             switch (Event.as(event).getTypeInt()) {
                 case Event.ONCLICK:
                     doOnClick(eventTarget, value);
@@ -69,11 +72,25 @@ public class TemplateNameCell extends AbstractCell<MetadataTemplateInfo> {
         }
     }
 
+    private Element findAppNameElement(Element parent) {
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            Node childNode = parent.getChild(i);
+
+            if (Element.is(childNode)) {
+                Element child = Element.as(childNode);
+                if (child.getAttribute("name").equalsIgnoreCase(appearance.description())) { //$NON-NLS-1$
+                    return child;
+                }
+            }
+        }
+        return null;
+    }
+
     private void doOnClick(Element eventTarget, MetadataTemplateInfo value) {
         Dialog d = new Dialog();
         d.setSize("500","100");
         d.setHideOnButtonClick(true);
-        d.setHeadingText(appearance.Description());
+        d.setHeadingText(appearance.description());
         HTML desc = new HTML(value.getDescription());
         desc.setStylePrimaryName(appearance.background());
         d.add(desc);
