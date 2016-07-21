@@ -5,6 +5,16 @@
 # simple containers.
 ---
 
+- name: predeploy chat notification
+  hosts: services:ui:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - always
+  roles:
+    - role: util-notify-chat
+      msg: "Deploying service nginxes"
+
 - name: Redeploy anon-files-nginx
   hosts: anon-files:&systems
   become: true
@@ -242,3 +252,13 @@
       has_iplant_data: true
       deploy_use_color: false
       service_name: "{{de.http_server.compose_service}}"
+
+- name: postdeploy chat notification
+  hosts: services:ui:&systems
+  become: true
+  gather_facts: false
+  tags:
+    - always
+  roles:
+    - role: util-notify-chat
+      msg: ":heavy_check_mark: Done deploying service nginxes"

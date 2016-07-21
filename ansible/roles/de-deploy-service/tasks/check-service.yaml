@@ -4,6 +4,8 @@
 - name: verify available_services was provided to check-service
   fail: msg="An iterable available_services must be passed to check-service.yaml"
   when: available_services is not iterable
+  tags:
+      - verify
 
 - name: verify that {{check_service_name}} exists in the docker-compose file
   fail: msg="{{check_service_name}} is not available on this host"

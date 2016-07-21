@@ -5,34 +5,46 @@
   vars:
     check_service_name: "{{service_name}}_green"
     available_services: "{{service_list.stdout_lines}}"
+  tags:
+      - verify
 
 - include: check-service.yaml
   vars:
     check_service_name: "{{service_name}}_blue"
     available_services: "{{service_list.stdout_lines}}"
+  tags:
+      - verify
 
 - include: check-service.yaml
   vars:
     check_service_name: "config_{{service_name}}_green"
     available_services: "{{service_list.stdout_lines}}"
+  tags:
+      - verify
   when: has_configs|default(true)
 
 - include: check-service.yaml
   vars:
     check_service_name: "config_{{service_name}}_blue"
     available_services: "{{service_list.stdout_lines}}"
+  tags:
+      - verify
   when: has_configs|default(true)
 
 - include: check-service.yaml
   vars:
     check_service_name: "iplant_data_{{service_name}}_green"
     available_services: "{{service_list.stdout_lines}}"
+  tags:
+      - verify
   when: has_iplant_data|default(false)
 
 - include: check-service.yaml
   vars:
     check_service_name: "iplant_data_{{service_name}}_blue"
     available_services: "{{service_list.stdout_lines}}"
+  tags:
+      - verify
   when: has_iplant_data|default(false)
 
 - name: Determine color of {{service_name_short}}

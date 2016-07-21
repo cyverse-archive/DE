@@ -15,6 +15,8 @@
     HOSTNAME: "{{ hostname_i.stdout_lines[0] }}"
   shell: "docker-compose -f {{docker_compose_path}} config --services"
   register: service_list
+  tags:
+    - verify
 
 - include: "colored.yaml"
   when: deploy_use_color
