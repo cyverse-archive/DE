@@ -1,3 +1,0 @@
-#!/bin/bash
-
-echo "CondorID $1 was stopped"
