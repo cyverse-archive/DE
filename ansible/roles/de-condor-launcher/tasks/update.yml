@@ -2,14 +2,14 @@
 - name: create /var/log/condor-launcher
   file: path=/var/log/condor-launcher owner=root group=root mode=0755 state=directory
 
-- name: pull jobservices image
-  shell: docker pull discoenv/jobservices:{{docker.tag}}
+- name: pull condor-launcher image
+  shell: docker pull discoenv/condor-launcher:{{docker.tag}}
 
 - name: pull configs image
   shell: docker pull gims.iplantcollaborative.org:5000/de-configs-{{environment_name}}:{{docker.tag}}
 
 - name: install condor-launcher
-  shell: docker run --rm -v /usr/local/bin:/condor-launcher --entrypoint "cp" discoenv/jobservices:{{docker.tag}} /bin/condor-launcher /condor-launcher/condor-launcher
+  shell: docker run --rm -v /usr/local/bin:/condor-launcher --entrypoint "cp" discoenv/condor-launcher:{{docker.tag}} /go/bin/condor-launcher /condor-launcher/condor-launcher
 
 - name: remove config container
   shell: docker rm -v condor-launcher-configs
