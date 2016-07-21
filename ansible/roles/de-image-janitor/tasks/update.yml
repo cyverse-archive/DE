@@ -8,14 +8,14 @@
 - name: place /opt/image-janitor/excludes file
   template: src=excludes.j2 dest=/opt/image-janitor/excludes owner=condor group=condor mode=0644
 
-- name: pull jobservices image
-  shell: docker pull discoenv/jobservices:{{docker.tag}}
+- name: pull image-janitor image
+  shell: docker pull discoenv/image-janitor:{{docker.tag}}
 
 - name: pull configs image
   shell: docker pull gims.iplantcollaborative.org:5000/de-configs-{{environment_name}}:{{docker.tag}}
 
 - name: install image-janitor
-  shell: docker run --rm -v /usr/local/bin:/image-janitor --entrypoint "cp" discoenv/jobservices:{{docker.tag}} /bin/image-janitor /image-janitor/image-janitor
+  shell: docker run --rm -v /usr/local/bin:/image-janitor --entrypoint "cp" discoenv/image-janitor:{{docker.tag}} /go/bin/image-janitor /image-janitor/image-janitor
 
 - name: remove config container
   shell: docker rm -v image-janitor-configs
