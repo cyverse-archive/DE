@@ -29,6 +29,8 @@ public class TemplateNameCell extends AbstractCell<MetadataTemplateInfo> {
                     MetadataTemplateInfo value);
 
         String Description();
+
+        String background();
     }
 
 
@@ -73,6 +75,7 @@ public class TemplateNameCell extends AbstractCell<MetadataTemplateInfo> {
         d.setHideOnButtonClick(true);
         d.setHeadingText(appearance.Description());
         HTML desc = new HTML(value.getDescription());
+        desc.setStylePrimaryName(appearance.background());
         d.add(desc);
         d.show();
     }
