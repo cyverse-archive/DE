@@ -30,10 +30,10 @@ public class DownloadTemplateCellDefaultAppearance implements DownloadTemplateCe
     }
 
     interface Templates extends SafeHtmlTemplates {
-        @SafeHtmlTemplates.Template("<img class='{0}' title='{2}' src='{1}' />")
+        @SafeHtmlTemplates.Template("<img name='{2}' class='{0}' title='{2}' src='{1}' />")
         SafeHtml cell(String imgClassName, SafeUri img, String toolTip);
 
-        @SafeHtmlTemplates.Template("<img id='{3}' class='{0}' title='{2}' src='{1}'/>")
+        @SafeHtmlTemplates.Template("<img name='{2}' id='{3}' class='{0}' title='{2}' src='{1}'/>")
         SafeHtml debugCell(String imgClassName, SafeUri img, String toolTip, String debugId);
     }
 
@@ -60,7 +60,7 @@ public class DownloadTemplateCellDefaultAppearance implements DownloadTemplateCe
     public void render(SafeHtmlBuilder sb, String debugId) {
         String imgClassName, tooltip;
         imgClassName = resources.css().download();
-        tooltip = "Download";
+        tooltip = download();
         final SafeUri safeUri = iplantResources.arrowDown().getSafeUri();
         if(DebugInfo.isDebugIdEnabled()){
             sb.append(templates.debugCell(imgClassName, safeUri, tooltip, debugId));
@@ -68,5 +68,10 @@ public class DownloadTemplateCellDefaultAppearance implements DownloadTemplateCe
             sb.append(templates.cell(imgClassName, safeUri, tooltip));
         }
 
+    }
+
+    @Override
+    public String download() {
+        return "Download";
     }
 }

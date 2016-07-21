@@ -13,6 +13,7 @@ import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Node;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Event;
 
@@ -24,6 +25,7 @@ public class DownloadTemplateCell extends AbstractCell<MetadataTemplateInfo> {
     public interface DownloadTemplateCellAppearance {
         void render(SafeHtmlBuilder sb,
                     String debugId);
+        String download();
     }
 
     private final DownloadTemplateCellAppearance appearance;
@@ -45,7 +47,8 @@ public class DownloadTemplateCell extends AbstractCell<MetadataTemplateInfo> {
         }
 
         Element eventTarget = Element.as(event.getEventTarget());
-        if(eventTarget.getClassName().contains("download")){
+        Element child = findAppNameElement(parent);
+        if (child != null && child.isOrHasChild(eventTarget)) {
             switch (Event.as(event).getTypeInt()) {
                 case Event.ONCLICK:
                     doOnClick(eventTarget, value);
@@ -55,6 +58,21 @@ public class DownloadTemplateCell extends AbstractCell<MetadataTemplateInfo> {
             }
 
         }
+    }
+
+
+    private Element findAppNameElement(Element parent) {
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            Node childNode = parent.getChild(i);
+
+            if (Element.is(childNode)) {
+                Element child = Element.as(childNode);
+                if (child.getAttribute("name").equalsIgnoreCase(appearance.download())) { //$NON-NLS-1$
+                    return child;
+                }
+            }
+        }
+        return null;
     }
 
     private void doOnClick(Element eventTarget, MetadataTemplateInfo value) {
