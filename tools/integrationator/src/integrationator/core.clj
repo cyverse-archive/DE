@@ -15,6 +15,7 @@
    ["-p" "--db-port PORT"     "database port number" :default 5432 :parse-fn #(Integer/parseInt %)]
    ["-d" "--db-name NAME"     "database name"        :default "de"]
    ["-U" "--db-user USER"     "database user"        :default "de"]
+   ["-P" "--db-password PASS" "database password"]
    ["-?" "--help"             "display the help message"]])
 
 (def required-options [:ldap-host])
@@ -64,8 +65,8 @@
 
 (defn- connect-to-db
   "Defines the database connection settings."
-  [{:keys [db-host db-port db-name db-user]}]
-  (let [db-pass (get-password db-host db-port db-name db-user)
+  [{:keys [db-host db-port db-name db-user db-password]}]
+  (let [db-pass (or db-password (get-password db-host db-port db-name db-user))
         db-spec {:classname   "org.postgresql.Driver"
                  :subprotocol "postgresql"
                  :subname     (str "//" db-host ":" db-port "/" db-name)
