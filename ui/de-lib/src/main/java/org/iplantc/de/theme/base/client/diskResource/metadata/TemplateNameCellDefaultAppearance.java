@@ -21,6 +21,9 @@ public class TemplateNameCellDefaultAppearance implements TemplateNameCell.Templ
     interface  MyCss extends CssResource {
         @CssResource.ClassName("info")
         String info();
+
+        String background();
+
     }
 
     interface Resources extends ClientBundle {
@@ -73,5 +76,10 @@ public class TemplateNameCellDefaultAppearance implements TemplateNameCell.Templ
     @Override
     public String Description() {
         return "Description";
+    }
+
+    @Override
+    public String background() {
+        return resources.css().background();
     }
 }
