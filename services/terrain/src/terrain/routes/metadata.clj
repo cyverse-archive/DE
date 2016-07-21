@@ -200,6 +200,9 @@
     (PUT "/apps/:app-id/favorite" [app-id]
          (service/success-response (apps/add-favorite-app app-id)))
 
+    (GET "/apps/:app-id/integration-data" [app-id]
+         (service/success-response (apps/get-app-integration-data app-id)))
+
     (GET "/apps/:app-id/is-publishable" [app-id]
          (service/success-response (apps/app-publishable? app-id)))
 
@@ -357,6 +360,9 @@
     (GET "/tools/:tool-id" [tool-id]
          (service/success-response (apps/get-tool tool-id)))
 
+    (GET "/tools/:tool-id/integration-data" [tool-id]
+         (service/success-response (apps/get-tool-integration-data tool-id)))
+
     (GET "/tool-requests" []
          (list-tool-requests))
 
@@ -364,7 +370,7 @@
           (submit-tool-request req))
 
     (GET "/tool-requests/status-codes" [:as {params :params}]
-         (list-tool-request-status-codes params))))
+          (list-tool-request-status-codes params))))
 
 (defn secured-metadata-routes
   []

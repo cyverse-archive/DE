@@ -786,3 +786,17 @@
                  {:query-params     (secured-params)
                   :as               :stream
                   :follow-redirects false}))
+
+(defn get-app-integration-data
+  [app-id]
+  (client/get (apps-url "apps" app-id "integration-data")
+              {:query-params     (secured-params)
+               :as               :stream
+               :follow-redirects false}))
+
+(defn get-tool-integration-data
+  [tool-id]
+  (client/get (apps-url "tools" tool-id "integration-data")
+              {:query-params     (secured-params)
+               :as               :stream
+               :follow-redirects false}))
