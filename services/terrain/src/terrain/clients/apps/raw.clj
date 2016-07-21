@@ -800,3 +800,17 @@
               {:query-params     (secured-params)
                :as               :stream
                :follow-redirects false}))
+
+(defn update-app-integration-data
+  [app-id integration-data-id]
+  (client/put (apps-url "admin" "apps" app-id "integration-data" integration-data-id)
+              {:query-params     (secured-params)
+               :as               :stream
+               :follow-redirects false}))
+
+(defn update-tool-integration-data
+  [tool-id integration-data-id]
+  (client/put (apps-url "admin" "tools" tool-id "integration-data" integration-data-id)
+              {:query-params     (secured-params)
+               :as               :stream
+               :follow-redirects false}))

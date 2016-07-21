@@ -118,7 +118,10 @@
           (service/success-response (apps/admin-add-app-docs app-id body)))
 
     (PATCH "/apps/:app-id/documentation" [app-id :as {:keys [body]}]
-           (service/success-response (apps/admin-edit-app-docs app-id body)))))
+           (service/success-response (apps/admin-edit-app-docs app-id body)))
+
+    (PUT "/apps/:app-id/integration-data/:integration-data-id" [app-id integration-data-id]
+         (service/success-response (apps/update-app-integration-data app-id integration-data-id)))))
 
 (defn apps-routes
   []
@@ -339,6 +342,9 @@
 
     (PATCH "/tools/:tool-id" [tool-id :as {:keys [params body]}]
            (apps/update-tool tool-id params body))
+
+    (PUT "/tools/:tool-id/integration-data/:integration-data-id" [tool-id integration-data-id]
+         (service/success-response (apps/update-tool-integration-data tool-id integration-data-id)))
 
     (GET "/tool-requests" [:as {params :params}]
          (admin-list-tool-requests params))
