@@ -302,6 +302,7 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter, SimpleDo
 
             @Override
             public void onFailure(Throwable caught) {
+                genomeSearchView.unmask();
                 IplantAnnouncer.getInstance()
                                .schedule(new ErrorAnnouncementConfig(appearance.cogeSearchError()));
 

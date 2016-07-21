@@ -187,7 +187,7 @@ public class GenomeSearchDialog extends Window {
     }
 
     private void serchGenome() {
-        GenomeSearchDialog.this.presenter.searchGenomeInCoge(searchtxt.getCurrentValue());
+        presenter.searchGenomeInCoge(searchtxt.getCurrentValue());
     }
 
     public void loadResults(List<Genome> genomes) {
@@ -204,5 +204,9 @@ public class GenomeSearchDialog extends Window {
     public void setPresenter(Presenter presenter) {
         this.presenter = presenter;
 
+    }
+
+    public void unmask() {
+        grid.unmask();
     }
 }

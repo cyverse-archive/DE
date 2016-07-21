@@ -168,12 +168,14 @@ public class MetadataPresenterImpl implements MetadataView.Presenter{
     public void onSelectTemplate() {
         final SelectMetadataTemplateDialog view =
                 new SelectMetadataTemplateDialog(templates, appearance, true);
-        view.addHideHandler(new HideEvent.HideHandler() {
+        view.addDialogHideHandler(new DialogHideHandler() {
             @Override
-            public void onHide(HideEvent event) {
-                MetadataTemplateInfo selectedTemplate = view.getSelectedTemplate();
-                if (selectedTemplate != null) {
-                    onTemplateSelected(selectedTemplate.getId());
+            public void onDialogHide(DialogHideEvent event) {
+                if(event.getHideButton().equals(PredefinedButton.OK)) {
+                    MetadataTemplateInfo selectedTemplate = view.getSelectedTemplate();
+                    if (selectedTemplate != null) {
+                        onTemplateSelected(selectedTemplate.getId());
+                    }
                 }
             }
         });
