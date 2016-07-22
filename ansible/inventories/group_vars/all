@@ -670,7 +670,7 @@ user_info:
 
 user_preferences_log_file: /logs/user-preferences.log
 user_preferences:
-  host: "{{ groups['user-preferences'][0] }}"
+  host: "{% if use_overlay %}user-preferences{% else %}{{ groups['user-preferences'][0] }}{% endif %}"
   port:
   service_name: user-preferences.service
   service_name_short: user-preferences
