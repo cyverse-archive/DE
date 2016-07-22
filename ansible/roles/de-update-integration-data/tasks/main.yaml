@@ -1,0 +1,11 @@
+---
+- name: update docker-py
+  pip: name="docker-py" state="latest"
+
+- name: pull the latest integrationator image
+  docker_image: name="{{ integrationator_repo }}" tag="{{ docker_tag }}" force=True
+
+- name: update integration data records
+  shell: >-
+    docker run --rm {{ integrationator_repo }}:{{ docker_tag }} -l {{ ldap_host }} -h {{ db_host }}
+    -p {{ db_port }} -d {{ db_name }} -U {{ db_user }} -P {{ db_password }}

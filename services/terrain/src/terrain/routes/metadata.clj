@@ -118,7 +118,10 @@
           (service/success-response (apps/admin-add-app-docs app-id body)))
 
     (PATCH "/apps/:app-id/documentation" [app-id :as {:keys [body]}]
-           (service/success-response (apps/admin-edit-app-docs app-id body)))))
+           (service/success-response (apps/admin-edit-app-docs app-id body)))
+
+    (PUT "/apps/:app-id/integration-data/:integration-data-id" [app-id integration-data-id]
+         (service/success-response (apps/update-app-integration-data app-id integration-data-id)))))
 
 (defn apps-routes
   []
@@ -199,6 +202,9 @@
 
     (PUT "/apps/:app-id/favorite" [app-id]
          (service/success-response (apps/add-favorite-app app-id)))
+
+    (GET "/apps/:app-id/integration-data" [app-id]
+         (service/success-response (apps/get-app-integration-data app-id)))
 
     (GET "/apps/:app-id/is-publishable" [app-id]
          (service/success-response (apps/app-publishable? app-id)))
@@ -337,6 +343,9 @@
     (PATCH "/tools/:tool-id" [tool-id :as {:keys [params body]}]
            (apps/update-tool tool-id params body))
 
+    (PUT "/tools/:tool-id/integration-data/:integration-data-id" [tool-id integration-data-id]
+         (service/success-response (apps/update-tool-integration-data tool-id integration-data-id)))
+
     (GET "/tool-requests" [:as {params :params}]
          (admin-list-tool-requests params))
 
@@ -357,6 +366,9 @@
     (GET "/tools/:tool-id" [tool-id]
          (service/success-response (apps/get-tool tool-id)))
 
+    (GET "/tools/:tool-id/integration-data" [tool-id]
+         (service/success-response (apps/get-tool-integration-data tool-id)))
+
     (GET "/tool-requests" []
          (list-tool-requests))
 
@@ -364,7 +376,7 @@
           (submit-tool-request req))
 
     (GET "/tool-requests/status-codes" [:as {params :params}]
-         (list-tool-request-status-codes params))))
+          (list-tool-request-status-codes params))))
 
 (defn secured-metadata-routes
   []
@@ -385,3 +397,23 @@
 
    (PUT "/feedback" [:as {body :body}]
         (provide-user-feedback body))))
+
+(defn admin-integration-data-routes
+  []
+  (optional-routes
+   [config/app-routes-enabled]
+
+   (GET "/integration-data" [:as {:keys [params]}]
+        (service/success-response (apps/list-integration-data params)))
+
+   (POST "/integration-data" [:as {:keys [body]}]
+         (service/success-response (apps/add-integration-data body)))
+
+   (GET "/integration-data/:integration-data-id" [integration-data-id]
+        (service/success-response (apps/get-integration-data integration-data-id)))
+
+   (PUT "/integration-data/:integration-data-id" [integration-data-id :as {:keys [body]}]
+        (service/success-response (apps/update-integration-data integration-data-id body)))
+
+   (DELETE "/integration-data/:integration-data-id" [integration-data-id]
+           (service/success-response (apps/delete-integration-data integration-data-id)))))

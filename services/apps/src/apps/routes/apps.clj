@@ -4,6 +4,7 @@
         [apps.routes.params]
         [apps.routes.schemas.app]
         [apps.routes.schemas.app.rating]
+        [apps.routes.schemas.integration-data :only [IntegrationData]]
         [apps.routes.schemas.tool :only [NewToolListing]]
         [apps.user :only [current-user]]
         [apps.util.coercions :only [coerce!]]
@@ -144,6 +145,14 @@
         :description "This service updates a single-step App in the database, as long as the App has not
         been submitted for public use."
         (ok (apps/update-app current-user (assoc body :id app-id))))
+
+  (GET* "/:app-id/integration-data" []
+        :path-params [app-id :- AppIdPathParam]
+        :query [params SecuredQueryParams]
+        :return IntegrationData
+        :summary "Return the Integration Data Record for an App"
+        :description "This service returns the integration data associated with an app."
+        (ok (apps/get-app-integration-data current-user app-id)))
 
   (POST* "/:app-id/copy" []
          :path-params [app-id :- AppIdPathParam]

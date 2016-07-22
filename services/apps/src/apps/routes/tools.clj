@@ -4,12 +4,14 @@
         [apps.containers]
         [apps.routes.params]
         [apps.routes.schemas.containers]
+        [apps.routes.schemas.integration-data :only [IntegrationData]]
         [apps.routes.schemas.tool]
         [apps.tools :only [add-tools delete-tool get-tool search-tools update-tool]]
         [apps.user :only [current-user]]
         [apps.util.service]
         [slingshot.slingshot :only [throw+]]
-        [ring.util.http-response :only [ok]]))
+        [ring.util.http-response :only [ok]])
+  (:require [apps.service.apps :as apps]))
 
 (def entrypoint-warning
   (str "
@@ -270,7 +272,15 @@
         :summary "Tool Container Volumes From Information"
         :description "Returns the data container settings for the given `volumes-from-id` the tool
          should import volumes from."
-        (requester tool-id (tool-volumes-from tool-id volumes-from-id))))
+        (requester tool-id (tool-volumes-from tool-id volumes-from-id)))
+
+  (GET* "/:tool-id/integration-data" []
+        :path-params [tool-id :- ToolIdParam]
+        :query [params SecuredQueryParams]
+        :return IntegrationData
+        :summary "Return the integration data record for a tool."
+        :description "This service returns the integration data associated with an app."
+        (ok (apps/get-tool-integration-data current-user tool-id))))
 
 (defroutes* tool-requests
   (GET* "/" []
@@ -489,4 +499,13 @@ included in it. Any existing settings not included in the request's `container` 
            :return nil
            :summary "Delete Tool Container Volumes From Information"
            :description "Deletes a container name that the tool container should import volumes from."
-           (ok (delete-tool-volumes-from tool-id volumes-from-id))))
+           (ok (delete-tool-volumes-from tool-id volumes-from-id)))
+
+  (PUT* "/:tool-id/integration-data/:integration-data-id" []
+        :path-params [tool-id :- ToolIdParam integration-data-id :- IntegrationDataIdPathParam]
+        :query [params SecuredQueryParams]
+        :return IntegrationData
+        :summary "Update the Integration Data Record for a Tool"
+        :description "This service allows administrators to change the integration data record
+        associated with a tool."
+        (ok (apps/update-tool-integration-data current-user tool-id integration-data-id))))

@@ -85,10 +85,10 @@
 (defn- add-public-apps-by-user-where-clause
   "Adds a where clause to an analysis listing query to restrict app results to
    the set of public apps integrated by a user."
-  [query email]
+  [query username]
   (where query
-         {:integrator_email email
-          :is_public        true}))
+         {:integrator_username username
+          :is_public           true}))
 
 (defn- get-app-count-base-query
   "Returns a base query for counting the total number of apps in the
@@ -292,21 +292,21 @@
 
 (defn count-public-apps-by-user
   "Counts the number of apps integrated by a user."
-  [email params]
+  [username params]
   ((comp :count first)
    (-> (select* app_listing)
        (aggregate (count :*) :count)
        (where {:deleted false})
-       (add-public-apps-by-user-where-clause email)
+       (add-public-apps-by-user-where-clause username)
        (add-app-id-where-clause params)
        (add-agave-pipeline-where-clause params)
        (select))))
 
 (defn list-public-apps-by-user
   "Lists the apps integrated by the user with the given"
-  [workspace favorites-group-index email query-opts]
+  [workspace favorites-group-index username query-opts]
   (-> (get-app-listing-base-query workspace favorites-group-index query-opts)
-      (add-public-apps-by-user-where-clause email)
+      (add-public-apps-by-user-where-clause username)
       (select)))
 
 (defn- is-visible-app-subselect

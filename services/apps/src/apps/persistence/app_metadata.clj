@@ -1,7 +1,9 @@
 (ns apps.persistence.app-metadata
   "Persistence layer for app metadata."
   (:use [kameleon.entities]
+        [kameleon.queries :only [get-user-id add-query-sorting add-query-offset add-query-limit]]
         [kameleon.util :only [normalize-string]]
+        [kameleon.util.search :only [format-query-wildcards]]
         [kameleon.uuids :only [uuidify]]
         [korma.core :exclude [update]]
         [korma.db :only [transaction]]
@@ -121,16 +123,146 @@
   [app-id]
   (assert-not-nil [:app-id app-id] (app-listing/get-app-listing (uuidify app-id))))
 
+(defn- user-id-subselect [username]
+  (subselect :users
+             (fields :id)
+             (where {:username username})))
+
+(defn get-integration-data-by-username [username]
+  (first (select integration_data (where {:user_id (user-id-subselect username)}))))
+
+(defn get-integration-data-by-email [integrator-email]
+  (first (select integration_data (where {:integrator_email integrator-email}))))
+
+(defn- add-integration-data [username integrator-email integrator-name]
+  (when username (get-user-id username))
+  (insert integration_data (values {:integrator_email integrator-email
+                                    :integrator_name  integrator-name
+                                    :user_id          (user-id-subselect username)})))
+
+(defn- lookup-integration-data [username integrator-email integrator-name]
+  (or (get-integration-data-by-username username)
+      (get-integration-data-by-email integrator-email)
+      (add-integration-data username integrator-email integrator-name)))
+
+(defn- can-update-integration-data? [id integrator-email integrator-name]
+  (zero? ((comp :count first)
+          (select :integration_data
+                  (aggregate (count :id) :count)
+                  (where {:id               [not= id]
+                          :integrator_email integrator-email
+                          :integrator_name  integrator-name})))))
+
+(defn- auto-update-integration-data [{:keys [id]} username integrator-email integrator-name]
+  (when (can-update-integration-data? id integrator-email integrator-name)
+    (sql/update integration_data
+                (set-fields {:integrator_email integrator-email
+                             :integrator_name  integrator-name
+                             :user_id          (user-id-subselect username)})
+                (where {:id id})))
+  (first (select integration_data (where {:id id}))))
+
 (defn get-integration-data
   "Retrieves integrator info from the database, adding it first if not already there."
-  ([{:keys [email first-name last-name]}]
-     (get-integration-data email (str first-name " " last-name)))
+  ([{:keys [username email first-name last-name]}]
+   (get-integration-data username email (str first-name " " last-name)))
   ([integrator-email integrator-name]
-     (if-let [integration-data (first (select integration_data
-                                              (where {:integrator_email integrator-email})))]
-       integration-data
-       (insert integration_data (values {:integrator_email integrator-email
-                                         :integrator_name  integrator-name})))))
+   (get-integration-data nil integrator-email integrator-name))
+  ([username integrator-email integrator-name]
+   (let [integration-data (lookup-integration-data username integrator-email integrator-name)]
+     (if (or (not= (:integrator_email integration-data) integrator-email)
+             (not= (:integrator_name integration-data) integrator-name)
+             (nil? (:user_id integration-data)))
+       (auto-update-integration-data integration-data username integrator-email integrator-name)
+       integration-data))))
+
+(defn update-integration-data
+  "Updates an integration data record."
+  [id name email]
+  (sql/update integration_data
+              (set-fields {:integrator_email email
+                           :integrator_name  name})
+              (where {:id id})))
+
+(defn- add-integration-data-search-clause [query search]
+  (if-not (nil? search)
+    (let [search (str "%" (format-query-wildcards search) "%")]
+      (where query
+             (or {(sqlfn lower :integrator_name) [like (sqlfn lower search)]}
+                 {(sqlfn lower :integrator_email) [like (sqlfn lower search)]})))
+    query))
+
+(defn- integration-data-base-query []
+  (-> (select* [:integration_data :d])
+      (join [:users :u] {:d.user_id :u.id})
+      (fields :d.id :d.integrator_name :d.integrator_email :u.username)))
+
+(defn get-integration-data-by-id [integration-data-id]
+  (-> (integration-data-base-query)
+      (where {:d.id integration-data-id})
+      select
+      first))
+
+(defn get-integration-data-by-tool-id [tool-id]
+  (-> (integration-data-base-query)
+      (join [:tools :t] {:t.integration_data_id :d.id})
+      (where {:t.id tool-id})
+      select
+      first))
+
+(defn get-integration-data-by-app-id [app-id]
+  (-> (integration-data-base-query)
+      (join [:apps :a] {:a.integration_data_id :d.id})
+      (where {:a.id app-id})
+      select
+      first))
+
+(defn update-app-integration-data [app-id integration-data-id]
+  (-> (update* :apps)
+      (set-fields {:integration_data_id integration-data-id})
+      (where {:id app-id})
+      (sql/update)))
+
+(defn update-tool-integration-data [tool-id integration-data-id]
+  (-> (update* :tools)
+      (set-fields {:integration_data_id integration-data-id})
+      (where {:id tool-id})
+      (sql/update)))
+
+(defn list-integration-data [search limit offset sort-field sort-dir]
+  (-> (select* [:integration_data :d])
+      (join [:users :u] {:d.user_id :u.id})
+      (fields :d.id :d.integrator_name :d.integrator_email :u.username)
+      (add-integration-data-search-clause search)
+      (add-query-sorting sort-field sort-dir)
+      (add-query-offset offset)
+      (add-query-limit limit)
+      select))
+
+(defn count-integration-data [search]
+  (-> (select* :integration_data)
+      (aggregate (count :*) :count)
+      (add-integration-data-search-clause search)
+      select
+      first
+      :count))
+
+(defn get-tool-ids-by-integration-data-id [integration-data-id]
+  (mapv :id (-> (select* :tools)
+                (fields :id)
+                (where {:integration_data_id integration-data-id})
+                select)))
+
+(defn get-app-ids-by-integration-data-id [integration-data-id]
+  (mapv :id (-> (select* :apps)
+                (fields :id)
+                (where {:integration_data_id integration-data-id})
+                select)))
+
+(defn delete-integration-data [integration-data-id]
+  (-> (delete* :integration_data)
+      (where {:id integration-data-id})
+      delete))
 
 (defn get-tool-listing-base-query
   "Common select query for tool listings."
@@ -143,6 +275,18 @@
               :type
               :version
               :attribution)))
+
+(defn get-tool
+  "Loads information about a single tool."
+  [tool-id]
+  (assert-not-nil
+   [:tool-id tool-id]
+   (-> (select* [:tools :t])
+       (join [:tool_types :tt] {:t.tool_type_id :tt.id})
+       (fields :t.id :t.name :t.description :t.location [:tt.name :type] :t.version :t.attribution)
+       (where {:t.id tool-id})
+       select
+       first)))
 
 (defn get-app-tools
   "Loads information about the tools associated with an app."
@@ -190,14 +334,6 @@
         [input-files output-files] ((juxt filter remove) :input_file data-files)]
     {:input_files  (map :filename input-files)
      :output_files (map :filename output-files)}))
-
-(defn- get-integration-data-by-tool-id
-  [tool-id]
-  (first
-    (select integration_data
-            (fields :integrator_name :integrator_email)
-            (join tools)
-            (where {:tools.id tool-id}))))
 
 (defn get-tool-implementation-details
   "Fetches a tool's implementation details."
@@ -262,9 +398,9 @@
 (defn add-app
   "Adds top-level app info to the database and returns the new app info, including its new ID."
   ([app]
-     (add-app app current-user))
+   (add-app app current-user))
   ([app user]
-     (insert apps (values (prep-app app (:id (get-integration-data user)))))))
+   (insert apps (values (prep-app app (:id (get-integration-data user)))))))
 
 (defn add-step
   "Adds an app step to the database for the given app ID."
@@ -309,15 +445,15 @@
 (defn update-app
   "Updates top-level app info in the database."
   ([app]
-     (update-app app false))
+   (update-app app false))
   ([app publish?]
-     (let [app-id (:id app)
-           app (-> app
-                   (select-keys [:name :description :wiki_url :deleted :disabled])
-                   (assoc :edited_date (sqlfn now)
-                          :integration_date (when publish? (sqlfn now)))
-                   (remove-nil-vals))]
-       (sql/update apps (set-fields app) (where {:id app-id})))))
+   (let [app-id (:id app)
+         app (-> app
+                 (select-keys [:name :description :wiki_url :deleted :disabled])
+                 (assoc :edited_date (sqlfn now)
+                        :integration_date (when publish? (sqlfn now)))
+                 (remove-nil-vals))]
+     (sql/update apps (set-fields app) (where {:id app-id})))))
 
 (defn add-app-reference
   "Adds an App's reference to the database."
@@ -371,9 +507,9 @@
 (defn get-app-group
   "Fetches an App group."
   ([group-id]
-     (first (select parameter_groups (where {:id group-id}))))
+   (first (select parameter_groups (where {:id group-id}))))
   ([group-id task-id]
-     (first (select parameter_groups (where {:id group-id, :task_id task-id})))))
+   (first (select parameter_groups (where {:id group-id, :task_id task-id})))))
 
 (defn add-app-group
   "Adds an App group to the database."
@@ -384,8 +520,8 @@
   "Updates an App group in the database."
   [{group-id :id :as group}]
   (sql/update parameter_groups
-    (set-fields (filter-valid-app-group-values group))
-    (where {:id group-id})))
+              (set-fields (filter-valid-app-group-values group))
+              (where {:id group-id})))
 
 (defn remove-app-group-orphans
   "Removes groups associated with the given task ID, but not in the given group-ids list."
@@ -428,9 +564,9 @@
 (defn get-app-parameter
   "Fetches an App parameter."
   ([parameter-id]
-     (first (select parameters (where {:id parameter-id}))))
+   (first (select parameters (where {:id parameter-id}))))
   ([parameter-id task-id]
-     (first (select :task_param_listing (where {:id parameter-id, :task_id task-id})))))
+   (first (select :task_param_listing (where {:id parameter-id, :task_id task-id})))))
 
 (defn add-app-parameter
   "Adds an App parameter to the parameters table."
@@ -443,10 +579,10 @@
   "Updates a parameter in the parameters table."
   [{parameter-id :id param-type :type :as parameter}]
   (sql/update parameters
-    (set-fields (filter-valid-app-parameter-values
-                  (assoc parameter
-                    :parameter_type (get-parameter-type-id param-type))))
-    (where {:id parameter-id})))
+              (set-fields (filter-valid-app-parameter-values
+                           (assoc parameter
+                                  :parameter_type (get-parameter-type-id param-type))))
+              (where {:id parameter-id})))
 
 (defn remove-parameter-orphans
   "Removes parameters associated with the given group ID, but not in the given parameter-ids list."
@@ -465,9 +601,9 @@
   (insert file_parameters
           (values (filter-valid-file-parameter-values
                    (assoc file-parameter
-                     :info_type (get-info-type-id info-type)
-                     :data_format (get-data-format-id data-format)
-                     :data_source_id (get-data-source-id data-source))))))
+                          :info_type (get-info-type-id info-type)
+                          :data_format (get-data-format-id data-format)
+                          :data_source_id (get-data-source-id data-source))))))
 
 (defn remove-file-parameter
   "Removes all file parameters associated with the given parameter ID."
@@ -547,16 +683,16 @@
 (defn delete-app
   "Marks or unmarks an app as deleted in the metadata database."
   ([app-id]
-     (delete-app true app-id))
+   (delete-app true app-id))
   ([deleted? app-id]
-     (sql/update :apps (set-fields {:deleted deleted?}) (where {:id app-id}))))
+   (sql/update :apps (set-fields {:deleted deleted?}) (where {:id app-id}))))
 
 (defn disable-app
   "Marks or unmarks an app as disabled in the metadata database."
   ([app-id]
-     (disable-app true app-id))
+   (disable-app true app-id))
   ([disabled? app-id]
-     (sql/update :apps (set-fields {:disabled disabled?}) (where {:id app-id}))))
+   (sql/update :apps (set-fields {:disabled disabled?}) (where {:id app-id}))))
 
 (defn rate-app
   "Adds or updates a user's rating and comment ID for the given app."
@@ -564,9 +700,9 @@
   (let [rating (first (select ratings (where {:app_id app-id, :user_id user-id})))]
     (if rating
       (sql/update ratings
-        (set-fields (remove-nil-vals request))
-        (where {:app_id app-id
-                :user_id user-id}))
+                  (set-fields (remove-nil-vals request))
+                  (where {:app_id app-id
+                          :user_id user-id}))
       (insert ratings
               (values (assoc (remove-nil-vals request) :app_id app-id, :user_id user-id))))))
 

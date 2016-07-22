@@ -1,13 +1,12 @@
 (ns apps.service.apps.permissions-test
-  (:use [apps.user :only [user-from-attributes]]
+  (:use [apps.service.apps.test-utils :only [get-user]]
         [clojure.test]
-        [clostache.parser :only [render]]
         [kameleon.uuids :only [uuidify uuid]])
   (:require [apps.clients.iplant-groups :as ipg]
-            [apps.clients.notifications :as dn]
             [apps.clients.permissions :as perms-client]
             [apps.service.apps :as apps]
-            [apps.service.workspace :as workspace]
+            [apps.service.apps.test-fixtures :as atf
+             :refer [test-app beta-apps create-test-app create-pipeline]]
             [apps.test-fixtures :as tf]
             [apps.util.config :as config]
             [clojure.tools.logging :as log]
@@ -15,129 +14,8 @@
             [permissions-client.core :as pc])
   (:import [clojure.lang ExceptionInfo]))
 
-(defn create-user [i]
-  (let [username (str "testde" i)]
-    {:user       username
-     :first-name username
-     :last-name  username
-     :email      (str username "@mail.org")}))
-
-(defn create-user-map []
-  (->> (take 10 (iterate inc 1))
-       (mapv (comp (juxt (comp keyword :user) identity) create-user))
-       (into {})))
-
-(def users (create-user-map))
-
-(defn get-user [k]
-  (user-from-attributes (users k)))
-
-(def app-definition
-  {:description "Testing"
-   :groups      [{:label      "Parameters"
-                  :name       "Parameters"
-                  :parameters [{:description     "Select an input file."
-                                :file_parameters {:data_source        "file"
-                                                  :file_info_type     "File"
-                                                  :format             "Unspecified"}
-                                :isVisible       true
-                                :label           "Input file"
-                                :name            ""
-                                :omit_if_blank   false
-                                :order           0
-                                :required        true
-                                :type            "FileInput"
-                                :validators      []}
-                               {:defaultValue    "out.txt"
-                                :description     ""
-                                :file_parameters {:data_source    "stdout"
-                                                  :file_info_type "File"
-                                                  :format         "Unspecified"
-                                                  :retain         true}
-                                :isVisible       true
-                                :label           "Output file name"
-                                :name            ""
-                                :omit_if_blank   false
-                                :order           1
-                                :required        false
-                                :type            "FileOutput"
-                                :valicators      []
-                                :value           "out.txt"}]}]
-   :name  "Permissions Test App"
-   :tools [{:attribution ""
-            :description "Word Count"
-            :id          (uuidify "85cf7a33-386b-46fe-87c7-8c9d59972624")
-            :location    ""
-            :name        "wc"
-            :type        "executable"
-            :version     "0.0.1"}]})
-
-(def pipeline-definition
-  {:mappings    [{:map         {(uuidify "13914010-89cd-406d-99c3-9c4ff8b023c3")
-                                (uuidify "13914010-89cd-406d-99c3-9c4ff8b023c3")}
-                  :source_step 0
-                  :target_step 1}]
-   :steps       [{:name        "DE Word Count"
-                  :description "Counts the number of words in a file."
-                  :app_type    "DE"
-                  :task_id     (uuidify "1ac31629-231a-4090-b3b4-63ee078a0c37")}
-                 {:name        "DE Word Count"
-                  :description "Counts the number of words in a file."
-                  :app_type    "DE"
-                  :task_id     (uuidify "1ac31629-231a-4090-b3b4-63ee078a0c37")}]
-   :name        "Word Count Inception"
-   :description "Counts the number of words in a word count."})
-
-(def ^:dynamic test-app nil)
-(def ^:dynamic public-apps nil)
-(def ^:dynamic beta-apps nil)
-
-(defn create-test-app
-  ([user]
-   (create-test-app user (:name app-definition)))
-  ([user name]
-   (sql/delete :apps (sql/where {:name name}))
-   (let [app (apps/add-app user (assoc app-definition :name name))]
-     (apps/owner-add-app-docs user (:id app) {:documentation "This is a test."})
-     app)))
-
-(defn create-pipeline
-  [user]
-  (sql/delete :apps (sql/where {:name (:name pipeline-definition)}))
-  (apps/add-pipeline user pipeline-definition))
-
-(defn with-test-app [f]
-  (binding [test-app (create-test-app (get-user :testde1))]
-    (f)
-    (apps/permanently-delete-apps (get-user :testde1) {:app_ids [(:id test-app)] :root_deletion_request true})))
-
-(defn with-workspaces [f]
-  (dorun (map (comp workspace/get-workspace get-user) (keys users)))
-  (f))
-
-(defn register-public-apps []
-  (for [app (sql/select :app_listing (sql/where {:is_public true :deleted false}))]
-    (do (pc/grant-permission (config/permissions-client) "app" (:id app) "group" (ipg/grouper-user-group-id) "read")
-        app)))
-
-(defn category-name-subselect [category-name]
-  (sql/subselect [:app_category_app :aca]
-                 (sql/join [:app_categories :c] {:aca.app_category_id :c.id})
-                 (sql/fields :aca.app_id)))
-
-(defn load-beta-apps []
-  (sql/select [:app_listing :a]
-              (sql/where {:a.id        [in (category-name-subselect "Beta")]
-                          :a.is_public true
-                          :a.deleted   false})))
-
-(defn with-public-apps [f]
-  (binding [public-apps (into [] (register-public-apps))
-            beta-apps   (into [] (load-beta-apps))]
-    (f)))
-
-(use-fixtures :once tf/run-integration-tests tf/with-test-db tf/with-config with-workspaces)
-(use-fixtures :each with-public-apps with-test-app)
+(use-fixtures :once tf/run-integration-tests tf/with-test-db tf/with-config atf/with-workspaces)
+(use-fixtures :each atf/with-public-apps atf/with-test-app)
 
 (defn find-category [category-name [cat & cats]]
   (if-not (or (nil? cat) (= (:name cat) category-name))

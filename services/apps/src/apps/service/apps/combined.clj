@@ -209,6 +209,26 @@
          (remove nil?)
          (first)))
 
+  (getAppIntegrationData [_ app-id]
+    (->> (map #(.getAppIntegrationData % app-id) clients)
+         (remove nil?)
+         (first)))
+
+  (getToolIntegrationData [_ tool-id]
+    (->> (map #(.getToolIntegrationData % tool-id) clients)
+         (remove nil?)
+         (first)))
+
+  (updateAppIntegrationData [_ app-id integration-data-id]
+    (->> (map #(.updateAppIntegrationData % app-id integration-data-id) clients)
+         (remove nil?)
+         (first)))
+
+  (updateToolIntegrationData [_ tool-id integration-data-id]
+    (->> (map #(.updateToolIntegrationData % tool-id integration-data-id) clients)
+         (remove nil?)
+         (first)))
+
   (ownerEditAppDocs [_ app-id body]
     (->> (map #(.ownerEditAppDocs % app-id body) clients)
          (remove nil?)

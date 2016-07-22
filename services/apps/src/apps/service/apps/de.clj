@@ -21,6 +21,7 @@
             [apps.service.apps.job-listings :as job-listings]
             [apps.service.apps.permissions :as app-permissions]
             [apps.service.apps.util :as apps-util]
+            [apps.service.integration-data :as integration-data]
             [apps.service.util :as util]))
 
 (deftype DeApps [user]
@@ -218,6 +219,22 @@
   (getAppDocs [_ app-id]
     (when (util/uuid? app-id)
       (docs/get-app-docs user (uuidify app-id))))
+
+  (getAppIntegrationData [_ app-id]
+    (when (util/uuid? app-id)
+      (integration-data/get-integration-data-for-app user app-id)))
+
+  (getToolIntegrationData [_ tool-id]
+    (when (util/uuid? tool-id)
+      (integration-data/get-integration-data-for-tool user tool-id)))
+
+  (updateAppIntegrationData [_ app-id integration-data-id]
+    (when (util/uuid? app-id)
+      (integration-data/update-integration-data-for-app user app-id integration-data-id)))
+
+  (updateToolIntegrationData [_ tool-id integration-data-id]
+    (when (util/uuid? tool-id)
+      (integration-data/update-integration-data-for-tool user tool-id integration-data-id)))
 
   (ownerEditAppDocs [_ app-id body]
     (when (util/uuid? app-id)

@@ -747,3 +747,70 @@
                  {:query-params     (secured-params params)
                   :as               :stream
                   :follow-redirects false})))
+
+(defn list-integration-data
+  [params]
+  (client/get (apps-url "admin" "integration-data")
+              {:query-params     (secured-params params apps-search-params)
+               :as               :stream
+               :follow-redirects false}))
+
+(defn add-integration-data
+  [body]
+  (client/post (apps-url "admin" "integration-data")
+               {:query-params     (secured-params)
+                :as               :stream
+                :body             body
+                :content-type     :json
+                :follow-redirects false}))
+
+(defn get-integration-data
+  [integration-data-id]
+  (client/get (apps-url "admin" "integration-data" integration-data-id)
+              {:query-params     (secured-params)
+               :as               :stream
+               :follow-redirects false}))
+
+(defn update-integration-data
+  [integration-data-id body]
+  (client/put (apps-url "admin" "integration-data" integration-data-id)
+              {:query-params     (secured-params)
+               :as               :stream
+               :body             body
+               :content-type     :json
+               :follow-redirects false}))
+
+(defn delete-integration-data
+  [integration-data-id]
+  (client/delete (apps-url "admin" "integration-data" integration-data-id)
+                 {:query-params     (secured-params)
+                  :as               :stream
+                  :follow-redirects false}))
+
+(defn get-app-integration-data
+  [app-id]
+  (client/get (apps-url "apps" app-id "integration-data")
+              {:query-params     (secured-params)
+               :as               :stream
+               :follow-redirects false}))
+
+(defn get-tool-integration-data
+  [tool-id]
+  (client/get (apps-url "tools" tool-id "integration-data")
+              {:query-params     (secured-params)
+               :as               :stream
+               :follow-redirects false}))
+
+(defn update-app-integration-data
+  [app-id integration-data-id]
+  (client/put (apps-url "admin" "apps" app-id "integration-data" integration-data-id)
+              {:query-params     (secured-params)
+               :as               :stream
+               :follow-redirects false}))
+
+(defn update-tool-integration-data
+  [tool-id integration-data-id]
+  (client/put (apps-url "admin" "tools" tool-id "integration-data" integration-data-id)
+              {:query-params     (secured-params)
+               :as               :stream
+               :follow-redirects false}))

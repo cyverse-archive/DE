@@ -329,6 +329,22 @@
   [user app-id]
   (.getAppDocs (get-apps-client user) app-id))
 
+(defn get-app-integration-data
+  [user app-id]
+  (.getAppIntegrationData (get-apps-client user) app-id))
+
+(defn get-tool-integration-data
+  [user tool-id]
+  (.getToolIntegrationData (get-apps-client user) tool-id))
+
+(defn update-app-integration-data
+  [user app-id integration-data-id]
+  (.updateAppIntegrationData (get-apps-client user) app-id integration-data-id))
+
+(defn update-tool-integration-data
+  [user tool-id integration-data-id]
+  (.updateToolIntegrationData (get-apps-client user) tool-id integration-data-id))
+
 (defn owner-edit-app-docs
   [user app-id body]
   (.ownerEditAppDocs (get-apps-client user) app-id body))

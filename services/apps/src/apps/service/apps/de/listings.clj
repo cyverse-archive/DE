@@ -73,19 +73,19 @@
 
 (defn- format-my-public-apps-group
   "Formats the virtual group for the user's public apps."
-  [user _ params]
+  [{:keys [username]} _ params]
   {:id        my-public-apps-id
    :name      "My public apps"
    :is_public false
-   :app_count (count-public-apps-by-user (:email user) params)})
+   :app_count (count-public-apps-by-user username params)})
 
 (defn list-my-public-apps
   "Lists the public apps belonging to the user with the given workspace."
-  [user workspace params]
+  [{:keys [username]} workspace params]
   (list-public-apps-by-user
    workspace
    (workspace-favorites-app-category-index)
-   (:email user)
+   username
    params))
 
 (defn format-shared-with-me-category
