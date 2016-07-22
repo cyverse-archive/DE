@@ -1,0 +1,17 @@
+galaxy_info:
+  author: Dennis Roberts
+  description: Links DE integration data records to known DE users if possible.
+  company: CyVerse
+
+  license: BSD
+
+  min_ansible_version: 1.2
+
+  platforms:
+  - name: EL
+    versions:
+    - 7
+
+  galaxy_tags: []
+
+dependencies: []

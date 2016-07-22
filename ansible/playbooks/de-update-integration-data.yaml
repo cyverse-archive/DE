@@ -1,0 +1,11 @@
+---
+- name: link integration data records to user records
+  hosts: apps:&systems
+  gather_facts: no
+  become: yes
+  roles:
+    - role: util-notify-chat
+      msg: "Linking integration data records to user records"
+    - role: de-update-integration-data
+    - role: util-notify-chat
+      msg: "Done linking integration data records to user records"

@@ -1,0 +1,4 @@
+---
+docker_tag: "{{ docker.tag | default(dev) }}"
+integrationator_repo: "discoenv/integrationator"
+ldap_host: "{{ ldap.host }}"
