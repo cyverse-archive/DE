@@ -278,7 +278,7 @@
         :path-params [tool-id :- ToolIdParam]
         :query [params SecuredQueryParams]
         :return IntegrationData
-        :summary "Return the integration data record for a tool."
+        :summary "Return the Integration Data Record for a Tool"
         :description "This service returns the integration data associated with an app."
         (ok (apps/get-tool-integration-data current-user tool-id))))
 
