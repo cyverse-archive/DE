@@ -1,5 +1,6 @@
 - hosts: services:ui
-  sudo: true
+  become: true
   gather_facts: false
+  serial: 1
   roles:
     - de-docker-network
