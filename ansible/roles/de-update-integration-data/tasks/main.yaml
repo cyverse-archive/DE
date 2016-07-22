@@ -2,18 +2,10 @@
 - name: update docker-py
   pip: name="docker-py" state="latest"
 
+- name: pull the latest integrationator image
+  docker_image: name="{{ integrationator_repo }}" tag="{{ docker_tag }}" force=True
+
 - name: update integration data records
-  docker_container:
-    name: "integrationator"
-    image: "{{ integrationator_repo }}:{{ docker_tag }}"
-    command: >-
-      -l {{ ldap_host }} -h {{ db_host }} -p {{ db_port }} -d {{ db_name }} -U {{ db_user }} -P {{ db_password }}
-    pull: True
-    detach: False
-    interactive: True
-
-- name: wait for the process to finish
-  shell: "docker wait integrationator"
-
-- name: remove the integrationator container
-  docker_container: name="integrationator" state="absent"
+  shell: >-
+    docker run --rm {{ integrationator_repo }}:{{ docker_tag }} -l {{ ldap_host }} -h {{ db_host }}
+    -p {{ db_port }} -d {{ db_name }} -U {{ db_user }} -P {{ db_password }}
