@@ -71,9 +71,9 @@ amqp_broker:
     exchange_auto_delete: false
 
 anon_files:
-  host: "{{ groups['anon-files'][0] }}"
+  host: "{% if use_overlay %}anon-files{% else %}{{ groups['anon-files'][0] }}{% endif %}"
   port:
-  base: "http://{{ groups['anon-files'][0] }}"
+  base: "http://{% if use_overlay %}anon-files{% else %}{{ groups['anon-files'][0] }}{% endif %}"
   proxy_url: "https://{{ groups['ui'][0] }}/anon-files/"
   anon_user: anonymous
   service_name: anon-files.service
@@ -189,7 +189,7 @@ clockwork:
   max_heap: "{{ max_heap.low }}"
 
 data_info:
-  host: "{{ groups['data-info'][0] }}"
+  host: "{% if use_overlay %}data-info{% else %}{{ groups['data-info'][0] }}{% endif %}"
   port:
   service_name: data-info.service
   service_name_short: data-info
@@ -228,9 +228,9 @@ dewey:
   max_heap: "{{ max_heap.low }}"
 
 terrain:
-  host: "{{ groups['terrain'][0] }}"
+  host: "{% if use_overlay %}terrain{% else %}{{ groups['terrain'][0] }}{% endif %}"
   port:
-  base: http://{{ groups['terrain'][0] }}
+  base: "http://{% if use_overlay %}terrain{% else %}{{ groups['terrain'][0] }}{% endif %}"
   service_name: terrain.service
   service_name_short: terrain
   compose_service: terrain
@@ -244,9 +244,9 @@ terrain:
 email_smtp_host: 127.0.0.1
 email_smtp_from_address:
 iplant_email:
-  host: "{{ groups['iplant-email'][0] }}"
+  host: "{% if use_overlay %}iplant-email{% else %}{{ groups['iplant-email'][0] }}{% endif %}"
   port:
-  base: http://{{ groups['iplant-email'][0] }}
+  base: "http://{% if use_overlay %}iplant-email{% else %}{{ groups['iplant-email'][0] }}{% endif %}"
   service_name: iplant-email.service
   service_name_short: iplant-email
   compose_service: iplant_email
@@ -366,9 +366,9 @@ info_typer:
   max_heap: "{{ max_heap.low }}"
 
 iplant_groups:
-  host: "{{ groups['iplant-groups'][0] }}"
+  host: "{% if use_overlay %}iplant-groups{% else %}{{ groups['iplant-groups'][0] }}{% endif %}"
   port:
-  base_url: "http://{{ groups['iplant-groups'][0] }}"
+  base_url: "http://{% if use_overlay %}iplant-groups{% else %}{{ groups['iplant-groups'][0] }}{% endif %}"
   service_name: iplant-groups.service
   service_name_short: iplant-groups
   compose_service: iplant_groups
@@ -458,7 +458,7 @@ jwt:
 
 kifshare_external_url: "http://{{ de.host }}/{{ kifshare.external_url_suffix }}"
 kifshare:
-  host: "{{ groups['kifshare'][0] }}"
+  host: "{% if use_overlay %}kifshare{% else %}{{ groups['kifshare'][0] }}{% endif %}"
   port:
   external_url_suffix: dl
   service_name: kifshare.service
@@ -475,9 +475,9 @@ kifshare:
   max_heap: "{{ max_heap.low }}"
 
 apps:
-  host: "{{ groups['apps'][0] }}"
+  host: "{% if use_overlay %}apps{% else %}{{ groups['apps'][0] }}{% endif %}"
   port:
-  base: "http://{{ groups['apps'][0] }}"
+  base: "http://{% if use_overlay %}apps{% else %}{{ groups['apps'][0] }}{% endif %}"
   service_name: apps.service
   service_name_short: apps
   compose_service: apps
@@ -508,7 +508,7 @@ metadata_db_admin: "{{ db_admin }}"
 metadata_db_admin_password: "{{ db_admin_password }}"
 
 metadata:
-  host: "{{ groups['metadata'][0] }}"
+  host: "{% if use_overlay %}metadata{% else %}{{ groups['metadata'][0] }}{% endif %}"
   port:
   service_name: metadata.service
   service_name_short: metadata
@@ -543,9 +543,9 @@ nginx_ssl:
 
 
 notificationagent:
-  host: "{{ groups['notificationagent'][0] }}"
+  host: "{% if use_overlay %}notification-agent{% else %}{{ groups['notificationagent'][0] }}{% endif %}"
   port:
-  base: "http://{{ groups['notificationagent'][0] }}"
+  base: "http://{% if use_overlay %}notification-agent{% else %}{{ groups['notificationagent'][0] }}{% endif %}"
   service_name: notificationagent.service
   service_name_short: notificationagent
   compose_service: notification_agent
@@ -583,7 +583,7 @@ permanent_id:
       doi: "doi:10.5072/FK2"
 
 permissions:
-  host: "{{ groups['permissions'][0] if groups['permissions']|count else '' }}"
+  host: "{% if use_overlay %}permissions{% else %}{{ groups['permissions'][0] if groups['permissions']|count else '' }}{% endif %}"
   port:
   compose_service: permissions
   service_name_short: permissions
@@ -607,7 +607,7 @@ prod_deployment: false
 
 saved_searches_log_file: /logs/saved-searches.log
 saved_searches:
-  host: "{{ groups['saved-searches'][0] }}"
+  host: "{% if use_overlay %}saved-searches{% else %}{{ groups['saved-searches'][0] }}{% endif %}"
   port:
   service_name: saved-searches.service
   service_name_short: saved-searches
@@ -645,7 +645,7 @@ tree_parser_base: http://portnoy.iplantcollaborative.org/parseTree
 
 tree_urls_log_file: /logs/tree-urls.log
 tree_urls:
-  host: "{{ groups['tree-urls'][0] }}"
+  host: "{% if use_overlay %}tree-urls{% else %}{{ groups['tree-urls'][0] }}{% endif %}"
   port:
   service_name: tree-urls.service
   service_name_short: tree-urls
@@ -684,7 +684,7 @@ user_preferences:
 
 user_sessions_log_file: /logs/user-sessions.log
 user_sessions:
-  host: "{{ groups['user-sessions'][0] }}"
+  host: "{% if use_overlay %}user-sessions{% else %}{{ groups['user-sessions'][0] }}{% endif %}"
   port:
   service_name: user-sessions.service
   service_name_short: user-sessions
