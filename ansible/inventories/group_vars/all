@@ -7,6 +7,7 @@ local_cfg_dest: cfg_files
 
 ## zero-downtime
 use_color: false
+use_overlay: false
 
 # A proxy host and port to be used by the database initialization utility,
 # facepalm. This does not affect network requests not made by facepalm.
