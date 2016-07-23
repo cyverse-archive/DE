@@ -18,15 +18,9 @@
     state: "present"
 
 - name: register existing DE apps
-  docker_container:
-    name: "app-registration"
-    image: "{{ app_registration_repo }}:{{ docker_tag }}"
-    volumes_from:
-      - "app-registration-configs"
-    command: "--config={{ config_path }} --de-database-name={{ de_database_name }}"
-
-- name: remove the app registration container
-  docker_container: name="app-registration" state="absent"
+  shell: >-
+    docker run --rm --volumes-from app-registration-configs {{ app_registration_repo }}:{{ docker_tag }}
+    --config={{ config_path }} --de-database-name={{ de_database_name }}
 
 - name: remove the app registration config container
   docker_container: name="app-registration-configs" state="absent"
