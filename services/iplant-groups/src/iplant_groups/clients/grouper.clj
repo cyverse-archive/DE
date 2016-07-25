@@ -416,7 +416,7 @@
     {:WsRestGetGrouperPrivilegesLiteRequest
      {:actAsSubjectId username
       name-key group-or-folder-name}}
-    (throw+ {:error_code ce/ERR_BAD_REQUEST :entity-type entity-type})))
+    (throw+ {:type :clojure-commons.exception/bad-request :entity-type entity-type})))
 
 (defn- get-group-folder-privileges
   [entity-type username group-or-folder-name]
@@ -609,10 +609,6 @@
 
 ;; Permission assignment
 ;; search/lookup
-(defn- uuid-lookups
-  [uuids]
-  (when-not (every? nil? uuids)
-    (mapv uuid-lookup (remove nil? uuids))))
 
 (defn- format-attribute-def-lookup
   [{:keys [attribute_def_id attribute_def]}]

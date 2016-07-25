@@ -55,7 +55,7 @@
   "Validates the configuration settings after they've been loaded."
   []
   (when-not (cc/validate-config configs config-valid)
-    (throw+ {:error_code ce/ERR_CONFIG_INVALID})))
+    (throw+ {:type :clojure-commons.exception/invalid-cfg})))
 
 (defn load-config-from-file
   "Loads the configuration settings from a file."
