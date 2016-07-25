@@ -17,4 +17,4 @@
             [jonase/eastwood "0.2.3"]]
   :eastwood {:exclude-namespaces [apps.protocols :test-paths]
              :linters [:wrong-arity :wrong-ns-form :wrong-pre-post :wrong-tag :misplaced-docstrings]}
-  :manifest {"db-version" "2.8.0:20160712.01"})
+  :manifest {"db-version" "2.8.0:20160725.01"})
