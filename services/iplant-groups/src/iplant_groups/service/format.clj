@@ -24,7 +24,7 @@
       "f"     false
       "no"    false
       "n"     false
-      (throw+ {:error_code    ce/ERR_ILLEGAL_ARGUMENT
+      (throw+ {:type          :clojure-commons.exception/illegal-argument
                :boolean_value s}))))
 
 (defn string-to-integer
@@ -34,7 +34,7 @@
 
 (defn- not-found
   [response]
-  (throw+ {:error_code          ce/ERR_NOT_FOUND
+  (throw+ {:type                :clojure-commons.exception/not-found
            :grouper_result_code (:resultCode response)
            :id                  (:id response)}))
 

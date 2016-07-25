@@ -5,13 +5,13 @@
 
 (defn not-found
   [desc id]
-  (throw+ {:error_code  ce/ERR_NOT_FOUND
+  (throw+ {:type        :clojure-commons.exception/not-found
            :description desc
            :id          id}))
 
 (defn forbidden
   [desc id]
-  (throw+ {:error_code  ce/ERR_FORBIDDEN
+  (throw+ {:type        :clojure-commons.exception/forbidden
            :description desc
            :id          id}))
 
