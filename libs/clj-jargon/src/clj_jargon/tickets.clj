@@ -4,7 +4,8 @@
         [clj-jargon.cart :only [temp-password]]
         [clj-jargon.item-info :only [file is-dir?]]
         [clj-jargon.item-ops :only [input-stream]])
-  (:require [clojure-commons.file-utils :as ft])
+  (:require [clojure-commons.file-utils :as ft]
+            [clojure.tools.logging :as log])
   (:import [org.irods.jargon.core.pub IRODSAccessObjectFactory]
            [org.irods.jargon.ticket.packinstr TicketInp] 
            [org.irods.jargon.ticket.packinstr TicketCreateModeEnum] 
@@ -20,9 +21,11 @@
    Probably doesn't need to be called directly."
   [cm username]
   (let [tsf (TicketServiceFactoryImpl. (:accessObjectFactory cm))
-        user (if (= username (:user cm))
-                 (:irodsAccount cm)
-                 (override-user-account cm username (temp-password cm username)))]
+        user (if (= username (:username cm))
+                 (do (log/debug (str "Using existing account since '" username "' = '" (:username cm) "'"))
+                     (:irodsAccount cm))
+                 (do (log/debug (str "Creating temporary password for '" username "' which does not match '" (:username cm) "'"))
+                     (override-user-account cm username (temp-password cm username))))]
     (.instanceTicketAdminService tsf user)))
 
 (defn set-ticket-options
