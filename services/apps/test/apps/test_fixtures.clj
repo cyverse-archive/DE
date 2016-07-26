@@ -7,7 +7,7 @@
 (def default-db-uri "jdbc:postgresql://dedb/de?user=de&password=notprod")
 (def default-jex-uri "https://jex-adapter:60000")
 (def default-data-info-uri "https://data-info:60000")
-(def default-notification-agent-uri "http://notificationagent:60000")
+(def default-notification-agent-uri "http://notification-agent:60000")
 (def default-iplant-groups-uri "http://iplant-groups:60000")
 (def default-metadata-uri "http://metadata:60000")
 (def default-permissions-uri "http://permissions:60000")
