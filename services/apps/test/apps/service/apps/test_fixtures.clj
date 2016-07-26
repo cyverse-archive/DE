@@ -103,8 +103,16 @@
   (dorun (map (comp workspace/get-workspace get-user) (keys users)))
   (f))
 
+(defn list-public-apps
+  "For the purposes of integration tests, any app that is integrated by either 'Default DE Tools' or 'Internal
+   DE Tools' is considered to be public by default."
+  []
+  (sql/select :app_listing
+              (sql/where {:deleted false
+                          :integrator_name [in ["Default DE Tools" "Internal DE Tools"]]})))
+
 (defn register-public-apps []
-  (for [app (sql/select :app_listing (sql/where {:is_public true :deleted false}))]
+  (for [app (list-public-apps)]
     (do (pc/grant-permission (config/permissions-client) "app" (:id app) "group" (ipg/grouper-user-group-id) "read")
         app)))
 
@@ -113,11 +121,14 @@
                  (sql/join [:app_categories :c] {:aca.app_category_id :c.id})
                  (sql/fields :aca.app_id)))
 
-(defn load-beta-apps []
+(defn load-beta-apps
+  "For the purposes of integration tests, any app that is integrated by either 'Default DE Tools' or 'Internal
+   DE Tools' is considered to be public by default."
+  []
   (sql/select [:app_listing :a]
-              (sql/where {:a.id        [in (category-name-subselect "Beta")]
-                          :a.is_public true
-                          :a.deleted   false})))
+              (sql/where {:a.id              [in (category-name-subselect "Beta")]
+                          :a.integrator_name [in ["Default DE Tools" "Internal DE Tools"]]
+                          :a.deleted         false})))
 
 (defn with-public-apps [f]
   (binding [public-apps (into [] (register-public-apps))

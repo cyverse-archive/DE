@@ -72,23 +72,23 @@
   "Adds a where clause to an analysis listing query to restrict app results to
    an app group and all of its descendents plus the set of public apps
    integrated by a user."
-  [query app-group-id email]
+  [query app-group-id username public-app-ids]
   (-> query
     (join :app_category_app
           (= :app_category_app.app_id
              :app_listing.id))
     (where (or {:app_category_app.app_category_id
                 [in (get-all-group-ids-subselect app-group-id)]}
-               {:integrator_email email
-                :is_public        true}))))
+               {:integrator_username username
+                :id                  [in (seq public-app-ids)]}))))
 
 (defn- add-public-apps-by-user-where-clause
   "Adds a where clause to an analysis listing query to restrict app results to
    the set of public apps integrated by a user."
-  [query username]
+  [query username {:keys [public-app-ids]}]
   (where query
          {:integrator_username username
-          :is_public           true}))
+          :id                  [in public-app-ids]}))
 
 (defn- get-app-count-base-query
   "Returns a base query for counting the total number of apps in the
@@ -108,10 +108,10 @@
       (-> (get-app-count-base-query query-opts)
         (add-app-group-where-clause app-group-id)
         (select))))
-  ([app-group-id email query-opts]
+  ([app-group-id username {:keys [public-app-ids] :as query-opts}]
     ((comp :total first)
       (-> (get-app-count-base-query query-opts)
-        (add-app-group-plus-public-apps-where-clause app-group-id email)
+        (add-app-group-plus-public-apps-where-clause app-group-id username public-app-ids)
         (select)))))
 
 (defn- get-app-listing-base-query
@@ -188,9 +188,9 @@
     (-> (get-app-listing-base-query workspace faves-index query-opts)
       (add-app-group-where-clause app-group-id)
       (select)))
-  ([app-group-id workspace faves-index query-opts email]
+  ([app-group-id workspace faves-index {:keys [public-app-ids] :as query-opts} username]
     (-> (get-app-listing-base-query workspace faves-index query-opts)
-      (add-app-group-plus-public-apps-where-clause app-group-id email)
+      (add-app-group-plus-public-apps-where-clause app-group-id username public-app-ids)
       (select))))
 
 (defn- get-public-group-ids-subselect
@@ -264,26 +264,26 @@
       select))
 
 (defn- add-deleted-and-orphaned-where-clause
-  [query]
+  [query public-app-ids]
   (where query
     (or {:deleted true
-         :is_public true}
+         :id      [in (seq public-app-ids)]}
       (raw "NOT EXISTS (SELECT * FROM app_category_app aca WHERE aca.app_id = app_listing.id)"))))
 
 (defn count-deleted-and-orphaned-apps
   "Counts the number of deleted, public apps, plus apps that are not listed under any category."
-  []
+  [{:keys [public-app-ids]}]
   ((comp :count first)
    (-> (select* app_listing)
        (aggregate (count :*) :count)
-       add-deleted-and-orphaned-where-clause
+       (add-deleted-and-orphaned-where-clause public-app-ids)
        (select))))
 
 (defn list-deleted-and-orphaned-apps
   "Fetches a list of deleted, public apps, plus apps that are not listed under any category."
-  [{:keys [limit offset sort-field sort-dir]}]
+  [{:keys [limit offset sort-field sort-dir public-app-ids]}]
   (-> (select* app_listing)
-      add-deleted-and-orphaned-where-clause
+      (add-deleted-and-orphaned-where-clause public-app-ids)
       (add-query-limit limit)
       (add-query-offset offset)
       (add-query-sorting (when sort-field (keyword sort-field))
@@ -297,7 +297,7 @@
    (-> (select* app_listing)
        (aggregate (count :*) :count)
        (where {:deleted false})
-       (add-public-apps-by-user-where-clause username)
+       (add-public-apps-by-user-where-clause username params)
        (add-app-id-where-clause params)
        (add-agave-pipeline-where-clause params)
        (select))))
@@ -306,37 +306,29 @@
   "Lists the apps integrated by the user with the given"
   [workspace favorites-group-index username query-opts]
   (-> (get-app-listing-base-query workspace favorites-group-index query-opts)
-      (add-public-apps-by-user-where-clause username)
+      (add-public-apps-by-user-where-clause username query-opts)
       (select)))
-
-(defn- is-visible-app-subselect
-  [{workspace-id :id root-category-id :root_category_id} favorites-group-index app-id-keyword]
-  (subselect [:app_category_app :aca]
-             (join [:app_category_listing :ac] {:aca.app_category_id :ac.id})
-             (where {:aca.app_id app-id-keyword})
-             (where {:ac.id [not= (get-fav-group-id-subselect root-category-id favorites-group-index)]})
-             (where (or :ac.is_public {:ac.workspace_id workspace-id}))))
 
 (defn list-shared-apps
   "Lists apps that have been shared with a user. For the time being, this works by listing all apps
-  in the :app-ids parameter that are not in one of the categories that the user can access. When the
-  category system changes, this query will also have to change."
+  that the user did not integrate, but for which the user has direct access permission."
   [workspace favorites-group-index params]
-  (-> (get-app-listing-base-query workspace favorites-group-index params)
-      (where (not (exists (is-visible-app-subselect workspace favorites-group-index :app_listing.id))))
-      select))
+  (let [params (assoc params :app-ids (:directly-accessible-app-ids params))]
+    (-> (get-app-listing-base-query workspace favorites-group-index params)
+        (where {:integrator_id [not= (:user_id workspace)]})
+        select)))
 
 (defn count-shared-apps
   "Counts the number of apps that have been shared with a user. For the time being, this works by
-  counting all apps in the :app-ids parameter that are not in one of the categories that the user
-  can access. When the category system changes, this query will also have to change."
+  counting all apps that the user did not integrate, but for which the has direct access permission."
   [workspace favorites-group-index params]
-  (-> (select* [:app_listing :l])
-      (aggregate (count :*) :count)
-      (where {:deleted false})
-      (where (not (exists (is-visible-app-subselect workspace favorites-group-index :l.id))))
-      (add-app-id-where-clause params)
-      select first :count))
+  (let [params (assoc params :app-ids (:directly-accessible-app-ids params))]
+    (-> (select* [:app_listing :l])
+        (aggregate (count :*) :count)
+        (where {:deleted false})
+        (where {:integrator_id [not= (:user_id workspace)]})
+        (add-app-id-where-clause params)
+        select first :count)))
 
 (defn list-apps-by-id
   "Lists all apps with an ID in the the given app-ids list."

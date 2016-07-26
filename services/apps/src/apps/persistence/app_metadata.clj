@@ -14,6 +14,7 @@
             [clojure.string :as string]
             [kameleon.app-listing :as app-listing]
             [korma.core :as sql]
+            [apps.clients.permissions :as perms-client]
             [apps.persistence.app-metadata.delete :as delete]
             [apps.persistence.app-metadata.relabel :as relabel]))
 
@@ -306,7 +307,7 @@
   (select (get-tool-listing-base-query)
           (modifier "DISTINCT")
           (where {:container_images_id img-id
-                  :is_public true})))
+                  :app_id              [in (perms-client/get-public-app-ids)]})))
 
 (defn get-apps-by-tool-id
   "Loads information about the apps using the tool with the given ID."
@@ -317,8 +318,11 @@
 (defn get-public-apps-by-tool-id
   "Loads information about the public apps using the tool with the given ID."
   [tool-id]
-  (let [tool-app-ids (select tool_listing (fields :app_id) (where {:tool_id tool-id :is_public true}))]
-    (map (comp get-app :app_id) tool-app-ids)))
+  (->> (select tool_listing
+               (fields :app_id)
+               (where {:tool_id tool-id
+                       :app_id  [in (perms-client/get-public-app-ids)]}))
+       (map (comp get-app :app_id))))
 
 (defn get-tool-type-id
   "Gets the ID of the given tool type name."

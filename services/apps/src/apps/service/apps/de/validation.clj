@@ -6,7 +6,8 @@
         [kameleon.entities]
         [kameleon.queries :only [parameter-types-for-tool-type]]
         [apps.persistence.app-metadata :only [get-app list-duplicate-apps]])
-  (:require [apps.service.apps.de.permissions :as perms]
+  (:require [apps.clients.permissions :as perms-client]
+            [apps.service.apps.de.permissions :as perms]
             [clojure.string :as string]))
 
 (defn- get-tool-type-from-database
@@ -83,14 +84,14 @@
 
 (defn- private-apps-for
   "Finds private single-step apps for a list of task IDs."
-  [task-ids]
+  [task-ids public-app-ids]
   (select [:app_listing :a]
           (fields :a.id :a.name)
           (join [:app_steps :step]
                 {:a.id :step.app_id})
           (where {:step.task_id [in task-ids]
                   :a.step_count 1
-                  :a.is_public  false})))
+                  :a.id         [not-in public-app-ids]})))
 
 (defn- list-unrunnable-tasks
   "Determines which of a collection of task IDs are not runnable."
@@ -112,8 +113,10 @@
   (let [app              (get-app app-id)
         task-ids         (task-ids-for-app app-id)
         unrunnable-tasks (list-unrunnable-tasks task-ids)
-        private-apps     (private-apps-for task-ids)]
-    (cond (:is_public app)       [false "app is already public"]
+        public-app-ids   (perms-client/get-public-app-ids)
+        is-public?       (contains? public-app-ids app-id)
+        private-apps     (private-apps-for task-ids public-app-ids)]
+    (cond is-public?             [false "app is already public"]
           (empty? task-ids)      [false "no app ID provided"]
           (seq unrunnable-tasks) [false "contains unrunnable tasks" unrunnable-tasks]
           (= 1 (count task-ids)) [true]
@@ -123,7 +126,7 @@
 (defn- verify-app-not-public
   "Verifies that an app has not been made public."
   [app]
-  (when (:is_public app)
+  (when (contains? (perms-client/get-public-app-ids) (:id app))
     (throw+ {:type  :clojure-commons.exception/not-writeable
              :error (str "Workflow, " (:id app) ", is public and may not be edited")})))
 

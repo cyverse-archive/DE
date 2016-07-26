@@ -140,3 +140,19 @@
 (def unshare-app (partial unshare-resource (rt-app)))
 (def share-analysis (partial share-resource (rt-analysis)))
 (def unshare-analysis (partial unshare-resource (rt-analysis)))
+
+(defn- get-public-resource-ids [resource-type]
+  (->> (pc/get-subject-permissions-for-resource-type (client) "group" (ipg/grouper-user-group-id) resource-type false)
+       :permissions
+       (map (comp uuidify :name :resource))
+       set))
+
+(def get-public-app-ids (partial get-public-resource-ids "app"))
+
+(defn- get-directly-accessible-resource-ids [resource-type user]
+  (->> (pc/get-subject-permissions-for-resource-type (client) "user" user resource-type false)
+       :permissions
+       (map (comp uuidify :name :resource))
+       set))
+
+(def get-directly-accessible-app-ids (partial get-directly-accessible-resource-ids "app"))

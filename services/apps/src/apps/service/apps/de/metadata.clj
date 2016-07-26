@@ -95,7 +95,7 @@
       (throw+ {:type  :clojure-commons.exception/bad-request-field
                :error (str "Rating must be an integer between 1 and 5 inclusive."
                                 " Invalid rating (" rating ") for App ID " app-id)}))
-    (when-not (:is_public app)
+    (when-not (contains? (perms-client/get-public-app-ids) app-id)
       (throw+ {:type  :clojure-commons.exception/bad-request-field
                :error (str "Unable to rate private app, " app-id)}))
     (amp/rate-app app-id user-id request)
@@ -106,7 +106,7 @@
   [user app-id]
   (let [app     (validate-app-existence app-id)
         user-id (get-valid-user-id (:username user))]
-    (when-not (:is_public app)
+    (when-not (contains? (perms-client/get-public-app-ids) app-id)
       (throw+ {:type  :clojure-commons.exception/bad-request-field
                :error (str "Unable to remove rating from private app, " app-id)}))
     (amp/delete-app-rating app-id user-id)
