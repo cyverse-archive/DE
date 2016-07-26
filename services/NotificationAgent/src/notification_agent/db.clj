@@ -640,7 +640,9 @@
   "Inserts a new system notification acknowledgment record for a given user and system notification.
    The state is set to acknowledged, and the given time used for the date acknowledged."
   [seen-date user sys-note-uuid]
-  (exec-raw ["INSERT INTO system_notification_acknowledgments VALUES (?, ?, 'acknowledged', ?)"
+  (exec-raw ["INSERT INTO system_notification_acknowledgments
+                  (user_id, system_notification_id, state, date_acknowledged)
+                VALUES (?, ?, 'acknowledged', ?)"
              [(lock-user user)
               (system-notif-id sys-note-uuid)
               (parse-date seen-date)]]))
