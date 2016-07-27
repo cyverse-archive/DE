@@ -12,11 +12,11 @@ monkey.amqp.exchange.name        = {{ amqp_de_exchange }}
 monkey.amqp.exchange.durable     = {{ amqp_de_exchange_durable }}
 monkey.amqp.exchange.auto-delete = {{ amqp_de_exchange_auto_delete }}
 
-monkey.es.url            = http://{{ elasticsearch.host }}:{{ elasticsearch.port }}
+monkey.es.url            = http://{{ data_store.elasticsearch.host }}:{{ data_store.elasticsearch.port }}
 monkey.es.index          = data
 monkey.es.tag-type       = tag
 monkey.es.batch-size     = 1000
-monkey.es.scroll-size    = {{ elasticsearch.scroll_size }}
+monkey.es.scroll-size    = {{ data_store.elasticsearch.scroll_size }}
 monkey.es.scroll-timeout = 1m
 
 monkey.tags.host       = {{ metadata_db_host }}

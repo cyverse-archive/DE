@@ -9,8 +9,8 @@ dewey.amqp.exchange.durable     = {{ amqp_irods_exchange_durable }}
 dewey.amqp.exchange.auto-delete = {{ amqp_irods_exchange_auto_delete }}
 dewey.amqp.qos                  = 100
 
-dewey.es.host                   = {{ elasticsearch.host }}
-dewey.es.port                   = {{ elasticsearch.port }}
+dewey.es.host                   = {{ data_store.elasticsearch.host }}
+dewey.es.port                   = {{ data_store.elasticsearch.port }}
 
 dewey.irods.host                = {{ irods.host }}
 dewey.irods.port                = {{ irods.port }}
