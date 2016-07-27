@@ -313,22 +313,26 @@
   "Lists apps that have been shared with a user. For the time being, this works by listing all apps
   that the user did not integrate, but for which the user has direct access permission."
   [workspace favorites-group-index params]
-  (let [params (assoc params :app-ids (:directly-accessible-app-ids params))]
-    (-> (get-app-listing-base-query workspace favorites-group-index params)
-        (where {:integrator_id [not= (:user_id workspace)]})
-        select)))
+  (if (seq (:directly-accessible-app-ids params))
+    (let [params (assoc params :app-ids (:directly-accessible-app-ids params))]
+      (-> (get-app-listing-base-query workspace favorites-group-index params)
+          (where {:integrator_id [not= (:user_id workspace)]})
+          select))
+    []))
 
 (defn count-shared-apps
   "Counts the number of apps that have been shared with a user. For the time being, this works by
   counting all apps that the user did not integrate, but for which the has direct access permission."
   [workspace favorites-group-index params]
-  (let [params (assoc params :app-ids (:directly-accessible-app-ids params))]
-    (-> (select* [:app_listing :l])
-        (aggregate (count :*) :count)
-        (where {:deleted false})
-        (where {:integrator_id [not= (:user_id workspace)]})
-        (add-app-id-where-clause params)
-        select first :count)))
+  (if (seq (:directly-accessible-app-ids params))
+    (let [params (assoc params :app-ids (:directly-accessible-app-ids params))]
+      (-> (select* [:app_listing :l])
+          (aggregate (count :*) :count)
+          (where {:deleted false})
+          (where {:integrator_id [not= (:user_id workspace)]})
+          (add-app-id-where-clause params)
+          select first :count))
+    0))
 
 (defn list-apps-by-id
   "Lists all apps with an ID in the the given app-ids list."
