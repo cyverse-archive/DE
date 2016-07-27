@@ -6,7 +6,8 @@
             [apps.clients.permissions :as perms-client]
             [apps.service.apps :as apps]
             [apps.service.apps.test-fixtures :as atf
-             :refer [test-app beta-apps create-test-app create-pipeline]]
+             :refer [test-app beta-apps create-test-app create-pipeline find-category
+                     get-category get-dev-category get-beta-category get-admin-beta-category]]
             [apps.test-fixtures :as tf]
             [apps.util.config :as config]
             [clojure.tools.logging :as log]
@@ -16,27 +17,6 @@
 
 (use-fixtures :once tf/run-integration-tests tf/with-test-db tf/with-config atf/with-workspaces)
 (use-fixtures :each atf/with-public-apps atf/with-test-app)
-
-(defn find-category [category-name [cat & cats]]
-  (if-not (or (nil? cat) (= (:name cat) category-name))
-    (or (find-category category-name (:categories cat))
-        (recur category-name cats))
-    cat))
-
-(defn get-category [user category-name]
-  (find-category category-name (:categories (apps/get-app-categories user {}))))
-
-(defn get-dev-category [user]
-  (get-category user "Apps under development"))
-
-(defn get-beta-category [user]
-  (get-category user "Beta"))
-
-(defn get-admin-category [user category-name]
-  (find-category category-name (:categories (apps/get-admin-app-categories user {}))))
-
-(defn get-admin-beta-category [user]
-  (get-admin-category user "Beta"))
 
 (deftest test-app-search
   (let [{username :shortUsername :as user} (get-user :testde1)]

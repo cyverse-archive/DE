@@ -158,3 +158,24 @@
             test-tool-id   (first (:tool_ids (create-tool (get-user :testde10))))]
     (f)
     (delete-tool test-tool-id)))
+
+(defn find-category [category-name [cat & cats]]
+  (if-not (or (nil? cat) (= (:name cat) category-name))
+    (or (find-category category-name (:categories cat))
+        (recur category-name cats))
+    cat))
+
+(defn get-category [user category-name]
+  (find-category category-name (:categories (apps/get-app-categories user {}))))
+
+(defn get-dev-category [user]
+  (get-category user "Apps under development"))
+
+(defn get-beta-category [user]
+  (get-category user "Beta"))
+
+(defn get-admin-category [user category-name]
+  (find-category category-name (:categories (apps/get-admin-app-categories user {}))))
+
+(defn get-admin-beta-category [user]
+  (get-admin-category user "Beta"))
