@@ -88,6 +88,13 @@
      (apps/owner-add-app-docs user (:id app) {:documentation "This is a test."})
      app)))
 
+(defn create-test-tool-app [user name]
+  (sql/delete :apps (sql/where {:name name}))
+  (let [tool (tools/get-tool test-tool-id)
+        app  (apps/add-app user (assoc app-definition :name name :tools [tool]))]
+    (apps/owner-add-app-docs user (:id app) {:documentation "This is a test."})
+    app))
+
 (defn create-pipeline
   [user]
   (sql/delete :apps (sql/where {:name (:name pipeline-definition)}))

@@ -1,5 +1,6 @@
 (ns apps.service.apps.permissions-test
-  (:use [apps.service.apps.test-utils :only [get-user]]
+  (:use [apps.service.apps.de.listings :only [shared-with-me-id]]
+        [apps.service.apps.test-utils :only [get-user]]
         [clojure.test]
         [kameleon.uuids :only [uuidify uuid]])
   (:require [apps.clients.iplant-groups :as ipg]
@@ -419,3 +420,17 @@
         pipeline                           (create-pipeline user)]
     (is (has-permission? "app" (:id pipeline) "user" username "own"))
     (apps/permanently-delete-apps user {:app_ids [(:id pipeline)]})))
+
+(deftest test-shared-listing
+  (let [testde1       (get-user :testde1)
+        testde2       (get-user :testde2)
+        app           (create-test-app testde1 "To be shared")
+        shared-apps   (fn [user] (apps/list-apps-in-category user shared-with-me-id {}))
+        contains-app? (fn [app-id apps] (seq (filter (comp (partial = app-id) :id) apps)))
+        old-listing   (shared-apps testde2)]
+    (is (not (contains-app? (:id app) (:apps old-listing))))
+    (pc/grant-permission (config/permissions-client) "app" (:id app) "user" (:shortUsername testde2) "read")
+    (let [new-listing (shared-apps testde2)]
+      (is (= (inc (:app_count old-listing)) (:app_count new-listing)))
+      (is (contains-app? (:id app) (:apps new-listing))))
+    (apps/permanently-delete-apps testde1 {:app_ids [(:id app)]})))
