@@ -303,8 +303,8 @@
   [{:keys [shortUsername] :as user} workspace group-id perms {:keys [public-app-ids] :as params}]
   (when-let [format-fns (virtual-group-fns group-id)]
     (-> ((:format-group format-fns) user workspace params)
-        (assoc :apps (let [app-listing    ((:format-listing format-fns) user workspace params)
-                           beta-ids-set   (app-ids->beta-ids-set shortUsername (map :id app-listing))]
+        (assoc :apps (let [app-listing  ((:format-listing format-fns) user workspace params)
+                           beta-ids-set (app-ids->beta-ids-set shortUsername (map :id app-listing))]
                        (map (partial format-app-listing perms beta-ids-set public-app-ids) app-listing))))))
 
 (defn- count-apps-in-group
