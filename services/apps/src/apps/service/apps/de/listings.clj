@@ -317,7 +317,7 @@
 (defn- get-apps-in-group
   "Gets the apps in an app group, including virtual app groups that may be included."
   [user {root-group-id :root_category_id :as workspace} {:keys [id]} params]
-  (let [faves-index    (workspace-favorites-app-category-index)]
+  (let [faves-index (workspace-favorites-app-category-index)]
     (if (= root-group-id id)
       (get-apps-in-group-for-user id workspace faves-index params (:username user))
       (get-apps-in-group-for-user id workspace faves-index params))))
