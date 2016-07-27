@@ -375,4 +375,14 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     public String confirmDeleteHierarchy(String selectedItem) {
         return displayStrings.confirmDeleteHierarchy(selectedItem);
     }
+
+    @Override
+    public String confirmDeleteAppWarning(String name) {
+        return displayStrings.confirmDeleteAppWarning(name);
+    }
+
+    @Override
+    public String confirmDeleteAppTitle() {
+        return displayStrings.confirmDeleteAppTitle();
+    }
 }

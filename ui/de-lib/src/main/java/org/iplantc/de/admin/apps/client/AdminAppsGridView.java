@@ -87,4 +87,6 @@ public interface AdminAppsGridView extends IsWidget,
     List<App> getSelectedApps();
 
     void deselectAll();
+
+    void removeApp(App selectedApp);
 }
