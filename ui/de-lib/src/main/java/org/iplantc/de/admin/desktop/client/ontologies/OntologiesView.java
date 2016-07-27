@@ -72,6 +72,9 @@ public interface OntologiesView extends IsWidget,
 
     void removeApp(App selectedApp);
 
+    void deselectAll();
+
+
     interface OntologiesViewAppearance {
         String addOntology();
 

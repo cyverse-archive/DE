@@ -323,6 +323,12 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         newGridView.removeApp(selectedApp);
     }
 
+    @Override
+    public void deselectAll() {
+        oldGridView.deselectAll();
+        newGridView.deselectAll();
+    }
+
     @UiHandler("publishButton")
     void publishButtonClicked(SelectEvent event) {
         Ontology editedOntology = ontologyDropDown.getCurrentValue();

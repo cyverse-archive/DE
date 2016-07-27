@@ -268,6 +268,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
             public void onSuccess(List<Avu> result) {
                 announcer.schedule(new SuccessAnnouncementConfig(appearance.appClassified(targetApp.getName(), hierarchy.getLabel())));
                 view.selectHierarchy(hierarchy);
+                view.deselectAll();
             }
         });
     }
