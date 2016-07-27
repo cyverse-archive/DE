@@ -27,7 +27,9 @@ import org.iplantc.de.admin.desktop.client.ontologies.service.OntologyServiceFac
 import org.iplantc.de.admin.desktop.client.ontologies.views.AppCategorizeView;
 import org.iplantc.de.admin.desktop.client.ontologies.views.AppToOntologyHierarchyDND;
 import org.iplantc.de.admin.desktop.client.ontologies.views.OntologyHierarchyToAppDND;
+import org.iplantc.de.admin.desktop.client.services.AppAdminServiceFacade;
 import org.iplantc.de.apps.client.AppCategoriesView;
+import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
 import org.iplantc.de.shared.DEProperties;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.avu.Avu;
@@ -99,6 +101,9 @@ public class OntologiesPresenterImplTest {
     @Mock Ontology ontologyMock;
     @Mock Iterator<Ontology> ontologyIteratorMock;
     @Mock Iterator<OntologyHierarchy> hierarchyIteratorMock;
+    @Mock Iterator<App> appIteratorMock;
+    @Mock App appMock;
+    @Mock AppAdminServiceFacade adminAppServiceMock;
 
 
     @Captor ArgumentCaptor<AsyncCallback<List<Ontology>>> asyncCallbackOntologyListCaptor;
@@ -138,6 +143,12 @@ public class OntologiesPresenterImplTest {
         when(iriIteratorMock.next()).thenReturn("iri1").thenReturn("iri2");
         when(listOntologyMock.size()).thenReturn(2);
         when(listOntologyMock.iterator()).thenReturn(ontologyIteratorMock);
+        when(appListMock.size()).thenReturn(1);
+        when(appIteratorMock.hasNext()).thenReturn(true, false);
+        when(appIteratorMock.next()).thenReturn(appMock);
+        when(appListMock.size()).thenReturn(1);
+        when(appListMock.iterator()).thenReturn(appIteratorMock);
+
         when(ontologyIteratorMock.hasNext()).thenReturn(true, true, false);
         when(ontologyIteratorMock.next()).thenReturn(ontologyMock).thenReturn(activeOntologyMock);
         when(ontologyMock.isActive()).thenReturn(false);
@@ -165,6 +176,7 @@ public class OntologiesPresenterImplTest {
         uut.announcer = announcerMock;
         uut.properties = propertiesMock;
         uut.ontologyUtil = utilMock;
+        uut.adminAppService = adminAppServiceMock;
 
         verifyConstructor(uut);
     }
@@ -185,6 +197,7 @@ public class OntologiesPresenterImplTest {
         verify(viewMock).addCategorizeButtonClickedEventHandler(eq(uut));
         verify(viewMock).addDeleteHierarchyEventHandler(eq(uut));
         verify(viewMock).addDeleteOntologyButtonClickedEventHandler(eq(uut));
+        verify(viewMock).addDeleteAppsSelectedHandler(eq(uut));
     }
 
     @Test
@@ -513,5 +526,22 @@ public class OntologiesPresenterImplTest {
         verify(announcerMock).schedule(any(SuccessAnnouncementConfig.class));
         verify(spy).getOntologyHierarchies(anyString());
 
+    }
+
+    @Test
+    public void testOnDeleteAppsSelected() {
+        DeleteAppsSelected eventMock = mock(DeleteAppsSelected.class);
+        when(eventMock.getAppsToBeDeleted()).thenReturn(appListMock);
+
+        /** CALL METHOD UNDER TEST **/
+        uut.onDeleteAppsSelected(eventMock);
+
+        verify(viewMock).maskGrids(eq(appearanceMock.loadingMask()));
+        verify(adminAppServiceMock).deleteApp(eq(appMock), asyncVoidCaptor.capture());
+
+        asyncVoidCaptor.getValue().onSuccess(null);
+
+        verify(viewMock).removeApp(appMock);
+        verify(viewMock).unmaskGrids();
     }
 }

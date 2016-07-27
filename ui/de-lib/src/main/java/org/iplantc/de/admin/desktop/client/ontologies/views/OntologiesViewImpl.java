@@ -14,6 +14,7 @@ import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.PublishOntol
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.SaveHierarchiesDialog;
 import org.iplantc.de.apps.client.AppCategoriesView;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
+import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.ontologies.Ontology;
@@ -21,6 +22,7 @@ import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import org.iplantc.de.client.util.OntologyUtil;
 import org.iplantc.de.commons.client.views.dialogs.EdamUploadDialog;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -76,6 +78,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @UiField TextButton saveHierarchy;
     @UiField TextButton deleteHierarchy;
     @UiField TextButton categorize;
+    @UiField TextButton deleteApp;
     @UiField(provided = true) OntologiesViewAppearance appearance;
     @UiField Tree<OntologyHierarchy, String> tree;
     @UiField(provided = true) AppCategoriesView categoriesView;
@@ -159,6 +162,11 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @Override
     public HandlerRegistration addDeleteHierarchyEventHandler(DeleteHierarchyEvent.DeleteHierarchyEventHandler handler) {
         return addHandler(handler, DeleteHierarchyEvent.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addDeleteAppsSelectedHandler(DeleteAppsSelected.DeleteAppsSelectedHandler handler) {
+        return addHandler(handler, DeleteAppsSelected.TYPE);
     }
 
     @Override
@@ -294,6 +302,25 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         deleteButton.setEnabled(selectedOntology != null && selectedOntology != activeOntology);
         deleteHierarchy.setEnabled(selectedOntology != null && tree.getSelectionModel().getSelectedItem() != null);
         categorize.setEnabled(selectedOntology != null && targetApp != null);
+        deleteApp.setEnabled(selectedOntology != null && targetApp != null);
+    }
+
+    @Override
+    public void maskGrids(String loadingMask) {
+        oldGridView.mask(loadingMask);
+        newGridView.mask(loadingMask);
+    }
+
+    @Override
+    public void unmaskGrids() {
+        oldGridView.unmask();
+        newGridView.unmask();
+    }
+
+    @Override
+    public void removeApp(App selectedApp) {
+        oldGridView.removeApp(selectedApp);
+        newGridView.removeApp(selectedApp);
     }
 
     @UiHandler("publishButton")
@@ -350,6 +377,22 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @UiHandler("categorize")
     void categorizeButtonClicked(SelectEvent event) {
         fireEvent(new CategorizeButtonClickedEvent(targetApp, treeStore.getRootItems()));
+    }
+
+    @UiHandler("deleteApp")
+    void deleteAppClicked(SelectEvent event) {
+        ConfirmMessageBox msgBox = new ConfirmMessageBox(appearance.confirmDeleteAppTitle(),
+                                                         appearance.confirmDeleteAppWarning(targetApp.getName()));
+
+        msgBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
+            @Override
+            public void onDialogHide(DialogHideEvent event) {
+                if(Dialog.PredefinedButton.YES.equals(event.getHideButton())){
+                    fireEvent(new DeleteAppsSelected(Lists.newArrayList(targetApp)));
+                }
+            }
+        });
+        msgBox.show();
     }
 
     @UiFactory

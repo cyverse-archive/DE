@@ -140,4 +140,12 @@ public class AdminAppsGridImpl extends ContentPanel implements AdminAppsGridView
     public void deselectAll() {
         grid.getSelectionModel().deselectAll();
     }
+
+    @Override
+    public void removeApp(App selectedApp) {
+        App app = listStore.findModelWithKey(selectedApp.getId());
+        if (app != null) {
+            listStore.remove(app);
+        }
+    }
 }

@@ -9,6 +9,7 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarc
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshOntologiesEvent;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
+import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.client.models.ontologies.Ontology;
@@ -34,7 +35,8 @@ public interface OntologiesView extends IsWidget,
                                         CategorizeButtonClickedEvent.HasCategorizeButtonClickedEventHandlers,
                                         AppSelectionChangedEvent.AppSelectionChangedEventHandler,
                                         DeleteOntologyButtonClickedEvent.HasDeleteOntologyButtonClickedEventHandlers,
-                                        DeleteHierarchyEvent.HasDeleteHierarchyEventHandlers {
+                                        DeleteHierarchyEvent.HasDeleteHierarchyEventHandlers,
+                                        DeleteAppsSelected.HasDeleteAppsSelectedHandlers {
 
     void showOntologyVersions(List<Ontology> result);
 
@@ -63,6 +65,12 @@ public interface OntologiesView extends IsWidget,
     void reSortHierarchies();
 
     void updateButtonStatus();
+
+    void maskGrids(String loadingMask);
+
+    void unmaskGrids();
+
+    void removeApp(App selectedApp);
 
     interface OntologiesViewAppearance {
         String addOntology();
@@ -188,6 +196,10 @@ public interface OntologiesView extends IsWidget,
         String hierarchyColumnLabel();
 
         String confirmDeleteHierarchy(String selectedItem);
+
+        String confirmDeleteAppWarning(String name);
+
+        String confirmDeleteAppTitle();
     }
 
     interface Presenter {

@@ -18,6 +18,8 @@ import org.iplantc.de.admin.desktop.client.ontologies.views.AppCategorizeView;
 import org.iplantc.de.admin.desktop.client.ontologies.views.AppToOntologyHierarchyDND;
 import org.iplantc.de.admin.desktop.client.ontologies.views.OntologyHierarchyToAppDND;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.CategorizeDialog;
+import org.iplantc.de.admin.desktop.client.services.AppAdminServiceFacade;
+import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.avu.Avu;
@@ -34,6 +36,7 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.shared.DEProperties;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -58,7 +61,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                                                 HierarchySelectedEvent.HierarchySelectedEventHandler,
                                                 CategorizeButtonClickedEvent.CategorizeButtonClickedEventHandler,
                                                 DeleteOntologyButtonClickedEvent.DeleteOntologyButtonClickedEventHandler,
-                                                DeleteHierarchyEvent.DeleteHierarchyEventHandler {
+                                                DeleteHierarchyEvent.DeleteHierarchyEventHandler,
+                                                DeleteAppsSelected.DeleteAppsSelectedHandler {
 
     private class CategorizeCallback implements AsyncCallback<List<Avu>> {
         private final App selectedApp;
@@ -142,7 +146,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         }
     }
 
-
+    @Inject AppAdminServiceFacade adminAppService;
     @Inject DEProperties properties;
     @Inject IplantAnnouncer announcer;
     OntologyUtil ontologyUtil;
@@ -200,6 +204,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         view.addCategorizeButtonClickedEventHandler(this);
         view.addDeleteOntologyButtonClickedEventHandler(this);
         view.addDeleteHierarchyEventHandler(this);
+        view.addDeleteAppsSelectedHandler(this);
     }
 
 
@@ -497,5 +502,28 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                                                                               .getVersion());
                                               }
                                           });
+    }
+
+    @Override
+    public void onDeleteAppsSelected(DeleteAppsSelected event) {
+        Preconditions.checkArgument(event.getAppsToBeDeleted().size() == 1);
+        final App selectedApp = event.getAppsToBeDeleted().iterator().next();
+
+        view.maskGrids(appearance.loadingMask());
+        adminAppService.deleteApp(selectedApp,
+                                  new AsyncCallback<Void>() {
+
+                                      @Override
+                                      public void onFailure(Throwable caught) {
+                                          view.unmaskGrids();
+                                          ErrorHandler.post(caught);
+                                      }
+
+                                      @Override
+                                      public void onSuccess(Void result) {
+                                          view.removeApp(selectedApp);
+                                          view.unmaskGrids();
+                                      }
+                                  });
     }
 }
