@@ -6,6 +6,7 @@ import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.apps.client.OntologyHierarchiesView;
 import org.iplantc.de.apps.shared.AppsModule.Ids;
+import org.iplantc.de.commons.client.widgets.DETabPanel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -18,7 +19,6 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 import com.sencha.gxt.widget.core.client.Composite;
-import com.sencha.gxt.widget.core.client.TabPanel;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 
 /**
@@ -30,7 +30,7 @@ public class AppsViewImpl extends Composite implements AppsView {
     }
 
     @UiField(provided = true) final AppsToolbarView toolBar;
-    @UiField TabPanel categoryTabs;
+    @UiField DETabPanel categoryTabs;
     AppCategoriesView.Presenter categoriesPresenter;
     OntologyHierarchiesView.Presenter hierarchiesPresenter;
 
@@ -63,7 +63,7 @@ public class AppsViewImpl extends Composite implements AppsView {
     }
 
     @Override
-    public TabPanel getCategoryTabPanel() {
+    public DETabPanel getCategoryTabPanel() {
         return categoryTabs;
     }
 

@@ -41,6 +41,8 @@ public interface AppsModule {
         String APP_TOOLS = ".tools";
         String TOOL_COLLAPSE_BTN = ".collapse";
         String HPC = ".hpc";
+        String WORKSPACE_TAB = ".workspaceTab";
+        String HPC_TAB = ".hpcTab";
     }
 }
 

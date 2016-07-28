@@ -9,6 +9,7 @@ import org.iplantc.de.apps.client.gin.factory.AppsViewFactory;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
+import org.iplantc.de.commons.client.widgets.DETabPanel;
 
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
@@ -85,7 +86,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     public void go(final HasOneWidget container,
                    final HasId selectedAppCategory,
                    final HasId selectedApp) {
-        TabPanel tabPanel = view.getCategoryTabPanel();
+        DETabPanel tabPanel = view.getCategoryTabPanel();
         if (isEmpty(tabPanel)) {
             categoriesPresenter.go(selectedAppCategory, tabPanel);
             hierarchiesPresenter.go(tabPanel);

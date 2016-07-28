@@ -10,10 +10,10 @@ import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
+import org.iplantc.de.commons.client.widgets.DETabPanel;
 
 import com.google.gwt.user.client.ui.IsWidget;
 
-import com.sencha.gxt.widget.core.client.TabPanel;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.TreeStyle;
 
@@ -71,7 +71,7 @@ public interface AppCategoriesView extends IsWidget,
 
         AppCategoriesView getWorkspaceView();
 
-        void go(HasId selectedAppCategory, TabPanel tabPanel);
+        void go(HasId selectedAppCategory, DETabPanel tabPanel);
 
         void setViewDebugId(String baseID);
     }
