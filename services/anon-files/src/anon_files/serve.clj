@@ -6,6 +6,7 @@
             [clj-jargon.item-info :as info]
             [clj-jargon.permissions :as perms]
             [clj-jargon.paging :as paging]
+            [cemerick.url :as url]
             [clojure.tools.logging :as log]
             [common-cfg.cfg :as cfg]
             [clojure.string :as string]
@@ -335,49 +336,51 @@
 (defn get-req-info
   [req]
   (init/with-jargon (jargon-cfg) [cm]
-    (if-not (valid? cm (:uri req))
+    (if-not (valid? cm (url/url-decode (:uri req)))
       (throw (Exception. "Bad")))
     (let [range (first (extract-ranges req))]
-      (request-info cm (:uri req) range))))
+      (request-info cm (url/url-decode (:uri req)) range))))
 
 (defn handle-request
   [req]
   (log/info "Handling GET request for" (:uri req))
   (log/info "\n" (cfg/pprint-to-string req))
-  (try
-    (if (range-request? req)
-      (log-headers
-       (let [info     (get-req-info req)
-             body     (anon-input-stream (:uri req) (:filesize info) info)]
-         (if (map? body)
-           body
-           {:status  206
-            :body    body
-            :headers (assoc (file-header (:uri req) (:lastmod info) (:lower info) (:upper info))
-                       "Content-Range" (content-range-str info))})))
-      (init/with-jargon (jargon-cfg) [cm]
-        (serve cm (:uri req))))
-    (catch Exception e
-      (log/warn e))))
+  (let [filepath (url/url-decode (:uri req))]
+    (try
+      (if (range-request? req)
+        (log-headers
+         (let [info     (get-req-info req)
+               body     (anon-input-stream filepath (:filesize info) info)]
+           (if (map? body)
+             body
+             {:status  206
+              :body    body
+              :headers (assoc (file-header filepath (:lastmod info) (:lower info) (:upper info))
+                         "Content-Range" (content-range-str info))})))
+        (init/with-jargon (jargon-cfg) [cm]
+          (serve cm filepath)))
+      (catch Exception e
+        (log/warn e)))))
 
 (defn handle-head-request
   [req]
   (log/info "Handling head request for" (:uri req))
   (log/info "\n" (cfg/pprint-to-string req))
-  (init/with-jargon (jargon-cfg) [cm]
-    (log-headers
-     (validated cm (:uri req)
-                (if (range-request? req)
-                  (let [info (get-req-info req)]
-                    {:status  200
-                     :body    ""
-                     :headers (assoc (file-header (:uri req) (:lastmod info) (:lower info) (:upper info))
-                                "Content-Range"  (content-range-str info))})
-                  (let [lastmod  (info/lastmod-date cm (:uri req))
-                        filesize (info/file-size cm (:uri req))]
-                    {:status 200
-                     :body ""
-                     :headers (file-header (:uri req) lastmod 0 (dec filesize))}))))))
+  (let [filepath (url/url-decode (:uri req))]
+    (init/with-jargon (jargon-cfg) [cm]
+      (log-headers
+       (validated cm filepath
+                  (if (range-request? req)
+                    (let [info (get-req-info req)]
+                      {:status  200
+                       :body    ""
+                       :headers (assoc (file-header filepath (:lastmod info) (:lower info) (:upper info))
+                                  "Content-Range"  (content-range-str info))})
+                    (let [lastmod  (info/lastmod-date cm filepath)
+                          filesize (info/file-size cm filepath)]
+                      {:status 200
+                       :body ""
+                       :headers (file-header filepath lastmod 0 (dec filesize))})))))))
 
 (defn- build-options-response
   [cm {:keys [uri]}]
@@ -393,4 +396,4 @@
   (log/info "Handling options request for" (:uri req))
   (log/info "\n" (cfg/pprint-to-string req))
   (init/with-jargon (jargon-cfg) [cm]
-    (log-headers (validated cm (:uri req) (build-options-response cm req)))))
+    (log-headers (validated cm (url/url-decode (:uri req)) (build-options-response cm req)))))
