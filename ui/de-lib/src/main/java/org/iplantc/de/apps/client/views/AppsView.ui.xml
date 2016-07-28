@@ -3,7 +3,8 @@
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
              xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
              xmlns:appsWidgets="urn:import:org.iplantc.de.apps.client"
-             xmlns:toolBar="urn:import:org.iplantc.de.apps.client">
+             xmlns:toolBar="urn:import:org.iplantc.de.apps.client"
+             xmlns:de="urn:import:org.iplantc.de.commons.client.widgets">
 
     <!-- Border Layout Data -->
     <ui:with field="westMargins"
@@ -55,9 +56,9 @@
         <!-- This is the navigation panel -->
         <container:west layoutData="{westData}">
             <gxt:ContentPanel headingText="{appearance.viewCategoriesHeader}">
-                <gxt:TabPanel ui:field="categoryTabs">
+                <de:DETabPanel ui:field="categoryTabs">
 
-                </gxt:TabPanel>
+                </de:DETabPanel>
             </gxt:ContentPanel>
         </container:west>
 

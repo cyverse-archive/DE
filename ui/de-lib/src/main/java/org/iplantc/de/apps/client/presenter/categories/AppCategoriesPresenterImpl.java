@@ -24,6 +24,7 @@ import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
+import org.iplantc.de.commons.client.widgets.DETabPanel;
 import org.iplantc.de.shared.AsyncProviderWrapper;
 import org.iplantc.de.shared.DEProperties;
 
@@ -45,7 +46,6 @@ import com.sencha.gxt.data.shared.SortDir;
 import com.sencha.gxt.data.shared.Store;
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.widget.core.client.TabItemConfig;
-import com.sencha.gxt.widget.core.client.TabPanel;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 
 import java.util.Arrays;
@@ -95,11 +95,12 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     private final EventBus eventBus;
     List<AppCategory> workspaceCategories = Lists.newArrayList();
     List<AppCategory> hpcCategories = Lists.newArrayList();
-    TabPanel viewTabPanel;
+    DETabPanel viewTabPanel;
     AppCategoriesViewFactory viewFactory;
     HandlerManager handlerManager;
     AppCategoriesView workspaceView;
     AppCategoriesView hpcView;
+    String baseId;
 
     @Inject
     AppCategoriesPresenterImpl(final DEProperties props,
@@ -144,14 +145,15 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     }
 
     @Override
-    public void go(final HasId selectedAppCategory, final TabPanel tabPanel) {
+    public void go(final HasId selectedAppCategory, final DETabPanel tabPanel) {
         this.viewTabPanel = tabPanel;
 
-        viewTabPanel.add(workspaceView.getTree(), new TabItemConfig(appearance.workspaceTab()));
-        viewTabPanel.add(hpcView.getTree(), new TabItemConfig(appearance.hpcTab()));
+        viewTabPanel.add(workspaceView.getTree(), new TabItemConfig(appearance.workspaceTab()), baseId + AppsModule.Ids.WORKSPACE_TAB);
+        viewTabPanel.add(hpcView.getTree(), new TabItemConfig(appearance.hpcTab()), baseId + AppsModule.Ids.HPC_TAB);
 
         workspaceView.getTree().mask(appearance.getAppCategoriesLoadingMask());
         hpcView.getTree().mask(appearance.getAppCategoriesLoadingMask());
+
         appService.getAppCategories(true, new AsyncCallback<List<AppCategory>>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -173,6 +175,7 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
 
     @Override
     public void setViewDebugId(String baseID) {
+        this.baseId = baseID;
         workspaceView.asWidget().ensureDebugId(baseID + AppsModule.Ids.CATEGORIES);
         hpcView.asWidget().ensureDebugId(baseID + AppsModule.Ids.HPC);
     }

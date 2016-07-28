@@ -24,6 +24,7 @@ import org.iplantc.de.client.util.OntologyUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.commons.client.widgets.DETabPanel;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.event.shared.GwtEvent;
@@ -39,7 +40,6 @@ import com.sencha.gxt.data.shared.SortDir;
 import com.sencha.gxt.data.shared.Store;
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.widget.core.client.TabItemConfig;
-import com.sencha.gxt.widget.core.client.TabPanel;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 
 import java.util.List;
@@ -119,7 +119,7 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
     OntologyUtil ontologyUtil;
     @Inject AsyncProvider<AppDetailsDialog> appDetailsDlgAsyncProvider;
     @Inject AppUserServiceFacade appUserService;
-    TabPanel viewTabPanel;
+    DETabPanel viewTabPanel;
     private OntologyServiceFacade serviceFacade;
     private OntologyHierarchiesView.OntologyHierarchiesAppearance appearance;
     protected String searchRegexPattern;
@@ -145,7 +145,7 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
     }
 
     @Override
-    public void go(final TabPanel tabPanel) {
+    public void go(final DETabPanel tabPanel) {
         viewTabPanel = tabPanel;
         serviceFacade.getRootHierarchies(new AsyncCallback<List<OntologyHierarchy>>() {
             @Override
@@ -190,10 +190,11 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
 
             tree.mask(appearance.getAppCategoriesLoadingMask());
             getFilteredHierarchies(hierarchy, tree);
-            view.asWidget().ensureDebugId(baseID + "." + hierarchy.getLabel().toLowerCase());
+            String hierarchyDebugId = baseID + "." + hierarchy.getIri();
+            view.asWidget().ensureDebugId(hierarchyDebugId);
             view.addOntologyHierarchySelectionChangedEventHandler(this);
             //As a preference, insert the hierarchy tabs before the HPC tab which is last
-            viewTabPanel.insert(tree, viewTabPanel.getWidgetCount() - 1, new TabItemConfig(appearance.hierarchyLabelName(hierarchy)));
+            viewTabPanel.insert(tree, viewTabPanel.getWidgetCount() - 1, new TabItemConfig(appearance.hierarchyLabelName(hierarchy)), hierarchyDebugId);
         }
     }
 
