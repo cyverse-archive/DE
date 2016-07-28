@@ -18,14 +18,15 @@ import org.iplantc.de.apps.client.events.selection.CopyWorkflowSelected;
 import org.iplantc.de.apps.client.gin.factory.AppCategoriesViewFactory;
 import org.iplantc.de.apps.client.views.details.dialogs.AppDetailsDialog;
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.shared.DEProperties;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.integration.AppTemplate;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
+import org.iplantc.de.commons.client.widgets.DETabPanel;
 import org.iplantc.de.shared.AsyncProviderWrapper;
+import org.iplantc.de.shared.DEProperties;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.event.shared.GwtEvent;
@@ -37,7 +38,6 @@ import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.data.shared.event.StoreAddEvent;
 import com.sencha.gxt.data.shared.event.StoreClearEvent;
 import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
-import com.sencha.gxt.widget.core.client.TabPanel;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.TreeSelectionModel;
 
@@ -70,7 +70,7 @@ public class AppCategoriesPresenterImplTest {
     @Mock AppCategoriesView.AppCategoriesAppearance appearanceMock;
     @Mock Tree<AppCategory, String> treeMock;
     @Mock TreeSelectionModel<AppCategory> selectionModelMock;
-    @Mock TabPanel tabPanelMock;
+    @Mock DETabPanel tabPanelMock;
 
     // Event mocks
     @Mock StoreAddEvent<App> mockAddEvent;

@@ -33,6 +33,7 @@ import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.services.OntologyServiceFacade;
 import org.iplantc.de.client.util.OntologyUtil;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.commons.client.widgets.DETabPanel;
 
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.inject.client.AsyncProvider;
@@ -42,7 +43,6 @@ import com.google.gwtmockito.GwtMockitoTestRunner;
 
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.widget.core.client.TabItemConfig;
-import com.sencha.gxt.widget.core.client.TabPanel;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.TreeSelectionModel;
 
@@ -68,7 +68,7 @@ public class OntologyHierarchiesPresenterImplTest {
     @Mock OntologyUtil ontologyUtilMock;
     @Mock AsyncProvider<AppDetailsDialog> appDetailsDialogProviderMock;
     @Mock AppUserServiceFacade appUserServiceMock;
-    @Mock TabPanel tabPanelMock;
+    @Mock DETabPanel tabPanelMock;
     @Mock OntologyServiceFacade ontologyServiceMock;
     @Mock OntologyHierarchiesView.OntologyHierarchiesAppearance appearanceMock;
     @Mock EventBus eventBusMock;
@@ -217,7 +217,7 @@ public class OntologyHierarchiesPresenterImplTest {
         /** CALL METHOD UNDER TEST **/
         spy.createViewTabs(hierarchyListMock);
         verify(viewMock).addOntologyHierarchySelectionChangedEventHandler(spy);
-        verify(tabPanelMock).insert(eq(treeMock), anyInt(), isA(TabItemConfig.class));
+        verify(tabPanelMock).insert(eq(treeMock), anyInt(), isA(TabItemConfig.class), anyString());
 
     }
 
