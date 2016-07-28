@@ -31,6 +31,15 @@
   [short-username]
   (set (keys (perms-client/load-app-permissions short-username))))
 
+(defn- augment-listing-params
+  ([params short-username perms]
+   (assoc params
+          :app-ids                     (set (keys perms))
+          :public-app-ids              (perms-client/get-public-app-ids)
+          :directly-accessible-app-ids (perms-client/get-directly-accessible-app-ids short-username)))
+  ([params short-username]
+   (augment-listing-params params short-username (perms-client/load-app-permissions short-username))))
+
 (defn- get-active-hierarchy-version
   []
   (let [version (db-categories/get-active-hierarchy-version)]
@@ -64,7 +73,7 @@
   {:id         trash-category-id
    :name       "Trash"
    :is_public  true
-   :app_count  (count-deleted-and-orphaned-apps)})
+   :app_count  (count-deleted-and-orphaned-apps params)})
 
 (defn list-trashed-apps
   "Lists the public, deleted apps and orphaned apps."
@@ -121,7 +130,7 @@
   (let [virtual-groups (format-private-virtual-groups user workspace params)
         actual-count   (count-apps-in-group-for-user
                         (:id group)
-                        (:email user)
+                        (:username user)
                         params)]
     (-> group
         (update-in [:categories] concat virtual-groups)
@@ -160,8 +169,7 @@
   "Retrieves the list of app groups that are visible to all users, the current user's app groups, or
    both, depending on the :public param."
   [user {:keys [public] :as params}]
-  (let [app-ids (get-visible-app-ids (:shortUsername user))
-        params  (assoc params :app-ids app-ids)]
+  (let [params (augment-listing-params params (:shortUsername user))]
     (if (contains? params :public)
       (if-not public
         (get-workspace-app-groups user params)
@@ -179,7 +187,7 @@
   "Retrieves the list of app groups that are accessible to administrators. This includes all public
    app groups along with the trash group."
   [user params]
-  (let [params (assoc params :admin true :public true)]
+  (let [params (assoc (augment-listing-params params (:shortUsername user)) :admin true :public true)]
     (conj (vec (get-app-groups user params))
           (format-trash-category nil nil params))))
 
@@ -245,7 +253,7 @@
 
 (defn- format-app-listing
   "Formats certain app fields into types more suitable for the client."
-  [perms beta-ids-set {:keys [id] :as app}]
+  [perms beta-ids-set public-app-ids {:keys [id] :as app}]
   (-> (assoc app :can_run (app-can-run? app))
       (dissoc :tool_count :task_count :external_app_count :lower_case_name)
       (format-app-ratings)
@@ -253,6 +261,7 @@
       (format-app-permissions perms)
       (assoc :can_favor true :can_rate true :app_type "DE")
       (assoc :beta (contains? beta-ids-set id))
+      (assoc :is_public (contains? public-app-ids id))
       (remove-nil-vals)))
 
 (defn- app-ids->beta-ids-set
@@ -272,9 +281,10 @@
         app-ids         (set (keys perms))
         app-listing-ids (metadata-filter app-ids)
         beta-ids-set    (app-ids->beta-ids-set shortUsername app-listing-ids)
+        public-app-ids  (perms-client/get-public-app-ids)
         app-listing     (list-apps-by-id workspace faves-index app-listing-ids (fix-sort-params params))]
     {:app_count (count app-listing-ids)
-     :apps      (map (partial format-app-listing perms beta-ids-set) app-listing)}))
+     :apps      (map (partial format-app-listing perms beta-ids-set public-app-ids) app-listing)}))
 
 (defn list-apps-with-metadata
   [{:keys [username] :as user} attr value params]
@@ -290,18 +300,18 @@
 
 (defn- list-apps-in-virtual-group
   "Formats a listing for a virtual group."
-  [{:keys [shortUsername] :as user} workspace group-id perms params]
+  [{:keys [shortUsername] :as user} workspace group-id perms {:keys [public-app-ids] :as params}]
   (when-let [format-fns (virtual-group-fns group-id)]
     (-> ((:format-group format-fns) user workspace params)
         (assoc :apps (let [app-listing  ((:format-listing format-fns) user workspace params)
                            beta-ids-set (app-ids->beta-ids-set shortUsername (map :id app-listing))]
-                       (map (partial format-app-listing perms beta-ids-set) app-listing))))))
+                       (map (partial format-app-listing perms beta-ids-set public-app-ids) app-listing))))))
 
 (defn- count-apps-in-group
   "Counts the number of apps in an app group, including virtual app groups that may be included."
   [user {root-group-id :root_category_id} {:keys [id] :as app-group} params]
   (if (= root-group-id id)
-    (count-apps-in-group-for-user id (:email user) params)
+    (count-apps-in-group-for-user id (:username user) params)
     (count-apps-in-group-for-user id params)))
 
 (defn- get-apps-in-group
@@ -309,19 +319,19 @@
   [user {root-group-id :root_category_id :as workspace} {:keys [id]} params]
   (let [faves-index (workspace-favorites-app-category-index)]
     (if (= root-group-id id)
-      (get-apps-in-group-for-user id workspace faves-index params (:email user))
+      (get-apps-in-group-for-user id workspace faves-index params (:username user))
       (get-apps-in-group-for-user id workspace faves-index params))))
 
 (defn- list-apps-in-real-group
   "This service lists all of the apps in a real app group and all of its descendents."
-  [{:keys [shortUsername] :as user} workspace category-id perms params]
+  [{:keys [shortUsername] :as user} workspace category-id perms {:keys [public-app-ids] :as params}]
   (let [app_group      (->> (get-app-category category-id)
                             (assert-not-nil ["category_id" category-id])
                             remove-nil-vals)
         total          (count-apps-in-group user workspace app_group params)
         apps_in_group  (get-apps-in-group user workspace app_group params)
         beta-ids-set   (app-ids->beta-ids-set shortUsername (map :id apps_in_group))
-        apps_in_group  (map (partial format-app-listing perms beta-ids-set) apps_in_group)]
+        apps_in_group  (map (partial format-app-listing perms beta-ids-set public-app-ids) apps_in_group)]
     (assoc app_group
       :app_count total
       :apps apps_in_group)))
@@ -332,7 +342,7 @@
   [user app-group-id params]
   (let [workspace (get-optional-workspace (:username user))
         perms     (perms-client/load-app-permissions (:shortUsername user))
-        params    (fix-sort-params (assoc params :app-ids (set (keys perms))))]
+        params    (fix-sort-params (augment-listing-params params (:shortUsername user) perms))]
     (or (list-apps-in-virtual-group user workspace app-group-id perms params)
         (list-apps-in-real-group user workspace app-group-id perms params))))
 
@@ -349,7 +359,7 @@
   (let [search_term (curl/url-decode (:search params))
         workspace (get-workspace username)
         perms (perms-client/load-app-permissions shortUsername)
-        params (fix-sort-params (assoc params :app-ids (set (keys perms))))
+        params (fix-sort-params (augment-listing-params params shortUsername perms))
         total (count-search-apps-for-user search_term (:id workspace) params)
         search_results (search-apps-for-user
                         search_term
@@ -357,7 +367,8 @@
                         (workspace-favorites-app-category-index)
                         params)
         beta-ids-set   (app-ids->beta-ids-set shortUsername (map :id search_results))
-        search_results (map (partial format-app-listing perms beta-ids-set) search_results)]
+        public-app-ids (:public-app-ids params)
+        search_results (map (partial format-app-listing perms beta-ids-set public-app-ids) search_results)]
     {:app_count total
      :apps search_results}))
 

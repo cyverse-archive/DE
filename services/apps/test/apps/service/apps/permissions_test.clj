@@ -1,12 +1,14 @@
 (ns apps.service.apps.permissions-test
-  (:use [apps.service.apps.test-utils :only [get-user]]
+  (:use [apps.service.apps.de.listings :only [shared-with-me-id]]
+        [apps.service.apps.test-utils :only [get-user]]
         [clojure.test]
         [kameleon.uuids :only [uuidify uuid]])
   (:require [apps.clients.iplant-groups :as ipg]
             [apps.clients.permissions :as perms-client]
             [apps.service.apps :as apps]
             [apps.service.apps.test-fixtures :as atf
-             :refer [test-app beta-apps create-test-app create-pipeline]]
+             :refer [test-app beta-apps create-test-app create-pipeline find-category
+                     get-category get-dev-category get-beta-category get-admin-beta-category]]
             [apps.test-fixtures :as tf]
             [apps.util.config :as config]
             [clojure.tools.logging :as log]
@@ -16,27 +18,6 @@
 
 (use-fixtures :once tf/run-integration-tests tf/with-test-db tf/with-config atf/with-workspaces)
 (use-fixtures :each atf/with-public-apps atf/with-test-app)
-
-(defn find-category [category-name [cat & cats]]
-  (if-not (or (nil? cat) (= (:name cat) category-name))
-    (or (find-category category-name (:categories cat))
-        (recur category-name cats))
-    cat))
-
-(defn get-category [user category-name]
-  (find-category category-name (:categories (apps/get-app-categories user {}))))
-
-(defn get-dev-category [user]
-  (get-category user "Apps under development"))
-
-(defn get-beta-category [user]
-  (get-category user "Beta"))
-
-(defn get-admin-category [user category-name]
-  (find-category category-name (:categories (apps/get-admin-app-categories user {}))))
-
-(defn get-admin-beta-category [user]
-  (get-admin-category user "Beta"))
 
 (deftest test-app-search
   (let [{username :shortUsername :as user} (get-user :testde1)]
@@ -439,3 +420,17 @@
         pipeline                           (create-pipeline user)]
     (is (has-permission? "app" (:id pipeline) "user" username "own"))
     (apps/permanently-delete-apps user {:app_ids [(:id pipeline)]})))
+
+(deftest test-shared-listing
+  (let [testde1       (get-user :testde1)
+        testde2       (get-user :testde2)
+        app           (create-test-app testde1 "To be shared")
+        shared-apps   (fn [user] (apps/list-apps-in-category user shared-with-me-id {}))
+        contains-app? (fn [app-id apps] (seq (filter (comp (partial = app-id) :id) apps)))
+        old-listing   (shared-apps testde2)]
+    (is (not (contains-app? (:id app) (:apps old-listing))))
+    (pc/grant-permission (config/permissions-client) "app" (:id app) "user" (:shortUsername testde2) "read")
+    (let [new-listing (shared-apps testde2)]
+      (is (= (inc (:app_count old-listing)) (:app_count new-listing)))
+      (is (contains-app? (:id app) (:apps new-listing))))
+    (apps/permanently-delete-apps testde1 {:app_ids [(:id app)]})))

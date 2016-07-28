@@ -88,6 +88,13 @@
      (apps/owner-add-app-docs user (:id app) {:documentation "This is a test."})
      app)))
 
+(defn create-test-tool-app [user name]
+  (sql/delete :apps (sql/where {:name name}))
+  (let [tool (tools/get-tool test-tool-id)
+        app  (apps/add-app user (assoc app-definition :name name :tools [tool]))]
+    (apps/owner-add-app-docs user (:id app) {:documentation "This is a test."})
+    app))
+
 (defn create-pipeline
   [user]
   (sql/delete :apps (sql/where {:name (:name pipeline-definition)}))
@@ -103,8 +110,16 @@
   (dorun (map (comp workspace/get-workspace get-user) (keys users)))
   (f))
 
+(defn list-public-apps
+  "For the purposes of integration tests, any app that is integrated by either 'Default DE Tools' or 'Internal
+   DE Tools' is considered to be public by default."
+  []
+  (sql/select :app_listing
+              (sql/where {:deleted false
+                          :integrator_name [in ["Default DE Tools" "Internal DE Tools"]]})))
+
 (defn register-public-apps []
-  (for [app (sql/select :app_listing (sql/where {:is_public true :deleted false}))]
+  (for [app (list-public-apps)]
     (do (pc/grant-permission (config/permissions-client) "app" (:id app) "group" (ipg/grouper-user-group-id) "read")
         app)))
 
@@ -113,11 +128,14 @@
                  (sql/join [:app_categories :c] {:aca.app_category_id :c.id})
                  (sql/fields :aca.app_id)))
 
-(defn load-beta-apps []
+(defn load-beta-apps
+  "For the purposes of integration tests, any app that is integrated by either 'Default DE Tools' or 'Internal
+   DE Tools' is considered to be public by default."
+  []
   (sql/select [:app_listing :a]
-              (sql/where {:a.id        [in (category-name-subselect "Beta")]
-                          :a.is_public true
-                          :a.deleted   false})))
+              (sql/where {:a.id              [in (category-name-subselect "Beta")]
+                          :a.integrator_name [in ["Default DE Tools" "Internal DE Tools"]]
+                          :a.deleted         false})))
 
 (defn with-public-apps [f]
   (binding [public-apps (into [] (register-public-apps))
@@ -147,3 +165,24 @@
             test-tool-id   (first (:tool_ids (create-tool (get-user :testde10))))]
     (f)
     (delete-tool test-tool-id)))
+
+(defn find-category [category-name [cat & cats]]
+  (if-not (or (nil? cat) (= (:name cat) category-name))
+    (or (find-category category-name (:categories cat))
+        (recur category-name cats))
+    cat))
+
+(defn get-category [user category-name]
+  (find-category category-name (:categories (apps/get-app-categories user {}))))
+
+(defn get-dev-category [user]
+  (get-category user "Apps under development"))
+
+(defn get-beta-category [user]
+  (get-category user "Beta"))
+
+(defn get-admin-category [user category-name]
+  (find-category category-name (:categories (apps/get-admin-app-categories user {}))))
+
+(defn get-admin-beta-category [user]
+  (get-admin-category user "Beta"))
