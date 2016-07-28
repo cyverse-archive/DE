@@ -5,15 +5,20 @@ import org.iplantc.de.apps.client.events.selection.AppDetailsDocSelected;
 import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
 import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
+import org.iplantc.de.apps.client.events.selection.DetailsHierarchyClicked;
 import org.iplantc.de.apps.client.events.selection.SaveMarkdownSelected;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppDoc;
+import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
+
+import com.sencha.gxt.data.shared.TreeStore;
+import com.sencha.gxt.widget.core.client.tree.TreeStyle;
 
 import java.util.List;
 
@@ -28,7 +33,8 @@ public interface AppDetailsView extends IsWidget,
                                         AppDetailsDocSelected.HasAppDetailsDocSelectedHandlers,
                                         SaveMarkdownSelected.HasSaveMarkdownSelectedHandlers,
                                         AppRatingDeselected.HasAppRatingDeselectedHandlers,
-                                        AppRatingSelected.HasAppRatingSelectedEventHandlers {
+                                        AppRatingSelected.HasAppRatingSelectedEventHandlers,
+                                        DetailsHierarchyClicked.HasDetailsHierarchyClickedHandlers {
 
     interface AppDetailsAppearance {
         interface AppDetailsStyle extends CssResource {
@@ -91,16 +97,19 @@ public interface AppDetailsView extends IsWidget,
         String appUrl();
 
         String copyAppUrl();
+
+        void setTreeIcons(TreeStyle style);
     }
 
     interface Presenter extends AppFavoriteSelectedEvent.HasAppFavoriteSelectedEventHandlers,
                                 AppRatingDeselected.HasAppRatingDeselectedHandlers,
-                                AppRatingSelected.HasAppRatingSelectedEventHandlers {
+                                AppRatingSelected.HasAppRatingSelectedEventHandlers,
+                                DetailsHierarchyClicked.HasDetailsHierarchyClickedHandlers {
 
         void go(HasOneWidget widget,
                 App app,
                 String searchRegexPattern,
-                List<List<String>> appGroupHierarchies);
+                TreeStore<OntologyHierarchy> hierarchyTreeStore);
     }
 
     /**

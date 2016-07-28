@@ -3,6 +3,7 @@ package org.iplantc.de.client.models.apps;
 import org.iplantc.de.client.models.HasDescription;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
+import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import org.iplantc.de.client.models.tool.Tool;
 
 import com.google.gwt.user.client.ui.HasName;
@@ -142,4 +143,8 @@ public interface App extends HasId,
     PermissionValue getPermission();
 
     Boolean isBeta();
+
+    List<OntologyHierarchy> getHierarchies();
+
+    void setHierarchies(List<OntologyHierarchy> hierarchies);
 }

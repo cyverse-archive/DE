@@ -2,8 +2,9 @@ package org.iplantc.de.apps.client.gin.factory;
 
 import org.iplantc.de.apps.client.AppDetailsView;
 import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 
-import java.util.List;
+import com.sencha.gxt.data.shared.TreeStore;
 
 /**
  * Created by jstroot on 3/4/15.
@@ -12,5 +13,5 @@ import java.util.List;
 public interface AppDetailsViewFactory {
     AppDetailsView create(App app,
                           String searchRegex,
-                          List<List<String>> appGroupHierarchies);
+                          TreeStore<OntologyHierarchy> hierarchyTreeStore);
 }

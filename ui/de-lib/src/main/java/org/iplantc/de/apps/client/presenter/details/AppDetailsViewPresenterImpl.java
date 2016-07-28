@@ -6,11 +6,13 @@ import org.iplantc.de.apps.client.events.selection.AppDetailsDocSelected;
 import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
 import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
+import org.iplantc.de.apps.client.events.selection.DetailsHierarchyClicked;
 import org.iplantc.de.apps.client.events.selection.SaveMarkdownSelected;
 import org.iplantc.de.apps.client.gin.factory.AppDetailsViewFactory;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppDoc;
+import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
@@ -25,7 +27,7 @@ import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import java.util.List;
+import com.sencha.gxt.data.shared.TreeStore;
 
 /**
  * @author jstroot
@@ -72,13 +74,21 @@ public class AppDetailsViewPresenterImpl implements AppDetailsView.Presenter,
     }
 
     @Override
+    public HandlerRegistration addDetailsHierarchyClickedHandler(DetailsHierarchyClicked.DetailsHierarchyClickedHandler handler) {
+        if(view == null){
+            throw new IllegalStateException("You must call 'go(..)' before calling this method");
+        }
+        return view.addDetailsHierarchyClickedHandler(handler);
+    }
+
+    @Override
     public void go(final HasOneWidget widget,
                    final App app,
                    final String searchRegexPattern,
-                   final List<List<String>> appGroupHierarchies) {
+                   TreeStore<OntologyHierarchy> hierarchyTreeStore) {
         Preconditions.checkState(view == null, "Cannot call go(..) more than once");
 
-        view = viewFactoryProvider.get().create(app, searchRegexPattern, appGroupHierarchies);
+        view = viewFactoryProvider.get().create(app, searchRegexPattern, hierarchyTreeStore);
         view.addAppDetailsDocSelectedHandler(AppDetailsViewPresenterImpl.this);
         view.addSaveMarkdownSelectedHandler(AppDetailsViewPresenterImpl.this);
         widget.setWidget(view);

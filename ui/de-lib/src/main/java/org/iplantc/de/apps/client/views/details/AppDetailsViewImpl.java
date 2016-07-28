@@ -6,6 +6,8 @@ import org.iplantc.de.apps.client.events.selection.AppDetailsDocSelected;
 import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
 import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
+import org.iplantc.de.apps.client.events.selection.DetailsHierarchyClicked;
+import org.iplantc.de.apps.client.events.selection.OntologyHierarchySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.SaveMarkdownSelected;
 import org.iplantc.de.apps.client.views.details.doc.AppDocMarkdownDialog;
 import org.iplantc.de.apps.client.views.grid.cells.AppFavoriteCellWidget;
@@ -14,7 +16,9 @@ import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppDoc;
+import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import org.iplantc.de.client.models.tool.Tool;
+import org.iplantc.de.client.util.OntologyUtil;
 import org.iplantc.de.commons.client.views.dialogs.IPlantPromptDialog;
 import org.iplantc.de.desktop.client.presenter.DesktopPresenterImpl;
 
@@ -42,12 +46,15 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
+import com.sencha.gxt.core.client.Style;
+import com.sencha.gxt.core.client.ValueProvider;
+import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.TabPanel;
 import com.sencha.gxt.widget.core.client.container.AccordionLayoutContainer;
-
-import java.util.List;
+import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
+import com.sencha.gxt.widget.core.client.tree.Tree;
 
 /**
  * @author jstroot
@@ -141,7 +148,8 @@ public class AppDetailsViewImpl extends Composite implements
     InlineLabel integratorEmail;
     @UiField
     @Ignore
-    DivElement categories;
+    Tree<OntologyHierarchy, String> categories;
+    @UiField(provided = true) @Ignore TreeStore<OntologyHierarchy> treeStore;
     @UiField
     @Path("")
     AppRatingCellWidget ratings; // Bind to app
@@ -175,16 +183,16 @@ public class AppDetailsViewImpl extends Composite implements
     AppDetailsViewImpl(final AppDetailsView.AppDetailsAppearance appearance,
                        @Assisted final App app,
                        @Assisted final String searchRegexPattern,
-                       @Assisted final List<List<String>> appGroupHierarchies) {
+                       @Assisted final TreeStore<OntologyHierarchy> treeStore) {
         this.appearance = appearance;
         this.app = app;
+        this.treeStore = treeStore;
 
         initWidget(BINDER.createAndBindUi(this));
 
         // Set up highlighting editors
         integratorName = new HighlightEditor(appearance, integratorNameDiv, searchRegexPattern);
         description = new HighlightEditor(appearance, descriptionElement, searchRegexPattern);
-        categories.setInnerSafeHtml(appearance.getCategoriesHtml(appGroupHierarchies));
         toolEditorSource = new ToolEditorSource(toolsContainer);
         this.tools = ListEditor.of(toolEditorSource);
 
@@ -259,6 +267,11 @@ public class AppDetailsViewImpl extends Composite implements
     }
 
     @Override
+    public HandlerRegistration addDetailsHierarchyClickedHandler(DetailsHierarchyClicked.DetailsHierarchyClickedHandler handler) {
+        return addHandler(handler, DetailsHierarchyClicked.TYPE);
+    }
+
+    @Override
     public void onAppUpdated(final AppUpdatedEvent event) {
         editorDriver.edit(event.getApp());
         favIcon.setValue(null);
@@ -287,6 +300,38 @@ public class AppDetailsViewImpl extends Composite implements
     @Ignore
     DateLabel createDateLabel() {
         return new DateLabel(DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_MEDIUM));
+    }
+
+    @UiFactory
+    Tree<OntologyHierarchy, String> createTree() {
+        Tree<OntologyHierarchy, String> tree = new Tree<>(treeStore, new ValueProvider<OntologyHierarchy, String>() {
+            @Override
+            public String getValue(OntologyHierarchy object) {
+                return object.getLabel();
+            }
+
+            @Override
+            public void setValue(OntologyHierarchy object, String value) {
+
+            }
+
+            @Override
+            public String getPath() {
+                return null;
+            }
+        });
+        appearance.setTreeIcons(tree.getStyle());
+        tree.getSelectionModel().setSelectionMode(Style.SelectionMode.SINGLE);
+        tree.getSelectionModel().addSelectionChangedHandler(new SelectionChangedEvent.SelectionChangedHandler<OntologyHierarchy>() {
+            @Override
+            public void onSelectionChanged(SelectionChangedEvent<OntologyHierarchy> event) {
+                if (event.getSelection().size() == 1) {
+                    OntologyHierarchy hierarchy = event.getSelection().get(0);
+                    fireEvent(new DetailsHierarchyClicked(hierarchy));
+                }
+            }
+        });
+        return tree;
     }
 
     public static native String render(String val) /*-{
