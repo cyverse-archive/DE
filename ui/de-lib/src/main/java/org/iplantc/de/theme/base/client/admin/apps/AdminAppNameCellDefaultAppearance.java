@@ -20,7 +20,7 @@ public class AdminAppNameCellDefaultAppearance extends AppNameCellDefaultAppeara
                        final App value,
                        final String searchPattern) {
         if(!value.isDisabled()){
-            if (value.isBeta()) {
+            if (!value.getAppType().equalsIgnoreCase(App.EXTERNAL_APP) && value.isBeta()) {
                 super.render(sb,
                              value,
                              resources.css().appBeta(),

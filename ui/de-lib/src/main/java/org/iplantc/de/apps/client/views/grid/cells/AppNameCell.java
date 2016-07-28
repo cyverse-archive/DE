@@ -68,7 +68,7 @@ public class AppNameCell extends AbstractCell<App> {
         favoriteCell.render(context, value, sb);
         String textClassName, textToolTip;
         if (!value.isDisabled()) {
-            if (value.isBeta()) {
+            if (!value.getAppType().equalsIgnoreCase(App.EXTERNAL_APP) && value.isBeta()) {
                 textClassName = appearance.appBetaNameClass();
                 textToolTip = appearance.appBeta();
             } else {
