@@ -1,12 +1,11 @@
+### TODO CORE-7936: Remove after 2.8 release
 ---
 - name: tag the apps in 'Beta' with 'beta' AVUs
-  hosts: apps:&systems
+  hosts: db-proxy:&systems
   become: true
   gather_facts: false
   tags:
-    - services
-    - apps
-    - metadata
+    - databases
   roles:
     - role: util-notify-chat
       msg: "Adding app beta AVUs"
