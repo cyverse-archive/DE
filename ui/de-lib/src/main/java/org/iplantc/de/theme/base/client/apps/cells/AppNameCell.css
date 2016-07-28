@@ -28,3 +28,16 @@
     padding-top: 2px;
     padding-bottom: 2px;
 }
+
+.appBeta {
+    color: blue;
+}
+
+.appBetaHyperlink {
+    cursor: pointer;
+    color: blue;
+}
+
+.appBetaHyperlink:hover {
+    text-decoration: underline;
+}

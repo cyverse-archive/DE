@@ -27,6 +27,10 @@ public class AppNameCellDefaultAppearance implements AppNameCell.AppNameCellAppe
         String appName();
 
         String appDisabled();
+
+        String appBeta();
+
+        String appBetaHyperlink();
     }
 
     public interface Resources extends ClientBundle {
@@ -83,6 +87,16 @@ public class AppNameCellDefaultAppearance implements AppNameCell.AppNameCellAppe
     @Override
     public String appUnavailable() {
         return iplantDisplayStrings.appUnavailable();
+    }
+
+    @Override
+    public String appBeta() {
+        return appsMessages.betaToolTip();
+    }
+
+    @Override
+    public String appBetaNameClass() {
+        return resources.css().appBetaHyperlink();
     }
 
     @Override
