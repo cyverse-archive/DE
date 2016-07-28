@@ -22,6 +22,7 @@
                  [org.iplantc/service-logging "5.2.8.0"]
                  [org.iplantc/common-cli "5.2.8.0"]
                  [org.iplantc/common-cfg "5.2.8.0"]
+                 [com.cemerick/url "0.1.1"]
                  [medley "0.6.0"]
                  [compojure "1.3.4"]
                  [ring "1.4.0"]]
