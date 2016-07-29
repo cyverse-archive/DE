@@ -46,3 +46,12 @@ CREATE TABLE job_status_updates (
     -- This is not the date that the update was sent.
     created_date timestamp NOT NULL DEFAULT now()
 )
+
+---
+--- Create some indices on the columns often referenced by queries in job-status-to-apps-adapter
+---
+CREATE INDEX job_status_updates_propagated
+ON job_status_updates (propagated, propagation_attempts);
+
+CREATE INDEX job_status_updates_external_id
+ON job_status_updates (external_id);
