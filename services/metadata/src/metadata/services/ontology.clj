@@ -136,13 +136,19 @@
         (ont-db/delete-classes ontology-version class-iris))))
   (list-hierarchies ontology-version))
 
+(defn filter-root-hierarchy
+  "Filters an Ontology Hierarchy, rooted at the given root-iri, returning only the hierarchy's
+   leaf-classes that are associated with the given targets."
+  [ontology-version iri-set root-iri]
+  (let [hierarchy (format-hierarchy ontology-version root-iri)]
+    (util/filter-hierarchy iri-set hierarchy)))
+
 (defn filter-hierarchy
   "Filters an Ontology Hierarchy, rooted at the given root-iri, returning only the hierarchy's
    leaf-classes that are associated with the given targets."
   [ontology-version root-iri attr target-types target-ids]
-  (let [hierarchy (format-hierarchy ontology-version root-iri)
-        iri-set (set (map :value (avu-db/get-avus-by-attr target-types target-ids attr)))]
-    {:hierarchy (util/filter-hierarchy iri-set hierarchy)}))
+  (let [iri-set (set (map :value (avu-db/get-avus-by-attrs target-types target-ids [attr])))]
+    {:hierarchy (filter-root-hierarchy ontology-version iri-set root-iri)}))
 
 (defn filter-unclassified-targets
   "Filters the given target IDs by returning a list of any that are not associated with any Ontology
@@ -156,3 +162,13 @@
                                                                               attr
                                                                               iri-set)))]
     {:target-ids (seq (sets/difference target-ids found-ids))}))
+
+(defn filter-target-hierarchies
+  "Filters Ontology Hierarchies saved for the given ontology-version, returning only the hierarchy's
+   leaf-classes that are associated with the given target."
+  [ontology-version attrs target-type target-id]
+  (let [roots       (ont-db/get-ontology-hierarchy-roots ontology-version)
+        iri-set     (set (map :value (avu-db/get-avus-by-attrs [target-type] [target-id] attrs)))
+        filter-root (partial filter-root-hierarchy ontology-version iri-set)
+        hierarchies (map (comp filter-root :class_iri) roots)]
+    {:hierarchies (remove nil? hierarchies)}))

@@ -31,3 +31,8 @@
 
 (s/defschema OntologyHierarchyList
   {:hierarchies (describe [OntologyClassHierarchy] "A list of Ontology Class hierarchies")})
+
+(s/defschema TargetHierarchyFilterRequest
+  (merge TargetItem
+         {:attrs
+          (describe [String] "The metadata attributes that store class IRIs for the given ontology")}))

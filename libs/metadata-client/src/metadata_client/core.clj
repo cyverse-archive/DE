@@ -54,6 +54,14 @@
   (http/get (metadata-url-encoded "ontologies" ontology-version)
             (get-options {:user username})))
 
+(defn filter-hierarchies
+  [username ontology-version attrs target-type target-id]
+  (->> (http/post (metadata-url-encoded "ontologies" ontology-version "filter")
+                  (post-options (json/encode {:attrs attrs :type target-type :id target-id})
+                                {:user username}
+                                :as :json))
+       :body))
+
 (defn filter-hierarchy
   [username ontology-version root-iri attr target-types target-ids]
   (http/post (metadata-url-encoded "ontologies" ontology-version root-iri "filter")

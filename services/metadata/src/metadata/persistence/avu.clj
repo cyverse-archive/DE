@@ -38,11 +38,11 @@
   [target-type target-id]
   (select :avus (target-where-clause target-type target-id)))
 
-(defn get-avus-by-attr
+(defn get-avus-by-attrs
   "Finds all existing AVUs by the given targets and the given set of attributes."
-  [target-types target-ids attribute]
+  [target-types target-ids attributes]
   (select :avus
-          (where {:attribute   attribute
+          (where {:attribute   [in attributes]
                   :target_id   [in target-ids]
                   :target_type [in (map db/->enum-val target-types)]})))
 
