@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.web.bindery.autobean.shared.Splittable;
 
 import com.sencha.gxt.data.shared.ListStore;
+import com.sencha.gxt.widget.core.client.Window;
 import com.sencha.gxt.widget.core.client.button.IconButton;
 
 import java.util.List;
@@ -205,6 +206,8 @@ public interface DesktopView extends IsWidget {
         void show(final WindowConfig config, final boolean updateExistingWindow);
 
         void submitUserFeedback(Splittable splittable, IsHideable isHideable);
+
+        void stickWindowToTop(Window window);
 
     }
 

@@ -78,10 +78,12 @@ class InitializationCallbacks {
                     }
                 });
                 box.show();
-            }
-            if (userInfo.hasAgaveRedirect()) {
-                AgaveAuthPrompt prompt = new AgaveAuthPrompt();
-                prompt.show();
+            } else {
+                if (userInfo.hasAgaveRedirect()) {
+                    AgaveAuthPrompt prompt = AgaveAuthPrompt.getInstance();
+                    prompt.show();
+                    presenter.stickWindowToTop(prompt);
+                }
             }
             userSessionService.getUserPreferences(userPreferencesCallback);
         }

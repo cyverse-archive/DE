@@ -40,7 +40,6 @@ import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.commons.client.util.WindowUtil;
-import org.iplantc.de.commons.client.views.dialogs.AgaveAuthPrompt;
 import org.iplantc.de.commons.client.views.dialogs.IplantErrorDialog;
 import org.iplantc.de.commons.client.views.window.configs.AnalysisWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.AppWizardConfig;
@@ -423,18 +422,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
 
     @Override
     public void onAppsWinBtnSelect() {
-        if (userInfo.hasAgaveRedirect()) {
-            AgaveAuthPrompt prompt = new AgaveAuthPrompt();
-            prompt.show();
-            prompt.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
-                @Override
-                public void onDialogHide(DialogHideEvent event) {
-                    desktopWindowManager.show(WindowType.APPS);
-                }
-            });
-        } else {
-            desktopWindowManager.show(WindowType.APPS);
-        }
+        desktopWindowManager.show(WindowType.APPS);
     }
 
     /**
@@ -637,6 +625,11 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
             }
         });
 
+    }
+
+    @Override
+    public void stickWindowToTop(com.sencha.gxt.widget.core.client.Window window) {
+        desktopWindowManager.stickWindowToTop(window);
     }
 
     void doPeriodicSessionSave() {

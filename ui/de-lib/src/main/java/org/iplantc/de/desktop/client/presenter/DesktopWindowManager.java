@@ -35,6 +35,7 @@ public class DesktopWindowManager {
     private final WindowFactory windowFactory;
     private final WindowManager windowManager;
     private Element desktopContainer;
+    private Window sticky;
 
     @Inject
     DesktopWindowManager(final WindowManager windowManager,
@@ -78,6 +79,9 @@ public class DesktopWindowManager {
                     window.setContainer(desktopContainer);
                 }
                 window.show(config, constructWindowId(config), true);
+                if (sticky != null) {
+                    windowManager.bringToFront(sticky);
+                }
             }
         });
     }
@@ -158,7 +162,6 @@ public class DesktopWindowManager {
 
                 window.show(config, constructWindowId(config), true);
                 moveOutOfBoundsWindow(window);
-                windowManager.bringToFront(window.asWindow());
             }
         });
     }
@@ -216,4 +219,7 @@ public class DesktopWindowManager {
         this.desktopContainer = desktopContainer;
     }
 
+    public void stickWindowToTop(Window window) {
+        this.sticky = window;
+    }
 }
