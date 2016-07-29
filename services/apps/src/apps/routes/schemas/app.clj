@@ -281,6 +281,10 @@
           :references
           AppReferencesParam
 
+          (optional-key :hierarchies)
+          (describe Any
+            "The ontology hierarchies associated with the App")
+
           :categories
           (describe [AppDetailCategory]
             "The list of Categories associated with the App")

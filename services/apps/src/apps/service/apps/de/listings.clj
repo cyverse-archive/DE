@@ -388,7 +388,7 @@
 
 (defn- format-app-details
   "Formats information for the get-app-details service."
-  [details tools]
+  [username details tools]
   (let [app-id (:id details)]
     (-> details
       (select-keys [:id :integration_date :edited_date :deleted :disabled :wiki_url
@@ -399,6 +399,11 @@
              :tools                (map remove-nil-vals tools)
              :categories           (get-groups-for-app app-id)
              :suggested_categories (get-suggested-groups-for-app app-id))
+      (merge (metadata-client/filter-hierarchies username
+                                                 (get-active-hierarchy-version)
+                                                 (workspace-metadata-category-attrs)
+                                                 "app"
+                                                 app-id))
       format-wiki-url)))
 
 ;; FIXME: remove the code to bypass the permission checks for admin users when we have a better
@@ -412,7 +417,7 @@
         tools   (get-app-tools app-id)]
     (when (empty? tools)
       (throw  (IllegalArgumentException. (str "no tools associated with app, " app-id))))
-    (->> (format-app-details details tools)
+    (->> (format-app-details username details tools)
          (remove-nil-vals))))
 
 (defn load-app-ids

@@ -1,5 +1,6 @@
 (ns apps.routes.apps
-  (:use [common-swagger-api.schema]
+  (:use [common-swagger-api.routes]
+        [common-swagger-api.schema]
         [apps.routes.middleware :only [wrap-metadata-base-url]]
         [apps.routes.params]
         [apps.routes.schemas.app]
@@ -166,8 +167,14 @@
         :path-params [app-id :- AppIdJobViewPathParam]
         :query [params SecuredQueryParams]
         :return AppDetails
+        :middlewares [wrap-metadata-base-url]
         :summary "Get App Details"
-        :description "This service is used by the DE to obtain high-level details about a single App"
+        :description (str
+"This service is used by the DE to obtain high-level details about a single App."
+(get-endpoint-delegate-block
+  "metadata"
+  "POST /ontologies/{ontology-version}/filter")
+"Please see the metadata service documentation for information about the `hierarchies` response field.")
         (ok (coerce! AppDetails
                  (apps/get-app-details current-user app-id))))
 
