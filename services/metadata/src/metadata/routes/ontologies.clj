@@ -25,6 +25,17 @@
           :description "List Ontology Hierarchies saved for the given `ontology-version`."
           (ok (service/list-hierarchies ontology-version)))
 
+    (POST* "/:ontology-version/filter" []
+           :path-params [ontology-version :- OntologyVersionParam]
+           :query [{:keys [user]} StandardUserQueryParams]
+           :body [{:keys [type id attrs]} TargetHierarchyFilterRequest]
+           :return OntologyHierarchyList
+           :summary "Filter Target's Ontology Hierarchies"
+           :description
+           "Filters Ontology Hierarchies saved for the given `ontology-version`,
+            returning only the hierarchy's leaf-classes that are associated with the given target."
+           (ok (service/filter-target-hierarchies ontology-version attrs type id)))
+
     (POST* "/:ontology-version/:root-iri/filter" []
            :path-params [ontology-version :- OntologyVersionParam
                          root-iri :- OntologyClassIRIParam]

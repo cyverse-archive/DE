@@ -136,6 +136,11 @@
   [props config-valid configs]
   "apps.workspace.public-id")
 
+(cc/defprop-vec workspace-metadata-category-attrs
+  "The attrs used for an app's category metadata AVUs."
+  [props config-valid configs]
+  "apps.workspace.metadata.category.attrs")
+
 (cc/defprop-str uid-domain
   "The domain name to append to the user identifier to get the fully qualified
    user identifier."
