@@ -301,8 +301,8 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         saveHierarchy.setEnabled(selectedOntology != null);
         deleteButton.setEnabled(selectedOntology != null && selectedOntology != activeOntology);
         deleteHierarchy.setEnabled(selectedOntology != null && tree.getSelectionModel().getSelectedItem() != null);
-        categorize.setEnabled(selectedOntology != null && targetApp != null);
-        deleteApp.setEnabled(selectedOntology != null && targetApp != null);
+        categorize.setEnabled(selectedOntology != null && targetApp != null && !targetApp.getAppType().equalsIgnoreCase(App.EXTERNAL_APP));
+        deleteApp.setEnabled(selectedOntology != null && targetApp != null && !targetApp.getAppType().equalsIgnoreCase(App.EXTERNAL_APP));
     }
 
     @Override

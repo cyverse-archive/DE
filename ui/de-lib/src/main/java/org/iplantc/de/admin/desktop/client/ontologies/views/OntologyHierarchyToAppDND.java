@@ -130,7 +130,14 @@ public class OntologyHierarchyToAppDND implements DndDragStartEvent.DndDragStart
         // Verify we have a drop target.
         if (targetApp == null) {
             status.setStatus(false);
-            status.update(hierarchy.getLabel());
+            status.update("");
+            return false;
+        }
+
+        // Verify the target is not an external app
+        if (targetApp.getAppType().equalsIgnoreCase(App.EXTERNAL_APP)) {
+            status.setStatus(false);
+            status.update(appearance.externalAppDND(targetApp.getName()));
             return false;
         }
 

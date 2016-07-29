@@ -80,4 +80,6 @@ public interface OntologyDisplayStrings extends Messages{
     String confirmDeleteAppTitle();
 
     String confirmDeleteAppWarning(String name);
+
+    String externalAppDND(String appLabels);
 }

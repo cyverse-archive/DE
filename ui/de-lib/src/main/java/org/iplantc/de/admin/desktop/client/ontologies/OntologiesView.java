@@ -203,6 +203,8 @@ public interface OntologiesView extends IsWidget,
         String confirmDeleteAppWarning(String name);
 
         String confirmDeleteAppTitle();
+
+        String externalAppDND(String appLabels);
     }
 
     interface Presenter {
