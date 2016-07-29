@@ -28,4 +28,14 @@ public class AgaveAuthDefaultAppearance implements AgaveAuthPrompt.AgaveAuthAppe
     public String agaveRedirectMessage() {
         return displayStrings.agaveRedirectMessage();
     }
+
+    @Override
+    public String authenticateBtnText() {
+        return displayStrings.authenticateBtnText();
+    }
+
+    @Override
+    public String declineAuthBtnText() {
+        return displayStrings.declineAuthBtnText();
+    }
 }

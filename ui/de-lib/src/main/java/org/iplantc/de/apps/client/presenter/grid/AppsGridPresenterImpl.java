@@ -47,6 +47,8 @@ import com.sencha.gxt.data.shared.event.StoreAddEvent;
 import com.sencha.gxt.data.shared.event.StoreClearEvent;
 import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
 import com.sencha.gxt.data.shared.event.StoreUpdateEvent;
+import com.sencha.gxt.widget.core.client.Dialog;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 
 import java.util.List;
 
@@ -65,8 +67,17 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
         @Override
         public void onFailure(Throwable caught) {
             if (caught instanceof HttpRedirectException) {
-                AgaveAuthPrompt prompt = new AgaveAuthPrompt();
+                AgaveAuthPrompt prompt = AgaveAuthPrompt.getInstance();
                 prompt.show();
+                prompt.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
+                    @Override
+                    public void onDialogHide(DialogHideEvent event) {
+                        if (event.getHideButton() == Dialog.PredefinedButton.NO) {
+                            listStore.clear();
+                            view.setHeadingText(appearance.agaveAuthRequiredTitle());
+                        }
+                    }
+                });
             } else {
                 ErrorHandler.post(caught);
             }

@@ -30,12 +30,15 @@ import org.iplantc.de.shared.DEProperties;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
@@ -164,10 +167,23 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
             @Override
             public void onSuccess(List<AppCategory> result) {
                 filterCategories(result);
-                createWorkspaceTab(selectedAppCategory);
-                createHPCTab();
+                addCategoriesToWorkspaceTree(selectedAppCategory);
+                addCategoriesToHPCTree();
+                addHPCTabSelectionHandler();
                 workspaceView.getTree().unmask();
                 hpcView.getTree().unmask();
+            }
+        });
+
+    }
+
+    void addHPCTabSelectionHandler() {
+        viewTabPanel.addSelectionHandler(new SelectionHandler<Widget>() {
+            @Override
+            public void onSelection(SelectionEvent<Widget> event) {
+                if (event.getSelectedItem() == hpcView.getTree() && hpcCategories.size() == 1) {
+                    hpcView.getTree().getSelectionModel().select(hpcCategories.get(0), true);
+                }
             }
         });
 
@@ -180,12 +196,12 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
         hpcView.asWidget().ensureDebugId(baseID + AppsModule.Ids.HPC);
     }
 
-    void createHPCTab() {
+    void addCategoriesToHPCTree() {
         hpcView.addAppCategorySelectedEventHandler(this);
         addAppCategories(hpcView.getTree().getStore(), null, hpcCategories);
     }
 
-    void createWorkspaceTab(HasId selectedAppCategory) {
+    void addCategoriesToWorkspaceTree(HasId selectedAppCategory) {
         TreeStore<AppCategory> treeStore = workspaceView.getTree().getStore();
         final Store.StoreSortInfo<AppCategory> info = new Store.StoreSortInfo<>(new AppCategoryComparator(treeStore),
                                                                                 SortDir.ASC);

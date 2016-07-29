@@ -9,4 +9,8 @@ public interface AgaveAuthDisplayStrings extends Messages {
     String agaveRedirectTitle();
 
     String agaveRedirectMessage();
+
+    String authenticateBtnText();
+
+    String declineAuthBtnText();
 }

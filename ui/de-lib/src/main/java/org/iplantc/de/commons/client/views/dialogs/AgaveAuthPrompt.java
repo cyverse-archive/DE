@@ -7,6 +7,7 @@ import com.google.gwt.user.client.Window;
 
 import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
+import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 
 /**
@@ -14,17 +15,30 @@ import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
  */
 public class AgaveAuthPrompt extends ConfirmMessageBox {
 
+    private static AgaveAuthPrompt instance;
+
+    public static AgaveAuthPrompt getInstance() {
+        if (instance == null) {
+            instance = new AgaveAuthPrompt();
+        }
+        return instance;
+    }
+
     public interface AgaveAuthAppearance {
 
         String agaveRedirectTitle();
 
         String agaveRedirectMessage();
+
+        String authenticateBtnText();
+
+        String declineAuthBtnText();
     }
 
     static AgaveAuthAppearance appearance = GWT.create(AgaveAuthAppearance.class);
     UserInfo userInfo;
 
-    public AgaveAuthPrompt(String title, String message) {
+    private AgaveAuthPrompt(String title, String message) {
         super(title, message);
 
         this.userInfo = UserInfo.getInstance();
@@ -36,11 +50,17 @@ public class AgaveAuthPrompt extends ConfirmMessageBox {
                 }
             }
         });
+        
+        TextButton authButton = getButton(PredefinedButton.YES);
+        authButton.setText(appearance.authenticateBtnText());
+        
+        TextButton noBtn = getButton(PredefinedButton.NO);
+        noBtn.setText(appearance.declineAuthBtnText());
 
         setWidth(500);
     }
 
-    public AgaveAuthPrompt() {
+    private AgaveAuthPrompt() {
         this(appearance.agaveRedirectTitle(), appearance.agaveRedirectMessage());
     }
 }

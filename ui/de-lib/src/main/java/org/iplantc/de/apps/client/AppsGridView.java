@@ -100,4 +100,6 @@ public interface AppsGridView extends IsWidget,
     Grid<App> getGrid();
 
     void setSearchPattern(String searchPattern);
+
+    void setHeadingText(String text);
 }
