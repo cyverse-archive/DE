@@ -229,10 +229,26 @@
 "Please see the metadata service documentation for response information.")
         (listings/get-app-hierarchy current-user ontology-version root-iri attr))
 
+  (GET* "/:ontology-version/:root-iri/apps" []
+        :path-params [ontology-version :- OntologyVersionParam
+                      root-iri :- OntologyClassIRIParam]
+        :query [{:keys [attr] :as params} OntologyAppListingPagingParams]
+        :middlewares [wrap-metadata-base-url]
+        :return AppListing
+        :summary "List Apps in a Category"
+        :description (str
+"Lists all of the apps under an app category hierarchy, for the given `ontology-version`,
+ that are visible to the user."
+(get-endpoint-delegate-block
+  "metadata"
+  "POST /ontologies/{ontology-version}/{root-iri}/filter-targets"))
+        (ok (coerce! AppListing
+                     (apps/admin-list-apps-under-hierarchy current-user ontology-version root-iri attr params))))
+
   (GET* "/:ontology-version/:root-iri/unclassified" [root-iri]
         :path-params [ontology-version :- OntologyVersionParam
                       root-iri :- OntologyClassIRIParam]
-        :query [params OntologyAppListingPagingParams]
+        :query [{:keys [attr] :as params} OntologyAppListingPagingParams]
         :return AppListing
         :middlewares [wrap-metadata-base-url]
         :summary "List Unclassified Apps"
@@ -243,7 +259,7 @@
   "metadata"
   "POST /ontologies/{ontology-version}/{root-iri}/filter-unclassified"))
         (ok (coerce! AppListing
-                     (listings/get-unclassified-app-listing current-user ontology-version root-iri params)))))
+                     (listings/get-unclassified-app-listing current-user ontology-version root-iri attr params)))))
 
 (defroutes* reference-genomes
   (POST* "/" []

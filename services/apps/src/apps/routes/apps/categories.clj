@@ -67,22 +67,22 @@
 "Please see the metadata service documentation for response information.")
         (listings/get-app-hierarchy current-user root-iri attr))
 
-  (GET* "/:class-iri/apps" []
-        :path-params [class-iri :- OntologyClassIRIParam]
+  (GET* "/:root-iri/apps" []
+        :path-params [root-iri :- OntologyClassIRIParam]
         :query [{:keys [attr] :as params} OntologyAppListingPagingParams]
         :middlewares [wrap-metadata-base-url]
         :return AppListing
         :summary "List Apps in a Category"
         :description (str
-"Lists all of the apps within an app category that are visible to the user."
+"Lists all of the apps under an app category hierarchy that are visible to the user."
 (get-endpoint-delegate-block
   "metadata"
-  "POST /avus/filter-targets"))
-        (ok (coerce! AppListing (apps/list-apps-with-metadata current-user attr class-iri params))))
+  "POST /ontologies/{ontology-version}/{root-iri}/filter-targets"))
+        (ok (coerce! AppListing (apps/list-apps-under-hierarchy current-user root-iri attr params))))
 
   (GET* "/:root-iri/unclassified" []
         :path-params [root-iri :- OntologyClassIRIParam]
-        :query [params OntologyAppListingPagingParams]
+        :query [{:keys [attr] :as params} OntologyAppListingPagingParams]
         :return AppListing
         :middlewares [wrap-metadata-base-url]
         :summary "List Unclassified Apps"
@@ -92,6 +92,6 @@
 (get-endpoint-delegate-block
   "metadata"
   "POST /ontologies/{ontology-version}/{root-iri}/filter-unclassified"))
-        (ok (coerce! AppListing (listings/get-unclassified-app-listing current-user root-iri params))))
+        (ok (coerce! AppListing (listings/get-unclassified-app-listing current-user root-iri attr params))))
 
   (route/not-found (service/unrecognized-path-response)))

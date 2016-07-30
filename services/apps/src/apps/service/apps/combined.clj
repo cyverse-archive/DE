@@ -13,6 +13,18 @@
             [apps.service.apps.combined.util :as util]
             [apps.service.apps.permissions :as app-permissions]))
 
+(defn- apply-app-listing-params
+  [listing-map params]
+  (-> listing-map
+      (sort-apps params {:default-sort-field "name"})
+      (apply-offset params)
+      (apply-limit params)))
+
+(defn- merge-client-app-listings
+  "Expects the client listing-maps in a format like {:app_count int, :apps []}"
+  [listing-maps]
+  (apply merge-with #(if (integer? %1) (+ %1 %2) (into %1 %2)) listing-maps))
+
 (deftype CombinedApps [clients user]
   apps.protocols.Apps
 
@@ -37,15 +49,17 @@
      (when-let [client (first (filter #(.hasCategory % category-id) clients))]
        (.listAppsInCategory client category-id params))))
 
-  (listAppsWithMetadata [_ attr value params]
+  (listAppsUnderHierarchy [_ root-iri attr params]
     (let [unpaged-params (dissoc params :limit :offset)
-          listing-maps   (map #(.listAppsWithMetadata % attr value unpaged-params) clients)
-          ;; Expects each client to return a map like {:app_count int, :apps []}
-          result-map     (apply merge-with #(if (integer? %1) (+ %1 %2) (into %1 %2)) listing-maps)]
-      (-> result-map
-          (sort-apps params {:default-sort-field "name"})
-          (apply-offset params)
-          (apply-limit params))))
+          listing-maps   (map #(.listAppsUnderHierarchy % root-iri attr unpaged-params) clients)
+          result-map     (merge-client-app-listings listing-maps)]
+      (apply-app-listing-params result-map params)))
+
+  (adminListAppsUnderHierarchy [_ ontology-version root-iri attr params]
+    (let [unpaged-params (dissoc params :limit :offset)
+          listing-maps   (map #(.adminListAppsUnderHierarchy % ontology-version root-iri attr unpaged-params) clients)
+          result-map     (merge-client-app-listings listing-maps)]
+      (apply-app-listing-params result-map params)))
 
   (searchApps [_ search-term params]
     (->> (map #(.searchApps % search-term (select-keys params [:search])) clients)
