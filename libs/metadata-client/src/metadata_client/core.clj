@@ -80,6 +80,16 @@
        :target-ids
        (map uuidify)))
 
+(defn filter-hierarchy-targets
+  [username ontology-version root-iri attr target-types target-ids]
+  (->> (http/post (metadata-url-encoded "ontologies" ontology-version root-iri "filter-targets")
+                  (post-options (json/encode {:target-types target-types :target-ids target-ids})
+                                {:user username :attr attr}
+                                :as :json))
+       :body
+       :target-ids
+       (map uuidify)))
+
 (defn filter-unclassified
   [username ontology-version root-iri attr target-types target-ids]
   (->> (http/post (metadata-url-encoded "ontologies" ontology-version root-iri "filter-unclassified")
