@@ -36,16 +36,14 @@
 
 (deftest filter-hierarchy-test
   (testing "Test filter-hierarchy where no nodes should be filtered."
-    (is (= (filter-hierarchy #{5} hierarchy) hierarchy))))
+    (is (= (filter-hierarchy #{5 6} hierarchy) hierarchy)))
 
-(deftest filter-hierarchy-test
   (testing "Test filter-hierarchy where only leaf-nodes with :iri 3 and 6 should remain."
     (is (= (filter-hierarchy #{1 2 3 6} hierarchy) {:iri 1
                                                     :subclasses [{:iri 2
                                                                   :subclasses [{:iri 3}]}
                                                                  {:iri 3}
-                                                                 {:iri 6}]}))))
+                                                                 {:iri 6}]})))
 
-(deftest filter-hierarchy-test
   (testing "Test filter-hierarchy where all nodes are filtered."
     (is (= (filter-hierarchy #{999} hierarchy) nil))))
