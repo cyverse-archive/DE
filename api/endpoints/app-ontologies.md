@@ -16,7 +16,8 @@ title: DE API Documentation
     * [Listing Filtered Ontology Hierarchies](#listing-filtered-ontology-hierarchies)
     * [Listing Hierarchies for any Ontology](#listing-hierarchies-for-any-ontology)
     * [Listing Filtered Hierarchies for any Ontology](#listing-filtered-hierarchies-for-any-ontology)
-    * [Listing Apps in Ontology Hierarchies](#listing-apps-in-ontology-hierarchies)
+    * [Listing Apps in Hierarchies for the Active Ontology](#listing-apps-in-hierarchies-for-the-active-ontology)
+    * [Listing Apps in Hierarchies for any Ontology](#listing-apps-in-hierarchies-for-any-ontology)
     * [Listing Unclassified Apps for the Active Ontology](#listing-unclassified-apps-for-the-active-ontology)
     * [Listing Unclassified Apps for any Ontology](#listing-unclassified-apps-for-any-ontology)
 
@@ -53,14 +54,15 @@ title: DE API Documentation
 5. Admins or users with app "write" permissions may categorize those apps under ontology classes
    by attaching the class IRIs as metadata.
     * [Managing App AVU Metadata](app-metadata.html#managing-app-avu-metadata)
-6. Apps with an ontology class attached as metadata (regardless of ontology version)
+6. Apps with an ontology class attached as metadata, or any class under the hierarchy of that root class,
    may be listed with the following endpoint:
-    * [Listing Apps in Ontology Hierarchies](#listing-apps-in-ontology-hierarchies)
+    * [Listing Apps in Hierarchies for the Active Ontology](#listing-apps-in-hierarchies-for-the-active-ontology)
 7. An admin may add hierarchies for other ontology versions
    and preview their filtered hierarchies and app listings,
    without affecting the active version in use by normal users.
     * [Listing Hierarchies for any Ontology](#listing-hierarchies-for-any-ontology)
     * [Listing Filtered Hierarchies for any Ontology](#listing-filtered-hierarchies-for-any-ontology)
+    * [Listing Apps in Hierarchies for any Ontology](#listing-apps-in-hierarchies-for-any-ontology)
     * [Listing Unclassified Apps for any Ontology](#listing-unclassified-apps-for-any-ontology)
 
 ## Save an Ontology XML Document
@@ -153,11 +155,20 @@ Delegates to apps: GET /admin/ontologies/{ontology-version}/{root-iri}
 This endpoint is a passthrough to the apps endpoint using the same path.
 Please see the apps service documentation for more information.
 
-## Listing Apps in Ontology Hierarchies
+## Listing Apps in Hierarchies for the Active Ontology
 
-Secured Endpoint: GET /apps/hierarchies/{class-iri}/apps
+Secured Endpoint: GET /apps/hierarchies/{root-iri}/apps
 
-Delegates to apps: GET /apps/hierarchies/{class-iri}/apps
+Delegates to apps: GET /apps/hierarchies/{root-iri}/apps
+
+This endpoint is a passthrough to the apps endpoint using the same path.
+Please see the apps service documentation for more information.
+
+## Listing Apps in Hierarchies for any Ontology
+
+Secured Endpoint: GET /admin/ontologies/{ontology-version}/{root-iri}/apps
+
+Delegates to apps: GET /admin/ontologies/{ontology-version}/{root-iri}/apps
 
 This endpoint is a passthrough to the apps endpoint using the same path.
 Please see the apps service documentation for more information.
