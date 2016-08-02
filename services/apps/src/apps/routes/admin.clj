@@ -81,13 +81,19 @@
           :query [params SecuredQueryParams]
           :body [body (describe AdminAppPatchRequest "The App to update.")]
           :return AppDetails
+          :middlewares [wrap-metadata-base-url]
           :summary "Update App Details and Labels"
-          :description "This service is capable of updating high-level information of an App, including
-          'deleted' and 'disabled' flags, as well as just the labels within a single-step app that
-          has already been made available for public use.
-          <b>Note</b>: Although this endpoint accepts all App Group and Parameter fields within the
-          'groups' array, only their 'description', 'label', and 'display' (only in parameter
-          arguments) fields will be processed and updated by this endpoint."
+          :description (str
+"This service is capable of updating high-level information of an App,
+ including 'deleted' and 'disabled' flags, as well as just the labels within a single-step app that has
+ already been made available for public use.
+<b>Note</b>: Although this endpoint accepts all App Group and Parameter fields within the 'groups' array,
+ only their 'description', 'label', and 'display' (only in parameter arguments)
+ fields will be processed and updated by this endpoint."
+(get-endpoint-delegate-block
+  "metadata"
+  "POST /ontologies/{ontology-version}/filter")
+"Please see the metadata service documentation for information about the `hierarchies` response field.")
           (ok (coerce! AppDetails
                 (apps/admin-update-app current-user (assoc body :id app-id)))))
 
@@ -95,8 +101,14 @@
         :path-params [app-id :- AppIdPathParam]
         :query [params SecuredQueryParams]
         :return AppDetails
+        :middlewares [wrap-metadata-base-url]
         :summary "Get App Details"
-        :description "This service allows administrative users to view detailed informaiton about private apps."
+        :description (str
+"This service allows administrative users to view detailed informaiton about private apps."
+(get-endpoint-delegate-block
+  "metadata"
+  "POST /ontologies/{ontology-version}/filter")
+"Please see the metadata service documentation for information about the `hierarchies` response field.")
         (ok (coerce! AppDetails
                (apps/admin-get-app-details current-user app-id))))
 
