@@ -85,9 +85,13 @@
         client     (get-apps-client user state-info)]
     (.listAppsInCategory client category-id params)))
 
-(defn list-apps-with-metadata
-  [user attr value params]
-  (.listAppsWithMetadata (get-apps-client user) attr value params))
+(defn list-apps-under-hierarchy
+  [user root-iri attr params]
+  (.listAppsUnderHierarchy (get-apps-client user) root-iri attr params))
+
+(defn admin-list-apps-under-hierarchy
+  [user ontology-version root-iri attr params]
+  (.adminListAppsUnderHierarchy (get-apps-client user) ontology-version root-iri attr params))
 
 (defn search-apps
   [user {:keys [search] :as params}]

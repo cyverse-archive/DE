@@ -286,15 +286,17 @@
     {:app_count (count app-listing-ids)
      :apps      (map (partial format-app-listing perms beta-ids-set public-app-ids) app-listing)}))
 
-(defn list-apps-with-metadata
-  [{:keys [username] :as user} attr value params]
-  (let [metadata-filter (partial metadata-client/filter-by-attr-value username attr value ["app"])]
-    (apps-listing-with-metadata-filter user params metadata-filter)))
+(defn list-apps-under-hierarchy
+  ([user root-iri attr params]
+   (list-apps-under-hierarchy user (get-active-hierarchy-version) root-iri attr params))
+  ([{:keys [username] :as user} ontology-version root-iri attr params]
+   (let [metadata-filter (partial metadata-client/filter-hierarchy-targets username ontology-version root-iri attr ["app"])]
+     (apps-listing-with-metadata-filter user params metadata-filter))))
 
 (defn get-unclassified-app-listing
-  ([user root-iri params]
-   (get-unclassified-app-listing user (get-active-hierarchy-version) root-iri params))
-  ([{:keys [username] :as user} ontology-version root-iri {:keys [attr] :as params}]
+  ([user root-iri attr params]
+   (get-unclassified-app-listing user (get-active-hierarchy-version) root-iri attr params))
+  ([{:keys [username] :as user} ontology-version root-iri attr params]
    (let [metadata-filter (partial metadata-client/filter-unclassified username ontology-version root-iri attr ["app"])]
      (apps-listing-with-metadata-filter user params metadata-filter))))
 

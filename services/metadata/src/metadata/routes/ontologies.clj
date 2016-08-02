@@ -48,6 +48,18 @@
             hierarchy's leaf-classes that are associated with the given targets."
            (ok (service/filter-hierarchy ontology-version root-iri attr target-types target-ids)))
 
+    (POST* "/:ontology-version/:root-iri/filter-targets" []
+           :path-params [ontology-version :- OntologyVersionParam
+                         root-iri :- OntologyClassIRIParam]
+           :query [{:keys [attr user]} OntologyHierarchyFilterParams]
+           :body [{:keys [target-types target-ids]} TargetFilterRequest]
+           :return TargetIDList
+           :summary "Filter Targets Under a Hierarchy"
+           :description
+           "Filters the given target IDs by returning only those that are associated with any Ontology
+            classes of the hierarchy rooted at the given `root-iri`."
+           (ok (service/filter-hierarchy-targets ontology-version root-iri attr target-types target-ids)))
+
     (POST* "/:ontology-version/:root-iri/filter-unclassified" []
            :path-params [ontology-version :- OntologyVersionParam
                          root-iri :- OntologyClassIRIParam]

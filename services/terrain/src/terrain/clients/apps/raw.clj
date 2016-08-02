@@ -72,11 +72,16 @@
                :follow-redirects false}))
 
 (defn get-hierarchy-app-listing
-  [class-iri params]
-  (client/get (apps-url-encoded "apps" "hierarchies" class-iri "apps")
-              {:query-params     (secured-params params apps-hierarchy-sort-params)
-               :as               :stream
-               :follow-redirects false}))
+  ([ontology-version root-iri params]
+   (client/get (apps-url-encoded "admin" "ontologies" ontology-version root-iri "apps")
+               {:query-params     (secured-params params apps-hierarchy-sort-params)
+                :as               :stream
+                :follow-redirects false}))
+  ([root-iri params]
+   (client/get (apps-url-encoded "apps" "hierarchies" root-iri "apps")
+               {:query-params     (secured-params params apps-hierarchy-sort-params)
+                :as               :stream
+                :follow-redirects false})))
 
 (defn get-unclassified-app-listing
   ([ontology-version root-iri params]
