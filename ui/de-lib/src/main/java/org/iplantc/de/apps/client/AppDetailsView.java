@@ -5,9 +5,11 @@ import org.iplantc.de.apps.client.events.selection.AppDetailsDocSelected;
 import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
 import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
+import org.iplantc.de.apps.client.events.selection.DetailsCategoryClicked;
 import org.iplantc.de.apps.client.events.selection.DetailsHierarchyClicked;
 import org.iplantc.de.apps.client.events.selection.SaveMarkdownSelected;
 import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.AppDoc;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 
@@ -34,7 +36,8 @@ public interface AppDetailsView extends IsWidget,
                                         SaveMarkdownSelected.HasSaveMarkdownSelectedHandlers,
                                         AppRatingDeselected.HasAppRatingDeselectedHandlers,
                                         AppRatingSelected.HasAppRatingSelectedEventHandlers,
-                                        DetailsHierarchyClicked.HasDetailsHierarchyClickedHandlers {
+                                        DetailsHierarchyClicked.HasDetailsHierarchyClickedHandlers,
+                                        DetailsCategoryClicked.HasDetailsCategoryClickedHandlers {
 
     interface AppDetailsAppearance {
         interface AppDetailsStyle extends CssResource {
@@ -104,12 +107,14 @@ public interface AppDetailsView extends IsWidget,
     interface Presenter extends AppFavoriteSelectedEvent.HasAppFavoriteSelectedEventHandlers,
                                 AppRatingDeselected.HasAppRatingDeselectedHandlers,
                                 AppRatingSelected.HasAppRatingSelectedEventHandlers,
-                                DetailsHierarchyClicked.HasDetailsHierarchyClickedHandlers {
+                                DetailsHierarchyClicked.HasDetailsHierarchyClickedHandlers,
+                                DetailsCategoryClicked.HasDetailsCategoryClickedHandlers{
 
         void go(HasOneWidget widget,
                 App app,
                 String searchRegexPattern,
-                TreeStore<OntologyHierarchy> hierarchyTreeStore);
+                TreeStore<OntologyHierarchy> hierarchyTreeStore,
+                TreeStore<AppCategory> categoryTreeStore);
     }
 
     /**

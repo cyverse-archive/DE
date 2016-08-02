@@ -8,8 +8,10 @@ import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppInfoSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
 import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
+import org.iplantc.de.apps.client.events.selection.DetailsCategoryClicked;
 import org.iplantc.de.apps.client.events.selection.DetailsHierarchyClicked;
 import org.iplantc.de.apps.client.events.selection.OntologyHierarchySelectionChangedEvent;
+import org.iplantc.de.apps.client.gin.AppCategoryTreeStoreProvider;
 import org.iplantc.de.apps.client.gin.OntologyHierarchyTreeStoreProvider;
 import org.iplantc.de.apps.client.gin.factory.OntologyHierarchiesViewFactory;
 import org.iplantc.de.apps.client.presenter.callbacks.DeleteRatingCallback;
@@ -17,6 +19,7 @@ import org.iplantc.de.apps.client.presenter.callbacks.RateAppCallback;
 import org.iplantc.de.apps.client.views.details.dialogs.AppDetailsDialog;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.services.OntologyServiceFacade;
@@ -53,13 +56,16 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
                                                          AppRatingSelected.AppRatingSelectedHandler,
                                                          AppRatingDeselected.AppRatingDeselectedHandler,
                                                          AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler,
-                                                         DetailsHierarchyClicked.DetailsHierarchyClickedHandler {
+                                                         DetailsHierarchyClicked.DetailsHierarchyClickedHandler,
+                                                         DetailsCategoryClicked.DetailsCategoryClickedHandler {
 
     class AppDetailsCallback implements AsyncCallback<App> {
 
         private final AppDetailsDialog dlg;
+        private App app;
 
-        public AppDetailsCallback(AppDetailsDialog dlg) {
+        public AppDetailsCallback(App app, AppDetailsDialog dlg) {
+            this.app = app;
             this.dlg = dlg;
         }
 
@@ -69,13 +75,25 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
         }
 
         @Override
-        public void onSuccess(final App result) {
-            TreeStore<OntologyHierarchy> treeStore = getTreeStore();
-            addHierarchies(treeStore, null, result.getHierarchies());
+        public void onSuccess(final App appDetails) {
+            TreeStore<OntologyHierarchy> hierarchyTreeStore = getHierarchyTreeStore();
+            TreeStore<AppCategory> categoryTreeStore = getCategoryTreeStore();
 
-            dlg.show(result,
+            if (app.getAppType().equalsIgnoreCase(App.EXTERNAL_APP)) {
+                categoryTreeStore.add(appDetails.getGroups());
+            }
+
+            List<OntologyHierarchy> hierarchies = appDetails.getHierarchies();
+            if (hierarchies != null && hierarchies.size() == 0) {
+                hierarchies = unclassifiedHierarchies;
+            }
+            addHierarchies(hierarchyTreeStore, null, hierarchies);
+
+            dlg.show(appDetails,
                      searchRegexPattern,
-                     treeStore,
+                     hierarchyTreeStore,
+                     categoryTreeStore,
+                     OntologyHierarchiesPresenterImpl.this,
                      OntologyHierarchiesPresenterImpl.this,
                      OntologyHierarchiesPresenterImpl.this,
                      OntologyHierarchiesPresenterImpl.this,
@@ -96,6 +114,7 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
     Map<String, List<OntologyHierarchy>> iriToHierarchyMap = new FastMap<>();
     private OntologyHierarchiesViewFactory viewFactory;
     String baseID;
+    List<OntologyHierarchy> unclassifiedHierarchies = Lists.newArrayList();
 
 
     @Inject
@@ -145,14 +164,16 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
 
             @Override
             public void onSuccess(final AppDetailsDialog dlg) {
-                appUserService.getAppDetails(event.getApp(), new AppDetailsCallback(dlg));
+                App app = event.getApp();
+                appUserService.getAppDetails(app,
+                                             new AppDetailsCallback(app, dlg));
             }
         });
     }
 
     void createViewTabs(List<OntologyHierarchy> results) {
         for (OntologyHierarchy hierarchy : results) {
-            TreeStore<OntologyHierarchy> treeStore = getTreeStore();
+            TreeStore<OntologyHierarchy> treeStore = getHierarchyTreeStore();
             OntologyHierarchiesView view = viewFactory.create(treeStore);
             Tree<OntologyHierarchy, String> tree = view.getTree();
 
@@ -176,11 +197,15 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
         }
     }
 
-    TreeStore<OntologyHierarchy> getTreeStore() {
+    TreeStore<OntologyHierarchy> getHierarchyTreeStore() {
         TreeStore<OntologyHierarchy> treeStore = new OntologyHierarchyTreeStoreProvider().get();
         treeStore.addSortInfo(new Store.StoreSortInfo<>(ontologyUtil.getOntologyNameComparator(),
                                                         SortDir.ASC));
         return treeStore;
+    }
+
+    TreeStore<AppCategory> getCategoryTreeStore() {
+        return new AppCategoryTreeStoreProvider().get();
     }
 
     void getFilteredHierarchies(final OntologyHierarchy root, final Tree<OntologyHierarchy, String> tree) {
@@ -199,7 +224,9 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
                                                          result = root;
                                                          result.setSubclasses(Lists.<OntologyHierarchy>newArrayList());
                                                      }
-                                                     ontologyUtil.addUnclassifiedChild(result);
+                                                     OntologyHierarchy unclassifiedChild =
+                                                             ontologyUtil.addUnclassifiedChild(result);
+                                                     unclassifiedHierarchies.add(unclassifiedChild);
                                                      //Set the key for the current root (which won't appear in the tree, but will be the name of the tab)
                                                      // which will allow the children to know the full path from its parent to node
                                                      ontologyUtil.getOrCreateHierarchyPathTag(result);
@@ -290,7 +317,25 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
                 OntologyHierarchy selectedHierarchy = tree.getStore().findModelWithKey(id);
                 if (selectedHierarchy != null) {
                     viewTabPanel.setActiveWidget(tree);
+                    tree.scrollIntoView(selectedHierarchy);
                     tree.getSelectionModel().select(selectedHierarchy, true);
+                    break;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onDetailsCategoryClicked(DetailsCategoryClicked event) {
+        AppCategory category = event.getCategory();
+        if (category != null) {
+            for (int i = 0 ; i < viewTabPanel.getWidgetCount() ; i++) {
+                Tree<AppCategory, String> tree = ((Tree)viewTabPanel.getWidget(i));
+                AppCategory selectedCategory = tree.getStore().findModelWithKey(category.getId());
+                if (selectedCategory != null) {
+                    viewTabPanel.setActiveWidget(tree);
+                    tree.scrollIntoView(selectedCategory);
+                    tree.getSelectionModel().select(selectedCategory, true);
                     break;
                 }
             }

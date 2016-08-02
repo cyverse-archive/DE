@@ -17,7 +17,9 @@
 		type="com.sencha.gxt.widget.core.client.TabItemConfig">
 		<ui:attributes text="{appearance.toolInformationTabLabel}" />
 	</ui:with>
-	<ui:with field="treeStore"
+	<ui:with field="hierarchyTreeStore"
+			 type="com.sencha.gxt.data.shared.TreeStore"/>
+	<ui:with field="categoryTreeStore"
 			 type="com.sencha.gxt.data.shared.TreeStore"/>
 
 	<tabs:TabPanel ui:field="tabPanel" bodyBorder="false"
@@ -99,7 +101,8 @@
 							<ui:text from="{appearance.categoriesLabel}" />
 						</td>
 						<td>
-							<tree:Tree ui:field="categories" store="{treeStore}"/>
+							<tree:Tree ui:field="categoryTree" store="{categoryTreeStore}"/>
+							<tree:Tree ui:field="hierarchyTree" store="{hierarchyTreeStore}"/>
 						</td>
 					</tr>
 

@@ -6,8 +6,8 @@ import org.iplantc.de.apps.client.events.selection.AppDetailsDocSelected;
 import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
 import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
+import org.iplantc.de.apps.client.events.selection.DetailsCategoryClicked;
 import org.iplantc.de.apps.client.events.selection.DetailsHierarchyClicked;
-import org.iplantc.de.apps.client.events.selection.OntologyHierarchySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.SaveMarkdownSelected;
 import org.iplantc.de.apps.client.views.details.doc.AppDocMarkdownDialog;
 import org.iplantc.de.apps.client.views.grid.cells.AppFavoriteCellWidget;
@@ -15,10 +15,10 @@ import org.iplantc.de.apps.client.views.grid.cells.AppRatingCellWidget;
 import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.AppDoc;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import org.iplantc.de.client.models.tool.Tool;
-import org.iplantc.de.client.util.OntologyUtil;
 import org.iplantc.de.commons.client.views.dialogs.IPlantPromptDialog;
 import org.iplantc.de.desktop.client.presenter.DesktopPresenterImpl;
 
@@ -146,10 +146,12 @@ public class AppDetailsViewImpl extends Composite implements
     final HighlightEditor integratorName;
     @UiField
     InlineLabel integratorEmail;
-    @UiField
+    @UiField (provided = true)
     @Ignore
-    Tree<OntologyHierarchy, String> categories;
-    @UiField(provided = true) @Ignore TreeStore<OntologyHierarchy> treeStore;
+    Tree<OntologyHierarchy, String> hierarchyTree;
+    @UiField(provided = true) @Ignore TreeStore<OntologyHierarchy> hierarchyTreeStore;
+    @UiField(provided = true) @Ignore Tree<AppCategory, String> categoryTree;
+    @UiField(provided = true) @Ignore TreeStore<AppCategory> categoryTreeStore;
     @UiField
     @Path("")
     AppRatingCellWidget ratings; // Bind to app
@@ -183,10 +185,15 @@ public class AppDetailsViewImpl extends Composite implements
     AppDetailsViewImpl(final AppDetailsView.AppDetailsAppearance appearance,
                        @Assisted final App app,
                        @Assisted final String searchRegexPattern,
-                       @Assisted final TreeStore<OntologyHierarchy> treeStore) {
+                       @Assisted final TreeStore<OntologyHierarchy> hierarchyTreeStore,
+                       @Assisted final TreeStore<AppCategory> categoryTreeStore) {
         this.appearance = appearance;
         this.app = app;
-        this.treeStore = treeStore;
+        this.hierarchyTreeStore = hierarchyTreeStore;
+        this.categoryTreeStore = categoryTreeStore;
+
+        hierarchyTree = createHierarchyTree();
+        categoryTree = createCategoryTree();
 
         initWidget(BINDER.createAndBindUi(this));
 
@@ -272,6 +279,11 @@ public class AppDetailsViewImpl extends Composite implements
     }
 
     @Override
+    public HandlerRegistration addDetailsCategoryClickedHandler(DetailsCategoryClicked.DetailsCategoryClickedHandler handler) {
+        return addHandler(handler, DetailsCategoryClicked.TYPE);
+    }
+
+    @Override
     public void onAppUpdated(final AppUpdatedEvent event) {
         editorDriver.edit(event.getApp());
         favIcon.setValue(null);
@@ -302,9 +314,8 @@ public class AppDetailsViewImpl extends Composite implements
         return new DateLabel(DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_MEDIUM));
     }
 
-    @UiFactory
-    Tree<OntologyHierarchy, String> createTree() {
-        Tree<OntologyHierarchy, String> tree = new Tree<>(treeStore, new ValueProvider<OntologyHierarchy, String>() {
+    Tree<OntologyHierarchy, String> createHierarchyTree() {
+        Tree<OntologyHierarchy, String> tree = new Tree<>(hierarchyTreeStore, new ValueProvider<OntologyHierarchy, String>() {
             @Override
             public String getValue(OntologyHierarchy object) {
                 return object.getLabel();
@@ -328,6 +339,37 @@ public class AppDetailsViewImpl extends Composite implements
                 if (event.getSelection().size() == 1) {
                     OntologyHierarchy hierarchy = event.getSelection().get(0);
                     fireEvent(new DetailsHierarchyClicked(hierarchy));
+                }
+            }
+        });
+        return tree;
+    }
+
+    Tree<AppCategory, String> createCategoryTree() {
+        Tree<AppCategory, String> tree = new Tree<>(categoryTreeStore, new ValueProvider<AppCategory, String>() {
+            @Override
+            public String getValue(AppCategory object) {
+                return object.getName();
+            }
+
+            @Override
+            public void setValue(AppCategory object, String value) {
+
+            }
+
+            @Override
+            public String getPath() {
+                return null;
+            }
+        });
+        appearance.setTreeIcons(tree.getStyle());
+        tree.getSelectionModel().setSelectionMode(Style.SelectionMode.SINGLE);
+        tree.getSelectionModel().addSelectionChangedHandler(new SelectionChangedEvent.SelectionChangedHandler<AppCategory>() {
+            @Override
+            public void onSelectionChanged(SelectionChangedEvent<AppCategory> event) {
+                if (event.getSelection().size() == 1) {
+                    AppCategory category = event.getSelection().get(0);
+                    fireEvent(new DetailsCategoryClicked(category));
                 }
             }
         });

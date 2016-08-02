@@ -66,11 +66,12 @@ public class OntologyUtil {
         }
     }
 
-    public void addUnclassifiedChild(OntologyHierarchy child) {
+    public OntologyHierarchy addUnclassifiedChild(OntologyHierarchy child) {
         OntologyHierarchy unclassified = factory.getHierarchy().as();
         unclassified.setLabel(UNCLASSIFIED_LABEL);
         unclassified.setIri(child.getIri() + UNCLASSIFIED_IRI_APPEND);
         child.getSubclasses().add(unclassified);
+        return unclassified;
     }
 
     public boolean isUnclassified(OntologyHierarchy hierarchy) {
@@ -199,5 +200,4 @@ public class OntologyUtil {
     AutoBean<OntologyHierarchy> getHierarchyAutoBean(OntologyHierarchy hierarchy) {
         return AutoBeanUtils.getAutoBean(hierarchy);
     }
-
 }

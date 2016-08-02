@@ -6,11 +6,13 @@ import org.iplantc.de.apps.client.events.selection.AppDetailsDocSelected;
 import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
 import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
+import org.iplantc.de.apps.client.events.selection.DetailsCategoryClicked;
 import org.iplantc.de.apps.client.events.selection.DetailsHierarchyClicked;
 import org.iplantc.de.apps.client.events.selection.SaveMarkdownSelected;
 import org.iplantc.de.apps.client.gin.factory.AppDetailsViewFactory;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.AppDoc;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import org.iplantc.de.client.services.AppUserServiceFacade;
@@ -82,13 +84,22 @@ public class AppDetailsViewPresenterImpl implements AppDetailsView.Presenter,
     }
 
     @Override
+    public HandlerRegistration addDetailsCategoryClickedHandler(DetailsCategoryClicked.DetailsCategoryClickedHandler handler) {
+        if(view == null){
+            throw new IllegalStateException("You must call 'go(..)' before calling this method");
+        }
+        return view.addDetailsCategoryClickedHandler(handler);
+    }
+
+    @Override
     public void go(final HasOneWidget widget,
                    final App app,
                    final String searchRegexPattern,
-                   TreeStore<OntologyHierarchy> hierarchyTreeStore) {
+                   TreeStore<OntologyHierarchy> hierarchyTreeStore,
+                   TreeStore<AppCategory> categoryTreeStore) {
         Preconditions.checkState(view == null, "Cannot call go(..) more than once");
 
-        view = viewFactoryProvider.get().create(app, searchRegexPattern, hierarchyTreeStore);
+        view = viewFactoryProvider.get().create(app, searchRegexPattern, hierarchyTreeStore, categoryTreeStore);
         view.addAppDetailsDocSelectedHandler(AppDetailsViewPresenterImpl.this);
         view.addSaveMarkdownSelectedHandler(AppDetailsViewPresenterImpl.this);
         widget.setWidget(view);

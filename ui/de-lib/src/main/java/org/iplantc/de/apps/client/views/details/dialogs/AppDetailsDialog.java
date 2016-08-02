@@ -4,8 +4,10 @@ import org.iplantc.de.apps.client.AppDetailsView;
 import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
 import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
+import org.iplantc.de.apps.client.events.selection.DetailsCategoryClicked;
 import org.iplantc.de.apps.client.events.selection.DetailsHierarchyClicked;
 import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
@@ -34,10 +36,12 @@ public class AppDetailsDialog extends IPlantDialog {
     public void show(final App app,
                      final String searchRegexPattern,
                      final TreeStore<OntologyHierarchy> hierarchyTreeStore,
+                     final TreeStore<AppCategory> categoryTreeStore,
                      final AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler favoriteSelectedHandler,
                      final AppRatingSelected.AppRatingSelectedHandler ratingSelectedHandler,
                      final AppRatingDeselected.AppRatingDeselectedHandler ratingDeselectedHandler,
-                     final DetailsHierarchyClicked.DetailsHierarchyClickedHandler hierarchySelectionHandler) {
+                     final DetailsHierarchyClicked.DetailsHierarchyClickedHandler hierarchySelectionHandler,
+                     final DetailsCategoryClicked.DetailsCategoryClickedHandler categoryClickedHandler) {
 
         setHeadingText(app.getName());
         presenterProvider.get(new AsyncCallback<AppDetailsView.Presenter>() {
@@ -48,7 +52,7 @@ public class AppDetailsDialog extends IPlantDialog {
 
             @Override
             public void onSuccess(final AppDetailsView.Presenter result) {
-                result.go(AppDetailsDialog.this, app, searchRegexPattern, hierarchyTreeStore);
+                result.go(AppDetailsDialog.this, app, searchRegexPattern, hierarchyTreeStore, categoryTreeStore);
                 if(favoriteSelectedHandler != null){
                     result.addAppFavoriteSelectedEventHandlers(favoriteSelectedHandler);
                 }
@@ -60,6 +64,9 @@ public class AppDetailsDialog extends IPlantDialog {
                 }
                 if (hierarchySelectionHandler != null) {
                     result.addDetailsHierarchyClickedHandler(hierarchySelectionHandler);
+                }
+                if (categoryClickedHandler != null) {
+                    result.addDetailsCategoryClickedHandler(categoryClickedHandler);
                 }
             }
         });
