@@ -17,6 +17,7 @@
 
 ### TODO CORE-7936: Remove after 2.8 release
 - include: playbooks/de-TMP-RUN-ONCE-app-beta-tagger.yaml
+  tags: beta-tagger
 
 ############################################
 # Services

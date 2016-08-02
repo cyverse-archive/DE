@@ -7,5 +7,5 @@
 
 - name: update integration data records
   shell: >-
-    docker run --rm {{ integrationator_repo }}:{{ docker_tag }} -l {{ ldap_host }} -h {{ db_host }}
-    -p {{ db_port }} -d {{ db_name }} -U {{ db_user }} -P {{ db_password }}
+    docker run --rm {{ integrationator_repo }}:{{ docker_tag }} -l {{ ldap_host | quote }} -h {{ db_host | quote }}
+    -p {{ db_port }} -d {{ db_name | quote }} -U {{ db_user | quote }} -P {{ db_password | quote }}
