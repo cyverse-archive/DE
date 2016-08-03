@@ -67,17 +67,16 @@ public class AppNameCell extends AbstractCell<App> {
         }
         favoriteCell.render(context, value, sb);
         String textClassName, textToolTip;
-        if (!value.isDisabled()) {
-            if (!value.getAppType().equalsIgnoreCase(App.EXTERNAL_APP) && value.isBeta()) {
-                textClassName = appearance.appBetaNameClass();
-                textToolTip = appearance.appBeta();
-            } else {
-                textClassName = appearance.appHyperlinkNameClass();
-                textToolTip = appearance.run();
-            }
-        } else {
+
+        if (value.isDisabled()) {
             textClassName = appearance.appDisabledClass();
             textToolTip = appearance.appUnavailable();
+        } else if (value.isBeta() != null && value.isBeta()) {
+            textClassName = appearance.appBetaNameClass();
+            textToolTip = appearance.appBeta();
+        } else {
+            textClassName = appearance.appHyperlinkNameClass();
+            textToolTip = appearance.run();
         }
 
         String debugId = baseID + "." + value.getId() + AppsModule.Ids.APP_NAME_CELL;
