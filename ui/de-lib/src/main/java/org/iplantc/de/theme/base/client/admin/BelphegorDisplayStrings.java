@@ -88,4 +88,12 @@ public interface BelphegorDisplayStrings extends Messages {
     String updateDocumentationSuccess();
 
     String ontologies();
+
+    String betaLabel();
+
+    String betaCheckBoxText();
+
+    String betaTagAddedSuccess();
+
+    String betaTagRemovedSuccess();
 }

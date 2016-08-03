@@ -72,6 +72,10 @@ public class AppEditor extends Window implements Editor<App>, IsWidget, SaveAppS
         String validDocError();
 
         SafeHtml wikiUrlFieldLabel();
+
+        String betaLabel();
+
+        String betaCheckBoxText();
     }
 
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter {
@@ -106,6 +110,8 @@ public class AppEditor extends Window implements Editor<App>, IsWidget, SaveAppS
     @UiField CheckBoxAdapter disabled;
     @UiField
     FieldLabel appDisabledCheckBoxLabel;
+    @UiField FieldLabel appBetaCheckBoxLabel;
+    @UiField CheckBoxAdapter beta;
     @UiField
     TextArea description;
     @UiField
@@ -231,6 +237,7 @@ public class AppEditor extends Window implements Editor<App>, IsWidget, SaveAppS
         integratorEmail.setId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.INTEGRATOR_EMAIL);
         integratorEmailFieldLabel.ensureDebugId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.INTEGRATOR_EMAIL_LABEL);
         disabled.getCheckBox().ensureDebugId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.DISABLED);
+        beta.getCheckBox().ensureDebugId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.BETA);
         appDisabledCheckBoxLabel.ensureDebugId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.DISABLED_LABEL);
         description.setId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.DESCRIPTION);
         appDescFieldLabel.ensureDebugId(baseID + Belphegor.AppIds.EDITOR_WINDOW + Belphegor.AppIds.DESCRIPTION_LABEL);

@@ -1,6 +1,8 @@
 package org.iplantc.de.admin.apps.client.presenter.grid;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
@@ -13,6 +15,7 @@ import org.iplantc.de.admin.apps.client.AdminAppsGridView;
 import org.iplantc.de.admin.apps.client.events.selection.RestoreAppSelected;
 import org.iplantc.de.admin.apps.client.events.selection.SaveAppSelected;
 import org.iplantc.de.admin.apps.client.gin.factory.AdminAppsGridViewFactory;
+import org.iplantc.de.admin.desktop.client.ontologies.service.OntologyServiceFacade;
 import org.iplantc.de.admin.desktop.client.services.AppAdminServiceFacade;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
@@ -21,8 +24,12 @@ import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.AppDoc;
+import org.iplantc.de.client.models.avu.Avu;
+import org.iplantc.de.client.models.avu.AvuList;
 import org.iplantc.de.client.services.AppServiceFacade;
+import org.iplantc.de.client.util.OntologyUtil;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -60,10 +67,16 @@ public class AdminAppsGridPresenterImplTest {
     @Mock Grid<App> gridMock;
     @Mock GridSelectionModel<App> selectionModelMock;
     @Mock IplantAnnouncer announcerMock;
+    @Mock OntologyUtil ontologyUtilMock;
+    @Mock AvuList avuListMock;
+    @Mock List<Avu> listAvuMock;
+    @Mock App appMock;
+    @Mock OntologyServiceFacade ontologyServiceFacadeMock;
 
     @Captor ArgumentCaptor<AsyncCallback<List<App>>> appListCallbackCaptor;
     @Captor ArgumentCaptor<AsyncCallback<App>> appCallbackCaptor;
     @Captor ArgumentCaptor<AsyncCallback<Void>> voidCallbackCaptor;
+    @Captor ArgumentCaptor<AsyncCallback<List<Avu>>> avuListCallbackCaptor;
 
     private AdminAppsGridPresenterImpl uut;
 
@@ -71,11 +84,17 @@ public class AdminAppsGridPresenterImplTest {
         when(viewFactoryMock.create(Matchers.<ListStore<App>>any())).thenReturn(viewMock);
         when(viewMock.getGrid()).thenReturn(gridMock);
         when(gridMock.getSelectionModel()).thenReturn(selectionModelMock);
+        when(appearanceMock.betaTagAddedSuccess()).thenReturn("Success");
+        when(appearanceMock.betaTagRemovedSuccess()).thenReturn("Success");
+        when(ontologyUtilMock.getBetaAvuList()).thenReturn(avuListMock);
+        when(ontologyUtilMock.removeBetaAvu(listAvuMock)).thenReturn(avuListMock);
         uut = new AdminAppsGridPresenterImpl(viewFactoryMock, listStoreMock);
         uut.adminAppService = adminAppServiceMock;
         uut.appService = appServiceMock;
         uut.appearance = appearanceMock;
         uut.announcer = announcerMock;
+        uut.ontologyUtil = ontologyUtilMock;
+        uut.ontologyServiceFacade = ontologyServiceFacadeMock;
     }
 
     @Test public void verifyForwardedEventHandlerRegistration() {
@@ -282,6 +301,41 @@ public class AdminAppsGridPresenterImplTest {
                                  appMock,
                                  docMock);
         verifyZeroInteractions(appServiceMock);
+    }
+
+    @Test
+    public void testUpdateBetaStatus_AddBeta() {
+        when(appMock.isBeta()).thenReturn(true);
+
+        /*** CALL METHOD UNDER TEST ***/
+        uut.updateBetaStatus(appMock);
+
+        verify(ontologyUtilMock).getBetaAvuList();
+        verify(ontologyServiceFacadeMock).addAVUsToApp(eq(appMock), eq(avuListMock), avuListCallbackCaptor.capture());
+
+        avuListCallbackCaptor.getValue().onSuccess(listAvuMock);
+        verify(announcerMock).schedule(isA(SuccessAnnouncementConfig.class));
+        verify(appMock).setBeta(anyBoolean());
+        verify(listStoreMock).update(eq(appMock));
+    }
+
+    @Test
+    public void testUpdateBetaStatus_RemoveBeta() {
+        when(appMock.isBeta()).thenReturn(false);
+
+        /*** CALL METHOD UNDER TEST ***/
+        uut.updateBetaStatus(appMock);
+
+        verify(ontologyServiceFacadeMock).getAppAVUs(eq(appMock), avuListCallbackCaptor.capture());
+
+        avuListCallbackCaptor.getValue().onSuccess(listAvuMock);
+        verify(ontologyUtilMock).removeBetaAvu(listAvuMock);
+        verify(ontologyServiceFacadeMock).setAppAVUs(eq(appMock), eq(avuListMock), avuListCallbackCaptor.capture());
+
+        avuListCallbackCaptor.getValue().onSuccess(listAvuMock);
+        verify(appMock).setBeta(anyBoolean());
+        verify(listStoreMock).update(eq(appMock));
+        verify(announcerMock).schedule(isA(SuccessAnnouncementConfig.class));
     }
 
 }

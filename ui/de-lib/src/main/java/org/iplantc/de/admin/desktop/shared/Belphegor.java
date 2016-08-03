@@ -54,6 +54,7 @@ public interface Belphegor {
         String DOC_HELP = ".docHelp";
         String TEMPLATE_LINK = ".templateLink";
         String CLOSE_BTN = ".closeBtn";
+        String BETA = ".beta";
     }
 
     interface RefGenomeIds {
