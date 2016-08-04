@@ -4,13 +4,15 @@ import org.iplantc.de.apps.client.AppDetailsView;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.theme.base.client.apps.AppSearchHighlightAppearance;
 import org.iplantc.de.theme.base.client.apps.AppsMessages;
+import org.iplantc.de.theme.base.client.apps.categories.AppCategoriesViewDefaultAppearance;
 
 import com.google.common.base.Joiner;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+
+import com.sencha.gxt.widget.core.client.tree.TreeStyle;
 
 import java.util.List;
 
@@ -19,7 +21,7 @@ import java.util.List;
  */
 public class AppDetailsDefaultAppearance implements AppDetailsView.AppDetailsAppearance {
 
-    public interface AppDetailsAppearanceResources extends ClientBundle {
+    public interface AppDetailsAppearanceResources extends AppCategoriesViewDefaultAppearance.AppCategoryViewResources {
         @Source("AppDetailsStyle.css")
         AppDetailsStyle css();
     }
@@ -167,5 +169,12 @@ public class AppDetailsDefaultAppearance implements AppDetailsView.AppDetailsApp
     @Override
     public String copyAppUrl() {
         return appsMessages.copyAppUrl();
+    }
+
+    @Override
+    public void setTreeIcons(TreeStyle style) {
+        style.setNodeCloseIcon(resources.category());
+        style.setNodeOpenIcon(resources.categoryOpen());
+        style.setLeafIcon(resources.subCategory());
     }
 }

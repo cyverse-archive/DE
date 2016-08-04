@@ -1,8 +1,10 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
-	xmlns:tabs="urn:import:com.sencha.gxt.widget.core.client"
-	xmlns:appWidgets="urn:import:org.iplantc.de.apps.client.views.grid.cells">
+			 xmlns:g="urn:import:com.google.gwt.user.client.ui"
+			 xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+			 xmlns:tabs="urn:import:com.sencha.gxt.widget.core.client"
+			 xmlns:tree="urn:import:com.sencha.gxt.widget.core.client.tree"
+			 xmlns:appWidgets="urn:import:org.iplantc.de.apps.client.views.grid.cells">
 
 	<ui:with field="appearance"
 		type="org.iplantc.de.apps.client.AppDetailsView.AppDetailsAppearance" />
@@ -15,6 +17,10 @@
 		type="com.sencha.gxt.widget.core.client.TabItemConfig">
 		<ui:attributes text="{appearance.toolInformationTabLabel}" />
 	</ui:with>
+	<ui:with field="hierarchyTreeStore"
+			 type="com.sencha.gxt.data.shared.TreeStore"/>
+	<ui:with field="categoryTreeStore"
+			 type="com.sencha.gxt.data.shared.TreeStore"/>
 
 	<tabs:TabPanel ui:field="tabPanel" bodyBorder="false"
 		borders="false" styleName="{appearance.css.tabPanel}">
@@ -84,18 +90,19 @@
 					</tr>
 					<tr>
 						<td class="{appearance.css.label}">
-							<ui:text from="{appearance.categoriesLabel}" />
+							<ui:text from="{appearance.url}" />
 						</td>
-						<td>
-							<div ui:field="categories" />
+						<td class="{appearance.css.value}">
+							<g:Anchor ui:field="url" styleName="{appearance.css.hyperlink}"/>
 						</td>
 					</tr>
 					<tr>
-					<td class="{appearance.css.label}">
-                                <ui:text from="{appearance.url}" />
-                        </td>
-						<td class="{appearance.css.value}">
-							<g:Anchor ui:field="url" styleName="{appearance.css.hyperlink}"/>
+						<td class="{appearance.css.label}">
+							<ui:text from="{appearance.categoriesLabel}" />
+						</td>
+						<td>
+							<tree:Tree ui:field="categoryTree" store="{categoryTreeStore}"/>
+							<tree:Tree ui:field="hierarchyTree" store="{hierarchyTreeStore}"/>
 						</td>
 					</tr>
 
