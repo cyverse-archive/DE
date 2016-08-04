@@ -267,11 +267,9 @@
 (defn- app-ids->beta-ids-set
   "Filters the given list of app-ids into a set containing the ids of apps marked as `beta`"
   [username app-ids]
-  (set (metadata-client/filter-by-attr-value username
-                                             (workspace-metadata-beta-attr-iri)
-                                             (workspace-metadata-beta-value)
-                                             ["app"]
-                                             app-ids)))
+  (let [beta-avu {:attr (workspace-metadata-beta-attr-iri)
+                  :value (workspace-metadata-beta-value)}]
+    (set (metadata-client/filter-by-avus username ["app"] app-ids [beta-avu]))))
 
 (defn- apps-listing-with-metadata-filter
   [{:keys [username shortUsername]} params metadata-filter]

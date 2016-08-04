@@ -10,11 +10,6 @@
 (def AvuIdPathParam (describe UUID "The AVU's UUID"))
 (def AvuIdParam AvuIdPathParam)
 
-(s/defschema FilterByAvuParams
-  (merge StandardUserQueryParams
-         {:attr  (describe NonBlankString "The Attribute's name")
-          :value (describe NonBlankString "The Attribute's value")}))
-
 (s/defschema Avu
   {:id AvuIdParam
    :attr (describe String "The Attribute's name")
@@ -47,3 +42,10 @@
 
 (s/defschema SetAvuRequest
   (->optional-param AvuListRequest :avus))
+
+(s/defschema AvuFilterRequest
+  (select-keys Avu [:attr :value]))
+
+(s/defschema FilterByAvusRequest
+  (merge TargetFilterRequest
+         {:avus (describe [AvuFilterRequest] "The AVUs to use to filter the given targets")}))

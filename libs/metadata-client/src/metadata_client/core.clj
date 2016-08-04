@@ -68,13 +68,13 @@
              (post-options (json/encode {:target-types target-types :target-ids target-ids})
                            {:user username :attr attr})))
 
-(defn filter-by-attr-value
-  [username attr value target-types target-ids]
+(defn filter-by-avus
+  [username target-types target-ids avus]
   (->> (http/post (metadata-url-encoded "avus" "filter-targets")
-                  (post-options (json/encode {:target-types target-types :target-ids target-ids})
-                                {:user  username
-                                 :attr  attr
-                                 :value value}
+                  (post-options (json/encode {:target-types target-types
+                                              :target-ids   target-ids
+                                              :avus         avus})
+                                {:user username}
                                 :as :json))
        :body
        :target-ids
