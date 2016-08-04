@@ -851,6 +851,14 @@
                        {:aca.app_id (uuidify app-id)
                         :l.id       [not= (user-favorite-subselect :w.root_category_id faves-idx)]})))))
 
+(defn list-duplicate-apps-by-id
+  [app-name app-id-set]
+  (select :apps
+          (fields :id :name :description)
+          (where {(normalize-string :name) (normalize-string app-name)
+                  :deleted                 false
+                  :id                      [in app-id-set]})))
+
 (defn- list-duplicate-apps*
   [app-name app-id category-id-set]
   (select [:apps :a]

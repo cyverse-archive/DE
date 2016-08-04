@@ -5,7 +5,7 @@
         [kameleon.core]
         [kameleon.entities]
         [kameleon.queries :only [parameter-types-for-tool-type]]
-        [apps.persistence.app-metadata :only [get-app list-duplicate-apps]])
+        [apps.persistence.app-metadata :only [get-app list-duplicate-apps list-duplicate-apps-by-id]])
   (:require [apps.clients.permissions :as perms-client]
             [apps.service.apps.de.permissions :as perms]
             [clojure.string :as string]))
@@ -152,8 +152,7 @@
   "An app with the same name already exists in one of the same categories.")
 
 (defn validate-app-name
-  "Verifies that an app with the same name doesn't already exist in any of the same app categories. The beta
-   category is treated as an exception because it's intended to be a staging area for new apps."
+  "Verifies that an app with the same name doesn't already exist in any of the same app categories."
   ([app-name app-id]
      (validate-app-name app-name app-id nil))
   ([app-name app-id category-ids]
@@ -166,3 +165,9 @@
        (if (seq category-ids)
          (exists duplicate-app-selected-categories-msg :app_name app-name :category_ids category-ids :path path)
          (exists duplicate-app-existing-categories-msg :app_name app-name :app_id app-id :path path)))))
+
+(defn validate-app-name-in-hierarchy
+  [app-name app-ids]
+  (let [duplicate-apps (list-duplicate-apps-by-id app-name app-ids)]
+    (when-not (empty? duplicate-apps)
+      (exists duplicate-app-existing-categories-msg :app_name app-name :apps duplicate-apps))))

@@ -8,6 +8,7 @@
             [kameleon.app-groups :as app-groups]
             [apps.persistence.app-metadata :as persistence]
             [apps.persistence.categories :as db-categories]
+            [apps.service.apps.de.categorization :as categorization]
             [apps.service.apps.de.validation :as av]
             [clojure-commons.exception-util :as ex-util]
             [metadata-client.core :as metadata-client]))
@@ -89,10 +90,11 @@
 (defn update-app
   "This service updates high-level details and labels in an App, and can mark or unmark the app as
    deleted or disabled in the database."
-  [{app-name :name app-id :id :as app}]
+  [{username :shortUsername} {app-name :name app-id :id :as app}]
   (transaction
    (validate-app-existence app-id)
    (when-not (nil? app-name)
+     (categorization/validate-app-name-in-current-hierarchy username app-id app-name)
      (av/validate-app-name app-name app-id))
    (if (empty? (select-keys app [:name :description :wiki_url :references :groups]))
      (update-app-deleted-disabled app)
