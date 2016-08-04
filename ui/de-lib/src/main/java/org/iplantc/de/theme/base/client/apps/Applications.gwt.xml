@@ -78,4 +78,10 @@
     <replace-with class="org.iplantc.de.theme.base.client.apps.details.doc.AppDocMarkdownDialogDefaultAppearance">
         <when-type-is class="org.iplantc.de.apps.client.views.details.doc.AppDocMarkdownDialog.AppDocMarkdownDialogAppearance"/>
     </replace-with>
+
+
+    <!--Launch Widget-->
+    <replace-with class="org.iplantc.de.theme.base.client.apps.widgets.AppLaunchViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.apps.widgets.client.view.AppLaunchView.AppLaunchViewAppearance"/>
+    </replace-with>
 </module>

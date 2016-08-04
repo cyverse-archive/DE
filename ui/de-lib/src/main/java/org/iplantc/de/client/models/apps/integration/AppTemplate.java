@@ -65,4 +65,6 @@ public interface AppTemplate extends HasId, HasLabel, HasName, HasDescription {
 
     @PropertyName("app_type")
     String getAppType();
+
+    Boolean isDeleted();
 }

@@ -43,14 +43,18 @@ public class AppLaunchViewImpl extends Composite implements AppLaunchView {
 
     private final LaunchAnalysisView law;
 
+    AppLaunchViewAppearance appearance;
+
     @Inject
     public AppLaunchViewImpl(final AppWizardViewUIUiBinder binder,
                              final LaunchAnalysisView law,
                              final AppTemplateForm wizard,
-                             final AppTemplateUtils appTemplateUtils) {
+                             final AppTemplateUtils appTemplateUtils,
+                             AppLaunchViewAppearance appearance) {
         this.law = law;
         this.wizard = wizard;
         this.appTemplateUtils = appTemplateUtils;
+        this.appearance = appearance;
         initWidget(binder.createAndBindUi(this));
         editorDriver.initialize(this);
     }
@@ -71,6 +75,11 @@ public class AppLaunchViewImpl extends Composite implements AppLaunchView {
         law.edit(je, appTemplate.getAppType());
         editorDriver.edit(appTemplate);
         wizard.insertFirstInAccordion(law);
+
+        if (appTemplate.isDeleted()) {
+            mask(appearance.deprecatedAppMask());
+            launchButton.setEnabled(false);
+        }
     }
 
     @UiHandler("launchButton")

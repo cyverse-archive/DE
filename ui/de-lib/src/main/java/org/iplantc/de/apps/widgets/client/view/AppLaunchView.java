@@ -22,6 +22,10 @@ import com.google.gwt.user.client.ui.IsWidget;
  */
 public interface AppLaunchView extends IsWidget, Editor<AppTemplate>, HasRequestAnalysisLaunchHandlers {
 
+    interface AppLaunchViewAppearance {
+        String deprecatedAppMask();
+    }
+
     /**
      * FIXME JDS Re-evaluate necessity for two different presenters.
      * 
