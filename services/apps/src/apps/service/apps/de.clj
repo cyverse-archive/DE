@@ -1,7 +1,6 @@
 (ns apps.service.apps.de
   (:use [kameleon.uuids :only [uuidify]])
   (:require [clojure.string :as string]
-            [clojure.tools.logging :as log]
             [apps.clients.jex :as jex]
             [apps.persistence.app-metadata :as ap]
             [apps.persistence.jobs :as jp]
@@ -202,7 +201,7 @@
     (app-admin/delete-app app-id))
 
   (adminUpdateApp [_ body]
-    (app-admin/update-app body))
+    (app-admin/update-app user body))
 
   (getAdminAppCategories [_ params]
     (listings/get-admin-app-groups user params))

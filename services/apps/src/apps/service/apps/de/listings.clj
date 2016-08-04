@@ -14,7 +14,7 @@
         [apps.workspace])
   (:require [apps.clients.permissions :as perms-client]
             [apps.persistence.app-metadata :refer [get-app get-app-tools] :as amp]
-            [apps.persistence.categories :as db-categories]
+            [apps.service.apps.de.categorization :as categorization]
             [apps.service.apps.de.permissions :as perms]
             [cemerick.url :as curl]
             [metadata-client.core :as metadata-client]))
@@ -40,17 +40,9 @@
   ([params short-username]
    (augment-listing-params params short-username (perms-client/load-app-permissions short-username))))
 
-(defn- get-active-hierarchy-version
-  []
-  (let [version (db-categories/get-active-hierarchy-version)]
-    (when-not version
-      (throw+ {:type  :clojure-commons.exception/not-found
-               :error "An app hierarchy version has not been set."}))
-    version))
-
 (defn list-hierarchies
   [{:keys [username]}]
-  (metadata-client/list-hierarchies username (get-active-hierarchy-version)))
+  (metadata-client/list-hierarchies username (categorization/get-active-hierarchy-version)))
 
 (defn- fix-sort-params
   [params]
@@ -178,7 +170,7 @@
 
 (defn get-app-hierarchy
   ([user root-iri attr]
-   (get-app-hierarchy user (get-active-hierarchy-version) root-iri attr))
+   (get-app-hierarchy user (categorization/get-active-hierarchy-version) root-iri attr))
   ([{:keys [username shortUsername]} ontology-version root-iri attr]
    (let [app-ids (get-visible-app-ids shortUsername)]
      (metadata-client/filter-hierarchy username ontology-version root-iri attr ["app"] app-ids))))
@@ -267,11 +259,9 @@
 (defn- app-ids->beta-ids-set
   "Filters the given list of app-ids into a set containing the ids of apps marked as `beta`"
   [username app-ids]
-  (set (metadata-client/filter-by-attr-value username
-                                             (workspace-metadata-beta-attr-iri)
-                                             (workspace-metadata-beta-value)
-                                             ["app"]
-                                             app-ids)))
+  (let [beta-avu {:attr (workspace-metadata-beta-attr-iri)
+                  :value (workspace-metadata-beta-value)}]
+    (set (metadata-client/filter-by-avus username ["app"] app-ids [beta-avu]))))
 
 (defn- apps-listing-with-metadata-filter
   [{:keys [username shortUsername]} params metadata-filter]
@@ -288,14 +278,14 @@
 
 (defn list-apps-under-hierarchy
   ([user root-iri attr params]
-   (list-apps-under-hierarchy user (get-active-hierarchy-version) root-iri attr params))
+   (list-apps-under-hierarchy user (categorization/get-active-hierarchy-version) root-iri attr params))
   ([{:keys [username] :as user} ontology-version root-iri attr params]
    (let [metadata-filter (partial metadata-client/filter-hierarchy-targets username ontology-version root-iri attr ["app"])]
      (apps-listing-with-metadata-filter user params metadata-filter))))
 
 (defn get-unclassified-app-listing
   ([user root-iri attr params]
-   (get-unclassified-app-listing user (get-active-hierarchy-version) root-iri attr params))
+   (get-unclassified-app-listing user (categorization/get-active-hierarchy-version) root-iri attr params))
   ([{:keys [username] :as user} ontology-version root-iri attr params]
    (let [metadata-filter (partial metadata-client/filter-unclassified username ontology-version root-iri attr ["app"])]
      (apps-listing-with-metadata-filter user params metadata-filter))))
@@ -402,7 +392,7 @@
              :categories           (get-groups-for-app app-id)
              :suggested_categories (get-suggested-groups-for-app app-id))
       (merge (metadata-client/filter-hierarchies username
-                                                 (get-active-hierarchy-version)
+                                                 (categorization/get-active-hierarchy-version)
                                                  (workspace-metadata-category-attrs)
                                                  "app"
                                                  app-id))

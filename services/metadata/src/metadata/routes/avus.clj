@@ -10,14 +10,14 @@
     :tags ["avus"]
 
     (POST* "/filter-targets" []
-           :query [{:keys [attr value user]} FilterByAvuParams]
-           :body [{:keys [target-types target-ids]} TargetFilterRequest]
+           :query [{:keys [user]} StandardUserQueryParams]
+           :body [{:keys [target-types target-ids avus]} FilterByAvusRequest]
            :return TargetIDList
            :summary "Filter Targets by AVU"
            :description
            "Filters the given target IDs by returning a list of any that have metadata with the given
-            `attr` and `value`."
-           (ok (avus/filter-targets-by-attr-value attr value target-types target-ids)))
+            `attrs` and `values`."
+           (ok (avus/filter-targets-by-avus target-types target-ids avus)))
 
     (GET* "/:target-type/:target-id" []
           :path-params [target-id :- TargetIdPathParam

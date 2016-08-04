@@ -6,11 +6,16 @@
             [metadata.amqp :as amqp]
             [metadata.persistence.avu :as persistence]))
 
-(defn filter-targets-by-attr-value
-  "Filters the given target IDs by returning a list of any that have the given attr and value applied."
-  [attr value target-types target-ids]
-  {:target-ids (map :target_id
-                    (persistence/filter-targets-by-attr-values target-types target-ids attr [value]))})
+(defn- filter-targets-by-attr-values
+  [target-types target-ids [attr avus]]
+  (persistence/filter-targets-by-attr-values target-types target-ids attr (map :value avus)))
+
+(defn filter-targets-by-avus
+  "Filters the given target IDs by returning a list of any that have the given attrs and values applied."
+  [target-types target-ids avus]
+  (let [found-targets (mapcat (partial filter-targets-by-attr-values target-types target-ids)
+                              (group-by :attr avus))]
+    {:target-ids (seq (set (map :target_id found-targets)))}))
 
 (defn- format-avu
   "Formats the given AVU for adding or updating."

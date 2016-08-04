@@ -126,6 +126,7 @@
           :query [params SecuredQueryParamsEmailRequired]
           :body [body (describe App "The App to update.")]
           :return App
+          :middlewares [wrap-metadata-base-url]
           :summary "Update App Labels"
           :description "This service is capable of updating just the labels within a single-step app, and
           it allows apps that have already been made available for public use to be updated, which
@@ -142,6 +143,7 @@
         :query [params SecuredQueryParamsEmailRequired]
         :body [body (describe AppRequest "The App to update.")]
         :return App
+        :middlewares [wrap-metadata-base-url]
         :summary "Update an App"
         :description "This service updates a single-step App in the database, as long as the App has not
         been submitted for public use."

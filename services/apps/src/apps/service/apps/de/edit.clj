@@ -16,7 +16,8 @@
         [slingshot.slingshot :only [throw+]])
   (:require [clojure.set :as set]
             [apps.clients.permissions :as permissions]
-            [apps.persistence.app-metadata :as persistence]))
+            [apps.persistence.app-metadata :as persistence]
+            [apps.service.apps.de.categorization :as categorization]))
 
 (def ^:private copy-prefix "Copy of ")
 (def ^:private max-app-name-len 255)
@@ -350,6 +351,7 @@
   [user {app-id :id app-name :name :keys [references groups] :as app}]
   (verify-app-editable user (persistence/get-app app-id))
   (transaction
+    (categorization/validate-app-name-in-current-hierarchy (:shortUsername user) app-id app-name)
     (validate-app-name app-name app-id)
     (persistence/update-app app)
     (let [tool-id (->> app :tools first :id)
@@ -466,6 +468,7 @@
     (when-not (user-owns-app? user app)
       (verify-app-permission user app "write")))
   (transaction
+   (categorization/validate-app-name-in-current-hierarchy (:shortUsername user) app-id app-name)
    (validate-app-name app-name app-id)
    (persistence/update-app-labels body))
   (get-app-ui user app-id))
