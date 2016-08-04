@@ -1,5 +1,7 @@
 package org.iplantc.de.apps.client.presenter.hierarchies;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.iplantc.de.apps.client.OntologyHierarchiesView;
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
@@ -310,17 +312,17 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
     @Override
     public void onDetailsHierarchyClicked(DetailsHierarchyClicked event) {
         OntologyHierarchy hierarchy = event.getHierarchy();
-        if (hierarchy != null) {
-            String id = ontologyUtil.getOrCreateHierarchyPathTag(hierarchy);
-            for (int i = 0 ; i < viewTabPanel.getWidgetCount() ; i++) {
-                Tree<OntologyHierarchy, String> tree = ((Tree)viewTabPanel.getWidget(i));
-                OntologyHierarchy selectedHierarchy = tree.getStore().findModelWithKey(id);
-                if (selectedHierarchy != null) {
-                    viewTabPanel.setActiveWidget(tree);
-                    tree.scrollIntoView(selectedHierarchy);
-                    tree.getSelectionModel().select(selectedHierarchy, true);
-                    break;
-                }
+        checkNotNull(hierarchy);
+
+        String id = ontologyUtil.getOrCreateHierarchyPathTag(hierarchy);
+        for (int i = 0; i < viewTabPanel.getWidgetCount(); i++) {
+            Tree<OntologyHierarchy, String> tree = ((Tree)viewTabPanel.getWidget(i));
+            OntologyHierarchy selectedHierarchy = tree.getStore().findModelWithKey(id);
+            if (selectedHierarchy != null) {
+                viewTabPanel.setActiveWidget(tree);
+                tree.scrollIntoView(selectedHierarchy);
+                tree.getSelectionModel().select(selectedHierarchy, true);
+                break;
             }
         }
     }
@@ -328,16 +330,16 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
     @Override
     public void onDetailsCategoryClicked(DetailsCategoryClicked event) {
         AppCategory category = event.getCategory();
-        if (category != null) {
-            for (int i = 0 ; i < viewTabPanel.getWidgetCount() ; i++) {
-                Tree<AppCategory, String> tree = ((Tree)viewTabPanel.getWidget(i));
-                AppCategory selectedCategory = tree.getStore().findModelWithKey(category.getId());
-                if (selectedCategory != null) {
-                    viewTabPanel.setActiveWidget(tree);
-                    tree.scrollIntoView(selectedCategory);
-                    tree.getSelectionModel().select(selectedCategory, true);
-                    break;
-                }
+        checkNotNull(category);
+
+        for (int i = 0 ; i < viewTabPanel.getWidgetCount() ; i++) {
+            Tree<AppCategory, String> tree = ((Tree)viewTabPanel.getWidget(i));
+            AppCategory selectedCategory = tree.getStore().findModelWithKey(category.getId());
+            if (selectedCategory != null) {
+                viewTabPanel.setActiveWidget(tree);
+                tree.scrollIntoView(selectedCategory);
+                tree.getSelectionModel().select(selectedCategory, true);
+                break;
             }
         }
     }
