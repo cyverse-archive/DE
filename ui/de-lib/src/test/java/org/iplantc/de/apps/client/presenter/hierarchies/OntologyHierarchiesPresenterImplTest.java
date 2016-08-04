@@ -5,6 +5,7 @@ import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.isA;
+import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -101,8 +102,10 @@ public class OntologyHierarchiesPresenterImplTest {
     @Mock AppCategory appCategoryMock;
     @Mock List<AppCategory> appCategoryListMock;
     @Mock List<OntologyHierarchy> unclassifiedHierarchiesMock;
+    @Mock OntologyHierarchy unclassifiedMock;
 
     @Captor ArgumentCaptor<AsyncCallback<List<OntologyHierarchy>>> hierarchyListCallback;
+    @Captor ArgumentCaptor<AsyncCallback<OntologyHierarchy>> hierarchyCallback;
     @Captor ArgumentCaptor<AsyncCallback<AppDetailsDialog>> appDetailsDialogCallback;
     @Captor ArgumentCaptor<AsyncCallback<App>> appDetailsCallback;
     @Captor ArgumentCaptor<AsyncCallback<List<Avu>>> appAvuCallbackCaptor;
@@ -116,8 +119,10 @@ public class OntologyHierarchiesPresenterImplTest {
         when(avuListMock.size()).thenReturn(1);
         when(avuIteratorMock.hasNext()).thenReturn(true, false);
         when(avuIteratorMock.next()).thenReturn(avuMock);
+        when(hierarchyMock.getIri()).thenReturn("iri");
         when(hierarchyMock.getLabel()).thenReturn("string");
         when(hierarchyMock.getLabel().toLowerCase()).thenReturn("string");
+        when(hierarchyMock.getSubclasses()).thenReturn(hierarchyListMock);
         when(hierarchyListMock.iterator()).thenReturn(hierarchyListIterator);
         when(hierarchyListMock.size()).thenReturn(1);
         when(hierarchyListIterator.hasNext()).thenReturn(true, false);
@@ -143,6 +148,7 @@ public class OntologyHierarchiesPresenterImplTest {
         when(categoryTreeMock.getId()).thenReturn("id");
         when(unclassifiedHierarchiesMock.size()).thenReturn(2);
         when(unclassifiedHierarchiesMock.iterator()).thenReturn(hierarchyListIterator);
+        when(ontologyUtilMock.addUnclassifiedChild(hierarchyMock)).thenReturn(unclassifiedMock);
 
         uut = new OntologyHierarchiesPresenterImpl(factoryMock,
                                                    ontologyServiceMock,
@@ -407,5 +413,23 @@ public class OntologyHierarchiesPresenterImplTest {
         verify(categoryTreeStoreMock).findModelWithKey(anyString());
         verify(tabPanelMock).setActiveWidget(eq(categoryTreeMock));
         verify(categoryTreeSelectionModelMock).select(eq(appCategoryMock), anyBoolean());
+    }
+
+    @Test
+    public void testGetFilteredHierarchies() {
+        when(ontologyUtilMock.convertHierarchyToAvu(hierarchyMock)).thenReturn(avuMock);
+
+        OntologyHierarchiesPresenterImpl spy = spy(uut);
+
+        /*** CALL METHOD UNDER TEST ***/
+        spy.getFilteredHierarchies(hierarchyMock, hierarchyTreeMock);
+        verify(ontologyServiceMock).getFilteredHierarchies(anyString(), eq(avuMock), hierarchyCallback.capture());
+
+        hierarchyCallback.getValue().onSuccess(hierarchyMock);
+        verify(ontologyUtilMock).addUnclassifiedChild(eq(hierarchyMock));
+        verify(unclassifiedHierarchiesMock).add(eq(unclassifiedMock));
+        verify(ontologyUtilMock).getOrCreateHierarchyPathTag(hierarchyMock);
+        verify(spy).addHierarchies(eq(hierarchyTreeStoreMock), isNull(OntologyHierarchy.class), eq(hierarchyListMock));
+        verify(hierarchyTreeMock).unmask();
     }
 }
