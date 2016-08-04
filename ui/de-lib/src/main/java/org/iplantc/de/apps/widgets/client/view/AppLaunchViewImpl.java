@@ -5,6 +5,7 @@ import org.iplantc.de.apps.widgets.client.events.RequestAnalysisLaunchEvent.Requ
 import org.iplantc.de.client.models.apps.integration.AppTemplate;
 import org.iplantc.de.client.models.apps.integration.JobExecution;
 import org.iplantc.de.client.util.AppTemplateUtils;
+import org.iplantc.de.commons.client.widgets.CustomMask;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
@@ -42,6 +43,7 @@ public class AppLaunchViewImpl extends Composite implements AppLaunchView {
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
     private final LaunchAnalysisView law;
+    private CustomMask customMask;
 
     AppLaunchViewAppearance appearance;
 
@@ -50,11 +52,13 @@ public class AppLaunchViewImpl extends Composite implements AppLaunchView {
                              final LaunchAnalysisView law,
                              final AppTemplateForm wizard,
                              final AppTemplateUtils appTemplateUtils,
-                             AppLaunchViewAppearance appearance) {
+                             AppLaunchViewAppearance appearance,
+                             CustomMask customMask) {
         this.law = law;
         this.wizard = wizard;
         this.appTemplateUtils = appTemplateUtils;
         this.appearance = appearance;
+        this.customMask = customMask;
         initWidget(binder.createAndBindUi(this));
         editorDriver.initialize(this);
     }
@@ -102,5 +106,12 @@ public class AppLaunchViewImpl extends Composite implements AppLaunchView {
             mask();
             launchButton.setEnabled(false);
         }
+    }
+
+    @Override
+    public void mask(String message) {
+        mask = true;
+        maskMessage = message;
+        customMask.mask(this, message);
     }
 }
