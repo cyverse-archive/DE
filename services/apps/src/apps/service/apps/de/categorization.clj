@@ -13,9 +13,9 @@
             [metadata-client.core :as metadata-client]))
 
 (defn get-active-hierarchy-version
-  []
+  [& {:keys [validate] :or {validate true}}]
   (let [version (db-categories/get-active-hierarchy-version)]
-    (when-not version
+    (when (and validate (empty? version))
       (throw+ {:type  :clojure-commons.exception/not-found
                :error "An app hierarchy version has not been set."}))
     version))

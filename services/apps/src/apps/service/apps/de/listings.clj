@@ -378,6 +378,18 @@
   [{:keys [id wiki_url] :as app}]
   (assoc app :wiki_url (if (get-documentation id) nil wiki_url)))
 
+(defn- format-app-hierarchies
+  [{app-id :id :as app} username]
+  (let [ontology-version (categorization/get-active-hierarchy-version :validate false)
+        hierarchies      (if ontology-version
+                           (metadata-client/filter-hierarchies username
+                                                               ontology-version
+                                                               (workspace-metadata-category-attrs)
+                                                               "app"
+                                                               app-id)
+                           {:hierarchies []})]
+    (merge app hierarchies)))
+
 (defn- format-app-details
   "Formats information for the get-app-details service."
   [username details tools]
@@ -391,11 +403,7 @@
              :tools                (map remove-nil-vals tools)
              :categories           (get-groups-for-app app-id)
              :suggested_categories (get-suggested-groups-for-app app-id))
-      (merge (metadata-client/filter-hierarchies username
-                                                 (categorization/get-active-hierarchy-version)
-                                                 (workspace-metadata-category-attrs)
-                                                 "app"
-                                                 app-id))
+      (format-app-hierarchies username)
       format-wiki-url)))
 
 ;; FIXME: remove the code to bypass the permission checks for admin users when we have a better
