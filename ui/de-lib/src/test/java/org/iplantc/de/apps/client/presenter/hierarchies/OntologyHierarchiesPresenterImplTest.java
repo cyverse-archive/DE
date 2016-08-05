@@ -37,6 +37,7 @@ import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.services.OntologyServiceFacade;
 import org.iplantc.de.client.util.OntologyUtil;
+import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.widgets.DETabPanel;
 
@@ -131,6 +132,7 @@ public class OntologyHierarchiesPresenterImplTest {
         when(ontologyUtilMock.getOrCreateHierarchyPathTag(hierarchyMock)).thenReturn("id");
         when(factoryMock.create(hierarchyTreeStoreMock)).thenReturn(viewMock);
         when(appearanceMock.hierarchyLabelName(hierarchyMock)).thenReturn("string");
+        when(appearanceMock.ontologyAttrMatchingFailure()).thenReturn("string");
         when(viewMock.asWidget()).thenReturn(randomWidgetMock);
         when(viewMock.getTree()).thenReturn(hierarchyTreeMock);
         when(hierarchyTreeMock.getSelectionModel()).thenReturn(treeSelectionModelMock);
@@ -177,7 +179,9 @@ public class OntologyHierarchiesPresenterImplTest {
 
 
     @Test
-    public void testGo() throws Exception {
+    public void testGo_validIriToAttrMap() throws Exception {
+        when(ontologyUtilMock.createIriToAttrMap(hierarchyListMock)).thenReturn(true);
+
         uut = new OntologyHierarchiesPresenterImpl(factoryMock,
                                                    ontologyServiceMock,
                                                    eventBusMock,
@@ -198,6 +202,36 @@ public class OntologyHierarchiesPresenterImplTest {
         verify(ontologyServiceMock).getRootHierarchies(hierarchyListCallback.capture());
 
         hierarchyListCallback.getValue().onSuccess(hierarchyListMock);
+        verify(ontologyUtilMock).createIriToAttrMap(eq(hierarchyListMock));
+        verifyNoMoreInteractions(ontologyServiceMock, ontologyUtilMock, eventBusMock);
+    }
+
+    @Test
+    public void testGo_invalidIriToAttrMap() throws Exception {
+        when(ontologyUtilMock.createIriToAttrMap(hierarchyListMock)).thenReturn(false);
+
+        uut = new OntologyHierarchiesPresenterImpl(factoryMock,
+                                                   ontologyServiceMock,
+                                                   eventBusMock,
+                                                   appearanceMock) {
+            @Override
+            void createViewTabs(List<OntologyHierarchy> results) {
+            }
+        };
+        uut.ontologyUtil = ontologyUtilMock;
+        uut.announcer = announcerMock;
+        uut.appDetailsDlgAsyncProvider = appDetailsDialogProviderMock;
+        uut.appUserService = appUserServiceMock;
+        uut.handlerManager = handlerManagerMock;
+        uut.iriToHierarchyMap = iriToHierarchyMapMock;
+
+        /** CALL METHOD UNDER TEST **/
+        uut.go(tabPanelMock);
+        verify(ontologyServiceMock).getRootHierarchies(hierarchyListCallback.capture());
+
+        hierarchyListCallback.getValue().onSuccess(hierarchyListMock);
+        verify(ontologyUtilMock).createIriToAttrMap(eq(hierarchyListMock));
+        verify(announcerMock).schedule(isA(ErrorAnnouncementConfig.class));
         verifyNoMoreInteractions(ontologyServiceMock, ontologyUtilMock, eventBusMock);
     }
 

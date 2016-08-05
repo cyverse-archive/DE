@@ -82,12 +82,13 @@ public class OntologyUtil {
      * @return
      */
     public boolean createIriToAttrMap(List<OntologyHierarchy> result) {
-        if (properties.getOntologyAttrs() == null) {
+        String attrs = properties.getOntologyAttrs();
+        if (attrs == null) {
             return false;
         }
 
         iriToAttrMap.clear();
-        buildIriToAttrMap(properties.getOntologyAttrs());
+        buildIriToAttrMap(attrs);
 
         return isValidIriMap(result);
     }
@@ -110,7 +111,8 @@ public class OntologyUtil {
         JSONObject map = jsonUtil.getObject(ontologyAttr);
 
         for (String key : map.keySet()) {
-            iriToAttrMap.put(key, jsonUtil.getString(map, key));
+            String value = jsonUtil.getString(map, key);
+            iriToAttrMap.put(key, value);
         }
     }
 

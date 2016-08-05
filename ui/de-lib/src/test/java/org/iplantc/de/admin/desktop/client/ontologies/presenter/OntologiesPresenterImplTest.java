@@ -127,6 +127,7 @@ public class OntologiesPresenterImplTest {
         when(appearanceMock.appAvusCleared(Matchers.<App> any())).thenReturn("success");
         when(appearanceMock.ontologyDeleted(anyString())).thenReturn("success");
         when(appearanceMock.hierarchyDeleted(anyString())).thenReturn("success");
+        when(appearanceMock.ontologyAttrMatchingError()).thenReturn("fail");
         when(oldGridViewMock.getGrid()).thenReturn(oldGridMock);
         when(oldGridPresenterMock.getView()).thenReturn(oldGridViewMock);
         when(newGridPresenterMock.getView()).thenReturn(newGridViewMock);
@@ -346,6 +347,10 @@ public class OntologiesPresenterImplTest {
             @Override
             void addHierarchies(OntologyHierarchy parent, List<OntologyHierarchy> children) {
             }
+
+            @Override
+            void displayErrorToAdmin() {
+            }
         };
 
         /** CALL METHOD UNDER TEST **/
@@ -384,9 +389,19 @@ public class OntologiesPresenterImplTest {
             @Override
             void addHierarchies(OntologyHierarchy parent, List<OntologyHierarchy> children) {
             }
+
+            @Override
+            boolean isValidHierarchy(OntologyHierarchy result) {
+                return true;
+            }
+
+            @Override
+            void displayErrorToAdmin() {
+            }
         };
         uut.properties = propertiesMock;
         uut.announcer = announcerMock;
+        uut.ontologyUtil = utilMock;
 
         /** CALL METHOD UNDER TEST **/
         uut.onSaveOntologyHierarchy(eventMock);
@@ -395,6 +410,16 @@ public class OntologiesPresenterImplTest {
                                                         asyncOntologyHierarchyCaptor.capture());
 
         asyncOntologyHierarchyCaptor.getValue().onSuccess(ontologyHierarchyMock);
+
+        verify(serviceFacadeMock).getOntologyHierarchies(anyString(), asyncOntologyHierarchyListCaptor.capture());
+
+        asyncOntologyHierarchyListCaptor.getValue().onSuccess(ontologyHierarchyListMock);
+
+        verify(viewMock).clearStore();
+        verify(utilMock).createIriToAttrMap(eq(ontologyHierarchyListMock));
+        verify(viewMock, times(3)).maskHierarchyTree();
+        verify(viewMock).unMaskHierarchyTree();
+        verify(viewMock).updateButtonStatus();
 
         verify(viewMock).showTreePanel();
 
