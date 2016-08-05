@@ -2,7 +2,7 @@
   (:use [clojure.test]
         [apps.persistence.categories]
         [apps.test-fixtures :only [run-integration-tests with-test-db]]
-        [korma.core]))
+        [korma.core :exclude [update]]))
 
 (defn clean-up-hierarchy-versions [f]
   (f)

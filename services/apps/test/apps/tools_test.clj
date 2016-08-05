@@ -3,7 +3,7 @@
         [clojure.test]
         [apps.tools]
         [korma.db]
-        [korma.core]
+        [korma.core :exclude [update]]
         [kameleon.entities])
   (:require [korma.core :as sql]))
 
