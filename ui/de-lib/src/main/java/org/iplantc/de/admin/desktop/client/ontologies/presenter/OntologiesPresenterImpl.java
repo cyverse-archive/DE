@@ -138,6 +138,10 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
             if (result.size() == 0) {
                 view.showEmptyTreePanel();
             } else {
+                boolean isValid = ontologyUtil.createIriToAttrMap(result);
+                if (!isValid) {
+                    ErrorHandler.post(appearance.ontologyAttrMatchingError());
+                }
                 view.maskHierarchyTree();
                 addHierarchies(null, result);
             }

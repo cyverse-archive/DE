@@ -82,4 +82,6 @@ public interface OntologyDisplayStrings extends Messages{
     String confirmDeleteAppWarning(String name);
 
     String externalAppDND(String appLabels);
+
+    String ontologyAttrMatchingError();
 }

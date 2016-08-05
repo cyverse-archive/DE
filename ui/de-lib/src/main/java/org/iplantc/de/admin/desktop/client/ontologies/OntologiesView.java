@@ -205,6 +205,8 @@ public interface OntologiesView extends IsWidget,
         String confirmDeleteAppTitle();
 
         String externalAppDND(String appLabels);
+
+        String ontologyAttrMatchingError();
     }
 
     interface Presenter {

@@ -390,4 +390,8 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     public String externalAppDND(String appLabels) {
         return displayStrings.externalAppDND(appLabels);
     }
+
+    public String ontologyAttrMatchingError() {
+        return displayStrings.ontologyAttrMatchingError();
+    }
 }

@@ -10,13 +10,17 @@ import org.iplantc.de.shared.DEProperties;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.json.client.JSONObject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
+
+import com.sencha.gxt.core.shared.FastMap;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author aramsey
@@ -30,18 +34,18 @@ public class OntologyUtil {
         }
     }
 
+    JsonUtil jsonUtil;
     private static OntologyUtil INSTANCE;
     OntologyAutoBeanFactory factory;
     AvuAutoBeanFactory avuFactory;
     DEProperties properties;
 
-    final String OPERATION_ATTR = "rdf:type";
-    final String TOPIC_ATTR = "http://edamontology.org/has_topic";
     final String LABEL_ATTR = "rdfs:label";
     final String LABEL_UNIT = "value";
 
     final String UNCLASSIFIED_LABEL = "Unclassified";
     final String UNCLASSIFIED_IRI_APPEND = "_unclassified";
+    Map<String, String> iriToAttrMap = new FastMap<>();
 
     final String BETA_ATTR;
     final String BETA_VALUE;
@@ -55,6 +59,7 @@ public class OntologyUtil {
         factory = GWT.create(OntologyAutoBeanFactory.class);
         avuFactory = GWT.create(AvuAutoBeanFactory.class);
         properties = DEProperties.getInstance();
+        jsonUtil = JsonUtil.getInstance();
 
         BETA_ATTR = properties.getBetaAvuIri();
         BETA_VALUE = properties.getBetaAvuValue();
@@ -67,6 +72,46 @@ public class OntologyUtil {
             INSTANCE = new OntologyUtil();
         }
         return INSTANCE;
+    }
+
+    /**
+     * Creates a mapping from a JSON object in the configs
+     * The mapping is from a regex which should match a set of hierarchy IRIs
+     * to the corresponding attribute needed for metadata for those hierarchies
+     * @param result
+     * @return
+     */
+    public boolean createIriToAttrMap(List<OntologyHierarchy> result) {
+        if (properties.getOntologyAttrs() == null) {
+            return false;
+        }
+
+        iriToAttrMap.clear();
+        buildIriToAttrMap(properties.getOntologyAttrs());
+
+        return isValidIriMap(result);
+    }
+
+    public boolean isValidIriMap(List<OntologyHierarchy> hierarchies) {
+        if (iriToAttrMap == null || iriToAttrMap.size() == 0) {
+            return false;
+        }
+
+        for (OntologyHierarchy hierarchy : hierarchies) {
+            if (Strings.isNullOrEmpty(getAttr(hierarchy))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public void buildIriToAttrMap(String ontologyAttr) {
+        JSONObject map = jsonUtil.getObject(ontologyAttr);
+
+        for (String key : map.keySet()) {
+            iriToAttrMap.put(key, jsonUtil.getString(map, key));
+        }
     }
 
     public OntologyHierarchyNameComparator getOntologyNameComparator() {
@@ -97,12 +142,12 @@ public class OntologyUtil {
 
 
     public String getAttr(OntologyHierarchy hierarchy) {
-        if (hierarchy.getIri().contains("operation")){
-            return OPERATION_ATTR;
+        for (String regex : iriToAttrMap.keySet()) {
+            if (hierarchy.getIri().matches(regex)){
+                return iriToAttrMap.get(regex);
+            }
         }
-        else{
-            return TOPIC_ATTR;
-        }
+        return "";
     }
 
     public Avu convertHierarchyToAvu(OntologyHierarchy hierarchy) {
