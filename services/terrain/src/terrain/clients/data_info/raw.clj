@@ -104,14 +104,15 @@
 ;; CREATE
 
 (defn upload-file
-  [user dest-path filename content-type istream]
+  [user dest-path filename content-type istream & {:keys [as] :or {as :stream}}]
   (http/post (str (url/url (cfg/data-info-base) "data"))
              {:query-params {:user user
                              :dest dest-path}
               :multipart [{:part-name "file"
                            :name filename
                            :mime-type content-type
-                           :content istream}]}))
+                           :content istream}]
+              :as as}))
 (defn create-dirs
   "Uses the data-info directories endpoint to create several directories."
   [user paths]
@@ -163,6 +164,12 @@
     [user paths]
     (request :post ["deleter"]
              (mk-req-map user (json/encode {:paths paths}))))
+
+(defn delete-data-item
+  "Uses the data-info delete by data ID endpoint to delete a single data item."
+  [user data-id]
+  (request :delete ["data" data-id]
+           (mk-req-map user)))
 
 (defn delete-contents
     "Uses the data-info delete-children endpoint to delete the contents of a directory."
