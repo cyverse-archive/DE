@@ -20,9 +20,9 @@
                                         :unit  ""}]
                                 :irods-avus []})
 
-    (let [data-id (:id integration/test-data-item)
-          {:keys [irods-avus metadata]} (data-info/get-metadata-json integration/test-user data-id)
-          ezid-metadata (parse-valid-ezid-metadata integration/test-data-item irods-avus metadata)]
+    (let [data-id       (:id integration/test-data-item)
+          metadata      (data-info/get-metadata-json integration/test-user data-id)
+          ezid-metadata (parse-valid-ezid-metadata integration/test-data-item metadata)]
       (is (contains? ezid-metadata @ezid-target-attr)))
 
     (data-info-client/set-avus integration/test-user (:id integration/test-data-item) {:irods-avus []})))
