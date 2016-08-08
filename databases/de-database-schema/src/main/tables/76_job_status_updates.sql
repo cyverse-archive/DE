@@ -45,7 +45,7 @@ CREATE TABLE job_status_updates (
     -- The date that the record was created by whichever service adds the record.
     -- This is not the date that the update was sent.
     created_date timestamp NOT NULL DEFAULT now()
-)
+);
 
 ---
 --- Create some indices on the columns often referenced by queries in job-status-to-apps-adapter
