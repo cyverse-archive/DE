@@ -21,4 +21,7 @@
   (let [icat-cfg ((comp icat/init props->icat-cfg) props)]
     (icat/with-icat icat-cfg
       (esc/purge-index props)
-      (icat/reindex icat-cfg))))
+      (icat/reindex icat-cfg)))
+  ; hint to garbage-collect after a reindex so Infosquito doesn't sit around
+  ; taking up memory/getting swapped out until the next time it runs
+  (System/gc))
