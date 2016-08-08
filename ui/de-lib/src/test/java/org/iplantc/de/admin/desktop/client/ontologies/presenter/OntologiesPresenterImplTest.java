@@ -30,7 +30,7 @@ import org.iplantc.de.admin.desktop.client.ontologies.views.OntologyHierarchyToA
 import org.iplantc.de.admin.desktop.client.services.AppAdminServiceFacade;
 import org.iplantc.de.apps.client.AppCategoriesView;
 import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
-import org.iplantc.de.shared.DEProperties;
+import org.iplantc.de.apps.client.presenter.toolBar.proxy.AppSearchRpcProxy;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.client.models.avu.AvuAutoBeanFactory;
@@ -39,15 +39,20 @@ import org.iplantc.de.client.models.ontologies.Ontology;
 import org.iplantc.de.client.models.ontologies.OntologyAutoBeanFactory;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import org.iplantc.de.client.models.ontologies.OntologyVersionDetail;
+import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.util.OntologyUtil;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
+import org.iplantc.de.shared.DEProperties;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import com.google.web.bindery.autobean.shared.AutoBean;
 
 import com.sencha.gxt.data.shared.TreeStore;
+import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
+import com.sencha.gxt.data.shared.loader.PagingLoadResult;
+import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 
 import org.junit.Before;
@@ -104,6 +109,9 @@ public class OntologiesPresenterImplTest {
     @Mock Iterator<App> appIteratorMock;
     @Mock App appMock;
     @Mock AppAdminServiceFacade adminAppServiceMock;
+    @Mock AppServiceFacade appServiceMock;
+    @Mock AppSearchRpcProxy proxyMock;
+    @Mock PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loaderMock;
 
 
     @Captor ArgumentCaptor<AsyncCallback<List<Ontology>>> asyncCallbackOntologyListCaptor;
@@ -159,6 +167,7 @@ public class OntologiesPresenterImplTest {
         when(hierarchyIteratorMock.hasNext()).thenReturn(true, true, false);
         when(hierarchyIteratorMock.next()).thenReturn(hierarchyMock).thenReturn(hierarchyMock);
         when(factoryMock.create(Matchers.<TreeStore<OntologyHierarchy>>any(),
+                                Matchers.<PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>>>any(),
                                 isA(AppCategoriesView.class),
                                 isA(AdminAppsGridView.class),
                                 isA(AdminAppsGridView.class),
@@ -166,6 +175,7 @@ public class OntologiesPresenterImplTest {
                                 isA(AppToOntologyHierarchyDND.class))).thenReturn(viewMock);
 
         uut = new OntologiesPresenterImpl(serviceFacadeMock,
+                                          appServiceMock,
                                           treeStoreMock,
                                           factoryMock,
                                           avuFactoryMock,
@@ -173,21 +183,35 @@ public class OntologiesPresenterImplTest {
                                           categoriesPresenterMock,
                                           oldGridPresenterMock,
                                           newGridPresenterMock,
-                                          categorizeViewMock);
+                                          categorizeViewMock) {
+            @Override
+            AppSearchRpcProxy getProxy(AppServiceFacade appService) {
+                return proxyMock;
+            }
+
+            @Override
+            PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> getPagingLoader() {
+                return loaderMock;
+            }
+        };
         uut.announcer = announcerMock;
         uut.properties = propertiesMock;
         uut.ontologyUtil = utilMock;
         uut.adminAppService = adminAppServiceMock;
+        uut.proxy = proxyMock;
+        uut.loader = loaderMock;
 
-        verifyConstructor(uut);
+        verifyConstructor();
     }
 
-    void verifyConstructor(OntologiesPresenterImpl uut) {
+    void verifyConstructor() {
         verify(categoriesViewMock).addAppCategorySelectedEventHandler(eq(oldGridPresenterMock));
         verify(categoriesViewMock).addAppCategorySelectedEventHandler(eq(oldGridViewMock));
         verify(oldGridPresenterMock).addStoreRemoveHandler(eq(categoriesPresenterMock));
         verify(oldGridViewMock).addAppSelectionChangedEventHandler(eq(viewMock));
         verify(newGridViewMock).addAppSelectionChangedEventHandler(eq(viewMock));
+
+        verify(proxyMock).setHasHandlers(eq(viewMock));
 
         verify(viewMock).addRefreshOntologiesEventHandler(eq(uut));
         verify(viewMock).addSelectOntologyVersionEventHandler(eq(uut));
@@ -199,6 +223,11 @@ public class OntologiesPresenterImplTest {
         verify(viewMock).addDeleteHierarchyEventHandler(eq(uut));
         verify(viewMock).addDeleteOntologyButtonClickedEventHandler(eq(uut));
         verify(viewMock).addDeleteAppsSelectedHandler(eq(uut));
+
+        verify(viewMock).addAppSearchResultLoadEventHandler(categoriesPresenterMock);
+        verify(viewMock).addAppSearchResultLoadEventHandler(oldGridPresenterMock);
+        verify(viewMock).addAppSearchResultLoadEventHandler(oldGridViewMock);
+        verify(viewMock).addBeforeAppSearchEventHandler(oldGridViewMock);
     }
 
     @Test
@@ -269,6 +298,7 @@ public class OntologiesPresenterImplTest {
         when(targetAppMock.getName()).thenReturn("name");
 
         uut = new OntologiesPresenterImpl(serviceFacadeMock,
+                                          appServiceMock,
                                           treeStoreMock,
                                           factoryMock,
                                           avuFactoryMock,
@@ -336,6 +366,7 @@ public class OntologiesPresenterImplTest {
         when(ontologyHierarchyListMock.size()).thenReturn(1);
 
         uut = new OntologiesPresenterImpl(serviceFacadeMock,
+                                          appServiceMock,
                                           treeStoreMock,
                                           factoryMock,
                                           avuFactoryMock,
@@ -378,6 +409,7 @@ public class OntologiesPresenterImplTest {
         when(iriListMock.iterator()).thenReturn(iriIteratorMock);
 
         uut = new OntologiesPresenterImpl(serviceFacadeMock,
+                                          appServiceMock,
                                           treeStoreMock,
                                           factoryMock,
                                           avuFactoryMock,
@@ -474,6 +506,7 @@ public class OntologiesPresenterImplTest {
 
 
         uut = new OntologiesPresenterImpl(serviceFacadeMock,
+                                          appServiceMock,
                                           treeStoreMock,
                                           factoryMock,
                                           avuFactoryMock,

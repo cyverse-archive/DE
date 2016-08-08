@@ -13,8 +13,11 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersi
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.PublishOntologyDialog;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.SaveHierarchiesDialog;
 import org.iplantc.de.apps.client.AppCategoriesView;
+import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
+import org.iplantc.de.apps.client.events.BeforeAppSearchEvent;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
+import org.iplantc.de.apps.client.views.toolBar.AppSearchField;
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.ontologies.Ontology;
@@ -44,6 +47,9 @@ import com.sencha.gxt.data.shared.LabelProvider;
 import com.sencha.gxt.data.shared.SortDir;
 import com.sencha.gxt.data.shared.Store;
 import com.sencha.gxt.data.shared.TreeStore;
+import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
+import com.sencha.gxt.data.shared.loader.PagingLoadResult;
+import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.dnd.core.client.DragSource;
 import com.sencha.gxt.dnd.core.client.DropTarget;
 import com.sencha.gxt.widget.core.client.Composite;
@@ -79,6 +85,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @UiField TextButton deleteHierarchy;
     @UiField TextButton categorize;
     @UiField TextButton deleteApp;
+    @UiField AppSearchField appSearchField;
     @UiField(provided = true) OntologiesViewAppearance appearance;
     @UiField Tree<OntologyHierarchy, String> tree;
     @UiField(provided = true) AppCategoriesView categoriesView;
@@ -97,10 +104,12 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     private OntologyHierarchyToAppDND hierarchyToAppDND;
     private AppToOntologyHierarchyDND appToHierarchyDND;
     private OntologyUtil ontologyUtil = OntologyUtil.getInstance();
+    private PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
 
     @Inject
     public OntologiesViewImpl(OntologiesViewAppearance appearance,
                               @Assisted TreeStore<OntologyHierarchy> treeStore,
+                              @Assisted PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader,
                               @Assisted AppCategoriesView categoriesView,
                               @Assisted("oldGridView") AdminAppsGridView oldGridView,
                               @Assisted("newGridView") AdminAppsGridView newGridView,
@@ -108,6 +117,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
                               @Assisted AppToOntologyHierarchyDND appToHierarchyDND) {
         this.appearance = appearance;
         this.treeStore = treeStore;
+        this.loader = loader;
         this.categoriesView = categoriesView;
         this.oldGridView = oldGridView;
         this.newGridView = newGridView;
@@ -167,6 +177,16 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @Override
     public HandlerRegistration addDeleteAppsSelectedHandler(DeleteAppsSelected.DeleteAppsSelectedHandler handler) {
         return addHandler(handler, DeleteAppsSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addAppSearchResultLoadEventHandler(AppSearchResultLoadEvent.AppSearchResultLoadEventHandler handler) {
+        return addHandler(handler, AppSearchResultLoadEvent.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addBeforeAppSearchEventHandler(BeforeAppSearchEvent.BeforeAppSearchEventHandler handler) {
+        return addHandler(handler, BeforeAppSearchEvent.TYPE);
     }
 
     @Override
@@ -294,6 +314,11 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
             }
         });
         return ontologySimpleComboBox;
+    }
+
+    @UiFactory
+    AppSearchField createAppSearchField() {
+        return new AppSearchField(loader);
     }
 
     public void updateButtonStatus() {

@@ -8,7 +8,8 @@
              xmlns:adminApps="urn:import:org.iplantc.de.admin.apps.client"
              xmlns:tree="urn:import:com.sencha.gxt.widget.core.client.tree"
              xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
-             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+             xmlns:appSearch="urn:import:org.iplantc.de.apps.client.views.toolBar">
 
     <ui:with field="appearance"
              type="org.iplantc.de.admin.desktop.client.ontologies.OntologiesView.OntologiesViewAppearance"/>
@@ -37,13 +38,15 @@
         <ui:attributes size=".5"/>
     </ui:with>
 
+    <ui:with field="boxData"
+             type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
+        <ui:attributes flex="3"/>
+    </ui:with>
+
 
     <container:BorderLayoutContainer borders="true">
         <container:north layoutData="{northData}">
             <toolbar:ToolBar>
-                <toolbar:child>
-                    <form:SimpleComboBox ui:field="ontologyDropDown"/>
-                </toolbar:child>
                 <toolbar:child>
                     <button:TextButton ui:field="addButton"
                                        text="{appearance.addOntology}"
@@ -55,6 +58,10 @@
                                        icon="{appearance.deleteIcon}"/>
                 </toolbar:child>
                 <toolbar:child>
+                    <toolbar:SeparatorToolItem/>
+                </toolbar:child>
+
+                <toolbar:child>
                     <button:TextButton ui:field="saveHierarchy"
                                        text="{appearance.saveHierarchy}"
                                        icon="{appearance.saveIcon}"/>
@@ -65,6 +72,10 @@
                                        icon="{appearance.deleteIcon}"/>
                 </toolbar:child>
                 <toolbar:child>
+                    <toolbar:SeparatorToolItem/>
+                </toolbar:child>
+
+                <toolbar:child>
                     <button:TextButton ui:field="categorize"
                                        text="{appearance.categorize}"
                                        icon="{appearance.blueFolder}"/>
@@ -74,16 +85,33 @@
                                        text="{appearance.confirmDeleteAppTitle}"
                                        icon="{appearance.deleteIcon}"/>
                 </toolbar:child>
-                <toolbar:child>
-                    <button:TextButton ui:field="publishButton"
-                                       text="{appearance.publishOntology}"
-                                       icon="{appearance.publishIcon}"/>
+                <toolbar:child layoutData="{boxData}">
+                    <appSearch:AppSearchField ui:field="appSearchField"
+                                              emptyText="{appearance.emptySearchFieldText}"/>
                 </toolbar:child>
+
+
             </toolbar:ToolBar>
         </container:north>
         <container:center layoutData="{centerData}">
             <gxt:ContentPanel headingText="NEW">
                 <container:BorderLayoutContainer borders="true">
+                    <container:north layoutData="{northData}">
+                        <toolbar:ToolBar>
+                            <toolbar:child>
+                                <form:SimpleComboBox ui:field="ontologyDropDown"/>
+                            </toolbar:child>
+                            <toolbar:child>
+                                <toolbar:SeparatorToolItem/>
+                            </toolbar:child>
+                            <toolbar:child>
+                                <button:TextButton ui:field="publishButton"
+                                                   text="{appearance.publishOntology}"
+                                                   icon="{appearance.publishIcon}"/>
+                            </toolbar:child>
+                        </toolbar:ToolBar>
+                    </container:north>
+
                     <container:center layoutData="{centerData}">
                         <container:CardLayoutContainer ui:field="cards">
                             <container:CenterLayoutContainer ui:field="noTreePanel">
