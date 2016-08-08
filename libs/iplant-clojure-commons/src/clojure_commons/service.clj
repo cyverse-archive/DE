@@ -10,6 +10,9 @@
 
 (defn get-docs-status
   "Returns a service status map."
-  [svc-info server-name server-port docs-uri]
-  (merge (get-status svc-info)
-    {:docs-url      (str "http://" server-name ":" server-port docs-uri)}))
+  ([svc-info server-name server-port docs-uri]
+   (merge (get-status svc-info)
+     {:docs-url      (str "http://" server-name ":" server-port docs-uri)}))
+  ([svc-info server-name server-port docs-uri expecting]
+     (assoc (get-docs-status svc-info server-name server-port docs-uri)
+            :expecting (str expecting))))

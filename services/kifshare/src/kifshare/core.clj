@@ -11,6 +11,7 @@
             [clojure.tools.logging :as log]
             [compojure.route :as route]
             [ring.util.response :as resp]
+            [ring.util.http-response :as http-resp]
             [kifshare.config :as cfg]
             [kifshare.controllers :as controllers]
             [clojure.string :as string]
@@ -34,7 +35,10 @@
       keep-alive))
 
 (defroutes kifshare-routes
-  (GET "/" [] "Hello from kifshare.")
+  (GET "/" [:as {{expecting :expecting} :params :as req}]
+       (if (and expecting (not= expecting "kifshare"))
+         (http-resp/internal-server-error (str "Hello from kifshare. Error: expecting " expecting "."))
+         "Hello from kifshare."))
 
   (GET "/favicon.ico" []
        (static-resp (cfg/favicon-path)))

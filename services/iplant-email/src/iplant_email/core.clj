@@ -1,6 +1,7 @@
 (ns iplant-email.core
   (:gen-class)
-  (:use compojure.core)
+  (:use [compojure.core]
+        [ring.util.response])
   (:require [cheshire.core :as cheshire]
             [compojure.route :as route]
             [compojure.handler :as handler]
@@ -10,6 +11,8 @@
             [iplant-email.json-body :as jb]
             [iplant-email.json-validator :as jv]
             [iplant-email.templatize :as tmpl]
+            [ring.middleware.params :refer [wrap-params]]
+            [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [common-cli.core :as ccli]
             [me.raynes.fs :as fs]
             [service-logging.thread-context :as tc]))
@@ -29,7 +32,11 @@
                                :stack-trace stack-trace})})))
 
 (defroutes email-routes
-  (GET "/" [] "Welcome to iPlant Email!")
+  (GET "/" [:as {{expecting :expecting} :params :as req}]
+    (if (and expecting (not= expecting "iplant-email"))
+      (status (response (str "Welcome to iPlant Email! Error: expecting " expecting ".")) 500)
+      "Welcome to iPlant Email!"))
+
 
   (POST "/" {body :body} (sm/do-send-email body)))
 
@@ -49,6 +56,8 @@
 
 (defn site-handler [routes]
   (-> routes
+    wrap-keyword-params
+    wrap-params
     jb/parse-json-body))
 
 (defn -main

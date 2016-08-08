@@ -34,7 +34,7 @@
                                 [com.fasterxml.jackson.core/jackson-databind]
                                 [com.fasterxml.jackson.core/jackson-core]]]
                  [slingshot "0.12.2"]
-                 [compojure "1.3.4"]
+                 [compojure "1.5.0"]
                  [de.ubercode.clostache/clostache "1.4.0"]
                  [com.cemerick/url "0.1.1"]]
 
