@@ -488,7 +488,6 @@ apps:
   hpc_category: 00000000-0000-0000-0000-000000000001
   user_root: Workspace
   user_subs: "[\"Apps under development\",\"Favorite Apps\"]"
-  trash_category: Trash
   max_heap: "{{ max_heap.high }}"
   grouper_user:
   beta_attr_iri: n2t.net/ark:/99152/h1459
