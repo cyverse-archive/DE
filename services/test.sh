@@ -10,4 +10,4 @@ if [ -z $CMD ]; then
 fi
 
 docker pull discoenv/buildenv
-docker run --rm -v $(pwd):/build -w /build discoenv/buildenv lein $CMD
+docker run --rm -v $(pwd):/build -w /build discoenv/buildenv lein do clean, $CMD
