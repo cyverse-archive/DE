@@ -92,4 +92,10 @@ public interface OntologyDisplayStrings extends Messages{
     String treePanelHeader();
 
     String refresh();
+
+    String restoreApp();
+
+    String restoreAppSuccessMsgTitle();
+
+    String restoreAppSuccessMsg(String name, String joinedCatNames);
 }

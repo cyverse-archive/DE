@@ -8,6 +8,7 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.PreviewHierarchySel
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshOntologiesEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshPreviewButtonClicked;
+import org.iplantc.de.admin.desktop.client.ontologies.events.RestoreAppButtonClicked;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
@@ -46,11 +47,13 @@ public interface OntologiesView extends IsWidget,
                                         DeleteAppsSelected.HasDeleteAppsSelectedHandlers,
                                         BeforeAppSearchEvent.HasBeforeAppSearchEventHandlers,
                                         AppSearchResultLoadEvent.HasAppSearchResultLoadEventHandlers,
-                                        RefreshPreviewButtonClicked.HasRefreshPreviewButtonClickedHandlers {
+                                        RefreshPreviewButtonClicked.HasRefreshPreviewButtonClickedHandlers,
+                                        RestoreAppButtonClicked.HasRestoreAppButtonClickedHandlers {
 
     enum TreeType {
         ALL, EDITOR, PREVIEW
     }
+
 
     void showOntologyVersions(List<Ontology> result);
 
@@ -235,6 +238,16 @@ public interface OntologiesView extends IsWidget,
         String treePanelHeader();
 
         String refresh();
+
+        String restoreApp();
+
+        ImageResource restoreAppIcon();
+
+        String restoreAppFailureMsg(String name);
+
+        String restoreAppSuccessMsgTitle();
+
+        String restoreAppSuccessMsg(String name, String joinedCatNames);
     }
 
     interface Presenter {

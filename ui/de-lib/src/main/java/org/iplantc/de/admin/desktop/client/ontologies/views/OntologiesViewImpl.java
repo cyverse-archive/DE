@@ -10,6 +10,7 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.PreviewHierarchySel
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshOntologiesEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshPreviewButtonClicked;
+import org.iplantc.de.admin.desktop.client.ontologies.events.RestoreAppButtonClicked;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.PublishOntologyDialog;
@@ -88,6 +89,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @UiField TextButton deleteApp;
     @UiField AppSearchField appSearchField;
     @UiField TextButton refreshPreview;
+    @UiField TextButton restoreApp;
     @UiField(provided = true) OntologiesViewAppearance appearance;
     @UiField(provided = true) Tree<OntologyHierarchy, String> editorTree;
     @UiField(provided = true) Tree<OntologyHierarchy, String> previewTree;
@@ -222,6 +224,10 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @Override
     public HandlerRegistration addRefreshPreviewButtonClickedHandler(RefreshPreviewButtonClicked.RefreshPreviewButtonClickedHandler handler) {
         return addHandler(handler, RefreshPreviewButtonClicked.TYPE);
+    }
+
+    public HandlerRegistration addRestoreAppButtonClickedHandlers(RestoreAppButtonClicked.RestoreAppButtonClickedHandler handler) {
+        return addHandler(handler, RestoreAppButtonClicked.TYPE);
     }
 
     @Override
@@ -451,6 +457,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         categorize.setEnabled(selectedOntology != null && targetApp != null && !targetApp.getAppType().equalsIgnoreCase(App.EXTERNAL_APP));
         deleteApp.setEnabled(selectedOntology != null && targetApp != null && !targetApp.getAppType().equalsIgnoreCase(App.EXTERNAL_APP));
         refreshPreview.setEnabled(selectedOntology != null && editorTreeStore.getRootItems() != null && editorTreeStore.getRootItems().size() > 0);
+        restoreApp.setEnabled(targetApp != null && targetApp.isDeleted());
     }
 
     @Override
@@ -552,6 +559,11 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @UiHandler("refreshPreview")
     void refreshPreviewButtonClicked(SelectEvent event) {
         fireEvent(new RefreshPreviewButtonClicked(ontologyDropDown.getCurrentValue(), editorTreeStore.getRootItems()));
+    }
+
+    @UiHandler("restoreApp")
+    void restoreAppClicked(SelectEvent event) {
+        fireEvent(new RestoreAppButtonClicked(targetApp));
     }
 
     Tree<OntologyHierarchy, String> createTree(TreeStore<OntologyHierarchy> store) {

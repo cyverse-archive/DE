@@ -88,6 +88,11 @@
                                        text="{appearance.confirmDeleteAppTitle}"
                                        icon="{appearance.deleteIcon}"/>
                 </toolbar:child>
+                <toolbar:child>
+                    <button:TextButton ui:field="restoreApp"
+                                       text="{appearance.restoreApp}"
+                                       icon="{appearance.restoreAppIcon}"/>
+                </toolbar:child>
                 <toolbar:child layoutData="{boxData}">
                     <appSearch:AppSearchField ui:field="appSearchField"
                                               emptyText="{appearance.emptySearchFieldText}"/>
