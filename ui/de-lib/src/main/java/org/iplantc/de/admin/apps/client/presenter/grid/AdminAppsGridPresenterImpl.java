@@ -74,10 +74,10 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
         }
     }
 
-    class SetAppAvusCallback implements AsyncCallback<List<Avu>> {
+    class RemoveBetaAvuCallback implements AsyncCallback<List<Avu>> {
         App app;
 
-        public SetAppAvusCallback(App app) {
+        public RemoveBetaAvuCallback(App app) {
             this.app = app;
         }
 
@@ -94,10 +94,10 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
         }
     }
 
-    class AddAppAvusCallback implements AsyncCallback<List<Avu>> {
+    class AddBetaAvuCallback implements AsyncCallback<List<Avu>> {
         private final App app;
 
-        public AddAppAvusCallback(App app) {
+        public AddBetaAvuCallback(App app) {
             this.app = app;
         }
 
@@ -326,7 +326,7 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
 
         if (app.isBeta()) {
             AvuList betaAvus = ontologyUtil.getBetaAvuList();
-            ontologyServiceFacade.addAVUsToApp(app, betaAvus, new AddAppAvusCallback(app));
+            ontologyServiceFacade.addAVUsToApp(app, betaAvus, new AddBetaAvuCallback(app));
         } else {
             ontologyServiceFacade.getAppAVUs(app, new AsyncCallback<List<Avu>>() {
                 @Override
@@ -337,7 +337,7 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
                 @Override
                 public void onSuccess(List<Avu> result) {
                     AvuList avuList = ontologyUtil.removeBetaAvu(result);
-                    ontologyServiceFacade.setAppAVUs(app, avuList, new SetAppAvusCallback(app));
+                    ontologyServiceFacade.setAppAVUs(app, avuList, new RemoveBetaAvuCallback(app));
                 }
             });
         }
