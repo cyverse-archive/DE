@@ -84,6 +84,17 @@ public class DEProperties {
             WORKSPACE_PREFIX + "defaultTrashAppCategoryId";
 
     /**
+     * Properties key for the Beta Avu fields
+     */
+    private static final String BETA_AVU_IRI = WORKSPACE_PREFIX + "metadata.beta.attr.iri";
+
+    private static final String BETA_AVU_LABEL = WORKSPACE_PREFIX + "metadata.beta.attr.label";
+
+    private static final String BETA_AVU_VALUE = WORKSPACE_PREFIX + "metadata.beta.value";
+
+    private static final String BETA_AVU_UNIT = WORKSPACE_PREFIX + "metadata.beta.unit";
+
+    /**
      * Default community data folder path
      */
     private static final String COMMUNITY_DATA_PATH = "org.iplantc.communitydata.path";
@@ -138,6 +149,14 @@ public class DEProperties {
     private String defaultTrashCategoryId;
 
     private String pathListFileIdentifier;
+
+    private String betaAvuIri;
+
+    private String betaAvuLabel;
+
+    private String betaAvuValue;
+
+    private String betaAvuUnit;
 
 
     public String getPathListFileIdentifier() {
@@ -216,6 +235,10 @@ public class DEProperties {
         keys.add(DEFAULT_TRASH_CATEGORY_ID);
         keys.add(UNPROTECTED_MULE_SERVICE_BASE_URL);
         keys.add(DEFAULT_HPC_CATEGORY_ID);
+        keys.add(BETA_AVU_IRI);
+        keys.add(BETA_AVU_LABEL);
+        keys.add(BETA_AVU_VALUE);
+        keys.add(BETA_AVU_UNIT);
         return keys;
     }
 
@@ -240,6 +263,10 @@ public class DEProperties {
         pathListFileIdentifier = properties.get(PATH_LIST_FILE_IDENTIFIER);
         communityDataPath = properties.get(COMMUNITY_DATA_PATH);
         permIdBaseUrl = properties.get(PERM_ID_BASE_URL);
+        betaAvuIri = properties.get(BETA_AVU_IRI);
+        betaAvuLabel = properties.get(BETA_AVU_LABEL);
+        betaAvuValue = properties.get(BETA_AVU_VALUE);
+        betaAvuUnit = properties.get(BETA_AVU_UNIT);
     }
 
     /**
@@ -358,4 +385,19 @@ public class DEProperties {
         return permIdBaseUrl;
     }
 
+    public String getBetaAvuIri() {
+        return betaAvuIri;
+    }
+
+    public String getBetaAvuLabel() {
+        return betaAvuLabel;
+    }
+
+    public String getBetaAvuValue() {
+        return betaAvuValue;
+    }
+
+    public String getBetaAvuUnit() {
+        return betaAvuUnit;
+    }
 }
