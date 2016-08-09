@@ -72,6 +72,17 @@
                 </container:child>
 
                 <container:child layoutData="{verticalLayoutData}">
+                    <form:FieldLabel ui:field="appBetaCheckBoxLabel"
+                                     labelAlign="TOP"
+                                     text="{appearance.betaLabel}">
+                        <form:widget>
+                            <fields:CheckBoxAdapter ui:field="beta"
+                                                    text="{appearance.betaCheckBoxText}"/>
+                        </form:widget>
+                    </form:FieldLabel>
+                </container:child>
+
+                <container:child layoutData="{verticalLayoutData}">
                     <form:FieldLabel ui:field="appDescFieldLabel"
                                      labelAlign="TOP"
                                      text="{appearance.appDescription}">

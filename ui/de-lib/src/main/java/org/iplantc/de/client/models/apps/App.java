@@ -98,6 +98,8 @@ public interface App extends HasId,
 
     void setDisabled(Boolean disabled);
 
+    void setBeta(Boolean beta);
+
     @PropertyName(EDITED_DATE_KEY)
     void setEditedDate(Date editedDate);
 

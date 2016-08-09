@@ -5,6 +5,7 @@ import org.iplantc.de.admin.apps.client.events.selection.RestoreAppSelected;
 import org.iplantc.de.admin.apps.client.events.selection.SaveAppSelected;
 import org.iplantc.de.admin.apps.client.gin.factory.AdminAppsGridViewFactory;
 import org.iplantc.de.admin.apps.client.views.editor.AppEditor;
+import org.iplantc.de.admin.desktop.client.ontologies.service.OntologyServiceFacade;
 import org.iplantc.de.admin.desktop.client.services.AppAdminServiceFacade;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
@@ -14,8 +15,11 @@ import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.AppDoc;
+import org.iplantc.de.client.models.avu.Avu;
+import org.iplantc.de.client.models.avu.AvuList;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
+import org.iplantc.de.client.util.OntologyUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
@@ -70,6 +74,47 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
         }
     }
 
+    class SetAppAvusCallback implements AsyncCallback<List<Avu>> {
+        App app;
+
+        public SetAppAvusCallback(App app) {
+            this.app = app;
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            ErrorHandler.post(caught);
+        }
+
+        @Override
+        public void onSuccess(List<Avu> result) {
+            app.setBeta(false);
+            listStore.update(app);
+            announcer.schedule(new SuccessAnnouncementConfig(appearance.betaTagRemovedSuccess()));
+        }
+    }
+
+    class AddAppAvusCallback implements AsyncCallback<List<Avu>> {
+        private final App app;
+
+        public AddAppAvusCallback(App app) {
+            this.app = app;
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            ErrorHandler.post(caught);
+        }
+
+        @Override
+        public void onSuccess(List<Avu> result) {
+            announcer.schedule(new SuccessAnnouncementConfig(appearance.betaTagAddedSuccess()));
+            app.setBeta(true);
+            listStore.update(app);
+        }
+    }
+
+    @Inject OntologyServiceFacade ontologyServiceFacade;
     @Inject AppAdminServiceFacade adminAppService;
     @Inject AppServiceFacade appService;
     @Inject AdminAppsGridView.Presenter.Appearance appearance;
@@ -80,6 +125,7 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
     private final ListStore<App> listStore;
     private final AdminAppsGridView view;
     boolean isDocUpdate;
+    OntologyUtil ontologyUtil = OntologyUtil.getInstance();
 
     @Inject
     AdminAppsGridPresenterImpl(final AdminAppsGridViewFactory viewFactory,
@@ -256,6 +302,7 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
                 public void onSuccess(App result) {
                     view.unmask();
                     listStore.update(result);
+                    updateBetaStatus(app);
                 }
             });
         }
@@ -271,6 +318,28 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
                                            new DocSaveCallback(announcer,
                                                                appearance));
             }
+        }
+    }
+
+    public void updateBetaStatus(final App app) {
+        Preconditions.checkNotNull(app);
+
+        if (app.isBeta()) {
+            AvuList betaAvus = ontologyUtil.getBetaAvuList();
+            ontologyServiceFacade.addAVUsToApp(app, betaAvus, new AddAppAvusCallback(app));
+        } else {
+            ontologyServiceFacade.getAppAVUs(app, new AsyncCallback<List<Avu>>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    ErrorHandler.post(caught);
+                }
+
+                @Override
+                public void onSuccess(List<Avu> result) {
+                    AvuList avuList = ontologyUtil.removeBetaAvu(result);
+                    ontologyServiceFacade.setAppAVUs(app, avuList, new SetAppAvusCallback(app));
+                }
+            });
         }
     }
 }

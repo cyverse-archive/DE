@@ -69,6 +69,10 @@ public interface AdminAppsGridView extends IsWidget,
             String updateApplicationError();
 
             String updateDocumentationSuccess();
+
+            String betaTagAddedSuccess();
+
+            String betaTagRemovedSuccess();
         }
 
         AdminAppsGridView getView();

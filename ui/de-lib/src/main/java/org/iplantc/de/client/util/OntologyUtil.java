@@ -41,6 +41,11 @@ public class OntologyUtil {
     final String UNCLASSIFIED_LABEL = "Unclassified";
     final String UNCLASSIFIED_IRI_APPEND = "_unclassified";
 
+    final String BETA_ATTR = "n2t.net/ark:/99152/h1459";
+    final String BETA_VALUE = "beta";
+    final String BETA_SUB_VALUE = "releaseStatus";
+    final String BETA_SUB_UNIT = "attr";
+
     private static final String HIERARCHY_PARENT_MODEL_KEY = "parent_key";
     private static final String HIERARCHY_MODEL_KEY = "model_key";
 
@@ -200,4 +205,47 @@ public class OntologyUtil {
     AutoBean<OntologyHierarchy> getHierarchyAutoBean(OntologyHierarchy hierarchy) {
         return AutoBeanUtils.getAutoBean(hierarchy);
     }
+
+    public AvuList getBetaAvuList() {
+        AvuList avuListBean = avuFactory.getAvuList().as();
+        List<Avu> betaAvuList = Lists.newArrayList();
+
+        Avu betaAvu = getBetaAvu();
+
+        betaAvuList.add(betaAvu);
+        avuListBean.setAvus(betaAvuList);
+
+        return avuListBean;
+    }
+
+    public Avu getBetaAvu() {
+        Avu avu = avuFactory.getAvu().as();
+        avu.setAttribute(BETA_ATTR);
+        avu.setValue(BETA_VALUE);
+        avu.setUnit("");
+
+        List<Avu> subAvus = Lists.newArrayList();
+        Avu subAvu = avuFactory.getAvu().as();
+        subAvu.setAttribute(LABEL_ATTR);
+        subAvu.setValue(BETA_SUB_VALUE);
+        subAvu.setUnit(BETA_SUB_UNIT);
+        subAvus.add(subAvu);
+
+        avu.setAvus(subAvus);
+
+        return avu;
+    }
+
+    public AvuList removeBetaAvu(List<Avu> result) {
+        AvuList avuListBean = avuFactory.getAvuList().as();
+
+        for (Avu avu : result) {
+            if (avu.getAttribute().equalsIgnoreCase(BETA_ATTR)) {
+                result.remove(avu);
+            }
+        }
+        avuListBean.setAvus(result);
+        return avuListBean;
+    }
+
 }

@@ -89,4 +89,14 @@ public class AdminAppsGridPresenterDefaultAppearance extends AppsGridViewDefault
     public String updateDocumentationSuccess() {
         return displayStrings.updateDocumentationSuccess();
     }
+
+    @Override
+    public String betaTagAddedSuccess() {
+        return displayStrings.betaTagAddedSuccess();
+    }
+
+    @Override
+    public String betaTagRemovedSuccess() {
+        return displayStrings.betaTagRemovedSuccess();
+    }
 }

@@ -19,28 +19,27 @@ public class AdminAppNameCellDefaultAppearance extends AppNameCellDefaultAppeara
     public void render(final SafeHtmlBuilder sb,
                        final App value,
                        final String searchPattern) {
-        if(!value.isDisabled()){
-            if (!value.getAppType().equalsIgnoreCase(App.EXTERNAL_APP) && value.isBeta()) {
-                super.render(sb,
-                             value,
-                             resources.css().appBeta(),
-                             searchPattern,
-                             displayStrings.editApp(),
-                             null);
-            } else {
-                super.render(sb,
-                             value,
-                             resources.css().appName(),
-                             searchPattern,
-                             displayStrings.editApp(),
-                             null);
-            }
-        } else {
+
+        if (value.isDisabled()) {
             super.render(sb,
                          value,
                          resources.css().appDisabled(),
                          searchPattern,
                          appUnavailable(),
+                         null);
+        } else if(value.isBeta() != null && value.isBeta()) {
+            super.render(sb,
+                         value,
+                         resources.css().appBeta(),
+                         searchPattern,
+                         displayStrings.editApp(),
+                         null);
+        } else {
+            super.render(sb,
+                         value,
+                         resources.css().appName(),
+                         searchPattern,
+                         displayStrings.editApp(),
                          null);
         }
     }

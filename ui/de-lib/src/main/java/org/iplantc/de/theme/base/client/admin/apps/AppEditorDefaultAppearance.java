@@ -120,4 +120,14 @@ public class AppEditorDefaultAppearance implements AppEditor.AppEditorAppearance
     public SafeHtml wikiUrlFieldLabel() {
         return SafeHtmlUtils.fromTrustedString(iplantDisplayStrings.wikiUrlLabel(constants.publishDocumentationUrl()));
     }
+
+    @Override
+    public String betaLabel() {
+        return displayStrings.betaLabel();
+    }
+
+    @Override
+    public String betaCheckBoxText() {
+        return displayStrings.betaCheckBoxText();
+    }
 }
