@@ -385,4 +385,9 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     public String confirmDeleteAppTitle() {
         return displayStrings.confirmDeleteAppTitle();
     }
+
+    @Override
+    public String externalAppDND(String appLabels) {
+        return displayStrings.externalAppDND(appLabels);
+    }
 }

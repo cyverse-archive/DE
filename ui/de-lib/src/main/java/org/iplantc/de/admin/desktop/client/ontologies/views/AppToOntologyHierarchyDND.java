@@ -143,6 +143,20 @@ public class AppToOntologyHierarchyDND implements DndDragStartEvent.DndDragStart
             return false;
         }
 
+        // Verify no external apps are selected
+        List<App> agaveApps = Lists.newArrayList();
+        for (App app : apps) {
+            if (app.getAppType().equalsIgnoreCase(App.EXTERNAL_APP)) {
+                agaveApps.add(app);
+            }
+        }
+
+        if (agaveApps.size() > 0) {
+            status.setStatus(false);
+            status.update(appearance.externalAppDND(getAppLabels(agaveApps)));
+            return false;
+        }
+
         String appList = getAppLabels(apps);
 
         // Verify we have a drop target.
