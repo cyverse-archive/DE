@@ -494,7 +494,6 @@ apps:
   beta_attr_iri: n2t.net/ark:/99152/h1459
   beta_attr_label: releaseStatus
   beta_value: beta
-  ontology_attrs: "{\"http://edamontology.org/operation.*\":\"rdf:type\",\"http://edamontology.org/topic.*\":\"http://edamontology.org/has_topic\"}"
 
 metadata_db_driver: "{{ db_driver }}"
 metadata_db_vendor: "{{ db_vendor }}"
