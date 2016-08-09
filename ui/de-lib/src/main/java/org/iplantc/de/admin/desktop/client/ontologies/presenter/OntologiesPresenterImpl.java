@@ -32,7 +32,6 @@ import org.iplantc.de.client.models.ontologies.Ontology;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import org.iplantc.de.client.models.ontologies.OntologyVersionDetail;
 import org.iplantc.de.client.services.AppServiceFacade;
-import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.client.util.OntologyUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -167,6 +166,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                 }
                 view.maskTree(OntologiesView.TreeType.EDITOR);
                 addHierarchies(OntologiesView.TreeType.EDITOR, null, result);
+                addTrashCategory();
                 getFilteredOntologyHierarchies(version, result);
             }
             view.unmaskTree(OntologiesView.TreeType.EDITOR);
@@ -174,10 +174,12 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         }
     }
 
+    static final String TRASH_CATEGORY = "Trash";
     @Inject AppAdminServiceFacade adminAppService;
     @Inject DEProperties properties;
     @Inject IplantAnnouncer announcer;
     @Inject JsonUtil jsonUtil;
+    @Inject AppServiceFacade appService;
     OntologyUtil ontologyUtil;
     AppSearchRpcProxy proxy;
     PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
@@ -458,6 +460,13 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         }
     }
 
+    void addTrashCategory() {
+        OntologyHierarchy trash = ontologyUtil.getHierarchyObject();
+        trash.setLabel(TRASH_CATEGORY);
+        trash.setIri(TRASH_CATEGORY);
+        editorTreeStore.add(trash);
+    }
+
     void helperMap(List<OntologyHierarchy> children) {
         for (OntologyHierarchy hierarchy : children) {
             String iri = hierarchy.getIri();
@@ -536,11 +545,18 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
             return;
         }
 
+        if (hierarchy.getIri().equalsIgnoreCase(TRASH_CATEGORY)) {
+            getTrashItems();
+            return;
+        }
+
         String attr = ontologyUtil.getAttr(hierarchy);
         if (Strings.isNullOrEmpty(attr)) {
             displayErrorToAdmin();
             return;
         }
+
+        Avu avu = ontologyUtil.convertHierarchyToAvu(hierarchy);
 
         gridView.mask(appearance.loadingMask());
         serviceFacade.getAppsByHierarchy(editedOntology.getVersion(), hierarchy.getIri(), attr, new AsyncCallback<List<App>>() {
@@ -714,6 +730,25 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                 announcer.schedule(new SuccessAnnouncementConfig(appearance.restoreAppSuccessMsgTitle() + "\n"
                                                                  + appearance.restoreAppSuccessMsg(result.getName(),
                                                                                                    joinedCatNames)));
+            }
+        });
+    }
+
+    public void getTrashItems() {
+        String id = properties.getDefaultTrashAppCategoryId();
+        Preconditions.checkNotNull(id);
+        view.maskGrids(appearance.loadingMask());
+        appService.getApps(id, new AsyncCallback<List<App>>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+                view.unmaskGrids();
+            }
+
+            @Override
+            public void onSuccess(List<App> result) {
+                editorGridPresenter.getView().clearAndAdd(result);
+                view.unmaskGrids();
             }
         });
     }

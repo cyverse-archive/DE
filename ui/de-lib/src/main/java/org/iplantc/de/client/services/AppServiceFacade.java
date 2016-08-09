@@ -34,6 +34,8 @@ public interface AppServiceFacade {
      * @param callback called when the RPC call is complete.*/
     void getApps(HasId appCategory, AsyncCallback<List<App>> callback);
 
+    void getApps(String id, AsyncCallback<List<App>> callback);
+
     /**
      * Retrieves a paged listing of templates in the given group.
      *
