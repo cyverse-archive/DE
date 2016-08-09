@@ -5,6 +5,7 @@ import org.iplantc.de.client.models.avu.AvuAutoBeanFactory;
 import org.iplantc.de.client.models.avu.AvuList;
 import org.iplantc.de.client.models.ontologies.OntologyAutoBeanFactory;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
+import org.iplantc.de.shared.DEProperties;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -32,6 +33,7 @@ public class OntologyUtil {
     private static OntologyUtil INSTANCE;
     OntologyAutoBeanFactory factory;
     AvuAutoBeanFactory avuFactory;
+    DEProperties properties;
 
     final String OPERATION_ATTR = "rdf:type";
     final String TOPIC_ATTR = "http://edamontology.org/has_topic";
@@ -41,10 +43,10 @@ public class OntologyUtil {
     final String UNCLASSIFIED_LABEL = "Unclassified";
     final String UNCLASSIFIED_IRI_APPEND = "_unclassified";
 
-    final String BETA_ATTR = "n2t.net/ark:/99152/h1459";
-    final String BETA_VALUE = "beta";
-    final String BETA_SUB_VALUE = "releaseStatus";
-    final String BETA_SUB_UNIT = "attr";
+    final String BETA_ATTR;
+    final String BETA_VALUE;
+    final String BETA_SUB_VALUE;
+    final String BETA_SUB_UNIT;
 
     private static final String HIERARCHY_PARENT_MODEL_KEY = "parent_key";
     private static final String HIERARCHY_MODEL_KEY = "model_key";
@@ -52,6 +54,12 @@ public class OntologyUtil {
     private OntologyUtil() {
         factory = GWT.create(OntologyAutoBeanFactory.class);
         avuFactory = GWT.create(AvuAutoBeanFactory.class);
+        properties = DEProperties.getInstance();
+
+        BETA_ATTR = properties.getBetaAvuIri();
+        BETA_VALUE = properties.getBetaAvuValue();
+        BETA_SUB_VALUE = properties.getBetaAvuLabel();
+        BETA_SUB_UNIT = properties.getBetaAvuUnit();
     }
 
     public static OntologyUtil getInstance() {

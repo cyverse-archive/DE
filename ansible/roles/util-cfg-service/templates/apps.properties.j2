@@ -28,9 +28,9 @@ apps.workspace.dev-app-category-index       = 0
 apps.workspace.favorites-app-category-index = 1
 apps.workspace.public-id                    = 00000000-0000-0000-0000-000000000000
 apps.workspace.metadata.category.attrs      = rdf:type, http://edamontology.org/has_topic
-apps.workspace.metadata.beta.attr.iri       = n2t.net/ark:/99152/h1459
-apps.workspace.metadata.beta.attr.label     = releaseStatus
-apps.workspace.metadata.beta.value          = beta
+apps.workspace.metadata.beta.attr.iri       = {{ apps.beta_attr_iri }}
+apps.workspace.metadata.beta.attr.label     = {{ apps.beta_attr_label }}
+apps.workspace.metadata.beta.value          = {{ apps.beta_value }}
 
 # The domain name to append to the user id to get the fully qualified user id.
 apps.uid.domain = {{ cas_uid_domain }}

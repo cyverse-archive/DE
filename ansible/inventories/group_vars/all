@@ -491,6 +491,9 @@ apps:
   trash_category: Trash
   max_heap: "{{ max_heap.high }}"
   grouper_user:
+  beta_attr_iri: n2t.net/ark:/99152/h1459
+  beta_attr_label: releaseStatus
+  beta_value: beta
 
 metadata_db_driver: "{{ db_driver }}"
 metadata_db_vendor: "{{ db_vendor }}"
