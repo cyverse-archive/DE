@@ -32,7 +32,12 @@ Please see the metadata service documentation for response information.")
          :summary "Add/Update Metadata AVUs"
          :description (str
 "Adds or updates Metadata AVUs on the app.
- The authenticated user must have `write` permission to edit this metadata."
+ The authenticated user must have `write` permission to edit this metadata,
+ and the app's name must not duplicate the name of any other app (visible to the requesting user)
+ that also has any of the ontology hierarchy AVUs given in the request."
+(get-endpoint-delegate-block
+  "metadata"
+  "POST /avus/filter-targets")
 (get-endpoint-delegate-block
   "metadata"
   "POST /avus/{target-type}/{target-id}")
@@ -47,7 +52,12 @@ Please see the metadata service documentation for request and response informati
         :summary "Set Metadata AVUs"
         :description (str
 "Sets Metadata AVUs on the app.
- The authenticated user must have `write` permission to edit this metadata."
+ The authenticated user must have `write` permission to edit this metadata,
+ and the app's name must not duplicate the name of any other app (visible to the requesting user)
+ that also has any of the ontology hierarchy AVUs given in the request."
+(get-endpoint-delegate-block
+  "metadata"
+  "POST /avus/filter-targets")
 (get-endpoint-delegate-block
   "metadata"
   "PUT /avus/{target-type}/{target-id}")
@@ -79,7 +89,12 @@ Please see the metadata service documentation for response information.")
          :middlewares [wrap-metadata-base-url]
          :summary "Add/Update Metadata AVUs"
          :description (str
-"Adds or updates Metadata AVUs on the app."
+"Adds or updates Metadata AVUs on the app.
+ The app's name must not duplicate the name of any other app (visible to the requesting user)
+ that also has any of the ontology hierarchy AVUs given in the request."
+(get-endpoint-delegate-block
+  "metadata"
+  "POST /avus/filter-targets")
 (get-endpoint-delegate-block
   "metadata"
   "POST /avus/{target-type}/{target-id}")
@@ -93,7 +108,12 @@ Please see the metadata service documentation for request and response informati
         :middlewares [wrap-metadata-base-url]
         :summary "Set Metadata AVUs"
         :description (str
-"Sets Metadata AVUs on the app."
+"Sets Metadata AVUs on the app.
+ The app's name must not duplicate the name of any other app (visible to the requesting user)
+ that also has any of the ontology hierarchy AVUs given in the request."
+(get-endpoint-delegate-block
+  "metadata"
+  "POST /avus/filter-targets")
 (get-endpoint-delegate-block
   "metadata"
   "PUT /avus/{target-type}/{target-id}")
