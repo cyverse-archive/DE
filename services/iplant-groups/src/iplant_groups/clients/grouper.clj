@@ -530,20 +530,33 @@
 ;; Groups for a subject.
 
 (defn- format-groups-for-subject-request
-  [username subject-id]
-  {:WsRestGetGroupsRequest
-   {:actAsSubjectLookup   (act-as-subject-lookup username)
-    :subjectLookups       [(subject-id-lookup subject-id)]}})
+  ([username subject-id]
+   {:WsRestGetGroupsRequest
+    {:actAsSubjectLookup   (act-as-subject-lookup username)
+     :subjectLookups       [(subject-id-lookup subject-id)]}})
+  ([username subject-id folder-name]
+   {:WsRestGetGroupsRequest
+    {:actAsSubjectLookup   (act-as-subject-lookup username)
+     :subjectLookups       [(subject-id-lookup subject-id)]
+     :wsStemLookup {:stemName folder-name}
+     :stemScope "ALL_IN_SUBTREE"}}))
 
-(defn groups-for-subject
-  [username subject-id]
+(defn- groups-for-subject*
+  [request-body]
   (with-trap [default-error-handler]
-    (-> (format-groups-for-subject-request username subject-id)
-        (grouper-post "subjects")
+    (-> (grouper-post request-body "subjects")
         :WsGetGroupsResults
         :results
         first
         :wsGroups)))
+
+(defn groups-for-subject
+  [username subject-id]
+  (groups-for-subject* (format-groups-for-subject-request username subject-id)))
+
+(defn groups-for-subject-folder
+  [username subject-id folder-name]
+  (groups-for-subject* (format-groups-for-subject-request username subject-id folder-name)))
 
 ;; Attribute Definition Name search
 (defn- format-attribute-name-search-request

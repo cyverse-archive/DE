@@ -24,6 +24,11 @@
     (s/optional-key :folder)
     (describe NonBlankString "The name of the folder to search for.")))
 
+(s/defschema GroupsForSubjectParams
+  (assoc StandardUserQueryParams
+    (s/optional-key :folder)
+    (describe NonBlankString "The name of the folder to limit to results within.")))
+
 (s/defschema AttributeSearchParams
   (assoc SearchParams
     (s/optional-key :exact)
