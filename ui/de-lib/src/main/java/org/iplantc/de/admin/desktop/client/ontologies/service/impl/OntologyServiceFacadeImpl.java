@@ -84,8 +84,8 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
     }
 
     @Override
-    public void getAppsByHierarchy(String version, String iri, Avu avu, AsyncCallback<List<App>> callback) {
-        String address = ONTOLOGY_ADMIN + "/" + URL.encodeQueryString(version) + "/" + URL.encodeQueryString(iri) + "/apps" + "?attr=" + URL.encodeQueryString(avu.getAttribute());
+    public void getAppsByHierarchy(String version, String iri, String attr, AsyncCallback<List<App>> callback) {
+        String address = ONTOLOGY_ADMIN + "/" + URL.encodeQueryString(version) + "/" + URL.encodeQueryString(iri) + "/apps" + "?attr=" + URL.encodeQueryString(attr);
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, new AsyncCallbackConverter<String, List<App>>(callback) {
@@ -133,6 +133,18 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, new OntologyHierarchyListCallbackConverter(callback, factory));
 
+    }
+
+    @Override
+    public void getFilteredOntologyHierarchy(String version,
+                                             String iri,
+                                             String attr,
+                                             AsyncCallback<OntologyHierarchy> callback) {
+        String address = ONTOLOGY_ADMIN + "/" + URL.encodeQueryString(version) + "/" + URL.encodeQueryString(iri);
+        address += "?attr=" + URL.encodeQueryString(attr);
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
+        deService.getServiceData(wrapper, new OntologyHierarchyCallbackConverter(callback, factory));
     }
 
     @Override

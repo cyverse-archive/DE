@@ -240,7 +240,7 @@ public class OntologiesPresenterImplTest {
 
         asyncCallbackOntologyListCaptor.getValue().onSuccess(listOntologyMock);
         verify(viewMock).showOntologyVersions(eq(listOntologyMock));
-        verify(viewMock).unMaskHierarchyTree();
+        verify(viewMock).unMaskTree();
         verifyNoMoreInteractions(viewMock);
     }
 
@@ -254,7 +254,7 @@ public class OntologiesPresenterImplTest {
 
         asyncCallbackOntologyListCaptor.getValue().onSuccess(listOntologyMock);
         verify(viewMock).showOntologyVersions(eq(listOntologyMock));
-        verify(viewMock).unMaskHierarchyTree();
+        verify(viewMock).unMaskTree();
         verify(ontologyMock).isActive();
         verify(activeOntologyMock).isActive();
         verify(viewMock).selectActiveOntology(activeOntologyMock);
@@ -346,7 +346,7 @@ public class OntologiesPresenterImplTest {
         /** CALL METHOD UNDER TEST **/
         uut.onSelectOntologyVersion(eventMock);
 
-        verify(viewMock).clearStore();
+        verify(viewMock).clearStores();
 
         verify(serviceFacadeMock).getOntologyHierarchies(eq(eventMock.getSelectedOntology()
                                                                      .getVersion()),
@@ -387,7 +387,7 @@ public class OntologiesPresenterImplTest {
         /** CALL METHOD UNDER TEST **/
         uut.onSelectOntologyVersion(eventMock);
 
-        verify(viewMock).clearStore();
+        verify(viewMock).clearStores();
 
         verify(serviceFacadeMock).getOntologyHierarchies(eq(eventMock.getSelectedOntology()
                                                                      .getVersion()),
@@ -447,10 +447,10 @@ public class OntologiesPresenterImplTest {
 
         asyncOntologyHierarchyListCaptor.getValue().onSuccess(ontologyHierarchyListMock);
 
-        verify(viewMock).clearStore();
+        verify(viewMock).clearStores();
         verify(utilMock).createIriToAttrMap(eq(ontologyHierarchyListMock));
-        verify(viewMock, times(3)).maskHierarchyTree();
-        verify(viewMock).unMaskHierarchyTree();
+        verify(viewMock, times(3)).maskTree();
+        verify(viewMock).unMaskTree();
         verify(viewMock).updateButtonStatus();
 
         verify(viewMock).showTreePanel();

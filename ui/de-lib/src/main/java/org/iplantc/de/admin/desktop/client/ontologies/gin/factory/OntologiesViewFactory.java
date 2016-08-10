@@ -4,7 +4,6 @@ import org.iplantc.de.admin.apps.client.AdminAppsGridView;
 import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
 import org.iplantc.de.admin.desktop.client.ontologies.views.AppToOntologyHierarchyDND;
 import org.iplantc.de.admin.desktop.client.ontologies.views.OntologyHierarchyToAppDND;
-import org.iplantc.de.apps.client.AppCategoriesView;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 
@@ -20,9 +19,9 @@ import com.sencha.gxt.data.shared.loader.PagingLoader;
  */
 public interface OntologiesViewFactory {
 
-    OntologiesView create(TreeStore<OntologyHierarchy> treeStore,
+    OntologiesView create(@Assisted("editorTreeStore") TreeStore<OntologyHierarchy> treeStore,
+                          @Assisted("previewTreeStore") TreeStore<OntologyHierarchy> previewTreeStore,
                           PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader,
-                          AppCategoriesView categoriesView,
                           @Assisted("oldGridView") AdminAppsGridView oldGridView,
                           @Assisted("newGridView") AdminAppsGridView newGridView,
                           OntologyHierarchyToAppDND dndHandler,

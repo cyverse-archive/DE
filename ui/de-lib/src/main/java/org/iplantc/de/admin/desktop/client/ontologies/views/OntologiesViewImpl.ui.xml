@@ -3,7 +3,6 @@
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
              xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
              xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
-             xmlns:apps="urn:import:org.iplantc.de.apps.client"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:adminApps="urn:import:org.iplantc.de.admin.apps.client"
              xmlns:tree="urn:import:com.sencha.gxt.widget.core.client.tree"
@@ -43,6 +42,10 @@
         <ui:attributes flex="3"/>
     </ui:with>
 
+    <ui:with field="editorTreeStore"
+             type="com.sencha.gxt.data.shared.TreeStore"/>
+    <ui:with field="previewTreeStore"
+             type="com.sencha.gxt.data.shared.TreeStore"/>
 
     <container:BorderLayoutContainer borders="true">
         <container:north layoutData="{northData}">
@@ -94,7 +97,7 @@
             </toolbar:ToolBar>
         </container:north>
         <container:center layoutData="{centerData}">
-            <gxt:ContentPanel headingText="NEW">
+            <gxt:ContentPanel headingText="{appearance.westPanelHeader}">
                 <container:BorderLayoutContainer borders="true">
                     <container:north layoutData="{northData}">
                         <toolbar:ToolBar>
@@ -117,8 +120,8 @@
                             <container:CenterLayoutContainer ui:field="noTreePanel">
                                 <g:Label text="No ontology version selected."/>
                             </container:CenterLayoutContainer>
-                            <gxt:ContentPanel ui:field="treePanel">
-                                <tree:Tree ui:field="tree"/>
+                            <gxt:ContentPanel ui:field="editorTreePanel" headingText="{appearance.treePanelHeader}">
+                                <tree:Tree ui:field="editorTree" store="{editorTreeStore}"/>
                             </gxt:ContentPanel>
                             <container:CenterLayoutContainer ui:field="emptyTreePanel">
                                 <g:Label text="No hierarchies saved for this ontology version."/>
@@ -132,10 +135,12 @@
             </gxt:ContentPanel>
         </container:center>
         <container:east layoutData="{eastData}">
-            <gxt:ContentPanel headingText="CURRENT">
+            <gxt:ContentPanel headingText="{appearance.eastPanelHeader}">
                 <container:BorderLayoutContainer>
                     <container:center layoutData="{centerData}">
-                        <apps:AppCategoriesView ui:field="categoriesView"/>
+                        <gxt:ContentPanel ui:field="previewTreePanel" headingText="{appearance.treePanelHeader}">
+                            <tree:Tree ui:field="previewTree" store="{previewTreeStore}"/>
+                        </gxt:ContentPanel>
                     </container:center>
                     <container:west layoutData="{westData}">
                         <adminApps:AdminAppsGridView ui:field="oldGridView"/>

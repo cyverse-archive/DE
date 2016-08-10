@@ -84,4 +84,10 @@ public interface OntologyDisplayStrings extends Messages{
     String ontologyAttrMatchingError();
 
     String emptySearchFieldText();
+
+    String westPanelHeader();
+
+    String eastPanelHeader();
+
+    String treePanelHeader();
 }

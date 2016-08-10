@@ -6,13 +6,13 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.CategorizeButtonCli
 import org.iplantc.de.admin.desktop.client.ontologies.events.DeleteHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.DeleteOntologyButtonClickedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.PreviewHierarchySelectedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshOntologiesEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.PublishOntologyDialog;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.SaveHierarchiesDialog;
-import org.iplantc.de.apps.client.AppCategoriesView;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.BeforeAppSearchEvent;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
@@ -87,17 +87,18 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @UiField TextButton deleteApp;
     @UiField AppSearchField appSearchField;
     @UiField(provided = true) OntologiesViewAppearance appearance;
-    @UiField Tree<OntologyHierarchy, String> tree;
-    @UiField(provided = true) AppCategoriesView categoriesView;
+    @UiField(provided = true) Tree<OntologyHierarchy, String> editorTree;
+    @UiField(provided = true) Tree<OntologyHierarchy, String> previewTree;
     @UiField(provided = true) AdminAppsGridView oldGridView;
     @UiField(provided = true) AdminAppsGridView newGridView;
     @UiField CardLayoutContainer cards;
     @UiField CenterLayoutContainer noTreePanel, emptyTreePanel;
-    @UiField ContentPanel treePanel;
+    @UiField ContentPanel editorTreePanel, previewTreePanel;
     @UiField TextButton publishButton;
     @Inject DEClientConstants clientConstants;
 
-    private TreeStore<OntologyHierarchy> treeStore;
+    @UiField(provided = true) TreeStore<OntologyHierarchy> editorTreeStore;
+    @UiField(provided = true) TreeStore<OntologyHierarchy> previewTreeStore;
     private Ontology activeOntology;
     private Ontology selectedOntology;
     private App targetApp;
@@ -108,29 +109,52 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
     @Inject
     public OntologiesViewImpl(OntologiesViewAppearance appearance,
-                              @Assisted TreeStore<OntologyHierarchy> treeStore,
+                              @Assisted("editorTreeStore") TreeStore<OntologyHierarchy> editorTreeStore,
+                              @Assisted("previewTreeStore") TreeStore<OntologyHierarchy> previewTreeStore,
                               @Assisted PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader,
-                              @Assisted AppCategoriesView categoriesView,
                               @Assisted("oldGridView") AdminAppsGridView oldGridView,
                               @Assisted("newGridView") AdminAppsGridView newGridView,
                               @Assisted OntologyHierarchyToAppDND hierarchyToAppDND,
                               @Assisted AppToOntologyHierarchyDND appToHierarchyDND) {
         this.appearance = appearance;
-        this.treeStore = treeStore;
         this.loader = loader;
-        this.categoriesView = categoriesView;
+        this.editorTreeStore = editorTreeStore;
+        this.previewTreeStore = previewTreeStore;
         this.oldGridView = oldGridView;
         this.newGridView = newGridView;
         this.hierarchyToAppDND = hierarchyToAppDND;
         this.appToHierarchyDND = appToHierarchyDND;
+
+        addTreeSelectionHandlers();
 
         initWidget(uiBinder.createAndBindUi(this));
 
         updateButtonStatus();
 
         setUpDND();
+    }
 
-        treePanel.setHeadingText("Hierarchies");
+    void addTreeSelectionHandlers() {
+        editorTree = createTree(editorTreeStore);
+        editorTree.getSelectionModel().addSelectionChangedHandler(new SelectionChangedEvent.SelectionChangedHandler<OntologyHierarchy>() {
+            @Override
+            public void onSelectionChanged(SelectionChangedEvent<OntologyHierarchy> event) {
+                if (event.getSelection().size() == 1) {
+                    fireEvent(new HierarchySelectedEvent(event.getSelection().get(0), ontologyDropDown.getCurrentValue(), TreeType.EDITOR));
+                }
+                updateButtonStatus();
+            }
+        });
+        previewTree = createTree(previewTreeStore);
+        previewTree.getSelectionModel().addSelectionChangedHandler(new SelectionChangedEvent.SelectionChangedHandler<OntologyHierarchy>() {
+            @Override
+            public void onSelectionChanged(SelectionChangedEvent<OntologyHierarchy> event) {
+                if (event.getSelection().size() == 1) {
+                    fireEvent(new PreviewHierarchySelectedEvent(event.getSelection().get(0), ontologyDropDown.getCurrentValue(), TreeType.PREVIEW));
+                }
+                updateButtonStatus();
+            }
+        });
     }
 
     @Override
@@ -189,6 +213,10 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         return addHandler(handler, BeforeAppSearchEvent.TYPE);
     }
 
+    public HandlerRegistration addPreviewHierarchySelectedEventHandler(PreviewHierarchySelectedEvent.PreviewHierarchySelectedEventHandler handler) {
+        return addHandler(handler, PreviewHierarchySelectedEvent.TYPE);
+    }
+
     @Override
     public void onAppSelectionChanged(AppSelectionChangedEvent event) {
         List<App> appSelection = event.getAppSelection();
@@ -220,12 +248,12 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
     @Override
     public void showTreePanel() {
-        cards.setActiveWidget(treePanel);
+        cards.setActiveWidget(editorTreePanel);
     }
 
     @Override
     public OntologyHierarchy getHierarchyFromElement(Element el) {
-        Tree.TreeNode<OntologyHierarchy> node = tree.findNode(el);
+        Tree.TreeNode<OntologyHierarchy> node = editorTree.findNode(el);
         if (node != null) {
             return node.getModel();
         }
@@ -234,39 +262,99 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
     @Override
     public OntologyHierarchy getSelectedHierarchy() {
-        return tree.getSelectionModel().getSelectedItem();
+        return editorTree.getSelectionModel().getSelectedItem();
     }
 
     @Override
-    public void clearStore() {
-        treeStore.clear();
+    public Ontology getSelectedOntology() {
+        return ontologyDropDown.getCurrentValue();
     }
 
     @Override
-    public void addToStore(List<OntologyHierarchy> children) {
-        treeStore.add(children);
+    public void clearStore(TreeType type) {
+        switch(type){
+            case EDITOR:
+                editorTreeStore.clear();
+                break;
+            case PREVIEW:
+                previewTreeStore.clear();
+                break;
+            case ALL:
+                editorTreeStore.clear();
+                previewTreeStore.clear();
+                break;
+        }
     }
 
     @Override
-    public void addToStore(OntologyHierarchy parent, List<OntologyHierarchy> children) {
-        treeStore.add(parent, children);
+    public void addToStore(TreeType type, List<OntologyHierarchy> children) {
+        switch(type) {
+            case EDITOR:
+                editorTreeStore.add(children);
+                break;
+            case PREVIEW:
+                previewTreeStore.add(children);
+                break;
+            case ALL:
+                editorTreeStore.add(children);
+                previewTreeStore.add(children);
+                break;
+        }
     }
 
     @Override
-    public void maskHierarchyTree() {
-        treePanel.mask(appearance.loadingMask());
+    public void addToStore(TreeType type, OntologyHierarchy parent, List<OntologyHierarchy> children) {
+        switch(type) {
+            case EDITOR:
+                editorTreeStore.add(parent, children);
+                break;
+            case PREVIEW:
+                previewTreeStore.add(parent, children);
+                break;
+            case ALL:
+                editorTreeStore.add(parent, children);
+                previewTreeStore.add(parent, children);
+                break;
+        }
     }
 
     @Override
-    public void unMaskHierarchyTree() {
-        treePanel.unmask();
+    public void maskTree(TreeType type) {
+        switch(type) {
+            case EDITOR:
+                editorTreePanel.mask(appearance.loadingMask());
+                break;
+            case PREVIEW:
+                previewTreePanel.mask(appearance.loadingMask());
+                break;
+            case ALL:
+                editorTreePanel.mask(appearance.loadingMask());
+                previewTreePanel.mask(appearance.loadingMask());
+                break;
+        }
+    }
+
+    @Override
+    public void unmaskTree(TreeType type) {
+        switch(type) {
+            case EDITOR:
+                editorTreePanel.unmask();
+                break;
+            case PREVIEW:
+                previewTreePanel.unmask();
+                break;
+            case ALL:
+                editorTreePanel.unmask();
+                previewTreePanel.unmask();
+                break;
+        }
     }
 
     @Override
     public void selectHierarchy(OntologyHierarchy hierarchy) {
         if (hierarchy != null) {
-            tree.getSelectionModel().deselectAll();
-            tree.getSelectionModel().select(hierarchy, true);
+            editorTree.getSelectionModel().deselectAll();
+            editorTree.getSelectionModel().select(hierarchy, true);
         }
     }
 
@@ -281,8 +369,19 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     @Override
-    public void reSortHierarchies() {
-        treeStore.applySort(false);
+    public void reSortTree(TreeType type) {
+        switch(type) {
+            case EDITOR:
+                editorTreeStore.applySort(false);
+                break;
+            case PREVIEW:
+                previewTreeStore.applySort(false);
+                break;
+            case ALL:
+                editorTreeStore.applySort(false);
+                previewTreeStore.applySort(false);
+                break;
+        }
     }
 
     @UiFactory
@@ -325,7 +424,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         publishButton.setEnabled(selectedOntology != null && selectedOntology != activeOntology);
         saveHierarchy.setEnabled(selectedOntology != null);
         deleteButton.setEnabled(selectedOntology != null && selectedOntology != activeOntology);
-        deleteHierarchy.setEnabled(selectedOntology != null && tree.getSelectionModel().getSelectedItem() != null);
+        deleteHierarchy.setEnabled(selectedOntology != null && editorTree.getSelectionModel().getSelectedItem() != null);
         categorize.setEnabled(selectedOntology != null && targetApp != null && !targetApp.getAppType().equalsIgnoreCase(App.EXTERNAL_APP));
         deleteApp.setEnabled(selectedOntology != null && targetApp != null && !targetApp.getAppType().equalsIgnoreCase(App.EXTERNAL_APP));
     }
@@ -390,8 +489,8 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
     @UiHandler("deleteHierarchy")
     void deleteHierarchyClicked(SelectEvent event) {
-        final OntologyHierarchy selectedItem = tree.getSelectionModel().getSelectedItem();
-        if (tree != null && selectedItem != null) {
+        final OntologyHierarchy selectedItem = editorTree.getSelectionModel().getSelectedItem();
+        if (editorTree != null && selectedItem != null) {
             ConfirmMessageBox cmb = new ConfirmMessageBox(appearance.deleteHierarchy(), appearance.confirmDeleteHierarchy(selectedItem.getLabel()));
             cmb.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
                 @Override
@@ -407,7 +506,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
 
     @UiHandler("categorize")
     void categorizeButtonClicked(SelectEvent event) {
-        fireEvent(new CategorizeButtonClickedEvent(targetApp, treeStore.getRootItems()));
+        fireEvent(new CategorizeButtonClickedEvent(targetApp, editorTreeStore.getRootItems()));
     }
 
     @UiHandler("deleteApp")
@@ -426,9 +525,8 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         msgBox.show();
     }
 
-    @UiFactory
-    Tree<OntologyHierarchy, String> createTree() {
-        Tree<OntologyHierarchy, String> ontologyTree = new Tree<>(treeStore, new ValueProvider<OntologyHierarchy, String>() {
+    Tree<OntologyHierarchy, String> createTree(TreeStore<OntologyHierarchy> store) {
+        Tree<OntologyHierarchy, String> ontologyTree = new Tree<>(store, new ValueProvider<OntologyHierarchy, String>() {
             @Override
             public String getValue(OntologyHierarchy object) {
                 return object.getLabel();
@@ -446,17 +544,8 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         });
 
         ontologyTree.getSelectionModel().setSelectionMode(Style.SelectionMode.SINGLE);
-        ontologyTree.getSelectionModel().addSelectionChangedHandler(new SelectionChangedEvent.SelectionChangedHandler<OntologyHierarchy>() {
-            @Override
-            public void onSelectionChanged(SelectionChangedEvent<OntologyHierarchy> event) {
-                if (event.getSelection().size() == 1) {
-                    fireEvent(new HierarchySelectedEvent(event.getSelection().get(0), ontologyDropDown.getCurrentValue()));
-                }
-                updateButtonStatus();
-            }
-        });
 
-        treeStore.addSortInfo(new Store.StoreSortInfo<>(ontologyUtil.getOntologyNameComparator(), SortDir.ASC));
+        store.addSortInfo(new Store.StoreSortInfo<>(ontologyUtil.getOntologyNameComparator(), SortDir.ASC));
 
         return ontologyTree;
     }
@@ -484,10 +573,10 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         newGridSource.addDragStartHandler(appToHierarchyDND);
 
         //Tree DND
-        DragSource treeDragSource = new DragSource(tree);
+        DragSource treeDragSource = new DragSource(editorTree);
         treeDragSource.addDragStartHandler(hierarchyToAppDND);
 
-        DropTarget treeDropTarget = new DropTarget(tree);
+        DropTarget treeDropTarget = new DropTarget(editorTree);
         treeDropTarget.setAllowSelfAsSource(false);
         treeDropTarget.addDragEnterHandler(appToHierarchyDND);
         treeDropTarget.addDragMoveHandler(appToHierarchyDND);

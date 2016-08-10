@@ -37,6 +37,8 @@ public interface OntologyServiceFacade {
      */
     void getOntologyHierarchies(String version, AsyncCallback<List<OntologyHierarchy>> callback);
 
+    void getFilteredOntologyHierarchy(String version, String root, String attr, AsyncCallback<OntologyHierarchy> callback);
+
     /**
      * Get the list of apps that are not tagged with the given root for the specified Ontology version
      * @param version
@@ -54,10 +56,10 @@ public interface OntologyServiceFacade {
     /**
      * Get the list of apps that belong to the specified class iri and metadata attribute
      * @param iri
-     * @param avu
+     * @param attr
      * @param callback
      */
-    void getAppsByHierarchy(String version, String iri, Avu avu, AsyncCallback<List<App>> callback);
+    void getAppsByHierarchy(String version, String iri, String attr, AsyncCallback<List<App>> callback);
 
     /**
      * Add/Append a list of metadata tags to an App
