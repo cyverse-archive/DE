@@ -9,6 +9,7 @@
         [apps.util.conversions :only [remove-nil-vals]])
   (:require [clojure.string :as string]
             [apps.containers :as c]
+            [apps.clients.iplant-groups :as ipg]
             [apps.service.apps.de.jobs.params :as params]
             [apps.service.apps.de.jobs.util :as util]))
 
@@ -133,6 +134,7 @@
    :steps                (.buildSteps request-builder)
    :username             (:shortUsername user)
    :user_id              (get-user-id (:username user))
+   :user_groups          (map (comp ipg/remove-environment-from-group :name) (:groups (ipg/lookup-subject-groups (:shortUsername user))))
    :uuid                 (or (:uuid submission) (uuid))
    :wiki_url             (:wiki_url app)
    :skip-parent-meta     (:skip-parent-meta submission)
