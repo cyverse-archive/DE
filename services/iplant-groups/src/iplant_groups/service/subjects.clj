@@ -13,5 +13,8 @@
     (fmt/format-subject attribute-names subject)))
 
 (defn groups-for-subject
-  [subject-id {:keys [user]}]
-  {:groups (mapv fmt/format-group (grouper/groups-for-subject user subject-id))})
+  [subject-id {:keys [user folder]}]
+  (let [result (if folder
+                 (grouper/groups-for-subject-folder user subject-id folder)
+                 (grouper/groups-for-subject user subject-id))]
+    {:groups (mapv fmt/format-group result)}))

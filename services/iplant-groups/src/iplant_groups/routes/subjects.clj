@@ -24,7 +24,7 @@
 
   (GET* "/:subject-id/groups" []
         :path-params [subject-id :- SubjectIdPathParam]
-        :query       [params StandardUserQueryParams]
+        :query       [params GroupsForSubjectParams]
         :return      GroupList
         :summary     "List Groups for a Subject"
         :description "This endpoint allows callers to list all groups that a subject belongs to."
