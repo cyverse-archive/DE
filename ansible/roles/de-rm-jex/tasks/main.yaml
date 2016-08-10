@@ -4,11 +4,6 @@
   tags:
     - jex
 
-- name: remove /var/log/de/jex
-  file: path=/var/log/de/jex state=absent
-  tags:
-    - jex
-
 - name: delete the jex docker image
   shell: docker rmi {{docker.user}}/jex:{{docker.tag}}
   ignore_errors: true
