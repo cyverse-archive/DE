@@ -21,6 +21,8 @@ public interface OntologyHierarchiesView extends IsWidget,
     interface OntologyHierarchiesAppearance extends AppCategoriesView.AppCategoriesAppearance {
 
         String hierarchyLabelName(OntologyHierarchy hierarchy);
+
+        String ontologyAttrMatchingFailure();
     }
 
     interface Presenter extends AppInfoSelectedEvent.AppInfoSelectedEventHandler,

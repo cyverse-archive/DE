@@ -64,7 +64,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                                                 DeleteHierarchyEvent.DeleteHierarchyEventHandler,
                                                 DeleteAppsSelected.DeleteAppsSelectedHandler {
 
-    private class CategorizeCallback implements AsyncCallback<List<Avu>> {
+    class CategorizeCallback implements AsyncCallback<List<Avu>> {
         private final App selectedApp;
         private final List<OntologyHierarchy> hierarchyRoots;
 
@@ -98,7 +98,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         }
     }
 
-    private class SaveHierarchyAsyncCallback implements AsyncCallback<OntologyHierarchy> {
+    class SaveHierarchyAsyncCallback implements AsyncCallback<OntologyHierarchy> {
         private final String iri;
         private final String ontologyVersion;
 
@@ -125,7 +125,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         }
     }
 
-    private class HierarchiesCallback implements AsyncCallback<List<OntologyHierarchy>> {
+    class HierarchiesCallback implements AsyncCallback<List<OntologyHierarchy>> {
         @Override
         public void onFailure(Throwable caught) {
             ErrorHandler.post(caught);
@@ -138,6 +138,10 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
             if (result.size() == 0) {
                 view.showEmptyTreePanel();
             } else {
+                boolean isValid = ontologyUtil.createIriToAttrMap(result);
+                if (!isValid) {
+                    displayErrorToAdmin();
+                }
                 view.maskHierarchyTree();
                 addHierarchies(null, result);
             }
@@ -389,7 +393,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         serviceFacade.getAppAVUs(selectedApp, new CategorizeCallback(selectedApp, hierarchyRoots));
     }
 
-    private boolean isValidHierarchy(OntologyHierarchy result) {
+    boolean isValidHierarchy(OntologyHierarchy result) {
         // If there are no subclasses, either the hierarchy had no subcategories (which
         // we do not want as a root, or
         // there was an undetected typo in the iri
@@ -526,5 +530,9 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                                           view.unmaskGrids();
                                       }
                                   });
+    }
+
+    void displayErrorToAdmin() {
+        ErrorHandler.post(appearance.ontologyAttrMatchingError());
     }
 }

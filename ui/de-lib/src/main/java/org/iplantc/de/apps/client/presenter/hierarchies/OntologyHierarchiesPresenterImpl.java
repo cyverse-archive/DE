@@ -49,6 +49,8 @@ import com.sencha.gxt.widget.core.client.tree.Tree;
 
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author aramsey
@@ -117,7 +119,7 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
     private OntologyHierarchiesViewFactory viewFactory;
     String baseID;
     List<OntologyHierarchy> unclassifiedHierarchies = Lists.newArrayList();
-
+    Logger LOG = Logger.getLogger("OntologyHierarchiesPresenterImpl");
 
     @Inject
     public OntologyHierarchiesPresenterImpl(OntologyHierarchiesViewFactory viewFactory,
@@ -145,7 +147,13 @@ public class OntologyHierarchiesPresenterImpl implements OntologyHierarchiesView
             @Override
             public void onSuccess(List<OntologyHierarchy> result) {
                 if (result != null && result.size() > 0) {
-                    createViewTabs(result);
+                    boolean isValid = ontologyUtil.createIriToAttrMap(result);
+                    if (!isValid) {
+                        announcer.schedule(new ErrorAnnouncementConfig(appearance.ontologyAttrMatchingFailure()));
+                        LOG.log(Level.SEVERE, "ERROR UI's ontology configs do not exist or do not match published ontology!");
+                    } else {
+                        createViewTabs(result);
+                    }
                 }
             }
         });

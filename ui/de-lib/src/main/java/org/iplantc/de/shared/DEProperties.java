@@ -83,6 +83,9 @@ public class DEProperties {
     private static final String DEFAULT_TRASH_CATEGORY_ID =
             WORKSPACE_PREFIX + "defaultTrashAppCategoryId";
 
+    private static final String ONTOLOGY_ATTRS = WORKSPACE_PREFIX + "ontologyAttrs";
+
+
     /**
      * Properties key for the Beta Avu fields
      */
@@ -157,6 +160,8 @@ public class DEProperties {
     private String betaAvuValue;
 
     private String betaAvuUnit;
+
+    private String ontologyAttrs;
 
 
     public String getPathListFileIdentifier() {
@@ -239,6 +244,7 @@ public class DEProperties {
         keys.add(BETA_AVU_LABEL);
         keys.add(BETA_AVU_VALUE);
         keys.add(BETA_AVU_UNIT);
+        keys.add(ONTOLOGY_ATTRS);
         return keys;
     }
 
@@ -267,6 +273,7 @@ public class DEProperties {
         betaAvuLabel = properties.get(BETA_AVU_LABEL);
         betaAvuValue = properties.get(BETA_AVU_VALUE);
         betaAvuUnit = properties.get(BETA_AVU_UNIT);
+        ontologyAttrs = properties.get(ONTOLOGY_ATTRS);
     }
 
     /**
@@ -399,5 +406,9 @@ public class DEProperties {
 
     public String getBetaAvuUnit() {
         return betaAvuUnit;
+    }
+
+    public String getOntologyAttrs() {
+        return ontologyAttrs;
     }
 }

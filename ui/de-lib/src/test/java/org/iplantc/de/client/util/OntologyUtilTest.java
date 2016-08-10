@@ -1,20 +1,28 @@
 package org.iplantc.de.client.util;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.anyList;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
-import static org.junit.Assert.assertEquals;
 
 import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.client.models.avu.AvuAutoBeanFactory;
 import org.iplantc.de.client.models.avu.AvuList;
 import org.iplantc.de.client.models.ontologies.OntologyAutoBeanFactory;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
+import org.iplantc.de.shared.DEProperties;
 
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import com.google.web.bindery.autobean.shared.AutoBean;
 
@@ -26,6 +34,8 @@ import org.mockito.Mock;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author aramsey
@@ -52,6 +62,12 @@ public class OntologyUtilTest {
     @Mock AutoBean<Avu> avuAutoBeanMock;
     @Mock AutoBean<Avu> subAvuAutoBeanMock;
     @Mock OntologyHierarchy unclassifiedMock;
+    @Mock DEProperties propertiesMock;
+    @Mock JsonUtil jsonUtilMock;
+    @Mock Map<String, String> iriToAttrMapMock;
+    @Mock JSONObject mapMock;
+    @Mock Set<String> keySetMock;
+    @Mock Iterator<String> stringIteratorMock;
 
 
     @Before
@@ -69,11 +85,25 @@ public class OntologyUtilTest {
         when(ontologyHierarchyListMock.iterator()).thenReturn(hierarchyIteratorMock);
         when(hierarchyAutoBeanMock.as()).thenReturn(unclassifiedMock);
         when(ontologyAutoBeanFactoryMock.getHierarchy()).thenReturn(hierarchyAutoBeanMock);
+        when(mapMock.keySet()).thenReturn(keySetMock);
+        when(mapMock.size()).thenReturn(2);
+        when(iriToAttrMapMock.size()).thenReturn(2);
+        when(iriToAttrMapMock.keySet()).thenReturn(keySetMock);
+        when(keySetMock.size()).thenReturn(2);
+        when(keySetMock.iterator()).thenReturn(stringIteratorMock);
+        when(iriToAttrMapMock.get("http://edamontology.org/topic.*")).thenReturn("http://edamontology.org/has_topic");
+        when(iriToAttrMapMock.get("http://edamontology.org/operation.*")).thenReturn("rdf:type");
+        when(stringIteratorMock.hasNext()).thenReturn(true).thenReturn(true).thenReturn(false);
+        when(stringIteratorMock.next()).thenReturn("http://edamontology.org/operation.*").thenReturn("http://edamontology.org/topic.*");
+        when(jsonUtilMock.getString(mapMock, "string")).thenReturn("string");
 
         uut = OntologyUtil.getInstance();
 
         uut.factory = ontologyAutoBeanFactoryMock;
         uut.avuFactory = avuAutoBeanFactoryMock;
+        uut.jsonUtil = jsonUtilMock;
+        uut.properties = propertiesMock;
+        uut.iriToAttrMap = iriToAttrMapMock;
 
         spy = spy(uut);
     }
@@ -125,14 +155,24 @@ public class OntologyUtilTest {
     }
 
     @Test
-    public void testGetAttr() {
+    public void testGetAttr_topic() {
         OntologyHierarchy hierarchyMock = mock(OntologyHierarchy.class);
-        when(hierarchyMock.getIri()).thenReturn("http://edamontology.org/topic_1234");
+        when(hierarchyMock.getIri()).thenReturn("http://edamontology.org/topic_0003");
         assertEquals("http://edamontology.org/has_topic", uut.getAttr(hierarchyMock));
+    }
 
+    @Test
+    public void testGetAttr_operation() {
+        OntologyHierarchy hierarchyMock = mock(OntologyHierarchy.class);
         when(hierarchyMock.getIri()).thenReturn("http://edamontology.org/operation_1234");
         assertEquals("rdf:type", uut.getAttr(hierarchyMock));
+    }
 
+    @Test
+    public void testGetAttr_notFound() {
+        OntologyHierarchy hierarchyMock = mock(OntologyHierarchy.class);
+        when(hierarchyMock.getIri()).thenReturn("http://edamontology.org/data_1234");
+        assertEquals("", uut.getAttr(hierarchyMock));
     }
 
     @Test
@@ -225,6 +265,41 @@ public class OntologyUtilTest {
         verify(hierarchyAutoBeanMock).getTag(eq(HIERARCHY_MODEL_KEY));
 
         verifyNoMoreInteractions(hierarchyAutoBeanMock);
+    }
+
+    @Test
+    public void testCreateIriToAttrMap_nullProperties() {
+        when(propertiesMock.getOntologyAttrs()).thenReturn(null);
+
+        /** CALL METHOD UNDER TEST **/
+        uut.createIriToAttrMap(ontologyHierarchyListMock);
+        verify(propertiesMock).getOntologyAttrs();
+        verifyZeroInteractions(iriToAttrMapMock);
+    }
+
+    @Test
+    public void testCreateIriToAttrMap_withProperties() {
+        when(propertiesMock.getOntologyAttrs()).thenReturn("string");
+        when(jsonUtilMock.getObject(anyString())).thenReturn(mapMock);
+
+        /** CALL METHOD UNDER TEST **/
+        spy.createIriToAttrMap(ontologyHierarchyListMock);
+        verify(propertiesMock).getOntologyAttrs();
+        verify(iriToAttrMapMock).clear();
+        verify(spy).buildIriToAttrMap(anyString());
+    }
+
+    @Test
+    public void testBuildIriToAttrMap() {
+        when(jsonUtilMock.getObject("rdf:type")).thenReturn(mapMock);
+
+        /** CALL METHOD UNDER TEST **/
+        uut.buildIriToAttrMap("rdf:type");
+
+        verify(jsonUtilMock).getObject(anyString());
+        verify(mapMock).keySet();
+        verify(jsonUtilMock, times(2)).getString(eq(mapMock), anyString());
+        verify(iriToAttrMapMock, times(2)).put(anyString(), anyString());
     }
 
 }

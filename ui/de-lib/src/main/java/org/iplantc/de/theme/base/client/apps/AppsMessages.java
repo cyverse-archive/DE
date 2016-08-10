@@ -133,4 +133,6 @@ public interface AppsMessages extends Messages {
     String viewCategoriesHeader();
 
     String betaToolTip();
+
+    String ontologyAttrMatchingFailure();
 }
