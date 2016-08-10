@@ -455,7 +455,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         Avu avu = ontologyUtil.convertHierarchyToAvu(hierarchy);
 
         newGridPresenter.getView().mask(appearance.loadingMask());
-        serviceFacade.getAppsByHierarchy(hierarchy.getIri(), avu, new AsyncCallback<List<App>>() {
+        serviceFacade.getAppsByHierarchy(editedOntology.getVersion(), hierarchy.getIri(), avu, new AsyncCallback<List<App>>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);

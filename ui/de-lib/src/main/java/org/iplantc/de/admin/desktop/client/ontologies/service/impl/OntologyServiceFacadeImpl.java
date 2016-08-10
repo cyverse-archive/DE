@@ -84,8 +84,8 @@ public class OntologyServiceFacadeImpl implements OntologyServiceFacade {
     }
 
     @Override
-    public void getAppsByHierarchy(String iri, Avu avu, AsyncCallback<List<App>> callback) {
-        String address = APPS_HIERARCHIES + "/" + URL.encodeQueryString(iri) + "/apps" + "?attr=" + URL.encodeQueryString(avu.getAttribute());
+    public void getAppsByHierarchy(String version, String iri, Avu avu, AsyncCallback<List<App>> callback) {
+        String address = ONTOLOGY_ADMIN + "/" + URL.encodeQueryString(version) + "/" + URL.encodeQueryString(iri) + "/apps" + "?attr=" + URL.encodeQueryString(avu.getAttribute());
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, new AsyncCallbackConverter<String, List<App>>(callback) {

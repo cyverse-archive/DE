@@ -57,7 +57,7 @@ public interface OntologyServiceFacade {
      * @param avu
      * @param callback
      */
-    void getAppsByHierarchy(String iri, Avu avu, AsyncCallback<List<App>> callback);
+    void getAppsByHierarchy(String version, String iri, Avu avu, AsyncCallback<List<App>> callback);
 
     /**
      * Add/Append a list of metadata tags to an App
