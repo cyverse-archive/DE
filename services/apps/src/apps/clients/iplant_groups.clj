@@ -61,8 +61,8 @@
   [group-name]
   (try+
    (:body (http/get (grouper-url "groups" group-name)
-                    {:query-params     {:user (config/de-grouper-user)}
-                     :as               :json}))
+                    {:query-params {:user (config/de-grouper-user)}
+                     :as           :json}))
    (catch [:status 404] _ nil)))
 
 (defn- create-group
@@ -75,6 +75,13 @@
                      :content-type :json
                      :as           :json})))
 
+(defn- get-group-members
+  "Retrieves a list of members belonging to a group."
+  [group-name]
+  (:body (http/get (grouper-url "groups" group-name "members")
+                   {:query-params {:user (config/de-grouper-user)}
+                    :as           :json})))
+
 (defn get-or-create-group
   "Ensures that a group with the given name exists."
   [group-name group-type]
@@ -85,3 +92,9 @@
   "Retrieves information about the workshop users group, creating the group if necessary."
   []
   (get-or-create-group (grouper-workshop-group) "role"))
+
+(defn get-workshop-group-members
+  "Retrieves the list of workshop group members, creating the group if necessary."
+  []
+  (get-workshop-group)
+  (get-group-members (grouper-workshop-group)))

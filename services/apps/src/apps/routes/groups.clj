@@ -11,5 +11,12 @@
     :summary "Retrieve Workshop Group Information"
     :return schema/Group
     :description "This service allows administrators to retrieve information about the workshop users
-    group"
-    (ok (groups/get-workshop-group))))
+    group."
+    (ok (groups/get-workshop-group)))
+
+  (GET* "/workshop/members" []
+    :query [params SecuredQueryParams]
+    :summary "List Workshop Group Members"
+    :return schema/GroupMembers
+    :description "This service allows administrators to list the members of the workshop users group."
+    (ok (groups/get-workshop-group-members))))
