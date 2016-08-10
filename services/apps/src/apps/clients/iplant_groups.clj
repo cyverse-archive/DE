@@ -1,13 +1,24 @@
 (ns apps.clients.iplant-groups
   (:require [apps.util.config :as config]
             [cemerick.url :as curl]
-            [clj-http.client :as http]))
+            [clj-http.client :as http]
+            [clojure.string :as string]))
 
-(def grouper-user-group-fmt "iplant:de:%s:users:de-users")
+(def ^:private grouper-environment-base-fmt "iplant:de:%s")
+
+(defn- grouper-environment-base
+  []
+  (format grouper-environment-base-fmt (config/env-name)))
+
+(defn remove-environment-from-group
+  [group-name]
+  (string/replace-first group-name (str (grouper-environment-base) ":") ""))
+
+(def ^:private grouper-user-group-fmt "%s:users:de-users")
 
 (defn- grouper-user-group
   []
-  (format grouper-user-group-fmt (config/env-name)))
+  (format grouper-user-group-fmt (grouper-environment-base)))
 
 (defn- grouper-url
   [& components]
@@ -28,6 +39,12 @@
   [user short-username]
   (-> (http/get (grouper-url "subjects" short-username) {:query-params {:user user} :as :json})
       (:body)))
+
+(defn lookup-subject-groups
+  "Uses iplant-groups groups-for-subject lookup by ID endpoint to retrieve a user's groups"
+  [short-username]
+  (-> (http/get (grouper-url "subjects" short-username "groups") {:query-params {:user (config/de-grouper-user) :folder (grouper-environment-base)} :as :json})
+      :body))
 
 (defn add-de-user
   "Adds a user to the de-users group."
