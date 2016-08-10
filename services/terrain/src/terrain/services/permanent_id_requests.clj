@@ -213,7 +213,7 @@
              :request-type type})))
 
 (defn- parse-valid-ezid-metadata
-  [{:keys [path]} irods-avus {:keys [avus]}]
+  [{:keys [path]} {:keys [avus irods-avus]}]
   (let [format-avus #(vector (:attr %) (:value %))
         ezid-metadata (into {} (concat (map format-avus irods-avus) (map format-avus avus)))]
     (validate-ezid-metadata ezid-metadata)
@@ -225,8 +225,8 @@
   "Gets data-info stat for the given ID and checks if the data item is valid for a Permanent ID request."
   [user data-id]
   (let [data-item (->> data-id (data-info/stat-by-uuid user) (validate-data-item user))
-        {:keys [irods-avus metadata]} (data-info/get-metadata-json user data-id)]
-    (parse-valid-ezid-metadata data-item irods-avus metadata)
+        metadata (data-info/get-metadata-json user data-id)]
+    (parse-valid-ezid-metadata data-item metadata)
     data-item))
 
 (defn- format-alt-id-avus
@@ -351,16 +351,16 @@
   [user {request-id :id :keys [folder type] :as request}]
   (validate-request-for-completion request)
   (try+
-    (let [shoulder                      (request-type->shoulder type)
-          folder                        (validate-publish-dest folder)
-          folder-id                     (uuidify (:id folder))
-          {:keys [irods-avus metadata]} (data-info/get-metadata-json user folder-id)
-          ezid-metadata                 (parse-valid-ezid-metadata folder irods-avus metadata)
-          ezid-response                 (ezid/mint-id shoulder ezid-metadata)
-          identifier                    (get ezid-response (keyword type))
-          alt-identifiers               (dissoc ezid-response (keyword type))
-          publish-avus                  (format-publish-avus ezid-metadata identifier alt-identifiers)
-          publish-path                  (publish-data-item user folder)]
+    (let [shoulder        (request-type->shoulder type)
+          folder          (validate-publish-dest folder)
+          folder-id       (uuidify (:id folder))
+          metadata        (data-info/get-metadata-json user folder-id)
+          ezid-metadata   (parse-valid-ezid-metadata folder metadata)
+          ezid-response   (ezid/mint-id shoulder ezid-metadata)
+          identifier      (get ezid-response (keyword type))
+          alt-identifiers (dissoc ezid-response (keyword type))
+          publish-avus    (format-publish-avus ezid-metadata identifier alt-identifiers)
+          publish-path    (publish-data-item user folder)]
       (email/send-permanent-id-request-complete type
                                                 publish-path
                                                 (json/encode ezid-response {:pretty true}))
