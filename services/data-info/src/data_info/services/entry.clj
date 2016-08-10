@@ -45,14 +45,13 @@
       ""
       (ops/input-stream irods path))))
 
-(defn file-entry
-  [path {:keys [attachment]}]
+(defn- file-entry
+  [cm path {:keys [attachment]}]
   (let [filename    (str \" (file/basename path) \")
         disposition (if attachment
                       (str "attachment; filename=" filename)
                       (str "filename=" filename))
-        media-type  (init/with-jargon (cfg/jargon-cfg) [cm]
-                      (irods/detect-media-type cm path))]
+        media-type  (irods/detect-media-type cm path)]
     (assoc (http-response/ok (get-file path))
            :headers {"Content-Type"        media-type
                      "Content-Disposition" disposition})))
@@ -213,8 +212,8 @@
             :totalBad (total-bad user zone path entity-type info-types bad-indicator)})))
 
 
-(defn folder-entry
-  [path {:keys [user
+(defn- folder-entry
+  [cm path {:keys [user
                 entity-type
                 bad-chars
                 bad-name
@@ -234,26 +233,25 @@
         sort-dir    (resolve-sort-dir sort-dir)
         offset      (if-not (nil? offset) offset 0)]
     (http-response/ok
-      (init/with-jargon (cfg/jargon-cfg) [cm]
-        (paged-dir-listing
-          cm user path entity-type badies sort-field sort-dir offset limit info-type)))))
+      (paged-dir-listing
+         cm user path entity-type badies sort-field sort-dir offset limit info-type))))
 
 
 (defn- get-path-attrs
-  [zone path-in-zone user]
-  (init/with-jargon (cfg/jargon-cfg) [cm]
-    (duv/user-exists cm user)
-    (let [path (file/rm-last-slash (irods/abs-path zone path-in-zone))]
-      (jv/validate-path-lengths path)
-      (duv/path-exists cm path)
-      (duv/path-readable cm user path)
-      {:path           path
-       :is-dir?        (item/is-dir? cm path)})))
+  [cm zone path-in-zone user]
+  (duv/user-exists cm user)
+  (let [path (file/rm-last-slash (irods/abs-path zone path-in-zone))]
+    (jv/validate-path-lengths path)
+    (duv/path-exists cm path)
+    (duv/path-readable cm user path)
+    {:path           path
+     :is-dir?        (item/is-dir? cm path)}))
 
 
 (defn dispatch-path-to-resource
   [zone path-in-zone {:keys [user] :as params}]
-  (let [{:keys [path is-dir?]} (get-path-attrs zone path-in-zone user)]
-    (if is-dir?
-      (folder-entry path params)
-      (file-entry path params))))
+  (init/with-jargon (cfg/jargon-cfg) [cm]
+    (let [{:keys [path is-dir?]} (get-path-attrs cm zone path-in-zone user)]
+      (if is-dir?
+        (folder-entry cm path params)
+        (file-entry cm path params)))))
