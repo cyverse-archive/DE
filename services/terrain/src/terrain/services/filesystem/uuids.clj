@@ -17,7 +17,7 @@
 (def uuid-attr "ipc_UUID")
 
 
-(defn ^IPersistentMap path-for-uuid
+(defn- ^IPersistentMap path-for-uuid
   "Resolves a stat info for the entity with a given UUID.
 
    Params:
@@ -25,7 +25,7 @@
      uuid - the UUID
 
    Returns:
-     It returns a path-stat map containing an additional UUID field."
+     It returns a path."
   ([^IPersistentMap cm ^String user ^UUID uuid]
    (let [results (list-everything-with-attr-value cm uuid-attr uuid)]
      (when (empty? results)
@@ -37,7 +37,7 @@
                 :count      (count results)
                 :uuid       uuid}))
      (if (pos? (count results))
-       (merge {:uuid uuid} (stat/path-stat cm user (first results))))))
+       (first results))))
   ([^String user ^UUID uuid]
    (init/with-jargon (jargon/jargon-cfg) [cm]
      (path-for-uuid cm user uuid))))
@@ -111,5 +111,5 @@
      It returns true if the user can access the data item, otherwise false"
   [^String user ^UUID data-id]
   (init/with-jargon (jargon/jargon-cfg) [cm]
-    (let [data-path (:path (path-for-uuid cm user (str data-id)))]
+    (let [data-path (path-for-uuid cm user (str data-id))]
       (and data-path (is-readable? cm user data-path)))))
