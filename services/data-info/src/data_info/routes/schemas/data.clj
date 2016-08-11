@@ -14,7 +14,7 @@
          :path (describe NonBlankString "A path to translate to a UUID")))
 
 (s/defschema PathToUUIDReturn
-  {:id (describe NonBlankString "The UUID for the path queried.")})
+  {:id DataIdPathParam})
 
 (s/defschema FileUploadQueryParams
   (assoc StandardUserQueryParams
