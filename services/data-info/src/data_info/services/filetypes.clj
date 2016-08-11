@@ -53,7 +53,7 @@
 
 (defn do-add-type-uuid
   [{user :user} {type :type} data-id]
-  (let [path (ft/rm-last-slash (:path (uuids/path-for-uuid user data-id)))]
+  (let [path (ft/rm-last-slash (uuids/path-for-uuid user data-id))]
     (add-type-path user path type)))
 
 (with-pre-hook! #'do-add-type-uuid

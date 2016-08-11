@@ -15,6 +15,21 @@
 
 
 (defn ^IPersistentMap path-for-uuid
+  "Resolves a path for the entity with a given UUID.
+
+   Params:
+     user - the user requesting the info
+     uuid - the UUID
+
+   Returns:
+     It returns a path."
+  ([^IPersistentMap cm ^String user ^UUID uuid]
+   (uuid/get-path cm uuid))
+  ([^String user ^UUID uuid]
+   (init/with-jargon (cfg/jargon-cfg) [cm]
+     (path-for-uuid cm user uuid))))
+
+(defn ^IPersistentMap path-stat-for-uuid
   "Resolves a stat info for the entity with a given UUID.
 
    Params:
@@ -30,7 +45,7 @@
 
   ([^String user ^UUID uuid]
    (init/with-jargon (cfg/jargon-cfg) [cm]
-     (path-for-uuid cm user uuid))))
+     (path-stat-for-uuid cm user uuid))))
 
 
 (defn paths-for-uuids
@@ -77,5 +92,5 @@
      It returns true if the user can access the data item, otherwise false"
   [^String user ^UUID data-id]
   (init/with-jargon (cfg/jargon-cfg) [cm]
-    (let [data-path (:path (path-for-uuid cm user (str data-id)))]
+    (let [data-path (uuid/get-path cm (str data-id))]
       (and data-path (is-readable? cm user data-path)))))

@@ -71,7 +71,7 @@
 
 (defn- get-readable-data-item
   [cm user data-id]
-  (let [{:keys [path] :as data-item} (uuids/path-for-uuid cm user data-id)]
+  (let [{:keys [path] :as data-item} (uuids/path-stat-for-uuid cm user data-id)]
     (validators/path-readable cm user path)
     data-item))
 
@@ -176,7 +176,7 @@
   [user data-id {:keys [irods-avus] :as metadata}]
   (with-jargon (cfg/jargon-cfg) [cm]
     (validators/user-exists cm user)
-    (let [{:keys [path type]} (uuids/path-for-uuid cm user data-id)
+    (let [{:keys [path type]} (uuids/path-stat-for-uuid cm user data-id)
           irods-avus (set (map #(select-keys % [:attr :value :unit]) irods-avus))
           current-avus (set (list-path-metadata cm path :system false))
           delete-irods-avus (s/difference current-avus irods-avus)
@@ -270,7 +270,7 @@
   (with-jargon (cfg/jargon-cfg) [cm]
     (validators/user-exists cm user)
     (let [dest-dir (ft/dirname dest)
-          src-data (uuids/path-for-uuid cm user data-id)
+          src-data (uuids/path-stat-for-uuid cm user data-id)
           src-path (:path src-data)]
       (validators/path-readable cm user src-path)
       (validators/path-exists cm dest-dir)

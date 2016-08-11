@@ -24,7 +24,7 @@
 (defn list-permissions
   [{:keys [user]} data-id]
   (with-jargon (cfg/jargon-cfg) [cm]
-    (let [path (ft/rm-last-slash (:path (uuids/path-for-uuid user data-id)))]
+    (let [path (ft/rm-last-slash (uuids/path-for-uuid user data-id))]
       (validators/user-exists cm user)
       (validators/path-readable cm user path)
       (list-permissions* cm user path))))
@@ -38,7 +38,7 @@
 (defn add-permission
   [{:keys [user]} data-id share-with permission]
   (with-jargon (cfg/jargon-cfg) [cm]
-    (let [path (ft/rm-last-slash (:path (uuids/path-for-uuid user data-id)))]
+    (let [path (ft/rm-last-slash (uuids/path-for-uuid user data-id))]
       (validators/user-exists cm user)
       (validators/user-owns-path cm user path)
       (validators/user-exists cm share-with)
@@ -54,7 +54,7 @@
 (defn remove-permission
   [{:keys [user]} data-id unshare-with]
   (with-jargon (cfg/jargon-cfg) [cm]
-    (let [path (ft/rm-last-slash (:path (uuids/path-for-uuid user data-id)))]
+    (let [path (ft/rm-last-slash (uuids/path-for-uuid user data-id))]
       (validators/user-exists cm user)
       (validators/user-owns-path cm user path)
       (validators/user-exists cm unshare-with)

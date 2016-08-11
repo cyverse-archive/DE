@@ -59,7 +59,7 @@
    ring.middleware.multipart-params/multipart-params-request which overwrites the file in iRODS."
   [user data-id {istream :stream}]
   (with-jargon (cfg/jargon-cfg) [cm]
-    (let [path (ft/rm-last-slash (:path (uuids/path-for-uuid user data-id)))]
+    (let [path (ft/rm-last-slash (uuids/path-for-uuid cm user data-id))]
       (overwrite-path cm istream user path))))
 
 (defn wrap-multipart-overwrite

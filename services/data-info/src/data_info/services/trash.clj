@@ -50,38 +50,40 @@
              :paths (filterv #(home-matcher user %) paths)})))
 
 (defn- delete-paths
-  [user paths]
-  (with-jargon (cfg/jargon-cfg) [cm]
-    (let [paths (mapv ft/rm-last-slash paths)
-          trash-paths (atom (hash-map))]
-      (validators/user-exists cm user)
-      (validators/all-paths-exist cm paths)
-      (validators/user-owns-paths cm user paths)
-      (validate-not-homedir user paths)
+  ([user paths]
+   (with-jargon (cfg/jargon-cfg) [cm]
+     (delete-paths cm user paths)))
+  ([cm user paths]
+     (let [paths (mapv ft/rm-last-slash paths)
+           trash-paths (atom (hash-map))]
+       (validators/user-exists cm user)
+       (validators/all-paths-exist cm paths)
+       (validators/user-owns-paths cm user paths)
+       (validate-not-homedir user paths)
 
-      (doseq [^String p paths]
-        (log/debug "path" p)
-        (log/debug "readable?" user (owns? cm user p))
+       (doseq [^String p paths]
+         (log/debug "path" p)
+         (log/debug "readable?" user (owns? cm user p))
 
-        ;;; Delete all of the tickets associated with the file.
-        (let [path-tickets (mapv :ticket-id (ticket-ids-for-path cm (:username cm) p))]
-          (doseq [path-ticket path-tickets]
-            (delete-ticket cm (:username cm) path-ticket)))
+         ;;; Delete all of the tickets associated with the file.
+         (let [path-tickets (mapv :ticket-id (ticket-ids-for-path cm (:username cm) p))]
+           (doseq [path-ticket path-tickets]
+             (delete-ticket cm (:username cm) path-ticket)))
 
-        ;;; If the file isn't already in the user's trash, move it there
-        ;;; otherwise, do a hard delete.
-        (if-not (.startsWith p (paths/user-trash-path user))
-          (do (let [trash-path (move-to-trash cm p user)]
-              (swap! trash-paths assoc p trash-path)))
-          (delete cm p true))) ;;; Force a delete to bypass proxy user's trash.
+         ;;; If the file isn't already in the user's trash, move it there
+         ;;; otherwise, do a hard delete.
+         (if-not (.startsWith p (paths/user-trash-path user))
+           (do (let [trash-path (move-to-trash cm p user)]
+               (swap! trash-paths assoc p trash-path)))
+           (delete cm p true))) ;;; Force a delete to bypass proxy user's trash.
 
-       {:paths paths
-        :trash-paths @trash-paths})))
+        {:paths paths
+         :trash-paths @trash-paths})))
 
 (defn- delete-uuid
   "Delete by UUID: given a user and a data item UUID, delete that data item, returning a list of filenames deleted."
   [user source-uuid]
-  (let [path (ft/rm-last-slash (:path (uuids/path-for-uuid user source-uuid)))]
+  (let [path (ft/rm-last-slash (uuids/path-for-uuid user source-uuid))]
     (validate-not-homedir user [path])
     (validators/validate-num-paths-under-folder user path)
     (delete-paths user [path])))
@@ -89,12 +91,12 @@
 (defn- delete-uuid-contents
   "Delete contents by UUID: given a user and a data item UUID, delete the contents, returning a list of filenames deleted."
   [user source-uuid]
-  (let [source (ft/rm-last-slash (:path (uuids/path-for-uuid user source-uuid)))]
-    (with-jargon (cfg/jargon-cfg) [cm]
+  (with-jargon (cfg/jargon-cfg) [cm]
+    (let [source (ft/rm-last-slash (uuids/path-for-uuid cm user source-uuid))]
       (validators/validate-num-paths-under-folder user source)
-      (validators/path-is-dir cm source))
-    (let [paths (directory/get-paths-in-folder user source)]
-      (delete-paths user paths))))
+      (validators/path-is-dir cm source)
+      (let [paths (directory/get-paths-in-folder user source)]
+        (delete-paths cm user paths)))))
 
 (defn- list-in-dir
   [{^IRODSFileSystemAO cm-ao :fileSystemAO :as cm} fixed-path]

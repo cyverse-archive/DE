@@ -65,7 +65,7 @@
 (defn- rename-uuid
   "Rename by UUID: given a user, a source file UUID, and a new name, rename within the same folder."
   [user source-uuid dest-base]
-  (let [source (ft/rm-last-slash (:path (uuids/path-for-uuid user source-uuid)))
+  (let [source (ft/rm-last-slash (uuids/path-for-uuid user source-uuid))
         src-dir (ft/dirname source)
         dest (str (ft/add-trailing-slash src-dir) dest-base)]
     (validators/validate-num-paths-under-folder user source)
@@ -78,7 +78,7 @@
 (defn- move-uuid
   "Rename by UUID: given a user, a source file UUID, and a new directory, move retaining the filename."
   [user source-uuid dest-dir]
-  (let [source (ft/rm-last-slash (:path (uuids/path-for-uuid user source-uuid)))
+  (let [source (ft/rm-last-slash (uuids/path-for-uuid user source-uuid))
         src-base (ft/basename source)
         dest (str (ft/add-trailing-slash dest-dir) src-base)]
     (validators/validate-num-paths-under-folder user source)
@@ -95,7 +95,7 @@
 (defn- move-uuid-contents
   "Rename by UUID: given a user, a source directory UUID, and a new directory, move the directory contents, retaining the filename."
   [user source-uuid dest-dir]
-  (let [source (ft/rm-last-slash (:path (uuids/path-for-uuid user source-uuid)))]
+  (let [source (ft/rm-last-slash (uuids/path-for-uuid user source-uuid))]
     (with-jargon (cfg/jargon-cfg) [cm]
       (validators/path-is-dir cm source))
     (let [sources (directory/get-paths-in-folder user source)]
