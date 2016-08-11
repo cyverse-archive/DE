@@ -82,6 +82,15 @@
                    {:query-params {:user (config/de-grouper-user)}
                     :as           :json})))
 
+(defn- update-group-members
+  "Updates the membership list of a group."
+  [group-name subject-ids]
+  (:body (http/put (grouper-url "groups" group-name "members")
+                   {:query-params {:user (config/de-grouper-user)}
+                    :form-params  {:members subject-ids}
+                    :content-type :json
+                    :as           :json})))
+
 (defn get-or-create-group
   "Ensures that a group with the given name exists."
   [group-name group-type]
@@ -98,3 +107,9 @@
   []
   (get-workshop-group)
   (get-group-members (grouper-workshop-group)))
+
+(defn update-workshop-group-members
+  "Updates the listof workshop group members, creating the group if necessary."
+  [subject-ids]
+  (get-workshop-group)
+  (update-group-members (grouper-workshop-group) subject-ids))

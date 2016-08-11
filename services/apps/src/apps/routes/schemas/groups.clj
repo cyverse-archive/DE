@@ -1,5 +1,5 @@
 (ns apps.routes.schemas.groups
-  (:use [common-swagger-api.schema :only [describe]])
+  (:use [common-swagger-api.schema :only [describe NonBlankString]])
   (:require [schema.core :as s]))
 
 (s/defschema Group
@@ -54,3 +54,19 @@
 
 (s/defschema GroupMembers
   {:members (describe [Subject] "The list of group members.")})
+
+(s/defschema GroupMembersUpdate
+  {:members (describe [NonBlankString] "The new list of member subject IDs.")})
+
+(s/defschema GroupMemberSubjectUpdateResponse
+  {:success
+   (describe Boolean "True if the user was added successfully")
+
+   :subject_id
+   (describe NonBlankString "The subject ID.")
+
+   (s/optional-key :subject_name)
+   (describe NonBlankString "The subject name.")})
+
+(s/defschema GroupMembersUpdateResponse
+  {:results (describe [GroupMemberSubjectUpdateResponse] "The list of membership update results.")})

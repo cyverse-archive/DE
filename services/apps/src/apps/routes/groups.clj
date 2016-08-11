@@ -19,4 +19,11 @@
     :summary "List Workshop Group Members"
     :return schema/GroupMembers
     :description "This service allows administrators to list the members of the workshop users group."
-    (ok (groups/get-workshop-group-members))))
+    (ok (groups/get-workshop-group-members)))
+
+  (PUT* "/workshop/members" []
+    :query [params SecuredQueryParams]
+    :body [body (describe schema/GroupMembersUpdate "The new list group member IDs.")]
+    :return schema/GroupMembersUpdateResponse
+    :summary "Update the Workshop Group Membership List"
+    (ok (groups/update-workshop-group-members (:members body)))))

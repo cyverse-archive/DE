@@ -7,3 +7,6 @@
 
 (defn get-workshop-group-members []
   (ipg/get-workshop-group-members))
+
+(defn update-workshop-group-members [subject-ids]
+  (ipg/update-workshop-group-members subject-ids))
