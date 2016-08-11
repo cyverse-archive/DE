@@ -271,6 +271,12 @@
 
 ;; MISC
 
+(defn uuid-for-path
+  "Uses the data-info uuid-for-path endpoint to resolve a path to a UUID"
+  [user path]
+  (request :get ["data" "uuid"]
+           (mk-req-map user {:path path})))
+
 (defn collect-permissions
   "Uses the data-info permissions-gatherer endpoint to query user permissions for a set of files/folders."
   [user paths]

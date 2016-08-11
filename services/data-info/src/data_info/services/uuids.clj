@@ -81,6 +81,14 @@
     (valid/all-paths-readable cm user paths)
     (remove nil? (mapv (partial uuid-for-path cm user) paths))))
 
+(defn do-simple-uuid-for-path
+  [{:keys [user path]}]
+  (init/with-jargon (cfg/jargon-cfg) [cm]
+    (valid/user-exists cm user)
+    (valid/path-exists cm path)
+    (valid/path-readable cm user path)
+    {:id (str (irods/lookup-uuid cm path))}))
+
 (defn ^Boolean uuid-accessible?
   "Indicates if a data item is readable by a given user.
 

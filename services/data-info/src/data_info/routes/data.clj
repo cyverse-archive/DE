@@ -13,6 +13,7 @@
             [data-info.services.write :as write]
             [data-info.services.page-file :as page-file]
             [data-info.services.page-tabular :as page-tabular]
+            [data-info.services.uuids :as uuids]
             [data-info.util.config :as cfg]
             [tree-urls-client.middleware :refer [wrap-tree-urls-base]]
             [clojure-commons.error-codes :as ce]
@@ -24,6 +25,14 @@
 
   (context* "/data" []
     :tags ["data"]
+
+    (GET* "/uuid" [:as {uri :uri}]
+      :query [params PathToUUIDParams]
+      :return PathToUUIDReturn
+      :summary "Get the UUID for a path"
+      :description (str "Get a UUID for a path provided as a query parameter."
+(get-error-code-block "ERR_DOES_NOT_EXIST, ERR_NOT_READABLE, ERR_NOT_A_USER"))
+      (svc/trap uri uuids/do-simple-uuid-for-path params))
 
     (GET* "/path/:zone/*" [:as {{zone :zone path :*} :params uri :uri}]
       :query [params FolderListingParams]
