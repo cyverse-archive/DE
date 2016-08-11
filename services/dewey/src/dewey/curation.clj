@@ -6,7 +6,8 @@
             [clojure-commons.file-utils :as file]
             [dewey.entity :as entity]
             [dewey.indexing :as indexing]
-            [dewey.util :as util])
+            [dewey.util :as util]
+            [service-logging.thread-context :as tc])
   (:import [java.io IOException]
            [java.util UUID]
            [org.irods.jargon.core.exception FileNotFoundException JargonException]))
@@ -296,6 +297,10 @@
                                    nil))
 
 
+(defn- milliseconds-since
+  [start]
+  (/ (- (System/nanoTime) start) 1e6))
+
 (defn consume-msg
   "This is the primary function. It dispatches the message based on a routing key to a function
    specific to a certain type of message.
@@ -309,17 +314,25 @@
    Throws:
      It throws any exception perculating up from below."
   [irods-cfg es routing-key msg]
-  (log/info (format "[curation/consume-msg] [%s] [%s]" routing-key msg))
-  (if-let [consume (resolve-consumer routing-key)]
-    (try+
-      (irods/with-jargon irods-cfg [irods]
-        (consume irods es msg))
-      (catch FileNotFoundException _
-        (log/info "Attempted to index a non-existent iRODS entity. Most likely it was deleted after"
-                  "this index message was created."))
-      (catch JargonException e
-        (if (instance? IOException (.getCause e))
-          (log/warn "Failed to connect to iRODs. Could not process route" routing-key "with message"
-            msg)
-          (throw e))))
-    (log/warn (str "unknown routing key" routing-key "received with message" msg))))
+  (tc/with-logging-context {:amqp-routing-key routing-key :amqp-message msg}
+    (log/info (format "[curation/consume-msg] [%s] [%s]" routing-key msg))
+    (let [consume-start (System/nanoTime)
+          innertime (atom 0)]
+      (if-let [consume (resolve-consumer routing-key)]
+        (try+
+          (irods/with-jargon irods-cfg [irods]
+            (let [innerstart (System/nanoTime)]
+              (consume irods es msg)
+              (reset! innertime (milliseconds-since innerstart))))
+          (catch FileNotFoundException _
+            (log/info "Attempted to index a non-existent iRODS entity. Most likely it was deleted after"
+                      "this index message was created."))
+          (catch JargonException e
+            (if (instance? IOException (.getCause e))
+              (log/warn "Failed to connect to iRODs. Could not process route" routing-key "with message"
+                msg)
+              (throw e))))
+        (log/warn (str "unknown routing key" routing-key "received with message" msg)))
+      (let [consumetime (milliseconds-since consume-start)]
+        (tc/with-logging-context {:amqp-total-time consumetime :dewey-consume-time @innertime}
+          (log/info (format "[curation/consume-msg] [%s] [%s] %gms consume/%gms total" routing-key msg @innertime consumetime)))))))
