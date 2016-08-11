@@ -88,6 +88,14 @@
             :description "This endpoint allows callers to list the members of a single group."
             (ok (groups/get-group-members group-name params)))
 
+      (PUT* "/" []
+            :query       [params StandardUserQueryParams]
+            :body        [body (describe GroupMembersUpdate "The new list of group member IDs.")]
+            :return      GroupMembersUpdateResponse
+            :summary     "Replace Group Members"
+            :description "This endpoint allows callers to completely replace the members of a group."
+            (ok (groups/replace-members group-name body params)))
+
       (context* "/:subject-id" []
         :path-params [subject-id :- SubjectIdPathParam]
 

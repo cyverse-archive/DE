@@ -54,6 +54,16 @@
        (http/post (apply grouper-uri uri-parts))
        (:body)))
 
+(defn- grouper-put-no-exceptions
+  [body & uri-parts]
+  (json/decode (->> {:body             (json/encode body)
+                     :basic-auth       (auth-params)
+                     :content-type     content-type
+                     :throw-exceptions false}
+                    (http/put (apply grouper-uri uri-parts))
+                    (:body))
+               true))
+
 (defn- grouper-put
   [body & uri-parts]
   (->> {:body         (json/encode body)
@@ -257,6 +267,22 @@
                        (grouper-post "groups")
                        :WsGetMembersResults)]
       [(:wsSubjects (first (:results response))) (:subjectAttributeNames response)])))
+
+;; Replace all group members.
+
+(defn- format-member-replacement-request
+  [username subject-ids]
+  {:WsRestAddMemberRequest
+   {:actAsSubjectLookup (act-as-subject-lookup username)
+    :replaceAllExisting "T"
+    :subjectLookups     (subject-lookups subject-ids)}})
+
+(defn replace-group-members
+  [username group-name subject-ids]
+  (-> (format-member-replacement-request username subject-ids)
+      (grouper-put-no-exceptions "groups" group-name "members")
+      :WsAddMemberResults
+      :results))
 
 ;; Add group member.
 

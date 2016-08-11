@@ -1,5 +1,5 @@
 (ns iplant_groups.routes.schemas.group
-  (:use [common-swagger-api.schema :only [describe ->optional-param]])
+  (:use [common-swagger-api.schema :only [describe NonBlankString ->optional-param]])
   (:require [iplant_groups.routes.schemas.params :as params]
             [iplant_groups.routes.schemas.subject :as subject]
             [schema.core :as s]))
@@ -90,3 +90,19 @@
 
 (s/defschema GroupMembers
   {:members (describe [subject/Subject] "The list of group members.")})
+
+(s/defschema GroupMembersUpdate
+  {:members (describe [NonBlankString] "The new list of member subject IDs.")})
+
+(s/defschema GroupMemberSubjectUpdateResponse
+  {:success
+   (describe Boolean "True if the user was added successfully")
+
+   :subject_id
+   (describe NonBlankString "The subject ID.")
+
+   (s/optional-key :subject_name)
+   (describe NonBlankString "The subject name.")})
+
+(s/defschema GroupMembersUpdateResponse
+  {:results (describe [GroupMemberSubjectUpdateResponse] "The list of membership update results.")})
