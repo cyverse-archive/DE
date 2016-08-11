@@ -1,7 +1,7 @@
-(ns integration-tests.metadata.services.ontology-test
+(ns integration.metadata.services.ontology-test
   (:use [clojure.test]
         [korma.core :exclude [update]]
-        [integration-tests]
+        [integration]
         [metadata.services.ontology])
   (:require [metadata.persistence.ontologies :as db]))
 

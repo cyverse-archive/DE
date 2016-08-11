@@ -1,6 +1,6 @@
-(ns integration-tests.metadata.services.avus-test
+(ns integration.metadata.services.avus-test
   (:use [clojure.test]
-        [integration-tests]
+        [integration]
         [kameleon.uuids :only [uuid]]
         [metadata.services.avus])
   (:require [metadata.persistence.avu :as persistence]))

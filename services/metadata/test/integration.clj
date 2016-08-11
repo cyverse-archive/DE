@@ -1,4 +1,4 @@
-(ns integration-tests
+(ns integration
   (:use [clojure.test])
   (:require [metadata.util.config :as config]
             [metadata.util.db :as db]))
