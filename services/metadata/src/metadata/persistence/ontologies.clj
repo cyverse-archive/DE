@@ -25,10 +25,10 @@
                          :created_on)
                  (where {:version ontology-version}))))
 
-(defn mark-ontology-deleted
-  [ontology-version]
+(defn set-ontology-deleted
+  [ontology-version deleted]
   (sql/update :ontologies
-              (set-fields {:deleted true})
+              (set-fields {:deleted deleted})
               (where {:version ontology-version})))
 
 (defn list-ontologies

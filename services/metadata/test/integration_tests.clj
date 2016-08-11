@@ -3,6 +3,8 @@
   (:require [metadata.util.config :as config]
             [metadata.util.db :as db]))
 
+(def test-username "ipcdev")
+
 (defn- integration-test-setup
   []
   (config/load-config-from-file (System/getenv "TEST_METADATA_CONFIG_PATH"))

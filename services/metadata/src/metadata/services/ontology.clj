@@ -82,7 +82,7 @@
         (ex-util/not-found "An ontology with this version was not found."
                            :version ontology-version))
       (log/info user "deleting ontology" ontology-version)
-      (ont-db/mark-ontology-deleted ontology-version)))
+      (ont-db/set-ontology-deleted ontology-version true)))
   nil)
 
 (defn get-hierarchy
