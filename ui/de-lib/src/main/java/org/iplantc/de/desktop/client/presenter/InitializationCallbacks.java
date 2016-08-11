@@ -1,6 +1,5 @@
 package org.iplantc.de.desktop.client.presenter;
 
-import org.iplantc.de.shared.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.notifications.Notification;
@@ -10,7 +9,9 @@ import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.commons.client.views.dialogs.AgaveAuthPrompt;
 import org.iplantc.de.desktop.client.DesktopView;
+import org.iplantc.de.shared.DEProperties;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -77,6 +78,12 @@ class InitializationCallbacks {
                     }
                 });
                 box.show();
+            } else {
+                if (userInfo.hasAgaveRedirect()) {
+                    AgaveAuthPrompt prompt = AgaveAuthPrompt.getInstance();
+                    prompt.show();
+                    presenter.stickWindowToTop(prompt);
+                }
             }
             userSessionService.getUserPreferences(userPreferencesCallback);
         }

@@ -2,6 +2,8 @@ package org.iplantc.de.client.models;
 
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
+import java.util.Map;
+
 
 /**
  * AutoBean interface for the bootstrap endpoint response.
@@ -73,4 +75,7 @@ public interface UserBootstrap {
      */
     @PropertyName("newWorkspace")
     public boolean isNewUser();
+
+    @PropertyName("auth-redirect")
+    Map<String, String> getAuthRedirects();
 }

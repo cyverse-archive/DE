@@ -3,7 +3,6 @@ package org.iplantc.de.shared;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.shared.events.UserLoggedOutEvent;
 import org.iplantc.de.shared.exceptions.AuthenticationException;
-import org.iplantc.de.shared.exceptions.HttpRedirectException;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -66,13 +65,7 @@ public class AsyncCallbackWrapper<T> implements AsyncCallback<T> {
         }
 
         callback.onFailure(error);
-
-        if (error instanceof HttpRedirectException) {
-            LOG.log(Level.INFO, "Redirecting to", error);
-            HttpRedirectException e = (HttpRedirectException)error;
-            Window.Location.replace(e.getLocation());
-        }
-   }
+    }
 
     /**
      * Called whenever a call to the server succeeds. The callback that we're wrapping deals with all

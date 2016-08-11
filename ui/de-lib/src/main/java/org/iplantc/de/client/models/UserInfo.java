@@ -4,6 +4,7 @@ import com.google.gwt.core.shared.GWT;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Holds all the information about an user.
@@ -33,6 +34,7 @@ public class UserInfo {
     private final CommonModelAutoBeanFactory factory = GWT.create(CommonModelAutoBeanFactory.class);
     private UserBootstrap userInfo;
     private List<WindowState> savedOrderedWindowStates;
+    private static String AGAVE_AUTH_KEY = "agave";
 
     /**
      * Constructs a default instance of the object with all fields being set to null.
@@ -147,6 +149,18 @@ public class UserInfo {
      */
     public void setSavedOrderedWindowStates(List<WindowState> savedOrderedWindowStates) {
         this.savedOrderedWindowStates = savedOrderedWindowStates;
+    }
+
+    public Map<String, String> getAuthRedirects() {
+        return userInfo == null ? null : userInfo.getAuthRedirects();
+    }
+
+    public boolean hasAgaveRedirect() {
+        return getAuthRedirects() != null && userInfo.getAuthRedirects().containsKey(AGAVE_AUTH_KEY);
+    }
+
+    public String getAgaveRedirect() {
+        return !hasAgaveRedirect() ? null : userInfo.getAuthRedirects().get(AGAVE_AUTH_KEY);
     }
 }
 
