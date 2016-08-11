@@ -66,10 +66,10 @@
 
 (defn uuid-for-path
   [^String user ^String path]
-  (-> (raw/collect-stats user :paths [path])
+  (-> (raw/uuid-for-path user path)
       :body
-      json/decode
-      (get-in ["paths" path "id"])))
+      (json/decode true)
+      :id))
 
 (defn ensure-dir-created
   "If a folder doesn't exist, it creates the folder and makes the given user an owner of it.

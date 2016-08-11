@@ -9,6 +9,13 @@
         [heuristomancer.core :as info])
   (:require [schema.core :as s]))
 
+(s/defschema PathToUUIDParams
+  (assoc StandardUserQueryParams
+         :path (describe NonBlankString "A path to translate to a UUID")))
+
+(s/defschema PathToUUIDReturn
+  {:id (describe NonBlankString "The UUID for the path queried.")})
+
 (s/defschema FileUploadQueryParams
   (assoc StandardUserQueryParams
          :dest (describe NonBlankString "The destination directory for the uploaded file.")))
