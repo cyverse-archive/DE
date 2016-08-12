@@ -77,3 +77,11 @@ apps.metadata.base-url = http://{{ metadata.host }}:{{ metadata.port }}
 
 # Permissions service connection settings.
 apps.permissions.base-url = {{ permissions_base }}
+
+# iPlant Email service settings.
+apps.email.base-url             = {{ iplant_email.base }}
+apps.email.app-deletion.from    = {{ de_mail_from_addr }}
+apps.email.app-deletion.subject = Your "%s" app has been administratively deprecated
+
+# UI host
+apps.ui.base-url = {{ de.base }}
