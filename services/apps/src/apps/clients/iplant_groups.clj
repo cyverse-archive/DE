@@ -1,4 +1,5 @@
 (ns apps.clients.iplant-groups
+  (:use [slingshot.slingshot :only [try+]])
   (:require [apps.util.config :as config]
             [cemerick.url :as curl]
             [clj-http.client :as http]
@@ -14,11 +15,14 @@
   [group-name]
   (string/replace-first group-name (str (grouper-environment-base) ":") ""))
 
-(def ^:private grouper-user-group-fmt "%s:users:de-users")
+(def ^:private grouper-standard-group-fmt "%s:users:%s")
 
-(defn- grouper-user-group
-  []
-  (format grouper-user-group-fmt (grouper-environment-base)))
+(defn- grouper-standard-group
+  [group-name]
+  (format grouper-standard-group-fmt (grouper-environment-base) group-name))
+
+(def ^:private grouper-user-group (partial grouper-standard-group "de-users"))
+(def ^:private grouper-workshop-group (partial grouper-standard-group "workshop-users"))
 
 (defn- grouper-url
   [& components]
@@ -51,3 +55,61 @@
   [subject-id]
   (http/put (grouper-url "groups" (grouper-user-group) "members" subject-id)
             {:query-params {:user (config/de-grouper-user)}}))
+
+(defn- get-group
+  "Retrieves information about a DE group."
+  [group-name]
+  (try+
+   (:body (http/get (grouper-url "groups" group-name)
+                    {:query-params {:user (config/de-grouper-user)}
+                     :as           :json}))
+   (catch [:status 404] _ nil)))
+
+(defn- create-group
+  "Creates a group."
+  [group-name group-type]
+  (:body (http/post (grouper-url "groups")
+                    {:query-params {:user (config/de-grouper-user)}
+                     :form-params  {:name group-name
+                                    :type group-type}
+                     :content-type :json
+                     :as           :json})))
+
+(defn- get-group-members
+  "Retrieves a list of members belonging to a group."
+  [group-name]
+  (:body (http/get (grouper-url "groups" group-name "members")
+                   {:query-params {:user (config/de-grouper-user)}
+                    :as           :json})))
+
+(defn- update-group-members
+  "Updates the membership list of a group."
+  [group-name subject-ids]
+  (:body (http/put (grouper-url "groups" group-name "members")
+                   {:query-params {:user (config/de-grouper-user)}
+                    :form-params  {:members subject-ids}
+                    :content-type :json
+                    :as           :json})))
+
+(defn get-or-create-group
+  "Ensures that a group with the given name exists."
+  [group-name group-type]
+  (or (get-group group-name)
+      (create-group group-name group-type)))
+
+(defn get-workshop-group
+  "Retrieves information about the workshop users group, creating the group if necessary."
+  []
+  (get-or-create-group (grouper-workshop-group) "role"))
+
+(defn get-workshop-group-members
+  "Retrieves the list of workshop group members, creating the group if necessary."
+  []
+  (get-workshop-group)
+  (get-group-members (grouper-workshop-group)))
+
+(defn update-workshop-group-members
+  "Updates the listof workshop group members, creating the group if necessary."
+  [subject-ids]
+  (get-workshop-group)
+  (update-group-members (grouper-workshop-group) subject-ids))

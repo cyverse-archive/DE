@@ -819,3 +819,26 @@
               {:query-params     (secured-params)
                :as               :stream
                :follow-redirects false}))
+
+(defn get-workshop-group
+  []
+  (client/get (apps-url "admin" "groups" "workshop")
+              {:query-params     (secured-params)
+               :as               :stream
+               :follow-redirects false}))
+
+(defn get-workshop-group-members
+  []
+  (client/get (apps-url "admin" "groups" "workshop" "members")
+              {:query-params     (secured-params)
+               :as               :stream
+               :follow-redirects false}))
+
+(defn update-workshop-group-members
+  [body]
+  (client/put (apps-url "admin" "groups" "workshop" "members")
+              {:query-params     (secured-params)
+               :as               :stream
+               :body             body
+               :content-type     :json
+               :follow-redirects false}))

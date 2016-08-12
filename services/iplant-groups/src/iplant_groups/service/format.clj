@@ -196,3 +196,10 @@
   (->> (assoc (format-attribute-assign attribute-assign)
          :detail (format-permission-detail (:detail attribute-assign)))
        (remove-vals nil?)))
+
+(defn format-member-subject-update-response
+  [{result-metadata :resultMetadata subject :wsSubject}]
+  (->> {:success      (= (:success result-metadata) "T")
+        :subject_id   (:id subject)
+        :subject_name (:name subject)}
+       (remove-vals nil?)))

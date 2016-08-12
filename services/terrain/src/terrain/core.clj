@@ -13,6 +13,7 @@
         [terrain.routes.data]
         [terrain.routes.permanent-id-requests]
         [terrain.routes.fileio]
+        [terrain.routes.groups]
         [terrain.routes.metadata]
         [terrain.routes.misc]
         [terrain.routes.notification]
@@ -171,6 +172,7 @@
     (admin-app-avu-routes)
     (admin-app-comment-routes)
     (admin-filesystem-metadata-routes)
+    (admin-groups-routes)
     (admin-notification-routes)
     (admin-ontology-routes)
     (admin-reference-genomes-routes)
