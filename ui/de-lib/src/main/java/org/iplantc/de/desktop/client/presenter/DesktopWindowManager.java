@@ -122,6 +122,9 @@ public class DesktopWindowManager {
             // If window type could not be found, create and show one
             show(getDefaultConfig(windowType), false);
         }
+        if (sticky != null) {
+            windowManager.bringToFront(sticky);
+        }
 
     }
 
@@ -162,6 +165,9 @@ public class DesktopWindowManager {
 
                 window.show(config, constructWindowId(config), true);
                 moveOutOfBoundsWindow(window);
+                if (sticky != null) {
+                    windowManager.bringToFront(sticky);
+                }
             }
         });
     }
