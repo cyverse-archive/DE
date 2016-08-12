@@ -10,6 +10,9 @@
 (defn contains-member? [members member-id]
   (first (filter (comp (partial = member-id) :id) members)))
 
+(defn contains-subject-id? [results subject-id]
+  (first (filter (comp (partial = subject-id) :subject_id) results)))
+
 ;; We should be able to list information about the workshop group.
 (deftest test-workshop-group
   (let [group (groups/get-workshop-group)]
@@ -25,9 +28,27 @@
   (let [results (:results (groups/update-workshop-group-members ["testde1", "testde2", "testde3"]))]
     (is (= (count results) 3))
     (is (every? :success results)))
-  (let [members          (:members (groups/get-workshop-group-members))
-        contains-member? (fn [members member-id] (first (filter #(= (:id %) member-id) members)))]
+  (let [members (:members (groups/get-workshop-group-members))]
     (is (= (count members) 3))
     (is (contains-member? members "testde1"))
     (is (contains-member? members "testde2"))
     (is (contains-member? members "testde3"))))
+
+;; Failed user lookups should still update the users group.
+(deftest test-workshop-group-update-failed-subject-lookup
+  (let [results   (:results (groups/update-workshop-group-members ["testde1" "testde2", "imaginary-user"]))
+        successes (into [] (filter :success results))
+        failures  (into [] (remove :success results))]
+    (is (= (count successes) 2))
+    (is (contains-subject-id? successes "testde1"))
+    (is (contains-subject-id? successes "testde2"))
+    (is (= (count failures) 1))
+    (is (contains-subject-id? failures "imaginary-user")))
+  (let [members (:members (groups/get-workshop-group-members))]
+    (is (= (count members) 2))
+    (is (contains-member? members "testde1"))
+    (is (contains-member? members "testde2")))
+  (let [results (:results (groups/update-workshop-group-members []))]
+    (is (zero? (count results))))
+  (let [members (:members (groups/get-workshop-group-members))]
+    (is (zero? (count members)))))
