@@ -5,6 +5,7 @@ import org.iplantc.de.admin.desktop.client.gin.BelphegorAppsGinModule;
 import org.iplantc.de.admin.desktop.client.ontologies.gin.OntologiesGinModule;
 import org.iplantc.de.admin.desktop.client.toolAdmin.gin.ToolAdminGinModule;
 import org.iplantc.de.admin.desktop.client.views.BelphegorView;
+import org.iplantc.de.admin.desktop.client.workshopAdmin.gin.WorkshopAdminGinModule;
 import org.iplantc.de.commons.client.comments.gin.CommentsGinModule;
 import org.iplantc.de.diskResource.client.gin.DiskResourceGinModule;
 import org.iplantc.de.shared.services.DiscEnvApiService;
@@ -25,7 +26,8 @@ import com.google.gwt.inject.client.Ginjector;
               CommentsGinModule.class,
               TagsGinModule.class,
               ToolRequestGinModule.class,
-              ToolAdminGinModule.class })
+              ToolAdminGinModule.class,
+              WorkshopAdminGinModule.class})
 public interface BelphegorAppInjector extends Ginjector {
 
     BelphegorView.Presenter getBelphegorPresenter();

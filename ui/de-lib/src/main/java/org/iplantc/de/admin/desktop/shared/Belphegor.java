@@ -173,6 +173,10 @@ public interface Belphegor {
         String NO = ".noBtn";
     }
 
+    interface WorkshopAdminIds {
+        String VIEW = ".view";
+    }
+
     interface SystemMessageIds {
         String VIEW = ".view";
         String ADD = ".addBtn";
