@@ -214,6 +214,8 @@ public class OntologiesPresenterImplTest {
 
         verify(viewMock).addRefreshOntologiesEventHandler(eq(uut));
         verify(viewMock).addSelectOntologyVersionEventHandler(eq(uut));
+        verify(viewMock).addSelectOntologyVersionEventHandler(eq(oldGridViewMock));
+        verify(viewMock).addSelectOntologyVersionEventHandler(eq(newGridViewMock));
         verify(viewMock).addHierarchySelectedEventHandler(eq(uut));
         verify(viewMock).addHierarchySelectedEventHandler(eq(newGridViewMock));
         verify(viewMock).addPreviewHierarchySelectedEventHandler(eq(uut));

@@ -220,6 +220,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
         view.addRefreshOntologiesEventHandler(this);
         view.addSelectOntologyVersionEventHandler(this);
+        view.addSelectOntologyVersionEventHandler(oldGridPresenter.getView());
+        view.addSelectOntologyVersionEventHandler(newGridPresenter.getView());
         view.addHierarchySelectedEventHandler(this);
         view.addHierarchySelectedEventHandler(newGridPresenter.getView());
         view.addPreviewHierarchySelectedEventHandler(this);

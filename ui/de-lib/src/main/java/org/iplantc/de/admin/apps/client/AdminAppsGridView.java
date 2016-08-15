@@ -3,6 +3,7 @@ package org.iplantc.de.admin.apps.client;
 import org.iplantc.de.admin.apps.client.events.selection.RestoreAppSelected;
 import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.PreviewHierarchySelectedEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
 import org.iplantc.de.apps.client.AppsGridView;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.BeforeAppSearchEvent;
@@ -33,7 +34,8 @@ public interface AdminAppsGridView extends IsWidget,
                                            AppSearchResultLoadEvent.AppSearchResultLoadEventHandler,
                                            BeforeAppSearchEvent.BeforeAppSearchEventHandler,
                                            HierarchySelectedEvent.HierarchySelectedEventHandler,
-                                           PreviewHierarchySelectedEvent.PreviewHierarchySelectedEventHandler {
+                                           PreviewHierarchySelectedEvent.PreviewHierarchySelectedEventHandler,
+                                           SelectOntologyVersionEvent.SelectOntologyVersionEventHandler {
 
     interface Appearance extends AppsGridView.AppsGridAppearance {
 
