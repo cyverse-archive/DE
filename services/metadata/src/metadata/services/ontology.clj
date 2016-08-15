@@ -150,37 +150,47 @@
   (let [iri-set (set (map :value (avu-db/get-avus-by-attrs target-types target-ids [attr])))]
     {:hierarchy (filter-root-hierarchy ontology-version iri-set root-iri)}))
 
-(defn- hierarchy-filtered-target-set
+(defn filter-targets-by-ontology-class-search
+  "Filters the given target IDs by returning only those that have any of the given attrs
+   and Ontology class IRIs as values whose labels match the given search-term."
+  [ontology-version attrs search-term target-types target-ids]
+  (let [values (ont-db/search-classes-subselect ontology-version search-term)]
+    {:target-ids (map :target_id (avu-db/filter-targets-by-attrs-values target-types
+                                                                        target-ids
+                                                                        attrs
+                                                                        values))}))
+
+(defn- filter-hierarchy-target-ids
   "Filters the given target IDs by returning only those that are associated with any Ontology classes of
    the hierarchy rooted at the given root-iri."
   [ontology-version root-iri attr target-types target-ids]
   (let [hierarchy (format-hierarchy ontology-version root-iri)
         iri-set   (set (map :iri (util/hierarchy->class-set hierarchy)))]
-    (set (map :target_id (avu-db/filter-targets-by-attr-values target-types
-                                                               target-ids
-                                                               attr
-                                                               iri-set)))))
+    (map :target_id (avu-db/filter-targets-by-attrs-values target-types
+                                                           target-ids
+                                                           [attr]
+                                                           iri-set))))
 
 (defn filter-hierarchy-targets
   "Filters the given target IDs by returning only those that are associated with any Ontology classes of
    the hierarchy rooted at the given root-iri."
   [ontology-version root-iri attr target-types target-ids]
-  {:target-ids (seq (hierarchy-filtered-target-set ontology-version
-                                                   root-iri
-                                                   attr
-                                                   target-types
-                                                   (set target-ids)))})
+  {:target-ids (filter-hierarchy-target-ids ontology-version
+                                            root-iri
+                                            attr
+                                            target-types
+                                            (set target-ids))})
 
 (defn filter-unclassified-targets
   "Filters the given target IDs by returning a list of any that are not associated with any Ontology
    classes of the hierarchy rooted at the given root-iri."
   [ontology-version root-iri attr target-types target-ids]
   (let [target-ids (set target-ids)
-        found-ids  (hierarchy-filtered-target-set ontology-version
-                                                  root-iri
-                                                  attr
-                                                  target-types
-                                                  target-ids)]
+        found-ids  (set (filter-hierarchy-target-ids ontology-version
+                                                     root-iri
+                                                     attr
+                                                     target-types
+                                                     target-ids))]
     {:target-ids (seq (sets/difference target-ids found-ids))}))
 
 (defn filter-target-hierarchies

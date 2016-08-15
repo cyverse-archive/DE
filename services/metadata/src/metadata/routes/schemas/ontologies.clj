@@ -8,6 +8,10 @@
   (merge StandardUserQueryParams
          {:attr (describe String "The metadata attribute that stores class IRIs under the given root IRI")}))
 
+(s/defschema OntologySearchParams
+  (merge StandardUserQueryParams
+         {:label (describe String "The ontology class label search term")}))
+
 (s/defschema OntologyDetailsList
   {:ontologies (describe [OntologyDetails] "List of saved Ontologies")})
 
@@ -34,5 +38,10 @@
 
 (s/defschema TargetHierarchyFilterRequest
   (merge TargetItem
+         {:attrs
+          (describe [String] "The metadata attributes that store class IRIs for the given ontology")}))
+
+(s/defschema OntologySearchFilterRequest
+  (merge TargetFilterRequest
          {:attrs
           (describe [String] "The metadata attributes that store class IRIs for the given ontology")}))

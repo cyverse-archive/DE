@@ -62,6 +62,18 @@
                                 :as :json))
        :body))
 
+(defn filter-targets-by-ontology-search
+  [username ontology-version attrs search-term target-types target-ids]
+  (->> (http/post (metadata-url-encoded "ontologies" ontology-version "filter-targets")
+                  (post-options (json/encode {:attrs        attrs
+                                              :target-types target-types
+                                              :target-ids   target-ids})
+                                {:user username :label search-term}
+                                :as :json))
+       :body
+       :target-ids
+       (map uuidify)))
+
 (defn filter-hierarchy
   [username ontology-version root-iri attr target-types target-ids]
   (http/post (metadata-url-encoded "ontologies" ontology-version root-iri "filter")
