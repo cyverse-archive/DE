@@ -6,6 +6,7 @@
         [slingshot.slingshot :only [throw+]])
   (:require [clojure.tools.logging :as log]
             [kameleon.app-groups :as app-groups]
+            [apps.clients.email :as email]
             [apps.persistence.app-metadata :as persistence]
             [apps.persistence.categories :as db-categories]
             [apps.service.apps.de.categorization :as categorization]
@@ -62,11 +63,18 @@
                               :category_id category-id
                               :parent_id   parent-id)))
 
+(defn- app-deletion-notify
+  [{app-id :id app-name :name}]
+  (let [{:keys [integrator_name integrator_email]} (persistence/get-integration-data-by-app-id app-id)]
+    (when integrator_email
+      (email/send-app-deletion-notification integrator_name integrator_email app-name app-id))))
+
 (defn delete-app
   "This service marks an existing app as deleted in the database."
   [app-id]
-  (validate-app-existence app-id)
-  (persistence/delete-app true app-id)
+  (let [app (persistence/get-app app-id)]
+    (persistence/delete-app true app-id)
+    (app-deletion-notify app))
   nil)
 
 (defn- update-app-deleted-disabled

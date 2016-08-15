@@ -270,6 +270,26 @@
   [props config-valid configs]
   "apps.permissions.base-url")
 
+(cc/defprop-str ui-base-url
+  "The base URL for the email service."
+  [props config-valid configs]
+  "apps.ui.base-url")
+
+(cc/defprop-str iplant-email-base-url
+  "The base URL for the email service."
+  [props config-valid configs]
+  "apps.email.base-url")
+
+(cc/defprop-str app-deletion-notification-src-addr
+  "The source email address of app deletion notification messages."
+  [props config-valid configs]
+  "apps.email.app-deletion.from")
+
+(cc/defprop-str app-deletion-notification-subject
+  "The email subject of app deletion notification messages."
+  [props config-valid configs]
+  "apps.email.app-deletion.subject")
+
 (def get-default-app-categories
   (memoize
    (fn []
