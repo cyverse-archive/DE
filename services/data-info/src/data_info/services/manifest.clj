@@ -68,9 +68,10 @@
 
 (defn do-manifest-uuid
   [user data-id]
-  (with-jargon (cfg/jargon-cfg) [cm]
-    (let [file (uuids/path-stat-for-uuid cm user data-id)]
-      (manifest cm user file))))
+  (irods/catch-jargon-io-exceptions
+    (with-jargon (cfg/jargon-cfg) [cm]
+      (let [file (uuids/path-stat-for-uuid cm user data-id)]
+        (manifest cm user file)))))
 
 (with-pre-hook! #'do-manifest-uuid
   (fn [user data-id]

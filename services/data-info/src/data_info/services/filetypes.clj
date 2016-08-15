@@ -4,6 +4,7 @@
   (:require [heuristomancer.core :as hm]
             [clojure.string :as string]
             [data-info.util.config :as cfg]
+            [data-info.util.irods :as irods]
             [data-info.util.logging :as dul]
             [data-info.util.validators :as validators]
             [clojure-commons.file-utils :as ft]
@@ -19,31 +20,33 @@
 (defn- add-type
   "Adds the type to a file in iRODS at path for the specified user."
   [user path type]
-  (with-jargon (cfg/jargon-cfg) [cm]
-    (validators/path-exists cm path)
-    (validators/user-exists cm user)
-    (validators/user-owns-path cm user path)
-    (validators/path-is-file cm path)
+  (irods/catch-jargon-io-exceptions
+    (with-jargon (cfg/jargon-cfg) [cm]
+      (validators/path-exists cm path)
+      (validators/user-exists cm user)
+      (validators/user-owns-path cm user path)
+      (validators/path-is-file cm path)
 
-    (set-metadata cm path (cfg/type-detect-type-attribute) type "")
-    {:path path
-     :type type
-     :user user}))
+      (set-metadata cm path (cfg/type-detect-type-attribute) type "")
+      {:path path
+       :type type
+       :user user})))
 
 (defn- unset-types
   "Removes all info-type associations from a path."
   [user path]
 
-  (with-jargon (cfg/jargon-cfg) [cm]
-    (validators/path-exists cm path)
-    (validators/user-exists cm user)
-    (validators/user-owns-path cm user path)
+  (irods/catch-jargon-io-exceptions
+    (with-jargon (cfg/jargon-cfg) [cm]
+      (validators/path-exists cm path)
+      (validators/user-exists cm user)
+      (validators/user-owns-path cm user path)
 
-    (if (attribute? cm path (cfg/type-detect-type-attribute))
-      (delete-metadata cm path (cfg/type-detect-type-attribute)))
-    {:path path
-     :type ""
-     :user user}))
+      (if (attribute? cm path (cfg/type-detect-type-attribute))
+        (delete-metadata cm path (cfg/type-detect-type-attribute)))
+      {:path path
+       :type ""
+       :user user})))
 
 (defn- add-type-path
   [user path type]

@@ -24,14 +24,15 @@
 (defn id-entry
   [url-id user]
   (try
-    (init/with-jargon (cfg/jargon-cfg) [cm]
-      (if-not (user/user-exists? cm user)
-        (http-response/unprocessable-entity)
-        (if-let [path (uuid/get-path cm url-id)]
-          (if (perm/is-readable? cm user path)
-            (http-response/ok)
-            (http-response/forbidden))
-          (http-response/not-found))))
+    (irods/catch-jargon-io-exceptions
+      (init/with-jargon (cfg/jargon-cfg) [cm]
+        (if-not (user/user-exists? cm user)
+          (http-response/unprocessable-entity)
+          (if-let [path (uuid/get-path cm url-id)]
+            (if (perm/is-readable? cm user path)
+              (http-response/ok)
+              (http-response/forbidden))
+            (http-response/not-found)))))
     (catch IllegalArgumentException _
       (http-response/unprocessable-entity))))
 
@@ -250,8 +251,9 @@
 
 (defn dispatch-path-to-resource
   [zone path-in-zone {:keys [user] :as params}]
-  (init/with-jargon (cfg/jargon-cfg) [cm]
-    (let [{:keys [path is-dir?]} (get-path-attrs cm zone path-in-zone user)]
-      (if is-dir?
-        (folder-entry cm path params)
-        (file-entry cm path params)))))
+  (irods/catch-jargon-io-exceptions
+    (init/with-jargon (cfg/jargon-cfg) [cm]
+      (let [{:keys [path is-dir?]} (get-path-attrs cm zone path-in-zone user)]
+        (if is-dir?
+          (folder-entry cm path params)
+          (file-entry cm path params))))))

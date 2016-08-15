@@ -8,6 +8,7 @@
             [clojure-commons.file-utils :as ft]
             [data-info.services.stat :as stat]
             [data-info.util.config :as cfg]
+            [data-info.util.irods :as irods]
             [data-info.util.logging :as dul]
             [data-info.util.paths :as paths]
             [data-info.util.validators :as validators]
@@ -38,13 +39,14 @@
         community-data (ft/rm-last-slash (cfg/community-data))
         irods-home     (ft/rm-last-slash (cfg/irods-home))]
     (log/debug "[root-listing]" "for" user)
-    (with-jargon (cfg/jargon-cfg) [cm]
-      (validators/user-exists cm user)
-      {:roots (remove nil?
-                [(get-root cm user uhome)
-                 (get-root cm user community-data)
-                 (get-root cm user irods-home)
-                 (make-root cm user utrash)])})))
+    (irods/catch-jargon-io-exceptions
+      (with-jargon (cfg/jargon-cfg) [cm]
+        (validators/user-exists cm user)
+        {:roots (remove nil?
+                  [(get-root cm user uhome)
+                   (get-root cm user community-data)
+                   (get-root cm user irods-home)
+                   (make-root cm user utrash)])}))))
 
 (defn do-root-listing
   [user]

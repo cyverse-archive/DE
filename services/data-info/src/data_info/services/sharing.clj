@@ -11,6 +11,7 @@
             [data-info.util.logging :as dul]
             [data-info.util.paths :as paths]
             [data-info.util.config :as cfg]
+            [data-info.util.irods :as irods]
             [data-info.util.validators :as validators]))
 
 (defn- shared?
@@ -156,14 +157,15 @@
 
 (defn- anon-files
   [user paths]
-  (with-jargon (cfg/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (validators/all-paths-exist cm paths)
-    (validators/paths-are-files cm paths)
-    (validators/user-owns-paths cm user paths)
-    (log/warn "Giving read access to" (cfg/anon-user) "on:" (string/join " " paths))
-    (share cm user [(cfg/anon-user)] paths :read)
-    {:user user :paths (anon-files-urls paths)}))
+  (irods/catch-jargon-io-exceptions
+    (with-jargon (cfg/jargon-cfg) [cm]
+      (validators/user-exists cm user)
+      (validators/all-paths-exist cm paths)
+      (validators/paths-are-files cm paths)
+      (validators/user-owns-paths cm user paths)
+      (log/warn "Giving read access to" (cfg/anon-user) "on:" (string/join " " paths))
+      (share cm user [(cfg/anon-user)] paths :read)
+      {:user user :paths (anon-files-urls paths)})))
 
 (defn do-anon-files
   [{:keys [user]} {:keys [paths]}]

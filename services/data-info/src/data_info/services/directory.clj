@@ -52,15 +52,16 @@
 (defn- list-directories
   "Lists the directories contained under path."
   [user path]
-  (with-jargon (cfg/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (validators/path-exists cm path)
-    (validators/path-readable cm user path)
-    (validators/path-is-dir cm path)
-    (-> (stat/path-stat cm user path)
-        (select-keys [:id :label :path :date-created :date-modified :permission])
-        (assoc :folders (map (partial fmt-folder user)
-                             (icat/list-folders-in-folder user (cfg/irods-zone) path))))))
+  (irods/catch-jargon-io-exceptions
+    (with-jargon (cfg/jargon-cfg) [cm]
+      (validators/user-exists cm user)
+      (validators/path-exists cm path)
+      (validators/path-readable cm user path)
+      (validators/path-is-dir cm path)
+      (-> (stat/path-stat cm user path)
+          (select-keys [:id :label :path :date-created :date-modified :permission])
+          (assoc :folders (map (partial fmt-folder user)
+                               (icat/list-folders-in-folder user (cfg/irods-zone) path)))))))
 
 
 (defn do-directory

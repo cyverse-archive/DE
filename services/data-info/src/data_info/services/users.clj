@@ -4,6 +4,7 @@
             [dire.core :refer [with-pre-hook! with-post-hook!]]
             [data-info.services.permissions :as perms]
             [data-info.util.config :as cfg]
+            [data-info.util.irods :as irods]
             [data-info.util.logging :as dul]
             [data-info.util.validators :as validators]))
 
@@ -14,11 +15,12 @@
 
 (defn- list-perms
   [user abspaths]
-  (with-jargon (cfg/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (validators/all-paths-exist cm abspaths)
-    (validators/user-owns-paths cm user abspaths)
-    (mapv (partial list-perm cm user) abspaths)))
+  (irods/catch-jargon-io-exceptions
+    (with-jargon (cfg/jargon-cfg) [cm]
+      (validators/user-exists cm user)
+      (validators/all-paths-exist cm abspaths)
+      (validators/user-owns-paths cm user abspaths)
+      (mapv (partial list-perm cm user) abspaths))))
 
 (defn do-user-permissions
   [{user :user} {paths :paths}]

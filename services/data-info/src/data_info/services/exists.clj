@@ -5,6 +5,7 @@
             [clj-jargon.permissions :as perm]
             [clojure-commons.file-utils :as ft]
             [data-info.util.config :as cfg]
+            [data-info.util.irods :as irods]
             [data-info.util.logging :as log]
             [data-info.util.validators :as duv]))
 
@@ -16,9 +17,10 @@
 
 (defn do-exists
   [{user :user} {paths :paths}]
-  (with-jargon (cfg/jargon-cfg) [cm]
-    (duv/user-exists cm user)
-    {:paths (into {} (map (juxt keyword (partial path-exists-for-user? cm user)) (set paths)))}))
+  (irods/catch-jargon-io-exceptions
+    (with-jargon (cfg/jargon-cfg) [cm]
+      (duv/user-exists cm user)
+      {:paths (into {} (map (juxt keyword (partial path-exists-for-user? cm user)) (set paths)))})))
 
 (with-pre-hook! #'do-exists
   (fn [params body]

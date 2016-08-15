@@ -17,6 +17,7 @@
             [data-info.services.stat :as stat]
             [data-info.services.uuids :as uuids]
             [data-info.util.config :as cfg]
+            [data-info.util.irods :as irods]
             [data-info.util.paths :as paths]
             [data-info.util.validators :as validators]
             [metadata-client.core :as metadata]))
@@ -80,13 +81,14 @@
    if :system true is not passed to it, and replaces
    units set to ipc-reserved with an empty string."
   [user data-id & {:keys [system] :or {system false}}]
-  (with-jargon (cfg/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (let [{:keys [path type]} (get-readable-data-item cm user data-id)
-          metadata-response   (metadata/list-avus user (resolve-data-type type) data-id :as :json)]
-      (merge (:body metadata-response)
-             {:irods-avus (list-path-metadata cm path :system system)
-              :path       path}))))
+  (irods/catch-jargon-io-exceptions
+    (with-jargon (cfg/jargon-cfg) [cm]
+      (validators/user-exists cm user)
+      (let [{:keys [path type]} (get-readable-data-item cm user data-id)
+            metadata-response   (metadata/list-avus user (resolve-data-type type) data-id :as :json)]
+        (merge (:body metadata-response)
+               {:irods-avus (list-path-metadata cm path :system system)
+                :path       path})))))
 
 (defn admin-metadata-get
   "Lists metadata for a path, showing all AVUs."
@@ -148,19 +150,20 @@
    in addition to the 'irods-avus' key.
    Pass :system true to ignore restrictions on AVUs which may be added."
   [user data-id {:keys [irods-avus] :as metadata} & {:keys [system] :or {system false}}]
-  (with-jargon (cfg/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (let [{:keys [path type]} (get-readable-data-item cm user data-id)
-          path (ft/rm-last-slash path)
-          metadata (dissoc metadata :irods-avus)]
-      (validators/path-writeable cm user path)
-      (when-not system (authorized-avus irods-avus))
-      (when-not (empty? metadata)
-        (metadata/update-avus user (resolve-data-type type) data-id (json/encode metadata)))
-      (doseq [avu-map irods-avus]
-        (common-metadata-add cm path avu-map))
-      {:path path
-       :user user})))
+  (irods/catch-jargon-io-exceptions
+    (with-jargon (cfg/jargon-cfg) [cm]
+      (validators/user-exists cm user)
+      (let [{:keys [path type]} (get-readable-data-item cm user data-id)
+            path (ft/rm-last-slash path)
+            metadata (dissoc metadata :irods-avus)]
+        (validators/path-writeable cm user path)
+        (when-not system (authorized-avus irods-avus))
+        (when-not (empty? metadata)
+          (metadata/update-avus user (resolve-data-type type) data-id (json/encode metadata)))
+        (doseq [avu-map irods-avus]
+          (common-metadata-add cm path avu-map))
+        {:path path
+         :user user}))))
 
 (defn admin-metadata-add
   "Adds AVUs to path, bypassing user permission checks. See (metadata-add)
@@ -174,24 +177,25 @@
    The 'metadata' parameter should be in a format expected by the metadata service set AVUs endpoint,
    with an 'irods-avus' key following the format used for (metadata-add)."
   [user data-id {:keys [irods-avus] :as metadata}]
-  (with-jargon (cfg/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (let [{:keys [path type]} (uuids/path-stat-for-uuid cm user data-id)
-          irods-avus (set (map #(select-keys % [:attr :value :unit]) irods-avus))
-          current-avus (set (list-path-metadata cm path :system false))
-          delete-irods-avus (s/difference current-avus irods-avus)
-          metadata-request (json/encode (dissoc metadata :irods-avus))]
-      (validators/path-writeable cm user path)
-      (authorized-avus irods-avus)
+  (irods/catch-jargon-io-exceptions
+    (with-jargon (cfg/jargon-cfg) [cm]
+      (validators/user-exists cm user)
+      (let [{:keys [path type]} (uuids/path-stat-for-uuid cm user data-id)
+            irods-avus (set (map #(select-keys % [:attr :value :unit]) irods-avus))
+            current-avus (set (list-path-metadata cm path :system false))
+            delete-irods-avus (s/difference current-avus irods-avus)
+            metadata-request (json/encode (dissoc metadata :irods-avus))]
+        (validators/path-writeable cm user path)
+        (authorized-avus irods-avus)
 
-      (metadata/set-avus user (resolve-data-type type) data-id metadata-request)
-      (doseq [del-avu delete-irods-avus]
-        (common-metadata-delete cm path del-avu))
-      (doseq [avu irods-avus]
-        (common-metadata-add cm path avu))
+        (metadata/set-avus user (resolve-data-type type) data-id metadata-request)
+        (doseq [del-avu delete-irods-avus]
+          (common-metadata-delete cm path del-avu))
+        (doseq [avu irods-avus]
+          (common-metadata-add cm path avu))
 
-      {:path path
-       :user user})))
+        {:path path
+         :user user}))))
 
 (defn- format-copy-dest-item
   [{:keys [id type]}]
@@ -211,22 +215,23 @@
    src-id to the items with dest-ids. When the 'force?' parameter is false or not set, additional
    validation is performed."
   [user src-id dest-ids]
-  (with-jargon (cfg/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (let [{:keys [path type]} (get-readable-data-item cm user src-id)
-          dest-items (get-writable-data-items cm user dest-ids)
-          dest-paths (map :path dest-items)
-          dest-ids (map :id dest-items)
-          irods-avus (list-path-metadata cm path)]
-      (metadata/copy-metadata-avus user
-                                   (resolve-data-type type)
-                                   src-id
-                                   (map format-copy-dest-item dest-items))
-      (doseq [dest-id dest-ids]
-        (metadata-add user dest-id {:irods-avus irods-avus}))
-      {:user  user
-       :src   path
-       :paths dest-paths})))
+  (irods/catch-jargon-io-exceptions
+    (with-jargon (cfg/jargon-cfg) [cm]
+      (validators/user-exists cm user)
+      (let [{:keys [path type]} (get-readable-data-item cm user src-id)
+            dest-items (get-writable-data-items cm user dest-ids)
+            dest-paths (map :path dest-items)
+            dest-ids (map :id dest-items)
+            irods-avus (list-path-metadata cm path)]
+        (metadata/copy-metadata-avus user
+                                     (resolve-data-type type)
+                                     src-id
+                                     (map format-copy-dest-item dest-items))
+        (doseq [dest-id dest-ids]
+          (metadata-add user dest-id {:irods-avus irods-avus}))
+        {:user  user
+         :src   path
+         :paths dest-paths}))))
 
 (defn- stat-is-dir?
   [{:keys [type]}]
@@ -267,20 +272,21 @@
   "Allows a user to export metadata from a file or folder with the given data-id to a file specified
    by dest."
   [user data-id dest recursive?]
-  (with-jargon (cfg/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (let [dest-dir (ft/dirname dest)
-          src-data (uuids/path-stat-for-uuid cm user data-id)
-          src-path (:path src-data)]
-      (validators/path-readable cm user src-path)
-      (validators/path-exists cm dest-dir)
-      (validators/path-writeable cm user dest-dir)
-      (validators/path-not-exists cm dest)
-      (when recursive?
-        (validators/validate-num-paths-under-folder user src-path))
+  (irods/catch-jargon-io-exceptions
+    (with-jargon (cfg/jargon-cfg) [cm]
+      (validators/user-exists cm user)
+      (let [dest-dir (ft/dirname dest)
+            src-data (uuids/path-stat-for-uuid cm user data-id)
+            src-path (:path src-data)]
+        (validators/path-readable cm user src-path)
+        (validators/path-exists cm dest-dir)
+        (validators/path-writeable cm user dest-dir)
+        (validators/path-not-exists cm dest)
+        (when recursive?
+          (validators/validate-num-paths-under-folder user src-path))
 
-      (with-in-str (build-metadata-for-save cm user src-data recursive?)
-        {:file (stat/decorate-stat cm user (copy-stream cm *in* user dest))}))))
+        (with-in-str (build-metadata-for-save cm user src-data recursive?)
+          {:file (stat/decorate-stat cm user (copy-stream cm *in* user dest))})))))
 
 (defn do-metadata-save
   "Entrypoint for the API. Calls (metadata-save)."
@@ -322,14 +328,15 @@
 (defn- parse-metadata-csv
   "Parses paths and metadata to apply from a source CSV file in the data store"
   [user dest-id ^String separator src-path]
-  (with-jargon (cfg/jargon-cfg) [cm]
-    (validators/user-exists cm user)
-    (let [dest-dir (:path (get-readable-data-item cm user dest-id))
-          csv (get-csv cm src-path separator)
-          attrs (set (-> csv first rest))
-          csv-path-values (rest csv)]
-      {:path-metadata
-       (bulk-add-avus cm user dest-dir attrs csv-path-values)})))
+  (irods/catch-jargon-io-exceptions
+    (with-jargon (cfg/jargon-cfg) [cm]
+      (validators/user-exists cm user)
+      (let [dest-dir (:path (get-readable-data-item cm user dest-id))
+            csv (get-csv cm src-path separator)
+            attrs (set (-> csv first rest))
+            csv-path-values (rest csv)]
+        {:path-metadata
+         (bulk-add-avus cm user dest-dir attrs csv-path-values)}))))
 
 (defn parse-metadata-csv-file
   "Parses paths and metadata to apply from a source CSV file in the data store"

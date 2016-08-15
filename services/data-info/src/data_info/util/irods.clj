@@ -1,7 +1,7 @@
 (ns data-info.util.irods
   "This namespace encapsulates all of the common iRODS access logic."
   (:require [clojure.tools.logging :as log]
-            [slingshot.slingshot :refer [throw+]]
+            [slingshot.slingshot :refer [try+ throw+]]
             [clj-jargon.by-uuid :as uuid]
             [clj-jargon.init :as init]
             [clj-jargon.item-ops :as ops]
@@ -11,8 +11,19 @@
             [data-info.util.config :as cfg])
   (:import [clojure.lang IPersistentMap]
            [java.util UUID]
+           [java.io IOException]
+           [org.irods.jargon.core.exception JargonException]
            [org.apache.tika Tika]))
 
+(defmacro catch-jargon-io-exceptions
+  [& body]
+  `(try+
+     (do ~@body)
+     (catch JargonException e#
+       (if (instance? IOException (.getCause e#))
+         (throw+ {:error_code error/ERR_UNAVAILABLE
+                  :reason (str "iRODS is unavailable: " e#)})
+         (throw+)))))
 
 (defn ^String abs-path
   "Resolves a path relative to a zone into its absolute path.

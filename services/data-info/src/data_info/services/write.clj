@@ -8,6 +8,7 @@
             [data-info.services.stat :as stat]
             [data-info.services.uuids :as uuids]
             [data-info.util.config :as cfg]
+            [data-info.util.irods :as irods]
             [data-info.util.validators :as validators]))
 
 (defn- save-file-contents
@@ -44,9 +45,10 @@
    ring.middleware.multipart-params/multipart-params-request which stores the file in iRODS."
   [user dest-dir {istream :stream filename :filename}]
   (validators/good-pathname filename)
-  (with-jargon (cfg/jargon-cfg) [cm]
-    (let [dest-path (ft/path-join dest-dir filename)]
-      (create-at-path cm istream user dest-path))))
+  (irods/catch-jargon-io-exceptions
+    (with-jargon (cfg/jargon-cfg) [cm]
+      (let [dest-path (ft/path-join dest-dir filename)]
+        (create-at-path cm istream user dest-path)))))
 
 (defn wrap-multipart-create
   "Middleware which saves a new file from a multipart request."
@@ -58,9 +60,10 @@
   "When partially applied, creates a storage handler for
    ring.middleware.multipart-params/multipart-params-request which overwrites the file in iRODS."
   [user data-id {istream :stream}]
-  (with-jargon (cfg/jargon-cfg) [cm]
-    (let [path (ft/rm-last-slash (uuids/path-for-uuid cm user data-id))]
-      (overwrite-path cm istream user path))))
+  (irods/catch-jargon-io-exceptions
+    (with-jargon (cfg/jargon-cfg) [cm]
+      (let [path (ft/rm-last-slash (uuids/path-for-uuid cm user data-id))]
+        (overwrite-path cm istream user path)))))
 
 (defn wrap-multipart-overwrite
   "Middleware which overwrites a file's contents from a multipart request."
@@ -71,5 +74,6 @@
 (defn do-upload
   "Returns a path stat after a file has been uploaded. Intended to only be used with wrap-multipart-* middlewares."
   [{:keys [user]} file]
-  (with-jargon (cfg/jargon-cfg) [cm]
-    {:file (stat/path-stat cm user file)}))
+  (irods/catch-jargon-io-exceptions
+    (with-jargon (cfg/jargon-cfg) [cm]
+      {:file (stat/path-stat cm user file)})))
