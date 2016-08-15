@@ -56,4 +56,9 @@
     <replace-with class="org.iplantc.de.theme.base.client.commons.comments.presenter.CommentsPresenterDefaultAppearance">
         <when-type-is class="org.iplantc.de.commons.client.comments.CommentsView.Presenter.CommentsPresenterAppearance" />
     </replace-with>
+
+    <!--Custom Mask-->
+    <replace-with class="org.iplantc.de.theme.base.client.commons.widgets.CustomMaskDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.widgets.CustomMask.CustomMaskAppearance" />
+    </replace-with>
 </module>
