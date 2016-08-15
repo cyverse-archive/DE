@@ -35,24 +35,23 @@
    new directories."
   [user paths]
   (log/debug (str "create " user " " paths))
-  (irods/catch-jargon-io-exceptions
-    (with-jargon (cfg/jargon-cfg) [cm]
-      (validators/validate-num-paths paths)
-      (validators/user-exists cm user)
-      (let [paths (set (map ft/rm-last-slash paths))
-            sorted-paths (map (partial sort-existing cm) paths)
-            target-dirs (set (map first sorted-paths))
-            set-own-paths (set (map (comp last second) sorted-paths))
-            paths-to-mk (sort (set (mapcat second sorted-paths)))]
-        (doseq [target-dir target-dirs]
-          (validators/path-writeable cm user target-dir))
-        (doseq [path paths]
-          ;; Don't attempt to create the parent of a dir that was already created in this request.
-          (when-not (item/exists? cm path)
-            (ops/mkdirs cm path)))
-        (doseq [new-parent-dir set-own-paths]
-          (set-owner cm new-parent-dir user))
-        {:paths paths-to-mk}))))
+  (irods/with-jargon-exceptions [cm]
+    (validators/validate-num-paths paths)
+    (validators/user-exists cm user)
+    (let [paths (set (map ft/rm-last-slash paths))
+          sorted-paths (map (partial sort-existing cm) paths)
+          target-dirs (set (map first sorted-paths))
+          set-own-paths (set (map (comp last second) sorted-paths))
+          paths-to-mk (sort (set (mapcat second sorted-paths)))]
+      (doseq [target-dir target-dirs]
+        (validators/path-writeable cm user target-dir))
+      (doseq [path paths]
+        ;; Don't attempt to create the parent of a dir that was already created in this request.
+        (when-not (item/exists? cm path)
+          (ops/mkdirs cm path)))
+      (doseq [new-parent-dir set-own-paths]
+        (set-owner cm new-parent-dir user))
+      {:paths paths-to-mk})))
 
 (defn do-create
   "Entrypoint for the API that calls (create)."

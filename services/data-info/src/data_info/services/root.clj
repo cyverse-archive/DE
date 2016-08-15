@@ -1,6 +1,5 @@
 (ns data-info.services.root
-  (:use [clj-jargon.init :only [with-jargon]]
-        [clj-jargon.item-info :only [exists?]]
+  (:use [clj-jargon.item-info :only [exists?]]
         [clj-jargon.permissions :only [set-permission owns?]])
   (:require [clojure.tools.logging :as log]
             [clj-jargon.item-info :as item]
@@ -39,14 +38,13 @@
         community-data (ft/rm-last-slash (cfg/community-data))
         irods-home     (ft/rm-last-slash (cfg/irods-home))]
     (log/debug "[root-listing]" "for" user)
-    (irods/catch-jargon-io-exceptions
-      (with-jargon (cfg/jargon-cfg) [cm]
-        (validators/user-exists cm user)
-        {:roots (remove nil?
-                  [(get-root cm user uhome)
-                   (get-root cm user community-data)
-                   (get-root cm user irods-home)
-                   (make-root cm user utrash)])}))))
+    (irods/with-jargon-exceptions [cm]
+      (validators/user-exists cm user)
+      {:roots (remove nil?
+                [(get-root cm user uhome)
+                 (get-root cm user community-data)
+                 (get-root cm user irods-home)
+                 (make-root cm user utrash)])})))
 
 (defn do-root-listing
   [user]

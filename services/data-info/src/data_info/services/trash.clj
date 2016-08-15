@@ -1,6 +1,5 @@
 (ns data-info.services.trash
   (:use [clojure-commons.error-codes]
-        [clj-jargon.init :only [with-jargon]]
         [clj-jargon.item-ops]
         [clj-jargon.item-info]
         [clj-jargon.metadata]
@@ -52,9 +51,8 @@
 
 (defn- delete-paths
   ([user paths]
-   (irods/catch-jargon-io-exceptions
-     (with-jargon (cfg/jargon-cfg) [cm]
-       (delete-paths cm user paths))))
+   (irods/with-jargon-exceptions [cm]
+     (delete-paths cm user paths)))
   ([cm user paths]
      (let [paths (mapv ft/rm-last-slash paths)
            trash-paths (atom (hash-map))]
@@ -93,13 +91,12 @@
 (defn- delete-uuid-contents
   "Delete contents by UUID: given a user and a data item UUID, delete the contents, returning a list of filenames deleted."
   [user source-uuid]
-  (irods/catch-jargon-io-exceptions
-    (with-jargon (cfg/jargon-cfg) [cm]
-      (let [source (ft/rm-last-slash (uuids/path-for-uuid cm user source-uuid))]
-        (validators/validate-num-paths-under-folder user source)
-        (validators/path-is-dir cm source)
-        (let [paths (directory/get-paths-in-folder user source)]
-          (delete-paths cm user paths))))))
+  (irods/with-jargon-exceptions [cm]
+    (let [source (ft/rm-last-slash (uuids/path-for-uuid cm user source-uuid))]
+      (validators/validate-num-paths-under-folder user source)
+      (validators/path-is-dir cm source)
+      (let [paths (directory/get-paths-in-folder user source)]
+        (delete-paths cm user paths)))))
 
 (defn- list-in-dir
   [{^IRODSFileSystemAO cm-ao :fileSystemAO :as cm} fixed-path]
@@ -112,15 +109,14 @@
 (defn- delete-trash
   "Permanently delete the contents of a user's trash directory."
   [user]
-  (irods/catch-jargon-io-exceptions
-    (with-jargon (cfg/jargon-cfg) [cm]
-      (validators/user-exists cm user)
-      (let [trash-dir  (paths/user-trash-path user)
-            trash-list (mapv (fn [^IRODSFile file] (.getAbsolutePath file)) (list-in-dir cm (ft/rm-last-slash trash-dir)))]
-        (doseq [trash-path trash-list]
-          (delete cm trash-path true))
-        {:trash trash-dir
-         :paths trash-list}))))
+  (irods/with-jargon-exceptions [cm]
+    (validators/user-exists cm user)
+    (let [trash-dir  (paths/user-trash-path user)
+          trash-list (mapv (fn [^IRODSFile file] (.getAbsolutePath file)) (list-in-dir cm (ft/rm-last-slash trash-dir)))]
+      (doseq [trash-path trash-list]
+        (delete cm trash-path true))
+      {:trash trash-dir
+       :paths trash-list})))
 
 (defn- restore-to-homedir?
   "Whether to restore a given file to the home directory.
@@ -181,41 +177,40 @@
 
 (defn- restore-path
   [{:keys [user paths user-trash]}]
-  (irods/catch-jargon-io-exceptions
-    (with-jargon (cfg/jargon-cfg) [cm]
-      (let [paths (mapv ft/rm-last-slash paths)]
-        (if (seq paths)
-          (do
-            (validators/user-exists cm user)
-            (validators/all-paths-exist cm paths)
-            (validators/all-paths-writeable cm user paths)
+  (irods/with-jargon-exceptions [cm]
+    (let [paths (mapv ft/rm-last-slash paths)]
+      (if (seq paths)
+        (do
+          (validators/user-exists cm user)
+          (validators/all-paths-exist cm paths)
+          (validators/all-paths-writeable cm user paths)
 
-            (let [retval (atom (hash-map))]
-              (doseq [path paths]
-                (let [fully-restored      (ft/rm-last-slash (restoration-path cm user path))
-                      restored-to-homedir (restore-to-homedir? cm user path)]
-                  (log/warn "Restoring " path " to " fully-restored)
+          (let [retval (atom (hash-map))]
+            (doseq [path paths]
+              (let [fully-restored      (ft/rm-last-slash (restoration-path cm user path))
+                    restored-to-homedir (restore-to-homedir? cm user path)]
+                (log/warn "Restoring " path " to " fully-restored)
 
-                  (validators/path-not-exists cm fully-restored)
-                  (log/warn fully-restored " does not exist. That's good.")
+                (validators/path-not-exists cm fully-restored)
+                (log/warn fully-restored " does not exist. That's good.")
 
-                  (restore-parent-dirs cm user fully-restored)
-                  (log/warn "Done restoring parent dirs for " fully-restored)
+                (restore-parent-dirs cm user fully-restored)
+                (log/warn "Done restoring parent dirs for " fully-restored)
 
-                  (validators/path-writeable cm user (ft/dirname fully-restored))
-                  (log/warn fully-restored "is writeable. That's good.")
+                (validators/path-writeable cm user (ft/dirname fully-restored))
+                (log/warn fully-restored "is writeable. That's good.")
 
-                  (log/warn "Moving " path " to " fully-restored)
-                  (validators/path-not-exists cm fully-restored)
+                (log/warn "Moving " path " to " fully-restored)
+                (validators/path-not-exists cm fully-restored)
 
-                  (log/warn fully-restored " does not exist. That's good.")
-                  (move cm path fully-restored :user user :admin-users (cfg/irods-admins))
-                  (log/warn "Done moving " path " to " fully-restored)
+                (log/warn fully-restored " does not exist. That's good.")
+                (move cm path fully-restored :user user :admin-users (cfg/irods-admins))
+                (log/warn "Done moving " path " to " fully-restored)
 
-                  (swap! retval assoc path {:restored-path fully-restored
-                                            :partial-restore restored-to-homedir})))
-              {:restored @retval}))
-          {:restored {}})))))
+                (swap! retval assoc path {:restored-path fully-restored
+                                          :partial-restore restored-to-homedir})))
+            {:restored @retval}))
+        {:restored {}}))))
 
 (defn do-delete
   [{user :user} {paths :paths}]

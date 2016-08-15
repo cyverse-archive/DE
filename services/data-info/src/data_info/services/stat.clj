@@ -5,7 +5,6 @@
             [slingshot.slingshot :refer [throw+]]
             [clj-icat-direct.icat :as icat]
             [clj-jargon.by-uuid :as uuid]
-            [clj-jargon.init :refer [with-jargon]]
             [clj-jargon.item-info :as info]
             [clj-jargon.metadata :as meta]
             [clj-jargon.permissions :as perm]
@@ -96,20 +95,19 @@
 
 (defn do-stat
   [{user :user validation :validation-behavior} {paths :paths uuids :ids}]
-  (irods/catch-jargon-io-exceptions
-    (with-jargon (cfg/jargon-cfg) [cm]
-      (validators/user-exists cm user)
-      (validators/all-uuids-exist cm uuids)
-      (let [uuid-paths (map (juxt (comp keyword str) (partial uuid/get-path cm)) uuids)
-            all-paths (into paths (map second uuid-paths))]
-        (validators/all-paths-exist cm all-paths)
-        (case (keyword validation)
-              :own (validators/user-owns-paths cm user all-paths)
-              :write (validators/all-paths-writeable cm user all-paths)
-              :read (validators/all-paths-readable cm user all-paths)
-              (validators/all-paths-readable cm user all-paths))
-        {:paths (into {} (map (juxt keyword (partial path-stat cm user)) paths))
-         :ids (into {} (map (juxt first #(path-stat cm user (second %))) uuid-paths))}))))
+  (irods/with-jargon-exceptions [cm]
+    (validators/user-exists cm user)
+    (validators/all-uuids-exist cm uuids)
+    (let [uuid-paths (map (juxt (comp keyword str) (partial uuid/get-path cm)) uuids)
+          all-paths (into paths (map second uuid-paths))]
+      (validators/all-paths-exist cm all-paths)
+      (case (keyword validation)
+            :own (validators/user-owns-paths cm user all-paths)
+            :write (validators/all-paths-writeable cm user all-paths)
+            :read (validators/all-paths-readable cm user all-paths)
+            (validators/all-paths-readable cm user all-paths))
+      {:paths (into {} (map (juxt keyword (partial path-stat cm user)) paths))
+       :ids (into {} (map (juxt first #(path-stat cm user (second %))) uuid-paths))})))
 
 (with-pre-hook! #'do-stat
   (fn [params body]

@@ -1,6 +1,5 @@
 (ns data-info.services.manifest
   (:use [data-info.services.sharing :only [anon-file-url anon-readable?]]
-        [clj-jargon.init :only [with-jargon]]
         [clj-jargon.metadata :only [get-attribute attribute?]]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [clojure.tools.logging :as log]
@@ -68,10 +67,9 @@
 
 (defn do-manifest-uuid
   [user data-id]
-  (irods/catch-jargon-io-exceptions
-    (with-jargon (cfg/jargon-cfg) [cm]
-      (let [file (uuids/path-stat-for-uuid cm user data-id)]
-        (manifest cm user file)))))
+  (irods/with-jargon-exceptions [cm]
+    (let [file (uuids/path-stat-for-uuid cm user data-id)]
+      (manifest cm user file))))
 
 (with-pre-hook! #'do-manifest-uuid
   (fn [user data-id]

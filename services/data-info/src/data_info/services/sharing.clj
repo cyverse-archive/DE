@@ -1,6 +1,5 @@
 (ns data-info.services.sharing
-  (:use [clj-jargon.init :only [with-jargon]]
-        [clj-jargon.item-info :only [trash-base-dir is-dir?]]
+  (:use [clj-jargon.item-info :only [trash-base-dir is-dir?]]
         [clj-jargon.permissions]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [clojure.tools.logging :as log]
@@ -157,15 +156,14 @@
 
 (defn- anon-files
   [user paths]
-  (irods/catch-jargon-io-exceptions
-    (with-jargon (cfg/jargon-cfg) [cm]
-      (validators/user-exists cm user)
-      (validators/all-paths-exist cm paths)
-      (validators/paths-are-files cm paths)
-      (validators/user-owns-paths cm user paths)
-      (log/warn "Giving read access to" (cfg/anon-user) "on:" (string/join " " paths))
-      (share cm user [(cfg/anon-user)] paths :read)
-      {:user user :paths (anon-files-urls paths)})))
+  (irods/with-jargon-exceptions [cm]
+    (validators/user-exists cm user)
+    (validators/all-paths-exist cm paths)
+    (validators/paths-are-files cm paths)
+    (validators/user-owns-paths cm user paths)
+    (log/warn "Giving read access to" (cfg/anon-user) "on:" (string/join " " paths))
+    (share cm user [(cfg/anon-user)] paths :read)
+    {:user user :paths (anon-files-urls paths)}))
 
 (defn do-anon-files
   [{:keys [user]} {:keys [paths]}]

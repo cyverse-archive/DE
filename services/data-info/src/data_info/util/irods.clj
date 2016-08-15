@@ -25,6 +25,11 @@
                   :reason (str "iRODS is unavailable: " e#)})
          (throw+)))))
 
+(defmacro with-jargon-exceptions
+  [[cm-sym] & body]
+  `(catch-jargon-io-exceptions
+     (init/with-jargon (cfg/jargon-cfg) [~cm-sym] (do ~@body))))
+
 (defn ^String abs-path
   "Resolves a path relative to a zone into its absolute path.
 
@@ -72,5 +77,5 @@
        path-type)))
 
   ([^String path]
-   (init/with-jargon (cfg/jargon-cfg) [cm]
+   (with-jargon-exceptions [cm]
      (detect-media-type cm path))))

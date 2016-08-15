@@ -1,6 +1,5 @@
 (ns data-info.services.rename
   (:use [clojure-commons.error-codes]
-        [clj-jargon.init :only [with-jargon]]
         [clj-jargon.item-ops :only [move move-all]]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [clojure.tools.logging :as log]
@@ -20,50 +19,48 @@
 (defn- move-paths
   "As 'user', moves directories listed in 'sources' into the directory listed in 'dest'."
   [user sources dest]
-  (irods/catch-jargon-io-exceptions
-    (with-jargon (cfg/jargon-cfg) [cm]
-      (let [all-paths  (apply merge (mapv #(hash-map (source->dest %1 dest) %1) sources))
-            dest-paths (keys all-paths)
-            sources    (mapv ft/rm-last-slash sources)
-            dest       (ft/rm-last-slash dest)]
-        (validators/user-exists cm user)
-        (validators/all-paths-exist cm sources)
-        (validators/all-paths-exist cm [dest])
-        (validators/path-is-dir cm dest)
-        (validators/user-owns-paths cm user sources)
-        (validators/path-writeable cm user dest)
-        (validators/no-paths-exist cm dest-paths)
-        (move-all cm sources dest :user user :admin-users (cfg/irods-admins))
-        {:user user :sources sources :dest dest}))))
+  (irods/with-jargon-exceptions [cm]
+    (let [all-paths  (apply merge (mapv #(hash-map (source->dest %1 dest) %1) sources))
+          dest-paths (keys all-paths)
+          sources    (mapv ft/rm-last-slash sources)
+          dest       (ft/rm-last-slash dest)]
+      (validators/user-exists cm user)
+      (validators/all-paths-exist cm sources)
+      (validators/all-paths-exist cm [dest])
+      (validators/path-is-dir cm dest)
+      (validators/user-owns-paths cm user sources)
+      (validators/path-writeable cm user dest)
+      (validators/no-paths-exist cm dest-paths)
+      (move-all cm sources dest :user user :admin-users (cfg/irods-admins))
+      {:user user :sources sources :dest dest})))
 
 (defn- rename-path
   "Data item renaming. As 'user', move 'source' to 'dest'.
 
    If the data item is remaining in the same directory, do not validate if it's writeable."
   [user source dest]
-  (irods/catch-jargon-io-exceptions
-    (with-jargon (cfg/jargon-cfg) [cm]
-      (let [source    (ft/rm-last-slash source)
-            dest      (ft/rm-last-slash dest)
-            src-base  (ft/basename source)
-            dest-base (ft/basename dest)]
-        (if (= source dest)
-          {:source source :dest dest :user user}
-          (do
-            (validators/user-exists cm user)
-            (validators/all-paths-exist cm [source (ft/dirname dest)])
-            (validators/path-is-dir cm (ft/dirname dest))
-            (validators/user-owns-path cm user source)
-            (if-not (= (ft/dirname source) (ft/dirname dest))
-              (validators/path-writeable cm user (ft/dirname dest)))
-            (validators/path-not-exists cm dest)
+  (irods/with-jargon-exceptions [cm]
+    (let [source    (ft/rm-last-slash source)
+          dest      (ft/rm-last-slash dest)
+          src-base  (ft/basename source)
+          dest-base (ft/basename dest)]
+      (if (= source dest)
+        {:source source :dest dest :user user}
+        (do
+          (validators/user-exists cm user)
+          (validators/all-paths-exist cm [source (ft/dirname dest)])
+          (validators/path-is-dir cm (ft/dirname dest))
+          (validators/user-owns-path cm user source)
+          (if-not (= (ft/dirname source) (ft/dirname dest))
+            (validators/path-writeable cm user (ft/dirname dest)))
+          (validators/path-not-exists cm dest)
 
-            (let [result (move cm source dest :user user :admin-users (cfg/irods-admins))]
-              (when-not (nil? result)
-                (throw+ {:error_code ERR_INCOMPLETE_RENAME
-                         :paths result
-                         :user user}))
-              {:source source :dest dest :user user})))))))
+          (let [result (move cm source dest :user user :admin-users (cfg/irods-admins))]
+            (when-not (nil? result)
+              (throw+ {:error_code ERR_INCOMPLETE_RENAME
+                       :paths result
+                       :user user}))
+            {:source source :dest dest :user user}))))))
 
 (defn- rename-uuid
   "Rename by UUID: given a user, a source file UUID, and a new name, rename within the same folder."
@@ -99,9 +96,8 @@
   "Rename by UUID: given a user, a source directory UUID, and a new directory, move the directory contents, retaining the filename."
   [user source-uuid dest-dir]
   (let [source (ft/rm-last-slash (uuids/path-for-uuid user source-uuid))]
-    (irods/catch-jargon-io-exceptions
-      (with-jargon (cfg/jargon-cfg) [cm]
-        (validators/path-is-dir cm source)))
+    (irods/with-jargon-exceptions [cm]
+      (validators/path-is-dir cm source))
     (let [sources (directory/get-paths-in-folder user source)]
       (move-paths user sources dest-dir))))
 

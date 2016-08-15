@@ -1,6 +1,5 @@
 (ns data-info.services.tickets
   (:use [clojure-commons.error-codes]
-        [clj-jargon.init :only [with-jargon]]
         [clj-jargon.tickets]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [clojure.tools.logging :as log]
@@ -50,32 +49,30 @@
 
 (defn- add-tickets
   [user paths public?]
-  (irods/catch-jargon-io-exceptions
-    (with-jargon (cfg/jargon-cfg) [cm]
-      (let [new-uuids (gen-uuids cm user (count paths))]
-        (validators/user-exists cm user)
-        (validators/all-paths-exist cm paths)
-        (validators/all-paths-writeable cm user paths)
-        (doseq [[path uuid] (map list paths new-uuids)]
-          (log/warn "[add-tickets] adding ticket for " path "as" uuid)
-          (create-ticket cm (:username cm) path uuid)
-          (when public?
-            (log/warn "[add-tickets] making ticket" uuid "public")
-            (publicize-ticket cm uuid)))
-        {:user    user
-         :tickets (mapv (partial returnable-ticket-map cm) new-uuids)}))))
+  (irods/with-jargon-exceptions [cm]
+    (let [new-uuids (gen-uuids cm user (count paths))]
+      (validators/user-exists cm user)
+      (validators/all-paths-exist cm paths)
+      (validators/all-paths-writeable cm user paths)
+      (doseq [[path uuid] (map list paths new-uuids)]
+        (log/warn "[add-tickets] adding ticket for " path "as" uuid)
+        (create-ticket cm (:username cm) path uuid)
+        (when public?
+          (log/warn "[add-tickets] making ticket" uuid "public")
+          (publicize-ticket cm uuid)))
+      {:user    user
+       :tickets (mapv (partial returnable-ticket-map cm) new-uuids)})))
 
 (defn- remove-tickets
   [user ticket-ids]
-  (irods/catch-jargon-io-exceptions
-    (with-jargon (cfg/jargon-cfg) [cm]
-      (validators/user-exists cm user)
-      (validators/all-tickets-exist cm user ticket-ids)
-      (let [all-paths (mapv #(.getIrodsAbsolutePath (ticket-by-id cm (:username cm) %)) ticket-ids)]
-        (validators/all-paths-writeable cm user all-paths)
-        (doseq [ticket-id ticket-ids]
-          (delete-ticket cm (:username cm) ticket-id))
-        {:user user :tickets ticket-ids}))))
+  (irods/with-jargon-exceptions [cm]
+    (validators/user-exists cm user)
+    (validators/all-tickets-exist cm user ticket-ids)
+    (let [all-paths (mapv #(.getIrodsAbsolutePath (ticket-by-id cm (:username cm) %)) ticket-ids)]
+      (validators/all-paths-writeable cm user all-paths)
+      (doseq [ticket-id ticket-ids]
+        (delete-ticket cm (:username cm) ticket-id))
+      {:user user :tickets ticket-ids})))
 
 (defn- tickets-for-path
   [cm path]
@@ -87,13 +84,12 @@
 
 (defn- list-tickets-for-paths
   [user paths]
-  (irods/catch-jargon-io-exceptions
-    (with-jargon (cfg/jargon-cfg) [cm]
-      (validators/user-exists cm user)
-      (validators/all-paths-exist cm paths)
-      (validators/all-paths-readable cm user paths)
-      {:tickets
-       (apply merge (mapv #(hash-map %1 (returnable-tickets-for-path cm %1)) paths))})))
+  (irods/with-jargon-exceptions [cm]
+    (validators/user-exists cm user)
+    (validators/all-paths-exist cm paths)
+    (validators/all-paths-readable cm user paths)
+    {:tickets
+     (apply merge (mapv #(hash-map %1 (returnable-tickets-for-path cm %1)) paths))}))
 
 (defn do-add-tickets
   [{public? :public user :user} {paths :paths}]

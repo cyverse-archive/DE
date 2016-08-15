@@ -5,9 +5,7 @@
             [clj-icat-direct.icat :as icat]
             [data-info.services.stat :as stat]
             [clj-jargon.by-uuid :as uuid]
-            [clj-jargon.init :as init]
             [clojure-commons.error-codes :as error]
-            [data-info.util.config :as cfg]
             [data-info.util.irods :as irods]
             [data-info.util.validators :as valid])
   (:import [java.util UUID]
@@ -26,9 +24,8 @@
   ([^IPersistentMap cm ^String user ^UUID uuid]
    (uuid/get-path cm uuid))
   ([^String user ^UUID uuid]
-   (irods/catch-jargon-io-exceptions
-     (init/with-jargon (cfg/jargon-cfg) [cm]
-       (path-for-uuid cm user uuid)))))
+   (irods/with-jargon-exceptions [cm]
+       (path-for-uuid cm user uuid))))
 
 (defn ^IPersistentMap path-stat-for-uuid
   "Resolves a stat info for the entity with a given UUID.
@@ -45,21 +42,19 @@
       (throw+ {:error_code error/ERR_DOES_NOT_EXIST :uuid uuid})))
 
   ([^String user ^UUID uuid]
-   (irods/catch-jargon-io-exceptions
-     (init/with-jargon (cfg/jargon-cfg) [cm]
-       (path-stat-for-uuid cm user uuid)))))
+   (irods/with-jargon-exceptions [cm]
+     (path-stat-for-uuid cm user uuid))))
 
 
 (defn paths-for-uuids
   [user uuids]
   (letfn [(id-type [type entity] (merge entity {:id (:path entity) :type type}))]
-    (irods/catch-jargon-io-exceptions
-      (init/with-jargon (cfg/jargon-cfg) [cm]
-        (valid/user-exists cm user)
-        (->> (concat (map (partial id-type :dir) (icat/select-folders-with-uuids uuids))
-                     (map (partial id-type :file) (icat/select-files-with-uuids uuids)))
-          (mapv (partial stat/decorate-stat cm user))
-          (remove #(nil? (:permission %))))))))
+    (irods/with-jargon-exceptions [cm]
+      (valid/user-exists cm user)
+      (->> (concat (map (partial id-type :dir) (icat/select-folders-with-uuids uuids))
+                   (map (partial id-type :file) (icat/select-files-with-uuids uuids)))
+        (mapv (partial stat/decorate-stat cm user))
+        (remove #(nil? (:permission %)))))))
 
 (defn ^IPersistentMap uuid-for-path
   "Retrieves the path stat info for a given entity. It attaches the UUID in a additional :uuid
@@ -78,21 +73,19 @@
 
 (defn uuids-for-paths
   [user paths]
-  (irods/catch-jargon-io-exceptions
-    (init/with-jargon (cfg/jargon-cfg) [cm]
-      (valid/user-exists cm user)
-      (valid/all-paths-exist cm paths)
-      (valid/all-paths-readable cm user paths)
-      (remove nil? (mapv (partial uuid-for-path cm user) paths)))))
+  (irods/with-jargon-exceptions [cm]
+    (valid/user-exists cm user)
+    (valid/all-paths-exist cm paths)
+    (valid/all-paths-readable cm user paths)
+    (remove nil? (mapv (partial uuid-for-path cm user) paths))))
 
 (defn do-simple-uuid-for-path
   [{:keys [user path]}]
-  (irods/catch-jargon-io-exceptions
-    (init/with-jargon (cfg/jargon-cfg) [cm]
-      (valid/user-exists cm user)
-      (valid/path-exists cm path)
-      (valid/path-readable cm user path)
-      {:id (irods/lookup-uuid cm path)})))
+  (irods/with-jargon-exceptions [cm]
+    (valid/user-exists cm user)
+    (valid/path-exists cm path)
+    (valid/path-readable cm user path)
+    {:id (irods/lookup-uuid cm path)}))
 
 (defn ^Boolean uuid-accessible?
   "Indicates if a data item is readable by a given user.
@@ -104,7 +97,6 @@
    Returns:
      It returns true if the user can access the data item, otherwise false"
   [^String user ^UUID data-id]
-  (irods/catch-jargon-io-exceptions
-    (init/with-jargon (cfg/jargon-cfg) [cm]
-      (let [data-path (uuid/get-path cm (str data-id))]
-        (and data-path (is-readable? cm user data-path))))))
+  (irods/with-jargon-exceptions [cm]
+    (let [data-path (uuid/get-path cm (str data-id))]
+      (and data-path (is-readable? cm user data-path)))))
