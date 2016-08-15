@@ -40,6 +40,19 @@
   ([params short-username]
    (augment-listing-params params short-username (perms-client/load-app-permissions short-username))))
 
+(defn- augment-search-params
+  [search_term params short-username app-ids]
+  (let [category-attrs (set (workspace-metadata-category-attrs))]
+    (if (or (empty? app-ids) (empty? category-attrs))
+      params
+      (assoc params :pre-matched-app-ids
+                    (metadata-client/filter-targets-by-ontology-search short-username
+                                                                       (categorization/get-active-hierarchy-version)
+                                                                       category-attrs
+                                                                       search_term
+                                                                       ["app"]
+                                                                       app-ids)))))
+
 (defn list-hierarchies
   [{:keys [username]}]
   (metadata-client/list-hierarchies username (categorization/get-active-hierarchy-version)))
@@ -352,6 +365,7 @@
         workspace (get-workspace username)
         perms (perms-client/load-app-permissions shortUsername)
         params (fix-sort-params (augment-listing-params params shortUsername perms))
+        params (augment-search-params search_term params shortUsername (:app-ids params))
         total (count-search-apps-for-user search_term (:id workspace) params)
         search_results (search-apps-for-user
                         search_term
