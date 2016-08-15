@@ -510,14 +510,14 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
             return;
         }
 
-        String avu = ontologyUtil.getAttr(hierarchy);
-        if (Strings.isNullOrEmpty(avu)) {
+        String attr = ontologyUtil.getAttr(hierarchy);
+        if (Strings.isNullOrEmpty(attr)) {
             displayErrorToAdmin();
             return;
         }
 
         gridView.mask(appearance.loadingMask());
-        serviceFacade.getAppsByHierarchy(editedOntology.getVersion(), hierarchy.getIri(), avu, new AsyncCallback<List<App>>() {
+        serviceFacade.getAppsByHierarchy(editedOntology.getVersion(), hierarchy.getIri(), attr, new AsyncCallback<List<App>>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
