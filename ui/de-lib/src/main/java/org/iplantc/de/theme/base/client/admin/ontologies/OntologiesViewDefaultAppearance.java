@@ -418,4 +418,9 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     public String treePanelHeader() {
         return displayStrings.treePanelHeader();
     }
+
+    @Override
+    public String refresh() {
+        return displayStrings.refresh();
+    }
 }

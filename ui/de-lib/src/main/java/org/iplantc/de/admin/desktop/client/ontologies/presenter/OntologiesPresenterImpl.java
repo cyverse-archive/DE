@@ -10,6 +10,7 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEv
 import org.iplantc.de.admin.desktop.client.ontologies.events.PreviewHierarchySelectedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshOntologiesEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshPreviewButtonClicked;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.gin.factory.OntologiesViewFactory;
@@ -67,7 +68,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                                                 CategorizeButtonClickedEvent.CategorizeButtonClickedEventHandler,
                                                 DeleteOntologyButtonClickedEvent.DeleteOntologyButtonClickedEventHandler,
                                                 DeleteHierarchyEvent.DeleteHierarchyEventHandler,
-                                                DeleteAppsSelected.DeleteAppsSelectedHandler {
+                                                DeleteAppsSelected.DeleteAppsSelectedHandler,
+                                                RefreshPreviewButtonClicked.RefreshPreviewButtonClickedHandler {
 
     class CategorizeCallback implements AsyncCallback<List<Avu>> {
         private final App selectedApp;
@@ -232,6 +234,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         view.addDeleteOntologyButtonClickedEventHandler(this);
         view.addDeleteHierarchyEventHandler(this);
         view.addDeleteAppsSelectedHandler(this);
+        view.addRefreshPreviewButtonClickedHandler(this);
 
         view.addAppSearchResultLoadEventHandler(oldGridPresenter);
         view.addAppSearchResultLoadEventHandler(oldGridPresenter.getView());
@@ -340,6 +343,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     void getOntologies(final boolean selectActiveOntology) {
         newGridPresenter.getView().clearAndAdd(null);
         oldGridPresenter.getView().clearAndAdd(null);
+        view.clearStore(OntologiesView.TreeType.ALL);
         serviceFacade.getOntologies(new AsyncCallback<List<Ontology>>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -632,5 +636,18 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     void displayErrorToAdmin() {
         ErrorHandler.post(appearance.ontologyAttrMatchingError());
+    }
+
+    @Override
+    public void onRefreshPreviewButtonClicked(RefreshPreviewButtonClicked event) {
+        Ontology editedOntology = event.getEditedOntology();
+        List<OntologyHierarchy> roots = event.getRoots();
+
+        Preconditions.checkNotNull(editedOntology);
+        Preconditions.checkNotNull(roots);
+
+        String version = editedOntology.getVersion();
+
+        getFilteredOntologyHierarchies(version, roots);
     }
 }

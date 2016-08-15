@@ -137,6 +137,15 @@
         <container:east layoutData="{eastData}">
             <gxt:ContentPanel headingText="{appearance.eastPanelHeader}">
                 <container:BorderLayoutContainer>
+                    <container:north layoutData="{northData}">
+                        <toolbar:ToolBar>
+                            <toolbar:child>
+                                <button:TextButton ui:field="refreshPreview"
+                                                   text="{appearance.refresh}"
+                                                   icon="{appearance.refreshIcon}"/>
+                            </toolbar:child>
+                        </toolbar:ToolBar>
+                    </container:north>
                     <container:center layoutData="{centerData}">
                         <gxt:ContentPanel ui:field="previewTreePanel" headingText="{appearance.treePanelHeader}">
                             <tree:Tree ui:field="previewTree" store="{previewTreeStore}"/>

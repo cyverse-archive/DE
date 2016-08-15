@@ -90,4 +90,6 @@ public interface OntologyDisplayStrings extends Messages{
     String eastPanelHeader();
 
     String treePanelHeader();
+
+    String refresh();
 }

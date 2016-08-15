@@ -7,6 +7,7 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEv
 import org.iplantc.de.admin.desktop.client.ontologies.events.PreviewHierarchySelectedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshOntologiesEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshPreviewButtonClicked;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
@@ -44,7 +45,8 @@ public interface OntologiesView extends IsWidget,
                                         DeleteHierarchyEvent.HasDeleteHierarchyEventHandlers,
                                         DeleteAppsSelected.HasDeleteAppsSelectedHandlers,
                                         BeforeAppSearchEvent.HasBeforeAppSearchEventHandlers,
-                                        AppSearchResultLoadEvent.HasAppSearchResultLoadEventHandlers {
+                                        AppSearchResultLoadEvent.HasAppSearchResultLoadEventHandlers,
+                                        RefreshPreviewButtonClicked.HasRefreshPreviewButtonClickedHandlers {
 
     enum TreeType {
         ALL, EDITOR, PREVIEW
@@ -229,6 +231,8 @@ public interface OntologiesView extends IsWidget,
         String eastPanelHeader();
 
         String treePanelHeader();
+
+        String refresh();
     }
 
     interface Presenter {
