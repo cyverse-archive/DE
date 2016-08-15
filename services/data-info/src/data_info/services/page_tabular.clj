@@ -1,7 +1,6 @@
 (ns data-info.services.page-tabular
   (:use [clojure-commons.error-codes]
         [clojure-commons.validators]
-        [clj-jargon.init :only [with-jargon]]
         [clj-jargon.item-info :only [file-size]]
         [clj-jargon.paging :only [read-at-position]]
         [slingshot.slingshot :only [try+ throw+]])
@@ -12,7 +11,7 @@
             [dire.core :refer [with-pre-hook! with-post-hook!]]
             [data-info.services.uuids :as uuids]
             [data-info.util.logging :as dul]
-            [data-info.util.config :as cfg]
+            [data-info.util.irods :as irods]
             [data-info.util.validators :as validators])
   (:import [au.com.bytecode.opencsv CSVReader]
            [java.io InputStream]))
@@ -88,7 +87,7 @@
    we shouldn't try to parse partial rows. We scan forward from the starting position to find the first
    line-ending and then scan backwards from the last position for the last line-ending."
   [user path page chunk-size separator]
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (log/warn "[read-csv-chunk]" user path page chunk-size separator)
     (validators/user-exists cm user)
     (validators/path-exists cm path)

@@ -4,7 +4,6 @@
   (:require [me.raynes.fs :as fs]
             [clj-icat-direct.icat :as icat]
             [clj-jargon.by-uuid :as uuid]
-            [clj-jargon.init :as init]
             [clj-jargon.item-info :as item]
             [clj-jargon.item-ops :as ops]
             [clj-jargon.permissions :as perm]
@@ -24,7 +23,7 @@
 (defn id-entry
   [url-id user]
   (try
-    (init/with-jargon (cfg/jargon-cfg) [cm]
+    (irods/with-jargon-exceptions [cm]
       (if-not (user/user-exists? cm user)
         (http-response/unprocessable-entity)
         (if-let [path (uuid/get-path cm url-id)]
@@ -39,11 +38,10 @@
 ;; file specific
 
 (defn- get-file
-  [path]
-  (init/with-jargon (cfg/jargon-cfg) [irods]
-    (if (zero? (item/file-size irods path))
-      ""
-      (ops/input-stream irods path))))
+  [irods path]
+  (if (zero? (item/file-size irods path))
+    ""
+    (ops/input-stream irods path)))
 
 (defn- file-entry
   [cm path {:keys [attachment]}]
@@ -52,7 +50,7 @@
                       (str "attachment; filename=" filename)
                       (str "filename=" filename))
         media-type  (irods/detect-media-type cm path)]
-    (assoc (http-response/ok (get-file path))
+    (assoc (http-response/ok (get-file cm path))
            :headers {"Content-Type"        media-type
                      "Content-Disposition" disposition})))
 
@@ -250,7 +248,7 @@
 
 (defn dispatch-path-to-resource
   [zone path-in-zone {:keys [user] :as params}]
-  (init/with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (let [{:keys [path is-dir?]} (get-path-attrs cm zone path-in-zone user)]
       (if is-dir?
         (folder-entry cm path params)

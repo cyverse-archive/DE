@@ -5,7 +5,6 @@
             [slingshot.slingshot :refer [throw+]]
             [clj-icat-direct.icat :as icat]
             [clj-jargon.by-uuid :as uuid]
-            [clj-jargon.init :refer [with-jargon]]
             [clj-jargon.item-info :as info]
             [clj-jargon.metadata :as meta]
             [clj-jargon.permissions :as perm]
@@ -96,7 +95,7 @@
 
 (defn do-stat
   [{user :user validation :validation-behavior} {paths :paths uuids :ids}]
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (validators/user-exists cm user)
     (validators/all-uuids-exist cm uuids)
     (let [uuid-paths (map (juxt (comp keyword str) (partial uuid/get-path cm)) uuids)

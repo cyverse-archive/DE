@@ -1,6 +1,5 @@
 (ns data-info.services.rename
   (:use [clojure-commons.error-codes]
-        [clj-jargon.init :only [with-jargon]]
         [clj-jargon.item-ops :only [move move-all]]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [clojure.tools.logging :as log]
@@ -9,6 +8,7 @@
             [data-info.services.uuids :as uuids]
             [data-info.services.directory :as directory]
             [data-info.util.config :as cfg]
+            [data-info.util.irods :as irods]
             [data-info.util.logging :as dul]
             [data-info.util.validators :as validators]))
 
@@ -19,7 +19,7 @@
 (defn- move-paths
   "As 'user', moves directories listed in 'sources' into the directory listed in 'dest'."
   [user sources dest]
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (let [all-paths  (apply merge (mapv #(hash-map (source->dest %1 dest) %1) sources))
           dest-paths (keys all-paths)
           sources    (mapv ft/rm-last-slash sources)
@@ -39,7 +39,7 @@
 
    If the data item is remaining in the same directory, do not validate if it's writeable."
   [user source dest]
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (let [source    (ft/rm-last-slash source)
           dest      (ft/rm-last-slash dest)
           src-base  (ft/basename source)
@@ -96,7 +96,7 @@
   "Rename by UUID: given a user, a source directory UUID, and a new directory, move the directory contents, retaining the filename."
   [user source-uuid dest-dir]
   (let [source (ft/rm-last-slash (uuids/path-for-uuid user source-uuid))]
-    (with-jargon (cfg/jargon-cfg) [cm]
+    (irods/with-jargon-exceptions [cm]
       (validators/path-is-dir cm source))
     (let [sources (directory/get-paths-in-folder user source)]
       (move-paths user sources dest-dir))))

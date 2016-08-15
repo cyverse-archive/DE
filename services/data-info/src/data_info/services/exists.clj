@@ -1,10 +1,9 @@
 (ns data-info.services.exists
   (:require [dire.core :refer [with-pre-hook! with-post-hook!]]
-            [clj-jargon.init :refer [with-jargon]]
             [clj-jargon.item-info :as item]
             [clj-jargon.permissions :as perm]
             [clojure-commons.file-utils :as ft]
-            [data-info.util.config :as cfg]
+            [data-info.util.irods :as irods]
             [data-info.util.logging :as log]
             [data-info.util.validators :as duv]))
 
@@ -16,7 +15,7 @@
 
 (defn do-exists
   [{user :user} {paths :paths}]
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (duv/user-exists cm user)
     {:paths (into {} (map (juxt keyword (partial path-exists-for-user? cm user)) (set paths)))}))
 

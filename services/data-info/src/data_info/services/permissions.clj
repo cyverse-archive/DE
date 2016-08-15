@@ -1,5 +1,4 @@
 (ns data-info.services.permissions
-  (:use [clj-jargon.init :only [with-jargon]])
   (:require [clojure.tools.logging :as log]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
             [clj-jargon.permissions :as perm]
@@ -7,6 +6,7 @@
             [data-info.services.sharing :as sharing]
             [data-info.services.uuids :as uuids]
             [data-info.util.config :as cfg]
+            [data-info.util.irods :as irods]
             [data-info.util.logging :as dul]
             [data-info.util.validators :as validators]))
 
@@ -23,7 +23,7 @@
 
 (defn list-permissions
   [{:keys [user]} data-id]
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (let [path (ft/rm-last-slash (uuids/path-for-uuid user data-id))]
       (validators/user-exists cm user)
       (validators/path-readable cm user path)
@@ -37,7 +37,7 @@
 
 (defn add-permission
   [{:keys [user]} data-id share-with permission]
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (let [path (ft/rm-last-slash (uuids/path-for-uuid user data-id))]
       (validators/user-exists cm user)
       (validators/user-owns-path cm user path)
@@ -53,7 +53,7 @@
 
 (defn remove-permission
   [{:keys [user]} data-id unshare-with]
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (let [path (ft/rm-last-slash (uuids/path-for-uuid user data-id))]
       (validators/user-exists cm user)
       (validators/user-owns-path cm user path)

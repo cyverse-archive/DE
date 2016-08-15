@@ -1,5 +1,4 @@
 (ns data-info.services.write
-  (:use [clj-jargon.init :only [with-jargon]])
   (:require [clojure-commons.file-utils :as ft]
             [clojure-commons.error-codes :as ce]
             [clj-jargon.item-info :as info]
@@ -7,7 +6,7 @@
             [ring.middleware.multipart-params :as multipart]
             [data-info.services.stat :as stat]
             [data-info.services.uuids :as uuids]
-            [data-info.util.config :as cfg]
+            [data-info.util.irods :as irods]
             [data-info.util.validators :as validators]))
 
 (defn- save-file-contents
@@ -44,7 +43,7 @@
    ring.middleware.multipart-params/multipart-params-request which stores the file in iRODS."
   [user dest-dir {istream :stream filename :filename}]
   (validators/good-pathname filename)
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (let [dest-path (ft/path-join dest-dir filename)]
       (create-at-path cm istream user dest-path))))
 
@@ -58,7 +57,7 @@
   "When partially applied, creates a storage handler for
    ring.middleware.multipart-params/multipart-params-request which overwrites the file in iRODS."
   [user data-id {istream :stream}]
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (let [path (ft/rm-last-slash (uuids/path-for-uuid cm user data-id))]
       (overwrite-path cm istream user path))))
 
@@ -71,5 +70,5 @@
 (defn do-upload
   "Returns a path stat after a file has been uploaded. Intended to only be used with wrap-multipart-* middlewares."
   [{:keys [user]} file]
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     {:file (stat/path-stat cm user file)}))

@@ -1,9 +1,9 @@
 (ns data-info.services.filetypes
-  (:use [clj-jargon.init :only [with-jargon]]
-        [clj-jargon.metadata])
+  (:use [clj-jargon.metadata])
   (:require [heuristomancer.core :as hm]
             [clojure.string :as string]
             [data-info.util.config :as cfg]
+            [data-info.util.irods :as irods]
             [data-info.util.logging :as dul]
             [data-info.util.validators :as validators]
             [clojure-commons.file-utils :as ft]
@@ -19,7 +19,7 @@
 (defn- add-type
   "Adds the type to a file in iRODS at path for the specified user."
   [user path type]
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (validators/path-exists cm path)
     (validators/user-exists cm user)
     (validators/user-owns-path cm user path)
@@ -34,7 +34,7 @@
   "Removes all info-type associations from a path."
   [user path]
 
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (validators/path-exists cm path)
     (validators/user-exists cm user)
     (validators/user-owns-path cm user path)

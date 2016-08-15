@@ -8,6 +8,7 @@
             [dire.core :refer [with-pre-hook! with-post-hook!]]
             [clj-jargon.item-info :as item]
             [clj-jargon.item-ops :as ops]
+            [data-info.util.irods :as irods]
             [data-info.util.config :as cfg]
             [data-info.util.logging :as dul]
             [data-info.util.validators :as validators]))
@@ -34,7 +35,7 @@
    new directories."
   [user paths]
   (log/debug (str "create " user " " paths))
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (validators/validate-num-paths paths)
     (validators/user-exists cm user)
     (let [paths (set (map ft/rm-last-slash paths))

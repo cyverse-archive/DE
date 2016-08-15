@@ -1,6 +1,5 @@
 (ns data-info.services.sharing
-  (:use [clj-jargon.init :only [with-jargon]]
-        [clj-jargon.item-info :only [trash-base-dir is-dir?]]
+  (:use [clj-jargon.item-info :only [trash-base-dir is-dir?]]
         [clj-jargon.permissions]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [clojure.tools.logging :as log]
@@ -11,6 +10,7 @@
             [data-info.util.logging :as dul]
             [data-info.util.paths :as paths]
             [data-info.util.config :as cfg]
+            [data-info.util.irods :as irods]
             [data-info.util.validators :as validators]))
 
 (defn- shared?
@@ -156,7 +156,7 @@
 
 (defn- anon-files
   [user paths]
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (validators/user-exists cm user)
     (validators/all-paths-exist cm paths)
     (validators/paths-are-files cm paths)

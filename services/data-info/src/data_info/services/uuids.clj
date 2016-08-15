@@ -5,9 +5,7 @@
             [clj-icat-direct.icat :as icat]
             [data-info.services.stat :as stat]
             [clj-jargon.by-uuid :as uuid]
-            [clj-jargon.init :as init]
             [clojure-commons.error-codes :as error]
-            [data-info.util.config :as cfg]
             [data-info.util.irods :as irods]
             [data-info.util.validators :as valid])
   (:import [java.util UUID]
@@ -26,8 +24,8 @@
   ([^IPersistentMap cm ^String user ^UUID uuid]
    (uuid/get-path cm uuid))
   ([^String user ^UUID uuid]
-   (init/with-jargon (cfg/jargon-cfg) [cm]
-     (path-for-uuid cm user uuid))))
+   (irods/with-jargon-exceptions [cm]
+       (path-for-uuid cm user uuid))))
 
 (defn ^IPersistentMap path-stat-for-uuid
   "Resolves a stat info for the entity with a given UUID.
@@ -44,14 +42,14 @@
       (throw+ {:error_code error/ERR_DOES_NOT_EXIST :uuid uuid})))
 
   ([^String user ^UUID uuid]
-   (init/with-jargon (cfg/jargon-cfg) [cm]
+   (irods/with-jargon-exceptions [cm]
      (path-stat-for-uuid cm user uuid))))
 
 
 (defn paths-for-uuids
   [user uuids]
   (letfn [(id-type [type entity] (merge entity {:id (:path entity) :type type}))]
-    (init/with-jargon (cfg/jargon-cfg) [cm]
+    (irods/with-jargon-exceptions [cm]
       (valid/user-exists cm user)
       (->> (concat (map (partial id-type :dir) (icat/select-folders-with-uuids uuids))
                    (map (partial id-type :file) (icat/select-files-with-uuids uuids)))
@@ -75,7 +73,7 @@
 
 (defn uuids-for-paths
   [user paths]
-  (init/with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (valid/user-exists cm user)
     (valid/all-paths-exist cm paths)
     (valid/all-paths-readable cm user paths)
@@ -83,7 +81,7 @@
 
 (defn do-simple-uuid-for-path
   [{:keys [user path]}]
-  (init/with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (valid/user-exists cm user)
     (valid/path-exists cm path)
     (valid/path-readable cm user path)
@@ -99,6 +97,6 @@
    Returns:
      It returns true if the user can access the data item, otherwise false"
   [^String user ^UUID data-id]
-  (init/with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (let [data-path (uuid/get-path cm (str data-id))]
       (and data-path (is-readable? cm user data-path)))))

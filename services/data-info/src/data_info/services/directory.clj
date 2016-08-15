@@ -1,7 +1,6 @@
 (ns data-info.services.directory
   (:require [dire.core :refer [with-pre-hook! with-post-hook!]]
             [clj-icat-direct.icat :as icat]
-            [clj-jargon.init :refer [with-jargon]]
             [clj-jargon.permissions :as perm]
             [data-info.services.stat :as stat]
             [data-info.util.config :as cfg]
@@ -52,7 +51,7 @@
 (defn- list-directories
   "Lists the directories contained under path."
   [user path]
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (validators/user-exists cm user)
     (validators/path-exists cm path)
     (validators/path-readable cm user path)

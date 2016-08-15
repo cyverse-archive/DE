@@ -1,20 +1,19 @@
 (ns data-info.services.page-file
-  (:use [clj-jargon.init :only [with-jargon]]
-        [clj-jargon.item-info]
+  (:use [clj-jargon.item-info]
         [clj-jargon.paging]
         [slingshot.slingshot :only [try+ throw+]])
   (:require [clojure.tools.logging :as log]
             [clojure-commons.file-utils :as ft]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
             [data-info.services.uuids :as uuids]
-            [data-info.util.config :as cfg]
+            [data-info.util.irods :as irods]
             [data-info.util.logging :as dul]
             [data-info.util.validators :as validators]))
 
 (defn- read-file-chunk
   "Reads a chunk of a file starting at 'position' and reading a chunk of length 'chunk-size'."
   [user path position chunk-size]
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (validators/user-exists cm user)
     (validators/path-exists cm path)
     (validators/path-is-file cm path)

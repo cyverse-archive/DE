@@ -1,7 +1,6 @@
 (ns data-info.services.metadata
   (:use [clojure-commons.error-codes]
         [clojure-commons.validators]
-        [clj-jargon.init :only [with-jargon]]
         [clj-jargon.item-ops :only [copy-stream input-stream]]
         [clj-jargon.metadata]
         [kameleon.uuids :only [uuidify]]
@@ -17,6 +16,7 @@
             [data-info.services.stat :as stat]
             [data-info.services.uuids :as uuids]
             [data-info.util.config :as cfg]
+            [data-info.util.irods :as irods]
             [data-info.util.paths :as paths]
             [data-info.util.validators :as validators]
             [metadata-client.core :as metadata]))
@@ -80,7 +80,7 @@
    if :system true is not passed to it, and replaces
    units set to ipc-reserved with an empty string."
   [user data-id & {:keys [system] :or {system false}}]
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (validators/user-exists cm user)
     (let [{:keys [path type]} (get-readable-data-item cm user data-id)
           metadata-response   (metadata/list-avus user (resolve-data-type type) data-id :as :json)]
@@ -148,7 +148,7 @@
    in addition to the 'irods-avus' key.
    Pass :system true to ignore restrictions on AVUs which may be added."
   [user data-id {:keys [irods-avus] :as metadata} & {:keys [system] :or {system false}}]
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (validators/user-exists cm user)
     (let [{:keys [path type]} (get-readable-data-item cm user data-id)
           path (ft/rm-last-slash path)
@@ -174,7 +174,7 @@
    The 'metadata' parameter should be in a format expected by the metadata service set AVUs endpoint,
    with an 'irods-avus' key following the format used for (metadata-add)."
   [user data-id {:keys [irods-avus] :as metadata}]
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (validators/user-exists cm user)
     (let [{:keys [path type]} (uuids/path-stat-for-uuid cm user data-id)
           irods-avus (set (map #(select-keys % [:attr :value :unit]) irods-avus))
@@ -211,7 +211,7 @@
    src-id to the items with dest-ids. When the 'force?' parameter is false or not set, additional
    validation is performed."
   [user src-id dest-ids]
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (validators/user-exists cm user)
     (let [{:keys [path type]} (get-readable-data-item cm user src-id)
           dest-items (get-writable-data-items cm user dest-ids)
@@ -267,7 +267,7 @@
   "Allows a user to export metadata from a file or folder with the given data-id to a file specified
    by dest."
   [user data-id dest recursive?]
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (validators/user-exists cm user)
     (let [dest-dir (ft/dirname dest)
           src-data (uuids/path-stat-for-uuid cm user data-id)
@@ -322,7 +322,7 @@
 (defn- parse-metadata-csv
   "Parses paths and metadata to apply from a source CSV file in the data store"
   [user dest-id ^String separator src-path]
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (validators/user-exists cm user)
     (let [dest-dir (:path (get-readable-data-item cm user dest-id))
           csv (get-csv cm src-path separator)

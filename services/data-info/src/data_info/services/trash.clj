@@ -1,6 +1,5 @@
 (ns data-info.services.trash
   (:use [clojure-commons.error-codes]
-        [clj-jargon.init :only [with-jargon]]
         [clj-jargon.item-ops]
         [clj-jargon.item-info]
         [clj-jargon.metadata]
@@ -11,6 +10,7 @@
             [clojure-commons.file-utils :as ft]
             [dire.core :refer [with-pre-hook! with-post-hook!]]
             [data-info.util.config :as cfg]
+            [data-info.util.irods :as irods]
             [data-info.util.paths :as paths]
             [data-info.util.logging :as dul]
             [data-info.services.directory :as directory]
@@ -51,7 +51,7 @@
 
 (defn- delete-paths
   ([user paths]
-   (with-jargon (cfg/jargon-cfg) [cm]
+   (irods/with-jargon-exceptions [cm]
      (delete-paths cm user paths)))
   ([cm user paths]
      (let [paths (mapv ft/rm-last-slash paths)
@@ -91,7 +91,7 @@
 (defn- delete-uuid-contents
   "Delete contents by UUID: given a user and a data item UUID, delete the contents, returning a list of filenames deleted."
   [user source-uuid]
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (let [source (ft/rm-last-slash (uuids/path-for-uuid cm user source-uuid))]
       (validators/validate-num-paths-under-folder user source)
       (validators/path-is-dir cm source)
@@ -109,7 +109,7 @@
 (defn- delete-trash
   "Permanently delete the contents of a user's trash directory."
   [user]
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (validators/user-exists cm user)
     (let [trash-dir  (paths/user-trash-path user)
           trash-list (mapv (fn [^IRODSFile file] (.getAbsolutePath file)) (list-in-dir cm (ft/rm-last-slash trash-dir)))]
@@ -177,7 +177,7 @@
 
 (defn- restore-path
   [{:keys [user paths user-trash]}]
-  (with-jargon (cfg/jargon-cfg) [cm]
+  (irods/with-jargon-exceptions [cm]
     (let [paths (mapv ft/rm-last-slash paths)]
       (if (seq paths)
         (do
