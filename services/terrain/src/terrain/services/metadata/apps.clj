@@ -48,13 +48,14 @@
   (assert-valid user-agent "Missing or empty request parameter: user-agent")
   (let [username    (:username current-user)
         user        (:shortUsername current-user)
-        workspace   (dm/get-workspace)
-        preferences (user-prefs (:username current-user))
-        login-time  (:login_time (dm/record-login ip-address user-agent))]
+        workspace   (future (dm/get-workspace))
+        preferences (future (user-prefs (:username current-user)))
+        login-record (future (dm/record-login ip-address user-agent))
+        auth-redirect (future (dm/get-auth-redirect-uris))]
     (success-response
-      {:workspaceId   (:id workspace)
-       :newWorkspace  (:new_workspace workspace)
-       :loginTime     (str login-time)
+      {:workspaceId   (:id @workspace)
+       :newWorkspace  (:new_workspace @workspace)
+       :loginTime     (str (:login_time @login-record))
        :username      user
        :full_username username
        :email         (:email current-user)
@@ -63,8 +64,8 @@
        :userHomePath  (di/user-home-folder user)
        :userTrashPath (di/user-trash-folder user)
        :baseTrashPath (di/base-trash-folder)
-       :preferences   preferences
-       :auth-redirect (dm/get-auth-redirect-uris)})))
+       :preferences   @preferences
+       :auth-redirect @auth-redirect})))
 
 (defn logout
   "This service records the fact that the user logged out."
