@@ -1,6 +1,5 @@
 package org.iplantc.de.admin.desktop.client.views;
 
-import org.iplantc.de.admin.apps.client.AdminAppsView;
 import org.iplantc.de.admin.desktop.client.metadata.view.TemplateListingView;
 import org.iplantc.de.admin.desktop.client.ontologies.OntologiesView;
 import org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView;
@@ -9,10 +8,7 @@ import org.iplantc.de.admin.desktop.client.systemMessage.SystemMessageView;
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
 import org.iplantc.de.admin.desktop.client.toolRequest.ToolRequestView;
 import org.iplantc.de.admin.desktop.shared.Belphegor;
-import org.iplantc.de.shared.DEProperties;
-import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.UserInfo;
-import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 
 import com.google.gwt.core.client.GWT;
@@ -44,11 +40,10 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
     interface BelphegorViewUiBinder extends UiBinder<Widget, BelphegorViewImpl> {}
 
     @UiField HtmlLayoutContainer northCon;
-    @UiField SimpleContainer appsPanel, ontologiesPanel, refGenomePanel, toolRequestPanel, systemMessagesPanel, metadataPanel,
+    @UiField SimpleContainer ontologiesPanel, refGenomePanel, toolRequestPanel, systemMessagesPanel, metadataPanel,
             permIdPanel, toolAdminPanel;
     @UiField(provided = true) BelphegorViewAppearance appearance;
     private TextButton menuButton;
-    private AdminAppsView.AdminPresenter presenter;
     private RefGenomeView.Presenter refGenPresenter;
     private ToolRequestView.Presenter toolReqPresenter;
     private ToolAdminView.Presenter toolAdminPresenter;
@@ -58,18 +53,15 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
     private OntologiesView.Presenter ontologiesPresenter;
 
     @Inject
-    public BelphegorViewImpl(final AdminAppsView.AdminPresenter presenter,
-                             final OntologiesView.Presenter ontologiesPresenter,
+    public BelphegorViewImpl(final OntologiesView.Presenter ontologiesPresenter,
                              final RefGenomeView.Presenter refGenPresenter,
                              final ToolRequestView.Presenter toolReqPresenter,
                              final ToolAdminView.Presenter toolAdminPresenter,
                              final SystemMessageView.Presenter sysMsgPresenter,
                              final TemplateListingView.Presenter tempPresenter,
                              final PermanentIdRequestView.Presenter permIdPresenter,
-                             final DEProperties toolIntProps,
                              final BelphegorViewAppearance appearance) {
         this.appearance = appearance;
-        this.presenter = presenter;
         this.ontologiesPresenter = ontologiesPresenter;
         this.refGenPresenter = refGenPresenter;
         this.toolReqPresenter = toolReqPresenter;
@@ -79,15 +71,13 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
         this.permIdPresenter = permIdPresenter;
 
         initWidget(uiBinder.createAndBindUi(this));
-        init(presenter,
-             ontologiesPresenter,
+        init(ontologiesPresenter,
              refGenPresenter,
              toolReqPresenter,
              toolAdminPresenter,
              sysMsgPresenter,
              tempPresenter,
-             permIdPresenter,
-             toolIntProps);
+             permIdPresenter);
         ensureDebugId(Belphegor.Ids.BELPHEGOR);
     }
 
@@ -96,19 +86,15 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
         return new HtmlLayoutContainer(appearance.renderNorthContainer());
     }
 
-    private void init(final AdminAppsView.AdminPresenter presenter,
-                      final OntologiesView.Presenter ontologiesPresenter,
+    private void init(final OntologiesView.Presenter ontologiesPresenter,
                       final RefGenomeView.Presenter refGenPresenter,
                       final ToolRequestView.Presenter toolReqPresenter,
                       final ToolAdminView.Presenter toolAdminPresenter,
                       final SystemMessageView.Presenter sysMsgPresenter,
                       final TemplateListingView.Presenter tempPresenter,
-                      final PermanentIdRequestView.Presenter permIdPresenter,
-                      final DEProperties toolIntProps) {
+                      final PermanentIdRequestView.Presenter permIdPresenter) {
         buildUserMenu();
-        // Select Beta group by default.
-        HasId betaGroup = CommonModelUtils.getInstance().createHasIdFromString(toolIntProps.getDefaultBetaCategoryId());
-        presenter.go(appsPanel, betaGroup);
+
         ontologiesPresenter.go(ontologiesPanel);
         refGenPresenter.go(refGenomePanel);
         toolReqPresenter.go(toolRequestPanel);
@@ -146,9 +132,6 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
         super.onEnsureDebugId(baseID);
 
         menuButton.ensureDebugId(baseID + Belphegor.Ids.MENU_BUTTON);
-
-        appsPanel.ensureDebugId(baseID + Belphegor.Ids.APPS);
-        presenter.setViewDebugId(baseID + Belphegor.Ids.APPS);
 
         ontologiesPanel.ensureDebugId(baseID + Belphegor.Ids.ONTOLOGIES);
 
