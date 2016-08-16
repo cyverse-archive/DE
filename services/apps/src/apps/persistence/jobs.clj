@@ -208,6 +208,7 @@
   [field]
   (case field
     :name      :j.job_name
+    :username  :j.username
     :app_name  :j.app_name
     :startdate :j.start_date
     :enddate   :j.end_date
