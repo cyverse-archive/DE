@@ -11,16 +11,16 @@
   (where query {:target_id   target-id
                 :target_type (db/->enum-val target-type)}))
 
-(defn filter-targets-by-attr-values
-  "Finds the given targets that have the given attribute and any of the given values."
-  [target-types target-ids attribute values]
+(defn filter-targets-by-attrs-values
+  "Finds the given targets that have any of the given attributes and values."
+  [target-types target-ids attributes values]
   (select :avus
           (modifier "DISTINCT")
           (fields :target_id
                   :target_type)
           (where {:target_id   [in target-ids]
                   :target_type [in (map db/->enum-val target-types)]
-                  :attribute   attribute
+                  :attribute   [in attributes]
                   :value       [in values]})))
 
 (defn get-avu-by-id

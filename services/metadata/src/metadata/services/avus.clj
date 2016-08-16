@@ -8,7 +8,7 @@
 
 (defn- filter-targets-by-attr-values
   [target-types target-ids [attr avus]]
-  (persistence/filter-targets-by-attr-values target-types target-ids attr (map :value avus)))
+  (persistence/filter-targets-by-attrs-values target-types target-ids [attr] (map :value avus)))
 
 (defn filter-targets-by-avus
   "Filters the given target IDs by returning a list of any that have the given attrs and values applied."

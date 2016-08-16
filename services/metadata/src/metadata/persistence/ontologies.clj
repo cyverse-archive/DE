@@ -1,5 +1,6 @@
 (ns metadata.persistence.ontologies
-  (:use [korma.core :exclude [update]])
+  (:use [korma.core :exclude [update]]
+        [kameleon.util.search])
   (:require [korma.core :as sql]))
 
 (defn add-ontology-xml
@@ -53,6 +54,18 @@
                   :label
                   :description)
           (where {:ontology_version ontology-version})))
+
+(defn- search-classes-base
+  [ontology-version search-term]
+  (let [search-term (str "%" (format-query-wildcards search-term) "%")]
+    (-> (select* :ontology_classes)
+        (where {:ontology_version    ontology-version
+                (sqlfn lower :label) [like (sqlfn lower search-term)]}))))
+
+(defn search-classes-subselect
+  [ontology-version search-term]
+  (-> (search-classes-base ontology-version search-term)
+      (subselect (fields :iri))))
 
 (defn delete-classes
   [ontology-version class-iris]

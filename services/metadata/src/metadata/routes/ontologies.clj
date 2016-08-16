@@ -36,6 +36,17 @@
             returning only the hierarchy's leaf-classes that are associated with the given target."
            (ok (service/filter-target-hierarchies ontology-version attrs type id)))
 
+    (POST* "/:ontology-version/filter-targets" []
+           :path-params [ontology-version :- OntologyVersionParam]
+           :query [{:keys [user label]} OntologySearchParams]
+           :body [{:keys [target-types target-ids attrs]} OntologySearchFilterRequest]
+           :return TargetIDList
+           :summary "Filter Targets by Ontology Search"
+           :description
+           "Filters the given target IDs by returning only those that have any of the given `attrs`
+            and Ontology class IRIs as values whose labels match the given Ontology class `label`."
+           (ok (service/filter-targets-by-ontology-class-search ontology-version attrs label target-types target-ids)))
+
     (POST* "/:ontology-version/:root-iri/filter" []
            :path-params [ontology-version :- OntologyVersionParam
                          root-iri :- OntologyClassIRIParam]
