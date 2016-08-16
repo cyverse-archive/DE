@@ -31,6 +31,8 @@ public class AppNameCellDefaultAppearance implements AppNameCell.AppNameCellAppe
         String appBeta();
 
         String appBetaHyperlink();
+
+        String appPrivate();
     }
 
     public interface Resources extends ClientBundle {
@@ -97,6 +99,16 @@ public class AppNameCellDefaultAppearance implements AppNameCell.AppNameCellAppe
     @Override
     public String appBetaNameClass() {
         return resources.css().appBetaHyperlink();
+    }
+
+    @Override
+    public String appPrivate() {
+        return appsMessages.privateToolTip();
+    }
+
+    @Override
+    public String appPrivateNameClass() {
+        return resources.css().appPrivate();
     }
 
     @Override

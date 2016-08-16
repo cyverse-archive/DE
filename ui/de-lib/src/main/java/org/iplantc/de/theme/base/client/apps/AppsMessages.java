@@ -135,4 +135,6 @@ public interface AppsMessages extends Messages {
     String betaToolTip();
 
     String ontologyAttrMatchingFailure();
+
+    String privateToolTip();
 }

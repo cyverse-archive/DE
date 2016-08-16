@@ -41,3 +41,11 @@
 .appBetaHyperlink:hover {
     text-decoration: underline;
 }
+
+.appPrivate {
+    color: green;
+}
+
+.appPrivate:hover {
+    text-decoration: underline;
+}
