@@ -19,9 +19,15 @@
         :middlewares [wrap-metadata-base-url]
         :summary "Search Apps"
         :return AppListing
-        :description "This service allows users to search for Apps based on a part of the App name or
-        description. The response body contains an `apps` array that is in the same format as
-        the `apps` array in the /apps/categories/:category-id endpoint response."
+        :description (str
+"This service allows users to search for Apps based on a part of the App name, description, integrator's
+ name, tool name, or category name the app is under."
+(get-endpoint-delegate-block
+  "metadata"
+  "POST /avus/filter-targets")
+(get-endpoint-delegate-block
+  "metadata"
+  "POST /ontologies/{ontology-version}/filter-targets"))
         (ok (coerce! AppListing
                  (apps/search-apps current-user params))))
 
