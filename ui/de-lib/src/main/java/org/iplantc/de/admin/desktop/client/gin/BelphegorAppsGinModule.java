@@ -30,6 +30,8 @@ import org.iplantc.de.admin.desktop.client.toolRequest.service.impl.ToolRequestS
 import org.iplantc.de.admin.desktop.client.toolRequest.view.ToolRequestViewImpl;
 import org.iplantc.de.admin.desktop.client.views.BelphegorView;
 import org.iplantc.de.admin.desktop.client.views.BelphegorViewImpl;
+import org.iplantc.de.admin.desktop.client.workshopAdmin.WorkshopAdminView;
+import org.iplantc.de.admin.desktop.client.workshopAdmin.view.WorkshopAdminViewImpl;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.shared.DEProperties;
@@ -61,8 +63,6 @@ public class BelphegorAppsGinModule extends AbstractGinModule {
         bind(ToolRequestView.class).to(ToolRequestViewImpl.class);
         bind(ToolRequestView.Presenter.class).to(ToolRequestPresenterImpl.class);
         bind(ToolRequestServiceFacade.class).to(ToolRequestServiceFacadeImpl.class);
-
-
 
         bind(SystemMessageView.class).to(SystemMessageViewImpl.class);
         bind(SystemMessageView.Presenter.class).to(SystemMessagePresenterImpl.class);

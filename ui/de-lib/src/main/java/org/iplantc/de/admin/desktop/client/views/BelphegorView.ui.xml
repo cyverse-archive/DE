@@ -56,6 +56,10 @@
              type="com.sencha.gxt.widget.core.client.TabItemConfig">
         <ui:attributes text="Tool Admin"/>
     </ui:with>
+    <ui:with field="workshopAdminConfig"
+             type="com.sencha.gxt.widget.core.client.TabItemConfig">
+        <ui:attributes text="Workshop Admin"/>
+    </ui:with>
     <con:Viewport>
         <con:BorderLayoutContainer>
             <con:north layoutData="{northData}">
@@ -83,9 +87,12 @@
                         <con:SimpleContainer ui:field="metadataPanel">
                         </con:SimpleContainer>
                     </gxt:child>
-                       <gxt:child config="{permIdConfig}">
+                    <gxt:child config="{permIdConfig}">
                         <con:SimpleContainer ui:field="permIdPanel">
                         </con:SimpleContainer>
+                    </gxt:child>
+                    <gxt:child config="{workshopAdminConfig}">
+                        <con:SimpleContainer ui:field="workshopAdminPanel" />
                     </gxt:child>
                 </gxt:TabPanel>
             </con:center>

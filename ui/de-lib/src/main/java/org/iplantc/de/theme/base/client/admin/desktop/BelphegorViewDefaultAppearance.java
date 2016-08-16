@@ -116,6 +116,11 @@ public class BelphegorViewDefaultAppearance implements BelphegorView.BelphegorVi
     }
 
     @Override
+    public String workshopAdmin() {
+        return belphegorDisplayStrings.workshopAdmin();
+    }
+
+    @Override
     public String ontologies() {
         return belphegorDisplayStrings.ontologies();
     }

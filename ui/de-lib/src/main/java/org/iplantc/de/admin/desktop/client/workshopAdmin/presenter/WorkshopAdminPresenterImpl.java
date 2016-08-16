@@ -1,6 +1,7 @@
 package org.iplantc.de.admin.desktop.client.workshopAdmin.presenter;
 
 import com.google.gwt.user.client.ui.HasOneWidget;
+import com.google.inject.Inject;
 import com.sencha.gxt.data.shared.ListStore;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.WorkshopAdminView;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.gin.factory.WorkshopAdminViewFactory;
@@ -21,6 +22,7 @@ public class WorkshopAdminPresenterImpl implements WorkshopAdminView.Presenter {
     private final WorkshopAdminView.WorkshopAdminViewAppearance appearance;
     private final ListStore<Member> listStore;
 
+    @Inject
     public WorkshopAdminPresenterImpl(final WorkshopAdminViewFactory viewFactory,
                                       final WorkshopAdminServiceFacade serviceFacade,
                                       final GroupAutoBeanFactory groupAutoBeanFactory,

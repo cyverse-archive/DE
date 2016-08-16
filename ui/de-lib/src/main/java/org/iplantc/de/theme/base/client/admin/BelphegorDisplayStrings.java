@@ -85,6 +85,9 @@ public interface BelphegorDisplayStrings extends Messages {
     @Key("toolAdmin")
     String toolAdmin();
 
+    @Key("workshopAdmin")
+    String workshopAdmin();
+
     String updateDocumentationSuccess();
 
     String ontologies();

@@ -16,6 +16,7 @@ public interface Belphegor {
         String TOOL_ADMIN = ".toolAdmin";
         String TOOL_REQUEST = ".toolRequest";
         String ONTOLOGIES = ".ontologies";
+        String WORKSHOP_ADMIN = ".workshopAdmin";
     }
 
     interface AppIds {
