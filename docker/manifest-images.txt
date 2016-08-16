@@ -1,14 +1,19 @@
 anon-files
 app-registration
 clockwork
+condor-launcher
 data-info
 de
 dewey
 terrain
+image-janitor
 info-typer
 infosquito
 iplant-email
 iplant-groups
+jex-adapter
+job-status-recorder
+job-status-to-apps-adapter
 kifshare
 apps
 metadata
@@ -16,6 +21,7 @@ monkey
 notification-agent
 permissions
 porklock
+road-runner
 saved-searches
 templeton
 tree-urls
