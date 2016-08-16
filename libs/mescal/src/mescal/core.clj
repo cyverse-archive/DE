@@ -40,7 +40,7 @@
   (listAppsWithOntology [_ term]
     (v2/check-access-token token-info-fn timeout)
     (v2/list-apps base-url token-info-fn timeout {:page-len      page-len
-                                                  :ontology.like (str "*" term "*")}))
+                                                  :ontology.like (str "*\"" term "\"*")}))
   (getApp [_ app-id]
     (v2/check-access-token token-info-fn timeout)
     (v2/get-app base-url token-info-fn timeout app-id))

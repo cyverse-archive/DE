@@ -14,10 +14,17 @@
 
 (defn list-apps-with-ontology
   [agave term params]
-  (-> (select-keys (.listAppsWithOntology agave term) [:app_count :apps])
-      (sort-apps params {:default-sort-field "name"})
-      (apply-offset params)
-      (apply-limit params)))
+  (try+
+    (-> (select-keys (.listAppsWithOntology agave term) [:app_count :apps])
+        (sort-apps params {:default-sort-field "name"})
+        (apply-offset params)
+        (apply-limit params))
+    (catch [:error_code ce/ERR_UNAVAILABLE] _
+      (log/error (:throwable &throw-context) "Agave app listing timed out")
+      nil)
+    (catch clj-http-error? _
+      (log/error (:throwable &throw-context) "HTTP error returned by Agave")
+      nil)))
 
 (defn search-apps
   [agave search-term params]
