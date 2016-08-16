@@ -2,6 +2,7 @@ anon-files
 app-registration
 apps-beta-tagger
 clockwork
+condor-launcher
 condor-log-monitor
 curl-wrapper
 data-info
@@ -10,10 +11,14 @@ unittest-dedb
 dewey
 terrain
 facepalm
+image-janitor
 info-typer
 infosquito
 iplant-email
 iplant-groups
+jex-adapter
+job-status-recorder
+job-status-to-apps-adapter
 jobservices
 kifshare
 apps
@@ -23,6 +28,7 @@ nginx-consul-template
 notification-agent
 permissions
 porklock
+road-runner
 saved-searches
 sharkbait
 templeton
