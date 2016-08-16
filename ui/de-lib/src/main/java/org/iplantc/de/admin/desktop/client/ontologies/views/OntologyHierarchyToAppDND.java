@@ -25,18 +25,18 @@ public class OntologyHierarchyToAppDND implements DndDragStartEvent.DndDragStart
                                                   DndDragEnterEvent.DndDragEnterHandler {
 
     OntologiesView.OntologiesViewAppearance appearance;
-    AdminAppsGridView.Presenter oldGridPresenter;
-    AdminAppsGridView.Presenter newGridPresenter;
+    AdminAppsGridView.Presenter previewGridPresenter;
+    AdminAppsGridView.Presenter editorGridPresenter;
     OntologiesView.Presenter presenter;
     boolean moved;
 
     public OntologyHierarchyToAppDND(OntologiesView.OntologiesViewAppearance appearance,
-                                     AdminAppsGridView.Presenter oldGridPresenter,
-                                     AdminAppsGridView.Presenter newGridPresenter,
+                                     AdminAppsGridView.Presenter previewGridPresenter,
+                                     AdminAppsGridView.Presenter editorGridPresenter,
                                      OntologiesView.Presenter presenter) {
         this.appearance = appearance;
-        this.oldGridPresenter = oldGridPresenter;
-        this.newGridPresenter = newGridPresenter;
+        this.previewGridPresenter = previewGridPresenter;
+        this.editorGridPresenter = editorGridPresenter;
         this.presenter = presenter;
     }
 
@@ -106,12 +106,12 @@ public class OntologyHierarchyToAppDND implements DndDragStartEvent.DndDragStart
     }
 
     private App getDropTargetApp(Element eventTarget, Widget dropTarget) {
-        if (dropTarget == oldGridPresenter.getView().asWidget()) {
-            return oldGridPresenter.getAppFromElement(eventTarget);
+        if (dropTarget == previewGridPresenter.getView().asWidget()) {
+            return previewGridPresenter.getAppFromElement(eventTarget);
         }
 
-        if (dropTarget == newGridPresenter.getView().asWidget()) {
-            return newGridPresenter.getAppFromElement(eventTarget);
+        if (dropTarget == editorGridPresenter.getView().asWidget()) {
+            return editorGridPresenter.getAppFromElement(eventTarget);
         }
 
         return null;

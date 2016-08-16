@@ -148,7 +148,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
         @Override
         public void onSuccess(List<OntologyHierarchy> result) {
-            view.clearStore(OntologiesView.TreeType.EDITOR);
+            view.clearTreeStore(OntologiesView.TreeType.EDITOR);
             if (result.size() == 0) {
                 view.showEmptyTreePanel();
             } else {
@@ -176,8 +176,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     private final TreeStore<OntologyHierarchy> editorTreeStore;
     private final TreeStore<OntologyHierarchy> previewTreeStore;
     private OntologiesView.OntologiesViewAppearance appearance;
-    private AdminAppsGridView.Presenter oldGridPresenter;
-    private AdminAppsGridView.Presenter newGridPresenter;
+    private AdminAppsGridView.Presenter previewGridPresenter;
+    private AdminAppsGridView.Presenter editorGridPresenter;
     private AppCategorizeView categorizeView;
     private AvuAutoBeanFactory avuFactory;
     private Map<String, List<OntologyHierarchy>> iriToHierarchyMap = new FastMap<>();
@@ -190,8 +190,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                                    OntologiesViewFactory factory,
                                    AvuAutoBeanFactory avuFactory,
                                    OntologiesView.OntologiesViewAppearance appearance,
-                                   AdminAppsGridView.Presenter oldGridPresenter,
-                                   AdminAppsGridView.Presenter newGridPresenter,
+                                   AdminAppsGridView.Presenter previewGridPresenter,
+                                   AdminAppsGridView.Presenter editorGridPresenter,
                                    AppCategorizeView categorizeView) {
         this.serviceFacade = serviceFacade;
         this.avuFactory = avuFactory;
@@ -200,8 +200,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         this.appearance = appearance;
         this.ontologyUtil = OntologyUtil.getInstance();
 
-        this.oldGridPresenter = oldGridPresenter;
-        this.newGridPresenter = newGridPresenter;
+        this.previewGridPresenter = previewGridPresenter;
+        this.editorGridPresenter = editorGridPresenter;
         this.categorizeView = categorizeView;
 
         proxy = getProxy(appService);
@@ -210,24 +210,28 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         this.view = factory.create(editorTreeStore,
                                    previewTreeStore,
                                    loader,
-                                   oldGridPresenter.getView(),
-                                   newGridPresenter.getView(),
-                                   new OntologyHierarchyToAppDND(appearance, oldGridPresenter, newGridPresenter, this),
-                                   new AppToOntologyHierarchyDND(appearance, oldGridPresenter, newGridPresenter, this));
+                                   previewGridPresenter.getView(),
+                                   editorGridPresenter.getView(),
+                                   new OntologyHierarchyToAppDND(appearance,
+                                                                 previewGridPresenter,
+                                                                 editorGridPresenter, this),
+                                   new AppToOntologyHierarchyDND(appearance,
+                                                                 previewGridPresenter,
+                                                                 editorGridPresenter, this));
 
-        oldGridPresenter.getView().addAppSelectionChangedEventHandler(view);
-        newGridPresenter.getView().addAppSelectionChangedEventHandler(view);
+        previewGridPresenter.getView().addAppSelectionChangedEventHandler(view);
+        editorGridPresenter.getView().addAppSelectionChangedEventHandler(view);
 
         proxy.setHasHandlers(view);
 
         view.addRefreshOntologiesEventHandler(this);
         view.addSelectOntologyVersionEventHandler(this);
-        view.addSelectOntologyVersionEventHandler(oldGridPresenter.getView());
-        view.addSelectOntologyVersionEventHandler(newGridPresenter.getView());
+        view.addSelectOntologyVersionEventHandler(previewGridPresenter.getView());
+        view.addSelectOntologyVersionEventHandler(editorGridPresenter.getView());
         view.addHierarchySelectedEventHandler(this);
-        view.addHierarchySelectedEventHandler(newGridPresenter.getView());
+        view.addHierarchySelectedEventHandler(editorGridPresenter.getView());
         view.addPreviewHierarchySelectedEventHandler(this);
-        view.addPreviewHierarchySelectedEventHandler(oldGridPresenter.getView());
+        view.addPreviewHierarchySelectedEventHandler(previewGridPresenter.getView());
         view.addSaveOntologyHierarchyEventHandler(this);
         view.addPublishOntologyClickEventHandler(this);
         view.addCategorizeButtonClickedEventHandler(this);
@@ -235,10 +239,6 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         view.addDeleteHierarchyEventHandler(this);
         view.addDeleteAppsSelectedHandler(this);
         view.addRefreshPreviewButtonClickedHandler(this);
-
-        view.addAppSearchResultLoadEventHandler(oldGridPresenter);
-        view.addAppSearchResultLoadEventHandler(oldGridPresenter.getView());
-        view.addBeforeAppSearchEventHandler(oldGridPresenter.getView());
     }
 
     PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> getPagingLoader() {
@@ -341,9 +341,9 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     }
 
     void getOntologies(final boolean selectActiveOntology) {
-        newGridPresenter.getView().clearAndAdd(null);
-        oldGridPresenter.getView().clearAndAdd(null);
-        view.clearStore(OntologiesView.TreeType.ALL);
+        editorGridPresenter.getView().clearAndAdd(null);
+        previewGridPresenter.getView().clearAndAdd(null);
+        view.clearTreeStore(OntologiesView.TreeType.ALL);
         serviceFacade.getOntologies(new AsyncCallback<List<Ontology>>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -370,9 +370,9 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     @Override
     public void onSelectOntologyVersion(SelectOntologyVersionEvent event) {
-        view.clearStore(OntologiesView.TreeType.ALL);
-        newGridPresenter.getView().clearAndAdd(null);
-        oldGridPresenter.getView().clearAndAdd(null);
+        view.clearTreeStore(OntologiesView.TreeType.ALL);
+        editorGridPresenter.getView().clearAndAdd(null);
+        previewGridPresenter.getView().clearAndAdd(null);
         iriToHierarchyMap.clear();
 
         view.showTreePanel();
@@ -389,7 +389,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
 
     void getFilteredOntologyHierarchies(String version, List<OntologyHierarchy> result) {
-        view.clearStore(OntologiesView.TreeType.PREVIEW);
+        view.clearTreeStore(OntologiesView.TreeType.PREVIEW);
         for (OntologyHierarchy hierarchy: result) {
             view.maskTree(OntologiesView.TreeType.PREVIEW);
             String attr = ontologyUtil.getAttr(hierarchy);
@@ -425,9 +425,9 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         }
         if (parent == null) {
             ontologyUtil.addUnclassifiedChild(children);
-            view.addToStore(type, children);
+            view.addToTreeStore(type, children);
         } else {
-            view.addToStore(type, parent, children);
+            view.addToTreeStore(type, parent, children);
 
         }
 
@@ -498,14 +498,14 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     public void onPreviewHierarchySelected(PreviewHierarchySelectedEvent event) {
         OntologyHierarchy hierarchy = event.getHierarchy();
         Ontology editedOntology = event.getEditedOntology();
-        getAppsByHierarchy(oldGridPresenter.getView(), hierarchy, editedOntology);
+        getAppsByHierarchy(previewGridPresenter.getView(), hierarchy, editedOntology);
     }
 
     @Override
     public void onHierarchySelected(HierarchySelectedEvent event) {
         OntologyHierarchy hierarchy = event.getHierarchy();
         Ontology editedOntology = event.getEditedOntology();
-        getAppsByHierarchy(newGridPresenter.getView(), hierarchy, editedOntology);
+        getAppsByHierarchy(editorGridPresenter.getView(), hierarchy, editedOntology);
     }
 
     void getAppsByHierarchy(final AdminAppsGridView gridView,

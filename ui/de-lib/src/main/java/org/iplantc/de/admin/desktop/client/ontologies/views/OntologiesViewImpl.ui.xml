@@ -129,7 +129,7 @@
                         </container:CardLayoutContainer>
                     </container:center>
                     <container:east layoutData="{eastData}">
-                        <adminApps:AdminAppsGridView ui:field="newGridView"/>
+                        <adminApps:AdminAppsGridView ui:field="editorGridView"/>
                     </container:east>
                 </container:BorderLayoutContainer>
             </gxt:ContentPanel>
@@ -152,7 +152,7 @@
                         </gxt:ContentPanel>
                     </container:center>
                     <container:west layoutData="{westData}">
-                        <adminApps:AdminAppsGridView ui:field="oldGridView"/>
+                        <adminApps:AdminAppsGridView ui:field="previewGridView"/>
                     </container:west>
                 </container:BorderLayoutContainer>
 

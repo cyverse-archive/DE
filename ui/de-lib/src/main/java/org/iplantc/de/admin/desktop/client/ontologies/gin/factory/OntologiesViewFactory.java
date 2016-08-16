@@ -22,8 +22,8 @@ public interface OntologiesViewFactory {
     OntologiesView create(@Assisted("editorTreeStore") TreeStore<OntologyHierarchy> treeStore,
                           @Assisted("previewTreeStore") TreeStore<OntologyHierarchy> previewTreeStore,
                           PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader,
-                          @Assisted("oldGridView") AdminAppsGridView oldGridView,
-                          @Assisted("newGridView") AdminAppsGridView newGridView,
+                          @Assisted("previewGridView") AdminAppsGridView oldGridView,
+                          @Assisted("editorGridView") AdminAppsGridView newGridView,
                           OntologyHierarchyToAppDND dndHandler,
                           AppToOntologyHierarchyDND appDndHandler);
 }

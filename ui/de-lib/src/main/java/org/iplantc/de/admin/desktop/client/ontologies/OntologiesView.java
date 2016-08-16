@@ -64,11 +64,11 @@ public interface OntologiesView extends IsWidget,
 
     Ontology getSelectedOntology();
 
-    void clearStore(TreeType type);
+    void clearTreeStore(TreeType type);
 
-    void addToStore(TreeType type, List<OntologyHierarchy> children);
+    void addToTreeStore(TreeType type, List<OntologyHierarchy> children);
 
-    void addToStore(TreeType type, OntologyHierarchy parent, List<OntologyHierarchy> children);
+    void addToTreeStore(TreeType type, OntologyHierarchy parent, List<OntologyHierarchy> children);
 
     void maskTree(TreeType type);
 
