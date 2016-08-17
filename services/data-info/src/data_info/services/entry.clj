@@ -38,19 +38,21 @@
 ;; file specific
 
 (defn- get-file
-  [irods path]
-  (if (zero? (item/file-size irods path))
-    ""
-    (ops/input-stream irods path)))
+  [path]
+  (irods/with-jargon-exceptions [irods]
+    (if (zero? (item/file-size irods path))
+      ""
+      (ops/input-stream irods path))))
 
 (defn- file-entry
-  [cm path {:keys [attachment]}]
+  [path {:keys [attachment]}]
   (let [filename    (str \" (file/basename path) \")
         disposition (if attachment
                       (str "attachment; filename=" filename)
                       (str "filename=" filename))
-        media-type  (irods/detect-media-type cm path)]
-    (assoc (http-response/ok (get-file cm path))
+        media-type  (irods/with-jargon-exceptions [cm]
+                      (irods/detect-media-type cm path))]
+    (assoc (http-response/ok (get-file path))
            :headers {"Content-Type"        media-type
                      "Content-Disposition" disposition})))
 
@@ -211,7 +213,7 @@
 
 
 (defn- folder-entry
-  [cm path {:keys [user
+  [path {:keys [user
                 entity-type
                 bad-chars
                 bad-name
@@ -231,25 +233,26 @@
         sort-dir    (resolve-sort-dir sort-dir)
         offset      (if-not (nil? offset) offset 0)]
     (http-response/ok
-      (paged-dir-listing
-         cm user path entity-type badies sort-field sort-dir offset limit info-type))))
+      (irods/with-jargon-exceptions [cm]
+        (paged-dir-listing
+           cm user path entity-type badies sort-field sort-dir offset limit info-type)))))
 
 
 (defn- get-path-attrs
-  [cm zone path-in-zone user]
-  (duv/user-exists cm user)
-  (let [path (file/rm-last-slash (irods/abs-path zone path-in-zone))]
-    (jv/validate-path-lengths path)
-    (duv/path-exists cm path)
-    (duv/path-readable cm user path)
-    {:path           path
-     :is-dir?        (item/is-dir? cm path)}))
+  [zone path-in-zone user]
+  (irods/with-jargon-exceptions [cm]
+    (duv/user-exists cm user)
+    (let [path (file/rm-last-slash (irods/abs-path zone path-in-zone))]
+      (jv/validate-path-lengths path)
+      (duv/path-exists cm path)
+      (duv/path-readable cm user path)
+      {:path           path
+       :is-dir?        (item/is-dir? cm path)})))
 
 
 (defn dispatch-path-to-resource
   [zone path-in-zone {:keys [user] :as params}]
-  (irods/with-jargon-exceptions [cm]
-    (let [{:keys [path is-dir?]} (get-path-attrs cm zone path-in-zone user)]
-      (if is-dir?
-        (folder-entry cm path params)
-        (file-entry cm path params)))))
+  (let [{:keys [path is-dir?]} (get-path-attrs zone path-in-zone user)]
+    (if is-dir?
+      (folder-entry path params)
+      (file-entry path params))))
