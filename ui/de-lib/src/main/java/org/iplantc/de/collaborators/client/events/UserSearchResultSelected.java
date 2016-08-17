@@ -17,7 +17,7 @@ public class UserSearchResultSelected extends GwtEvent<UserSearchResultSelectedE
 
     public enum USER_SEARCH_EVENT_TAG {
 
-        SHARING, MANAGE
+        SHARING, MANAGE, WORKSHOP_ADMIN
 
     };
 

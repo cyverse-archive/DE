@@ -4,6 +4,7 @@
              xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
              xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
              xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+             xmlns:userSearch = "urn:import:org.iplantc.de.collaborators.client.util"
              xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
 
     <ui:with field="appearance"
@@ -32,6 +33,9 @@
     <container:BorderLayoutContainer borders="true">
         <container:north layoutData="{northData}">
             <toolbar:ToolBar>
+                <toolbar:child>
+                    <userSearch:UserSearchField ui:field="userSearch" />
+                </toolbar:child>
                 <toolbar:child>
                     <button:TextButton ui:field="deleteButton"
                                        text="{appearance.delete}"

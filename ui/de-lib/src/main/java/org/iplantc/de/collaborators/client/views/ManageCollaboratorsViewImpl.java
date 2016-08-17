@@ -63,7 +63,7 @@ public class ManageCollaboratorsViewImpl extends Composite implements ManageColl
     public ManageCollaboratorsViewImpl(final ListStore<Collaborator> store,
                                        final MODE mode) {
         this.listStore = store;
-        searchField = new UserSearchField(USER_SEARCH_EVENT_TAG.MANAGE);
+        searchField = new UserSearchField(USER_SEARCH_EVENT_TAG.WORKSHOP_ADMIN);
         checkBoxModel = new CheckBoxSelectionModel<>(new IdentityValueProvider<Collaborator>());
         initWidget(uiBinder.createAndBindUi(this));
         grid.setSelectionModel(checkBoxModel);

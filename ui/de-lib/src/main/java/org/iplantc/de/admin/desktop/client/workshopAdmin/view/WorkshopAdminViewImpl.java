@@ -21,6 +21,8 @@ import org.iplantc.de.admin.desktop.client.workshopAdmin.events.MemberSelectedEv
 import org.iplantc.de.admin.desktop.client.workshopAdmin.model.MemberProperties;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.view.cells.MemberNameCell;
 import org.iplantc.de.client.models.groups.Member;
+import org.iplantc.de.collaborators.client.events.UserSearchResultSelected;
+import org.iplantc.de.collaborators.client.util.UserSearchField;
 
 import java.util.Comparator;
 import java.util.List;
@@ -32,6 +34,7 @@ public class WorkshopAdminViewImpl extends Composite implements WorkshopAdminVie
 
     interface WorkshopAdminViewImplUiBinder extends UiBinder<Widget, WorkshopAdminViewImpl> {}
 
+    @UiField(provided = true) UserSearchField userSearch;
     @UiField TextButton deleteButton;
     @UiField Grid<Member> grid;
     @UiField(provided = true) ListStore<Member> listStore;
@@ -60,6 +63,7 @@ public class WorkshopAdminViewImpl extends Composite implements WorkshopAdminVie
     public WorkshopAdminViewImpl(final WorkshopAdminViewAppearance appearance,
                                  final MemberProperties memberProperties,
                                  @Assisted ListStore<Member> listStore) {
+        this.userSearch = new UserSearchField(UserSearchResultSelected.USER_SEARCH_EVENT_TAG.WORKSHOP_ADMIN);
         this.appearance = appearance;
         this.memberProperties = memberProperties;
         this.listStore = listStore;
