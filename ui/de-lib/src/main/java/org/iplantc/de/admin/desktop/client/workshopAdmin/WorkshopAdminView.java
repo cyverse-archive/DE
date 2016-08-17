@@ -13,10 +13,6 @@ public interface WorkshopAdminView extends IsWidget, IsMaskable {
 
     interface WorkshopAdminViewAppearance {
 
-        String add();
-
-        ImageResource addIcon();
-
         String delete();
 
         ImageResource deleteIcon();

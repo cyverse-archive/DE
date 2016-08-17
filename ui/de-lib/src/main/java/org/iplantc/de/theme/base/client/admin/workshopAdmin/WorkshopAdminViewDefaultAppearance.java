@@ -19,16 +19,6 @@ public class WorkshopAdminViewDefaultAppearance implements WorkshopAdminView.Wor
     }
 
     @Override
-    public String add() {
-        return displayStrings.add();
-    }
-
-    @Override
-    public ImageResource addIcon() {
-        return iplantResources.add();
-    }
-
-    @Override
     public String delete() {
         return displayStrings.delete();
     }

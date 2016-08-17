@@ -33,11 +33,6 @@
         <container:north layoutData="{northData}">
             <toolbar:ToolBar>
                 <toolbar:child>
-                    <button:TextButton ui:field="addButton"
-                                       text="{appearance.add}"
-                                       icon="{appearance.addIcon}"/>
-                </toolbar:child>
-                <toolbar:child>
                     <button:TextButton ui:field="deleteButton"
                                        text="{appearance.delete}"
                                        icon="{appearance.deleteIcon}"/>

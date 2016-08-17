@@ -32,7 +32,6 @@ public class WorkshopAdminViewImpl extends Composite implements WorkshopAdminVie
 
     interface WorkshopAdminViewImplUiBinder extends UiBinder<Widget, WorkshopAdminViewImpl> {}
 
-    @UiField TextButton addButton;
     @UiField TextButton deleteButton;
     @UiField Grid<Member> grid;
     @UiField(provided = true) ListStore<Member> listStore;

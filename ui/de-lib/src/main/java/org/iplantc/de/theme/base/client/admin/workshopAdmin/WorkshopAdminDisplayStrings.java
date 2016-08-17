@@ -8,9 +8,6 @@ import com.google.gwt.i18n.client.Messages;
  */
 public interface WorkshopAdminDisplayStrings extends Messages {
 
-    @LocalizableResource.Key("add")
-    String add();
-
     @LocalizableResource.Key("delete")
     String delete();
 
