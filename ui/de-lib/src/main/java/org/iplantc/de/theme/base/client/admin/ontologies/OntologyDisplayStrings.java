@@ -84,4 +84,6 @@ public interface OntologyDisplayStrings extends Messages{
     String externalAppDND(String appLabels);
 
     String ontologyAttrMatchingError();
+
+    String emptySearchFieldText();
 }

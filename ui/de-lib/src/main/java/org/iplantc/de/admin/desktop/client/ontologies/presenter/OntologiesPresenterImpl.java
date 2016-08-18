@@ -20,6 +20,7 @@ import org.iplantc.de.admin.desktop.client.ontologies.views.OntologyHierarchyToA
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.CategorizeDialog;
 import org.iplantc.de.admin.desktop.client.services.AppAdminServiceFacade;
 import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
+import org.iplantc.de.apps.client.presenter.toolBar.proxy.AppSearchRpcProxy;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.avu.Avu;
@@ -28,6 +29,7 @@ import org.iplantc.de.client.models.avu.AvuList;
 import org.iplantc.de.client.models.ontologies.Ontology;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import org.iplantc.de.client.models.ontologies.OntologyVersionDetail;
+import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.OntologyUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -45,6 +47,9 @@ import com.google.inject.Inject;
 
 import com.sencha.gxt.core.shared.FastMap;
 import com.sencha.gxt.data.shared.TreeStore;
+import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
+import com.sencha.gxt.data.shared.loader.PagingLoadResult;
+import com.sencha.gxt.data.shared.loader.PagingLoader;
 
 import java.util.Collections;
 import java.util.List;
@@ -154,6 +159,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     @Inject DEProperties properties;
     @Inject IplantAnnouncer announcer;
     OntologyUtil ontologyUtil;
+    AppSearchRpcProxy proxy;
+    PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
     private OntologiesView view;
     private OntologyServiceFacade serviceFacade;
     private final TreeStore<OntologyHierarchy> treeStore;
@@ -167,6 +174,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     @Inject
     public OntologiesPresenterImpl(OntologyServiceFacade serviceFacade,
+                                   AppServiceFacade appService,
                                    final TreeStore<OntologyHierarchy> treeStore,
                                    OntologiesViewFactory factory,
                                    AvuAutoBeanFactory avuFactory,
@@ -186,7 +194,11 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         this.newGridPresenter = newGridPresenter;
         this.categorizeView = categorizeView;
 
+        proxy = getProxy(appService);
+        loader = getPagingLoader();
+
         this.view = factory.create(treeStore,
+                                   loader,
                                    categoriesPresenter.getView(),
                                    oldGridPresenter.getView(),
                                    newGridPresenter.getView(),
@@ -199,6 +211,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         oldGridPresenter.getView().addAppSelectionChangedEventHandler(view);
         newGridPresenter.getView().addAppSelectionChangedEventHandler(view);
 
+        proxy.setHasHandlers(view);
+
         view.addRefreshOntologiesEventHandler(this);
         view.addSelectOntologyVersionEventHandler(this);
         view.addHierarchySelectedEventHandler(this);
@@ -209,6 +223,19 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         view.addDeleteOntologyButtonClickedEventHandler(this);
         view.addDeleteHierarchyEventHandler(this);
         view.addDeleteAppsSelectedHandler(this);
+
+        view.addAppSearchResultLoadEventHandler(categoriesPresenter);
+        view.addAppSearchResultLoadEventHandler(oldGridPresenter);
+        view.addAppSearchResultLoadEventHandler(oldGridPresenter.getView());
+        view.addBeforeAppSearchEventHandler(oldGridPresenter.getView());
+    }
+
+    PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> getPagingLoader() {
+        return new PagingLoader<>(proxy);
+    }
+
+    AppSearchRpcProxy getProxy(AppServiceFacade appService) {
+        return new AppSearchRpcProxy(appService);
     }
 
 

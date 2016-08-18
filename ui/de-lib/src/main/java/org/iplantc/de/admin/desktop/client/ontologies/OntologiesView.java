@@ -5,9 +5,11 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.DeleteHierarchyEven
 import org.iplantc.de.admin.desktop.client.ontologies.events.DeleteOntologyButtonClickedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshOntologiesEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
-import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshOntologiesEvent;
+import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
+import org.iplantc.de.apps.client.events.BeforeAppSearchEvent;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
 import org.iplantc.de.client.models.apps.App;
@@ -16,6 +18,7 @@ import org.iplantc.de.client.models.ontologies.Ontology;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.HasOneWidget;
@@ -27,6 +30,7 @@ import java.util.List;
  * @author aramsey
  */
 public interface OntologiesView extends IsWidget,
+                                        HasHandlers,
                                         RefreshOntologiesEvent.HasViewOntologyVersionEventHandlers,
                                         SelectOntologyVersionEvent.HasSelectOntologyVersionEventHandlers,
                                         HierarchySelectedEvent.HasHierarchySelectedEventHandlers,
@@ -36,7 +40,9 @@ public interface OntologiesView extends IsWidget,
                                         AppSelectionChangedEvent.AppSelectionChangedEventHandler,
                                         DeleteOntologyButtonClickedEvent.HasDeleteOntologyButtonClickedEventHandlers,
                                         DeleteHierarchyEvent.HasDeleteHierarchyEventHandlers,
-                                        DeleteAppsSelected.HasDeleteAppsSelectedHandlers {
+                                        DeleteAppsSelected.HasDeleteAppsSelectedHandlers,
+                                        BeforeAppSearchEvent.HasBeforeAppSearchEventHandlers,
+                                        AppSearchResultLoadEvent.HasAppSearchResultLoadEventHandlers {
 
     void showOntologyVersions(List<Ontology> result);
 
@@ -207,6 +213,8 @@ public interface OntologiesView extends IsWidget,
         String externalAppDND(String appLabels);
 
         String ontologyAttrMatchingError();
+
+        String emptySearchFieldText();
     }
 
     interface Presenter {

@@ -394,4 +394,8 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     public String ontologyAttrMatchingError() {
         return displayStrings.ontologyAttrMatchingError();
     }
+
+    public String emptySearchFieldText() {
+        return displayStrings.emptySearchFieldText();
+    }
 }
