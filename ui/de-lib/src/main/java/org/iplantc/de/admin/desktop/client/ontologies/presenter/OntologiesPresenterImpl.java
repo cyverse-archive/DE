@@ -46,7 +46,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
@@ -706,8 +705,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
             @Override
             public void onFailure(Throwable caught) {
                 view.unmaskGrids();
-                JSONObject obj = JSONParser.parseStrict(caught.getMessage()).isObject();
-                String reason = jsonUtil.trim(obj.get("reason").toString());
+                JSONObject obj = jsonUtil.getObject(caught.getMessage());
+                String reason = jsonUtil.getString(obj, "reason");
                 if (reason.contains("orphaned")) {
                     announcer.schedule(new ErrorAnnouncementConfig(appearance.restoreAppFailureMsg(app.getName())));
                 } else {
