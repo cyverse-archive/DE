@@ -1,7 +1,9 @@
 package org.iplantc.de.admin.desktop.client.workshopAdmin.presenter;
 
+import com.google.common.base.Strings;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
+import com.google.gwt.util.tools.shared.StringUtils;
 import com.google.inject.Inject;
 import com.sencha.gxt.data.shared.ListStore;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.WorkshopAdminView;
@@ -47,6 +49,18 @@ public class WorkshopAdminPresenterImpl implements WorkshopAdminView.Presenter {
             return member;
         }
 
+        private boolean listContainsMember(List<Member> members, Member newMember) {
+            String newMemberId = newMember.getId();
+            if (newMemberId != null) {
+                for (Member member : members) {
+                    if (member.getId() != null && member.getId().equals(newMemberId)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         @Override
         public void onUserSearchResultSelected(UserSearchResultSelected event) {
 
@@ -57,7 +71,7 @@ public class WorkshopAdminPresenterImpl implements WorkshopAdminView.Presenter {
 
             // Add the user to the list if not there already.
             Member member = memberFromCollaborator(event.getCollaborator());
-            if (!listStore.hasRecord(member)) {
+            if (!listContainsMember(listStore.getAll(), member)) {
                 listStore.add(member);
             }
         }
