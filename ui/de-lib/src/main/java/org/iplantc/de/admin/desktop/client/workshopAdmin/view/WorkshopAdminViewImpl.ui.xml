@@ -46,6 +46,11 @@
                                        text="{appearance.save}"
                                        icon="{appearance.saveIcon}" />
                 </toolbar:child>
+                <toolbar:child>
+                    <button:TextButton ui:field="refreshButton"
+                                       text="{appearance.refresh}"
+                                       icon="{appearance.refreshIcon}" />
+                </toolbar:child>
             </toolbar:ToolBar>
         </container:north>
         <container:center layoutData="{centerData}">

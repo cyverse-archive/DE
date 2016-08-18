@@ -8,6 +8,7 @@ import com.google.inject.Inject;
 import com.sencha.gxt.data.shared.ListStore;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.WorkshopAdminView;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.events.DeleteMembersClickedEvent;
+import org.iplantc.de.admin.desktop.client.workshopAdmin.events.RefreshMembersClickedEvent;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.events.SaveMembersClickedEvent;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.gin.factory.WorkshopAdminViewFactory;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.model.MemberProperties;
@@ -97,6 +98,15 @@ public class WorkshopAdminPresenterImpl implements WorkshopAdminView.Presenter {
         }
     }
 
+    private final class RefreshMembersClickedEventHandler
+            implements RefreshMembersClickedEvent.RefreshMembersClickedEventHandler {
+
+        @Override
+        public void onRefreshMembersClicked(RefreshMembersClickedEvent event) {
+            updateView();
+        }
+    }
+
     @Inject
     public WorkshopAdminPresenterImpl(final WorkshopAdminViewFactory viewFactory,
                                       final WorkshopAdminServiceFacade serviceFacade,
@@ -115,6 +125,7 @@ public class WorkshopAdminPresenterImpl implements WorkshopAdminView.Presenter {
         view.addGlobalEventHandler(UserSearchResultSelected.TYPE, new UserSearchResultSelectedEventHandler());
         view.addLocalEventHandler(DeleteMembersClickedEvent.TYPE, new DeleteMembersClickedEventHandler());
         view.addLocalEventHandler(SaveMembersClickedEvent.TYPE, new SaveMembersClickedEventHandler());
+        view.addLocalEventHandler(RefreshMembersClickedEvent.TYPE, new RefreshMembersClickedEventHandler());
     }
 
     @Override

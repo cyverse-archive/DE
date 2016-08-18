@@ -22,6 +22,7 @@ import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.WorkshopAdminView;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.events.DeleteMembersClickedEvent;
+import org.iplantc.de.admin.desktop.client.workshopAdmin.events.RefreshMembersClickedEvent;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.events.SaveMembersClickedEvent;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.model.MemberProperties;
 import org.iplantc.de.client.events.EventBus;
@@ -112,5 +113,10 @@ public class WorkshopAdminViewImpl extends Composite implements WorkshopAdminVie
     @UiHandler("saveButton")
     void saveButtonClicked(SelectEvent event) {
         fireEvent(new SaveMembersClickedEvent(listStore.getAll()));
+    }
+
+    @UiHandler("refreshButton")
+    void refreshButtonClicked(SelectEvent event) {
+        fireEvent(new RefreshMembersClickedEvent());
     }
 }

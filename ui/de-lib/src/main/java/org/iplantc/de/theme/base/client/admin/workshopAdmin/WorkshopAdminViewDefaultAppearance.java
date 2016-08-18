@@ -81,4 +81,14 @@ public class WorkshopAdminViewDefaultAppearance implements WorkshopAdminView.Wor
     public String loadingMask() {
         return iplantDisplayStrings.loadingMask();
     }
+
+    @Override
+    public String refresh() {
+        return iplantDisplayStrings.refresh();
+    }
+
+    @Override
+    public ImageResource refreshIcon() {
+        return iplantResources.refresh();
+    }
 }

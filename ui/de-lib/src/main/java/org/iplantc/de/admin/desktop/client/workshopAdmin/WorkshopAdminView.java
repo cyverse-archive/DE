@@ -27,6 +27,10 @@ public interface WorkshopAdminView extends IsWidget, IsMaskable {
 
         ImageResource saveIcon();
 
+        String refresh();
+
+        ImageResource refreshIcon();
+
         int nameColumnWidth();
 
         String nameColumnLabel();
