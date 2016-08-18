@@ -2972,4 +2972,8 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String agaveAuthRequiredTitle();
 
 	String paramUnit();
+
+    @DefaultMessage("Publish")
+    @Key("publish")
+    String publish();
 }

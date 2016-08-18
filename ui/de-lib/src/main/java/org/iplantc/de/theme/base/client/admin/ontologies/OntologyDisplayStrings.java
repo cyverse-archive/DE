@@ -23,8 +23,6 @@ public interface OntologyDisplayStrings extends Messages{
 
     String fileUploadSuccess(String file);
 
-    String publishOntology();
-
     String activeOntologyLabel();
 
     String editedOntologyLabel();

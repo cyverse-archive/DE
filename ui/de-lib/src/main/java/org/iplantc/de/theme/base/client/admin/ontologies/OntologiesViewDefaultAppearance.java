@@ -129,7 +129,7 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
 
     @Override
     public String publishOntology() {
-        return displayStrings.publishOntology();
+        return iplantDisplayStrings.publish();
     }
 
     @Override
