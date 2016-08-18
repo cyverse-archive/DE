@@ -9,4 +9,5 @@
   (ipg/get-workshop-group-members))
 
 (defn update-workshop-group-members [subject-ids]
-  (ipg/update-workshop-group-members subject-ids))
+  (let [results (:results (ipg/update-workshop-group-members subject-ids))]
+    (assoc (ipg/get-workshop-group-members) :failures (mapv :subject_id (remove :success results)))))

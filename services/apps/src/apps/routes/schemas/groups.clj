@@ -58,15 +58,6 @@
 (s/defschema GroupMembersUpdate
   {:members (describe [NonBlankString] "The new list of member subject IDs.")})
 
-(s/defschema GroupMemberSubjectUpdateResponse
-  {:success
-   (describe Boolean "True if the user was added successfully")
-
-   :subject_id
-   (describe NonBlankString "The subject ID.")
-
-   (s/optional-key :subject_name)
-   (describe NonBlankString "The subject name.")})
-
 (s/defschema GroupMembersUpdateResponse
-  {:results (describe [GroupMemberSubjectUpdateResponse] "The list of membership update results.")})
+  {:failures (describe [String] "The list of subject IDs that could not be added to the group.")
+   :members  (describe [Subject] "The updated list of group members.")})
