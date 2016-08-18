@@ -43,7 +43,7 @@ public interface WorkshopAdminView extends IsWidget, IsMaskable {
         void setViewDebugId(String baseId);
     }
 
-    void memberSelected(Member member);
-
     <H extends EventHandler> void addGlobalEventHandler(GwtEvent.Type<H> type, H handler);
+
+    <H extends EventHandler> void addLocalEventHandler(GwtEvent.Type<H> type, H handler);
 }

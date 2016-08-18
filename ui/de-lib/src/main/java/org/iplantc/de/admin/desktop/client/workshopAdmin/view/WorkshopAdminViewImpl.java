@@ -11,7 +11,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.core.client.Style;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.Composite;
@@ -20,9 +19,7 @@ import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.WorkshopAdminView;
-import org.iplantc.de.admin.desktop.client.workshopAdmin.events.MemberSelectedEvent;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.model.MemberProperties;
-import org.iplantc.de.admin.desktop.client.workshopAdmin.view.cells.MemberNameCell;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.groups.Member;
 import org.iplantc.de.collaborators.client.util.UserSearchField;
@@ -49,21 +46,6 @@ public class WorkshopAdminViewImpl extends Composite implements WorkshopAdminVie
 
     private static WorkshopAdminViewImplUiBinder uiBinder = GWT.create(WorkshopAdminViewImplUiBinder.class);
 
-    private final class MemberNameComparator implements Comparator<Member> {
-
-        @Override
-        public int compare(Member o1, Member o2) {
-            if (o1 == null && o2 == null) {
-                return 0;
-            } else if (o1 == null) {
-                return 1;
-            } else if (o2 == null) {
-                return -1;
-            }
-            return o1.getName().compareToIgnoreCase(o2.getName());
-        }
-    }
-
     @Inject
     public WorkshopAdminViewImpl(final WorkshopAdminViewAppearance appearance,
                                  final MemberProperties memberProperties,
@@ -73,13 +55,18 @@ public class WorkshopAdminViewImpl extends Composite implements WorkshopAdminVie
         this.memberProperties = memberProperties;
         this.listStore = listStore;
         initWidget(uiBinder.createAndBindUi(this));
-        grid.getSelectionModel().setSelectionMode(Style.SelectionMode.SINGLE);
+        grid.getSelectionModel().setSelectionMode(Style.SelectionMode.MULTI);
     }
 
     @Override
     public <H extends EventHandler> void addGlobalEventHandler(GwtEvent.Type<H> type, H handler) {
         HandlerRegistration registration = EventBus.getInstance().addHandler(type, handler);
         globalHandlerRegistrations.add(registration);
+    }
+
+    @Override
+    public <H extends EventHandler> void addLocalEventHandler(GwtEvent.Type<H> type, H handler) {
+        addHandler(handler, type);
     }
 
     @Override
@@ -96,8 +83,8 @@ public class WorkshopAdminViewImpl extends Composite implements WorkshopAdminVie
     @UiFactory
     ColumnModel<Member> createColumnModel() {
         List<ColumnConfig<Member, ?>> list = Lists.newArrayList();
-        ColumnConfig<Member, Member> nameCol = new ColumnConfig<>(
-                new IdentityValueProvider<Member>("name"),
+        ColumnConfig<Member, String> nameCol = new ColumnConfig<>(
+                memberProperties.name(),
                 appearance.nameColumnWidth(),
                 appearance.nameColumnLabel());
         ColumnConfig<Member, String> emailCol = new ColumnConfig<>(
@@ -108,15 +95,9 @@ public class WorkshopAdminViewImpl extends Composite implements WorkshopAdminVie
                 memberProperties.institution(),
                 appearance.institutionColumnWidth(),
                 appearance.institutionColumnLabel());
-        nameCol.setCell(new MemberNameCell(this));
-        nameCol.setComparator(new MemberNameComparator());
         list.add(nameCol);
         list.add(emailCol);
         list.add(institutionCol);
         return new ColumnModel<>(list);
-    }
-
-    public void memberSelected(Member member) {
-        fireEvent(new MemberSelectedEvent(member));
     }
 }

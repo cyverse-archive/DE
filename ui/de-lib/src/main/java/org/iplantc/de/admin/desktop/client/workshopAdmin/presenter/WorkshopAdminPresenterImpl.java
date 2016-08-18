@@ -1,6 +1,6 @@
 package org.iplantc.de.admin.desktop.client.workshopAdmin.presenter;
 
-import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
@@ -10,7 +10,6 @@ import org.iplantc.de.admin.desktop.client.workshopAdmin.gin.factory.WorkshopAdm
 import org.iplantc.de.admin.desktop.client.workshopAdmin.model.MemberProperties;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.service.WorkshopAdminServiceFacade;
 import org.iplantc.de.admin.desktop.shared.Belphegor;
-import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.collaborators.Collaborator;
 import org.iplantc.de.client.models.groups.GroupAutoBeanFactory;
 import org.iplantc.de.client.models.groups.Member;
