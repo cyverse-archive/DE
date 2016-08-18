@@ -225,8 +225,12 @@ public class OntologiesPresenterImplTest {
         verify(viewMock).addDeleteHierarchyEventHandler(eq(uut));
         verify(viewMock).addDeleteOntologyButtonClickedEventHandler(eq(uut));
         verify(viewMock).addDeleteAppsSelectedHandler(eq(uut));
-
         verify(viewMock).addRefreshPreviewButtonClickedHandler(eq(uut));
+
+        verify(viewMock).addAppSearchResultLoadEventHandler(eq(uut));
+        verify(viewMock).addAppSearchResultLoadEventHandler(previewGridPresenterMock);
+        verify(viewMock).addAppSearchResultLoadEventHandler(previewGridViewMock);
+        verify(viewMock).addBeforeAppSearchEventHandler(previewGridViewMock);
     }
 
     @Test
