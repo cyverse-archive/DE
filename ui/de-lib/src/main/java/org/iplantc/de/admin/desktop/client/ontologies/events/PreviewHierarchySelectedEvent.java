@@ -16,25 +16,25 @@ import java.util.List;
 /**
  * @author aramsey
  */
-public class HierarchySelectedEvent extends GwtEvent<HierarchySelectedEvent.HierarchySelectedEventHandler> {
+public class PreviewHierarchySelectedEvent extends GwtEvent<PreviewHierarchySelectedEvent.PreviewHierarchySelectedEventHandler> {
     private static final String HIERARCHY_MODEL_KEY = "model_key";
 
-    public static interface HierarchySelectedEventHandler extends EventHandler {
-        void onHierarchySelected(HierarchySelectedEvent event);
+    public static interface PreviewHierarchySelectedEventHandler extends EventHandler {
+        void onPreviewHierarchySelected(PreviewHierarchySelectedEvent event);
     }
 
-    public interface HasHierarchySelectedEventHandlers {
-        HandlerRegistration addHierarchySelectedEventHandler(HierarchySelectedEventHandler handler);
+    public interface HasPreviewHierarchySelectedEventHandlers {
+        HandlerRegistration addPreviewHierarchySelectedEventHandler(PreviewHierarchySelectedEventHandler handler);
     }
 
-    public static Type<HierarchySelectedEventHandler> TYPE = new Type<HierarchySelectedEventHandler>();
+    public static Type<PreviewHierarchySelectedEventHandler> TYPE = new Type<PreviewHierarchySelectedEventHandler>();
 
     private OntologyHierarchy hierarchy;
     private Ontology editedOntology;
     OntologiesView.TreeType treeType;
 
-    public HierarchySelectedEvent(OntologyHierarchy hierarchy, Ontology editedOntology,
-                                  OntologiesView.TreeType treeType){
+    public PreviewHierarchySelectedEvent(OntologyHierarchy hierarchy,
+                                         Ontology editedOntology, OntologiesView.TreeType treeType){
         this.hierarchy = hierarchy;
         this.editedOntology = editedOntology;
         this.treeType = treeType;
@@ -57,12 +57,12 @@ public class HierarchySelectedEvent extends GwtEvent<HierarchySelectedEvent.Hier
         return treeType;
     }
 
-    public Type<HierarchySelectedEventHandler> getAssociatedType() {
+    public Type<PreviewHierarchySelectedEventHandler> getAssociatedType() {
         return TYPE;
     }
 
-    protected void dispatch(HierarchySelectedEventHandler handler) {
-        handler.onHierarchySelected(this);
+    protected void dispatch(PreviewHierarchySelectedEventHandler handler) {
+        handler.onPreviewHierarchySelected(this);
     }
 
 }

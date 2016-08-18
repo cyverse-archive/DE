@@ -271,7 +271,10 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     public String appClassified(String name, List<Avu> result) {
         List<String> tags = Lists.newArrayList();
         for (Avu avu : result) {
-            tags.add(avu.getUnit());
+            List<Avu> subAvus = avu.getAvus();
+            if (subAvus != null && subAvus.size() == 1) {
+                tags.add(subAvus.get(0).getValue());
+            }
         }
         return displayStrings.appClassifiedList(name, tags);
     }
@@ -391,11 +394,33 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
         return displayStrings.externalAppDND(appLabels);
     }
 
+    @Override
     public String ontologyAttrMatchingError() {
         return displayStrings.ontologyAttrMatchingError();
     }
 
+    @Override
     public String emptySearchFieldText() {
         return displayStrings.emptySearchFieldText();
+    }
+
+    @Override
+    public String westPanelHeader() {
+        return displayStrings.westPanelHeader();
+    }
+
+    @Override
+    public String eastPanelHeader() {
+        return displayStrings.eastPanelHeader();
+    }
+
+    @Override
+    public String treePanelHeader() {
+        return displayStrings.treePanelHeader();
+    }
+
+    @Override
+    public String refresh() {
+        return displayStrings.refresh();
     }
 }

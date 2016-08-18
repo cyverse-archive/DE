@@ -28,7 +28,6 @@ import org.iplantc.de.admin.desktop.client.ontologies.views.AppCategorizeView;
 import org.iplantc.de.admin.desktop.client.ontologies.views.AppToOntologyHierarchyDND;
 import org.iplantc.de.admin.desktop.client.ontologies.views.OntologyHierarchyToAppDND;
 import org.iplantc.de.admin.desktop.client.services.AppAdminServiceFacade;
-import org.iplantc.de.apps.client.AppCategoriesView;
 import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
 import org.iplantc.de.apps.client.presenter.toolBar.proxy.AppSearchRpcProxy;
 import org.iplantc.de.client.models.apps.App;
@@ -76,14 +75,15 @@ public class OntologiesPresenterImplTest {
     @Mock IplantAnnouncer announcerMock;
     @Mock OntologiesView viewMock;
     @Mock OntologyServiceFacade serviceFacadeMock;
-    @Mock TreeStore<OntologyHierarchy> treeStoreMock;
+    @Mock TreeStore<OntologyHierarchy> editorStoreMock;
+    @Mock TreeStore<OntologyHierarchy> previewStoreMock;
     @Mock OntologiesView.OntologiesViewAppearance appearanceMock;
-    @Mock AdminAppsGridView.Presenter oldGridPresenterMock;
-    @Mock AdminAppsGridView.Presenter newGridPresenterMock;
+    @Mock AdminAppsGridView.Presenter previewGridPresenterMock;
+    @Mock AdminAppsGridView.Presenter editorGridPresenterMock;
     @Mock OntologyAutoBeanFactory beanFactoryMock;
     @Mock Grid<App> oldGridMock;
-    @Mock AdminAppsGridView oldGridViewMock;
-    @Mock AdminAppsGridView newGridViewMock;
+    @Mock AdminAppsGridView previewGridViewMock;
+    @Mock AdminAppsGridView editorGridViewMock;
     @Mock AdminCategoriesView.Presenter categoriesPresenterMock;
     @Mock AdminCategoriesView categoriesViewMock;
     @Mock OntologiesViewFactory factoryMock;
@@ -136,9 +136,9 @@ public class OntologiesPresenterImplTest {
         when(appearanceMock.ontologyDeleted(anyString())).thenReturn("success");
         when(appearanceMock.hierarchyDeleted(anyString())).thenReturn("success");
         when(appearanceMock.ontologyAttrMatchingError()).thenReturn("fail");
-        when(oldGridViewMock.getGrid()).thenReturn(oldGridMock);
-        when(oldGridPresenterMock.getView()).thenReturn(oldGridViewMock);
-        when(newGridPresenterMock.getView()).thenReturn(newGridViewMock);
+        when(previewGridViewMock.getGrid()).thenReturn(oldGridMock);
+        when(previewGridPresenterMock.getView()).thenReturn(previewGridViewMock);
+        when(editorGridPresenterMock.getView()).thenReturn(editorGridViewMock);
         when(categoriesPresenterMock.getView()).thenReturn(categoriesViewMock);
         when(utilMock.convertHierarchiesToAvus(ontologyHierarchyListMock)).thenReturn(avuListBeanMock);
         when(utilMock.convertHierarchiesToAvus(hierarchyMock)).thenReturn(avuListBeanMock);
@@ -167,8 +167,8 @@ public class OntologiesPresenterImplTest {
         when(hierarchyIteratorMock.hasNext()).thenReturn(true, true, false);
         when(hierarchyIteratorMock.next()).thenReturn(hierarchyMock).thenReturn(hierarchyMock);
         when(factoryMock.create(Matchers.<TreeStore<OntologyHierarchy>>any(),
+                                Matchers.<TreeStore<OntologyHierarchy>>any(),
                                 Matchers.<PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>>>any(),
-                                isA(AppCategoriesView.class),
                                 isA(AdminAppsGridView.class),
                                 isA(AdminAppsGridView.class),
                                 isA(OntologyHierarchyToAppDND.class),
@@ -176,13 +176,12 @@ public class OntologiesPresenterImplTest {
 
         uut = new OntologiesPresenterImpl(serviceFacadeMock,
                                           appServiceMock,
-                                          treeStoreMock,
+                                          editorStoreMock,
+                                          previewStoreMock,
                                           factoryMock,
                                           avuFactoryMock,
-                                          appearanceMock,
-                                          categoriesPresenterMock,
-                                          oldGridPresenterMock,
-                                          newGridPresenterMock,
+                                          appearanceMock, previewGridPresenterMock,
+                                          editorGridPresenterMock,
                                           categorizeViewMock) {
             @Override
             AppSearchRpcProxy getProxy(AppServiceFacade appService) {
@@ -193,6 +192,8 @@ public class OntologiesPresenterImplTest {
             PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> getPagingLoader() {
                 return loaderMock;
             }
+
+            void displayErrorToAdmin() {}
         };
         uut.announcer = announcerMock;
         uut.properties = propertiesMock;
@@ -205,18 +206,19 @@ public class OntologiesPresenterImplTest {
     }
 
     void verifyConstructor() {
-        verify(categoriesViewMock).addAppCategorySelectedEventHandler(eq(oldGridPresenterMock));
-        verify(categoriesViewMock).addAppCategorySelectedEventHandler(eq(oldGridViewMock));
-        verify(oldGridPresenterMock).addStoreRemoveHandler(eq(categoriesPresenterMock));
-        verify(oldGridViewMock).addAppSelectionChangedEventHandler(eq(viewMock));
-        verify(newGridViewMock).addAppSelectionChangedEventHandler(eq(viewMock));
+        verify(previewGridViewMock).addAppSelectionChangedEventHandler(eq(viewMock));
+        verify(editorGridViewMock).addAppSelectionChangedEventHandler(eq(viewMock));
 
         verify(proxyMock).setHasHandlers(eq(viewMock));
 
         verify(viewMock).addRefreshOntologiesEventHandler(eq(uut));
         verify(viewMock).addSelectOntologyVersionEventHandler(eq(uut));
+        verify(viewMock).addSelectOntologyVersionEventHandler(eq(previewGridViewMock));
+        verify(viewMock).addSelectOntologyVersionEventHandler(eq(editorGridViewMock));
         verify(viewMock).addHierarchySelectedEventHandler(eq(uut));
-        verify(viewMock).addHierarchySelectedEventHandler(eq(newGridViewMock));
+        verify(viewMock).addHierarchySelectedEventHandler(eq(editorGridViewMock));
+        verify(viewMock).addPreviewHierarchySelectedEventHandler(eq(uut));
+        verify(viewMock).addPreviewHierarchySelectedEventHandler(eq(previewGridViewMock));
         verify(viewMock).addSaveOntologyHierarchyEventHandler(eq(uut));
         verify(viewMock).addPublishOntologyClickEventHandler(eq(uut));
         verify(viewMock).addCategorizeButtonClickedEventHandler(eq(uut));
@@ -224,10 +226,7 @@ public class OntologiesPresenterImplTest {
         verify(viewMock).addDeleteOntologyButtonClickedEventHandler(eq(uut));
         verify(viewMock).addDeleteAppsSelectedHandler(eq(uut));
 
-        verify(viewMock).addAppSearchResultLoadEventHandler(categoriesPresenterMock);
-        verify(viewMock).addAppSearchResultLoadEventHandler(oldGridPresenterMock);
-        verify(viewMock).addAppSearchResultLoadEventHandler(oldGridViewMock);
-        verify(viewMock).addBeforeAppSearchEventHandler(oldGridViewMock);
+        verify(viewMock).addRefreshPreviewButtonClickedHandler(eq(uut));
     }
 
     @Test
@@ -236,11 +235,14 @@ public class OntologiesPresenterImplTest {
         /** CALL METHOD UNDER TEST **/
         uut.getOntologies(false);
 
+        verify(editorGridViewMock).clearAndAdd(null);
+        verify(previewGridViewMock).clearAndAdd(null);
+        verify(viewMock).clearTreeStore(isA(OntologiesView.TreeType.class));
         verify(serviceFacadeMock).getOntologies(asyncCallbackOntologyListCaptor.capture());
 
         asyncCallbackOntologyListCaptor.getValue().onSuccess(listOntologyMock);
         verify(viewMock).showOntologyVersions(eq(listOntologyMock));
-        verify(viewMock).unMaskHierarchyTree();
+        verify(viewMock).unmaskTree(isA(OntologiesView.TreeType.class));
         verifyNoMoreInteractions(viewMock);
     }
 
@@ -254,7 +256,7 @@ public class OntologiesPresenterImplTest {
 
         asyncCallbackOntologyListCaptor.getValue().onSuccess(listOntologyMock);
         verify(viewMock).showOntologyVersions(eq(listOntologyMock));
-        verify(viewMock).unMaskHierarchyTree();
+        verify(viewMock).unmaskTree(isA(OntologiesView.TreeType.class));
         verify(ontologyMock).isActive();
         verify(activeOntologyMock).isActive();
         verify(viewMock).selectActiveOntology(activeOntologyMock);
@@ -281,6 +283,33 @@ public class OntologiesPresenterImplTest {
         when(utilMock.isUnclassified(hierarchyMock)).thenReturn(false);
         when(targetAppMock.getName()).thenReturn("name");
 
+        uut = new OntologiesPresenterImpl(serviceFacadeMock,
+                                          appServiceMock,
+                                          editorStoreMock,
+                                          previewStoreMock,
+                                          factoryMock,
+                                          avuFactoryMock,
+                                          appearanceMock, previewGridPresenterMock,
+                                          editorGridPresenterMock,
+                                          categorizeViewMock) {
+            @Override
+            boolean previewTreeHasHierarchy(OntologyHierarchy hierarchy) {
+                return false;
+            }
+
+            @Override
+            void getFilteredOntologyHierarchies(String version, List<OntologyHierarchy> result) {
+            }
+
+            @Override
+            public Ontology getSelectedOntology() {
+                return ontologyMock;
+            }
+        };
+        uut.announcer = announcerMock;
+        uut.properties = propertiesMock;
+        uut.ontologyUtil = utilMock;
+
 
         /** CALL METHOD UNDER TEST **/
         uut.hierarchyDNDtoApp(hierarchyMock, targetAppMock);
@@ -299,13 +328,11 @@ public class OntologiesPresenterImplTest {
 
         uut = new OntologiesPresenterImpl(serviceFacadeMock,
                                           appServiceMock,
-                                          treeStoreMock,
+                                          editorStoreMock, previewStoreMock,
                                           factoryMock,
                                           avuFactoryMock,
-                                          appearanceMock,
-                                          categoriesPresenterMock,
-                                          oldGridPresenterMock,
-                                          newGridPresenterMock,
+                                          appearanceMock, previewGridPresenterMock,
+                                          editorGridPresenterMock,
                                           categorizeViewMock){
             @Override
             void clearAvus(App targetApp) {}
@@ -346,7 +373,7 @@ public class OntologiesPresenterImplTest {
         /** CALL METHOD UNDER TEST **/
         uut.onSelectOntologyVersion(eventMock);
 
-        verify(viewMock).clearStore();
+        verify(viewMock).clearTreeStore(isA(OntologiesView.TreeType.class));
 
         verify(serviceFacadeMock).getOntologyHierarchies(eq(eventMock.getSelectedOntology()
                                                                      .getVersion()),
@@ -367,16 +394,17 @@ public class OntologiesPresenterImplTest {
 
         uut = new OntologiesPresenterImpl(serviceFacadeMock,
                                           appServiceMock,
-                                          treeStoreMock,
+                                          editorStoreMock,
+                                          previewStoreMock,
                                           factoryMock,
                                           avuFactoryMock,
-                                          appearanceMock,
-                                          categoriesPresenterMock,
-                                          oldGridPresenterMock,
-                                          newGridPresenterMock,
+                                          appearanceMock, previewGridPresenterMock,
+                                          editorGridPresenterMock,
                                           categorizeViewMock) {
             @Override
-            void addHierarchies(OntologyHierarchy parent, List<OntologyHierarchy> children) {
+            void addHierarchies(OntologiesView.TreeType type,
+                                OntologyHierarchy parent,
+                                List<OntologyHierarchy> children) {
             }
 
             @Override
@@ -387,7 +415,7 @@ public class OntologiesPresenterImplTest {
         /** CALL METHOD UNDER TEST **/
         uut.onSelectOntologyVersion(eventMock);
 
-        verify(viewMock).clearStore();
+        verify(viewMock).clearTreeStore(isA(OntologiesView.TreeType.class));
 
         verify(serviceFacadeMock).getOntologyHierarchies(eq(eventMock.getSelectedOntology()
                                                                      .getVersion()),
@@ -410,16 +438,17 @@ public class OntologiesPresenterImplTest {
 
         uut = new OntologiesPresenterImpl(serviceFacadeMock,
                                           appServiceMock,
-                                          treeStoreMock,
+                                          editorStoreMock,
+                                          previewStoreMock,
                                           factoryMock,
                                           avuFactoryMock,
-                                          appearanceMock,
-                                          categoriesPresenterMock,
-                                          oldGridPresenterMock,
-                                          newGridPresenterMock,
+                                          appearanceMock, previewGridPresenterMock,
+                                          editorGridPresenterMock,
                                           categorizeViewMock) {
             @Override
-            void addHierarchies(OntologyHierarchy parent, List<OntologyHierarchy> children) {
+            void addHierarchies(OntologiesView.TreeType type,
+                                OntologyHierarchy parent,
+                                List<OntologyHierarchy> children) {
             }
 
             @Override
@@ -447,10 +476,10 @@ public class OntologiesPresenterImplTest {
 
         asyncOntologyHierarchyListCaptor.getValue().onSuccess(ontologyHierarchyListMock);
 
-        verify(viewMock).clearStore();
+        verify(viewMock, times(2)).clearTreeStore(isA(OntologiesView.TreeType.class));
         verify(utilMock).createIriToAttrMap(eq(ontologyHierarchyListMock));
-        verify(viewMock, times(3)).maskHierarchyTree();
-        verify(viewMock).unMaskHierarchyTree();
+        verify(viewMock, times(5)).maskTree(isA(OntologiesView.TreeType.class));
+        verify(viewMock).unmaskTree(isA(OntologiesView.TreeType.class));
         verify(viewMock).updateButtonStatus();
 
         verify(viewMock).showTreePanel();
@@ -474,49 +503,65 @@ public class OntologiesPresenterImplTest {
     }
 
     @Test
-    public void testOnHierarchySelected_classified() {
+    public void testOnHierarchySelected() {
+        OntologiesPresenterImpl spy = spy(uut);
 
         HierarchySelectedEvent eventMock = mock(HierarchySelectedEvent.class);
         Ontology ontologyMock = mock(Ontology.class);
         when(hierarchyMock.getIri()).thenReturn("iri");
         when(eventMock.getHierarchy()).thenReturn(hierarchyMock);
         when(eventMock.getEditedOntology()).thenReturn(ontologyMock);
-        when(utilMock.isUnclassified(hierarchyMock)).thenReturn(false);
 
         /** CALL METHOD UNDER TEST **/
-        uut.onHierarchySelected(eventMock);
+        spy.onHierarchySelected(eventMock);
 
-        verify(serviceFacadeMock).getAppsByHierarchy(eq(hierarchyMock.getIri()), eq(avuMock), asyncAppListCaptor.capture());
+        verify(spy).getAppsByHierarchy(eq(editorGridViewMock), eq(hierarchyMock), eq(ontologyMock));
+    }
+
+    @Test
+    public void testGetAppsByHierarchy_classified() {
+        HierarchySelectedEvent eventMock = mock(HierarchySelectedEvent.class);
+        Ontology ontologyMock = mock(Ontology.class);
+        when(hierarchyMock.getIri()).thenReturn("iri");
+        when(utilMock.getAttr(hierarchyMock)).thenReturn("attr");
+        when(eventMock.getHierarchy()).thenReturn(hierarchyMock);
+        when(eventMock.getEditedOntology()).thenReturn(ontologyMock);
+        when(utilMock.isUnclassified(hierarchyMock)).thenReturn(false);
+        when(ontologyMock.getVersion()).thenReturn("version");
+
+        uut.getAppsByHierarchy(editorGridViewMock, hierarchyMock, ontologyMock);
+
+        verify(serviceFacadeMock).getAppsByHierarchy(eq(ontologyMock.getVersion()),
+                                                     anyString(),
+                                                     anyString(),
+                                                     asyncAppListCaptor.capture());
 
         asyncAppListCaptor.getValue().onSuccess(appListMock);
-        verify(newGridViewMock).clearAndAdd(appListMock);
-        verify(newGridViewMock).unmask();
+        verify(editorGridViewMock).clearAndAdd(appListMock);
+        verify(editorGridViewMock).unmask();
+
     }
 
 
     @Test
-    public void testOnHierarchySelected_unclassified() {
-
-        HierarchySelectedEvent eventMock = mock(HierarchySelectedEvent.class);
+    public void testGetAppsByHierarchy_unclassified() {
         Ontology ontologyMock = mock(Ontology.class);
         when(hierarchyMock.getIri()).thenReturn("iri");
-        when(eventMock.getHierarchy()).thenReturn(hierarchyMock);
-        when(eventMock.getEditedOntology()).thenReturn(ontologyMock);
         when(utilMock.isUnclassified(hierarchyMock)).thenReturn(true);
-
 
         uut = new OntologiesPresenterImpl(serviceFacadeMock,
                                           appServiceMock,
-                                          treeStoreMock,
+                                          editorStoreMock,
+                                          previewStoreMock,
                                           factoryMock,
                                           avuFactoryMock,
-                                          appearanceMock,
-                                          categoriesPresenterMock,
-                                          oldGridPresenterMock,
-                                          newGridPresenterMock,
+                                          appearanceMock, previewGridPresenterMock,
+                                          editorGridPresenterMock,
                                           categorizeViewMock) {
             @Override
-            void getUnclassifiedApps(OntologyHierarchy hierarchy, Ontology editedOntology) {
+            void getUnclassifiedApps(AdminAppsGridView gridView,
+                                     OntologyHierarchy hierarchy,
+                                     Ontology editedOntology) {
             }
         };
         uut.announcer = announcerMock;
@@ -524,7 +569,7 @@ public class OntologiesPresenterImplTest {
         uut.ontologyUtil = utilMock;
 
         /** CALL METHOD UNDER TEST **/
-        uut.onHierarchySelected(eventMock);
+        uut.getAppsByHierarchy(editorGridViewMock, hierarchyMock, ontologyMock);
         //Testing the unclassifiedApps method separately
         verifyZeroInteractions(serviceFacadeMock);
     }
@@ -538,15 +583,15 @@ public class OntologiesPresenterImplTest {
         when(ontologyMock.getVersion()).thenReturn("version");
 
         /** CALL METHOD UNDER TEST **/
-        uut.getUnclassifiedApps(hierarchyMock, ontologyMock);
+        uut.getUnclassifiedApps(editorGridViewMock, hierarchyMock, ontologyMock);
 
-        verify(newGridViewMock).mask(anyString());
+        verify(editorGridViewMock).mask(anyString());
         verify(serviceFacadeMock).getUnclassifiedApps(eq(ontologyMock.getVersion()), anyString(), eq(avuMock), asyncAppListCaptor.capture());
 
         asyncAppListCaptor.getValue().onSuccess(appListMock);
 
-        verify(newGridViewMock).clearAndAdd(appListMock);
-        verify(newGridViewMock).unmask();
+        verify(editorGridViewMock).clearAndAdd(appListMock);
+        verify(editorGridViewMock).unmask();
     }
 
     @Test
@@ -601,5 +646,28 @@ public class OntologiesPresenterImplTest {
 
         verify(viewMock).removeApp(appMock);
         verify(viewMock).unmaskGrids();
+    }
+
+    @Test
+    public void testGetFilteredOntologyHierarchies() {
+
+        when(utilMock.getAttr(hierarchyMock)).thenReturn("attr");
+
+        /** CALL METHOD UNDER TEST **/
+        uut.getFilteredOntologyHierarchies("version", ontologyHierarchyListMock);
+
+        verify(viewMock).clearTreeStore(isA(OntologiesView.TreeType.class));
+        verify(viewMock, times(2)).maskTree(isA(OntologiesView.TreeType.class));
+
+        verify(serviceFacadeMock, times(2)).getFilteredOntologyHierarchy(anyString(),
+                                                               anyString(),
+                                                               anyString(),
+                                                               asyncOntologyHierarchyCaptor.capture());
+
+        asyncOntologyHierarchyCaptor.getValue().onSuccess(hierarchyMock);
+
+        verify(viewMock).reSortTree(isA(OntologiesView.TreeType.class));
+        verify(viewMock).unmaskTree(isA(OntologiesView.TreeType.class));
+
     }
 }

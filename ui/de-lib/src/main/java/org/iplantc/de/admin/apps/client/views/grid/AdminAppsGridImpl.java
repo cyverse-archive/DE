@@ -2,6 +2,8 @@ package org.iplantc.de.admin.apps.client.views.grid;
 
 import org.iplantc.de.admin.apps.client.AdminAppsGridView;
 import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.PreviewHierarchySelectedEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.BeforeAppSearchEvent;
@@ -93,6 +95,11 @@ public class AdminAppsGridImpl extends ContentPanel implements AdminAppsGridView
     }
 
     @Override
+    public void onPreviewHierarchySelected(PreviewHierarchySelectedEvent event) {
+        setHeadingText(Joiner.on(" >> ").join(event.getPath()));
+    }
+
+    @Override
     public void onAppSearchResultLoad(AppSearchResultLoadEvent event) {
         unmask();
 //        searchRegexPattern = event.getSearchPattern();
@@ -147,5 +154,10 @@ public class AdminAppsGridImpl extends ContentPanel implements AdminAppsGridView
         if (app != null) {
             listStore.remove(app);
         }
+    }
+
+    @Override
+    public void onSelectOntologyVersion(SelectOntologyVersionEvent event) {
+        setHeadingHtml("&nbsp;");
     }
 }

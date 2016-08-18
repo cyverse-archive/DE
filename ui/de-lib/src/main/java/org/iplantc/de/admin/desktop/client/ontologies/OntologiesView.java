@@ -4,8 +4,10 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.CategorizeButtonCli
 import org.iplantc.de.admin.desktop.client.ontologies.events.DeleteHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.DeleteOntologyButtonClickedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.HierarchySelectedEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.PreviewHierarchySelectedEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshOntologiesEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshPreviewButtonClicked;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
@@ -34,6 +36,7 @@ public interface OntologiesView extends IsWidget,
                                         RefreshOntologiesEvent.HasViewOntologyVersionEventHandlers,
                                         SelectOntologyVersionEvent.HasSelectOntologyVersionEventHandlers,
                                         HierarchySelectedEvent.HasHierarchySelectedEventHandlers,
+                                        PreviewHierarchySelectedEvent.HasPreviewHierarchySelectedEventHandlers,
                                         SaveOntologyHierarchyEvent.HasSaveOntologyHierarchyEventHandlers,
                                         PublishOntologyClickEvent.HasPublishOntologyClickEventHandlers,
                                         CategorizeButtonClickedEvent.HasCategorizeButtonClickedEventHandlers,
@@ -42,7 +45,12 @@ public interface OntologiesView extends IsWidget,
                                         DeleteHierarchyEvent.HasDeleteHierarchyEventHandlers,
                                         DeleteAppsSelected.HasDeleteAppsSelectedHandlers,
                                         BeforeAppSearchEvent.HasBeforeAppSearchEventHandlers,
-                                        AppSearchResultLoadEvent.HasAppSearchResultLoadEventHandlers {
+                                        AppSearchResultLoadEvent.HasAppSearchResultLoadEventHandlers,
+                                        RefreshPreviewButtonClicked.HasRefreshPreviewButtonClickedHandlers {
+
+    enum TreeType {
+        ALL, EDITOR, PREVIEW
+    }
 
     void showOntologyVersions(List<Ontology> result);
 
@@ -54,21 +62,23 @@ public interface OntologiesView extends IsWidget,
 
     OntologyHierarchy getSelectedHierarchy();
 
-    void clearStore();
+    Ontology getSelectedOntology();
 
-    void addToStore(List<OntologyHierarchy> children);
+    void clearTreeStore(TreeType type);
 
-    void addToStore(OntologyHierarchy parent, List<OntologyHierarchy> children);
+    void addToTreeStore(TreeType type, List<OntologyHierarchy> children);
 
-    void maskHierarchyTree();
+    void addToTreeStore(TreeType type, OntologyHierarchy parent, List<OntologyHierarchy> children);
 
-    void unMaskHierarchyTree();
-    
+    void maskTree(TreeType type);
+
     void selectHierarchy(OntologyHierarchy hierarchy);
 
     void selectActiveOntology(Ontology activeOntology);
 
-    void reSortHierarchies();
+    void deselectHierarchies(TreeType type);
+
+    void reSortTree(TreeType type);
 
     void updateButtonStatus();
 
@@ -79,6 +89,8 @@ public interface OntologiesView extends IsWidget,
     void removeApp(App selectedApp);
 
     void deselectAll();
+
+    void unmaskTree(TreeType type);
 
 
     interface OntologiesViewAppearance {
@@ -215,6 +227,14 @@ public interface OntologiesView extends IsWidget,
         String ontologyAttrMatchingError();
 
         String emptySearchFieldText();
+
+        String westPanelHeader();
+
+        String eastPanelHeader();
+
+        String treePanelHeader();
+
+        String refresh();
     }
 
     interface Presenter {
@@ -229,5 +249,7 @@ public interface OntologiesView extends IsWidget,
         void appsDNDtoHierarchy(List<App> apps, OntologyHierarchy hierarchy);
 
         OntologyHierarchy getSelectedHierarchy();
+
+        Ontology getSelectedOntology();
     }
 }

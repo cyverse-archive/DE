@@ -29,23 +29,23 @@ public class AppToOntologyHierarchyDND implements DndDragStartEvent.DndDragStart
                                                   DndDragEnterEvent.DndDragEnterHandler {
 
     OntologiesView.OntologiesViewAppearance appearance;
-    AdminAppsGridView.Presenter oldGridPresenter;
-    AdminAppsGridView.Presenter newGridPresenter;
-    Widget oldGridView;
-    Widget newGridView;
+    AdminAppsGridView.Presenter previewGridPresenter;
+    AdminAppsGridView.Presenter editorGridPresenter;
+    Widget previewGridView;
+    Widget editorGridView;
     OntologiesView.Presenter presenter;
     boolean moved;
 
     public AppToOntologyHierarchyDND(OntologiesView.OntologiesViewAppearance appearance,
-                                     AdminAppsGridView.Presenter oldGridPresenter,
-                                     AdminAppsGridView.Presenter newGridPresenter,
+                                     AdminAppsGridView.Presenter previewGridPresenter,
+                                     AdminAppsGridView.Presenter editorGridPresenter,
                                      OntologiesView.Presenter presenter) {
         this.appearance = appearance;
-        this.oldGridPresenter = oldGridPresenter;
-        this.newGridPresenter = newGridPresenter;
+        this.previewGridPresenter = previewGridPresenter;
+        this.editorGridPresenter = editorGridPresenter;
         this.presenter = presenter;
-        this.oldGridView = oldGridPresenter.getView().asWidget();
-        this.newGridView = newGridPresenter.getView().asWidget();
+        this.previewGridView = previewGridPresenter.getView().asWidget();
+        this.editorGridView = editorGridPresenter.getView().asWidget();
     }
 
     @Override
@@ -113,20 +113,20 @@ public class AppToOntologyHierarchyDND implements DndDragStartEvent.DndDragStart
 
     private List<App> getDragSources(Widget dragWidget) {
         if (isOldGridApp(dragWidget)) {
-            return oldGridPresenter.getSelectedApps();
+            return previewGridPresenter.getSelectedApps();
         }
         if (isNewGridApp(dragWidget)) {
-            return newGridPresenter.getSelectedApps();
+            return editorGridPresenter.getSelectedApps();
         }
         return null;
     }
 
     private boolean isOldGridApp(Widget dragSource) {
-        return dragSource == oldGridView;
+        return dragSource == previewGridView;
     }
 
     private boolean isNewGridApp(Widget dragSource) {
-        return dragSource == newGridView;
+        return dragSource == editorGridView;
     }
 
     private OntologyHierarchy getDropTargetHierarchy(Element eventTarget) {
