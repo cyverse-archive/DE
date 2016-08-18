@@ -882,3 +882,12 @@
          category-ids
          (app-category-id-subselect app-id))
        (list-duplicate-apps* app-name app-id)))
+
+(defn filter-visible-app-ids
+  "Filters the given list of app IDs, returning only those not marked as deleted."
+  [app-ids]
+  (->> (select :apps
+               (fields :id)
+               (where {:id [in app-ids]
+                       :deleted false}))
+       (map :id)))
