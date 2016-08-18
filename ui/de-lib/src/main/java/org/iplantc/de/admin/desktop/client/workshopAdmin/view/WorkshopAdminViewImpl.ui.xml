@@ -39,7 +39,12 @@
                 <toolbar:child>
                     <button:TextButton ui:field="deleteButton"
                                        text="{appearance.delete}"
-                                       icon="{appearance.deleteIcon}"/>
+                                       icon="{appearance.deleteIcon}" />
+                </toolbar:child>
+                <toolbar:child>
+                    <button:TextButton ui:field="saveButton"
+                                       text="{appearance.save}"
+                                       icon="{appearance.saveIcon}" />
                 </toolbar:child>
             </toolbar:ToolBar>
         </container:north>

@@ -23,6 +23,10 @@ public interface WorkshopAdminView extends IsWidget, IsMaskable {
 
         ImageResource deleteIcon();
 
+        String save();
+
+        ImageResource saveIcon();
+
         int nameColumnWidth();
 
         String nameColumnLabel();
@@ -34,6 +38,10 @@ public interface WorkshopAdminView extends IsWidget, IsMaskable {
         int institutionColumnWidth();
 
         String institutionColumnLabel();
+
+        String partialGroupSaveMsg();
+
+        String loadingMask();
     }
 
     interface Presenter {

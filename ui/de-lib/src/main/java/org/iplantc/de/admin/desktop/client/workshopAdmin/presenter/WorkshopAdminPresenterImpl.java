@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 import com.sencha.gxt.data.shared.ListStore;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.WorkshopAdminView;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.events.DeleteMembersClickedEvent;
+import org.iplantc.de.admin.desktop.client.workshopAdmin.events.SaveMembersClickedEvent;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.gin.factory.WorkshopAdminViewFactory;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.model.MemberProperties;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.service.WorkshopAdminServiceFacade;
@@ -13,6 +14,7 @@ import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.collaborators.Collaborator;
 import org.iplantc.de.client.models.groups.GroupAutoBeanFactory;
 import org.iplantc.de.client.models.groups.Member;
+import org.iplantc.de.client.models.groups.MemberSaveResult;
 import org.iplantc.de.collaborators.client.events.UserSearchResultSelected;
 import org.iplantc.de.commons.client.ErrorHandler;
 
@@ -72,6 +74,15 @@ public class WorkshopAdminPresenterImpl implements WorkshopAdminView.Presenter {
         }
     }
 
+    private final class SaveMembersClickedEventHandler
+            implements SaveMembersClickedEvent.SaveMembersClickedEventHandler {
+
+        @Override
+        public void onSaveMembersClicked(SaveMembersClickedEvent event) {
+            saveMembers(event.getMembers());
+        }
+    }
+
     @Inject
     public WorkshopAdminPresenterImpl(final WorkshopAdminViewFactory viewFactory,
                                       final WorkshopAdminServiceFacade serviceFacade,
@@ -89,6 +100,7 @@ public class WorkshopAdminPresenterImpl implements WorkshopAdminView.Presenter {
     private void registerEventHandlers() {
         view.addGlobalEventHandler(UserSearchResultSelected.TYPE, new UserSearchResultSelectedEventHandler());
         view.addLocalEventHandler(DeleteMembersClickedEvent.TYPE, new DeleteMembersClickedEventHandler());
+        view.addLocalEventHandler(SaveMembersClickedEvent.TYPE, new SaveMembersClickedEventHandler());
     }
 
     @Override
@@ -103,15 +115,38 @@ public class WorkshopAdminPresenterImpl implements WorkshopAdminView.Presenter {
     }
 
     private void updateView() {
+        view.mask(appearance.loadingMask());
         serviceFacade.getMembers(new AsyncCallback<List<Member>>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
+                view.unmask();
             }
 
             @Override
             public void onSuccess(List<Member> members) {
                 listStore.replaceAll(members);
+                view.unmask();
+            }
+        });
+    }
+
+    private void saveMembers(List<Member> members) {
+        view.mask(appearance.loadingMask());
+        serviceFacade.saveMembers(members, new AsyncCallback<MemberSaveResult>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+                view.unmask();
+            }
+
+            @Override
+            public void onSuccess(MemberSaveResult result) {
+                if (!result.getFailures().isEmpty()) {
+                    ErrorHandler.post(appearance.partialGroupSaveMsg());
+                }
+                listStore.replaceAll(result.getMembers());
+                view.unmask();
             }
         });
     }

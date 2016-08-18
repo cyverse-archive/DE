@@ -8,15 +8,6 @@ import com.google.gwt.i18n.client.Messages;
  */
 public interface WorkshopAdminDisplayStrings extends Messages {
 
-    @LocalizableResource.Key("delete")
-    String delete();
-
-    @LocalizableResource.Key("nameColumnLabel")
-    String nameColumnLabel();
-
-    @LocalizableResource.Key("emailColumnLabel")
-    String emailColumnLabel();
-
-    @LocalizableResource.Key("institutionColumnLabel")
-    String institutionColumnLabel();
+    @LocalizableResource.Key("partialGroupSaveMsg")
+    String partialGroupSaveMsg();
 }
