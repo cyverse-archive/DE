@@ -5,6 +5,7 @@ import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.avu.Avu;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.theme.base.client.admin.BelphegorErrorStrings;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
@@ -41,25 +42,29 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     private IplantDisplayStrings iplantDisplayStrings;
     private HelpTemplates helpTemplates;
     private Templates templates;
+    private BelphegorErrorStrings belphegorErrorStrings;
 
     public OntologiesViewDefaultAppearance() {
         this(GWT.<OntologyDisplayStrings>create(OntologyDisplayStrings.class),
              GWT.<IplantResources>create(IplantResources.class),
              GWT.<IplantDisplayStrings>create(IplantDisplayStrings.class),
              GWT.<HelpTemplates>create(HelpTemplates.class),
-             GWT.<Templates>create(Templates.class));
+             GWT.<Templates>create(Templates.class),
+             GWT.<BelphegorErrorStrings>create(BelphegorErrorStrings.class));
     }
 
     OntologiesViewDefaultAppearance(OntologyDisplayStrings displayStrings,
                                     IplantResources iplantResources,
                                     IplantDisplayStrings iplantDisplayStrings,
                                     HelpTemplates helpTemplates,
-                                    Templates templates) {
+                                    Templates templates,
+                                    BelphegorErrorStrings belphegorErrorStrings) {
         this.displayStrings = displayStrings;
         this.iplantResources = iplantResources;
         this.iplantDisplayStrings = iplantDisplayStrings;
         this.helpTemplates = helpTemplates;
         this.templates = templates;
+        this.belphegorErrorStrings = belphegorErrorStrings;
     }
 
     @Override
@@ -422,5 +427,29 @@ public class OntologiesViewDefaultAppearance implements OntologiesView.Ontologie
     @Override
     public String refresh() {
         return displayStrings.refresh();
+    }
+
+    public String restoreApp() {
+        return displayStrings.restoreApp();
+    }
+
+    @Override
+    public ImageResource restoreAppIcon() {
+        return iplantResources.submitForPublic();
+    }
+
+    @Override
+    public String restoreAppFailureMsg(String name) {
+        return belphegorErrorStrings.restoreAppFailureMsg(name);
+    }
+
+    @Override
+    public String restoreAppSuccessMsgTitle() {
+        return displayStrings.restoreAppSuccessMsgTitle();
+    }
+
+    @Override
+    public String restoreAppSuccessMsg(String name, String joinedCatNames) {
+        return displayStrings.restoreAppSuccessMsg(name, joinedCatNames);
     }
 }

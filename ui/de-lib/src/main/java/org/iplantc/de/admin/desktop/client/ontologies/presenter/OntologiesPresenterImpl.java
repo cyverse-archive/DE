@@ -11,6 +11,7 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.PreviewHierarchySel
 import org.iplantc.de.admin.desktop.client.ontologies.events.PublishOntologyClickEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshOntologiesEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshPreviewButtonClicked;
+import org.iplantc.de.admin.desktop.client.ontologies.events.RestoreAppButtonClicked;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.gin.factory.OntologiesViewFactory;
@@ -31,6 +32,7 @@ import org.iplantc.de.client.models.ontologies.Ontology;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import org.iplantc.de.client.models.ontologies.OntologyVersionDetail;
 import org.iplantc.de.client.services.AppServiceFacade;
+import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.client.util.OntologyUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
@@ -38,10 +40,12 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.shared.DEProperties;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
@@ -71,7 +75,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                                                 DeleteHierarchyEvent.DeleteHierarchyEventHandler,
                                                 DeleteAppsSelected.DeleteAppsSelectedHandler,
                                                 RefreshPreviewButtonClicked.RefreshPreviewButtonClickedHandler,
-                                                AppSearchResultLoadEvent.AppSearchResultLoadEventHandler {
+                                                AppSearchResultLoadEvent.AppSearchResultLoadEventHandler,
+                                                RestoreAppButtonClicked.RestoreAppButtonClickedHandler {
 
     class CategorizeCallback implements AsyncCallback<List<Avu>> {
         private final App selectedApp;
@@ -160,6 +165,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                 }
                 view.maskTree(OntologiesView.TreeType.EDITOR);
                 addHierarchies(OntologiesView.TreeType.EDITOR, null, result);
+                addTrashCategory();
                 getFilteredOntologyHierarchies(version, result);
             }
             view.unmaskTree(OntologiesView.TreeType.EDITOR);
@@ -167,9 +173,12 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         }
     }
 
+    static final String TRASH_CATEGORY = "Trash";
     @Inject AppAdminServiceFacade adminAppService;
     @Inject DEProperties properties;
     @Inject IplantAnnouncer announcer;
+    @Inject JsonUtil jsonUtil;
+    @Inject AppServiceFacade appService;
     OntologyUtil ontologyUtil;
     AppSearchRpcProxy proxy;
     PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
@@ -246,7 +255,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         view.addAppSearchResultLoadEventHandler(previewGridPresenter);
         view.addAppSearchResultLoadEventHandler(previewGridPresenter.getView());
         view.addBeforeAppSearchEventHandler(previewGridPresenter.getView());
-
+        view.addRestoreAppButtonClickedHandlers(this);
     }
 
     PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> getPagingLoader() {
@@ -256,7 +265,6 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     AppSearchRpcProxy getProxy(AppServiceFacade appService) {
         return new AppSearchRpcProxy(appService);
     }
-
 
     @Override
     public void go(HasOneWidget container) {
@@ -301,6 +309,11 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     public void hierarchyDNDtoApp(final OntologyHierarchy hierarchy, final App targetApp) {
         if (ontologyUtil.isUnclassified(hierarchy)) {
             clearAvus(targetApp);
+            return;
+        }
+
+        if (hierarchy.getIri().equalsIgnoreCase(TRASH_CATEGORY)) {
+            deleteApp(targetApp);
             return;
         }
 
@@ -446,6 +459,13 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         }
     }
 
+    void addTrashCategory() {
+        OntologyHierarchy trash = ontologyUtil.getHierarchyObject();
+        trash.setLabel(TRASH_CATEGORY);
+        trash.setIri(TRASH_CATEGORY);
+        editorTreeStore.add(trash);
+    }
+
     void helperMap(List<OntologyHierarchy> children) {
         for (OntologyHierarchy hierarchy : children) {
             String iri = hierarchy.getIri();
@@ -524,11 +544,18 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
             return;
         }
 
+        if (hierarchy.getIri().equalsIgnoreCase(TRASH_CATEGORY)) {
+            getTrashItems();
+            return;
+        }
+
         String attr = ontologyUtil.getAttr(hierarchy);
         if (Strings.isNullOrEmpty(attr)) {
             displayErrorToAdmin();
             return;
         }
+
+        Avu avu = ontologyUtil.convertHierarchyToAvu(hierarchy);
 
         gridView.mask(appearance.loadingMask());
         serviceFacade.getAppsByHierarchy(editedOntology.getVersion(), hierarchy.getIri(), attr, new AsyncCallback<List<App>>() {
@@ -624,6 +651,10 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         Preconditions.checkArgument(event.getAppsToBeDeleted().size() == 1);
         final App selectedApp = event.getAppsToBeDeleted().iterator().next();
 
+        deleteApp(selectedApp);
+    }
+
+    void deleteApp(final App selectedApp) {
         view.maskGrids(appearance.loadingMask());
         adminAppService.deleteApp(selectedApp,
                                   new AsyncCallback<Void>() {
@@ -662,5 +693,62 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     @Override
     public void onAppSearchResultLoad(AppSearchResultLoadEvent event) {
         view.deselectHierarchies(OntologiesView.TreeType.ALL);
+    }
+
+    public void onRestoreAppButtonClicked(RestoreAppButtonClicked event) {
+        final App app = event.getApp();
+        Preconditions.checkNotNull(app);
+        Preconditions.checkArgument(app.isDeleted());
+
+        view.maskGrids(appearance.loadingMask());
+        adminAppService.restoreApp(app, new AsyncCallback<App>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                view.unmaskGrids();
+                JSONObject obj = jsonUtil.getObject(caught.getMessage());
+                String reason = jsonUtil.getString(obj, "reason");
+                if (reason.contains("orphaned")) {
+                    announcer.schedule(new ErrorAnnouncementConfig(appearance.restoreAppFailureMsg(app.getName())));
+                } else {
+                    announcer.schedule(new ErrorAnnouncementConfig(reason));
+                }
+            }
+
+            @Override
+            public void onSuccess(App result) {
+                editorGridPresenter.getView().removeApp(result);
+                view.unmaskGrids();
+                List<String> hierarchyNames = Lists.newArrayList();
+                for(OntologyHierarchy hierarchy : result.getHierarchies()){
+                    hierarchyNames.add(hierarchy.getLabel());
+                }
+                String joinedCatNames = Joiner.on(",").join(hierarchyNames);
+                if (Strings.isNullOrEmpty(joinedCatNames)) {
+                    joinedCatNames = "";
+                }
+                announcer.schedule(new SuccessAnnouncementConfig(appearance.restoreAppSuccessMsgTitle() + "\n"
+                                                                 + appearance.restoreAppSuccessMsg(result.getName(),
+                                                                                                   joinedCatNames)));
+            }
+        });
+    }
+
+    public void getTrashItems() {
+        String id = properties.getDefaultTrashAppCategoryId();
+        Preconditions.checkNotNull(id);
+        view.maskGrids(appearance.loadingMask());
+        appService.getApps(id, new AsyncCallback<List<App>>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+                view.unmaskGrids();
+            }
+
+            @Override
+            public void onSuccess(List<App> result) {
+                editorGridPresenter.getView().clearAndAdd(result);
+                view.unmaskGrids();
+            }
+        });
     }
 }

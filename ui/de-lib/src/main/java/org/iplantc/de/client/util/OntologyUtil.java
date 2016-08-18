@@ -303,4 +303,7 @@ public class OntologyUtil {
         return avuListBean;
     }
 
+    public OntologyHierarchy getHierarchyObject() {
+        return factory.getHierarchy().as();
+    }
 }

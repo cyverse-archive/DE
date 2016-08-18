@@ -110,7 +110,11 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
 
     @Override
     public void getApps(HasId appCategory, AsyncCallback<List<App>> callback) {
-        String address = CATEGORIES + "/" + appCategory.getId();
+        getApps(appCategory.getId(), callback);
+    }
+
+    public void getApps(String id, AsyncCallback<List<App>> callback) {
+        String address = CATEGORIES + "/" + id;
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deServiceFacade.getServiceData(wrapper, new AsyncCallbackConverter<String, List<App>>(callback) {
             @Override
