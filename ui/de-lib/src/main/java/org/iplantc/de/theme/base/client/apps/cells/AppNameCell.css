@@ -31,13 +31,33 @@
 
 .appBeta {
     color: blue;
+    font-size: 12px;
+    height: 15px;
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 
 .appBetaHyperlink {
     cursor: pointer;
     color: blue;
+    font-size: 12px;
+    height: 15px;
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 
 .appBetaHyperlink:hover {
+    text-decoration: underline;
+}
+
+.appPrivate {
+    color: green;
+    font-size: 12px;
+    height: 15px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.appPrivate:hover {
     text-decoration: underline;
 }

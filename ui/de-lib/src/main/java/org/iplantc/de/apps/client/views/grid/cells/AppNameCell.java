@@ -39,6 +39,10 @@ public class AppNameCell extends AbstractCell<App> {
 
         String appBetaNameClass();
 
+        String appPrivate();
+
+        String appPrivateNameClass();
+
         void render(SafeHtmlBuilder sb, App value, String textClassName, String searchPattern,
                     String textToolTip, String debugId);
 
@@ -74,6 +78,9 @@ public class AppNameCell extends AbstractCell<App> {
         } else if (value.isBeta() != null && value.isBeta()) {
             textClassName = appearance.appBetaNameClass();
             textToolTip = appearance.appBeta();
+        } else if (!value.isPublic()) {
+            textClassName = appearance.appPrivateNameClass();
+            textToolTip = appearance.appPrivate();
         } else {
             textClassName = appearance.appHyperlinkNameClass();
             textToolTip = appearance.run();

@@ -34,6 +34,13 @@ public class AdminAppNameCellDefaultAppearance extends AppNameCellDefaultAppeara
                          searchPattern,
                          displayStrings.editApp(),
                          null);
+        } else if (!value.isPublic()) {
+            super.render(sb,
+                         value,
+                         resources.css().appPrivate(),
+                         searchPattern,
+                         displayStrings.editApp(),
+                         null);
         } else {
             super.render(sb,
                          value,
