@@ -1,11 +1,11 @@
 package org.iplantc.de.admin.desktop.client.workshopAdmin.presenter;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
 import com.sencha.gxt.data.shared.ListStore;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.WorkshopAdminView;
+import org.iplantc.de.admin.desktop.client.workshopAdmin.events.DeleteMembersClickedEvent;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.gin.factory.WorkshopAdminViewFactory;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.model.MemberProperties;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.service.WorkshopAdminServiceFacade;
@@ -61,6 +61,17 @@ public class WorkshopAdminPresenterImpl implements WorkshopAdminView.Presenter {
         }
     }
 
+    private final class DeleteMembersClickedEventHandler
+            implements DeleteMembersClickedEvent.DeleteMembersClickedEventHandler {
+
+        @Override
+        public void onDeleteMembersClicked(DeleteMembersClickedEvent event) {
+            for (Member member : event.getMembers()) {
+                listStore.remove(member);
+            }
+        }
+    }
+
     @Inject
     public WorkshopAdminPresenterImpl(final WorkshopAdminViewFactory viewFactory,
                                       final WorkshopAdminServiceFacade serviceFacade,
@@ -77,6 +88,7 @@ public class WorkshopAdminPresenterImpl implements WorkshopAdminView.Presenter {
 
     private void registerEventHandlers() {
         view.addGlobalEventHandler(UserSearchResultSelected.TYPE, new UserSearchResultSelectedEventHandler());
+        view.addLocalEventHandler(DeleteMembersClickedEvent.TYPE, new DeleteMembersClickedEventHandler());
     }
 
     @Override

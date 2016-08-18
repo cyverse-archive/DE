@@ -8,6 +8,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -15,17 +16,18 @@ import com.sencha.gxt.core.client.Style;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.WorkshopAdminView;
+import org.iplantc.de.admin.desktop.client.workshopAdmin.events.DeleteMembersClickedEvent;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.model.MemberProperties;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.groups.Member;
 import org.iplantc.de.collaborators.client.util.UserSearchField;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -99,5 +101,10 @@ public class WorkshopAdminViewImpl extends Composite implements WorkshopAdminVie
         list.add(emailCol);
         list.add(institutionCol);
         return new ColumnModel<>(list);
+    }
+
+    @UiHandler("deleteButton")
+    void deleteButtonClicked(SelectEvent event) {
+        fireEvent(new DeleteMembersClickedEvent(grid.getSelectionModel().getSelectedItems()));
     }
 }
