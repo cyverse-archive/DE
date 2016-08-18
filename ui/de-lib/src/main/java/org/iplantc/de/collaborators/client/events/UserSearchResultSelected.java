@@ -35,6 +35,10 @@ public class UserSearchResultSelected extends GwtEvent<UserSearchResultSelectedE
         this.setTag(tag);
     }
 
+    public boolean matchesTag(USER_SEARCH_EVENT_TAG tag) {
+        return this.tag.equalsIgnoreCase(tag.toString());
+    }
+
     @Override
     public GwtEvent.Type<UserSearchResultSelectedEventHandler> getAssociatedType() {
         return TYPE;

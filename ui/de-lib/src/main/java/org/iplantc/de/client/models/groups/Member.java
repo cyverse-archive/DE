@@ -11,6 +11,9 @@ import java.util.List;
  */
 public interface Member extends HasId, HasName {
 
+    @AutoBean.PropertyName("id")
+    void setId(String id);
+
     @AutoBean.PropertyName("first_name")
     String getFirstName();
 

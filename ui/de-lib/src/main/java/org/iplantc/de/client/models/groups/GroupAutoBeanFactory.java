@@ -9,4 +9,6 @@ import com.google.web.bindery.autobean.shared.AutoBeanFactory;
 public interface GroupAutoBeanFactory extends AutoBeanFactory {
 
     AutoBean<Member> getMember();
+
+    AutoBean<MemberList> getMemberList();
 }

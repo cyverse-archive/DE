@@ -2,6 +2,9 @@ package org.iplantc.de.admin.desktop.client.workshopAdmin.view;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -20,10 +23,11 @@ import org.iplantc.de.admin.desktop.client.workshopAdmin.WorkshopAdminView;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.events.MemberSelectedEvent;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.model.MemberProperties;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.view.cells.MemberNameCell;
+import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.groups.Member;
-import org.iplantc.de.collaborators.client.events.UserSearchResultSelected;
 import org.iplantc.de.collaborators.client.util.UserSearchField;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -41,6 +45,7 @@ public class WorkshopAdminViewImpl extends Composite implements WorkshopAdminVie
     @UiField(provided = true) WorkshopAdminViewAppearance appearance;
 
     private MemberProperties memberProperties;
+    private final ArrayList<HandlerRegistration> globalHandlerRegistrations = new ArrayList<>();
 
     private static WorkshopAdminViewImplUiBinder uiBinder = GWT.create(WorkshopAdminViewImplUiBinder.class);
 
@@ -63,12 +68,29 @@ public class WorkshopAdminViewImpl extends Composite implements WorkshopAdminVie
     public WorkshopAdminViewImpl(final WorkshopAdminViewAppearance appearance,
                                  final MemberProperties memberProperties,
                                  @Assisted ListStore<Member> listStore) {
-        this.userSearch = new UserSearchField(UserSearchResultSelected.USER_SEARCH_EVENT_TAG.WORKSHOP_ADMIN);
+        this.userSearch = new UserSearchField(userSearchEventTag);
         this.appearance = appearance;
         this.memberProperties = memberProperties;
         this.listStore = listStore;
         initWidget(uiBinder.createAndBindUi(this));
         grid.getSelectionModel().setSelectionMode(Style.SelectionMode.SINGLE);
+    }
+
+    @Override
+    public <H extends EventHandler> void addGlobalEventHandler(GwtEvent.Type<H> type, H handler) {
+        HandlerRegistration registration = EventBus.getInstance().addHandler(type, handler);
+        globalHandlerRegistrations.add(registration);
+    }
+
+    @Override
+    protected void onUnload() {
+        super.onUnload();
+
+        // FIXME: it would be nice not to have to use the global event bus.
+        for (HandlerRegistration registration : globalHandlerRegistrations) {
+            registration.removeHandler();
+        }
+        globalHandlerRegistrations.clear();
     }
 
     @UiFactory
