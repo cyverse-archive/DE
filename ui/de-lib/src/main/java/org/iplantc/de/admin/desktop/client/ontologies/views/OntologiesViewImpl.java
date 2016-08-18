@@ -376,6 +376,22 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     @Override
+    public void deselectHierarchies(TreeType type) {
+        switch(type) {
+            case EDITOR:
+                editorTree.getSelectionModel().deselectAll();
+                break;
+            case PREVIEW:
+                previewTree.getSelectionModel().deselectAll();
+                break;
+            case ALL:
+                editorTree.getSelectionModel().deselectAll();
+                previewTree.getSelectionModel().deselectAll();
+                break;
+        }
+    }
+
+    @Override
     public void reSortTree(TreeType type) {
         switch(type) {
             case EDITOR:

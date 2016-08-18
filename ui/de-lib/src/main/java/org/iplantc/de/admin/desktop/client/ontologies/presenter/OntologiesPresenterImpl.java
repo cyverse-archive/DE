@@ -20,6 +20,7 @@ import org.iplantc.de.admin.desktop.client.ontologies.views.AppToOntologyHierarc
 import org.iplantc.de.admin.desktop.client.ontologies.views.OntologyHierarchyToAppDND;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.CategorizeDialog;
 import org.iplantc.de.admin.desktop.client.services.AppAdminServiceFacade;
+import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
 import org.iplantc.de.apps.client.presenter.toolBar.proxy.AppSearchRpcProxy;
 import org.iplantc.de.client.models.apps.App;
@@ -69,7 +70,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                                                 DeleteOntologyButtonClickedEvent.DeleteOntologyButtonClickedEventHandler,
                                                 DeleteHierarchyEvent.DeleteHierarchyEventHandler,
                                                 DeleteAppsSelected.DeleteAppsSelectedHandler,
-                                                RefreshPreviewButtonClicked.RefreshPreviewButtonClickedHandler {
+                                                RefreshPreviewButtonClicked.RefreshPreviewButtonClickedHandler,
+                                                AppSearchResultLoadEvent.AppSearchResultLoadEventHandler {
 
     class CategorizeCallback implements AsyncCallback<List<Avu>> {
         private final App selectedApp;
@@ -239,6 +241,12 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         view.addDeleteHierarchyEventHandler(this);
         view.addDeleteAppsSelectedHandler(this);
         view.addRefreshPreviewButtonClickedHandler(this);
+
+        view.addAppSearchResultLoadEventHandler(this);
+        view.addAppSearchResultLoadEventHandler(previewGridPresenter);
+        view.addAppSearchResultLoadEventHandler(previewGridPresenter.getView());
+        view.addBeforeAppSearchEventHandler(previewGridPresenter.getView());
+
     }
 
     PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> getPagingLoader() {
@@ -649,5 +657,10 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         String version = editedOntology.getVersion();
 
         getFilteredOntologyHierarchies(version, roots);
+    }
+
+    @Override
+    public void onAppSearchResultLoad(AppSearchResultLoadEvent event) {
+        view.deselectHierarchies(OntologiesView.TreeType.ALL);
     }
 }

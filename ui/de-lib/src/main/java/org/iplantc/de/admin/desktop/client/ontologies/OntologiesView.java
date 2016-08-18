@@ -76,6 +76,8 @@ public interface OntologiesView extends IsWidget,
 
     void selectActiveOntology(Ontology activeOntology);
 
+    void deselectHierarchies(TreeType type);
+
     void reSortTree(TreeType type);
 
     void updateButtonStatus();
