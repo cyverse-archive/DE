@@ -59,5 +59,5 @@
   {:members (describe [NonBlankString] "The new list of member subject IDs.")})
 
 (s/defschema GroupMembersUpdateResponse
-  {:failures (describe [String] "The list of subject IDs that could not be added to the group.")
-   :members  (describe [Subject] "The updated list of group members.")})
+  (assoc GroupMembers
+         :failures (describe [String] "The list of subject IDs that could not be added to the group.")))
