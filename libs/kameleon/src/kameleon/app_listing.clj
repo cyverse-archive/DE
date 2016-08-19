@@ -114,6 +114,50 @@
         (add-app-group-plus-public-apps-where-clause app-group-id username public-app-ids)
         (select)))))
 
+(defn- add-app-listing-base-query-fields
+  "Add minimum required columns to apps listing query results"
+  [listing-query]
+  (fields listing-query
+          :id
+          :name
+          :lower_case_name
+          :description
+          :integrator_name
+          :integrator_email
+          :integration_date
+          :edited_date
+          :wiki_url
+          :average_rating
+          :total_ratings
+          :is_public
+          :step_count
+          :tool_count
+          :external_app_count
+          :task_count
+          :deleted
+          :disabled
+          :overall_job_type))
+
+(defn- add-app-listing-is-favorite-field
+  "Add user's is_favorite column to apps listing query results"
+  [listing-query workspace_root_group_id favorites_group_index]
+  (let [is_fav_subselect (get-is-fav-sqlfn
+                           workspace_root_group_id
+                           favorites_group_index)]
+    (fields listing-query [is_fav_subselect :is_favorite])))
+
+(defn- add-app-listing-ratings-fields
+  "Add ratings columns to apps listing query results"
+  [listing-query user-id]
+  (-> listing-query
+      (fields [:ratings.rating :user_rating]
+              :ratings.comment_id)
+      (join ratings
+            (and (= :ratings.app_id
+                    :app_listing.id)
+                 (= :ratings.user_id
+                    user-id)))))
+
 (defn- get-app-listing-base-query
   "Gets an app_listing select query, setting any query limits and sorting
    found in the query_opts, using the given workspace (as returned by
@@ -125,60 +169,18 @@
         row_offset (or (:offset query_opts) 0)
         row_limit (or (:limit query_opts) -1)
         sort_field (keyword (or (:sort-field query_opts) (:sortfield query_opts)))
-        sort_dir (keyword (or (:sort-dir query_opts) (:sortdir query_opts)))
-
-        ;; Bind the final query
-        listing_query (->
-                        (select* app_listing)
-                        (modifier "DISTINCT")
-                        (fields :id
-                                :name
-                                :lower_case_name
-                                :description
-                                :integrator_name
-                                :integrator_email
-                                :integration_date
-                                :edited_date
-                                :wiki_url
-                                :average_rating
-                                :total_ratings
-                                :is_public
-                                :step_count
-                                :tool_count
-                                :external_app_count
-                                :task_count
-                                :deleted
-                                :disabled
-                                :overall_job_type)
-                        (where {:deleted false}))
-
-        ;; Bind is_favorite subqueries
-        is_fav_subselect (get-is-fav-sqlfn
-                           workspace_root_group_id
-                           favorites_group_index)
-
-        ;; Add user's is_favorite column
-        listing_query (-> listing_query
-                        (fields [is_fav_subselect :is_favorite]))
-
-        ;; Join the user's ratings
-        listing_query (-> listing_query
-                        (fields [:ratings.rating :user_rating]
-                                :ratings.comment_id)
-                        (join ratings
-                              (and (= :ratings.app_id
-                                      :app_listing.id)
-                                   (= :ratings.user_id
-                                      user_id))))]
-
-    ;; Add limits and sorting, if required, and return the query
-    (->
-      listing_query
-      (add-app-id-where-clause query_opts)
-      (add-agave-pipeline-where-clause query_opts)
-      (add-query-limit row_limit)
-      (add-query-offset row_offset)
-      (add-query-sorting sort_field sort_dir))))
+        sort_dir (keyword (or (:sort-dir query_opts) (:sortdir query_opts)))]
+    (-> (select* app_listing)
+        (modifier "DISTINCT")
+        (add-app-listing-base-query-fields)
+        (add-app-listing-is-favorite-field workspace_root_group_id favorites_group_index)
+        (add-app-listing-ratings-fields user_id)
+        (where {:deleted false})
+        (add-app-id-where-clause query_opts)
+        (add-agave-pipeline-where-clause query_opts)
+        (add-query-limit row_limit)
+        (add-query-offset row_offset)
+        (add-query-sorting sort_field sort_dir))))
 
 (defn get-apps-in-group-for-user
   "Lists all of the apps in an app group and all of its descendents, using the
@@ -284,6 +286,7 @@
   "Fetches a list of deleted, public apps, plus apps that are not listed under any category."
   [{:keys [limit offset sort-field sort-dir public-app-ids]}]
   (-> (select* app_listing)
+      (add-app-listing-base-query-fields)
       (add-deleted-and-orphaned-where-clause public-app-ids)
       (add-query-limit limit)
       (add-query-offset offset)
