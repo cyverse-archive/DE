@@ -27,10 +27,6 @@
   {:sort-field :lower_case_name
    :sort-dir   :ASC})
 
-(defn- get-visible-app-ids
-  [short-username]
-  (set (keys (perms-client/load-app-permissions short-username))))
-
 (defn- augment-listing-params
   ([params short-username perms]
    (assoc params
@@ -185,8 +181,9 @@
   ([user root-iri attr]
    (get-app-hierarchy user (categorization/get-active-hierarchy-version) root-iri attr))
   ([{:keys [username shortUsername]} ontology-version root-iri attr]
-   (let [app-ids (get-visible-app-ids shortUsername)]
-     (metadata-client/filter-hierarchy username ontology-version root-iri attr ["app"] app-ids))))
+   (let [app-ids         (set (keys (perms-client/load-app-permissions shortUsername)))
+         visible-app-ids (amp/filter-visible-app-ids app-ids)]
+     (metadata-client/filter-hierarchy username ontology-version root-iri attr ["app"] visible-app-ids))))
 
 (defn get-admin-app-groups
   "Retrieves the list of app groups that are accessible to administrators. This includes all public
