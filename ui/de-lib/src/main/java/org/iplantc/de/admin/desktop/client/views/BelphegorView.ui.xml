@@ -28,10 +28,6 @@
         <ui:attributes size="20"/>
     </ui:with>
 
-    <ui:with field="appsTabConfig"
-             type="com.sencha.gxt.widget.core.client.TabItemConfig">
-        <ui:attributes text="{appearance.applications}"/>
-    </ui:with>
     <ui:with field="ontologiesTabConfig"
              type="com.sencha.gxt.widget.core.client.TabItemConfig">
         <ui:attributes text="{appearance.ontologies}"/>
@@ -68,9 +64,6 @@
 
             <con:center layoutData="{centerData}">
                 <gxt:TabPanel>
-                    <gxt:child config="{appsTabConfig}">
-                        <con:SimpleContainer ui:field="appsPanel"/>
-                    </gxt:child>
                     <gxt:child config="{ontologiesTabConfig}">
                         <con:SimpleContainer ui:field="ontologiesPanel"/>
                     </gxt:child>
