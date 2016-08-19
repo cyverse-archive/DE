@@ -75,5 +75,10 @@
      <replace-with class="org.iplantc.de.theme.base.client.admin.permIdRequest.PermanentIdRequestPresenterDefaultAppearance">
         <when-type-is class="org.iplantc.de.admin.desktop.client.permIdRequest.views.PermanentIdRequestView.PermanentIdRequestPresenterAppearance"></when-type-is>
     </replace-with>
+
+    <!-- Workshop Admin -->
+    <replace-with class="org.iplantc.de.theme.base.client.admin.workshopAdmin.WorkshopAdminViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.desktop.client.workshopAdmin.WorkshopAdminView.WorkshopAdminViewAppearance" />
+    </replace-with>
 </module>
 

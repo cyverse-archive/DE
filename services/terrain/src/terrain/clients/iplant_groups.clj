@@ -10,6 +10,7 @@
   {:username (:id response)
    :firstname (:first_name response)
    :lastname (:last_name response)
+   :name (:name response)
    :email (:email response)
    :institution (:institution response)})
 

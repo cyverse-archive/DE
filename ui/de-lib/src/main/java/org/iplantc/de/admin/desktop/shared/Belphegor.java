@@ -16,6 +16,7 @@ public interface Belphegor {
         String TOOL_ADMIN = ".toolAdmin";
         String TOOL_REQUEST = ".toolRequest";
         String ONTOLOGIES = ".ontologies";
+        String WORKSHOP_ADMIN = ".workshopAdmin";
     }
 
     interface AppIds {
@@ -171,6 +172,10 @@ public interface Belphegor {
         String CONFIRM_DELETE = "confirmToolDelete";
         String YES = ".yesBtn";
         String NO = ".noBtn";
+    }
+
+    interface WorkshopAdminIds {
+        String VIEW = ".view";
     }
 
     interface SystemMessageIds {

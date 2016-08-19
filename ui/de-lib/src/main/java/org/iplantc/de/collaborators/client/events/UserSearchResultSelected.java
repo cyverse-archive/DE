@@ -17,7 +17,7 @@ public class UserSearchResultSelected extends GwtEvent<UserSearchResultSelectedE
 
     public enum USER_SEARCH_EVENT_TAG {
 
-        SHARING, MANAGE
+        SHARING, MANAGE, WORKSHOP_ADMIN
 
     };
 
@@ -33,6 +33,10 @@ public class UserSearchResultSelected extends GwtEvent<UserSearchResultSelectedE
     public UserSearchResultSelected(String tag, Collaborator collaborator) {
         this.collaborator = collaborator;
         this.setTag(tag);
+    }
+
+    public boolean matchesTag(USER_SEARCH_EVENT_TAG tag) {
+        return this.tag.equalsIgnoreCase(tag.toString());
     }
 
     @Override

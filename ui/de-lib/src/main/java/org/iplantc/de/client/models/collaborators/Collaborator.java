@@ -12,32 +12,38 @@ import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 public interface Collaborator {
 
     @PropertyName("username")
-    public void setUserName(String username);
+    void setUserName(String username);
 
     @PropertyName("username")
-    public String getUserName();
+    String getUserName();
 
     @PropertyName("firstname")
-    public void setFirstName(String firstname);
+    void setFirstName(String firstname);
 
     @PropertyName("firstname")
-    public String getFirstName();
+    String getFirstName();
 
     @PropertyName("lastname")
-    public void setLastName(String lastname);
+    void setLastName(String lastname);
 
     @PropertyName("lastname")
-    public String getLastName();
+    String getLastName();
+
+    @PropertyName("name")
+    void setName(String name);
+
+    @PropertyName("name")
+    String getName();
 
     @PropertyName("email")
-    public void setEmail(String email);
+    void setEmail(String email);
 
     @PropertyName("email")
-    public String getEmail();
+    String getEmail();
 
     @PropertyName("institution")
-    public String getInstitution();
+    String getInstitution();
 
     @PropertyName("institution")
-    public void setInstitution(String ins);
+    void setInstitution(String ins);
 }

@@ -7,6 +7,7 @@ import org.iplantc.de.admin.desktop.client.refGenome.RefGenomeView;
 import org.iplantc.de.admin.desktop.client.systemMessage.SystemMessageView;
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
 import org.iplantc.de.admin.desktop.client.toolRequest.ToolRequestView;
+import org.iplantc.de.admin.desktop.client.workshopAdmin.WorkshopAdminView;
 import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
@@ -41,7 +42,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
 
     @UiField HtmlLayoutContainer northCon;
     @UiField SimpleContainer ontologiesPanel, refGenomePanel, toolRequestPanel, systemMessagesPanel, metadataPanel,
-            permIdPanel, toolAdminPanel;
+            permIdPanel, toolAdminPanel, workshopAdminPanel;
     @UiField(provided = true) BelphegorViewAppearance appearance;
     private TextButton menuButton;
     private RefGenomeView.Presenter refGenPresenter;
@@ -51,6 +52,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
     private TemplateListingView.Presenter tempPresenter;
     private PermanentIdRequestView.Presenter permIdPresenter;
     private OntologiesView.Presenter ontologiesPresenter;
+    private WorkshopAdminView.Presenter workshopAdminPresenter;
 
     @Inject
     public BelphegorViewImpl(final OntologiesView.Presenter ontologiesPresenter,
@@ -60,6 +62,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
                              final SystemMessageView.Presenter sysMsgPresenter,
                              final TemplateListingView.Presenter tempPresenter,
                              final PermanentIdRequestView.Presenter permIdPresenter,
+                             final WorkshopAdminView.Presenter workshopAdminPresenter,
                              final BelphegorViewAppearance appearance) {
         this.appearance = appearance;
         this.ontologiesPresenter = ontologiesPresenter;
@@ -69,6 +72,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
         this.sysMsgPresenter = sysMsgPresenter;
         this.tempPresenter = tempPresenter;
         this.permIdPresenter = permIdPresenter;
+        this.workshopAdminPresenter = workshopAdminPresenter;
 
         initWidget(uiBinder.createAndBindUi(this));
         init(ontologiesPresenter,
@@ -77,7 +81,8 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
              toolAdminPresenter,
              sysMsgPresenter,
              tempPresenter,
-             permIdPresenter);
+             permIdPresenter,
+             workshopAdminPresenter);
         ensureDebugId(Belphegor.Ids.BELPHEGOR);
     }
 
@@ -92,7 +97,8 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
                       final ToolAdminView.Presenter toolAdminPresenter,
                       final SystemMessageView.Presenter sysMsgPresenter,
                       final TemplateListingView.Presenter tempPresenter,
-                      final PermanentIdRequestView.Presenter permIdPresenter) {
+                      final PermanentIdRequestView.Presenter permIdPresenter,
+                      final WorkshopAdminView.Presenter workshopAdminPresenter) {
         buildUserMenu();
 
         ontologiesPresenter.go(ontologiesPanel);
@@ -102,6 +108,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
         sysMsgPresenter.go(systemMessagesPanel);
         tempPresenter.go(metadataPanel);
         permIdPresenter.go(permIdPanel);
+        workshopAdminPresenter.go(workshopAdminPanel);
     }
 
     private void buildUserMenu() {
@@ -152,6 +159,9 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
 
         permIdPanel.ensureDebugId(baseID + Belphegor.Ids.PERMID);
         permIdPresenter.setViewDebugId(baseID + Belphegor.Ids.PERMID);
+
+        workshopAdminPanel.ensureDebugId(baseID + Belphegor.Ids.WORKSHOP_ADMIN);
+        workshopAdminPresenter.setViewDebugId(baseID + Belphegor.Ids.WORKSHOP_ADMIN);
     }
 
     @Override
