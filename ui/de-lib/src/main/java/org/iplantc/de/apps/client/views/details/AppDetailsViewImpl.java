@@ -23,6 +23,7 @@ import org.iplantc.de.commons.client.views.dialogs.IPlantPromptDialog;
 import org.iplantc.de.desktop.client.presenter.DesktopPresenterImpl;
 
 import com.google.common.base.Strings;
+import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.editor.client.LeafValueEditor;
@@ -33,6 +34,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -148,7 +150,7 @@ public class AppDetailsViewImpl extends Composite implements
     InlineLabel integratorEmail;
     @UiField (provided = true)
     @Ignore
-    Tree<OntologyHierarchy, String> hierarchyTree;
+    Tree<OntologyHierarchy, SafeHtml> hierarchyTree;
     @UiField(provided = true) @Ignore TreeStore<OntologyHierarchy> hierarchyTreeStore;
     @UiField(provided = true) @Ignore Tree<AppCategory, String> categoryTree;
     @UiField(provided = true) @Ignore TreeStore<AppCategory> categoryTreeStore;
@@ -176,6 +178,7 @@ public class AppDetailsViewImpl extends Composite implements
 
     final ListEditor<Tool, ToolDetailsView> tools;
     private final App app;
+    private String searchRegexPattern;
 
     @Inject
     UserInfo userInfo;
@@ -191,6 +194,7 @@ public class AppDetailsViewImpl extends Composite implements
         this.app = app;
         this.hierarchyTreeStore = hierarchyTreeStore;
         this.categoryTreeStore = categoryTreeStore;
+        this.searchRegexPattern = searchRegexPattern;
 
         hierarchyTree = createHierarchyTree();
         categoryTree = createCategoryTree();
@@ -314,15 +318,15 @@ public class AppDetailsViewImpl extends Composite implements
         return new DateLabel(DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_MEDIUM));
     }
 
-    Tree<OntologyHierarchy, String> createHierarchyTree() {
-        Tree<OntologyHierarchy, String> tree = new Tree<>(hierarchyTreeStore, new ValueProvider<OntologyHierarchy, String>() {
+    Tree<OntologyHierarchy, SafeHtml> createHierarchyTree() {
+        Tree<OntologyHierarchy, SafeHtml> tree = new Tree<>(hierarchyTreeStore, new ValueProvider<OntologyHierarchy, SafeHtml>() {
             @Override
-            public String getValue(OntologyHierarchy object) {
-                return object.getLabel();
+            public SafeHtml getValue(OntologyHierarchy object) {
+                return appearance.highlightText(object.getLabel(), searchRegexPattern);
             }
 
             @Override
-            public void setValue(OntologyHierarchy object, String value) {
+            public void setValue(OntologyHierarchy object, SafeHtml value) {
 
             }
 
@@ -342,6 +346,7 @@ public class AppDetailsViewImpl extends Composite implements
                 }
             }
         });
+        tree.setCell(new SafeHtmlCell());
         return tree;
     }
 
