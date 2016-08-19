@@ -1,5 +1,14 @@
 package org.iplantc.de.admin.desktop.client.workshopAdmin.view;
 
+import org.iplantc.de.admin.desktop.client.workshopAdmin.WorkshopAdminView;
+import org.iplantc.de.admin.desktop.client.workshopAdmin.events.DeleteMembersClickedEvent;
+import org.iplantc.de.admin.desktop.client.workshopAdmin.events.RefreshMembersClickedEvent;
+import org.iplantc.de.admin.desktop.client.workshopAdmin.events.SaveMembersClickedEvent;
+import org.iplantc.de.admin.desktop.client.workshopAdmin.model.MemberProperties;
+import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.models.groups.Member;
+import org.iplantc.de.collaborators.client.util.UserSearchField;
+
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventHandler;
@@ -12,6 +21,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+
 import com.sencha.gxt.core.client.Style;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.Composite;
@@ -20,14 +30,6 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
-import org.iplantc.de.admin.desktop.client.workshopAdmin.WorkshopAdminView;
-import org.iplantc.de.admin.desktop.client.workshopAdmin.events.DeleteMembersClickedEvent;
-import org.iplantc.de.admin.desktop.client.workshopAdmin.events.RefreshMembersClickedEvent;
-import org.iplantc.de.admin.desktop.client.workshopAdmin.events.SaveMembersClickedEvent;
-import org.iplantc.de.admin.desktop.client.workshopAdmin.model.MemberProperties;
-import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.models.groups.Member;
-import org.iplantc.de.collaborators.client.util.UserSearchField;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +48,7 @@ public class WorkshopAdminViewImpl extends Composite implements WorkshopAdminVie
     @UiField(provided = true) WorkshopAdminViewAppearance appearance;
 
     private MemberProperties memberProperties;
-    private final ArrayList<HandlerRegistration> globalHandlerRegistrations = new ArrayList<>();
+    ArrayList<HandlerRegistration> globalHandlerRegistrations = new ArrayList<>();
 
     private static WorkshopAdminViewImplUiBinder uiBinder = GWT.create(WorkshopAdminViewImplUiBinder.class);
 
