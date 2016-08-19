@@ -8,3 +8,5 @@
     body_format: json
   ignore_errors: True
   changed_when: false
+  tags:
+    - notify-chat
