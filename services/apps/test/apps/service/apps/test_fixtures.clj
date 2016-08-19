@@ -178,6 +178,7 @@
 (defn get-dev-category [user]
   (get-category user "Apps under development"))
 
+;; FIXME the Beta category is obsolete
 (defn get-beta-category [user]
   (get-category user "Beta"))
 
