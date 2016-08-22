@@ -85,9 +85,9 @@ public interface OntologiesView extends IsWidget,
 
     void updateButtonStatus();
 
-    void maskGrids(String loadingMask);
+    void maskGrid(ViewType type);
 
-    void unmaskGrids();
+    void unmaskGrid(ViewType type);
 
     void removeApp(App selectedApp);
 

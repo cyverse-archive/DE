@@ -461,15 +461,35 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     @Override
-    public void maskGrids(String loadingMask) {
-        previewGridView.mask(loadingMask);
-        editorGridView.mask(loadingMask);
+    public void maskGrid(ViewType type) {
+        switch(type) {
+            case EDITOR:
+                editorGridView.mask(appearance.loadingMask());
+                break;
+            case PREVIEW:
+                previewGridView.mask(appearance.loadingMask());
+                break;
+            case ALL:
+                editorGridView.mask(appearance.loadingMask());
+                previewGridView.mask(appearance.loadingMask());
+                break;
+        }
     }
 
     @Override
-    public void unmaskGrids() {
-        previewGridView.unmask();
-        editorGridView.unmask();
+    public void unmaskGrid(ViewType type) {
+        switch(type) {
+            case EDITOR:
+                editorGridView.unmask();
+                break;
+            case PREVIEW:
+                previewGridView.unmask();
+                break;
+            case ALL:
+                editorGridView.unmask();
+                previewGridView.unmask();
+                break;
+        }
     }
 
     @Override
