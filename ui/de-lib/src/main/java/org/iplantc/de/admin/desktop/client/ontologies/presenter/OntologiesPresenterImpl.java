@@ -658,6 +658,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         view.maskGrids(appearance.loadingMask());
         adminAppService.deleteApp(selectedApp,
                                   new AsyncCallback<Void>() {
+        if (!selectedApp.isDeleted()) {
 
                                       @Override
                                       public void onFailure(Throwable caught) {
@@ -671,6 +672,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                                           view.unmaskGrids();
                                       }
                                   });
+        }
     }
 
     void displayErrorToAdmin() {
