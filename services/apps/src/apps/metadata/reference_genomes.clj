@@ -50,11 +50,6 @@
       (where {:id [in uuids]}))
     (select (reference-genome-base-query))))
 
-(defn get-all-reference-genomes
-  "Lists all of the reference genomes in the database, including those marked as deleted."
-  []
-  (select (reference-genome-base-query)))
-
 (defn list-reference-genomes
   "Lists the reference genomes in the database."
   ([]
@@ -71,7 +66,7 @@
 (defn- validate-reference-genome-path
   "Verifies that a reference genome with the same path doesn't already exist."
   ([path id]
-     (if (seq (get-reference-genomes-where {:path path :id [not= id]}))
+     (if (seq (get-reference-genomes-where {:path path :id ['not= id]}))
        (cxu/exists "Another reference genome with the given path already exists." :path path)))
   ([path]
      (if (seq (get-reference-genomes-where {:path path}))
@@ -80,7 +75,7 @@
 (defn- validate-reference-genome-name
   "Verifies that a reference genome with the same name doesn't already exist."
   ([name id]
-     (if (seq (get-reference-genomes-where {:name name :id [not= id]}))
+     (if (seq (get-reference-genomes-where {:name name :id ['not= id]}))
        (cxu/exists "Another reference genome with the given name already exists." :name name)))
   ([name]
      (if (seq (get-reference-genomes-where {:name name}))
