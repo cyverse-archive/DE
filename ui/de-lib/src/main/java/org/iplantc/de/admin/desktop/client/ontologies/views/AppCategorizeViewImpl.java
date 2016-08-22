@@ -125,9 +125,9 @@ public class AppCategorizeViewImpl implements AppCategorizeView {
         addHierarchies(null, hierarchies);
     }
 
-    private void removeUnclassifieds(List<OntologyHierarchy> hierarchies) {
+    private void removeUnclassifiedsAndTrash(List<OntologyHierarchy> hierarchies) {
         for (OntologyHierarchy hierarchy : hierarchies) {
-            if (ontologyUtil.isUnclassified(hierarchy)) {
+            if (ontologyUtil.isUnclassified(hierarchy) || hierarchy.getIri().equalsIgnoreCase(OntologiesView.TRASH_CATEGORY)) {
                 hierarchies.remove(hierarchy);
             }
         }
@@ -138,7 +138,7 @@ public class AppCategorizeViewImpl implements AppCategorizeView {
             return;
         }
         
-        removeUnclassifieds(children);
+        removeUnclassifiedsAndTrash(children);
 
         if (parent == null) {
             treeStore.add(children);

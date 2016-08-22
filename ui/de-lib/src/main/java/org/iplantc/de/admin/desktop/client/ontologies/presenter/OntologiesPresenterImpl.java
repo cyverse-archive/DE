@@ -124,7 +124,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         @Override
         public void onFailure(Throwable caught) {
             ErrorHandler.post(caught);
-            view.unmaskTree(OntologiesView.TreeType.EDITOR);
+            view.unmaskTree(OntologiesView.ViewType.EDITOR);
         }
 
         @Override
@@ -134,7 +134,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
             } else {
                 announcer.schedule(new ErrorAnnouncementConfig(
                         appearance.invalidHierarchySubmitted(iri)));
-                view.unmaskTree(OntologiesView.TreeType.EDITOR);
+                view.unmaskTree(OntologiesView.ViewType.EDITOR);
             }
         }
     }
@@ -150,12 +150,12 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         @Override
         public void onFailure(Throwable caught) {
             ErrorHandler.post(caught);
-            view.unmaskTree(OntologiesView.TreeType.EDITOR);
+            view.unmaskTree(OntologiesView.ViewType.EDITOR);
         }
 
         @Override
         public void onSuccess(List<OntologyHierarchy> result) {
-            view.clearTreeStore(OntologiesView.TreeType.EDITOR);
+            view.clearTreeStore(OntologiesView.ViewType.EDITOR);
             if (result.size() == 0) {
                 view.showEmptyTreePanel();
             } else {
@@ -163,17 +163,16 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                 if (!isValid) {
                     displayErrorToAdmin();
                 }
-                view.maskTree(OntologiesView.TreeType.EDITOR);
-                addHierarchies(OntologiesView.TreeType.EDITOR, null, result);
+                view.maskTree(OntologiesView.ViewType.EDITOR);
+                addHierarchies(OntologiesView.ViewType.EDITOR, null, result);
                 addTrashCategory();
                 getFilteredOntologyHierarchies(version, result);
             }
-            view.unmaskTree(OntologiesView.TreeType.EDITOR);
+            view.unmaskTree(OntologiesView.ViewType.EDITOR);
             view.updateButtonStatus();
         }
     }
 
-    static final String TRASH_CATEGORY = "Trash";
     @Inject AppAdminServiceFacade adminAppService;
     @Inject DEProperties properties;
     @Inject IplantAnnouncer announcer;
@@ -312,7 +311,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
             return;
         }
 
-        if (hierarchy.getIri().equalsIgnoreCase(TRASH_CATEGORY)) {
+        if (hierarchy.getIri().equalsIgnoreCase(OntologiesView.TRASH_CATEGORY)) {
             deleteApp(targetApp);
             return;
         }
@@ -364,19 +363,19 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     void getOntologies(final boolean selectActiveOntology) {
         editorGridPresenter.getView().clearAndAdd(null);
         previewGridPresenter.getView().clearAndAdd(null);
-        view.clearTreeStore(OntologiesView.TreeType.ALL);
+        view.clearTreeStore(OntologiesView.ViewType.ALL);
         serviceFacade.getOntologies(new AsyncCallback<List<Ontology>>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
-                view.unmaskTree(OntologiesView.TreeType.EDITOR);
+                view.unmaskTree(OntologiesView.ViewType.EDITOR);
             }
 
             @Override
             public void onSuccess(List<Ontology> result) {
                 Collections.reverse(result);
                 view.showOntologyVersions(result);
-                view.unmaskTree(OntologiesView.TreeType.EDITOR);
+                view.unmaskTree(OntologiesView.ViewType.EDITOR);
                 if (selectActiveOntology) {
                     for (Ontology ontology : result) {
                         if (ontology.isActive()){
@@ -391,13 +390,13 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     @Override
     public void onSelectOntologyVersion(SelectOntologyVersionEvent event) {
-        view.clearTreeStore(OntologiesView.TreeType.ALL);
+        view.clearTreeStore(OntologiesView.ViewType.ALL);
         editorGridPresenter.getView().clearAndAdd(null);
         previewGridPresenter.getView().clearAndAdd(null);
         iriToHierarchyMap.clear();
 
         view.showTreePanel();
-        view.maskTree(OntologiesView.TreeType.EDITOR);
+        view.maskTree(OntologiesView.ViewType.EDITOR);
 
         getOntologyHierarchies(event.getSelectedOntology().getVersion());
 
@@ -410,9 +409,9 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
 
     void getFilteredOntologyHierarchies(String version, List<OntologyHierarchy> result) {
-        view.clearTreeStore(OntologiesView.TreeType.PREVIEW);
+        view.clearTreeStore(OntologiesView.ViewType.PREVIEW);
         for (OntologyHierarchy hierarchy: result) {
-            view.maskTree(OntologiesView.TreeType.PREVIEW);
+            view.maskTree(OntologiesView.ViewType.PREVIEW);
             String attr = ontologyUtil.getAttr(hierarchy);
             if (Strings.isNullOrEmpty(attr)) {
                 continue;
@@ -421,23 +420,23 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
                 @Override
                 public void onFailure(Throwable caught) {
                     ErrorHandler.post(caught);
-                    view.unmaskTree(OntologiesView.TreeType.PREVIEW);
+                    view.unmaskTree(OntologiesView.ViewType.PREVIEW);
                 }
 
                 @Override
                 public void onSuccess(OntologyHierarchy result) {
                     if (result != null) {
                         List<OntologyHierarchy> hierarchies = Lists.newArrayList(result);
-                        addHierarchies(OntologiesView.TreeType.PREVIEW, null, hierarchies);
-                        view.reSortTree(OntologiesView.TreeType.PREVIEW);
-                        view.unmaskTree(OntologiesView.TreeType.PREVIEW);
+                        addHierarchies(OntologiesView.ViewType.PREVIEW, null, hierarchies);
+                        view.reSortTree(OntologiesView.ViewType.PREVIEW);
+                        view.unmaskTree(OntologiesView.ViewType.PREVIEW);
                     }
                 }
             });
         }
     }
 
-    void addHierarchies(OntologiesView.TreeType type,
+    void addHierarchies(OntologiesView.ViewType type,
                         OntologyHierarchy parent,
                         List<OntologyHierarchy> children) {
         if ((children == null)
@@ -461,8 +460,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     void addTrashCategory() {
         OntologyHierarchy trash = ontologyUtil.getHierarchyObject();
-        trash.setLabel(TRASH_CATEGORY);
-        trash.setIri(TRASH_CATEGORY);
+        trash.setLabel(OntologiesView.TRASH_CATEGORY);
+        trash.setIri(OntologiesView.TRASH_CATEGORY);
         editorTreeStore.add(trash);
     }
 
@@ -483,7 +482,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         List<String> iris = event.getIris();
         String ontologyVersion = event.getOntology().getVersion();
         for (String iri : iris) {
-            view.maskTree(OntologiesView.TreeType.EDITOR);
+            view.maskTree(OntologiesView.ViewType.EDITOR);
             serviceFacade.saveOntologyHierarchy(ontologyVersion,
                                                 iri, new SaveHierarchyAsyncCallback(ontologyVersion, iri));
         }
@@ -494,7 +493,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     @Override
     public void onCategorizeButtonClicked(CategorizeButtonClickedEvent event) {
         final App selectedApp = event.getSelectedApp();
-        final List<OntologyHierarchy> hierarchyRoots = event.getHierarchyRoots();
+        final List<OntologyHierarchy> hierarchyRoots = Lists.newArrayList();
+        hierarchyRoots.addAll(event.getHierarchyRoots());
         serviceFacade.getAppAVUs(selectedApp, new CategorizeCallback(selectedApp, hierarchyRoots));
     }
 
@@ -544,7 +544,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
             return;
         }
 
-        if (hierarchy.getIri().equalsIgnoreCase(TRASH_CATEGORY)) {
+        if (hierarchy.getIri().equalsIgnoreCase(OntologiesView.TRASH_CATEGORY)) {
             getTrashItems();
             return;
         }
@@ -655,22 +655,23 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     }
 
     void deleteApp(final App selectedApp) {
-        view.maskGrids(appearance.loadingMask());
-        adminAppService.deleteApp(selectedApp,
-                                  new AsyncCallback<Void>() {
+        if (!selectedApp.isDeleted()) {
+            view.maskGrid(OntologiesView.ViewType.ALL);
+            adminAppService.deleteApp(selectedApp, new AsyncCallback<Void>() {
 
-                                      @Override
-                                      public void onFailure(Throwable caught) {
-                                          view.unmaskGrids();
-                                          ErrorHandler.post(caught);
-                                      }
+                @Override
+                public void onFailure(Throwable caught) {
+                    view.unmaskGrid(OntologiesView.ViewType.ALL);
+                    ErrorHandler.post(caught);
+                }
 
-                                      @Override
-                                      public void onSuccess(Void result) {
-                                          view.removeApp(selectedApp);
-                                          view.unmaskGrids();
-                                      }
-                                  });
+                @Override
+                public void onSuccess(Void result) {
+                    view.removeApp(selectedApp);
+                    view.unmaskGrid(OntologiesView.ViewType.ALL);
+                }
+            });
+        }
     }
 
     void displayErrorToAdmin() {
@@ -692,7 +693,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     @Override
     public void onAppSearchResultLoad(AppSearchResultLoadEvent event) {
-        view.deselectHierarchies(OntologiesView.TreeType.ALL);
+        view.deselectHierarchies(OntologiesView.ViewType.ALL);
     }
 
     public void onRestoreAppButtonClicked(RestoreAppButtonClicked event) {
@@ -700,11 +701,11 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         Preconditions.checkNotNull(app);
         Preconditions.checkArgument(app.isDeleted());
 
-        view.maskGrids(appearance.loadingMask());
+        view.maskGrid(OntologiesView.ViewType.EDITOR);
         adminAppService.restoreApp(app, new AsyncCallback<App>() {
             @Override
             public void onFailure(Throwable caught) {
-                view.unmaskGrids();
+                view.unmaskGrid(OntologiesView.ViewType.EDITOR);
                 JSONObject obj = jsonUtil.getObject(caught.getMessage());
                 String reason = jsonUtil.getString(obj, "reason");
                 if (reason.contains("orphaned")) {
@@ -717,7 +718,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
             @Override
             public void onSuccess(App result) {
                 editorGridPresenter.getView().removeApp(result);
-                view.unmaskGrids();
+                view.unmaskGrid(OntologiesView.ViewType.EDITOR);
                 List<String> hierarchyNames = Lists.newArrayList();
                 for(OntologyHierarchy hierarchy : result.getHierarchies()){
                     hierarchyNames.add(hierarchy.getLabel());
@@ -736,18 +737,18 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     public void getTrashItems() {
         String id = properties.getDefaultTrashAppCategoryId();
         Preconditions.checkNotNull(id);
-        view.maskGrids(appearance.loadingMask());
+        view.maskGrid(OntologiesView.ViewType.EDITOR);
         appService.getApps(id, new AsyncCallback<List<App>>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
-                view.unmaskGrids();
+                view.unmaskGrid(OntologiesView.ViewType.EDITOR);
             }
 
             @Override
             public void onSuccess(List<App> result) {
                 editorGridPresenter.getView().clearAndAdd(result);
-                view.unmaskGrids();
+                view.unmaskGrid(OntologiesView.ViewType.EDITOR);
             }
         });
     }

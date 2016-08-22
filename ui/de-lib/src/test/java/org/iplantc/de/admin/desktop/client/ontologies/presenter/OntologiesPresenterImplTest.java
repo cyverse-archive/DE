@@ -41,11 +41,9 @@ import org.iplantc.de.client.models.ontologies.Ontology;
 import org.iplantc.de.client.models.ontologies.OntologyAutoBeanFactory;
 import org.iplantc.de.client.models.ontologies.OntologyHierarchy;
 import org.iplantc.de.client.models.ontologies.OntologyVersionDetail;
-import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.util.OntologyUtil;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
-import org.iplantc.de.shared.DEProperties;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwtmockito.GwtMockitoTestRunner;
@@ -253,12 +251,12 @@ public class OntologiesPresenterImplTest {
 
         verify(editorGridViewMock).clearAndAdd(null);
         verify(previewGridViewMock).clearAndAdd(null);
-        verify(viewMock).clearTreeStore(isA(OntologiesView.TreeType.class));
+        verify(viewMock).clearTreeStore(isA(OntologiesView.ViewType.class));
         verify(serviceFacadeMock).getOntologies(asyncCallbackOntologyListCaptor.capture());
 
         asyncCallbackOntologyListCaptor.getValue().onSuccess(listOntologyMock);
         verify(viewMock).showOntologyVersions(eq(listOntologyMock));
-        verify(viewMock).unmaskTree(isA(OntologiesView.TreeType.class));
+        verify(viewMock).unmaskTree(isA(OntologiesView.ViewType.class));
         verifyNoMoreInteractions(viewMock);
     }
 
@@ -272,7 +270,7 @@ public class OntologiesPresenterImplTest {
 
         asyncCallbackOntologyListCaptor.getValue().onSuccess(listOntologyMock);
         verify(viewMock).showOntologyVersions(eq(listOntologyMock));
-        verify(viewMock).unmaskTree(isA(OntologiesView.TreeType.class));
+        verify(viewMock).unmaskTree(isA(OntologiesView.ViewType.class));
         verify(ontologyMock).isActive();
         verify(activeOntologyMock).isActive();
         verify(viewMock).selectActiveOntology(activeOntologyMock);
@@ -389,7 +387,7 @@ public class OntologiesPresenterImplTest {
         /** CALL METHOD UNDER TEST **/
         uut.onSelectOntologyVersion(eventMock);
 
-        verify(viewMock).clearTreeStore(isA(OntologiesView.TreeType.class));
+        verify(viewMock).clearTreeStore(isA(OntologiesView.ViewType.class));
 
         verify(serviceFacadeMock).getOntologyHierarchies(eq(eventMock.getSelectedOntology()
                                                                      .getVersion()),
@@ -418,7 +416,7 @@ public class OntologiesPresenterImplTest {
                                           editorGridPresenterMock,
                                           categorizeViewMock) {
             @Override
-            void addHierarchies(OntologiesView.TreeType type,
+            void addHierarchies(OntologiesView.ViewType type,
                                 OntologyHierarchy parent,
                                 List<OntologyHierarchy> children) {
             }
@@ -435,7 +433,7 @@ public class OntologiesPresenterImplTest {
         /** CALL METHOD UNDER TEST **/
         uut.onSelectOntologyVersion(eventMock);
 
-        verify(viewMock).clearTreeStore(isA(OntologiesView.TreeType.class));
+        verify(viewMock).clearTreeStore(isA(OntologiesView.ViewType.class));
 
         verify(serviceFacadeMock).getOntologyHierarchies(eq(eventMock.getSelectedOntology()
                                                                      .getVersion()),
@@ -466,7 +464,7 @@ public class OntologiesPresenterImplTest {
                                           editorGridPresenterMock,
                                           categorizeViewMock) {
             @Override
-            void addHierarchies(OntologiesView.TreeType type,
+            void addHierarchies(OntologiesView.ViewType type,
                                 OntologyHierarchy parent,
                                 List<OntologyHierarchy> children) {
             }
@@ -496,10 +494,10 @@ public class OntologiesPresenterImplTest {
 
         asyncOntologyHierarchyListCaptor.getValue().onSuccess(ontologyHierarchyListMock);
 
-        verify(viewMock, times(2)).clearTreeStore(isA(OntologiesView.TreeType.class));
+        verify(viewMock, times(2)).clearTreeStore(isA(OntologiesView.ViewType.class));
         verify(utilMock).createIriToAttrMap(eq(ontologyHierarchyListMock));
-        verify(viewMock, times(5)).maskTree(isA(OntologiesView.TreeType.class));
-        verify(viewMock).unmaskTree(isA(OntologiesView.TreeType.class));
+        verify(viewMock, times(5)).maskTree(isA(OntologiesView.ViewType.class));
+        verify(viewMock).unmaskTree(isA(OntologiesView.ViewType.class));
         verify(viewMock).updateButtonStatus();
 
         verify(viewMock).showTreePanel();
@@ -659,13 +657,13 @@ public class OntologiesPresenterImplTest {
         /** CALL METHOD UNDER TEST **/
         uut.onDeleteAppsSelected(eventMock);
 
-        verify(viewMock).maskGrids(eq(appearanceMock.loadingMask()));
+        verify(viewMock).maskGrid(eq(OntologiesView.ViewType.ALL));
         verify(adminAppServiceMock).deleteApp(eq(appMock), asyncVoidCaptor.capture());
 
         asyncVoidCaptor.getValue().onSuccess(null);
 
         verify(viewMock).removeApp(appMock);
-        verify(viewMock).unmaskGrids();
+        verify(viewMock).unmaskGrid(OntologiesView.ViewType.ALL);
     }
 
     @Test
@@ -676,8 +674,8 @@ public class OntologiesPresenterImplTest {
         /** CALL METHOD UNDER TEST **/
         uut.getFilteredOntologyHierarchies("version", ontologyHierarchyListMock);
 
-        verify(viewMock).clearTreeStore(isA(OntologiesView.TreeType.class));
-        verify(viewMock, times(2)).maskTree(isA(OntologiesView.TreeType.class));
+        verify(viewMock).clearTreeStore(isA(OntologiesView.ViewType.class));
+        verify(viewMock, times(2)).maskTree(isA(OntologiesView.ViewType.class));
 
         verify(serviceFacadeMock, times(2)).getFilteredOntologyHierarchy(anyString(),
                                                                          anyString(),
@@ -686,8 +684,8 @@ public class OntologiesPresenterImplTest {
 
         asyncOntologyHierarchyCaptor.getValue().onSuccess(hierarchyMock);
 
-        verify(viewMock).reSortTree(isA(OntologiesView.TreeType.class));
-        verify(viewMock).unmaskTree(isA(OntologiesView.TreeType.class));
+        verify(viewMock).reSortTree(isA(OntologiesView.ViewType.class));
+        verify(viewMock).unmaskTree(isA(OntologiesView.ViewType.class));
 
     }
 
@@ -699,7 +697,7 @@ public class OntologiesPresenterImplTest {
         /** CALL METHOD UNDER TEST **/
         uut.onRestoreAppButtonClicked(eventMock);
 
-        verify(viewMock).maskGrids(eq(appearanceMock.loadingMask()));
+        verify(viewMock).maskGrid(eq(OntologiesView.ViewType.EDITOR));
         verify(adminAppServiceMock).restoreApp(eq(appMock), asyncAppCaptor.capture());
 
         asyncAppCaptor.getValue().onSuccess(appMock);
@@ -713,11 +711,11 @@ public class OntologiesPresenterImplTest {
         /** CALL METHOD UNDER TEST **/
         uut.getTrashItems();
 
-        verify(viewMock).maskGrids(eq(appearanceMock.loadingMask()));
+        verify(viewMock).maskGrid(eq(OntologiesView.ViewType.EDITOR));
         verify(appServiceMock).getApps(anyString(), asyncAppListCaptor.capture());
 
         asyncAppListCaptor.getValue().onSuccess(appListMock);
         verify(editorGridViewMock).clearAndAdd(eq(appListMock));
-        verify(viewMock).unmaskGrids();
+        verify(viewMock).unmaskGrid(OntologiesView.ViewType.EDITOR);
     }
 }

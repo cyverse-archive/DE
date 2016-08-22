@@ -144,7 +144,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
             @Override
             public void onSelectionChanged(SelectionChangedEvent<OntologyHierarchy> event) {
                 if (event.getSelection().size() == 1) {
-                    fireEvent(new HierarchySelectedEvent(event.getSelection().get(0), ontologyDropDown.getCurrentValue(), TreeType.EDITOR));
+                    fireEvent(new HierarchySelectedEvent(event.getSelection().get(0), ontologyDropDown.getCurrentValue(), ViewType.EDITOR));
                 }
                 updateButtonStatus();
             }
@@ -154,7 +154,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
             @Override
             public void onSelectionChanged(SelectionChangedEvent<OntologyHierarchy> event) {
                 if (event.getSelection().size() == 1) {
-                    fireEvent(new PreviewHierarchySelectedEvent(event.getSelection().get(0), ontologyDropDown.getCurrentValue(), TreeType.PREVIEW));
+                    fireEvent(new PreviewHierarchySelectedEvent(event.getSelection().get(0), ontologyDropDown.getCurrentValue(), ViewType.PREVIEW));
                 }
                 updateButtonStatus();
             }
@@ -284,7 +284,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     @Override
-    public void clearTreeStore(TreeType type) {
+    public void clearTreeStore(ViewType type) {
         switch(type){
             case EDITOR:
                 editorTreeStore.clear();
@@ -300,7 +300,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     @Override
-    public void addToTreeStore(TreeType type, List<OntologyHierarchy> children) {
+    public void addToTreeStore(ViewType type, List<OntologyHierarchy> children) {
         switch(type) {
             case EDITOR:
                 editorTreeStore.add(children);
@@ -316,7 +316,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     @Override
-    public void addToTreeStore(TreeType type, OntologyHierarchy parent, List<OntologyHierarchy> children) {
+    public void addToTreeStore(ViewType type, OntologyHierarchy parent, List<OntologyHierarchy> children) {
         switch(type) {
             case EDITOR:
                 editorTreeStore.add(parent, children);
@@ -332,7 +332,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     @Override
-    public void maskTree(TreeType type) {
+    public void maskTree(ViewType type) {
         switch(type) {
             case EDITOR:
                 editorTreePanel.mask(appearance.loadingMask());
@@ -348,7 +348,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     @Override
-    public void unmaskTree(TreeType type) {
+    public void unmaskTree(ViewType type) {
         switch(type) {
             case EDITOR:
                 editorTreePanel.unmask();
@@ -382,7 +382,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     @Override
-    public void deselectHierarchies(TreeType type) {
+    public void deselectHierarchies(ViewType type) {
         switch(type) {
             case EDITOR:
                 editorTree.getSelectionModel().deselectAll();
@@ -398,7 +398,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     @Override
-    public void reSortTree(TreeType type) {
+    public void reSortTree(ViewType type) {
         switch(type) {
             case EDITOR:
                 editorTreeStore.applySort(false);
@@ -450,26 +450,54 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     public void updateButtonStatus() {
-        publishButton.setEnabled(selectedOntology != null && selectedOntology != activeOntology);
-        saveHierarchy.setEnabled(selectedOntology != null);
-        deleteButton.setEnabled(selectedOntology != null && selectedOntology != activeOntology);
-        deleteHierarchy.setEnabled(selectedOntology != null && editorTree.getSelectionModel().getSelectedItem() != null);
-        categorize.setEnabled(selectedOntology != null && targetApp != null && !targetApp.getAppType().equalsIgnoreCase(App.EXTERNAL_APP));
-        deleteApp.setEnabled(selectedOntology != null && targetApp != null && !targetApp.getAppType().equalsIgnoreCase(App.EXTERNAL_APP));
-        refreshPreview.setEnabled(selectedOntology != null && editorTreeStore.getRootItems() != null && editorTreeStore.getRootItems().size() > 0);
-        restoreApp.setEnabled(targetApp != null && targetApp.isDeleted());
+        boolean ontologySelected = selectedOntology != null;
+        boolean isActiveOntology = selectedOntology == activeOntology;
+        boolean editorTreeHasSelection = editorTree.getSelectionModel().getSelectedItem() != null;
+        boolean hasAppSelected = targetApp != null;
+        boolean isExternalApp = hasAppSelected && targetApp.getAppType().equalsIgnoreCase(App.EXTERNAL_APP);
+        boolean isDeletedApp = hasAppSelected && targetApp.isDeleted();
+        boolean editorTreeHasHierarchies = editorTreeStore.getRootItems() != null && editorTreeStore.getRootItems().size() > 0;
+
+        publishButton.setEnabled(ontologySelected && !isActiveOntology);
+        saveHierarchy.setEnabled(ontologySelected);
+        deleteButton.setEnabled(ontologySelected && !isActiveOntology);
+        deleteHierarchy.setEnabled(ontologySelected && editorTreeHasSelection);
+        categorize.setEnabled(ontologySelected && hasAppSelected && !isExternalApp);
+        deleteApp.setEnabled(ontologySelected && hasAppSelected && !isExternalApp && !isDeletedApp);
+        refreshPreview.setEnabled(ontologySelected && editorTreeHasHierarchies);
+        restoreApp.setEnabled(isDeletedApp);
     }
 
     @Override
-    public void maskGrids(String loadingMask) {
-        previewGridView.mask(loadingMask);
-        editorGridView.mask(loadingMask);
+    public void maskGrid(ViewType type) {
+        switch(type) {
+            case EDITOR:
+                editorGridView.mask(appearance.loadingMask());
+                break;
+            case PREVIEW:
+                previewGridView.mask(appearance.loadingMask());
+                break;
+            case ALL:
+                editorGridView.mask(appearance.loadingMask());
+                previewGridView.mask(appearance.loadingMask());
+                break;
+        }
     }
 
     @Override
-    public void unmaskGrids() {
-        previewGridView.unmask();
-        editorGridView.unmask();
+    public void unmaskGrid(ViewType type) {
+        switch(type) {
+            case EDITOR:
+                editorGridView.unmask();
+                break;
+            case PREVIEW:
+                previewGridView.unmask();
+                break;
+            case ALL:
+                editorGridView.unmask();
+                previewGridView.unmask();
+                break;
+        }
     }
 
     @Override
