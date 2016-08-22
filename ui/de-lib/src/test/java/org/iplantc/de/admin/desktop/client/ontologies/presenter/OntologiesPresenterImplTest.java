@@ -657,13 +657,13 @@ public class OntologiesPresenterImplTest {
         /** CALL METHOD UNDER TEST **/
         uut.onDeleteAppsSelected(eventMock);
 
-        verify(viewMock).maskGrids(eq(appearanceMock.loadingMask()));
+        verify(viewMock).maskGrid(eq(OntologiesView.ViewType.ALL));
         verify(adminAppServiceMock).deleteApp(eq(appMock), asyncVoidCaptor.capture());
 
         asyncVoidCaptor.getValue().onSuccess(null);
 
         verify(viewMock).removeApp(appMock);
-        verify(viewMock).unmaskGrids();
+        verify(viewMock).unmaskGrid(OntologiesView.ViewType.ALL);
     }
 
     @Test
@@ -697,7 +697,7 @@ public class OntologiesPresenterImplTest {
         /** CALL METHOD UNDER TEST **/
         uut.onRestoreAppButtonClicked(eventMock);
 
-        verify(viewMock).maskGrids(eq(appearanceMock.loadingMask()));
+        verify(viewMock).maskGrid(eq(OntologiesView.ViewType.EDITOR));
         verify(adminAppServiceMock).restoreApp(eq(appMock), asyncAppCaptor.capture());
 
         asyncAppCaptor.getValue().onSuccess(appMock);
@@ -711,7 +711,7 @@ public class OntologiesPresenterImplTest {
         /** CALL METHOD UNDER TEST **/
         uut.getTrashItems();
 
-        verify(viewMock).maskGrids(eq(appearanceMock.loadingMask()));
+        verify(viewMock).maskGrid(eq(OntologiesView.ViewType.EDITOR));
         verify(appServiceMock).getApps(anyString(), asyncAppListCaptor.capture());
 
         asyncAppListCaptor.getValue().onSuccess(appListMock);

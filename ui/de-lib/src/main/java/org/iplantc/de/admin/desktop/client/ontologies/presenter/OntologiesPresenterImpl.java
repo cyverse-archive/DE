@@ -655,23 +655,22 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     }
 
     void deleteApp(final App selectedApp) {
-        view.maskGrids(appearance.loadingMask());
-        adminAppService.deleteApp(selectedApp,
-                                  new AsyncCallback<Void>() {
         if (!selectedApp.isDeleted()) {
+            view.maskGrid(OntologiesView.ViewType.ALL);
+            adminAppService.deleteApp(selectedApp, new AsyncCallback<Void>() {
 
-                                      @Override
-                                      public void onFailure(Throwable caught) {
-                                          view.unmaskGrids();
-                                          ErrorHandler.post(caught);
-                                      }
+                @Override
+                public void onFailure(Throwable caught) {
+                    view.unmaskGrid(OntologiesView.ViewType.ALL);
+                    ErrorHandler.post(caught);
+                }
 
-                                      @Override
-                                      public void onSuccess(Void result) {
-                                          view.removeApp(selectedApp);
-                                          view.unmaskGrids();
-                                      }
-                                  });
+                @Override
+                public void onSuccess(Void result) {
+                    view.removeApp(selectedApp);
+                    view.unmaskGrid(OntologiesView.ViewType.ALL);
+                }
+            });
         }
     }
 
@@ -702,11 +701,11 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         Preconditions.checkNotNull(app);
         Preconditions.checkArgument(app.isDeleted());
 
-        view.maskGrids(appearance.loadingMask());
+        view.maskGrid(OntologiesView.ViewType.EDITOR);
         adminAppService.restoreApp(app, new AsyncCallback<App>() {
             @Override
             public void onFailure(Throwable caught) {
-                view.unmaskGrids();
+                view.unmaskGrid(OntologiesView.ViewType.EDITOR);
                 JSONObject obj = jsonUtil.getObject(caught.getMessage());
                 String reason = jsonUtil.getString(obj, "reason");
                 if (reason.contains("orphaned")) {
@@ -719,7 +718,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
             @Override
             public void onSuccess(App result) {
                 editorGridPresenter.getView().removeApp(result);
-                view.unmaskGrids();
+                view.unmaskGrid(OntologiesView.ViewType.EDITOR);
                 List<String> hierarchyNames = Lists.newArrayList();
                 for(OntologyHierarchy hierarchy : result.getHierarchies()){
                     hierarchyNames.add(hierarchy.getLabel());
@@ -738,18 +737,18 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     public void getTrashItems() {
         String id = properties.getDefaultTrashAppCategoryId();
         Preconditions.checkNotNull(id);
-        view.maskGrids(appearance.loadingMask());
+        view.maskGrid(OntologiesView.ViewType.EDITOR);
         appService.getApps(id, new AsyncCallback<List<App>>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
-                view.unmaskGrids();
+                view.unmaskGrid(OntologiesView.ViewType.EDITOR);
             }
 
             @Override
             public void onSuccess(List<App> result) {
                 editorGridPresenter.getView().clearAndAdd(result);
-                view.unmaskGrids();
+                view.unmaskGrid(OntologiesView.ViewType.EDITOR);
             }
         });
     }
