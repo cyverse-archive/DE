@@ -144,7 +144,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
             @Override
             public void onSelectionChanged(SelectionChangedEvent<OntologyHierarchy> event) {
                 if (event.getSelection().size() == 1) {
-                    fireEvent(new HierarchySelectedEvent(event.getSelection().get(0), ontologyDropDown.getCurrentValue(), TreeType.EDITOR));
+                    fireEvent(new HierarchySelectedEvent(event.getSelection().get(0), ontologyDropDown.getCurrentValue(), ViewType.EDITOR));
                 }
                 updateButtonStatus();
             }
@@ -154,7 +154,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
             @Override
             public void onSelectionChanged(SelectionChangedEvent<OntologyHierarchy> event) {
                 if (event.getSelection().size() == 1) {
-                    fireEvent(new PreviewHierarchySelectedEvent(event.getSelection().get(0), ontologyDropDown.getCurrentValue(), TreeType.PREVIEW));
+                    fireEvent(new PreviewHierarchySelectedEvent(event.getSelection().get(0), ontologyDropDown.getCurrentValue(), ViewType.PREVIEW));
                 }
                 updateButtonStatus();
             }
@@ -284,7 +284,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     @Override
-    public void clearTreeStore(TreeType type) {
+    public void clearTreeStore(ViewType type) {
         switch(type){
             case EDITOR:
                 editorTreeStore.clear();
@@ -300,7 +300,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     @Override
-    public void addToTreeStore(TreeType type, List<OntologyHierarchy> children) {
+    public void addToTreeStore(ViewType type, List<OntologyHierarchy> children) {
         switch(type) {
             case EDITOR:
                 editorTreeStore.add(children);
@@ -316,7 +316,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     @Override
-    public void addToTreeStore(TreeType type, OntologyHierarchy parent, List<OntologyHierarchy> children) {
+    public void addToTreeStore(ViewType type, OntologyHierarchy parent, List<OntologyHierarchy> children) {
         switch(type) {
             case EDITOR:
                 editorTreeStore.add(parent, children);
@@ -332,7 +332,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     @Override
-    public void maskTree(TreeType type) {
+    public void maskTree(ViewType type) {
         switch(type) {
             case EDITOR:
                 editorTreePanel.mask(appearance.loadingMask());
@@ -348,7 +348,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     @Override
-    public void unmaskTree(TreeType type) {
+    public void unmaskTree(ViewType type) {
         switch(type) {
             case EDITOR:
                 editorTreePanel.unmask();
@@ -382,7 +382,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     @Override
-    public void deselectHierarchies(TreeType type) {
+    public void deselectHierarchies(ViewType type) {
         switch(type) {
             case EDITOR:
                 editorTree.getSelectionModel().deselectAll();
@@ -398,7 +398,7 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     @Override
-    public void reSortTree(TreeType type) {
+    public void reSortTree(ViewType type) {
         switch(type) {
             case EDITOR:
                 editorTreeStore.applySort(false);

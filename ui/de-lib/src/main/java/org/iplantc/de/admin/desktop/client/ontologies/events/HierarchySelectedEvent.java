@@ -31,13 +31,13 @@ public class HierarchySelectedEvent extends GwtEvent<HierarchySelectedEvent.Hier
 
     private OntologyHierarchy hierarchy;
     private Ontology editedOntology;
-    OntologiesView.TreeType treeType;
+    OntologiesView.ViewType viewType;
 
     public HierarchySelectedEvent(OntologyHierarchy hierarchy, Ontology editedOntology,
-                                  OntologiesView.TreeType treeType){
+                                  OntologiesView.ViewType viewType){
         this.hierarchy = hierarchy;
         this.editedOntology = editedOntology;
-        this.treeType = treeType;
+        this.viewType = viewType;
     }
 
     public OntologyHierarchy getHierarchy() {
@@ -53,8 +53,8 @@ public class HierarchySelectedEvent extends GwtEvent<HierarchySelectedEvent.Hier
         return Lists.newArrayList(tag.split("/"));
     }
 
-    public OntologiesView.TreeType getTreeType() {
-        return treeType;
+    public OntologiesView.ViewType getViewType() {
+        return viewType;
     }
 
     public Type<HierarchySelectedEventHandler> getAssociatedType() {

@@ -50,7 +50,7 @@ public interface OntologiesView extends IsWidget,
                                         RefreshPreviewButtonClicked.HasRefreshPreviewButtonClickedHandlers,
                                         RestoreAppButtonClicked.HasRestoreAppButtonClickedHandlers {
 
-    enum TreeType {
+    enum ViewType {
         ALL, EDITOR, PREVIEW
     }
 
@@ -67,21 +67,21 @@ public interface OntologiesView extends IsWidget,
 
     Ontology getSelectedOntology();
 
-    void clearTreeStore(TreeType type);
+    void clearTreeStore(ViewType type);
 
-    void addToTreeStore(TreeType type, List<OntologyHierarchy> children);
+    void addToTreeStore(ViewType type, List<OntologyHierarchy> children);
 
-    void addToTreeStore(TreeType type, OntologyHierarchy parent, List<OntologyHierarchy> children);
+    void addToTreeStore(ViewType type, OntologyHierarchy parent, List<OntologyHierarchy> children);
 
-    void maskTree(TreeType type);
+    void maskTree(ViewType type);
 
     void selectHierarchy(OntologyHierarchy hierarchy);
 
     void selectActiveOntology(Ontology activeOntology);
 
-    void deselectHierarchies(TreeType type);
+    void deselectHierarchies(ViewType type);
 
-    void reSortTree(TreeType type);
+    void reSortTree(ViewType type);
 
     void updateButtonStatus();
 
@@ -93,7 +93,7 @@ public interface OntologiesView extends IsWidget,
 
     void deselectAll();
 
-    void unmaskTree(TreeType type);
+    void unmaskTree(ViewType type);
 
 
     interface OntologiesViewAppearance {
