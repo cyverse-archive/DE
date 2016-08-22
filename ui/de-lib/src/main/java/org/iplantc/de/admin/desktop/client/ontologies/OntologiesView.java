@@ -54,6 +54,7 @@ public interface OntologiesView extends IsWidget,
         ALL, EDITOR, PREVIEW
     }
 
+    String TRASH_CATEGORY = "Trash";
 
     void showOntologyVersions(List<Ontology> result);
 

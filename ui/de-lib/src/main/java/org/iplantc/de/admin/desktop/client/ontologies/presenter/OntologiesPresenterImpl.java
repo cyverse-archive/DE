@@ -173,7 +173,6 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         }
     }
 
-    static final String TRASH_CATEGORY = "Trash";
     @Inject AppAdminServiceFacade adminAppService;
     @Inject DEProperties properties;
     @Inject IplantAnnouncer announcer;
@@ -312,7 +311,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
             return;
         }
 
-        if (hierarchy.getIri().equalsIgnoreCase(TRASH_CATEGORY)) {
+        if (hierarchy.getIri().equalsIgnoreCase(OntologiesView.TRASH_CATEGORY)) {
             deleteApp(targetApp);
             return;
         }
@@ -461,8 +460,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
 
     void addTrashCategory() {
         OntologyHierarchy trash = ontologyUtil.getHierarchyObject();
-        trash.setLabel(TRASH_CATEGORY);
-        trash.setIri(TRASH_CATEGORY);
+        trash.setLabel(OntologiesView.TRASH_CATEGORY);
+        trash.setIri(OntologiesView.TRASH_CATEGORY);
         editorTreeStore.add(trash);
     }
 
@@ -494,7 +493,8 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
     @Override
     public void onCategorizeButtonClicked(CategorizeButtonClickedEvent event) {
         final App selectedApp = event.getSelectedApp();
-        final List<OntologyHierarchy> hierarchyRoots = event.getHierarchyRoots();
+        final List<OntologyHierarchy> hierarchyRoots = Lists.newArrayList();
+        hierarchyRoots.addAll(event.getHierarchyRoots());
         serviceFacade.getAppAVUs(selectedApp, new CategorizeCallback(selectedApp, hierarchyRoots));
     }
 
@@ -544,7 +544,7 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
             return;
         }
 
-        if (hierarchy.getIri().equalsIgnoreCase(TRASH_CATEGORY)) {
+        if (hierarchy.getIri().equalsIgnoreCase(OntologiesView.TRASH_CATEGORY)) {
             getTrashItems();
             return;
         }
