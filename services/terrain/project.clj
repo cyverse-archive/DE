@@ -56,7 +56,7 @@
                   {:url "http://www.biojava.org/download/maven"}]
                  ["sonatype-releases"
                   {:url "https://oss.sonatype.org/content/repositories/releases/"}]
-                 ["local"
-                  {:url "https://everdene.iplantcollaborative.org/maven/repository"
+                 ["nexml"
+                  {:url "http://nexml.github.io/maven/repository"
                    :checksum :ignore}]]
   :jvm-opts ["-Dlogback.configurationFile=/etc/iplant/de/logging/terrain-logging.xml"])
