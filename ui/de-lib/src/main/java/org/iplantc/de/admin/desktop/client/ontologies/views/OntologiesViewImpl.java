@@ -450,14 +450,22 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     }
 
     public void updateButtonStatus() {
-        publishButton.setEnabled(selectedOntology != null && selectedOntology != activeOntology);
-        saveHierarchy.setEnabled(selectedOntology != null);
-        deleteButton.setEnabled(selectedOntology != null && selectedOntology != activeOntology);
-        deleteHierarchy.setEnabled(selectedOntology != null && editorTree.getSelectionModel().getSelectedItem() != null);
-        categorize.setEnabled(selectedOntology != null && targetApp != null && !targetApp.getAppType().equalsIgnoreCase(App.EXTERNAL_APP));
-        deleteApp.setEnabled(selectedOntology != null && targetApp != null && !targetApp.getAppType().equalsIgnoreCase(App.EXTERNAL_APP) && !targetApp.isDeleted());
-        refreshPreview.setEnabled(selectedOntology != null && editorTreeStore.getRootItems() != null && editorTreeStore.getRootItems().size() > 0);
-        restoreApp.setEnabled(targetApp != null && targetApp.isDeleted());
+        boolean ontologySelected = selectedOntology != null;
+        boolean isActiveOntology = selectedOntology == activeOntology;
+        boolean editorTreeHasSelection = editorTree.getSelectionModel().getSelectedItem() != null;
+        boolean hasAppSelected = targetApp != null;
+        boolean isExternalApp = hasAppSelected && targetApp.getAppType().equalsIgnoreCase(App.EXTERNAL_APP);
+        boolean isDeletedApp = hasAppSelected && targetApp.isDeleted();
+        boolean editorTreeHasHierarchies = editorTreeStore.getRootItems() != null && editorTreeStore.getRootItems().size() > 0;
+
+        publishButton.setEnabled(ontologySelected && !isActiveOntology);
+        saveHierarchy.setEnabled(ontologySelected);
+        deleteButton.setEnabled(ontologySelected && !isActiveOntology);
+        deleteHierarchy.setEnabled(ontologySelected && editorTreeHasSelection);
+        categorize.setEnabled(ontologySelected && hasAppSelected && !isExternalApp);
+        deleteApp.setEnabled(ontologySelected && hasAppSelected && !isExternalApp && !isDeletedApp);
+        refreshPreview.setEnabled(ontologySelected && editorTreeHasHierarchies);
+        restoreApp.setEnabled(isDeletedApp);
     }
 
     @Override
