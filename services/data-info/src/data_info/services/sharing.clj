@@ -158,11 +158,12 @@
   [user paths]
   (irods/with-jargon-exceptions [cm]
     (validators/user-exists cm user)
+    (validators/user-exists cm (cfg/anon-user))
     (validators/all-paths-exist cm paths)
     (validators/paths-are-files cm paths)
     (validators/user-owns-paths cm user paths)
     (log/warn "Giving read access to" (cfg/anon-user) "on:" (string/join " " paths))
-    (share cm user [(cfg/anon-user)] paths :read)
+    (share-paths cm user [(cfg/anon-user)] paths :read)
     {:user user :paths (anon-files-urls paths)}))
 
 (defn do-anon-files
