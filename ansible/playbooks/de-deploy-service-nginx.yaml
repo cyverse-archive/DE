@@ -92,7 +92,7 @@
 
 - name: Redeploy jex-adapter-nginx
   hosts: jexevents
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services

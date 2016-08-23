@@ -88,7 +88,7 @@
 
 - name: Redeploy jex-adapter
   hosts: jexevents
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -377,7 +377,7 @@
 
 - name: Redeploy job-status-to-apps-adapter
   hosts: job-status-to-apps-adapter:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -394,7 +394,7 @@
 
 - name: Redeploy job-status-recorder
   hosts: job-status-recorder:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
