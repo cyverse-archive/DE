@@ -162,7 +162,7 @@
   [apps-client user job-id]
   (validate-jobs-for-user user [job-id] "write")
   (let [{:keys [status] :as job} (jp/get-job-by-id job-id)]
-    (when (listings/is-completed? status)
+    (when (jp/completed? status)
       (service/bad-request (str "job, " job-id ", is already completed or canceled")))
     (jp/update-job job-id jp/canceled-status (db/now))
     (try+

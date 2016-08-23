@@ -7,16 +7,6 @@
             [apps.service.util :as util]
             [kameleon.db :as db]))
 
-(defn is-completed?
-  [job-status]
-  (jp/completed-status-codes job-status))
-
-(defn is-running?
-  [job-status]
-  (= jp/running-status job-status))
-
-(def not-completed? (complement is-completed?))
-
 (defn- job-timestamp
   [timestamp]
   (str (or (db/millis-from-timestamp timestamp) 0)))
@@ -28,8 +18,8 @@
 
 (defn- batch-child-status
   [{:keys [status]}]
-  (cond (is-completed? status) :completed
-        (is-running? status)   :running
+  (cond (jp/completed? status) :completed
+        (jp/running? status)   :running
         :else                  :submitted))
 
 (def ^:private empty-batch-child-status

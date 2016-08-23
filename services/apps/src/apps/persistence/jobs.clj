@@ -27,16 +27,19 @@
 (def submitted-status "Submitted")
 (def idle-status "Idle")
 (def running-status "Running")
+(def impending-cancellation-status "ImpendingCancellation")
+(def running-status-codes #{running-status impending-cancellation-status})
 (def completed-status-codes #{canceled-status failed-status completed-status})
 
 (def job-status-order
-  {pending-status   0
-   submitted-status 1
-   idle-status      2
-   running-status   3
-   completed-status 4
-   failed-status    4
-   canceled-status  4})
+  {pending-status                0
+   submitted-status              1
+   idle-status                   2
+   running-status                3
+   impending-cancellation-status 3
+   completed-status              4
+   failed-status                 4
+   canceled-status               4})
 
 (defn valid-status?
   "Determines whether or not the given status is a valid status code in the DE."

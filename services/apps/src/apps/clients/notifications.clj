@@ -8,8 +8,14 @@
             [clojure.tools.logging :as log]
             [apps.clients.notifications.app-sharing :as asn]
             [apps.clients.notifications.job-sharing :as jsn]
+            [apps.persistence.jobs :as jp]
             [apps.persistence.tool-requests :as tp]
             [apps.util.config :as config]))
+
+(def ^:private emailable-job-statuses
+  #{jp/completed-status
+    jp/failed-status
+    jp/impending-cancellation-status})
 
 (defn notificationagent-url
   [& components]
@@ -40,7 +46,7 @@
 (defn- send-email?
   [job-info]
   (boolean (and (:notify job-info false)
-                (#{"Completed" "Failed"} (:status job-info)))))
+                (emailable-job-statuses (:status job-info)))))
 
 (defn- format-job-status-update
   "Formats a job status update notification to send to the notification agent."
