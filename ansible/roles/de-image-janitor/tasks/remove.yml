@@ -6,5 +6,5 @@
   file: path=/lib/systemd/system/image-janitor.service state=absent
 
 - name: reload systemd
-  sudo: true
+  become: true
   shell: systemctl daemon-reload

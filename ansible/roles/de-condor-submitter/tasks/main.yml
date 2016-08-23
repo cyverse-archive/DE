@@ -16,11 +16,11 @@
       - verify
 
 # - name: set the /etc/condor/condor_config.local file
-#   sudo: yes
+#   become: yes
 #   template: src=condor_config.local.j2 dest=/etc/condor/condor_config.local owner=root group=root mode=0644
 
 # - name: restart condor
-#   sudo: yes
+#   become: yes
 #   service: name=condor state=restarted enabled=yes
 
 - name: Copy event_log file to /etc/condor/config.d/
@@ -36,7 +36,7 @@
       - config
 
 - name: start condor
-  sudo: yes
+  become: yes
   service: name=condor state=restarted
   tags:
       - condor
@@ -44,7 +44,7 @@
       - restart_condor
 
 - name: enable condor
-  sudo: yes
+  become: yes
   service: name=condor enabled=true
   tags:
       - condor

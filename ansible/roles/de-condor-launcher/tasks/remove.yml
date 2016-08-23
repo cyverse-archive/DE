@@ -6,5 +6,5 @@
   file: path=/lib/systemd/system/condor-launcher.service state=absent
 
 - name: reload systemd
-  sudo: true
+  become: true
   shell: systemctl daemon-reload

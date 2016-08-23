@@ -1,5 +1,5 @@
 ---
 - name: create the docker network for the de
-  sudo: true
+  become: true
   ignore_errors: yes
   shell: "docker network create --driver {% if use_overlay %}overlay{% else %}bridge{% endif %} de-{{environment_name}}"

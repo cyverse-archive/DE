@@ -41,7 +41,7 @@ Example Playbook
 ----------------
 
     - hosts: services
-      sudo: yes
+      become: yes
       roles:
          - role: util-cfg-systemd-unit
            service_name_short:

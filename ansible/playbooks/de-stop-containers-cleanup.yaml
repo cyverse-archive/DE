@@ -9,12 +9,12 @@
   post_tasks:
     - name: remove clm
       ignore_errors: yes
-      sudo: yes
+      become: yes
       shell: docker kill clm
 
 - name: Stop jex-events
   hosts: jexevents:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -22,9 +22,9 @@
   post_tasks:
     - name: stop jex-events
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker kill jexevents
     - name: stop jex-events part 2
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker kill jex-events

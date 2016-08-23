@@ -18,12 +18,12 @@
       shell: docker rm -v clm
     - name: annihilate clm configs
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v config_clm
 
 - name: Remove jex-events
   hosts: jexevents:&systems
-  sudo: true
+  become: true
   gather_facts: false
   tags:
     - services
@@ -39,9 +39,9 @@
       shell: docker rm -v jex-events
     - name: annihilate jex-events part 3
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v config_jex_events
     - name: annihilate jex-events part 4
       ignore_errors: yes
-      sudo: true
+      become: true
       shell: docker rm -v config_jexevents

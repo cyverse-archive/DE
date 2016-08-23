@@ -22,7 +22,7 @@
     - docker_pull
 
 - name: install jex logback.xml file
-  sudo: yes
+  become: yes
   shell: docker run --rm -v /usr/local/lib/jex:/jex --entrypoint "cp" {{docker.user}}/jex:{{docker.tag}} /logback.xml /jex/logback.xml
   tags:
     - jex
@@ -47,7 +47,7 @@
     - docker_pull
 
 - name: create /usr/local/bin/jex
-  sudo: yes
+  become: yes
   template: dest=/usr/local/bin/jex src=jex.j2 mode=0755
   tags:
     - jex

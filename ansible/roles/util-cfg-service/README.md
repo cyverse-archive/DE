@@ -35,7 +35,7 @@ Example Playbook
 ----------------
 
     - hosts: some-group
-      sudo: yes
+      become: yes
       roles:
          - role: util-cfg-service
            service_name_short: my-service 

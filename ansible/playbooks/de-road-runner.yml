@@ -1,6 +1,6 @@
 - name: Configure road-runner
   hosts: condor:services
-  sudo: yes
+  become: yes
   gather_facts: false
   tags:
     - road-runner

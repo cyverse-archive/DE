@@ -1,6 +1,6 @@
 - name: Configure condor-launcher
   hosts: jex
-  sudo: yes
+  become: yes
   gather_facts: false
   tags:
     - condor-launcher
