@@ -7,14 +7,18 @@
             [clojure.tools.logging :as log]
             [clojure-commons.exception-util :as cxu]))
 
-(defn supports-job-sharing?
+(defn job-steps-support-job-sharing?
   [apps-client job-steps]
   (every? #(.supportsJobSharing apps-client %) job-steps))
+
+(defn job-supports-job-sharing?
+  [apps-client job-id]
+  (job-steps-support-job-sharing? apps-client (jp/list-representative-job-steps [job-id])))
 
 (defn- validate-job-sharing-support
   [apps-client job-ids]
   (doseq [job-id job-ids]
-    (when-not (supports-job-sharing? apps-client job-id)
+    (when-not (job-supports-job-sharing? apps-client job-id)
       (cxu/bad-request (str "analysis sharing not supported for " job-id)))))
 
 (defn- verify-not-subjobs
