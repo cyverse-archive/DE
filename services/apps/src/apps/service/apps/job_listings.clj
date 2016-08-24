@@ -58,7 +58,7 @@
     :parent_id       parent-id
     :batch           (:is-batch job)
     :batch_status    (when (:is-batch job) (format-batch-status id))
-    :can_share       (and (nil? parent-id) (job-permissions/supports-job-sharing? apps-client (rep-steps id)))}))
+    :can_share       (and (nil? parent-id) (job-permissions/job-steps-support-job-sharing? apps-client (rep-steps id)))}))
 
 (defn- list-jobs*
   [{:keys [username]} search-params types analysis-ids]

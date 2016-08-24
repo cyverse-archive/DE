@@ -77,7 +77,7 @@
 
 (defn- verify-support
   [apps-client job-id]
-  (when-not (job-permissions/supports-job-sharing? apps-client job-id)
+  (when-not (job-permissions/job-supports-job-sharing? apps-client job-id)
     (job-sharing-msg :not-supported job-id)))
 
 (defn- share-app-for-job
