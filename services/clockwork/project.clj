@@ -30,9 +30,6 @@
                  [com.mchange/c3p0 "0.9.5.1"]
                  [korma "0.3.0-RC5"
                   :exclusions [c3p0]]
-                 [org.iplantc/clj-jargon "5.2.8.0"
-                   :exclusions [[org.slf4j/slf4j-log4j12]
-                                [log4j]]]
                  [org.iplantc/clojure-commons "5.2.8.0"]
                  [org.iplantc/common-cli "5.2.8.0"]
                  [org.iplantc/kameleon "5.2.8.0"]

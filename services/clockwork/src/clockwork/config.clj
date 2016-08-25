@@ -1,7 +1,6 @@
 (ns clockwork.config
   (:use [slingshot.slingshot :only [throw+]])
-  (:require [clj-jargon.init :as jargon]
-            [clojure-commons.config :as cc]
+  (:require [clojure-commons.config :as cc]
             [clojure-commons.error-codes :as ce]))
 
 (def ^:private props
@@ -113,9 +112,3 @@
   (cc/load-config-from-file cfg-path props)
   (cc/log-config props)
   (validate-config))
-
-(defn jargon-config
-  "Obtains a Jargon configuration map."
-  []
-  (jargon/init (irods-host) (irods-port) (irods-user) (irods-password) (irods-home) (irods-zone)
-               (irods-resource)))
