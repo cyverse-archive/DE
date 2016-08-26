@@ -80,12 +80,12 @@
      info types."
   [^String user ^String zone ^String folder-path ^Keyword entity-type & [info-types]]
   (let [type-cond (q/mk-file-type-cond info-types)
-        query     (case entity-type
+        queries   (case entity-type
                     :any    (q/mk-count-items-in-folder user zone folder-path type-cond)
                     :file   (q/mk-count-files-in-folder user zone folder-path type-cond)
                     :folder (q/mk-count-folders-in-folder user zone folder-path)
                             (throw (Exception. (str "invalid entity type " entity-type))))]
-    (-> (run-query-string query) first :total)))
+    (-> (apply run-transaction queries) first :total)))
 
 
 (defn number-of-all-items-under-folder

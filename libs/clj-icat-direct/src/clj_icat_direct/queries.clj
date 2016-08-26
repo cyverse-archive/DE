@@ -296,7 +296,7 @@
           SELECT ((" folder-query ") + (" file-query ")) AS total")))
 
 
-(defn ^String mk-count-files-in-folder
+(defn ^ISeq mk-count-files-in-folder
   "This function constructs a query for counting all of the files that are direct members of a given
    folder, accessible to a given user, and satisfy a given info type condition.
 
@@ -310,13 +310,13 @@
     It returns the properly formatted SELECT query."
   [^String user ^String zone ^String parent-path ^String info-type-cond]
   (let [group-query "SELECT group_user_id FROM groups"]
-    (str "WITH groups    AS (" (mk-groups user zone) "),
-               objs      AS (" (mk-unique-objs-in-coll parent-path ) "),
-               file_avus AS (" (mk-obj-avus "SELECT data_id FROM objs") ")
-         " (mk-count-objs-of-type "objs" "file_avus" group-query info-type-cond))))
+    [[(str "CREATE TEMPORARY TABLE groups ON COMMIT DROP AS " (mk-groups user zone))]
+     [(str "CREATE TEMPORARY TABLE objs ON COMMIT DROP AS " (mk-unique-objs-in-coll parent-path))]
+     [(str "CREATE TEMPORARY TABLE file_avus ON COMMIT DROP AS SELECT object_id, meta_attr_value, meta_attr_name FROM (" (mk-obj-avus "SELECT data_id FROM objs") ") obj_avus")]
+     [(str (mk-count-objs-of-type "objs" "file_avus" group-query info-type-cond))]]))
 
 
-(defn ^String mk-count-folders-in-folder
+(defn ^ISeq mk-count-folders-in-folder
   "This function constructs a query for counting all of the folders that are direct members of a
    given folder and accessible to a given user.
 
@@ -329,12 +329,12 @@
     It returns the properly formatted SELECT query."
   [^String user ^String zone ^String parent-path]
   (let [group-query "SELECT group_user_id FROM groups"]
-    (str "WITH groups AS (" (mk-groups user zone) ")
-         " (mk-count-colls-in-coll parent-path group-query))))
+    [[(str "WITH groups AS (" (mk-groups user zone) ")
+           " (mk-count-colls-in-coll parent-path group-query))]]))
 
 
-(defn ^String mk-count-items-in-folder
-  "This function constructs a query for counting all of the files and folders that are direct
+(defn ^ISeq mk-count-items-in-folder
+  "This function constructs a set of queries for counting all of the files and folders that are direct
    members of a given folder, accessible to a given user, and satisfy a given info type condition.
 
    Parameters:
@@ -349,10 +349,10 @@
   (let [group-query   "SELECT group_user_id FROM groups"
         folders-query (mk-count-colls-in-coll parent-path group-query)
         files-query   (mk-count-objs-of-type "objs" "file_avus" group-query info-type-cond)]
-    (str "WITH groups    AS (" (mk-groups user zone) "),
-               objs      AS (" (mk-unique-objs-in-coll parent-path ) "),
-               file_avus AS (" (mk-obj-avus "SELECT data_id FROM objs") ")
-          SELECT ((" folders-query ") + (" files-query ")) AS total")))
+    [[(str "CREATE TEMPORARY TABLE groups ON COMMIT DROP AS " (mk-groups user zone))]
+     [(str "CREATE TEMPORARY TABLE objs ON COMMIT DROP AS " (mk-unique-objs-in-coll parent-path))]
+     [(str "CREATE TEMPORARY TABLE file_avus ON COMMIT DROP AS SELECT object_id, meta_attr_value, meta_attr_name FROM (" (mk-obj-avus "SELECT data_id FROM objs") ") obj_avus")]
+     [(str "SELECT ((" folders-query ") + (" files-query ")) AS total")]]))
 
 
 (defn ^ISeq mk-paged-files-in-folder
