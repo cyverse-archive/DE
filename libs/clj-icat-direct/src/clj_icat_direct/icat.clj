@@ -3,7 +3,6 @@
   (:require [clojure.string :as string]
             [korma.db :as db]
             [korma.core :as k]
-            [clojure.java.jdbc :as jdbc]
             [clj-icat-direct.queries :as q])
   (:import [clojure.lang ISeq Keyword]))
 
@@ -48,8 +47,8 @@
     (let [side-effects (drop-last 1 queries)
           final-query-and-args (last queries)]
       (doseq [q side-effects]
-        ; uses jdbc/execute! because this can run DDL statements like CREATE TEMPORARY TABLE
-        (jdbc/execute! db/*current-conn* q))
+        ; uses exec-raw directly here to exclude :results so this can run DDL statements
+        (k/exec-raw icat q))
       (apply run-query-string final-query-and-args))))
 
 (defn number-of-files-in-folder
