@@ -3,6 +3,7 @@
   (:require [clojure.string :as string]
             [korma.db :as db]
             [korma.core :as k]
+            [clojure.java.jdbc :as jdbc]
             [clj-icat-direct.queries :as q])
   (:import [clojure.lang ISeq Keyword]))
 
@@ -37,6 +38,19 @@
    clj-icat-direct.queries first."
   [query & args]
   (k/exec-raw icat [query args] :results))
+
+(defn- run-transaction
+  "Runs the set of passed-in query strings+args in a transaction, returning
+  what the last one returns. This is intended to be used to create temporary
+  tables to circumvent the fact postgresql is bad at doing estimates on CTEs."
+  [& queries]
+  (db/transaction
+    (let [side-effects (drop-last 1 queries)
+          final-query-and-args (last queries)]
+      (doseq [q side-effects]
+        ; uses jdbc/execute! because this can run DDL statements like CREATE TEMPORARY TABLE
+        (jdbc/execute! db/*current-conn* q))
+      (apply run-query-string final-query-and-args))))
 
 (defn number-of-files-in-folder
   "Returns the number of files in a folder that the user has access to."
@@ -212,14 +226,16 @@
                      :file   q/mk-paged-files-in-folder
                      :folder q/mk-paged-folders-in-folder
                              (throw (Exception. (str "invalid entity type " entity-type))))
-        query (query-ctor
+        queries (query-ctor
                 :user           user
                 :zone           zone
                 :parent-path    folder-path
                 :info-type-cond (q/mk-file-type-cond info-types)
                 :sort-column    (resolve-sort-column sort-column)
-                :sort-direction (resolve-sort-direction sort-direction))]
-    (map fmt-info-type (run-query-string query limit offset))))
+                :sort-direction (resolve-sort-direction sort-direction)
+                :limit limit
+                :offset offset)]
+    (map fmt-info-type (apply run-transaction queries))))
 
 
 (defn select-files-with-uuids

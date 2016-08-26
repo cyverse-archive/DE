@@ -355,8 +355,8 @@
           SELECT ((" folders-query ") + (" files-query ")) AS total")))
 
 
-(defn ^String mk-paged-files-in-folder
-  "This function constructs a parameterized query for returning a sorted page of files that are
+(defn ^ISeq mk-paged-files-in-folder
+  "This function constructs a parameterized set of queries for returning a sorted page of files that are
    direct members of a given folder, accessible to a given user, and satisfy a given info type
    condition.
 
@@ -368,6 +368,7 @@
      sort-column    - the result field to sort on:
                       (type|modify_ts|create_ts|data_size|base_name|full_path)
      sort-direction - the direction of the sort
+     limit & offset - limit and offset to pass to the query
 
   Returns:
     It returns the properly formatted parameterized SELECT query. The query is parameterized over
@@ -383,19 +384,19 @@
       create_ts      - the iRODS timestamp string for when the file was created
       modify_ts      - the iRODS timestamp string for when the file was last modified
       access_type_id - the ICAT DB Id indicating the user's level of access to the file"
-  [& {:keys [user zone parent-path info-type-cond sort-column sort-direction]}]
+  [& {:keys [user zone parent-path info-type-cond sort-column sort-direction limit offset]}]
   (let [group-query "SELECT group_user_id FROM groups"]
-    (str "WITH groups    AS (" (mk-groups user zone) "),
-               objs      AS (" (mk-unique-objs-in-coll parent-path) "),
-               file_avus AS (" (mk-obj-avus "SELECT data_id FROM objs") ")
-         " (mk-files-in-folder parent-path group-query info-type-cond "objs" "file_avus") "
+    [[(str "CREATE TEMPORARY TABLE groups ON COMMIT DROP AS " (mk-groups user zone))]
+     [(str "CREATE TEMPORARY TABLE objs ON COMMIT DROP AS " (mk-unique-objs-in-coll parent-path))]
+     [(str "CREATE TEMPORARY TABLE file_avus ON COMMIT DROP AS SELECT object_id, meta_attr_value, meta_attr_name FROM (" (mk-obj-avus "SELECT data_id FROM objs") ") obj_avus")]
+     [(str (mk-files-in-folder parent-path group-query info-type-cond "objs" "file_avus") "
            ORDER BY " sort-column " " sort-direction "
            LIMIT ?
-           OFFSET ?")))
+           OFFSET ?") limit offset]]))
 
 
-(defn ^String mk-paged-folders-in-folder
-  "This function constructs a parameterized query for returning a sorted page of folders that are
+(defn ^ISeq mk-paged-folders-in-folder
+  "This function constructs a parameterized set of queries for returning a sorted page of folders that are
    direct members of a given folder and accessible to a given user.
 
    Parameters:
@@ -405,6 +406,7 @@
      sort-column    - the result field to sort on:
                       (type|modify_ts|create_ts|data_size|base_name|full_path)
      sort-direction - the direction of the sort
+     limit & offset - limit and offset to pass to the query
 
   Returns:
     It returns the properly formatted parameterized SELECT query. The query is parameterized over
@@ -420,16 +422,16 @@
       create_ts      - the iRODS timestamp string for when the folder was created
       modify_ts      - the iRODS timestamp string for when the folder was last modified
       access_type_id - the ICAT DB Id indicating the user's level of access to the folder"
-  [& {:keys [user zone parent-path sort-column sort-direction]}]
-  (str "WITH groups AS (" (mk-groups user zone) ")
+  [& {:keys [user zone parent-path sort-column sort-direction limit offset]}]
+  [[(str "WITH groups AS (" (mk-groups user zone) ")
        " (mk-folders-in-folder parent-path "SELECT group_user_id FROM groups") "
         ORDER BY " sort-column " " sort-direction "
         LIMIT ?
-        OFFSET ?"))
+        OFFSET ?") limit offset]])
 
 
-(defn ^String mk-paged-folder
-  "This function constructs a parameterized query for returning a sorted page of files and folders
+(defn ^ISeq mk-paged-folder
+  "This function constructs a set of parameterized queries for returning a sorted page of files and folders
    that are direct members of a given folder, accessible to a given user, and satisfy a given info
    type condition.
 
@@ -441,6 +443,7 @@
      sort-column    - the result field to sort on:
                       (type|modify_ts|create_ts|data_size|base_name|full_path)
      sort-direction - the direction of the sort
+     limit & offset - limit and offset to pass to the query
 
   Returns:
     It returns the properly formatted parameterized SELECT query. The query is parameterized over
@@ -458,19 +461,19 @@
       create_ts      - the iRODS timestamp string for when the file or folder was created
       modify_ts      - the iRODS timestamp string for when the file or folder was last modified
       access_type_id - the ICAT DB Id indicating the user's level of access to the file or folder"
-  [& {:keys [user zone parent-path info-type-cond sort-column sort-direction]}]
+  [& {:keys [user zone parent-path info-type-cond sort-column sort-direction limit offset]}]
   (let [group-query   "SELECT group_user_id FROM groups"
         folders-query (mk-folders-in-folder parent-path group-query)
         files-query   (mk-files-in-folder parent-path group-query info-type-cond "objs"
                                           "file_avus")]
-    (str "WITH groups    AS (" (mk-groups user zone) "),
-               objs      AS (" (mk-unique-objs-in-coll parent-path) "),
-               file_avus AS (" (mk-obj-avus "SELECT data_id FROM objs") ")
+    [[(str "CREATE TEMPORARY TABLE groups ON COMMIT DROP AS " (mk-groups user zone))]
+     [(str "CREATE TEMPORARY TABLE objs ON COMMIT DROP AS " (mk-unique-objs-in-coll parent-path))]
+     [(str "WITH file_avus AS (" (mk-obj-avus "SELECT data_id FROM objs") ")
           SELECT *
             FROM (" folders-query " UNION " files-query ") AS t
             ORDER BY type ASC, " sort-column " " sort-direction "
             LIMIT ?
-            OFFSET ?")))
+            OFFSET ?") limit offset]]))
 
 
 (defn ^String mk-count-uuids-of-file-type
