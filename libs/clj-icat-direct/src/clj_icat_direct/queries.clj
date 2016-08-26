@@ -145,7 +145,7 @@
 
 (defn- mk-obj-avus
   [obj-ids-query]
-  (str "SELECT *
+  (str "SELECT object_id, meta_attr_value, meta_attr_name
           FROM r_objt_metamap AS o JOIN r_meta_main AS m ON o.meta_id = m.meta_id
           WHERE o.object_id = ANY(ARRAY(" obj-ids-query "))"))
 
@@ -316,7 +316,7 @@
   (let [group-query "SELECT group_user_id FROM groups"]
     [[(mk-temp-table "groups" (mk-groups user zone))]
      [(mk-temp-table "objs" (mk-unique-objs-in-coll parent-path))]
-     [(mk-temp-table "file_avus" (str "SELECT object_id, meta_attr_value, meta_attr_name FROM (" (mk-obj-avus "SELECT data_id FROM objs") ") obj_avus"))]
+     [(mk-temp-table "file_avus" (mk-obj-avus "SELECT data_id FROM objs"))]
      [(str (mk-count-objs-of-type "objs" "file_avus" group-query info-type-cond))]]))
 
 
@@ -355,7 +355,7 @@
         files-query   (mk-count-objs-of-type "objs" "file_avus" group-query info-type-cond)]
     [[(mk-temp-table "groups" (mk-groups user zone))]
      [(mk-temp-table "objs" (mk-unique-objs-in-coll parent-path))]
-     [(mk-temp-table "file_avus" (str "SELECT object_id, meta_attr_value, meta_attr_name FROM (" (mk-obj-avus "SELECT data_id FROM objs") ") obj_avus"))]
+     [(mk-temp-table "file_avus" (mk-obj-avus "SELECT data_id FROM objs"))]
      [(str "SELECT ((" folders-query ") + (" files-query ")) AS total")]]))
 
 
@@ -392,7 +392,7 @@
   (let [group-query "SELECT group_user_id FROM groups"]
     [[(mk-temp-table "groups" (mk-groups user zone))]
      [(mk-temp-table "objs" (mk-unique-objs-in-coll parent-path))]
-     [(mk-temp-table "file_avus" (str "SELECT object_id, meta_attr_value, meta_attr_name FROM (" (mk-obj-avus "SELECT data_id FROM objs") ") obj_avus"))]
+     [(mk-temp-table "file_avus" (mk-obj-avus "SELECT data_id FROM objs"))]
      [(str (mk-files-in-folder parent-path group-query info-type-cond "objs" "file_avus") "
            ORDER BY " sort-column " " sort-direction "
            LIMIT ?
@@ -472,7 +472,7 @@
                                           "file_avus")]
     [[(mk-temp-table "groups" (mk-groups user zone))]
      [(mk-temp-table "objs" (mk-unique-objs-in-coll parent-path))]
-     [(mk-temp-table "file_avus" (str "SELECT object_id, meta_attr_value, meta_attr_name FROM (" (mk-obj-avus "SELECT data_id FROM objs") ") obj_avus"))]
+     [(mk-temp-table "file_avus" (mk-obj-avus "SELECT data_id FROM objs"))]
      [(str "SELECT *
             FROM (" folders-query " UNION " files-query ") AS t
             ORDER BY type ASC, " sort-column " " sort-direction "
