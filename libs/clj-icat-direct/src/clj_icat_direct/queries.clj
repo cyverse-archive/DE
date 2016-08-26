@@ -42,6 +42,10 @@
   (str "c.coll_name = '" path "'"))
 
 
+(defn- mk-temp-table
+  [table-name query]
+  (str "CREATE TEMPORARY TABLE " table-name " ON COMMIT DROP AS " query))
+
 (defn- mk-bad-cond
   [mk-bad-chars-cond mk-bad-name-cond mk-bad-path-cond parent-path bad-chars bad-names bad-paths]
   (let [conds (concat (when-not (empty? bad-chars) [(mk-bad-chars-cond parent-path bad-chars)])
@@ -310,9 +314,9 @@
     It returns the properly formatted SELECT query."
   [^String user ^String zone ^String parent-path ^String info-type-cond]
   (let [group-query "SELECT group_user_id FROM groups"]
-    [[(str "CREATE TEMPORARY TABLE groups ON COMMIT DROP AS " (mk-groups user zone))]
-     [(str "CREATE TEMPORARY TABLE objs ON COMMIT DROP AS " (mk-unique-objs-in-coll parent-path))]
-     [(str "CREATE TEMPORARY TABLE file_avus ON COMMIT DROP AS SELECT object_id, meta_attr_value, meta_attr_name FROM (" (mk-obj-avus "SELECT data_id FROM objs") ") obj_avus")]
+    [[(mk-temp-table "groups" (mk-groups user zone))]
+     [(mk-temp-table "objs" (mk-unique-objs-in-coll parent-path))]
+     [(mk-temp-table "file_avus" (str "SELECT object_id, meta_attr_value, meta_attr_name FROM (" (mk-obj-avus "SELECT data_id FROM objs") ") obj_avus"))]
      [(str (mk-count-objs-of-type "objs" "file_avus" group-query info-type-cond))]]))
 
 
@@ -349,9 +353,9 @@
   (let [group-query   "SELECT group_user_id FROM groups"
         folders-query (mk-count-colls-in-coll parent-path group-query)
         files-query   (mk-count-objs-of-type "objs" "file_avus" group-query info-type-cond)]
-    [[(str "CREATE TEMPORARY TABLE groups ON COMMIT DROP AS " (mk-groups user zone))]
-     [(str "CREATE TEMPORARY TABLE objs ON COMMIT DROP AS " (mk-unique-objs-in-coll parent-path))]
-     [(str "CREATE TEMPORARY TABLE file_avus ON COMMIT DROP AS SELECT object_id, meta_attr_value, meta_attr_name FROM (" (mk-obj-avus "SELECT data_id FROM objs") ") obj_avus")]
+    [[(mk-temp-table "groups" (mk-groups user zone))]
+     [(mk-temp-table "objs" (mk-unique-objs-in-coll parent-path))]
+     [(mk-temp-table "file_avus" (str "SELECT object_id, meta_attr_value, meta_attr_name FROM (" (mk-obj-avus "SELECT data_id FROM objs") ") obj_avus"))]
      [(str "SELECT ((" folders-query ") + (" files-query ")) AS total")]]))
 
 
@@ -386,9 +390,9 @@
       access_type_id - the ICAT DB Id indicating the user's level of access to the file"
   [& {:keys [user zone parent-path info-type-cond sort-column sort-direction limit offset]}]
   (let [group-query "SELECT group_user_id FROM groups"]
-    [[(str "CREATE TEMPORARY TABLE groups ON COMMIT DROP AS " (mk-groups user zone))]
-     [(str "CREATE TEMPORARY TABLE objs ON COMMIT DROP AS " (mk-unique-objs-in-coll parent-path))]
-     [(str "CREATE TEMPORARY TABLE file_avus ON COMMIT DROP AS SELECT object_id, meta_attr_value, meta_attr_name FROM (" (mk-obj-avus "SELECT data_id FROM objs") ") obj_avus")]
+    [[(mk-temp-table "groups" (mk-groups user zone))]
+     [(mk-temp-table "objs" (mk-unique-objs-in-coll parent-path))]
+     [(mk-temp-table "file_avus" (str "SELECT object_id, meta_attr_value, meta_attr_name FROM (" (mk-obj-avus "SELECT data_id FROM objs") ") obj_avus"))]
      [(str (mk-files-in-folder parent-path group-query info-type-cond "objs" "file_avus") "
            ORDER BY " sort-column " " sort-direction "
            LIMIT ?
@@ -466,10 +470,10 @@
         folders-query (mk-folders-in-folder parent-path group-query)
         files-query   (mk-files-in-folder parent-path group-query info-type-cond "objs"
                                           "file_avus")]
-    [[(str "CREATE TEMPORARY TABLE groups ON COMMIT DROP AS " (mk-groups user zone))]
-     [(str "CREATE TEMPORARY TABLE objs ON COMMIT DROP AS " (mk-unique-objs-in-coll parent-path))]
-     [(str "WITH file_avus AS (" (mk-obj-avus "SELECT data_id FROM objs") ")
-          SELECT *
+    [[(mk-temp-table "groups" (mk-groups user zone))]
+     [(mk-temp-table "objs" (mk-unique-objs-in-coll parent-path))]
+     [(mk-temp-table "file_avus" (str "SELECT object_id, meta_attr_value, meta_attr_name FROM (" (mk-obj-avus "SELECT data_id FROM objs") ") obj_avus"))]
+     [(str "SELECT *
             FROM (" folders-query " UNION " files-query ") AS t
             ORDER BY type ASC, " sort-column " " sort-direction "
             LIMIT ?
