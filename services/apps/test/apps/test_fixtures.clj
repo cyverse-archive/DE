@@ -1,6 +1,7 @@
 (ns apps.test-fixtures
   (:use [korma.db :only [create-db default-connection]])
   (:require [apps.util.config :as config]
+            [apps.user :as user]
             [clojure.string :as string]
             [clojure.tools.logging :as log]
             [metadata-client.core :as metadata-client]))
@@ -20,6 +21,13 @@
 (defn with-test-db [f]
   (default-connection (create-db {:connection-uri (or (System/getenv "DBURI") default-db-uri)}))
   (f))
+
+(defn with-test-user [f]
+  (user/with-user [{:user       "ipctest"
+                    :email      "ipctest@cyverse.org"
+                    :first-name "IPC"
+                    :last-name  "Test"}]
+                  (f)))
 
 (defn run-integration-tests [f]
   (when (System/getenv "RUN_INTEGRATION_TESTS")
