@@ -38,6 +38,19 @@
   [query & args]
   (k/exec-raw icat [query args] :results))
 
+(defn- run-transaction
+  "Runs the set of passed-in query strings+args in a transaction, returning
+  what the last one returns. This is intended to be used to create temporary
+  tables to circumvent the fact postgresql is bad at doing estimates on CTEs."
+  [& queries]
+  (db/transaction
+    (let [side-effects (drop-last 1 queries)
+          final-query-and-args (last queries)]
+      (doseq [q side-effects]
+        ; uses exec-raw directly here to exclude :results so this can run DDL statements
+        (k/exec-raw icat q))
+      (apply run-query-string final-query-and-args))))
+
 (defn number-of-files-in-folder
   "Returns the number of files in a folder that the user has access to."
   [user zone folder-path]
@@ -66,12 +79,12 @@
      info types."
   [^String user ^String zone ^String folder-path ^Keyword entity-type & [info-types]]
   (let [type-cond (q/mk-file-type-cond info-types)
-        query     (case entity-type
+        queries   (case entity-type
                     :any    (q/mk-count-items-in-folder user zone folder-path type-cond)
                     :file   (q/mk-count-files-in-folder user zone folder-path type-cond)
                     :folder (q/mk-count-folders-in-folder user zone folder-path)
                             (throw (Exception. (str "invalid entity type " entity-type))))]
-    (-> (run-query-string query) first :total)))
+    (-> (apply run-transaction queries) first :total)))
 
 
 (defn number-of-all-items-under-folder
@@ -212,14 +225,16 @@
                      :file   q/mk-paged-files-in-folder
                      :folder q/mk-paged-folders-in-folder
                              (throw (Exception. (str "invalid entity type " entity-type))))
-        query (query-ctor
+        queries (query-ctor
                 :user           user
                 :zone           zone
                 :parent-path    folder-path
                 :info-type-cond (q/mk-file-type-cond info-types)
                 :sort-column    (resolve-sort-column sort-column)
-                :sort-direction (resolve-sort-direction sort-direction))]
-    (map fmt-info-type (run-query-string query limit offset))))
+                :sort-direction (resolve-sort-direction sort-direction)
+                :limit limit
+                :offset offset)]
+    (map fmt-info-type (apply run-transaction queries))))
 
 
 (defn select-files-with-uuids
