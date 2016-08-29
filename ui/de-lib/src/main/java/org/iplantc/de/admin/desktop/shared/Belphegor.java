@@ -15,8 +15,16 @@ public interface Belphegor {
         String SYSTEM_MESSAGE = ".systemMessage";
         String TOOL_ADMIN = ".toolAdmin";
         String TOOL_REQUEST = ".toolRequest";
-        String ONTOLOGIES = ".ontologies";
+        String CATALOG = ".catalog";
         String WORKSHOP_ADMIN = ".workshopAdmin";
+        String CATALOG_TAB = ".catalogTab";
+        String REFERENCE_GENOME_TAB = ".referenceGenomeTab";
+        String TOOL_REQUEST_TAB = ".toolRequestTab";
+        String TOOL_ADMIN_TAB = ".toolAdminTab";
+        String SYSTEM_MESSAGE_TAB = ".systemMessageTab";
+        String METADATA_TAB = ".metadataTab";
+        String PERMID_TAB = ".permIdTab";
+        String WORKSHOP_ADMIN_TAB = ".workshopAdminTab";
     }
 
     interface AppIds {

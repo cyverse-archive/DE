@@ -10,6 +10,7 @@ import org.iplantc.de.admin.desktop.client.toolRequest.ToolRequestView;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.WorkshopAdminView;
 import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.UserInfo;
+import org.iplantc.de.commons.client.widgets.DETabPanel;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 
 import com.google.gwt.core.client.GWT;
@@ -41,6 +42,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
     interface BelphegorViewUiBinder extends UiBinder<Widget, BelphegorViewImpl> {}
 
     @UiField HtmlLayoutContainer northCon;
+    @UiField DETabPanel deTabPanel;
     @UiField SimpleContainer ontologiesPanel, refGenomePanel, toolRequestPanel, systemMessagesPanel, metadataPanel,
             permIdPanel, toolAdminPanel, workshopAdminPanel;
     @UiField(provided = true) BelphegorViewAppearance appearance;
@@ -140,26 +142,34 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
 
         menuButton.ensureDebugId(baseID + Belphegor.Ids.MENU_BUTTON);
 
-        ontologiesPanel.ensureDebugId(baseID + Belphegor.Ids.ONTOLOGIES);
+        deTabPanel.setTabDebugId(ontologiesPanel, baseID + Belphegor.Ids.CATALOG_TAB);
+        ontologiesPanel.ensureDebugId(baseID + Belphegor.Ids.CATALOG);
 
+        deTabPanel.setTabDebugId(refGenomePanel, baseID + Belphegor.Ids.REFERENCE_GENOME_TAB);
         refGenomePanel.ensureDebugId(baseID + Belphegor.Ids.REFERENCE_GENOME);
         refGenPresenter.setViewDebugId(baseID + Belphegor.Ids.REFERENCE_GENOME);
 
+        deTabPanel.setTabDebugId(toolRequestPanel, baseID + Belphegor.Ids.TOOL_REQUEST_TAB);
         toolRequestPanel.ensureDebugId(baseID + Belphegor.Ids.TOOL_REQUEST);
         toolReqPresenter.setViewDebugId(baseID + Belphegor.Ids.TOOL_REQUEST);
 
+        deTabPanel.setTabDebugId(toolAdminPanel, baseID + Belphegor.Ids.TOOL_ADMIN_TAB);
         toolAdminPanel.ensureDebugId(baseID + Belphegor.Ids.TOOL_ADMIN);
         toolAdminPresenter.setViewDebugId(baseID + Belphegor.Ids.TOOL_ADMIN);
 
+        deTabPanel.setTabDebugId(systemMessagesPanel, baseID + Belphegor.Ids.SYSTEM_MESSAGE_TAB);
         systemMessagesPanel.ensureDebugId(baseID + Belphegor.Ids.SYSTEM_MESSAGE);
         sysMsgPresenter.setViewDebugId(baseID + Belphegor.Ids.SYSTEM_MESSAGE);
 
+        deTabPanel.setTabDebugId(metadataPanel, baseID + Belphegor.Ids.METADATA_TAB);
         metadataPanel.ensureDebugId(baseID + Belphegor.Ids.METADATA);
         tempPresenter.setViewDebugId(baseID + Belphegor.Ids.METADATA);
 
+        deTabPanel.setTabDebugId(permIdPanel, baseID + Belphegor.Ids.PERMID_TAB);
         permIdPanel.ensureDebugId(baseID + Belphegor.Ids.PERMID);
         permIdPresenter.setViewDebugId(baseID + Belphegor.Ids.PERMID);
 
+        deTabPanel.setTabDebugId(workshopAdminPanel, baseID + Belphegor.Ids.WORKSHOP_ADMIN_TAB);
         workshopAdminPanel.ensureDebugId(baseID + Belphegor.Ids.WORKSHOP_ADMIN);
         workshopAdminPresenter.setViewDebugId(baseID + Belphegor.Ids.WORKSHOP_ADMIN);
     }
