@@ -84,6 +84,7 @@ public class ToolAdminViewImpl extends Composite implements ToolAdminView {
     @UiField TextButton deleteButton;
     @UiField Grid<Tool> grid;
     @UiField TextField filterField;
+    @UiField ColumnModel<Tool> cm;
     @UiField(provided = true) ListStore<Tool> listStore;
     @UiField(provided = true) ToolAdminViewAppearance appearance;
     @Inject AsyncProviderWrapper<ToolAdminDetailsDialog> toolDetailsDialog;
@@ -111,6 +112,12 @@ public class ToolAdminViewImpl extends Composite implements ToolAdminView {
         deleteButton.ensureDebugId(baseID + Belphegor.ToolAdminIds.DELETE);
         filterField.setId(baseID + Belphegor.ToolAdminIds.FILTER);
         grid.ensureDebugId(baseID + Belphegor.ToolAdminIds.GRID);
+
+        for (ColumnConfig<Tool, ?> cc : cm.getColumns()) {
+            if (cc.getCell() instanceof ToolAdminNameCell) {
+                ((ToolAdminNameCell)cc.getCell()).setBaseDebugId(baseID);
+            }
+        }
     }
 
     @Override

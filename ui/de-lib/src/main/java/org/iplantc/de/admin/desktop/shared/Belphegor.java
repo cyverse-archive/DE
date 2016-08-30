@@ -181,6 +181,7 @@ public interface Belphegor {
         String CONFIRM_DELETE = "confirmToolDelete";
         String YES = ".yesBtn";
         String NO = ".noBtn";
+        String NAME_CELL = ".nameCell";
     }
 
     interface WorkshopAdminIds {
