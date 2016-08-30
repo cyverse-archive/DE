@@ -237,4 +237,30 @@ public interface Belphegor {
         String COMMENTS = ".comments";
         String CANCEL = ".cancelBtn";
     }
+
+    interface CatalogIds {
+        String VIEW = ".view";
+        String ADD_ONTOLOGY_BTN = ".addOntologyBtn";
+        String DELETE_ONTOLOGY_BTN = ".deleteOntologyBtn";
+        String ONTOLOGY_DROP_DOWN = ".ontologyDropDown";
+        String SAVE_HIERARCHY_BTN = ".saveHierarchyBtn";
+        String DELETE_HIERARCHY_BTN = ".deleteHierarchyBtn";
+        String CATEGORIZE_BTN = ".categorizeBtn";
+        String DELETE_APP_BTN = ".deleteAppBtn";
+        String APP_SEARCH = ".appSearch";
+        String RESTORE_APP_BTN = ".restoreAppBtn";
+        String EDITOR_PANEL = ".editorPanel";
+        String EDITOR_TREE_PANEL = ".editorTreePanel";
+        String NO_TREE_PANEL = ".noTreePanel";
+        String EMPTY_TREE_PANEL = ".emptyTreePanel";
+        String EDITOR_TREE = ".editorTree";
+        String EDITOR_GRID = ".editorGrid";
+        String PUBLISH_BTN = ".publishBtn";
+        String PREVIEW_PANEL = ".previewPanel";
+        String PREVIEW_TREE_PANEL = ".previewTreePanel";
+        String PREVIEW_TREE = ".previewTree";
+        String PREVIEW_GRID = ".previewGrid";
+        String REFRESH_PREVIEW_BTN = ".refreshPreviewBtn";
+        String HEADER = ".header";
+    }
 }

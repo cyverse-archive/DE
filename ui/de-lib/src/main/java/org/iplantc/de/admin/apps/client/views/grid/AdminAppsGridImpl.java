@@ -128,6 +128,7 @@ public class AdminAppsGridImpl extends ContentPanel implements AdminAppsGridView
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
 
+        acm.ensureDebugId(baseID);
         grid.asWidget().ensureDebugId(baseID + Belphegor.AppIds.GRID);
     }
 
