@@ -13,6 +13,7 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshPreviewButto
 import org.iplantc.de.admin.desktop.client.ontologies.events.RestoreAppButtonClicked;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.model.HierarchyTree;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.PublishOntologyDialog;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.SaveHierarchiesDialog;
 import org.iplantc.de.admin.desktop.shared.Belphegor;
@@ -92,8 +93,8 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @UiField TextButton refreshPreview;
     @UiField TextButton restoreApp;
     @UiField(provided = true) OntologiesViewAppearance appearance;
-    @UiField(provided = true) Tree<OntologyHierarchy, String> editorTree;
-    @UiField(provided = true) Tree<OntologyHierarchy, String> previewTree;
+    @UiField(provided = true) HierarchyTree<OntologyHierarchy, String> editorTree;
+    @UiField(provided = true) HierarchyTree<OntologyHierarchy, String> previewTree;
     @UiField(provided = true) AdminAppsGridView previewGridView;
     @UiField(provided = true) AdminAppsGridView editorGridView;
     @UiField ContentPanel previewPanel, editorPanel;
@@ -596,8 +597,8 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         fireEvent(new RestoreAppButtonClicked(targetApp));
     }
 
-    Tree<OntologyHierarchy, String> createTree(TreeStore<OntologyHierarchy> store) {
-        Tree<OntologyHierarchy, String> ontologyTree = new Tree<>(store, new ValueProvider<OntologyHierarchy, String>() {
+    HierarchyTree<OntologyHierarchy, String> createTree(TreeStore<OntologyHierarchy> store) {
+        HierarchyTree<OntologyHierarchy, String> ontologyTree = new HierarchyTree<>(store, new ValueProvider<OntologyHierarchy, String>() {
             @Override
             public String getValue(OntologyHierarchy object) {
                 return object.getLabel();

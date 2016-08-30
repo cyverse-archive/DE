@@ -262,5 +262,6 @@ public interface Belphegor {
         String PREVIEW_GRID = ".previewGrid";
         String REFRESH_PREVIEW_BTN = ".refreshPreviewBtn";
         String HEADER = ".header";
+        String TREE_NODE = ".treeNode";
     }
 }
