@@ -5,6 +5,7 @@ import org.iplantc.de.admin.desktop.client.workshopAdmin.events.DeleteMembersCli
 import org.iplantc.de.admin.desktop.client.workshopAdmin.events.RefreshMembersClickedEvent;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.events.SaveMembersClickedEvent;
 import org.iplantc.de.admin.desktop.client.workshopAdmin.model.MemberProperties;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.groups.Member;
 import org.iplantc.de.collaborators.client.util.UserSearchField;
@@ -42,7 +43,7 @@ public class WorkshopAdminViewImpl extends Composite implements WorkshopAdminVie
     interface WorkshopAdminViewImplUiBinder extends UiBinder<Widget, WorkshopAdminViewImpl> {}
 
     @UiField(provided = true) UserSearchField userSearch;
-    @UiField TextButton deleteButton;
+    @UiField TextButton deleteButton, saveButton, refreshButton;
     @UiField Grid<Member> grid;
     @UiField(provided = true) ListStore<Member> listStore;
     @UiField(provided = true) WorkshopAdminViewAppearance appearance;
@@ -120,5 +121,15 @@ public class WorkshopAdminViewImpl extends Composite implements WorkshopAdminVie
     @UiHandler("refreshButton")
     void refreshButtonClicked(SelectEvent event) {
         fireEvent(new RefreshMembersClickedEvent());
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        userSearch.asWidget().ensureDebugId(baseID + Belphegor.WorkshopAdminIds.USER_SEARCH);
+        deleteButton.ensureDebugId(baseID + Belphegor.WorkshopAdminIds.DELETE_BTN);
+        saveButton.ensureDebugId(baseID + Belphegor.WorkshopAdminIds.SAVE_BTN);
+        refreshButton.ensureDebugId(baseID + Belphegor.WorkshopAdminIds.REFRESH_BTN);
     }
 }

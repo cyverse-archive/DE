@@ -186,6 +186,10 @@ public interface Belphegor {
 
     interface WorkshopAdminIds {
         String VIEW = ".view";
+        String USER_SEARCH = ".userSearch";
+        String DELETE_BTN = ".deleteBtn";
+        String SAVE_BTN = ".saveBtn";
+        String REFRESH_BTN = ".refreshBtn";
     }
 
     interface SystemMessageIds {
