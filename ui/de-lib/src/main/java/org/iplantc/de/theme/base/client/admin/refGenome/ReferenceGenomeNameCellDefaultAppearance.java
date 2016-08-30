@@ -17,11 +17,11 @@ import com.sencha.gxt.core.client.XTemplates;
  */
 public class ReferenceGenomeNameCellDefaultAppearance implements ReferenceGenomeNameCell.ReferenceGenomeNameCellAppearance {
     interface Templates extends XTemplates {
-        @XTemplate("<span><span class='{appStyle.unavailable}'> </span>&nbsp;<span name='rgName' class='{style.nameStyle}' >{refGenome.name}</span></span>")
-        SafeHtml genomeDeleted(FavoriteCellStyle appStyle, DiskResourceNameCellStyle style, ReferenceGenome refGenome);
+        @XTemplate("<span><span class='{appStyle.unavailable}'> </span>&nbsp;<span name='rgName' class='{style.nameStyle}' id='{debugId}' >{refGenome.name}</span></span>")
+        SafeHtml genomeDeleted(FavoriteCellStyle appStyle, DiskResourceNameCellStyle style, ReferenceGenome refGenome, String debugId);
 
-        @XTemplates.XTemplate("<span name='rgName' class='{style.nameStyle}' >{refGenome.name}</span>")
-        SafeHtml genome(DiskResourceNameCellStyle style, ReferenceGenome refGenome);
+        @XTemplates.XTemplate("<span name='rgName' class='{style.nameStyle}' id='{debugId}' >{refGenome.name}</span>")
+        SafeHtml genome(DiskResourceNameCellStyle style, ReferenceGenome refGenome, String debugId);
     }
 
     private final DiskResourceNameCellStyle diskResourceNameCellStyle;
@@ -46,12 +46,12 @@ public class ReferenceGenomeNameCellDefaultAppearance implements ReferenceGenome
     }
 
     @Override
-    public void renderDeletedReferenceGenomeCell(SafeHtmlBuilder sb, ReferenceGenome value) {
-        sb.append(templates.genomeDeleted(favoriteCellStyle, diskResourceNameCellStyle, value));
+    public void renderDeletedReferenceGenomeCell(SafeHtmlBuilder sb, ReferenceGenome value, String debugId) {
+        sb.append(templates.genomeDeleted(favoriteCellStyle, diskResourceNameCellStyle, value, debugId));
     }
 
     @Override
-    public void renderReferenceGenomeCell(SafeHtmlBuilder sb, ReferenceGenome value) {
-        sb.append(templates.genome(diskResourceNameCellStyle, value));
+    public void renderReferenceGenomeCell(SafeHtmlBuilder sb, ReferenceGenome value, String debugId) {
+        sb.append(templates.genome(diskResourceNameCellStyle, value, debugId));
     }
 }

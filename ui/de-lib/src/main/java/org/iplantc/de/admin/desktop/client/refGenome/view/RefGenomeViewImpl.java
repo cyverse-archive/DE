@@ -70,6 +70,7 @@ public class RefGenomeViewImpl extends Composite implements RefGenomeView {
     @UiField Grid<ReferenceGenome> grid;
     @UiField ListStore<ReferenceGenome> store;
     @UiField TextField filterField;
+    @UiField ColumnModel<ReferenceGenome> cm;
     @UiField(provided = true) RefGenomeAppearance appearance;
 
     private final ReferenceGenomeProperties rgProps;
@@ -211,5 +212,11 @@ public class RefGenomeViewImpl extends Composite implements RefGenomeView {
         addBtn.ensureDebugId(baseID + Belphegor.RefGenomeIds.ADD);
         filterField.setId(baseID + Belphegor.RefGenomeIds.NAME_FILTER);
         grid.ensureDebugId(baseID + Belphegor.RefGenomeIds.GRID);
+
+        for (ColumnConfig<ReferenceGenome, ?> cc : cm.getColumns()) {
+            if (cc.getCell() instanceof ReferenceGenomeNameCell) {
+                ((ReferenceGenomeNameCell)cc.getCell()).setBaseDebugId(baseID);
+            }
+        }
     }
 }

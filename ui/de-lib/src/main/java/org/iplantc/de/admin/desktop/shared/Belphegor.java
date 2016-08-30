@@ -84,6 +84,7 @@ public interface Belphegor {
         String EDITOR_VIEW = ".view";
         String GENOME_EDITOR = "genomeEditorWindow";
         String SAVE_BTN = ".saveBtn";
+        Object NAME_CELL = ".nameCell";
     }
 
     interface ToolRequestIds {
