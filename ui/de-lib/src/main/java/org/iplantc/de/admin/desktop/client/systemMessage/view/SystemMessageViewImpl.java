@@ -49,6 +49,7 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
 
     @UiField TextButton addBtn, deleteBtn;
     @UiField Grid<SystemMessage> grid;
+    @UiField ColumnModel<SystemMessage> cm;
     @UiField ListStore<SystemMessage> store;
     @UiField(provided = true) SystemMessageViewAppearance appearance;
 
@@ -74,6 +75,12 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
         addBtn.ensureDebugId(baseID + Belphegor.SystemMessageIds.ADD);
         deleteBtn.ensureDebugId(baseID + Belphegor.SystemMessageIds.DELETE);
         grid.ensureDebugId(baseID + Belphegor.SystemMessageIds.GRID);
+
+        for (ColumnConfig<SystemMessage, ?> cc : cm.getColumns()) {
+            if (cc.getCell() instanceof SystemMessageNameCell) {
+                ((SystemMessageNameCell)cc.getCell()).setBaseDebugId(baseID);
+            }
+        }
     }
 
     @Override

@@ -1,9 +1,11 @@
 package org.iplantc.de.admin.desktop.client.systemMessage.view.cells;
 
+import static com.google.gwt.dom.client.BrowserEvents.CLICK;
+
 import org.iplantc.de.admin.desktop.client.systemMessage.SystemMessageView;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.systemMessages.SystemMessage;
 
-import static com.google.gwt.dom.client.BrowserEvents.CLICK;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
@@ -21,11 +23,12 @@ public class SystemMessageNameCell extends AbstractCell<SystemMessage> {
     public interface SystemMessageNameCellAppearance {
         String CLICKABLE_ELEMENT_NAME = "smName";
 
-        void render(SafeHtmlBuilder sb, SystemMessage value);
+        void render(SafeHtmlBuilder sb, SystemMessage value, String debugID);
     }
 
     private final SystemMessageView view;
     private final SystemMessageNameCellAppearance appearance = GWT.create(SystemMessageNameCellAppearance.class);
+    private String baseDebugId;
 
     public SystemMessageNameCell(final SystemMessageView view) {
         super(CLICK);
@@ -34,7 +37,8 @@ public class SystemMessageNameCell extends AbstractCell<SystemMessage> {
 
     @Override
     public void render(Cell.Context arg0, SystemMessage value, SafeHtmlBuilder sb) {
-        appearance.render(sb, value);
+        String debugID = baseDebugId + "." + value.getId() + Belphegor.SystemMessageIds.NAME_CELL;
+        appearance.render(sb, value, debugID);
     }
 
     @Override
@@ -53,5 +57,9 @@ public class SystemMessageNameCell extends AbstractCell<SystemMessage> {
                 && eventTarget.getAttribute("name").equalsIgnoreCase(appearance.CLICKABLE_ELEMENT_NAME)) {
             view.editSystemMessage(value);
         }
+    }
+
+    public void setBaseDebugId(String baseDebugId) {
+        this.baseDebugId = baseDebugId;
     }
 }
