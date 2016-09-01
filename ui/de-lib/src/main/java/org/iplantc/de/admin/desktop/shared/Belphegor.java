@@ -210,7 +210,8 @@ public interface Belphegor {
         String LOGINS_DISABLED = ".loginsDisabled";
         String MESSAGE = ".message";
         String TYPE = ".type";
-        String NAME_CELL = ".nameCell";
+        String MESSAGE_CELL = ".messageCell";
+        String COL_HEADER = ".colHeader";
     }
 
     interface MetadataIds {

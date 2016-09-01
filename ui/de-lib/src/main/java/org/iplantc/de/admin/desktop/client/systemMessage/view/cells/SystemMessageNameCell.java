@@ -37,7 +37,7 @@ public class SystemMessageNameCell extends AbstractCell<SystemMessage> {
 
     @Override
     public void render(Cell.Context arg0, SystemMessage value, SafeHtmlBuilder sb) {
-        String debugID = baseDebugId + "." + value.getId() + Belphegor.SystemMessageIds.NAME_CELL;
+        String debugID = baseDebugId + "." + value.getId() + Belphegor.SystemMessageIds.MESSAGE_CELL;
         appearance.render(sb, value, debugID);
     }
 

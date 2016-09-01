@@ -4,6 +4,7 @@ import org.iplantc.de.admin.desktop.client.systemMessage.SystemMessageView;
 import org.iplantc.de.admin.desktop.client.systemMessage.view.cells.SystemMessageNameCell;
 import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.systemMessages.SystemMessage;
+import org.iplantc.de.client.util.StaticIdHelper;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 
 import com.google.common.collect.Lists;
@@ -23,6 +24,7 @@ import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
+import com.sencha.gxt.widget.core.client.event.ViewReadyEvent;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -69,12 +71,20 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
     }
 
     @Override
-    protected void onEnsureDebugId(String baseID) {
+    protected void onEnsureDebugId(final String baseID) {
         super.onEnsureDebugId(baseID);
 
         addBtn.ensureDebugId(baseID + Belphegor.SystemMessageIds.ADD);
         deleteBtn.ensureDebugId(baseID + Belphegor.SystemMessageIds.DELETE);
         grid.ensureDebugId(baseID + Belphegor.SystemMessageIds.GRID);
+        grid.addViewReadyHandler(new ViewReadyEvent.ViewReadyHandler() {
+            @Override
+            public void onViewReady(ViewReadyEvent event) {
+                StaticIdHelper.getInstance()
+                              .gridColumnHeaders(baseID + Belphegor.SystemMessageIds.GRID
+                                                 + Belphegor.SystemMessageIds.COL_HEADER, grid, cm);
+            }
+        });
 
         for (ColumnConfig<SystemMessage, ?> cc : cm.getColumns()) {
             if (cc.getCell() instanceof SystemMessageNameCell) {
