@@ -4,6 +4,7 @@ import org.iplantc.de.admin.desktop.client.refGenome.RefGenomeView;
 import org.iplantc.de.admin.desktop.client.refGenome.view.cells.ReferenceGenomeNameCell;
 import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.apps.refGenome.ReferenceGenome;
+import org.iplantc.de.client.util.StaticIdHelper;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 
 import com.google.common.base.Strings;
@@ -25,6 +26,7 @@ import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
+import com.sencha.gxt.widget.core.client.event.ViewReadyEvent;
 import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
@@ -206,12 +208,20 @@ public class RefGenomeViewImpl extends Composite implements RefGenomeView {
     }
 
     @Override
-    protected void onEnsureDebugId(String baseID) {
+    protected void onEnsureDebugId(final String baseID) {
         super.onEnsureDebugId(baseID);
 
         addBtn.ensureDebugId(baseID + Belphegor.RefGenomeIds.ADD);
         filterField.setId(baseID + Belphegor.RefGenomeIds.NAME_FILTER);
         grid.ensureDebugId(baseID + Belphegor.RefGenomeIds.GRID);
+        grid.addViewReadyHandler(new ViewReadyEvent.ViewReadyHandler() {
+            @Override
+            public void onViewReady(ViewReadyEvent event) {
+                StaticIdHelper.getInstance()
+                              .gridColumnHeaders(baseID + Belphegor.RefGenomeIds.GRID
+                                                 + Belphegor.RefGenomeIds.COL_HEADER, grid, cm);
+            }
+        });
 
         for (ColumnConfig<ReferenceGenome, ?> cc : cm.getColumns()) {
             if (cc.getCell() instanceof ReferenceGenomeNameCell) {
