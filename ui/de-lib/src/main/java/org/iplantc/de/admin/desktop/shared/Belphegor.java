@@ -226,6 +226,7 @@ public interface Belphegor {
         String YES = ".yesBtn";
         String NO = ".noBtn";
         String TEMPLATE_DESCRIPTION = ".description";
+        String COL_HEADER = ".colHeader";
     }
 
     interface PermIds {
