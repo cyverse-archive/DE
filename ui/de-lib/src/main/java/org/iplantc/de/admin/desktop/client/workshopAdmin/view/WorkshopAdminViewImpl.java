@@ -8,6 +8,7 @@ import org.iplantc.de.admin.desktop.client.workshopAdmin.model.MemberProperties;
 import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.groups.Member;
+import org.iplantc.de.client.util.StaticIdHelper;
 import org.iplantc.de.collaborators.client.util.UserSearchField;
 
 import com.google.common.collect.Lists;
@@ -28,6 +29,7 @@ import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.ViewReadyEvent;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -45,6 +47,7 @@ public class WorkshopAdminViewImpl extends Composite implements WorkshopAdminVie
     @UiField(provided = true) UserSearchField userSearch;
     @UiField TextButton deleteButton, saveButton, refreshButton;
     @UiField Grid<Member> grid;
+    @UiField ColumnModel<Member> cm;
     @UiField(provided = true) ListStore<Member> listStore;
     @UiField(provided = true) WorkshopAdminViewAppearance appearance;
 
@@ -124,12 +127,21 @@ public class WorkshopAdminViewImpl extends Composite implements WorkshopAdminVie
     }
 
     @Override
-    protected void onEnsureDebugId(String baseID) {
+    protected void onEnsureDebugId(final String baseID) {
         super.onEnsureDebugId(baseID);
 
         userSearch.asWidget().ensureDebugId(baseID + Belphegor.WorkshopAdminIds.USER_SEARCH);
         deleteButton.ensureDebugId(baseID + Belphegor.WorkshopAdminIds.DELETE_BTN);
         saveButton.ensureDebugId(baseID + Belphegor.WorkshopAdminIds.SAVE_BTN);
         refreshButton.ensureDebugId(baseID + Belphegor.WorkshopAdminIds.REFRESH_BTN);
+        grid.ensureDebugId(baseID + Belphegor.WorkshopAdminIds.GRID);
+        grid.addViewReadyHandler(new ViewReadyEvent.ViewReadyHandler() {
+            @Override
+            public void onViewReady(ViewReadyEvent event) {
+                StaticIdHelper.getInstance()
+                              .gridColumnHeaders(baseID + Belphegor.WorkshopAdminIds.GRID
+                                                 + Belphegor.WorkshopAdminIds.COL_HEADER, grid, cm);
+            }
+        });
     }
 }

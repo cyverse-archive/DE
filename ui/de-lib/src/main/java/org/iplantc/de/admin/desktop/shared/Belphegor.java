@@ -194,6 +194,8 @@ public interface Belphegor {
         String DELETE_BTN = ".deleteBtn";
         String SAVE_BTN = ".saveBtn";
         String REFRESH_BTN = ".refreshBtn";
+        String GRID = ".grid";
+        String COL_HEADER = ".colHeader";
     }
 
     interface SystemMessageIds {
