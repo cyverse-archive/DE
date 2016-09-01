@@ -246,6 +246,7 @@ public interface Belphegor {
         String STATUS_COMBO = ".statusCombo";
         String COMMENTS = ".comments";
         String CANCEL = ".cancelBtn";
+        String COL_HEADER = ".colHeader";
     }
 
     interface CatalogIds {
