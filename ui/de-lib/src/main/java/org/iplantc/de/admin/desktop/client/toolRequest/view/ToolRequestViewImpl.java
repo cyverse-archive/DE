@@ -6,6 +6,7 @@ import org.iplantc.de.client.models.toolRequest.ToolRequest;
 import org.iplantc.de.client.models.toolRequest.ToolRequestAutoBeanFactory;
 import org.iplantc.de.client.models.toolRequest.ToolRequestDetails;
 import org.iplantc.de.client.models.toolRequest.ToolRequestUpdate;
+import org.iplantc.de.client.util.StaticIdHelper;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
@@ -22,6 +23,7 @@ import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
+import com.sencha.gxt.widget.core.client.event.ViewReadyEvent;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -43,6 +45,7 @@ public class ToolRequestViewImpl extends Composite implements ToolRequestView, S
 
     @UiField TextButton updateBtn;
     @UiField Grid<ToolRequest> grid;
+    @UiField ColumnModel<ToolRequest> cm;
     @UiField ListStore<ToolRequest> store;
     @UiField ToolRequestDetailsPanel detailsPanel;
     @UiField(provided = true) ToolRequestViewAppearance appearance;
@@ -167,11 +170,20 @@ public class ToolRequestViewImpl extends Composite implements ToolRequestView, S
     }
 
     @Override
-    protected void onEnsureDebugId(String baseID) {
+    protected void onEnsureDebugId(final String baseID) {
         super.onEnsureDebugId(baseID);
 
         updateBtn.ensureDebugId(baseID + Belphegor.ToolRequestIds.UPDATE);
         grid.ensureDebugId(baseID + Belphegor.ToolRequestIds.GRID);
+        grid.addViewReadyHandler(new ViewReadyEvent.ViewReadyHandler() {
+            @Override
+            public void onViewReady(ViewReadyEvent event) {
+                StaticIdHelper.getInstance()
+                              .gridColumnHeaders(baseID + Belphegor.ToolRequestIds.GRID
+                                                 + Belphegor.ToolRequestIds.COL_HEADER, grid, cm);
+            }
+        });
+
         detailsPanel.ensureDebugId(baseID + Belphegor.ToolRequestIds.DETAILS_PANEL);
 
     }

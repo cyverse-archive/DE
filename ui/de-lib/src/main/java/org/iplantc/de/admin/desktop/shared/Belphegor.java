@@ -182,6 +182,7 @@ public interface Belphegor {
         String YES = ".yesBtn";
         String NO = ".noBtn";
         String NAME_CELL = ".nameCell";
+        String COL_HEADER = ".colHeader";
     }
 
     interface WorkshopAdminIds {
