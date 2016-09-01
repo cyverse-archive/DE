@@ -10,6 +10,7 @@ import org.iplantc.de.admin.desktop.client.toolAdmin.view.cells.ToolAdminNameCel
 import org.iplantc.de.admin.desktop.client.toolAdmin.view.dialogs.ToolAdminDetailsDialog;
 import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.tool.Tool;
+import org.iplantc.de.client.util.StaticIdHelper;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.shared.AsyncProviderWrapper;
 
@@ -37,6 +38,7 @@ import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.ViewReadyEvent;
 import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
@@ -105,13 +107,21 @@ public class ToolAdminViewImpl extends Composite implements ToolAdminView {
     }
 
     @Override
-    protected void onEnsureDebugId(String baseID) {
+    protected void onEnsureDebugId(final String baseID) {
         super.onEnsureDebugId(baseID);
 
         addButton.ensureDebugId(baseID + Belphegor.ToolAdminIds.ADD);
         deleteButton.ensureDebugId(baseID + Belphegor.ToolAdminIds.DELETE);
         filterField.setId(baseID + Belphegor.ToolAdminIds.FILTER);
         grid.ensureDebugId(baseID + Belphegor.ToolAdminIds.GRID);
+        grid.addViewReadyHandler(new ViewReadyEvent.ViewReadyHandler() {
+            @Override
+            public void onViewReady(ViewReadyEvent event) {
+                StaticIdHelper.getInstance()
+                              .gridColumnHeaders(baseID + Belphegor.ToolAdminIds.GRID
+                                                 + Belphegor.ToolAdminIds.COL_HEADER, grid, cm);
+            }
+        });
 
         for (ColumnConfig<Tool, ?> cc : cm.getColumns()) {
             if (cc.getCell() instanceof ToolAdminNameCell) {

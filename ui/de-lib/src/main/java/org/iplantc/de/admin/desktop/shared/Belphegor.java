@@ -113,6 +113,7 @@ public interface Belphegor {
         String SUBMIT_BTN = ".submitBtn";
         String DIALOG_VIEW = ".view";
         String ATTRIBUTION = ".attribution";
+        String COL_HEADER = ".colHeader";
     }
 
     interface ToolAdminIds {
