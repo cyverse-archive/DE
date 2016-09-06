@@ -14,8 +14,6 @@ title: DE API Documentation
     * [Saving User Preferences](#saving-user-preferences)
     * [Retrieving User Preferences](#retrieving-user-preferences)
     * [Removing User Preferences](#removing-user-preferences)
-    * [Determining a User's Default Output Directory](#determining-a-users-default-output-directory)
-    * [Resetting a user's default output directory.](#resetting-a-users-default-output-directory.)
     * [Obtaining Identifiers](#obtaining-identifiers)
     * [Submitting User Feedback](#submitting-user-feedback)
     * [Getting a user's saved searches](#getting-saved-searches)
@@ -212,54 +210,6 @@ $ curl -X DELETE -H "$AUTH_HEADER" "http://by-tor:8888/secured/preferences"
 Check the HTTP status code of the response to determine success. It should be in the 200 range.
 
 An attempt to remove preference data that doesn't already exist will be silently ignored.
-
-## Determining a User's Default Output Directory
-
-Secured Endpoint: GET /secured/default-output-dir
-
-This endoint determines the default output directory in iRODS for the currently authenticated user. This endpoint requires no query-string parameters. The default default output directory name is passed to Terrain in the `terrain.job-exec.default-output-folder` configuration parameter.
-
-This service works in conjunction with user preferences. If a default output directory has been selected already (either by the user or automatically) then this service will attempt to use that directory. If that directory exists already then this service will just return the full path to the directory. If the path exists and refers to a regular file then the service will fail with an error code of `REGULAR-FILE-SELECTED-AS-OUTPUT-FOLDER`. Otherwise, this service will create the directory and return the path.
-
-If the default output directory has not been selected yet then this service will automatically generate the path to the directory based on the name that was given to Terrain in the `terrain.job-exec.default-output-folder` configuration setting. The value of this configuration setting is treated as being relative to the user's home directory in iRODS. If the path exists and is a directory then the path is saved in the user's preferences and returned. If the path does not exist then the directory is created and the path is saved in the user's preferences and returned. If the path exists and is a regular file then the service will generate a unique path (by repeatedly trying the same name with a hyphen and an integer appended to it) and update the preferences and return the path when a unique path is found.
-
-Upon success, the JSON object returned in the response body contains a flag indicating that the service call was successfull along with the full path to the default output directory. Upon failure, the response body contains a flag indicating that the service call was not successful along with some information about why the service call failed.
-
-Here's an example:
-
-```
-$ curl -sH "$AUTH_HEADER" "http://by-tor:8888/secured/default-output-dir" | python -mjson.tool
-{
-    "path": "/iplant/home/ipctest/analyses"
-}
-```
-
-## Resetting a user's default output directory.
-
-Secured Endpoint: POST /secured/default-output-dir
-
-This endpoint resets a user's default output directory to its default value even if the user has already chosen a different default output directory. Since this is a POST request, this request requires a message body. The message body in this case is a JSON object containing the path relative to the user's home directory in the `path` attribute. Here are some examples:
-
-```
-$ curl -sH "$AUTH_HEADER" -d '
-{
-    "path":"foon"
-}' "http://by-tor:8888/secured/default-output-dir" | python -mjson.tool
-{
-    "path": "/iplant/home/ipctest/foon"
-}
-```
-
-```
-$ curl -sH "$AUTH_HEADER" -d '
-{
-    "inv":"foon"
-}' "http://by-tor:8888/secured/default-output-dir" | python -mjson.tool
-{
-    "arg": "path",
-    "code": "MISSING-REQUIRED-ARGUMENT"
-}
-```
 
 ## Obtaining Identifiers
 

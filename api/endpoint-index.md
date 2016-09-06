@@ -133,8 +133,6 @@ title: DE API Documentation
 * [GET /secured/bootstrap](endpoints/misc.html#initializing-a-users-workspace-and-preferences)
 * [GET /secured/collaborators](endpoints/collaborators.html#listing-collaborators)
 * [POST /secured/collaborators](endpoints/collaborators.html#adding-collaborators)
-* [GET /secured/default-output-dir](endpoints/misc.html#determining-a-users-default-output-directory)
-* [POST /secured/default-output-dir](endpoints/misc.html#resetting-a-users-default-output-directory)
 * [GET /secured/favorites/filesystem](endpoints/favorites.html#listing-stat-info-for-favorite-data)
 * [DELETE /secured/favorites/filesystem/{favorite}](endpoints/favorites.html#removing-a-data-resource-from-being-a-favorite)
 * [PUT /secured/favorites/filesystem/{favorite}](endpoints/favorites.html#marking-a-data-resource-as-favorite)
