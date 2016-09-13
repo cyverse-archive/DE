@@ -132,7 +132,7 @@ de:
 #          ssl_certificate_key: "/etc/ssl/example.com.key"
 
 de_version_name: Phthalo
-de_version: 2.8.0
+de_version: 2.9.0
 
 de_feedback_to_addr: ""
 de_mail_from_addr: "{{ de_feedback_to_addr }}"
