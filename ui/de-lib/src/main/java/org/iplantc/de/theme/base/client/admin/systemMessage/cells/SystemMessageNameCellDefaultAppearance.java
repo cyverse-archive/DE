@@ -16,8 +16,8 @@ import com.sencha.gxt.core.client.XTemplates;
  */
 public class SystemMessageNameCellDefaultAppearance implements SystemMessageNameCell.SystemMessageNameCellAppearance {
      interface Templates extends XTemplates {
-        @XTemplates.XTemplate("<span name='{elementName}' class='{style.nameStyle}' >{sysMessage.body}</span>")
-        SafeHtml genome(String elementName, DiskResourceNameCellStyle style, SystemMessage sysMessage);
+        @XTemplates.XTemplate("<span name='{elementName}' class='{style.nameStyle}' id='{debugID}' >{sysMessage.body}</span>")
+        SafeHtml genome(String elementName, DiskResourceNameCellStyle style, SystemMessage sysMessage, String debugID);
     }
 
     private final DiskResourceNameCellStyle diskResourceNameCellStyle;
@@ -40,11 +40,11 @@ public class SystemMessageNameCellDefaultAppearance implements SystemMessageName
     }
 
     @Override
-    public void render(SafeHtmlBuilder sb, SystemMessage value) {
+    public void render(SafeHtmlBuilder sb, SystemMessage value, String debugID) {
          if(value == null){
              return;
          }
 
-        sb.append(templates.genome(CLICKABLE_ELEMENT_NAME, diskResourceNameCellStyle, value));
+        sb.append(templates.genome(CLICKABLE_ELEMENT_NAME, diskResourceNameCellStyle, value, debugID));
     }
 }

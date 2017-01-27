@@ -656,8 +656,10 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
    }
 
     void restoreWindows(List<WindowState> windowStates) {
-        for (WindowState ws : windowStates) {
-            desktopWindowManager.show(ws);
+        if (windowStates != null && windowStates.size() > 0) {
+            for (WindowState ws : windowStates) {
+                desktopWindowManager.show(ws);
+            }
         }
     }
 

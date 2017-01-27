@@ -5,6 +5,7 @@ import org.iplantc.de.admin.desktop.client.metadata.events.DeleteMetadataSelecte
 import org.iplantc.de.admin.desktop.client.metadata.events.EditMetadataSelectedEvent;
 import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
+import org.iplantc.de.client.util.StaticIdHelper;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -22,6 +23,7 @@ import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.ViewReadyEvent;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -61,13 +63,21 @@ public class TemplatesListingViewImpl extends Composite implements IsWidget, Tem
     }
 
     @Override
-    protected void onEnsureDebugId(String baseID) {
+    protected void onEnsureDebugId(final String baseID) {
         super.onEnsureDebugId(baseID);
 
         addBtn.ensureDebugId(baseID + Belphegor.MetadataIds.ADD);
         editBtn.ensureDebugId(baseID + Belphegor.MetadataIds.EDIT);
         delBtn.ensureDebugId(baseID + Belphegor.MetadataIds.DELETE);
         grid.ensureDebugId(baseID + Belphegor.MetadataIds.GRID);
+        grid.addViewReadyHandler(new ViewReadyEvent.ViewReadyHandler() {
+            @Override
+            public void onViewReady(ViewReadyEvent event) {
+                StaticIdHelper.getInstance()
+                              .gridColumnHeaders(baseID + Belphegor.MetadataIds.GRID
+                                                 + Belphegor.MetadataIds.COL_HEADER, grid, cm);
+            }
+        });
     }
 
     @Override

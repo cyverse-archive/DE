@@ -102,7 +102,7 @@
             </toolbar:ToolBar>
         </container:north>
         <container:center layoutData="{centerData}">
-            <gxt:ContentPanel headingText="{appearance.westPanelHeader}">
+            <gxt:ContentPanel headingText="{appearance.westPanelHeader}" ui:field="editorPanel">
                 <container:BorderLayoutContainer borders="true">
                     <container:north layoutData="{northData}">
                         <toolbar:ToolBar>
@@ -140,7 +140,7 @@
             </gxt:ContentPanel>
         </container:center>
         <container:east layoutData="{eastData}">
-            <gxt:ContentPanel headingText="{appearance.eastPanelHeader}">
+            <gxt:ContentPanel headingText="{appearance.eastPanelHeader}" ui:field="previewPanel">
                 <container:BorderLayoutContainer>
                     <container:north layoutData="{northData}">
                         <toolbar:ToolBar>

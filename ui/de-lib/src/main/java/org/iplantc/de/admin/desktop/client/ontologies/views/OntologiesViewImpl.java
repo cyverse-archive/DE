@@ -13,8 +13,10 @@ import org.iplantc.de.admin.desktop.client.ontologies.events.RefreshPreviewButto
 import org.iplantc.de.admin.desktop.client.ontologies.events.RestoreAppButtonClicked;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SaveOntologyHierarchyEvent;
 import org.iplantc.de.admin.desktop.client.ontologies.events.SelectOntologyVersionEvent;
+import org.iplantc.de.admin.desktop.client.ontologies.model.HierarchyTree;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.PublishOntologyDialog;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.SaveHierarchiesDialog;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.BeforeAppSearchEvent;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
@@ -91,10 +93,11 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
     @UiField TextButton refreshPreview;
     @UiField TextButton restoreApp;
     @UiField(provided = true) OntologiesViewAppearance appearance;
-    @UiField(provided = true) Tree<OntologyHierarchy, String> editorTree;
-    @UiField(provided = true) Tree<OntologyHierarchy, String> previewTree;
+    @UiField(provided = true) HierarchyTree<OntologyHierarchy, String> editorTree;
+    @UiField(provided = true) HierarchyTree<OntologyHierarchy, String> previewTree;
     @UiField(provided = true) AdminAppsGridView previewGridView;
     @UiField(provided = true) AdminAppsGridView editorGridView;
+    @UiField ContentPanel previewPanel, editorPanel;
     @UiField CardLayoutContainer cards;
     @UiField CenterLayoutContainer noTreePanel, emptyTreePanel;
     @UiField ContentPanel editorTreePanel, previewTreePanel;
@@ -594,8 +597,8 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         fireEvent(new RestoreAppButtonClicked(targetApp));
     }
 
-    Tree<OntologyHierarchy, String> createTree(TreeStore<OntologyHierarchy> store) {
-        Tree<OntologyHierarchy, String> ontologyTree = new Tree<>(store, new ValueProvider<OntologyHierarchy, String>() {
+    HierarchyTree<OntologyHierarchy, String> createTree(TreeStore<OntologyHierarchy> store) {
+        HierarchyTree<OntologyHierarchy, String> ontologyTree = new HierarchyTree<>(store, new ValueProvider<OntologyHierarchy, String>() {
             @Override
             public String getValue(OntologyHierarchy object) {
                 return object.getLabel();
@@ -653,4 +656,37 @@ public class OntologiesViewImpl extends Composite implements OntologiesView {
         editorTreeTarget.addDropHandler(appToHierarchyDND);
     }
 
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        addButton.ensureDebugId(baseID + Belphegor.CatalogIds.ADD_ONTOLOGY_BTN);
+        deleteButton.ensureDebugId(baseID + Belphegor.CatalogIds.DELETE_ONTOLOGY_BTN);
+        ontologyDropDown.ensureDebugId(baseID + Belphegor.CatalogIds.ONTOLOGY_DROP_DOWN);
+        saveHierarchy.ensureDebugId(baseID + Belphegor.CatalogIds.SAVE_HIERARCHY_BTN);
+        deleteHierarchy.ensureDebugId(baseID + Belphegor.CatalogIds.DELETE_HIERARCHY_BTN);
+        categorize.ensureDebugId(baseID + Belphegor.CatalogIds.CATEGORIZE_BTN);
+        deleteApp.ensureDebugId(baseID + Belphegor.CatalogIds.DELETE_APP_BTN);
+        appSearchField.ensureDebugId(baseID + Belphegor.CatalogIds.APP_SEARCH);
+        restoreApp.ensureDebugId(baseID + Belphegor.CatalogIds.RESTORE_APP_BTN);
+
+        editorPanel.ensureDebugId(baseID + Belphegor.CatalogIds.EDITOR_PANEL);
+        editorPanel.getHeader().ensureDebugId(baseID + Belphegor.CatalogIds.EDITOR_PANEL + Belphegor.CatalogIds.HEADER);
+        editorTreePanel.ensureDebugId(baseID + Belphegor.CatalogIds.EDITOR_PANEL + Belphegor.CatalogIds.EDITOR_TREE_PANEL);
+        editorTreePanel.getHeader().ensureDebugId(baseID + Belphegor.CatalogIds.EDITOR_PANEL + Belphegor.CatalogIds.EDITOR_TREE_PANEL + Belphegor.CatalogIds.HEADER);
+        noTreePanel.ensureDebugId(baseID + Belphegor.CatalogIds.EDITOR_PANEL + Belphegor.CatalogIds.NO_TREE_PANEL);
+        emptyTreePanel.ensureDebugId(baseID + Belphegor.CatalogIds.EDITOR_PANEL + Belphegor.CatalogIds.EMPTY_TREE_PANEL);
+        editorTree.ensureDebugId(baseID + Belphegor.CatalogIds.EDITOR_PANEL + Belphegor.CatalogIds.EDITOR_TREE_PANEL + Belphegor.CatalogIds.EDITOR_TREE);
+        editorGridView.asWidget().ensureDebugId(baseID + Belphegor.CatalogIds.EDITOR_PANEL + Belphegor.CatalogIds.EDITOR_GRID);
+        publishButton.ensureDebugId(baseID + Belphegor.CatalogIds.EDITOR_PANEL + Belphegor.CatalogIds.PUBLISH_BTN);
+
+        previewPanel.ensureDebugId(baseID + Belphegor.CatalogIds.PREVIEW_PANEL);
+        previewPanel.getHeader().ensureDebugId(baseID + Belphegor.CatalogIds.PREVIEW_PANEL + Belphegor.CatalogIds.HEADER);
+        previewTreePanel.ensureDebugId(baseID + Belphegor.CatalogIds.PREVIEW_PANEL + Belphegor.CatalogIds.PREVIEW_TREE_PANEL);
+        previewTreePanel.getHeader().ensureDebugId(baseID + Belphegor.CatalogIds.PREVIEW_PANEL + Belphegor.CatalogIds.PREVIEW_TREE_PANEL + Belphegor.CatalogIds.HEADER);
+        previewTree.ensureDebugId(baseID + Belphegor.CatalogIds.PREVIEW_PANEL + Belphegor.CatalogIds.PREVIEW_TREE_PANEL + Belphegor.CatalogIds.PREVIEW_TREE);
+        previewGridView.asWidget().ensureDebugId(baseID + Belphegor.CatalogIds.PREVIEW_PANEL + Belphegor.CatalogIds.PREVIEW_GRID);
+        refreshPreview.ensureDebugId(baseID + Belphegor.CatalogIds.PREVIEW_PANEL + Belphegor.CatalogIds.REFRESH_PREVIEW_BTN);
+
+    }
 }

@@ -18,8 +18,8 @@ public class ToolAdminViewCellDefaultAppearance
         implements ToolAdminNameCell.ToolAdminNameCellAppearance {
 
     interface Templates extends XTemplates {
-        @XTemplates.XTemplate("<span name='{elementName}' class='{style.nameStyle}' >{tool.name}</span>")
-        SafeHtml tool(String elementName, DiskResourceNameCellStyle style, Tool tool);
+        @XTemplates.XTemplate("<span name='{elementName}' class='{style.nameStyle}' id='{debugID}'>{tool.name}</span>")
+        SafeHtml tool(String elementName, DiskResourceNameCellStyle style, Tool tool, String debugID);
     }
 
     private final Templates templates;
@@ -36,11 +36,11 @@ public class ToolAdminViewCellDefaultAppearance
     }
 
     @Override
-    public void render(SafeHtmlBuilder safeHtmlBuilder, Tool tool) {
+    public void render(SafeHtmlBuilder safeHtmlBuilder, Tool tool, String debugID) {
         if (tool == null) {
             return;
         }
 
-        safeHtmlBuilder.append(templates.tool(CLICKABLE_ELEMENT_NAME, defaultStyle, tool));
+        safeHtmlBuilder.append(templates.tool(CLICKABLE_ELEMENT_NAME, defaultStyle, tool, debugID));
     }
 }

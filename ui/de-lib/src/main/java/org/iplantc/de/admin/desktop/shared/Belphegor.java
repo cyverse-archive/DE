@@ -15,8 +15,16 @@ public interface Belphegor {
         String SYSTEM_MESSAGE = ".systemMessage";
         String TOOL_ADMIN = ".toolAdmin";
         String TOOL_REQUEST = ".toolRequest";
-        String ONTOLOGIES = ".ontologies";
+        String CATALOG = ".catalog";
         String WORKSHOP_ADMIN = ".workshopAdmin";
+        String CATALOG_TAB = ".catalogTab";
+        String REFERENCE_GENOME_TAB = ".referenceGenomeTab";
+        String TOOL_REQUEST_TAB = ".toolRequestTab";
+        String TOOL_ADMIN_TAB = ".toolAdminTab";
+        String SYSTEM_MESSAGE_TAB = ".systemMessageTab";
+        String METADATA_TAB = ".metadataTab";
+        String PERMID_TAB = ".permIdTab";
+        String WORKSHOP_ADMIN_TAB = ".workshopAdminTab";
     }
 
     interface AppIds {
@@ -56,6 +64,7 @@ public interface Belphegor {
         String TEMPLATE_LINK = ".templateLink";
         String CLOSE_BTN = ".closeBtn";
         String BETA = ".beta";
+        String COL_HEADER = ".colHeader";
     }
 
     interface RefGenomeIds {
@@ -76,6 +85,8 @@ public interface Belphegor {
         String EDITOR_VIEW = ".view";
         String GENOME_EDITOR = "genomeEditorWindow";
         String SAVE_BTN = ".saveBtn";
+        Object NAME_CELL = ".nameCell";
+        String COL_HEADER = ".colHeader";
     }
 
     interface ToolRequestIds {
@@ -102,6 +113,7 @@ public interface Belphegor {
         String SUBMIT_BTN = ".submitBtn";
         String DIALOG_VIEW = ".view";
         String ATTRIBUTION = ".attribution";
+        String COL_HEADER = ".colHeader";
     }
 
     interface ToolAdminIds {
@@ -172,10 +184,18 @@ public interface Belphegor {
         String CONFIRM_DELETE = "confirmToolDelete";
         String YES = ".yesBtn";
         String NO = ".noBtn";
+        String NAME_CELL = ".nameCell";
+        String COL_HEADER = ".colHeader";
     }
 
     interface WorkshopAdminIds {
         String VIEW = ".view";
+        String USER_SEARCH = ".userSearch";
+        String DELETE_BTN = ".deleteBtn";
+        String SAVE_BTN = ".saveBtn";
+        String REFRESH_BTN = ".refreshBtn";
+        String GRID = ".grid";
+        String COL_HEADER = ".colHeader";
     }
 
     interface SystemMessageIds {
@@ -193,6 +213,8 @@ public interface Belphegor {
         String LOGINS_DISABLED = ".loginsDisabled";
         String MESSAGE = ".message";
         String TYPE = ".type";
+        String MESSAGE_CELL = ".messageCell";
+        String COL_HEADER = ".colHeader";
     }
 
     interface MetadataIds {
@@ -209,6 +231,7 @@ public interface Belphegor {
         String YES = ".yesBtn";
         String NO = ".noBtn";
         String TEMPLATE_DESCRIPTION = ".description";
+        String COL_HEADER = ".colHeader";
     }
 
     interface PermIds {
@@ -228,5 +251,33 @@ public interface Belphegor {
         String STATUS_COMBO = ".statusCombo";
         String COMMENTS = ".comments";
         String CANCEL = ".cancelBtn";
+        String COL_HEADER = ".colHeader";
+    }
+
+    interface CatalogIds {
+        String VIEW = ".view";
+        String ADD_ONTOLOGY_BTN = ".addOntologyBtn";
+        String DELETE_ONTOLOGY_BTN = ".deleteOntologyBtn";
+        String ONTOLOGY_DROP_DOWN = ".ontologyDropDown";
+        String SAVE_HIERARCHY_BTN = ".saveHierarchyBtn";
+        String DELETE_HIERARCHY_BTN = ".deleteHierarchyBtn";
+        String CATEGORIZE_BTN = ".categorizeBtn";
+        String DELETE_APP_BTN = ".deleteAppBtn";
+        String APP_SEARCH = ".appSearch";
+        String RESTORE_APP_BTN = ".restoreAppBtn";
+        String EDITOR_PANEL = ".editorPanel";
+        String EDITOR_TREE_PANEL = ".editorTreePanel";
+        String NO_TREE_PANEL = ".noTreePanel";
+        String EMPTY_TREE_PANEL = ".emptyTreePanel";
+        String EDITOR_TREE = ".editorTree";
+        String EDITOR_GRID = ".editorGrid";
+        String PUBLISH_BTN = ".publishBtn";
+        String PREVIEW_PANEL = ".previewPanel";
+        String PREVIEW_TREE_PANEL = ".previewTreePanel";
+        String PREVIEW_TREE = ".previewTree";
+        String PREVIEW_GRID = ".previewGrid";
+        String REFRESH_PREVIEW_BTN = ".refreshPreviewBtn";
+        String HEADER = ".header";
+        String TREE_NODE = ".treeNode";
     }
 }

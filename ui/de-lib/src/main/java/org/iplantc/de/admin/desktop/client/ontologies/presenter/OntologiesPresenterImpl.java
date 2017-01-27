@@ -21,6 +21,7 @@ import org.iplantc.de.admin.desktop.client.ontologies.views.AppToOntologyHierarc
 import org.iplantc.de.admin.desktop.client.ontologies.views.OntologyHierarchyToAppDND;
 import org.iplantc.de.admin.desktop.client.ontologies.views.dialogs.CategorizeDialog;
 import org.iplantc.de.admin.desktop.client.services.AppAdminServiceFacade;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
 import org.iplantc.de.apps.client.presenter.toolBar.proxy.AppSearchRpcProxy;
@@ -255,6 +256,11 @@ public class OntologiesPresenterImpl implements OntologiesView.Presenter,
         view.addAppSearchResultLoadEventHandler(previewGridPresenter.getView());
         view.addBeforeAppSearchEventHandler(previewGridPresenter.getView());
         view.addRestoreAppButtonClickedHandlers(this);
+    }
+
+    @Override
+    public void setViewDebugId(String id) {
+        view.asWidget().ensureDebugId(id + Belphegor.CatalogIds.VIEW);
     }
 
     PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> getPagingLoader() {

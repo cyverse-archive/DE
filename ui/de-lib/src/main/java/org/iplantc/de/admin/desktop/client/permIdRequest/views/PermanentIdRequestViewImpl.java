@@ -7,6 +7,7 @@ import org.iplantc.de.client.models.identifiers.PermanentIdRequest;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestAutoBeanFactory;
 import org.iplantc.de.client.models.identifiers.PermanentIdRequestType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.util.StaticIdHelper;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -25,6 +26,7 @@ import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent.DialogHideHandler;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.ViewReadyEvent;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -63,6 +65,7 @@ public class PermanentIdRequestViewImpl extends Composite implements PermanentId
 
     @UiField
     Grid<PermanentIdRequest> grid;
+    @UiField ColumnModel<PermanentIdRequest> cm;
 
     @UiField
     ListStore<PermanentIdRequest> store;
@@ -96,13 +99,21 @@ public class PermanentIdRequestViewImpl extends Composite implements PermanentId
     }
 
     @Override
-    protected void onEnsureDebugId(String baseID) {
+    protected void onEnsureDebugId(final String baseID) {
         super.onEnsureDebugId(baseID);
 
         updateBtn.ensureDebugId(baseID + Belphegor.PermIds.UPDATE);
         metadataBtn.ensureDebugId(baseID + Belphegor.PermIds.METADATA);
         createDOIBtn.ensureDebugId(baseID + Belphegor.PermIds.DOI);
         grid.ensureDebugId(baseID + Belphegor.PermIds.GRID);
+        grid.addViewReadyHandler(new ViewReadyEvent.ViewReadyHandler() {
+            @Override
+            public void onViewReady(ViewReadyEvent event) {
+                StaticIdHelper.getInstance()
+                              .gridColumnHeaders(baseID + Belphegor.PermIds.GRID
+                                                 + Belphegor.PermIds.COL_HEADER, grid, cm);
+            }
+        });
     }
 
     @UiHandler("updateBtn")

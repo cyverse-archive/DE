@@ -86,4 +86,12 @@ public class AdminAppsColumnModel extends ColumnModel<App> implements AppNameSel
     public HandlerRegistration addAppInfoSelectedEventHandler(AppInfoSelectedEvent.AppInfoSelectedEventHandler handler) {
         return ensureHandlers().addHandler(AppInfoSelectedEvent.TYPE, handler);
     }
+
+    public void ensureDebugId(String baseID) {
+        for (ColumnConfig<App, ?> cc : configs) {
+            if (cc.getCell() instanceof AppInfoCell) {
+                ((AppInfoCell)cc.getCell()).setBaseDebugId(baseID);
+            }
+        }
+    }
 }

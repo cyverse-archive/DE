@@ -265,5 +265,7 @@ public interface OntologiesView extends IsWidget,
         OntologyHierarchy getSelectedHierarchy();
 
         Ontology getSelectedOntology();
+
+        void setViewDebugId(String id);
     }
 }

@@ -3,6 +3,7 @@ package org.iplantc.de.admin.desktop.client.toolAdmin.view.cells;
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
 
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.tool.Tool;
 
 import com.google.gwt.cell.client.AbstractCell;
@@ -21,11 +22,12 @@ public class ToolAdminNameCell extends AbstractCell<Tool> {
     public interface ToolAdminNameCellAppearance {
         String CLICKABLE_ELEMENT_NAME = "toolName";
 
-        void render(SafeHtmlBuilder safeHtmlBuilder, Tool tool);
+        void render(SafeHtmlBuilder safeHtmlBuilder, Tool tool, String debugID);
     }
 
     private final ToolAdminView view;
     private final ToolAdminNameCellAppearance appearance = GWT.create(ToolAdminNameCellAppearance.class);
+    private String baseDebugId;
 
     public ToolAdminNameCell(ToolAdminView view) {
         super(CLICK);
@@ -34,7 +36,8 @@ public class ToolAdminNameCell extends AbstractCell<Tool> {
 
     @Override
     public void render(Context context, Tool value, SafeHtmlBuilder sb) {
-        appearance.render(sb, value);
+        String debugID = baseDebugId + "." + value.getId() + Belphegor.ToolAdminIds.NAME_CELL;
+        appearance.render(sb, value, debugID);
     }
 
     @Override
@@ -54,5 +57,9 @@ public class ToolAdminNameCell extends AbstractCell<Tool> {
                                  .equalsIgnoreCase(ToolAdminNameCellAppearance.CLICKABLE_ELEMENT_NAME)) {
             view.toolSelected(value);
         }
+    }
+
+    public void setBaseDebugId(String baseDebugId) {
+        this.baseDebugId = baseDebugId;
     }
 }

@@ -1,9 +1,11 @@
 package org.iplantc.de.admin.desktop.client.refGenome.view.cells;
 
+import static com.google.gwt.dom.client.BrowserEvents.CLICK;
+
 import org.iplantc.de.admin.desktop.client.refGenome.RefGenomeView;
+import org.iplantc.de.admin.desktop.shared.Belphegor;
 import org.iplantc.de.client.models.apps.refGenome.ReferenceGenome;
 
-import static com.google.gwt.dom.client.BrowserEvents.CLICK;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
@@ -20,13 +22,14 @@ public class ReferenceGenomeNameCell extends AbstractCell<ReferenceGenome> {
 
     public interface ReferenceGenomeNameCellAppearance {
 
-        void renderDeletedReferenceGenomeCell(SafeHtmlBuilder sb, ReferenceGenome value);
+        void renderDeletedReferenceGenomeCell(SafeHtmlBuilder sb, ReferenceGenome value, String debugId);
 
-        void renderReferenceGenomeCell(SafeHtmlBuilder sb, ReferenceGenome value);
+        void renderReferenceGenomeCell(SafeHtmlBuilder sb, ReferenceGenome value, String debugId);
     }
 
     private final RefGenomeView view;
     private final ReferenceGenomeNameCellAppearance appearance = GWT.create(ReferenceGenomeNameCellAppearance.class);
+    private String baseID;
 
     public ReferenceGenomeNameCell(RefGenomeView view) {
         super(CLICK);
@@ -39,10 +42,12 @@ public class ReferenceGenomeNameCell extends AbstractCell<ReferenceGenome> {
             return;
         }
 
+        String debugId = baseID + "." + value.getId() + Belphegor.RefGenomeIds.NAME_CELL;
+
         if (value.isDeleted()) {
-            appearance.renderDeletedReferenceGenomeCell(sb, value);
+            appearance.renderDeletedReferenceGenomeCell(sb, value, debugId);
         } else {
-            appearance.renderReferenceGenomeCell(sb, value);
+            appearance.renderReferenceGenomeCell(sb, value, debugId);
         }
     }
 
@@ -60,4 +65,7 @@ public class ReferenceGenomeNameCell extends AbstractCell<ReferenceGenome> {
         }
     }
 
+    public void setBaseDebugId(String baseDebugId) {
+        this.baseID = baseDebugId;
+    }
 }

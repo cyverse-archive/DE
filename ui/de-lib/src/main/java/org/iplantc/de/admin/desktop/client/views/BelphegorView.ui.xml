@@ -3,6 +3,7 @@
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
              xmlns:gxt='urn:import:com.sencha.gxt.widget.core.client'
              xmlns:con='urn:import:com.sencha.gxt.widget.core.client.container'
+             xmlns:de="urn:import:org.iplantc.de.commons.client.widgets"
              >
     <ui:with field="appearance"
              type="org.iplantc.de.admin.desktop.client.views.BelphegorView.BelphegorViewAppearance"/>
@@ -67,34 +68,34 @@
             </con:north>
 
             <con:center layoutData="{centerData}">
-                <gxt:TabPanel>
-                    <gxt:child config="{ontologiesTabConfig}">
+                <de:DETabPanel ui:field="deTabPanel">
+                    <de:child config="{ontologiesTabConfig}">
                         <con:SimpleContainer ui:field="ontologiesPanel"/>
-                    </gxt:child>
-                    <gxt:child config="{refGenTabConfig}">
+                    </de:child>
+                    <de:child config="{refGenTabConfig}">
                         <con:SimpleContainer ui:field="refGenomePanel"/>
-                    </gxt:child>
-                    <gxt:child config="{toolReqTabConfig}">
+                    </de:child>
+                    <de:child config="{toolReqTabConfig}">
                         <con:SimpleContainer ui:field="toolRequestPanel"/>
-                    </gxt:child>
-                    <gxt:child config="{toolAdminConfig}">
+                    </de:child>
+                    <de:child config="{toolAdminConfig}">
                         <con:SimpleContainer ui:field="toolAdminPanel"/>
-                    </gxt:child>
-                    <gxt:child config="{sysMsgTabConfig}">
+                    </de:child>
+                    <de:child config="{sysMsgTabConfig}">
                         <con:SimpleContainer ui:field="systemMessagesPanel"/>
-                    </gxt:child>
-                     <gxt:child config="{detemplateConfig}">
+                    </de:child>
+                     <de:child config="{detemplateConfig}">
                         <con:SimpleContainer ui:field="metadataPanel">
                         </con:SimpleContainer>
-                    </gxt:child>
-                    <gxt:child config="{permIdConfig}">
+                    </de:child>
+                    <de:child config="{permIdConfig}">
                         <con:SimpleContainer ui:field="permIdPanel">
                         </con:SimpleContainer>
-                    </gxt:child>
-                    <gxt:child config="{workshopAdminConfig}">
+                    </de:child>
+                    <de:child config="{workshopAdminConfig}">
                         <con:SimpleContainer ui:field="workshopAdminPanel" />
-                    </gxt:child>
-                </gxt:TabPanel>
+                    </de:child>
+                </de:DETabPanel>
             </con:center>
 
             <con:south layoutData="{southData}">
